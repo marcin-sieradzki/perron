@@ -5,7 +5,7 @@ Perron is the design system of Mylder, a live map of Copenhagen's buses, S-tog, 
 ## Content
 
 - Say what is happening in plain sentences, then how sure we are. "Signal fault at Danshøj. Trains between Flintholm and Ny Ellebjerg run slower than planned." Never claim more certainty than the data has: a vehicle without a signal is "No signal since 08:02", not a guess.
-- Sentence case everywhere: "Show whole line", "Back to the map", "Reporting live, by operator". Capitals come only from the `perron-typography-overline` and `perron-typography-tag` styles, so write the source text in sentence case.
+- Sentence case everywhere: "Show whole line", "Back to the map", "Reporting live, by operator". Capitals come only from the `perron-typography-overline` style, so write the source text in sentence case.
 - Speak about the city and its vehicles, not about the person. Address them only in instructions: "Try a line number such as 5C."
 - Numbers: 24-hour clock ("08:14"), a space before units ("4 min", "45 km/h"), the true minus sign for early ("−1"), "—" for unknown, "≈" before estimates, "~" before estimated times. Countdowns under 45 seconds read "Now".
 - Data states and delays always use the same words, in English and Danish, so every screen agrees. Live / Live, Ageing / Ældre, Estimated / Beregnet, Timetable only / Kun køreplan, No signal / Intet signal; Delays / Forsinkelser, Running normally / Kører normalt, Show on map / Vis på kort. Don't write your own wording for them.
@@ -14,23 +14,40 @@ Perron is the design system of Mylder, a live map of Copenhagen's buses, S-tog, 
 
 ## Colour
 
+- Colours come in two tiers. The palette (`perron-palette-*`) holds the raw values: a neutral ramp from `0` (white) to `950`, and five steps each of blue, green, orange, red and yellow. The `perron-color-*` tokens say what a colour is for and point at a palette step per theme. Components and apps use `perron-color-*` only; a new need gets a new `color` token, never a palette value.
 - The map is the ground. Its colours are `perron-color-map-*`: land, water, park, street, rail, building and labels. Panels float over it in `perron-color-surface-overlay` with a 16 px backdrop blur; on phones, panels full of text use `perron-color-surface-default`.
 - Inside a panel, set cards and inset boxes on `perron-color-surface-raised` or `perron-color-surface-inset`. Hover is `perron-color-surface-hover`, a selected row `perron-color-surface-selected`.
-- Three text colours. `perron-color-text-primary` for what people read first; `perron-color-text-secondary` for supporting text (6.5:1 or better on every surface, both themes); `perron-color-text-tertiary` only for hints, axis labels and captions next to stronger text. Tertiary misses 4.5:1: 3.85:1 on `perron-color-surface-default` and 3.42:1 on `perron-color-surface-inset` in light, 4.23:1 and 3.58:1 in dark. Don't set sentences people must read in it.
+- Three text colours. `perron-color-text-primary` for what people read first; `perron-color-text-secondary` for supporting text (6.5:1 or better on every surface, both themes); `perron-color-text-tertiary` only for hints, axis labels and captions next to stronger text. Tertiary misses 4.5:1: 3.85:1 on `perron-color-surface-default` and 3.42:1 on `perron-color-surface-inset` in light, 4.48:1 and 3.75:1 in dark. Set sentences people must read in primary or secondary.
 - Hairlines are `perron-color-border-subtle`; borders of inputs and outline buttons are `perron-color-border-strong`.
 - Line colours are the operators' own (`perron-color-transit-line-<id>` for metro and S-tog, `perron-color-transit-mode-bus` and `perron-color-transit-mode-regional`). A line colour fills a shape only in a line badge; elsewhere it is a dot, a ring, a rail or a swatch. Text on a line colour always uses its `perron-color-transit-line-on-<id>` or `perron-color-transit-mode-on-*` partner. Several official pairs miss 4.5:1 (C 2.51:1, A 2.94:1, B 3.27:1, M4 3.56:1, M1 4.44:1); they stay exact, set bold, with the line always named in words nearby.
-- Status colours are reserved: `perron-color-status-success`, `-warning`, `-danger` and `-info` for health and counts of problems; `perron-color-transit-delay-*` for delays; `perron-color-transit-severity-*` for kinds of disruption. Each always comes with a word or an icon. In light, success and warning text are 3.87:1 and 4.12:1 on `perron-color-surface-default`: use them for short labels and numbers next to words, not for sentences.
-- `perron-color-data-state-no-signal` grey means a vehicle has gone silent. Never use it for anything else.
-- `perron-color-surface-inverse` with `perron-color-text-inverse` is the primary button and pressed toggles (17.3:1 light, 15.0:1 dark).
-- The focus ring is a solid 2 px outline in `perron-color-border-focus`, the same colour as primary text: 12.6:1 or better on every surface and on the map, in both themes.
-- Light is the default theme. Dark comes from `[data-theme="dark"]` or, without an explicit theme, from the system's dark mode. Choose dark colours from the dark tokens; never invert.
+- Status colours are reserved for health, delays and problems: success, warning, danger and info. Each comes in three tokens: `perron-color-status-<status>` fills dots, meters, icons and counts; `perron-color-text-<status>` is text in that colour (4.7:1 or better on every surface, both themes); `perron-color-surface-<status>` is a tinted background for a message. Delays (`perron-color-transit-delay-*`) and kinds of disruption (`perron-color-transit-severity-*`) point at the status text colours. A status colour always comes with a word or an icon.
+- The brand colour is the yellow of the bus dot in the Mylder mark. It belongs to the hero page and moments of emphasis: `perron-color-surface-brand` for bands and calls to action (text on it is `perron-color-text-on-color-dark`, 7.3:1), `perron-color-surface-brand-subtle` for a tinted background, `perron-color-text-brand` for a highlighted word. Inside the map app, actions stay ink, so the vehicles keep the colour.
+- `perron-color-data-state-no-signal` grey means a vehicle has gone silent. Use it for that alone.
+- `perron-color-surface-inverse` with `perron-color-text-inverse` is the primary button and pressed toggles (17.3:1 light, 15.3:1 dark).
+- The focus ring is a solid 2 px outline in `perron-color-border-focus`, the same colour as primary text: 11.7:1 or better on every surface and on the map, in both themes.
+- Light is the default theme. Dark comes from `[data-theme="dark"]` or, without an explicit theme, from the system's dark mode. Dark colours are their own palette steps, chosen for the dark surfaces, not an inversion of the light ones.
 
 ## Type
 
-- Three families, self-hosted: Familjen Grotesk for display (`perron-typography-display-lg`, `wordmark`, `display-sm`, `stat-lg`, `stat`), Schibsted Grotesk for text and labels, JetBrains Mono for data. Don't load them from Google Fonts; that sends visitors' IP addresses to Google.
-- Pick a role by job: `title` for a row's main line, `body` and `prose` for sentences, `meta` and `caption` for the line under, `overline` for section headings, `label` and `control` for controls, `badge` inside line badges.
-- Anything people compare down a column is a `perron-typography-data*` role: times, countdowns, counts, delays, percentages. They use tabular figures, so columns line up. The clock is `perron-typography-clock`; the kiosk clock `perron-typography-data-display`.
-- Set text with a typography role, never with a hand-picked size. The roles are classes in `typography.css` and composite custom properties (`font: var(--perron-typography-body)`).
+- Three families, self-hosted: Familjen Grotesk for headings and the wordmark, Schibsted Grotesk for text and labels, JetBrains Mono for data. Fonts load from this package, never from Google Fonts, which would send visitors' IP addresses to Google.
+- Sixteen roles, one per job. Set every piece of text with a role, as a class (`perron-typography-body`) or a composite custom property (`font: var(--perron-typography-body)` plus `letter-spacing: var(--perron-typography-body-tracking)`).
+
+| Role                         | Size  | Use                                                          |
+| ---------------------------- | ----- | ------------------------------------------------------------ |
+| `display`                    | 48    | Hero headline                                                |
+| `heading-lg`                 | 24    | Dialog and page titles                                       |
+| `heading-md`                 | 20    | Panel titles; the wordmark is heading-md set bold            |
+| `heading-sm`                 | 14    | Card titles                                                  |
+| `body`, `body-sm`, `caption` | 14–12 | Sentences, supporting sentences, notes and second lines      |
+| `label`, `label-sm`          | 13–12 | Buttons, tabs, chips and list names; legend and field labels |
+| `overline`                   | 11    | Section headings and tags, in capitals                       |
+| `badge`                      | 12    | Line badge labels                                            |
+| `stat`                       | 28    | Key figures                                                  |
+| `data-xl` to `data-sm`       | 48–11 | Clocks, countdowns, times, delays, counts and percentages    |
+
+- Anything people compare down a column is a `data` role: times, countdowns, counts, delays, percentages. They use tabular figures, so columns line up.
+- Sizes come from one scale, `perron-font-size-275` (11 px) to `perron-font-size-1200` (48 px), numbered like the spacing scale. Roles use it; components reach for a size directly only for a responsive step a role names: on phones `display` and `data-xl` step down to `perron-font-size-800` (32 px) and `stat` to `perron-font-size-600` (24 px).
+- Line heights are four: `none` for single lines in a fixed box, `tight` for headings and figures, `snug` for labels and data, `normal` for running text.
 
 ## Space, shape and depth
 

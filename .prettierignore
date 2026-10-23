@@ -1,3 +1,4 @@
 coverage
 package-lock.json
 tokens/generated
+.claude/skills/writing-for-agents

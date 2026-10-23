@@ -4,25 +4,34 @@ Perron is the design system of [Mylder](https://github.com/marcin-sieradzki/Myld
 
 Components come later. They are extracted from the Mylder prototype already, and kept on their own branch until the foundations are settled.
 
+## Standard
+
+The tokens follow the [Design Tokens specification 2025.10](https://www.w3.org/community/design-tokens/2025/10/28/design-tokens-specification-reaches-first-stable-version/), the first stable version from the W3C Design Tokens Community Group: its Format module for the files, its Color module for colour values and its Resolver module for how base, light and dark combine.
+
+The build checks every file against the format rule by rule (`scripts/lib/spec.ts`) before it writes anything, so a token that breaks the format fails `npm run check`. The format's `$root` tokens and `$extends` groups are not read by the build yet; the check reports them until it does.
+
 ## What is here
 
-| Path                          | What it is                                                                                                       |
-| ----------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| `tokens/*.tokens.json`        | The token sources, in the W3C design tokens format 2025.10: `base`, plus a `light` and a `dark` theme            |
-| `tokens/perron.resolver.json` | How the files combine (the format's resolver module): base always, then light or dark                            |
-| `tokens/generated/`           | Built from the sources: `tokens.css`, `typography.css`, `tokens.ts` and `penpot.tokens.json`. Never edit by hand |
-| `styles/perron.css`           | The one file an app loads: fonts, tokens, typography classes and page defaults                                   |
-| `scripts/`                    | The token build and its tests, including contrast checks                                                         |
-| `docs/foundations.md`         | How to use colour, type, space, shape, motion and the data states                                                |
+| Path                          | What it is                                                                                                                                            |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `tokens/*.tokens.json`        | The token sources: `base`, plus a `light` and a `dark` theme                                                                                          |
+| `tokens/perron.resolver.json` | How the files combine (the format's resolver module): base always, then light or dark                                                                 |
+| `tokens/generated/`           | Built from the sources: `tokens.css`, `typography.css`, `tokens.ts`, and `penpot.tokens.json` in the older flavour Penpot imports. Never edit by hand |
+| `styles/perron.css`           | The one file an app loads: fonts, tokens, typography classes and page defaults                                                                        |
+| `scripts/`                    | The token build and its tests, including contrast checks                                                                                              |
+| `docs/foundations.md`         | How to use colour, type, space, shape, motion and the data states                                                                                     |
+| `docs/renames.md`             | Token names that changed or went away, for code written against an older name                                                                         |
+| `.claude/skills/`             | Agent skills: `design-tokens`, and `writing-for-agents` from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT)                          |
 
 ## Token names
 
 Every token is `--perron-<group>-<name>` in CSS and `<group>.<name>` in the sources.
 
-- **Colour:** `text`, `surface`, `border`, `status` (success, warning, danger, info) and `chart` for the interface; `transit` (lines, modes, delays, severities), `data-state` and `map` for what Mylder shows. For example `--perron-color-text-secondary`, `--perron-color-transit-line-a`.
+- **Palette:** raw colours, `palette.<hue>.<step>`. A neutral ramp from `0` (white) to `950`, and blue, green, orange, red and yellow at steps 100, 300, 500, 700 and 900. Only colour tokens read the palette.
+- **Colour:** what a colour is for, per theme. `text`, `surface`, `border`, `status` (success, warning, danger, info) and the brand colour for the interface; `chart`, `transit` (lines, modes, delays, severities), `data-state` and `map` for what Mylder shows. For example `--perron-color-text-secondary`, `--perron-color-surface-warning`, `--perron-color-transit-line-a`.
 - **Space:** a 4 px base, named by count of 4 px units times 100: `space.050` is 2 px, `space.200` 8 px, `space.800` 32 px.
 - **Radius:** `xs` 4, `sm` 6, `md` 8, `lg` 12, `xl` 16 px and `full`.
-- **Type:** 40 roles under `typography.*`, each a composite of family, size, weight, line height and tracking.
+- **Type:** 16 roles under `typography.*` (`display`, `heading-*`, `body`, `label`, `overline`, `stat`, `data-*` and more), each a composite of family, weight, size, line height and tracking. Sizes use the spacing numbers: `font.size.400` is 16 px.
 - Also `shadow`, `size`, `opacity`, `z-index`, `duration`, `easing`, `breakpoint`, `effect`, `prik` (the data-state dot's geometry) and `map` (canvas measures).
 
 ## Commands

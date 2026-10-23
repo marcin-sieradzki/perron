@@ -1,16 +1,170 @@
 {
   "base": {
+    "palette": {
+      "neutral": {
+        "0": {
+          "$type": "color",
+          "$value": "#FFFFFF"
+        },
+        "50": {
+          "$type": "color",
+          "$value": "#FAFBF9"
+        },
+        "100": {
+          "$type": "color",
+          "$value": "#EBEEEB"
+        },
+        "300": {
+          "$type": "color",
+          "$value": "#A2ADB1"
+        },
+        "500": {
+          "$type": "color",
+          "$value": "#74818A"
+        },
+        "600": {
+          "$type": "color",
+          "$value": "#47535A"
+        },
+        "700": {
+          "$type": "color",
+          "$value": "#20282C"
+        },
+        "800": {
+          "$type": "color",
+          "$value": "#1D2428"
+        },
+        "900": {
+          "$type": "color",
+          "$value": "#12181B"
+        },
+        "950": {
+          "$type": "color",
+          "$value": "#0A0E10"
+        }
+      },
+      "blue": {
+        "100": {
+          "$type": "color",
+          "$value": "#EEF4FF"
+        },
+        "300": {
+          "$type": "color",
+          "$value": "#7FA6FF"
+        },
+        "500": {
+          "$type": "color",
+          "$value": "#2D5FC4"
+        },
+        "700": {
+          "$type": "color",
+          "$value": "#2351AF"
+        },
+        "900": {
+          "$type": "color",
+          "$value": "#202D49"
+        }
+      },
+      "green": {
+        "100": {
+          "$type": "color",
+          "$value": "#E5FAEC"
+        },
+        "300": {
+          "$type": "color",
+          "$value": "#3CCB80"
+        },
+        "500": {
+          "$type": "color",
+          "$value": "#13915A"
+        },
+        "700": {
+          "$type": "color",
+          "$value": "#067849"
+        },
+        "900": {
+          "$type": "color",
+          "$value": "#133622"
+        }
+      },
+      "orange": {
+        "100": {
+          "$type": "color",
+          "$value": "#FEF1E4"
+        },
+        "300": {
+          "$type": "color",
+          "$value": "#F0A43A"
+        },
+        "500": {
+          "$type": "color",
+          "$value": "#B06A00"
+        },
+        "700": {
+          "$type": "color",
+          "$value": "#965A00"
+        },
+        "900": {
+          "$type": "color",
+          "$value": "#3F280A"
+        }
+      },
+      "red": {
+        "100": {
+          "$type": "color",
+          "$value": "#FEF0EC"
+        },
+        "300": {
+          "$type": "color",
+          "$value": "#FF8655"
+        },
+        "500": {
+          "$type": "color",
+          "$value": "#C2410C"
+        },
+        "700": {
+          "$type": "color",
+          "$value": "#AD3600"
+        },
+        "900": {
+          "$type": "color",
+          "$value": "#452417"
+        }
+      },
+      "yellow": {
+        "100": {
+          "$type": "color",
+          "$value": "#FFF2DD"
+        },
+        "300": {
+          "$type": "color",
+          "$value": "#F2B630"
+        },
+        "500": {
+          "$type": "color",
+          "$value": "#D99A00"
+        },
+        "700": {
+          "$type": "color",
+          "$value": "#896001"
+        },
+        "900": {
+          "$type": "color",
+          "$value": "#3B2B07"
+        }
+      }
+    },
     "color": {
       "text": {
         "on-color": {
           "dark": {
             "$type": "color",
-            "$value": "#14181A",
+            "$value": "{palette.neutral.900}",
             "$description": "Dark text on a coloured fill (bus, light line colours)"
           },
           "light": {
             "$type": "color",
-            "$value": "#FFFFFF",
+            "$value": "{palette.neutral.0}",
             "$description": "White text on a coloured fill"
           }
         }
@@ -132,7 +286,7 @@
         "display": {
           "$type": "fontFamilies",
           "$value": "Familjen Grotesk",
-          "$description": "Wordmark, panel and dialog titles"
+          "$description": "Display: headings and the wordmark"
         },
         "body": {
           "$type": "fontFamilies",
@@ -142,7 +296,7 @@
         "data": {
           "$type": "fontFamilies",
           "$value": "JetBrains Mono",
-          "$description": "Clock times, countdowns, counts and data ages. Always tabular figures."
+          "$description": "Data: times, countdowns, counts and data ages. Always tabular figures."
         }
       },
       "weight": {
@@ -168,528 +322,246 @@
         }
       },
       "size": {
-        "10": {
-          "$type": "fontSizes",
-          "$value": "10px"
-        },
-        "11": {
+        "275": {
           "$type": "fontSizes",
           "$value": "11px"
         },
-        "12": {
+        "300": {
           "$type": "fontSizes",
           "$value": "12px"
         },
-        "13": {
+        "325": {
           "$type": "fontSizes",
           "$value": "13px"
         },
-        "14": {
+        "350": {
           "$type": "fontSizes",
           "$value": "14px"
         },
-        "15": {
+        "400": {
           "$type": "fontSizes",
-          "$value": "15px"
+          "$value": "16px"
         },
-        "20": {
+        "500": {
           "$type": "fontSizes",
           "$value": "20px"
         },
-        "22": {
+        "600": {
           "$type": "fontSizes",
-          "$value": "22px"
+          "$value": "24px"
         },
-        "23": {
+        "700": {
           "$type": "fontSizes",
-          "$value": "23px"
+          "$value": "28px"
         },
-        "26": {
+        "800": {
           "$type": "fontSizes",
-          "$value": "26px"
+          "$value": "32px"
         },
-        "27": {
+        "1200": {
           "$type": "fontSizes",
-          "$value": "27px"
+          "$value": "48px"
+        }
+      },
+      "line-height": {
+        "none": {
+          "$type": "number",
+          "$value": "1",
+          "$description": "Single lines in a fixed box: line badges, the kiosk clock"
         },
-        "30": {
-          "$type": "fontSizes",
-          "$value": "30px"
+        "tight": {
+          "$type": "number",
+          "$value": "1.15",
+          "$description": "Headings, key figures and clocks"
         },
-        "40": {
-          "$type": "fontSizes",
-          "$value": "40px"
+        "snug": {
+          "$type": "number",
+          "$value": "1.3",
+          "$description": "Labels, small headings and data"
         },
-        "54": {
-          "$type": "fontSizes",
-          "$value": "54px"
-        },
-        "9-5": {
-          "$type": "fontSizes",
-          "$value": "9.5px"
-        },
-        "10-5": {
-          "$type": "fontSizes",
-          "$value": "10.5px"
-        },
-        "11-5": {
-          "$type": "fontSizes",
-          "$value": "11.5px"
-        },
-        "12-5": {
-          "$type": "fontSizes",
-          "$value": "12.5px"
-        },
-        "13-5": {
-          "$type": "fontSizes",
-          "$value": "13.5px"
-        },
-        "14-5": {
-          "$type": "fontSizes",
-          "$value": "14.5px"
+        "normal": {
+          "$type": "number",
+          "$value": "1.5",
+          "$description": "Running text"
         }
       }
     },
     "typography": {
-      "display-lg": {
+      "display": {
         "$type": "typography",
         "$value": {
           "fontFamily": "{font.family.display}",
           "fontWeight": "{font.weight.bold}",
-          "fontSize": "{font.size.26}",
-          "lineHeight": "1.1",
-          "letterSpacing": "-0.52px"
+          "fontSize": "{font.size.1200}",
+          "lineHeight": "{font.line-height.tight}",
+          "letterSpacing": "-0.96px"
         },
-        "$description": "Dialog title (About)"
+        "$description": "Hero headline. Steps down to font.size.800 on phones."
       },
-      "wordmark": {
+      "heading-lg": {
         "$type": "typography",
         "$value": {
           "fontFamily": "{font.family.display}",
           "fontWeight": "{font.weight.bold}",
-          "fontSize": "{font.size.22}",
-          "lineHeight": "1",
-          "letterSpacing": "-0.55px"
+          "fontSize": "{font.size.600}",
+          "lineHeight": "{font.line-height.tight}",
+          "letterSpacing": "-0.48px"
         },
-        "$description": "Brand wordmark \"mylder\""
+        "$description": "Dialog and page titles"
       },
-      "display-sm": {
+      "heading-md": {
         "$type": "typography",
         "$value": {
           "fontFamily": "{font.family.display}",
           "fontWeight": "{font.weight.semibold}",
-          "fontSize": "{font.size.20}",
-          "lineHeight": "1.12",
+          "fontSize": "{font.size.500}",
+          "lineHeight": "{font.line-height.tight}",
           "letterSpacing": "-0.3px"
         },
-        "$description": "Detail panel title (destination or stop name)"
+        "$description": "Panel titles: a stop or a destination. The wordmark is heading-md set bold."
       },
-      "stat-lg": {
+      "heading-sm": {
         "$type": "typography",
         "$value": {
           "fontFamily": "{font.family.body}",
           "fontWeight": "{font.weight.semibold}",
-          "fontSize": "{font.size.30}",
-          "lineHeight": "1",
-          "letterSpacing": "-0.6px"
-        },
-        "$description": "Kiosk stat value"
-      },
-      "stat": {
-        "$type": "typography",
-        "$value": {
-          "fontFamily": "{font.family.body}",
-          "fontWeight": "{font.weight.semibold}",
-          "fontSize": "{font.size.27}",
-          "lineHeight": "1.05",
-          "letterSpacing": "-0.81px"
-        },
-        "$description": "KPI value (23 px on phones)"
-      },
-      "title": {
-        "$type": "typography",
-        "$value": {
-          "fontFamily": "{font.family.body}",
-          "fontWeight": "{font.weight.semibold}",
-          "fontSize": "{font.size.14-5}",
-          "lineHeight": "1.3",
+          "fontSize": "{font.size.350}",
+          "lineHeight": "{font.line-height.snug}",
           "letterSpacing": "0px"
         },
-        "$description": "Disruption title"
+        "$description": "Card titles, such as a disruption"
       },
       "body": {
         "$type": "typography",
         "$value": {
           "fontFamily": "{font.family.body}",
           "fontWeight": "{font.weight.regular}",
-          "fontSize": "{font.size.14}",
-          "lineHeight": "1.4",
+          "fontSize": "{font.size.350}",
+          "lineHeight": "{font.line-height.normal}",
           "letterSpacing": "0px"
         },
-        "$description": "Default body text and inputs"
-      },
-      "prose": {
-        "$type": "typography",
-        "$value": {
-          "fontFamily": "{font.family.body}",
-          "fontWeight": "{font.weight.regular}",
-          "fontSize": "{font.size.14}",
-          "lineHeight": "1.55",
-          "letterSpacing": "0px"
-        },
-        "$description": "Longer paragraphs (About dialog)"
+        "$description": "Sentences and inputs"
       },
       "body-sm": {
         "$type": "typography",
         "$value": {
           "fontFamily": "{font.family.body}",
           "fontWeight": "{font.weight.regular}",
-          "fontSize": "{font.size.13}",
-          "lineHeight": "1.5",
+          "fontSize": "{font.size.325}",
+          "lineHeight": "{font.line-height.normal}",
           "letterSpacing": "0px"
         },
-        "$description": "Disruption body, location line"
-      },
-      "label": {
-        "$type": "typography",
-        "$value": {
-          "fontFamily": "{font.family.body}",
-          "fontWeight": "{font.weight.semibold}",
-          "fontSize": "{font.size.13}",
-          "lineHeight": "1.2",
-          "letterSpacing": "0px"
-        },
-        "$description": "Buttons, tabs, names in lists"
-      },
-      "control": {
-        "$type": "typography",
-        "$value": {
-          "fontFamily": "{font.family.body}",
-          "fontWeight": "{font.weight.medium}",
-          "fontSize": "{font.size.13}",
-          "lineHeight": "1",
-          "letterSpacing": "0px"
-        },
-        "$description": "Filter chips, highlight chip"
-      },
-      "list-title": {
-        "$type": "typography",
-        "$value": {
-          "fontFamily": "{font.family.body}",
-          "fontWeight": "{font.weight.medium}",
-          "fontSize": "{font.size.13-5}",
-          "lineHeight": "1.25",
-          "letterSpacing": "0px"
-        },
-        "$description": "Destination or stop name in a row"
-      },
-      "meta": {
-        "$type": "typography",
-        "$value": {
-          "fontFamily": "{font.family.body}",
-          "fontWeight": "{font.weight.regular}",
-          "fontSize": "{font.size.12-5}",
-          "lineHeight": "1.35",
-          "letterSpacing": "0px"
-        },
-        "$description": "Subtitles and state descriptions"
-      },
-      "tooltip": {
-        "$type": "typography",
-        "$value": {
-          "fontFamily": "{font.family.body}",
-          "fontWeight": "{font.weight.medium}",
-          "fontSize": "{font.size.12-5}",
-          "lineHeight": "1.3",
-          "letterSpacing": "0px"
-        },
-        "$description": "Map tooltip"
-      },
-      "action": {
-        "$type": "typography",
-        "$value": {
-          "fontFamily": "{font.family.body}",
-          "fontWeight": "{font.weight.semibold}",
-          "fontSize": "{font.size.12-5}",
-          "lineHeight": "1",
-          "letterSpacing": "0px"
-        },
-        "$description": "Link buttons"
+        "$description": "Supporting sentences: the line under a title, disruption details"
       },
       "caption": {
         "$type": "typography",
         "$value": {
           "fontFamily": "{font.family.body}",
           "fontWeight": "{font.weight.regular}",
-          "fontSize": "{font.size.12}",
-          "lineHeight": "1.45",
+          "fontSize": "{font.size.300}",
+          "lineHeight": "{font.line-height.normal}",
           "letterSpacing": "0px"
         },
-        "$description": "Section subtitles, legend descriptions, notes"
+        "$description": "Notes, second lines in rows, legend descriptions, map credits"
+      },
+      "label": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.body}",
+          "fontWeight": "{font.weight.semibold}",
+          "fontSize": "{font.size.325}",
+          "lineHeight": "{font.line-height.snug}",
+          "letterSpacing": "0px"
+        },
+        "$description": "Buttons, tabs, chips and names in lists"
       },
       "label-sm": {
         "$type": "typography",
         "$value": {
           "fontFamily": "{font.family.body}",
           "fontWeight": "{font.weight.medium}",
-          "fontSize": "{font.size.12}",
-          "lineHeight": "1.2",
+          "fontSize": "{font.size.300}",
+          "lineHeight": "{font.line-height.snug}",
           "letterSpacing": "0px"
         },
-        "$description": "Legend items, day, kiosk stat labels"
-      },
-      "icon-label": {
-        "$type": "typography",
-        "$value": {
-          "fontFamily": "{font.family.body}",
-          "fontWeight": "{font.weight.semibold}",
-          "fontSize": "{font.size.12}",
-          "lineHeight": "1",
-          "letterSpacing": "0.48px"
-        },
-        "$description": "Text inside an icon button (language switch)"
-      },
-      "secondary": {
-        "$type": "typography",
-        "$value": {
-          "fontFamily": "{font.family.body}",
-          "fontWeight": "{font.weight.regular}",
-          "fontSize": "{font.size.11-5}",
-          "lineHeight": "1.3",
-          "letterSpacing": "0px"
-        },
-        "$description": "Second line in a row (vehicle name, data state)"
-      },
-      "stat-label": {
-        "$type": "typography",
-        "$value": {
-          "fontFamily": "{font.family.body}",
-          "fontWeight": "{font.weight.medium}",
-          "fontSize": "{font.size.11-5}",
-          "lineHeight": "1.2",
-          "letterSpacing": "0px"
-        },
-        "$description": "KPI label"
-      },
-      "fine": {
-        "$type": "typography",
-        "$value": {
-          "fontFamily": "{font.family.body}",
-          "fontWeight": "{font.weight.regular}",
-          "fontSize": "{font.size.11}",
-          "lineHeight": "1.3",
-          "letterSpacing": "0px"
-        },
-        "$description": "KPI footnote"
-      },
-      "field-label": {
-        "$type": "typography",
-        "$value": {
-          "fontFamily": "{font.family.body}",
-          "fontWeight": "{font.weight.medium}",
-          "fontSize": "{font.size.11}",
-          "lineHeight": "1.2",
-          "letterSpacing": "0px"
-        },
-        "$description": "Fact labels (Delay, Speed, Last report)"
+        "$description": "Legend items, field and stat labels, tooltips"
       },
       "overline": {
         "$type": "typography",
         "$value": {
           "fontFamily": "{font.family.body}",
           "fontWeight": "{font.weight.semibold}",
-          "fontSize": "{font.size.11}",
-          "lineHeight": "1.2",
-          "letterSpacing": "0.99px"
+          "fontSize": "{font.size.275}",
+          "lineHeight": "{font.line-height.snug}",
+          "letterSpacing": "0.88px"
         },
-        "$description": "Uppercase section heading"
-      },
-      "overline-sm": {
-        "$type": "typography",
-        "$value": {
-          "fontFamily": "{font.family.body}",
-          "fontWeight": "{font.weight.semibold}",
-          "fontSize": "{font.size.10-5}",
-          "lineHeight": "1",
-          "letterSpacing": "0.89px"
-        },
-        "$description": "Uppercase legend title, severity, table header"
-      },
-      "attribution": {
-        "$type": "typography",
-        "$value": {
-          "fontFamily": "{font.family.body}",
-          "fontWeight": "{font.weight.regular}",
-          "fontSize": "{font.size.10-5}",
-          "lineHeight": "1.35",
-          "letterSpacing": "0px"
-        },
-        "$description": "Map credits"
-      },
-      "tag": {
-        "$type": "typography",
-        "$value": {
-          "fontFamily": "{font.family.body}",
-          "fontWeight": "{font.weight.semibold}",
-          "fontSize": "{font.size.10}",
-          "lineHeight": "1",
-          "letterSpacing": "0.9px"
-        },
-        "$description": "Dashed tag (\"Simulated\")"
-      },
-      "tag-sm": {
-        "$type": "typography",
-        "$value": {
-          "fontFamily": "{font.family.body}",
-          "fontWeight": "{font.weight.semibold}",
-          "fontSize": "{font.size.9-5}",
-          "lineHeight": "1",
-          "letterSpacing": "0.76px"
-        },
-        "$description": "Dashed tag inside a chip (\"Later\")"
+        "$description": "Section headings and tags, set in capitals"
       },
       "badge": {
         "$type": "typography",
         "$value": {
           "fontFamily": "{font.family.body}",
           "fontWeight": "{font.weight.bold}",
-          "fontSize": "{font.size.12}",
-          "lineHeight": "1",
+          "fontSize": "{font.size.300}",
+          "lineHeight": "{font.line-height.none}",
           "letterSpacing": "0.12px"
         },
-        "$description": "Line badge label"
+        "$description": "Line badge labels"
       },
-      "badge-lg": {
+      "stat": {
         "$type": "typography",
         "$value": {
           "fontFamily": "{font.family.body}",
-          "fontWeight": "{font.weight.bold}",
-          "fontSize": "{font.size.15}",
-          "lineHeight": "1",
-          "letterSpacing": "0.15px"
+          "fontWeight": "{font.weight.semibold}",
+          "fontSize": "{font.size.700}",
+          "lineHeight": "{font.line-height.tight}",
+          "letterSpacing": "-0.84px"
         },
-        "$description": "Large line badge label"
+        "$description": "Key figures. Steps down to font.size.600 on phones."
       },
-      "data-display": {
+      "data-xl": {
         "$type": "typography",
         "$value": {
           "fontFamily": "{font.family.data}",
           "fontWeight": "{font.weight.semibold}",
-          "fontSize": "{font.size.54}",
-          "lineHeight": "1",
-          "letterSpacing": "-2.16px"
+          "fontSize": "{font.size.1200}",
+          "lineHeight": "{font.line-height.none}",
+          "letterSpacing": "-1.92px"
         },
-        "$description": "Kiosk clock (40 px on phones)"
+        "$description": "Kiosk clock. Steps down to font.size.800 on phones."
       },
-      "clock": {
+      "data-lg": {
         "$type": "typography",
         "$value": {
           "fontFamily": "{font.family.data}",
           "fontWeight": "{font.weight.semibold}",
-          "fontSize": "{font.size.15}",
-          "lineHeight": "1",
-          "letterSpacing": "-0.3px"
-        },
-        "$description": "Top bar clock"
-      },
-      "countdown": {
-        "$type": "typography",
-        "$value": {
-          "fontFamily": "{font.family.data}",
-          "fontWeight": "{font.weight.semibold}",
-          "fontSize": "{font.size.15}",
-          "lineHeight": "1.1",
+          "fontSize": "{font.size.400}",
+          "lineHeight": "{font.line-height.tight}",
           "letterSpacing": "0px"
         },
-        "$description": "Departure countdown (\"4 min\")"
-      },
-      "data-md": {
-        "$type": "typography",
-        "$value": {
-          "fontFamily": "{font.family.data}",
-          "fontWeight": "{font.weight.medium}",
-          "fontSize": "{font.size.12-5}",
-          "lineHeight": "1.2",
-          "letterSpacing": "0px"
-        },
-        "$description": "Arrival times, delay in the vehicle table"
+        "$description": "Top bar clock, departure countdowns"
       },
       "data": {
         "$type": "typography",
         "$value": {
           "fontFamily": "{font.family.data}",
           "fontWeight": "{font.weight.medium}",
-          "fontSize": "{font.size.12}",
-          "lineHeight": "1.25",
+          "fontSize": "{font.size.300}",
+          "lineHeight": "{font.line-height.snug}",
           "letterSpacing": "0px"
         },
-        "$description": "Percentages and counts in lists"
-      },
-      "data-control": {
-        "$type": "typography",
-        "$value": {
-          "fontFamily": "{font.family.data}",
-          "fontWeight": "{font.weight.semibold}",
-          "fontSize": "{font.size.12}",
-          "lineHeight": "1",
-          "letterSpacing": "0px"
-        },
-        "$description": "Segmented control labels (1×, 4×, 16×)"
+        "$description": "Times, delays, counts and percentages in lists and tables"
       },
       "data-sm": {
         "$type": "typography",
         "$value": {
           "fontFamily": "{font.family.data}",
           "fontWeight": "{font.weight.medium}",
-          "fontSize": "{font.size.11-5}",
-          "lineHeight": "1",
+          "fontSize": "{font.size.275}",
+          "lineHeight": "{font.line-height.snug}",
           "letterSpacing": "0px"
         },
-        "$description": "Data age in the vehicle table"
-      },
-      "data-xs": {
-        "$type": "typography",
-        "$value": {
-          "fontFamily": "{font.family.data}",
-          "fontWeight": "{font.weight.medium}",
-          "fontSize": "{font.size.11}",
-          "lineHeight": "1.2",
-          "letterSpacing": "0px"
-        },
-        "$description": "Counts in chips, \"since\" times, chart tooltip, keyboard keys"
-      },
-      "data-fine": {
-        "$type": "typography",
-        "$value": {
-          "fontFamily": "{font.family.data}",
-          "fontWeight": "{font.weight.regular}",
-          "fontSize": "{font.size.11}",
-          "lineHeight": "1.3",
-          "letterSpacing": "0px"
-        },
-        "$description": "Clock time under a countdown, struck-out scheduled times"
-      },
-      "data-2xs": {
-        "$type": "typography",
-        "$value": {
-          "fontFamily": "{font.family.data}",
-          "fontWeight": "{font.weight.medium}",
-          "fontSize": "{font.size.10-5}",
-          "lineHeight": "1",
-          "letterSpacing": "0px"
-        },
-        "$description": "Tab counts, scale bar"
-      },
-      "data-axis": {
-        "$type": "typography",
-        "$value": {
-          "fontFamily": "{font.family.data}",
-          "fontWeight": "{font.weight.medium}",
-          "fontSize": "{font.size.10}",
-          "lineHeight": "1",
-          "letterSpacing": "0px"
-        },
-        "$description": "Report strip and chart axis labels (chart axis uses 9.5 px)"
+        "$description": "Counts in chips and tabs, chart axes, the time under a countdown"
       }
     },
     "space": {
@@ -927,11 +799,6 @@
         "$value": "0.12",
         "$description": "Area under a chart line"
       },
-      "selected": {
-        "$type": "opacity",
-        "$value": "0.09",
-        "$description": "Selected row (mix of ink)"
-      },
       "map-dim-vehicle": {
         "$type": "opacity",
         "$value": "0.28",
@@ -966,11 +833,6 @@
         "$type": "opacity",
         "$value": "0.32",
         "$description": "Motion trail behind live vehicles"
-      },
-      "warning-tint": {
-        "$type": "opacity",
-        "$value": "0.2",
-        "$description": "Warning count background (mix of warn colour)"
       }
     },
     "prik": {
@@ -1100,30 +962,70 @@
       "text": {
         "primary": {
           "$type": "color",
-          "$value": "#12181B",
+          "$value": "{palette.neutral.900}",
           "$description": "Main text and icons; also the focus ring"
         },
         "secondary": {
           "$type": "color",
-          "$value": "#47535A",
+          "$value": "{palette.neutral.600}",
           "$description": "Supporting text"
         },
         "tertiary": {
           "$type": "color",
-          "$value": "#74818A",
+          "$value": "{palette.neutral.500}",
           "$description": "Hints, captions, inactive controls"
         },
         "inverse": {
           "$type": "color",
           "$value": "{color.surface.default}",
           "$description": "Text on inverse surfaces: tooltips, the chart's value tip"
+        },
+        "success": {
+          "$type": "color",
+          "$value": "{palette.green.700}",
+          "$description": "Text in the success colour: on time, running normally"
+        },
+        "warning": {
+          "$type": "color",
+          "$value": "{palette.orange.700}",
+          "$description": "Text in the warning colour"
+        },
+        "danger": {
+          "$type": "color",
+          "$value": "{palette.red.700}",
+          "$description": "Text in the danger colour: late, delay disruptions"
+        },
+        "info": {
+          "$type": "color",
+          "$value": "{palette.blue.700}",
+          "$description": "Text in the info colour: early, diversions"
+        },
+        "brand": {
+          "$type": "color",
+          "$value": "{palette.yellow.700}",
+          "$description": "Text in the brand colour, for emphasis on the hero page; never links or buttons"
         }
       },
       "surface": {
+        "default": {
+          "$type": "color",
+          "$value": "{palette.neutral.50}",
+          "$description": "Opaque panel background; text on inverse surfaces"
+        },
         "raised": {
           "$type": "color",
-          "$value": "#FFFFFF",
+          "$value": "{palette.neutral.0}",
           "$description": "Inputs, selected segment"
+        },
+        "inset": {
+          "$type": "color",
+          "$value": "{palette.neutral.100}",
+          "$description": "Segmented control track, counts, inset boxes"
+        },
+        "overlay": {
+          "$type": "color",
+          "$value": "rgba(250, 251, 249, 0.9)",
+          "$description": "Translucent floating panels over the map (used with backdrop blur)"
         },
         "hover": {
           "$type": "color",
@@ -1140,20 +1042,35 @@
           "$value": "{color.text.primary}",
           "$description": "Primary buttons, pressed icon buttons, chart tooltip"
         },
-        "default": {
+        "success": {
           "$type": "color",
-          "$value": "#FAFBF9",
-          "$description": "Opaque panel background; text on inverse surfaces"
+          "$value": "{palette.green.100}",
+          "$description": "Tinted background for a success message"
         },
-        "overlay": {
+        "warning": {
           "$type": "color",
-          "$value": "rgba(250, 251, 249, 0.9)",
-          "$description": "Translucent floating panels over the map (used with backdrop blur)"
+          "$value": "{palette.orange.100}",
+          "$description": "Tinted background for a warning message or count"
         },
-        "inset": {
+        "danger": {
           "$type": "color",
-          "$value": "#EBEEEB",
-          "$description": "Segmented control track, counts, inset boxes"
+          "$value": "{palette.red.100}",
+          "$description": "Tinted background for a danger message"
+        },
+        "info": {
+          "$type": "color",
+          "$value": "{palette.blue.100}",
+          "$description": "Tinted background for an info message"
+        },
+        "brand": {
+          "$type": "color",
+          "$value": "{palette.yellow.500}",
+          "$description": "Brand fill: hero bands and calls to action on the hero page. Text on it is color.text.on-color.dark"
+        },
+        "brand-subtle": {
+          "$type": "color",
+          "$value": "{palette.yellow.100}",
+          "$description": "Tinted brand background"
         }
       },
       "border": {
@@ -1174,25 +1091,25 @@
         }
       },
       "status": {
-        "info": {
-          "$type": "color",
-          "$value": "#2D5FC4",
-          "$description": "Early, diversions"
-        },
         "success": {
           "$type": "color",
-          "$value": "#13915A",
+          "$value": "{palette.green.500}",
           "$description": "Healthy, on time, live share at or above 70%"
         },
         "warning": {
           "$type": "color",
-          "$value": "#B06A00",
+          "$value": "{palette.orange.500}",
           "$description": "Partial, live share 40–69%"
         },
         "danger": {
           "$type": "color",
-          "$value": "#C2410C",
+          "$value": "{palette.red.500}",
           "$description": "Late by 3 min or more, live share under 40%, delay disruptions"
+        },
+        "info": {
+          "$type": "color",
+          "$value": "{palette.blue.500}",
+          "$description": "Early, diversions"
         }
       },
       "chart": {
@@ -1206,7 +1123,7 @@
         "mode": {
           "bus": {
             "$type": "color",
-            "$value": "#D99A00",
+            "$value": "{palette.yellow.500}",
             "$description": "All bus lines"
           },
           "regional": {
@@ -1228,7 +1145,7 @@
         "delay": {
           "on-time": {
             "$type": "color",
-            "$value": "{color.status.success}",
+            "$value": "{color.text.success}",
             "$description": "Delay text when on time"
           },
           "slight": {
@@ -1238,12 +1155,12 @@
           },
           "late": {
             "$type": "color",
-            "$value": "{color.status.danger}",
+            "$value": "{color.text.danger}",
             "$description": "Late by 3 min or more"
           },
           "early": {
             "$type": "color",
-            "$value": "{color.status.info}",
+            "$value": "{color.text.info}",
             "$description": "Delay text when early"
           },
           "unknown": {
@@ -1255,7 +1172,7 @@
         "severity": {
           "delay": {
             "$type": "color",
-            "$value": "{color.status.danger}",
+            "$value": "{color.text.danger}",
             "$description": "Icon and label for delays"
           },
           "data": {
@@ -1265,7 +1182,7 @@
           },
           "diversion": {
             "$type": "color",
-            "$value": "{color.status.info}",
+            "$value": "{color.text.info}",
             "$description": "Icon and label for diversions"
           },
           "planned": {
@@ -1375,39 +1292,79 @@
       "text": {
         "primary": {
           "$type": "color",
-          "$value": "#E8EDEB",
+          "$value": "{palette.neutral.100}",
           "$description": "Main text and icons; also the focus ring"
         },
         "secondary": {
           "$type": "color",
-          "$value": "#A2ADB1",
+          "$value": "{palette.neutral.300}",
           "$description": "Supporting text"
         },
         "tertiary": {
           "$type": "color",
-          "$value": "#717E84",
+          "$value": "{palette.neutral.500}",
           "$description": "Hints, captions, inactive controls"
         },
         "inverse": {
           "$type": "color",
           "$value": "{color.surface.default}",
           "$description": "Text on inverse surfaces: tooltips, the chart's value tip"
+        },
+        "success": {
+          "$type": "color",
+          "$value": "{palette.green.300}",
+          "$description": "Text in the success colour: on time, running normally"
+        },
+        "warning": {
+          "$type": "color",
+          "$value": "{palette.orange.300}",
+          "$description": "Text in the warning colour"
+        },
+        "danger": {
+          "$type": "color",
+          "$value": "{palette.red.300}",
+          "$description": "Text in the danger colour: late, delay disruptions"
+        },
+        "info": {
+          "$type": "color",
+          "$value": "{palette.blue.300}",
+          "$description": "Text in the info colour: early, diversions"
+        },
+        "brand": {
+          "$type": "color",
+          "$value": "{palette.yellow.300}",
+          "$description": "Text in the brand colour, for emphasis on the hero page; never links or buttons"
         }
       },
       "surface": {
+        "default": {
+          "$type": "color",
+          "$value": "{palette.neutral.900}",
+          "$description": "Opaque panel background; text on inverse surfaces"
+        },
         "raised": {
           "$type": "color",
-          "$value": "#1D2428",
+          "$value": "{palette.neutral.800}",
           "$description": "Inputs, selected segment"
+        },
+        "inset": {
+          "$type": "color",
+          "$value": "{palette.neutral.700}",
+          "$description": "Segmented control track, counts, inset boxes"
+        },
+        "overlay": {
+          "$type": "color",
+          "$value": "rgba(18, 24, 27, 0.88)",
+          "$description": "Translucent floating panels over the map (used with backdrop blur)"
         },
         "hover": {
           "$type": "color",
-          "$value": "rgba(232, 237, 235, 0.06)",
+          "$value": "rgba(235, 238, 235, 0.06)",
           "$description": "Hover state layer"
         },
         "selected": {
           "$type": "color",
-          "$value": "rgba(232, 237, 235, 0.09)",
+          "$value": "rgba(235, 238, 235, 0.09)",
           "$description": "Selected row"
         },
         "inverse": {
@@ -1415,31 +1372,46 @@
           "$value": "{color.text.primary}",
           "$description": "Primary buttons, pressed icon buttons, chart tooltip"
         },
-        "default": {
+        "success": {
           "$type": "color",
-          "$value": "#14191C",
-          "$description": "Opaque panel background; text on inverse surfaces"
+          "$value": "{palette.green.900}",
+          "$description": "Tinted background for a success message"
         },
-        "overlay": {
+        "warning": {
           "$type": "color",
-          "$value": "rgba(20, 26, 29, 0.88)",
-          "$description": "Translucent floating panels over the map (used with backdrop blur)"
+          "$value": "{palette.orange.900}",
+          "$description": "Tinted background for a warning message or count"
         },
-        "inset": {
+        "danger": {
           "$type": "color",
-          "$value": "#20282C",
-          "$description": "Segmented control track, counts, inset boxes"
+          "$value": "{palette.red.900}",
+          "$description": "Tinted background for a danger message"
+        },
+        "info": {
+          "$type": "color",
+          "$value": "{palette.blue.900}",
+          "$description": "Tinted background for an info message"
+        },
+        "brand": {
+          "$type": "color",
+          "$value": "{palette.yellow.300}",
+          "$description": "Brand fill: hero bands and calls to action on the hero page. Text on it is color.text.on-color.dark"
+        },
+        "brand-subtle": {
+          "$type": "color",
+          "$value": "{palette.yellow.900}",
+          "$description": "Tinted brand background"
         }
       },
       "border": {
         "subtle": {
           "$type": "color",
-          "$value": "rgba(232, 237, 235, 0.1)",
+          "$value": "rgba(235, 238, 235, 0.1)",
           "$description": "Dividers and panel borders"
         },
         "strong": {
           "$type": "color",
-          "$value": "rgba(232, 237, 235, 0.2)",
+          "$value": "rgba(235, 238, 235, 0.2)",
           "$description": "Input borders, dashed tags, axis lines"
         },
         "focus": {
@@ -1449,25 +1421,25 @@
         }
       },
       "status": {
-        "info": {
-          "$type": "color",
-          "$value": "#7FA6FF",
-          "$description": "Early, diversions"
-        },
         "success": {
           "$type": "color",
-          "$value": "#3CCB80",
+          "$value": "{palette.green.300}",
           "$description": "Healthy, on time, live share at or above 70%"
         },
         "warning": {
           "$type": "color",
-          "$value": "#F0A43A",
+          "$value": "{palette.orange.300}",
           "$description": "Partial, live share 40–69%"
         },
         "danger": {
           "$type": "color",
-          "$value": "#FF8655",
+          "$value": "{palette.red.300}",
           "$description": "Late by 3 min or more, live share under 40%, delay disruptions"
+        },
+        "info": {
+          "$type": "color",
+          "$value": "{palette.blue.300}",
+          "$description": "Early, diversions"
         }
       },
       "chart": {
@@ -1481,7 +1453,7 @@
         "mode": {
           "bus": {
             "$type": "color",
-            "$value": "#F2B630",
+            "$value": "{palette.yellow.300}",
             "$description": "All bus lines"
           },
           "regional": {
@@ -1503,7 +1475,7 @@
         "delay": {
           "on-time": {
             "$type": "color",
-            "$value": "{color.status.success}",
+            "$value": "{color.text.success}",
             "$description": "Delay text when on time"
           },
           "slight": {
@@ -1513,12 +1485,12 @@
           },
           "late": {
             "$type": "color",
-            "$value": "{color.status.danger}",
+            "$value": "{color.text.danger}",
             "$description": "Late by 3 min or more"
           },
           "early": {
             "$type": "color",
-            "$value": "{color.status.info}",
+            "$value": "{color.text.info}",
             "$description": "Delay text when early"
           },
           "unknown": {
@@ -1530,7 +1502,7 @@
         "severity": {
           "delay": {
             "$type": "color",
-            "$value": "{color.status.danger}",
+            "$value": "{color.text.danger}",
             "$description": "Icon and label for delays"
           },
           "data": {
@@ -1540,7 +1512,7 @@
           },
           "diversion": {
             "$type": "color",
-            "$value": "{color.status.info}",
+            "$value": "{color.text.info}",
             "$description": "Icon and label for diversions"
           },
           "planned": {

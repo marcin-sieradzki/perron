@@ -63,44 +63,26 @@ describe('token sources', () => {
 })
 
 /**
- * WCAG AA contrast for text tokens, measured against the opaque surfaces. Pairs below 4.5:1 that
- * the prototype ships today are listed here so the list stays honest: the test fails when a new
- * pair drops below the bar, and also when a listed pair is fixed and should leave the list.
- * docs/foundations.md says how each is used; the token naming research proposes fixes.
+ * WCAG AA contrast for text tokens, measured against the opaque surfaces. Pairs below 4.5:1 are
+ * listed here so the list stays honest: the test fails when a new pair drops below the bar, and
+ * also when a listed pair is fixed and should leave the list. Tertiary text is the one deliberate
+ * miss; docs/foundations.md says where it may be used.
  */
-const KNOWN_TEXT_FAILURES = new Set([
-  'light color.text.tertiary on color.surface.default',
-  'light color.text.tertiary on color.surface.raised',
-  'light color.text.tertiary on color.surface.inset',
-  'light color.transit.delay.unknown on color.surface.default',
-  'light color.transit.delay.unknown on color.surface.raised',
-  'light color.transit.delay.unknown on color.surface.inset',
-  'light color.status.success on color.surface.default',
-  'light color.status.success on color.surface.raised',
-  'light color.status.success on color.surface.inset',
-  'light color.transit.delay.on-time on color.surface.default',
-  'light color.transit.delay.on-time on color.surface.raised',
-  'light color.transit.delay.on-time on color.surface.inset',
-  'light color.status.warning on color.surface.default',
-  'light color.status.warning on color.surface.raised',
-  'light color.status.warning on color.surface.inset',
-  'light color.status.danger on color.surface.inset',
-  'light color.transit.delay.late on color.surface.inset',
-  'light color.transit.severity.delay on color.surface.inset',
-  'dark color.text.tertiary on color.surface.default',
-  'dark color.text.tertiary on color.surface.raised',
-  'dark color.text.tertiary on color.surface.inset',
-  'dark color.transit.delay.unknown on color.surface.default',
-  'dark color.transit.delay.unknown on color.surface.raised',
-  'dark color.transit.delay.unknown on color.surface.inset',
-])
+const KNOWN_TEXT_FAILURES = new Set(
+  ['light', 'dark'].flatMap((th) =>
+    ['color.text.tertiary', 'color.transit.delay.unknown'].flatMap((fg) =>
+      ['default', 'raised', 'inset'].map((bg) => `${th} ${fg} on color.surface.${bg}`),
+    ),
+  ),
+)
 
 /** Line badges whose label colour falls below 4.5:1 on the line colour (same in both themes). */
 const KNOWN_BADGE_FAILURES = new Set(['m1', 'm4', 'a', 'b', 'c'])
 
 describe('contrast', () => {
   const surfaces = ['color.surface.default', 'color.surface.raised', 'color.surface.inset']
-  const text = /^color\.(text\.(primary|secondary|tertiary)$|status\.|transit\.(delay|severity)\.)/
+  const text =
+    /^color\.(text\.(primary|secondary|tertiary|success|warning|danger|info|brand)$|transit\.(delay|severity)\.)/
 
   it('text tokens reach 4.5:1 on every opaque surface, apart from the known list', () => {
     const failures: string[] = []
@@ -136,6 +118,22 @@ describe('contrast', () => {
     }
   })
 
+  it('status and brand text reach 4.5:1 on their own tint, and text on the brand fill too', () => {
+    for (const th of ['light', 'dark'] as const) {
+      const t = { ...base, ...theme[th] }
+      for (const s of ['success', 'warning', 'danger', 'info'] as const) {
+        expect(contrastRatio(t[`color.text.${s}`], t[`color.surface.${s}`])).toBeGreaterThan(4.5)
+        expect(contrastRatio(t['color.text.primary'], t[`color.surface.${s}`])).toBeGreaterThan(7)
+      }
+      expect(contrastRatio(t['color.text.brand'], t['color.surface.brand-subtle'])).toBeGreaterThan(
+        4.5,
+      )
+      expect(
+        contrastRatio(t['color.text.on-color.dark'], t['color.surface.brand']),
+      ).toBeGreaterThan(4.5)
+    }
+  })
+
   it('primary and secondary ink reach 7:1 and 4.5:1 on the solid surface in both themes', () => {
     for (const th of ['light', 'dark'] as const) {
       const t = theme[th]
@@ -144,5 +142,48 @@ describe('contrast', () => {
         4.5,
       )
     }
+  })
+})
+
+describe('palette', () => {
+  const palette = tokens.base.filter((t) => t.name.startsWith('palette.'))
+  const paletteHex = new Set(palette.map((t) => (t.value as { hex: string }).hex))
+  const all = [...tokens.base, ...Object.values(tokens.themes).flat()]
+
+  it('gives every interface colour a palette step, translucent ones by their RGB', () => {
+    const loose = all
+      .filter((t) => /^color\.(text|surface|border|status|scrim)\b/.test(t.name))
+      .filter((t) => typeof t.value !== 'string')
+      .filter((t) => {
+        const c = t.value as { hex: string; alpha?: number }
+        return c.alpha === undefined || c.alpha === 1 || !paletteHex.has(c.hex)
+      })
+      .map((t) => t.name)
+    expect(loose).toEqual([])
+  })
+
+  it('is read only by color tokens', () => {
+    const readers = all
+      .filter((t) => JSON.stringify(t.value).includes('{palette.'))
+      .filter((t) => !t.name.startsWith('color.'))
+      .map((t) => t.name)
+    expect(readers).toEqual([])
+  })
+})
+
+describe('typography', () => {
+  it('loads exactly the font weights the roles use', () => {
+    const map = tokenMap(tokens, tokens.defaultTheme)
+    const used = new Set(
+      tokens.base
+        .filter((t) => t.type === 'typography')
+        .map((t) => {
+          const v = resolveValue(t.value, map) as { fontFamily: string[]; fontWeight: number }
+          return `${v.fontFamily[0].toLowerCase().replaceAll(' ', '-')}/${v.fontWeight}`
+        }),
+    )
+    const css = readFileSync(join(root, 'styles/fonts.css'), 'utf8')
+    const loaded = new Set([...css.matchAll(/@fontsource\/([\w-]+\/\d+)\.css/g)].map((m) => m[1]))
+    expect([...loaded].sort()).toEqual([...used].sort())
   })
 })

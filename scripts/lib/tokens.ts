@@ -1,5 +1,6 @@
 // Turns Perron's DTCG 2025.10 token files into CSS custom properties, a typed TS module and a
 // Penpot import file. Pure functions only; scripts/build-tokens.ts does the file I/O.
+import { inlinePointers, validateSources } from './spec.ts'
 
 type Json = { [key: string]: unknown }
 
@@ -55,7 +56,7 @@ function refsOf(ref: { $ref: string }[], files: Record<string, Json>) {
   return ref.flatMap(({ $ref }) => {
     const file = files[$ref]
     if (!file) throw new Error(`Resolver points to missing file ${$ref}`)
-    return flatten(file, undefined, [], [])
+    return flatten(inlinePointers(file), undefined, [], [])
   })
 }
 
@@ -438,6 +439,9 @@ export function emitTypographyCss(tokens: ResolvedTokens) {
 
 /** Every generated file, keyed by path relative to the repo root. */
 export function buildAll(sources: TokenSources) {
+  const problems = validateSources(sources)
+  if (problems.length)
+    throw new Error(`Token files break the 2025.10 format:\n${problems.join('\n')}`)
   const tokens = loadTokens(sources)
   return {
     'tokens/generated/tokens.css': emitCss(tokens),
