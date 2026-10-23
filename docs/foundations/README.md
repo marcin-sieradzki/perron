@@ -1,29 +1,46 @@
-# Perron foundations
+# Contents
 
-Perron is the design system of Mylder, a live map of Copenhagen's buses, S-tog, metro and regional trains. The map is the product; everything else floats over it on glass and says, in words and in the shape of every dot, how sure we are about what it shows.
+Perron is the design system of Mylder, a live map of Copenhagen's public transport: every bus, S-tog, metro and regional train, where it is now, and how sure we are about that. The map is the product. Everything else floats over it on glass and says, in words and in the shape of every dot, how sure we are about what it shows.
 
-Each page gives the rules for one foundation, then its tokens. The token tables and contrast tables are rebuilt from `tokens/` by `npm run tokens`, so a page always shows the values the build ships. Edit the prose around a table, never the table.
+## The brand
 
-| Page                                  | What it covers                                                          |
-| ------------------------------------- | ----------------------------------------------------------------------- |
-| [Brand](brand.md)                     | What Mylder is, its character, the mark and the brand colour            |
-| [Content](content.md)                 | Voice, the fixed words for data states and delays, numbers and times    |
-| [Accessibility](accessibility.md)     | The WCAG 2.2 AA target, what the build checks, what a person checks     |
-| [Colour](colour.md)                   | The palette, text, borders, status, brand, line colours and charts      |
-| [Typography](typography.md)           | The three families, the sixteen roles, sizes and line heights           |
-| [Space and shape](space-and-shape.md) | Spacing, radius, border widths and the focus ring                       |
-| [Elevation](elevation.md)             | The surface ladder, glass, shadows and stacking order                   |
-| [Motion](motion.md)                   | Durations, easing and reduced motion                                    |
-| [Layout](layout.md)                   | The map screen, breakpoints and shared measures                         |
-| [Data states](data-states.md)         | The five Prik states, delays and kinds of disruption                    |
-| [Map](map.md)                         | Map colours, line widths, dot sizes and dimming                         |
-| [Themes and modes](themes.md)         | Light and dark, reduced motion, and how the build switches between them |
-| [Iconography](iconography.md)         | Icons and the Mylder mark                                               |
+Mylder is Danish for a swarm or a throng: the city's vehicles, moving all at once. It has one look, in a light and a dark theme.
+
+- **Honest.** Every vehicle shows how fresh its data is, and every sentence says no more than the data knows.
+- **Calm.** The map and the vehicles carry the colour. The interface around them is ink, glass and neutral surfaces.
+- **Of Copenhagen.** The operators' own line colours, the city's names, Danish and English side by side, the 24-hour clock.
+
+The mark is on [Logos](logos.md), the brand colour on [Semantic colours](semantic-colours.md#brand), and the voice in [Content design](../content-design.md).
+
+## Pages
+
+Each page gives the rules for one foundation, then its tokens or files. The tables are rebuilt from `tokens/`, `icons/` and `logos/` by `npm run tokens`, so a page always shows what the build ships. Edit the prose around a table, never the table.
+
+| Page                                      | What it covers                                                        |
+| ----------------------------------------- | --------------------------------------------------------------------- |
+| [Accessibility](accessibility.md)         | The WCAG 2.2 AA target: what the build enforces, what a person checks |
+| [Elevation](elevation.md)                 | The surface ladder, glass and shadows                                 |
+| [Icons](icons.md)                         | The icon files, their size scale and style                            |
+| [Layout](layout.md)                       | Breakpoints, the map screen, stacking and shared measures             |
+| [Logos](logos.md)                         | The Mylder mark and how it is used                                    |
+| [Motion](motion.md)                       | Durations, easing and reduced motion                                  |
+| [Primitive colours](primitive-colours.md) | The palette every colour token points at                              |
+| [Semantic colours](semantic-colours.md)   | Every colour token in both themes                                     |
+| [Semantic spacing](semantic-spacing.md)   | Spacing, radius, border widths and the focus ring                     |
+| [Typography](typography.md)               | The three families, the sixteen roles, sizes and line heights         |
+
+Two more pages hold what only a live map needs:
+
+| Page                          | What it covers                                       |
+| ----------------------------- | ---------------------------------------------------- |
+| [Data states](data-states.md) | The five Prik states, delays and kinds of disruption |
+| [Map](map.md)                 | Line widths, dot sizes and dimming on the map canvas |
 
 ## Using the tokens
 
-- Load `perron.css` once at the app root. It brings the fonts, the custom properties for every theme and mode, the typography classes and a few page defaults.
+- Load `perron.css` once at the app root. It brings the fonts, the custom properties for both themes and for reduced motion, the typography classes and a few page defaults.
 - Pages name tokens the way the sources do, `color.text.primary`. In CSS that token is `var(--perron-color-text-primary)`: `--perron-`, then the name with dots as hyphens. Never copy a value.
 - In script, `tokens/generated/tokens.ts` has every value per theme, typed by name, and the reduced motion values under `modifiers`.
 - Light is the default theme. Set `data-theme="dark"` on any element for dark; without it, the system's dark mode applies. Reduced motion follows the system setting on its own.
+- Icons and logos are SVG files in `icons/` and `logos/`, listed with their use in `icons.json` and `logos.json`.
 - Change a token in `tokens/*.tokens.json`, then run `npm run tokens`. The generated files and the tables on these pages are never edited by hand.

@@ -1,4 +1,6 @@
-# Content
+# Content design
+
+How every word in Mylder reads: plain sentences, exact about certainty, in English and Danish. The foundations are in [foundations/](foundations/README.md).
 
 - Say what is happening in plain sentences, then how sure we are. "Signal fault at Danshøj. Trains between Flintholm and Ny Ellebjerg run slower than planned." Never claim more certainty than the data has: a vehicle without a signal is "No signal since 08:02", not a guess.
 - Sentence case everywhere: "Show whole line", "Back to the map", "Reporting live, by operator". Capitals come only from the `perron-typography-overline` style, so write the source text in sentence case.

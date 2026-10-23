@@ -7,8 +7,8 @@ Perron targets [WCAG 2.2](https://www.w3.org/TR/WCAG22/) level AA. Part of it th
 - **Text contrast (1.4.3).** Every text colour reaches 4.5:1 on `color.surface.default`, `raised` and `inset`, in both themes. The test lists the deliberate misses by name: `color.text.tertiary` and `color.transit.delay.unknown`, which are only for hints, captions and the "—" of an unknown delay, always next to stronger text. Status and brand text also reach 4.5:1 on their own tinted surfaces.
 - **Non-text contrast (1.4.11).** What shows where a control is, or what state something is in, reaches 3:1 against every surface: `color.border.control`, the focus ring and the status fills. Decorative lines, `color.border.subtle` and `color.border.strong`, are exempt, and their descriptions say so.
 - **The focus ring (2.4.7, 1.4.11)** reaches 3:1 on every surface and on the map's land, water and parks.
-- **The surface ladder.** `color.surface.inset` stands apart from `color.surface.raised` by at least 1.15:1 in both themes, so an inset track reads without a border. See [Elevation](elevation.md).
-- **Line badges.** Label colours on line colours are measured, and the official pairs that miss are listed. See [Colour](colour.md).
+- **The surface ladder.** `color.surface.inset` stands apart from `color.surface.raised` by at least 1.15:1 in both themes, so an inset track reads without a border. See [Elevation](elevation.md#surfaces).
+- **Line badges.** Label colours on line colours are measured, and the official pairs that miss are listed. See [Semantic colours](semantic-colours.md#line-colours).
 - **Reduced motion (2.3.3, a AAA criterion met anyway)** lives in the tokens: when the system asks for less motion, transitions take 0.01 ms. See [Motion](motion.md).
 
 ### Text on surfaces

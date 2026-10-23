@@ -909,6 +909,33 @@
       "$description": "Gap between the focused element and its ring"
     }
   },
+  "icon": {
+    "size": {
+      "$type": "dimension",
+      "$description": "Icon sizes, numbered like the spacing scale: icon.size.400 is 16 px. Each icon is drawn on a grid near its size, so its stroke stays 1.5 to 1.8 px.",
+      "325": {
+        "$value": {
+          "value": 13,
+          "unit": "px"
+        },
+        "$description": "Inline with label and caption text: the disruption icons"
+      },
+      "400": {
+        "$value": {
+          "value": 16,
+          "unit": "px"
+        },
+        "$description": "Inside controls: search, zoom, locate, close"
+      },
+      "450": {
+        "$value": {
+          "value": 18,
+          "unit": "px"
+        },
+        "$description": "Top bar buttons: kiosk mode, about"
+      }
+    }
+  },
   "effect": {
     "glass-blur": {
       "$type": "dimension",

@@ -1,17 +1,23 @@
-// Fills the tables in docs/foundations/*.md from the token files, so every value and contrast
-// ratio a page prints is what the build ships. Two kinds of block, each rebuilt on every build:
+// Fills the tables in docs/foundations/*.md from the token files and the icon and logo
+// manifests, so every value, ratio and file a page shows is what the build ships. Three kinds of
+// block, each rebuilt on every build:
 //   <!-- tokens: <patterns> --> ... <!-- /tokens -->
 //   <!-- contrast <minimum>: <patterns> on <token names> --> ... <!-- /contrast -->
+//   <!-- files: icons|logos --> ... <!-- /files -->
 // A pattern is a token name, or a prefix ending in `*`.
 import { readdirSync, readFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import * as prettier from 'prettier'
+import { iconGrid, readIcons, readLogos, type Asset } from './assets.ts'
 import { composite, contrastRatio } from './color.ts'
 import { resolveValue, tokenMap, toCss, type ResolvedTokens, type Token } from './tokens.ts'
 
 const TOKENS = /(<!-- tokens: ([^>]*?) -->)[\s\S]*?(<!-- \/tokens -->)/g
 const CONTRAST = /(<!-- contrast ([\d.]+): ([^>]*?) on ([^>]*?) -->)[\s\S]*?(<!-- \/contrast -->)/g
+const FILES = /(<!-- files: (icons|logos) -->)[\s\S]*?(<!-- \/files -->)/g
 const REF = /^\{([^{}]+)\}$/
+const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '../..')
 
 const words = (s: string) => s.trim().split(/\s+/)
 const title = (s: string) => s[0].toUpperCase() + s.slice(1)
@@ -137,9 +143,53 @@ function contrastTable(tokens: ResolvedTokens, min: number, patterns: string[], 
   return grid(head, rows)
 }
 
-/** `markdown` with every table rebuilt from `tokens`. */
-export function fillTables(markdown: string, tokens: ResolvedTokens) {
+/** One table per category, each under a heading, with a preview of every file. */
+function fileTables<T extends Asset>(
+  dir: string,
+  list: T[],
+  head: string[],
+  cells: (a: T, preview: string) => string[],
+) {
+  return [...new Set(list.map((a) => a.category))]
+    .map((category) => {
+      const rows = list
+        .filter((a) => a.category === category)
+        .map((a) => cells(a, `<img src="../../${dir}/${a.name}.svg" alt="">`))
+      return `### ${category}\n\n${grid(head, rows)}`
+    })
+    .join('\n\n')
+}
+
+function filesBlock(tokens: ResolvedTokens, root: string, dir: string) {
+  if (dir === 'logos')
+    return fileTables(dir, readLogos(root), ['Logo', 'File', 'Theme', 'Use'], (l, preview) => [
+      preview,
+      `\`${dir}/${l.name}.svg\``,
+      title(l.theme),
+      l.use,
+    ])
+  const map = tokenMap(tokens, tokens.defaultTheme)
+  return fileTables(dir, readIcons(root), ['Icon', 'Name', 'Grid', 'Size', 'Use'], (i, preview) => {
+    const size = map.get(i.size)
+    if (size?.type !== 'dimension') throw new Error(`${i.name}: ${i.size} is not a size token`)
+    return [
+      preview,
+      `\`${i.name}\``,
+      `${iconGrid(i.svg)} px`,
+      `\`${i.size}\`, ${literal(tokens, 'dimension', size.value, tokens.defaultTheme).replace('px', ' px')}`,
+      i.use,
+    ]
+  })
+}
+
+/** `markdown` with every table rebuilt from `tokens` and the files in `root`. */
+export function fillTables(markdown: string, tokens: ResolvedTokens, root = repoRoot) {
   return markdown
+    .replace(
+      FILES,
+      (_, open: string, dir: string, close: string) =>
+        `${open}\n\n${filesBlock(tokens, root, dir)}\n\n${close}`,
+    )
     .replace(
       TOKENS,
       (_, open: string, patterns: string, close: string) =>
@@ -169,7 +219,7 @@ export async function buildDocs(root: string, tokens: ResolvedTokens) {
     const file = join(dir, name)
     const options = await prettier.resolveConfig(file)
     out[`docs/foundations/${name}`] = await prettier.format(
-      fillTables(readFileSync(file, 'utf8'), tokens),
+      fillTables(readFileSync(file, 'utf8'), tokens, root),
       { ...options, filepath: file },
     )
   }

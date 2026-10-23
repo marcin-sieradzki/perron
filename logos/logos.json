@@ -1,0 +1,14 @@
+{
+  "Brand": {
+    "mylder-mark": {
+      "label": "Mylder mark",
+      "theme": "light",
+      "use": "On light grounds"
+    },
+    "mylder-mark-dark": {
+      "label": "Mylder mark, dark",
+      "theme": "dark",
+      "use": "On dark grounds"
+    }
+  }
+}

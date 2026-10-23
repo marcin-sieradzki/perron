@@ -1,0 +1,62 @@
+# Icons
+
+One small set, drawn for Mylder. Perron draws its own stroke icons rather than use an icon font or a third-party set: there are few of them, each drawn on a grid near the size it shows at. The files are in `icons/`, and `icons/icons.json` lists them by category with the size and use of each.
+
+## Sizes
+
+Every icon renders at one of three steps, set with `--perron-icon-size` (one of the tokens below) and never with a raw width. Each icon is drawn on the grid closest to its step, so its stroke stays between 1.5 and 1.8 px. A larger icon is a new drawing, not a scaled one.
+
+<!-- tokens: icon.size.* -->
+
+| Token           | Value  | Use                                                      |
+| --------------- | ------ | -------------------------------------------------------- |
+| `icon.size.325` | `13px` | Inline with label and caption text: the disruption icons |
+| `icon.size.400` | `16px` | Inside controls: search, zoom, locate, close             |
+| `icon.size.450` | `18px` | Top bar buttons: kiosk mode, about                       |
+
+<!-- /tokens -->
+
+## Style
+
+- Strokes with round caps and joins, 1.5 to 1.8 px on the icon's own grid. Fills only for a dot, such as the point of the info icon.
+- Drawn in `currentColor`, so an icon takes the colour of the text around it. Set the colour on the text, never on the icon.
+- The `.perron-icon` class in `perron.css` sizes an inline SVG icon from `--perron-icon-size`, and keeps it from shrinking in a flex row.
+- An icon sits next to a word or inside a labelled button; it never carries meaning alone. Next to text it is hidden from screen readers (`aria-hidden="true"`). Alone, it needs an accessible name.
+- No icon font, no emoji, no third-party icon set. A new icon follows this page, joins `icons/icons.json`, and the check confirms its grid, stroke and colour.
+
+## The set
+
+<!-- files: icons -->
+
+### Map
+
+| Icon                                      | Name     | Grid  | Size                   | Use                           |
+| ----------------------------------------- | -------- | ----- | ---------------------- | ----------------------------- |
+| <img src="../../icons/plus.svg" alt="">   | `plus`   | 16 px | `icon.size.400`, 16 px | Zoom in                       |
+| <img src="../../icons/minus.svg" alt="">  | `minus`  | 16 px | `icon.size.400`, 16 px | Zoom out                      |
+| <img src="../../icons/locate.svg" alt=""> | `locate` | 16 px | `icon.size.400`, 16 px | Centre the map on the network |
+
+### Actions
+
+| Icon                                      | Name     | Grid  | Size                   | Use                                    |
+| ----------------------------------------- | -------- | ----- | ---------------------- | -------------------------------------- |
+| <img src="../../icons/search.svg" alt=""> | `search` | 16 px | `icon.size.400`, 16 px | The search field                       |
+| <img src="../../icons/close.svg" alt="">  | `close`  | 16 px | `icon.size.400`, 16 px | Close a panel, a dialog or a highlight |
+
+### App
+
+| Icon                                       | Name      | Grid  | Size                   | Use            |
+| ------------------------------------------ | --------- | ----- | ---------------------- | -------------- |
+| <img src="../../icons/monitor.svg" alt=""> | `monitor` | 18 px | `icon.size.450`, 18 px | Kiosk mode     |
+| <img src="../../icons/info.svg" alt="">    | `info`    | 18 px | `icon.size.450`, 18 px | About and help |
+
+### Disruptions
+
+| Icon                                          | Name         | Grid  | Size                   | Use                |
+| --------------------------------------------- | ------------ | ----- | ---------------------- | ------------------ |
+| <img src="../../icons/warning.svg" alt="">    | `warning`    | 14 px | `icon.size.325`, 13 px | Delays             |
+| <img src="../../icons/signal-off.svg" alt=""> | `signal-off` | 14 px | `icon.size.325`, 13 px | Data feed problems |
+| <img src="../../icons/diversion.svg" alt="">  | `diversion`  | 14 px | `icon.size.325`, 13 px | Diversions         |
+| <img src="../../icons/calendar.svg" alt="">   | `calendar`   | 14 px | `icon.size.325`, 13 px | Planned works      |
+
+<!-- /files -->

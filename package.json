@@ -9,7 +9,9 @@
     "./tokens.css": "./tokens/generated/tokens.css",
     "./typography.css": "./tokens/generated/typography.css",
     "./tokens.ts": "./tokens/generated/tokens.ts",
-    "./tokens/*.json": "./tokens/*.json"
+    "./tokens/*.json": "./tokens/*.json",
+    "./icons/*": "./icons/*",
+    "./logos/*": "./logos/*"
   },
   "scripts": {
     "tokens": "node scripts/build-tokens.ts",

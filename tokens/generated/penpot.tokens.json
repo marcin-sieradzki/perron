@@ -660,6 +660,25 @@
         "$description": "Gap between the focused element and its ring"
       }
     },
+    "icon": {
+      "size": {
+        "325": {
+          "$type": "dimension",
+          "$value": "13px",
+          "$description": "Inline with label and caption text: the disruption icons"
+        },
+        "400": {
+          "$type": "dimension",
+          "$value": "16px",
+          "$description": "Inside controls: search, zoom, locate, close"
+        },
+        "450": {
+          "$type": "dimension",
+          "$value": "18px",
+          "$description": "Top bar buttons: kiosk mode, about"
+        }
+      }
+    },
     "effect": {
       "glass-blur": {
         "$type": "dimension",

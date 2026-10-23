@@ -1,4 +1,6 @@
-# Space and shape
+# Semantic spacing
+
+The spacing, radius and border tokens.
 
 ## Space
 

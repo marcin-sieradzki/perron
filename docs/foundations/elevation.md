@@ -1,6 +1,6 @@
 # Elevation
 
-The map is the ground. Everything else floats over it, and depth shows first in the surface colour, then in a shadow.
+The surface and shadow tokens. The map is the ground; everything else floats over it, and depth shows first in the surface colour, then in a shadow.
 
 ## Surfaces
 
@@ -48,21 +48,4 @@ Floating panels carry `shadow.panel`. Nothing else casts a shadow, except the se
 
 <!-- /tokens -->
 
-## Stacking order
-
-From lowest to highest: map controls, the overview sheet, the highlight chip, the detail panel, the top bar, the tooltip, then a dialog over a `color.scrim` backdrop.
-
-<!-- tokens: z-index.* color.scrim -->
-
-| Token                  | Value                    | Use                                               |
-| ---------------------- | ------------------------ | ------------------------------------------------- |
-| `z-index.map-controls` | `3`                      | Legend, map controls, scale, attribution          |
-| `z-index.sheet`        | `4`                      | Overview sheet, kiosk bar                         |
-| `z-index.highlight`    | `5`                      | Highlight chip                                    |
-| `z-index.detail`       | `6`                      | Detail panel                                      |
-| `z-index.top-bar`      | `7`                      | Brand, filters and clock along the top of the map |
-| `z-index.tooltip`      | `8`                      | Map hover card, above every panel                 |
-| `z-index.dialog`       | `10`                     | Modal dialog over everything                      |
-| `color.scrim`          | `rgba(10, 14, 16, 0.42)` | Backdrop behind modal dialogs                     |
-
-<!-- /tokens -->
+Stacking order is on [Layout](layout.md#stacking).

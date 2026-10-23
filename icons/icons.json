@@ -1,0 +1,54 @@
+{
+  "Map": {
+    "plus": {
+      "size": "icon.size.400",
+      "use": "Zoom in"
+    },
+    "minus": {
+      "size": "icon.size.400",
+      "use": "Zoom out"
+    },
+    "locate": {
+      "size": "icon.size.400",
+      "use": "Centre the map on the network"
+    }
+  },
+  "Actions": {
+    "search": {
+      "size": "icon.size.400",
+      "use": "The search field"
+    },
+    "close": {
+      "size": "icon.size.400",
+      "use": "Close a panel, a dialog or a highlight"
+    }
+  },
+  "App": {
+    "monitor": {
+      "size": "icon.size.450",
+      "use": "Kiosk mode"
+    },
+    "info": {
+      "size": "icon.size.450",
+      "use": "About and help"
+    }
+  },
+  "Disruptions": {
+    "warning": {
+      "size": "icon.size.325",
+      "use": "Delays"
+    },
+    "signal-off": {
+      "size": "icon.size.325",
+      "use": "Data feed problems"
+    },
+    "diversion": {
+      "size": "icon.size.325",
+      "use": "Diversions"
+    },
+    "calendar": {
+      "size": "icon.size.325",
+      "use": "Planned works"
+    }
+  }
+}
