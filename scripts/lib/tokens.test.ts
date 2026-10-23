@@ -1,8 +1,9 @@
-import { readFileSync } from 'node:fs'
+import { readdirSync, readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
-import { contrastRatio } from './color.ts'
+import { composite, contrastRatio } from './color.ts'
+import { buildDocs, documentedTokens } from './docs.ts'
 import { base, theme } from '../../tokens/generated/tokens.ts'
 import { readSources } from '../build-tokens.ts'
 import { buildAll, loadTokens, resolveValue, tokenMap, type TokenSources } from './tokens.ts'
@@ -12,11 +13,21 @@ const sources = readSources()
 const tokens = loadTokens(sources)
 
 describe('token sources', () => {
-  it('generated files match the sources', () => {
-    for (const [rel, text] of Object.entries(buildAll(sources)))
+  it('generated files and doc tables match the sources', async () => {
+    const out = { ...buildAll(sources), ...(await buildDocs(root, tokens)) }
+    for (const [rel, text] of Object.entries(out))
       expect(readFileSync(join(root, rel), 'utf8'), `${rel} is stale: run npm run tokens`).toBe(
         text,
       )
+  })
+
+  it('lists every token in a table on some foundation page', () => {
+    const dir = join(root, 'docs/foundations')
+    const documented = new Set(
+      readdirSync(dir).flatMap((f) => documentedTokens(readFileSync(join(dir, f), 'utf8'), tokens)),
+    )
+    const all = [...tokens.base, ...tokens.themes[tokens.defaultTheme]].map((t) => t.name)
+    expect(all.filter((name) => !documented.has(name))).toEqual([])
   })
 
   it('has light and dark themes with light as the default', () => {
@@ -52,6 +63,13 @@ describe('token sources', () => {
     expect(() => loadTokens(s)).toThrow(/not a base token/)
   })
 
+  it('rejects a modifier context that overrides a token base does not have', () => {
+    const s = clone()
+    const reduced = s.files['motion-reduced.tokens.json'] as { duration: Record<string, unknown> }
+    reduced.duration.nope = { $value: { value: 1, unit: 'ms' } }
+    expect(() => loadTokens(s)).toThrow(/not a base duration token/)
+  })
+
   it('reports unknown references and cycles', () => {
     const map = tokenMap(tokens, 'light')
     expect(() => resolveValue('{color.nope}', map)).toThrow(/Unknown reference/)
@@ -66,7 +84,7 @@ describe('token sources', () => {
  * WCAG AA contrast for text tokens, measured against the opaque surfaces. Pairs below 4.5:1 are
  * listed here so the list stays honest: the test fails when a new pair drops below the bar, and
  * also when a listed pair is fixed and should leave the list. Tertiary text is the one deliberate
- * miss; docs/foundations.md says where it may be used.
+ * miss; docs/foundations/colour.md says where it may be used.
  */
 const KNOWN_TEXT_FAILURES = new Set(
   ['light', 'dark'].flatMap((th) =>
@@ -131,6 +149,33 @@ describe('contrast', () => {
       expect(
         contrastRatio(t['color.text.on-color.dark'], t['color.surface.brand']),
       ).toBeGreaterThan(4.5)
+    }
+  })
+
+  it('control edges, status fills and the focus ring reach 3:1 against what they sit on', () => {
+    const failures: string[] = []
+    for (const th of ['light', 'dark'] as const) {
+      const t: Record<string, string> = { ...base, ...theme[th] }
+      const grounds = [...surfaces, 'color.map.land', 'color.map.water', 'color.map.park']
+      const marks = [
+        'color.border.control',
+        'color.border.focus',
+        ...['success', 'warning', 'danger', 'info'].map((s) => `color.status.${s}`),
+      ]
+      for (const mark of marks)
+        for (const ground of mark === 'color.border.focus' ? grounds : surfaces)
+          if (contrastRatio(composite(t[mark], t[ground]), t[ground]) < 3)
+            failures.push(`${th} ${mark} on ${ground}`)
+    }
+    expect(failures).toEqual([])
+  })
+
+  it('sets inset surfaces apart from raised ones in both themes', () => {
+    for (const th of ['light', 'dark'] as const) {
+      const t = theme[th]
+      expect(
+        contrastRatio(t['color.surface.inset'], t['color.surface.raised']),
+      ).toBeGreaterThanOrEqual(1.15)
     }
   })
 

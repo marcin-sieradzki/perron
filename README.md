@@ -1,6 +1,6 @@
 # Perron
 
-Perron is the design system of [Mylder](https://github.com/marcin-sieradzki/Mylder), a live map of Copenhagen's buses, S-tog, metro and regional trains. This repository holds its foundations: the design tokens, the build that turns them into CSS, TypeScript and a Penpot file, the fonts, and the guidelines in [docs/foundations.md](docs/foundations.md).
+Perron is the design system of [Mylder](https://github.com/marcin-sieradzki/Mylder), a live map of Copenhagen's buses, S-tog, metro and regional trains. This repository holds its foundations: the design tokens, the build that turns them into CSS, TypeScript and a Penpot file, the fonts, and the guidelines in [docs/foundations/](docs/foundations/README.md).
 
 Components come later. They are extracted from the Mylder prototype already, and kept on their own branch until the foundations are settled.
 
@@ -19,7 +19,7 @@ The build checks every file against the format rule by rule (`scripts/lib/spec.t
 | `tokens/generated/`           | Built from the sources: `tokens.css`, `typography.css`, `tokens.ts`, and `penpot.tokens.json` in the older flavour Penpot imports. Never edit by hand |
 | `styles/perron.css`           | The one file an app loads: fonts, tokens, typography classes and page defaults                                                                        |
 | `scripts/`                    | The token build and its tests, including contrast checks                                                                                              |
-| `docs/foundations.md`         | How to use colour, type, space, shape, motion and the data states                                                                                     |
+| `docs/foundations/`           | One page per foundation, with token tables the build fills in                                                                                         |
 | `docs/renames.md`             | Token names that changed or went away, for code written against an older name                                                                         |
 | `.claude/skills/`             | Agent skills: `design-tokens`, and `writing-for-agents` from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT)                          |
 

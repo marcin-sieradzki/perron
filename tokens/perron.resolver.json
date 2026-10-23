@@ -1,7 +1,7 @@
 {
   "name": "Perron",
   "version": "2025.10",
-  "description": "How the token files combine. base always applies; the theme modifier picks light or dark.",
+  "description": "How the files combine. base always applies; the theme modifier picks light or dark; the motion modifier overrides durations when the person asks for reduced motion.",
   "sets": {
     "base": {
       "sources": [
@@ -27,6 +27,18 @@
         ]
       },
       "default": "light"
+    },
+    "motion": {
+      "description": "Motion preference. Mapped to prefers-reduced-motion by the build.",
+      "contexts": {
+        "full": [],
+        "reduced": [
+          {
+            "$ref": "motion-reduced.tokens.json"
+          }
+        ]
+      },
+      "default": "full"
     }
   },
   "resolutionOrder": [
@@ -35,6 +47,9 @@
     },
     {
       "$ref": "#/modifiers/theme"
+    },
+    {
+      "$ref": "#/modifiers/motion"
     }
   ]
 }

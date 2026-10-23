@@ -125,7 +125,16 @@
           "alpha": 0.2,
           "hex": "#EBEEEB"
         },
-        "$description": "Input borders, dashed tags, axis lines"
+        "$description": "Dashed tags, axis lines: lines that decorate rather than show where a control is"
+      },
+      "control": {
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.9216, 0.9333, 0.9216],
+          "alpha": 0.39,
+          "hex": "#EBEEEB"
+        },
+        "$description": "Edges that show where a control is: inputs, outline buttons. 3:1 or better on every surface"
       },
       "focus": {
         "$value": "{color.text.primary}",
@@ -399,6 +408,33 @@
         }
       ],
       "$description": "Floating panels"
+    },
+    "thumb": {
+      "$value": {
+        "color": {
+          "colorSpace": "srgb",
+          "components": [0.0, 0.0, 0.0],
+          "alpha": 0.4,
+          "hex": "#000000"
+        },
+        "offsetX": {
+          "value": 0,
+          "unit": "px"
+        },
+        "offsetY": {
+          "value": 1,
+          "unit": "px"
+        },
+        "blur": {
+          "value": 2,
+          "unit": "px"
+        },
+        "spread": {
+          "value": 0,
+          "unit": "px"
+        }
+      },
+      "$description": "Selected segment in a segmented control"
     }
   },
   "$description": "Perron dark theme. Values from the prototype dark media query and [data-theme=\"dark\"]."

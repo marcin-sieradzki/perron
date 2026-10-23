@@ -1,0 +1,34 @@
+{
+  "$description": "Reduced motion: the resolver applies this over base when the person asks for less motion. Transitions take near zero time (0.01 ms, so transition events still fire); loops are stopped by their component instead, since a loop at near zero time would flicker.",
+  "duration": {
+    "$type": "duration",
+    "sheet": {
+      "$value": {
+        "value": 0.01,
+        "unit": "ms"
+      },
+      "$description": "Bottom sheet open and close"
+    },
+    "meter": {
+      "$value": {
+        "value": 0.01,
+        "unit": "ms"
+      },
+      "$description": "Meter fill change"
+    },
+    "camera": {
+      "$value": {
+        "value": 0.01,
+        "unit": "ms"
+      },
+      "$description": "Map camera fly-to"
+    },
+    "follow": {
+      "$value": {
+        "value": 0.01,
+        "unit": "ms"
+      },
+      "$description": "Camera fly-to when following starts"
+    }
+  }
+}

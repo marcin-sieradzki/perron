@@ -12,7 +12,7 @@ export const base = {
   "palette.neutral.300": "#A2ADB1",
   "palette.neutral.500": "#74818A",
   "palette.neutral.600": "#47535A",
-  "palette.neutral.700": "#20282C",
+  "palette.neutral.700": "#283237",
   "palette.neutral.800": "#1D2428",
   "palette.neutral.900": "#12181B",
   "palette.neutral.950": "#0A0E10",
@@ -116,9 +116,12 @@ export const base = {
   "radius.lg": "12px",
   "radius.xl": "16px",
   "radius.full": "9999px",
+  "border.width.025": "1px",
+  "border.width.050": "2px",
+  "focus.width": "2px",
+  "focus.offset": "2px",
   "effect.glass-blur": "16px",
   "effect.glass-saturate": "1.3",
-  "shadow.thumb": "0px 1px 2px 0px rgba(0, 0, 0, 0.14)",
   "duration.sheet": "320ms",
   "duration.meter": "800ms",
   "duration.camera": "750ms",
@@ -153,6 +156,7 @@ export const base = {
   "size.sheet-peek": "182px",
   "size.vehicle-row": "52px",
   "size.panel-gap": "12px",
+  "size.target-min": "24px",
   "opacity.series-fill": "0.12",
   "opacity.map-dim-vehicle": "0.28",
   "opacity.map-dim-line": "0.16",
@@ -214,6 +218,7 @@ export const theme = {
     "color.surface.brand-subtle": "#FFF2DD",
     "color.border.subtle": "rgba(18, 24, 27, 0.11)",
     "color.border.strong": "rgba(18, 24, 27, 0.22)",
+    "color.border.control": "rgba(18, 24, 27, 0.47)",
     "color.border.focus": "#12181B",
     "color.status.success": "#13915A",
     "color.status.warning": "#B06A00",
@@ -247,6 +252,7 @@ export const theme = {
     "color.map.label": "#66737A",
     "color.map.water-label": "#5F7A88",
     "shadow.panel": "0px 1px 2px 0px rgba(18, 24, 27, 0.06), 0px 10px 30px 0px rgba(18, 24, 27, 0.1)",
+    "shadow.thumb": "0px 1px 2px 0px rgba(0, 0, 0, 0.14)",
   },
   dark: {
     "color.text.primary": "#EBEEEB",
@@ -260,7 +266,7 @@ export const theme = {
     "color.text.brand": "#F2B630",
     "color.surface.default": "#12181B",
     "color.surface.raised": "#1D2428",
-    "color.surface.inset": "#20282C",
+    "color.surface.inset": "#283237",
     "color.surface.overlay": "rgba(18, 24, 27, 0.88)",
     "color.surface.hover": "rgba(235, 238, 235, 0.06)",
     "color.surface.selected": "rgba(235, 238, 235, 0.09)",
@@ -273,6 +279,7 @@ export const theme = {
     "color.surface.brand-subtle": "#3B2B07",
     "color.border.subtle": "rgba(235, 238, 235, 0.1)",
     "color.border.strong": "rgba(235, 238, 235, 0.2)",
+    "color.border.control": "rgba(235, 238, 235, 0.39)",
     "color.border.focus": "#EBEEEB",
     "color.status.success": "#3CCB80",
     "color.status.warning": "#F0A43A",
@@ -306,6 +313,7 @@ export const theme = {
     "color.map.label": "#7E8B91",
     "color.map.water-label": "#4B6774",
     "shadow.panel": "0px 1px 2px 0px rgba(0, 0, 0, 0.35), 0px 14px 36px 0px rgba(0, 0, 0, 0.38)",
+    "shadow.thumb": "0px 1px 2px 0px rgba(0, 0, 0, 0.4)",
   },
 } as const
 
@@ -344,6 +352,10 @@ export const numeric = {
   "radius.lg": 12,
   "radius.xl": 16,
   "radius.full": 9999,
+  "border.width.025": 1,
+  "border.width.050": 2,
+  "focus.width": 2,
+  "focus.offset": 2,
   "effect.glass-blur": 16,
   "effect.glass-saturate": 1.3,
   "duration.sheet": 320,
@@ -378,6 +390,7 @@ export const numeric = {
   "size.sheet-peek": 182,
   "size.vehicle-row": 52,
   "size.panel-gap": 12,
+  "size.target-min": 24,
   "opacity.series-fill": 0.12,
   "opacity.map-dim-vehicle": 0.28,
   "opacity.map-dim-line": 0.16,
@@ -409,6 +422,29 @@ export const numeric = {
   "map.track-spacing.metro": 3.4,
   "map.track-spacing.stog": 2.8,
   "map.track-spacing.regional": 2.8,
+} as const
+
+/**
+ * Base tokens a modifier context overrides, such as motion.reduced: CSS values and plain numbers.
+ * Script that animates (the map camera) reads these when the context applies.
+ */
+export const modifiers = {
+  "motion": {
+    "reduced": {
+      css: {
+        "duration.sheet": "0.01ms",
+        "duration.meter": "0.01ms",
+        "duration.camera": "0.01ms",
+        "duration.follow": "0.01ms",
+      },
+      numeric: {
+        "duration.sheet": 0.01,
+        "duration.meter": 0.01,
+        "duration.camera": 0.01,
+        "duration.follow": 0.01,
+      },
+    },
+  },
 } as const
 
 export type BaseToken = keyof typeof base

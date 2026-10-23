@@ -7,7 +7,7 @@
   --perron-palette-neutral-300: #A2ADB1;
   --perron-palette-neutral-500: #74818A;
   --perron-palette-neutral-600: #47535A;
-  --perron-palette-neutral-700: #20282C;
+  --perron-palette-neutral-700: #283237;
   --perron-palette-neutral-800: #1D2428;
   --perron-palette-neutral-900: #12181B;
   --perron-palette-neutral-950: #0A0E10;
@@ -127,9 +127,12 @@
   --perron-radius-lg: 12px;
   --perron-radius-xl: 16px;
   --perron-radius-full: 9999px;
+  --perron-border-width-025: 1px;
+  --perron-border-width-050: 2px;
+  --perron-focus-width: var(--perron-border-width-050);
+  --perron-focus-offset: 2px;
   --perron-effect-glass-blur: 16px;
   --perron-effect-glass-saturate: 1.3;
-  --perron-shadow-thumb: 0px 1px 2px 0px rgba(0, 0, 0, 0.14);
   --perron-duration-sheet: 320ms;
   --perron-duration-meter: 800ms;
   --perron-duration-camera: 750ms;
@@ -164,6 +167,7 @@
   --perron-size-sheet-peek: 182px;
   --perron-size-vehicle-row: 52px;
   --perron-size-panel-gap: 12px;
+  --perron-size-target-min: 24px;
   --perron-opacity-series-fill: 0.12;
   --perron-opacity-map-dim-vehicle: 0.28;
   --perron-opacity-map-dim-line: 0.16;
@@ -225,6 +229,7 @@
   --perron-color-surface-brand-subtle: var(--perron-palette-yellow-100);
   --perron-color-border-subtle: rgba(18, 24, 27, 0.11);
   --perron-color-border-strong: rgba(18, 24, 27, 0.22);
+  --perron-color-border-control: rgba(18, 24, 27, 0.47);
   --perron-color-border-focus: var(--perron-color-text-primary);
   --perron-color-status-success: var(--perron-palette-green-500);
   --perron-color-status-warning: var(--perron-palette-orange-500);
@@ -258,6 +263,7 @@
   --perron-color-map-label: #66737A;
   --perron-color-map-water-label: #5F7A88;
   --perron-shadow-panel: 0px 1px 2px 0px rgba(18, 24, 27, 0.06), 0px 10px 30px 0px rgba(18, 24, 27, 0.1);
+  --perron-shadow-thumb: 0px 1px 2px 0px rgba(0, 0, 0, 0.14);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -287,6 +293,7 @@
     --perron-color-surface-brand-subtle: var(--perron-palette-yellow-900);
     --perron-color-border-subtle: rgba(235, 238, 235, 0.1);
     --perron-color-border-strong: rgba(235, 238, 235, 0.2);
+    --perron-color-border-control: rgba(235, 238, 235, 0.39);
     --perron-color-border-focus: var(--perron-color-text-primary);
     --perron-color-status-success: var(--perron-palette-green-300);
     --perron-color-status-warning: var(--perron-palette-orange-300);
@@ -320,6 +327,7 @@
     --perron-color-map-label: #7E8B91;
     --perron-color-map-water-label: #4B6774;
     --perron-shadow-panel: 0px 1px 2px 0px rgba(0, 0, 0, 0.35), 0px 14px 36px 0px rgba(0, 0, 0, 0.38);
+    --perron-shadow-thumb: 0px 1px 2px 0px rgba(0, 0, 0, 0.4);
   }
 }
 
@@ -349,6 +357,7 @@
   --perron-color-surface-brand-subtle: var(--perron-palette-yellow-900);
   --perron-color-border-subtle: rgba(235, 238, 235, 0.1);
   --perron-color-border-strong: rgba(235, 238, 235, 0.2);
+  --perron-color-border-control: rgba(235, 238, 235, 0.39);
   --perron-color-border-focus: var(--perron-color-text-primary);
   --perron-color-status-success: var(--perron-palette-green-300);
   --perron-color-status-warning: var(--perron-palette-orange-300);
@@ -382,4 +391,14 @@
   --perron-color-map-label: #7E8B91;
   --perron-color-map-water-label: #4B6774;
   --perron-shadow-panel: 0px 1px 2px 0px rgba(0, 0, 0, 0.35), 0px 14px 36px 0px rgba(0, 0, 0, 0.38);
+  --perron-shadow-thumb: 0px 1px 2px 0px rgba(0, 0, 0, 0.4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --perron-duration-sheet: 0.01ms;
+    --perron-duration-meter: 0.01ms;
+    --perron-duration-camera: 0.01ms;
+    --perron-duration-follow: 0.01ms;
+  }
 }

@@ -25,6 +25,19 @@ export interface ResolvedTokens {
   /** Tokens from each theme context, keyed by context name */
   themes: Record<string, Token[]>
   defaultTheme: string
+  /**
+   * Every other modifier, such as motion: contexts that override base tokens. The default context
+   * is empty, so base holds the default values.
+   */
+  overrides: Record<string, { default: string; contexts: Record<string, Token[]> }>
+}
+
+/**
+ * The media query each override context applies under. CSS cannot switch custom properties on
+ * anything else, so a modifier context the build cannot place is an error.
+ */
+export const MODIFIER_MEDIA: Record<string, Record<string, string>> = {
+  motion: { reduced: '(prefers-reduced-motion: reduce)' },
 }
 
 const REF = /^\{([^{}]+)\}$/
@@ -72,15 +85,19 @@ export function loadTokens({ resolver, files }: TokenSources): ResolvedTokens {
   const base: Token[] = []
   let themes: Record<string, Token[]> = {}
   let defaultTheme = ''
+  const overrides: ResolvedTokens['overrides'] = {}
   for (const { $ref } of order) {
     const [, kind, name] = $ref.split('/')
     if (kind === 'sets') base.push(...refsOf(sets[name].sources, files))
     else if (kind === 'modifiers') {
       const m = modifiers[name]
-      themes = Object.fromEntries(
+      const contexts = Object.fromEntries(
         Object.entries(m.contexts).map(([ctx, refs]) => [ctx, refsOf(refs, files)]),
       )
-      defaultTheme = m.default
+      if (name === 'theme') {
+        themes = contexts
+        defaultTheme = m.default
+      } else overrides[name] = { default: m.default, contexts }
     } else throw new Error(`Unknown resolutionOrder entry ${$ref}`)
   }
   const seen = new Set<string>()
@@ -112,7 +129,18 @@ export function loadTokens({ resolver, files }: TokenSources): ResolvedTokens {
   for (const ts of Object.values(themes))
     for (const t of ts)
       if (seen.has(t.name)) throw new Error(`Theme token ${t.name} also defined in base`)
-  return { base, themes, defaultTheme }
+  const baseByName = new Map(base.map((t) => [t.name, t]))
+  for (const [name, m] of Object.entries(overrides))
+    for (const [ctx, ts] of Object.entries(m.contexts)) {
+      if (ctx === m.default && ts.length)
+        throw new Error(`The default ${name} context must be empty: base holds its values`)
+      if (ctx !== m.default && !MODIFIER_MEDIA[name]?.[ctx])
+        throw new Error(`No media query for the ${name} modifier's ${ctx} context`)
+      for (const t of ts)
+        if (baseByName.get(t.name)?.type !== t.type)
+          throw new Error(`${name} ${ctx} overrides ${t.name}, which is not a base ${t.type} token`)
+    }
+  return { base, themes, defaultTheme, overrides }
 }
 
 /** All tokens visible in one theme (base plus that theme), by name. */
@@ -273,7 +301,20 @@ ${block(`:root:not([data-theme='${defaultTheme}'])`, 'dark', '  ')}
 }
 
 ${block(`[data-theme='dark']`, 'dark')}
-`
+${Object.entries(tokens.overrides)
+  .flatMap(([name, m]) =>
+    Object.entries(m.contexts)
+      .map(([ctx, list]) => [ctx, list.filter(keep)] as const)
+      .filter(([, list]) => list.length)
+      .map(
+        ([ctx, list]) =>
+          `\n@media ${MODIFIER_MEDIA[name][ctx]} {\n  :root {\n${declarations(list)
+            .split('\n')
+            .map((l) => '  ' + l)
+            .join('\n')}\n  }\n}\n`,
+      ),
+  )
+  .join('')}`
 }
 
 const NUMERIC_TYPES = new Set(['dimension', 'duration', 'number', 'fontWeight'])
@@ -284,18 +325,30 @@ export function emitTs(tokens: ResolvedTokens) {
     const map = tokenMap(tokens, theme)
     return (t: Token) => toCss(t.type, resolveValue(t.value, map), () => null)
   }
-  const obj = (list: Token[], f: (t: Token) => string) =>
+  const obj = (list: Token[], f: (t: Token) => unknown) =>
     `{\n${list.map((t) => `  ${JSON.stringify(t.name)}: ${JSON.stringify(f(t))},`).join('\n')}\n}`
   const baseLit = lit(tokens.defaultTheme)
   const themeNames = Object.keys(tokens.themes)
   const map = tokenMap(tokens, tokens.defaultTheme)
-  const numeric = tokens.base
-    .filter((t) => NUMERIC_TYPES.has(t.type))
-    .map((t) => {
-      const v = resolveValue(t.value, map)
-      return `  ${JSON.stringify(t.name)}: ${typeof v === 'number' ? v : (v as Dim).value},`
-    })
-  const indent = (s: string) => s.replaceAll('\n', '\n  ')
+  const num = (t: Token) => {
+    const v = resolveValue(t.value, map)
+    return typeof v === 'number' ? v : (v as Dim).value
+  }
+  const numericOf = (list: Token[]) =>
+    obj(
+      list.filter((t) => NUMERIC_TYPES.has(t.type)),
+      num,
+    )
+  const indent = (s: string, by = 2) => s.replaceAll('\n', '\n' + ' '.repeat(by))
+  const modifiers = Object.entries(tokens.overrides).map(([name, m]) => {
+    const contexts = Object.entries(m.contexts)
+      .filter(([, list]) => list.length)
+      .map(
+        ([ctx, list]) =>
+          `    ${JSON.stringify(ctx)}: {\n      css: ${indent(obj(list, baseLit), 6)},\n      numeric: ${indent(numericOf(list), 6)},\n    },`,
+      )
+    return `  ${JSON.stringify(name)}: {\n${contexts.join('\n')}\n  },`
+  })
   return `// ${HEADER}
 
 /** Theme names. The first one is the default. */
@@ -311,8 +364,14 @@ ${themeNames.map((th) => `  ${th}: ${indent(obj(tokens.themes[th], lit(th)))},`)
 } as const
 
 /** Dimension, duration and number tokens as plain numbers (px, ms or unitless). */
-export const numeric = {
-${numeric.join('\n')}
+export const numeric = ${numericOf(tokens.base)} as const
+
+/**
+ * Base tokens a modifier context overrides, such as motion.reduced: CSS values and plain numbers.
+ * Script that animates (the map camera) reads these when the context applies.
+ */
+export const modifiers = {
+${modifiers.join('\n')}
 } as const
 
 export type BaseToken = keyof typeof base
@@ -403,13 +462,33 @@ export function emitPenpot(tokens: ResolvedTokens) {
   const themeNames = Object.keys(tokens.themes)
   const out: Json = { base: set(tokens.base) }
   for (const th of themeNames) out[th] = set(tokens.themes[th])
-  out.$themes = themeNames.map((th) => ({
-    id: th,
-    name: th[0].toUpperCase() + th.slice(1),
-    group: 'Theme',
-    selectedTokenSets: { base: 'enabled', [th]: 'enabled' },
-  }))
-  out.$metadata = { tokenSetOrder: ['base', ...themeNames] }
+  const title = (s: string) => s[0].toUpperCase() + s.slice(1)
+  const overrideSets: string[] = []
+  const overrideThemes = Object.entries(tokens.overrides).flatMap(([name, m]) =>
+    Object.entries(m.contexts).map(([ctx, list]) => {
+      const setName = `${name}-${ctx}`
+      if (list.length) {
+        out[setName] = set(list)
+        overrideSets.push(setName)
+      }
+      return {
+        id: setName,
+        name: title(ctx),
+        group: title(name),
+        selectedTokenSets: list.length ? { [setName]: 'enabled' } : {},
+      }
+    }),
+  )
+  out.$themes = [
+    ...themeNames.map((th) => ({
+      id: th,
+      name: title(th),
+      group: 'Theme',
+      selectedTokenSets: { base: 'enabled', [th]: 'enabled' },
+    })),
+    ...overrideThemes,
+  ]
+  out.$metadata = { tokenSetOrder: ['base', ...themeNames, ...overrideSets] }
   return JSON.stringify(out, null, 2) + '\n'
 }
 

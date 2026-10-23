@@ -2,6 +2,15 @@
 
 Token names that changed or went away, newest first, so code written against an older name can follow. The components on Mylder's `perron/components` branch use the names before 23 October 2026.
 
+## 23 October 2026: borders, focus and reduced motion
+
+- **Control edges.** Inputs and outline buttons move from `color.border.strong` to the new `color.border.control`, which reaches 3:1 on every surface. `color.border.strong` stays for lines that decorate, such as dashed tags and chart axes.
+- **New tokens for literals.** A 1 px border reads `border.width.025`, a 2 px one `border.width.050`. The focus ring reads `focus.width` and `focus.offset`. The smallest target is `size.target-min`.
+- **Thumb shadow.** `shadow.thumb` moved from base into the themes, stronger in dark. The name is unchanged.
+- **Dark inset.** `palette.neutral.700` changed from #20282C to #283237, so dark `color.surface.inset` stands apart from `color.surface.raised`.
+- **Reduced motion.** `tokens.css` sets the transition durations to 0.01 ms under `prefers-reduced-motion: reduce`. A component's own override of those durations can go; its code that stops loops stays.
+- **Docs.** `docs/foundations.md` became one page per foundation in `docs/foundations/`.
+
 ## 23 October 2026: palette, status colours and one type set
 
 ### Typography roles

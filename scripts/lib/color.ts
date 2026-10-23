@@ -25,3 +25,18 @@ export function contrastRatio(a: string, b: string) {
  * colours fall below 4.5:1 with either label colour.
  */
 export const isLightFill = (hex: string) => relativeLuminance(hex) > 0.4
+
+/** The opaque `#RRGGBB` a CSS colour (`#RRGGBB` or `rgba(r, g, b, a)`) shows over an opaque background. */
+export function composite(color: string, background: string) {
+  const rgba = /^rgba\((\d+), (\d+), (\d+), ([\d.]+)\)$/.exec(color)
+  if (!rgba) return color
+  const bg = parseInt(background.slice(1), 16)
+  const alpha = Number(rgba[4])
+  return `#${[16, 8, 0]
+    .map((shift, i) => {
+      const mixed = alpha * Number(rgba[i + 1]) + (1 - alpha) * ((bg >> shift) & 255)
+      return Math.round(mixed).toString(16).padStart(2, '0')
+    })
+    .join('')
+    .toUpperCase()}`
+}

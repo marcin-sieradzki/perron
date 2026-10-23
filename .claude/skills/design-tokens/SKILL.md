@@ -7,11 +7,11 @@ Perron's tokens are DTCG 2025.10 files in `tokens/`: `base.tokens.json` for ever
 
 ## Steps
 
-1. **Find the token that already does the job.** Search descriptions and names in `tokens/*.tokens.json` and the guidance in `docs/foundations.md`. Done when you can name the token that fits, or say in one sentence what job no token covers. Reusing a token is the usual outcome.
+1. **Find the token that already does the job.** Search descriptions and names in `tokens/*.tokens.json` and the guidance in `docs/foundations/`. Done when you can name the token that fits, or say in one sentence what job no token covers. Reusing a token is the usual outcome.
 2. **Place it** by the placement table below. Done when you know the file, the group and the tier.
 3. **Name it by its job**, then **write it**: copy the shape of a sibling token of the same type, give it a one-line `$description` saying where it is used, and put any Perron-only data under `$extensions["org.perron"]`.
-4. **Build and check**: `npm run tokens`, then `npm run check`. Done when the check passes and the contrast test's known list is unchanged, or has grown only by a deliberate miss that `docs/foundations.md` explains.
-5. **Record it.** Update the section of `docs/foundations.md` whose guidance changed. For a rename or removal, add the row to `docs/renames.md` and point every reader in this repo at the new name. Done when `git grep` finds the old name only in `docs/renames.md`.
+4. **Build and check**: `npm run tokens`, then `npm run check`. Done when the check passes and the contrast test's known list is unchanged, or has grown only by a deliberate miss that `docs/foundations/accessibility.md` explains.
+5. **Record it.** Update the page in `docs/foundations/` whose guidance changed. For a rename or removal, add the row to `docs/renames.md` and point every reader in this repo at the new name. Done when `git grep` finds the old name only in `docs/renames.md`.
 
 ## Placement
 

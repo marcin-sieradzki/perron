@@ -1,9 +1,10 @@
-// Builds CSS, TypeScript and Penpot files from the DTCG token files in tokens/.
-// Usage: node scripts/build-tokens.ts [--check]
+// Builds CSS, TypeScript and Penpot files from the DTCG token files in tokens/, and rebuilds the
+// token tables in docs/foundations/. Usage: node scripts/build-tokens.ts [--check]
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { buildAll, type TokenSources } from './lib/tokens.ts'
+import { buildDocs } from './lib/docs.ts'
+import { buildAll, loadTokens, type TokenSources } from './lib/tokens.ts'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const tokenDir = join(root, 'tokens')
@@ -17,7 +18,8 @@ export function readSources(): TokenSources {
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const check = process.argv.includes('--check')
-  const out = buildAll(readSources())
+  const sources = readSources()
+  const out = { ...buildAll(sources), ...(await buildDocs(root, loadTokens(sources))) }
   let stale = 0
   for (const [rel, text] of Object.entries(out)) {
     const file = join(root, rel)

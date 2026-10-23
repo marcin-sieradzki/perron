@@ -26,6 +26,6 @@ input {
 }
 
 :focus-visible {
-  outline: 2px solid var(--perron-color-border-focus);
-  outline-offset: 2px;
+  outline: var(--perron-focus-width) solid var(--perron-color-border-focus);
+  outline-offset: var(--perron-focus-offset);
 }

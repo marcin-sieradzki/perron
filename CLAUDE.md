@@ -6,5 +6,5 @@ The tokens follow the W3C Design Tokens Community Group's [Design Tokens specifi
 
 - Tokens: adding, changing, renaming or removing one, or a component needing a value, goes through the `design-tokens` skill.
 - Skills and this file: write them with the `writing-for-agents` skill.
-- Choosing tokens for a screen (which colour, role, space or radius): `docs/foundations.md`.
+- Choosing tokens for a screen (which colour, role, space or radius): `docs/foundations/`, one page per foundation.
 - Work is done when `npm run check` passes.
