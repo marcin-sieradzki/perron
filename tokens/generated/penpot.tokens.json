@@ -1,0 +1,1675 @@
+{
+  "base": {
+    "color": {
+      "text": {
+        "on-color": {
+          "dark": {
+            "$type": "color",
+            "$value": "#14181A",
+            "$description": "Dark text on a coloured fill (bus, light line colours)"
+          },
+          "light": {
+            "$type": "color",
+            "$value": "#FFFFFF",
+            "$description": "White text on a coloured fill"
+          }
+        }
+      },
+      "scrim": {
+        "$type": "color",
+        "$value": "rgba(10, 14, 16, 0.42)",
+        "$description": "Backdrop behind modal dialogs"
+      },
+      "transit": {
+        "line": {
+          "m1": {
+            "$type": "color",
+            "$value": "#0B8A44",
+            "$description": "Metro M1"
+          },
+          "m2": {
+            "$type": "color",
+            "$value": "#F0B400",
+            "$description": "Metro M2"
+          },
+          "m3": {
+            "$type": "color",
+            "$value": "#E2231A",
+            "$description": "Metro M3 (Cityringen)"
+          },
+          "m4": {
+            "$type": "color",
+            "$value": "#0090D0",
+            "$description": "Metro M4"
+          },
+          "a": {
+            "$type": "color",
+            "$value": "#00A1DE",
+            "$description": "S-tog A"
+          },
+          "b": {
+            "$type": "color",
+            "$value": "#4BA046",
+            "$description": "S-tog B"
+          },
+          "c": {
+            "$type": "color",
+            "$value": "#F18A00",
+            "$description": "S-tog C"
+          },
+          "e": {
+            "$type": "color",
+            "$value": "#7D5AA6",
+            "$description": "S-tog E"
+          },
+          "f": {
+            "$type": "color",
+            "$value": "#F5C200",
+            "$description": "S-tog F"
+          },
+          "h": {
+            "$type": "color",
+            "$value": "#DD1F2A",
+            "$description": "S-tog H"
+          }
+        },
+        "line-on": {
+          "m1": {
+            "$type": "color",
+            "$value": "{color.text.on-color.light}",
+            "$description": "Label text on the M1 line badge"
+          },
+          "m2": {
+            "$type": "color",
+            "$value": "{color.text.on-color.dark}",
+            "$description": "Label text on the M2 line badge"
+          },
+          "m3": {
+            "$type": "color",
+            "$value": "{color.text.on-color.light}",
+            "$description": "Label text on the M3 line badge"
+          },
+          "m4": {
+            "$type": "color",
+            "$value": "{color.text.on-color.light}",
+            "$description": "Label text on the M4 line badge"
+          },
+          "a": {
+            "$type": "color",
+            "$value": "{color.text.on-color.light}",
+            "$description": "Label text on the A line badge"
+          },
+          "b": {
+            "$type": "color",
+            "$value": "{color.text.on-color.light}",
+            "$description": "Label text on the B line badge"
+          },
+          "c": {
+            "$type": "color",
+            "$value": "{color.text.on-color.light}",
+            "$description": "Label text on the C line badge"
+          },
+          "e": {
+            "$type": "color",
+            "$value": "{color.text.on-color.light}",
+            "$description": "Label text on the E line badge"
+          },
+          "f": {
+            "$type": "color",
+            "$value": "{color.text.on-color.dark}",
+            "$description": "Label text on the F line badge"
+          },
+          "h": {
+            "$type": "color",
+            "$value": "{color.text.on-color.light}",
+            "$description": "Label text on the H line badge"
+          }
+        }
+      }
+    },
+    "font": {
+      "family": {
+        "display": {
+          "$type": "fontFamilies",
+          "$value": "Familjen Grotesk",
+          "$description": "Wordmark, panel and dialog titles"
+        },
+        "body": {
+          "$type": "fontFamilies",
+          "$value": "Schibsted Grotesk",
+          "$description": "All interface text"
+        },
+        "data": {
+          "$type": "fontFamilies",
+          "$value": "JetBrains Mono",
+          "$description": "Clock times, countdowns, counts and data ages. Always tabular figures."
+        }
+      },
+      "weight": {
+        "regular": {
+          "$type": "fontWeights",
+          "$value": "400",
+          "$description": "Running text"
+        },
+        "medium": {
+          "$type": "fontWeights",
+          "$value": "500",
+          "$description": "Controls, list titles, data"
+        },
+        "semibold": {
+          "$type": "fontWeights",
+          "$value": "600",
+          "$description": "Labels, titles, stats"
+        },
+        "bold": {
+          "$type": "fontWeights",
+          "$value": "700",
+          "$description": "Display titles, wordmark, line badges"
+        }
+      },
+      "size": {
+        "10": {
+          "$type": "fontSizes",
+          "$value": "10px"
+        },
+        "11": {
+          "$type": "fontSizes",
+          "$value": "11px"
+        },
+        "12": {
+          "$type": "fontSizes",
+          "$value": "12px"
+        },
+        "13": {
+          "$type": "fontSizes",
+          "$value": "13px"
+        },
+        "14": {
+          "$type": "fontSizes",
+          "$value": "14px"
+        },
+        "15": {
+          "$type": "fontSizes",
+          "$value": "15px"
+        },
+        "20": {
+          "$type": "fontSizes",
+          "$value": "20px"
+        },
+        "22": {
+          "$type": "fontSizes",
+          "$value": "22px"
+        },
+        "23": {
+          "$type": "fontSizes",
+          "$value": "23px"
+        },
+        "26": {
+          "$type": "fontSizes",
+          "$value": "26px"
+        },
+        "27": {
+          "$type": "fontSizes",
+          "$value": "27px"
+        },
+        "30": {
+          "$type": "fontSizes",
+          "$value": "30px"
+        },
+        "40": {
+          "$type": "fontSizes",
+          "$value": "40px"
+        },
+        "54": {
+          "$type": "fontSizes",
+          "$value": "54px"
+        },
+        "9-5": {
+          "$type": "fontSizes",
+          "$value": "9.5px"
+        },
+        "10-5": {
+          "$type": "fontSizes",
+          "$value": "10.5px"
+        },
+        "11-5": {
+          "$type": "fontSizes",
+          "$value": "11.5px"
+        },
+        "12-5": {
+          "$type": "fontSizes",
+          "$value": "12.5px"
+        },
+        "13-5": {
+          "$type": "fontSizes",
+          "$value": "13.5px"
+        },
+        "14-5": {
+          "$type": "fontSizes",
+          "$value": "14.5px"
+        }
+      }
+    },
+    "typography": {
+      "display-lg": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.display}",
+          "fontWeight": "{font.weight.bold}",
+          "fontSize": "{font.size.26}",
+          "lineHeight": "1.1",
+          "letterSpacing": "-0.52px"
+        },
+        "$description": "Dialog title (About)"
+      },
+      "wordmark": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.display}",
+          "fontWeight": "{font.weight.bold}",
+          "fontSize": "{font.size.22}",
+          "lineHeight": "1",
+          "letterSpacing": "-0.55px"
+        },
+        "$description": "Brand wordmark \"mylder\""
+      },
+      "display-sm": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.display}",
+          "fontWeight": "{font.weight.semibold}",
+          "fontSize": "{font.size.20}",
+          "lineHeight": "1.12",
+          "letterSpacing": "-0.3px"
+        },
+        "$description": "Detail panel title (destination or stop name)"
+      },
+      "stat-lg": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.body}",
+          "fontWeight": "{font.weight.semibold}",
+          "fontSize": "{font.size.30}",
+          "lineHeight": "1",
+          "letterSpacing": "-0.6px"
+        },
+        "$description": "Kiosk stat value"
+      },
+      "stat": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.body}",
+          "fontWeight": "{font.weight.semibold}",
+          "fontSize": "{font.size.27}",
+          "lineHeight": "1.05",
+          "letterSpacing": "-0.81px"
+        },
+        "$description": "KPI value (23 px on phones)"
+      },
+      "title": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.body}",
+          "fontWeight": "{font.weight.semibold}",
+          "fontSize": "{font.size.14-5}",
+          "lineHeight": "1.3",
+          "letterSpacing": "0px"
+        },
+        "$description": "Disruption title"
+      },
+      "body": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.body}",
+          "fontWeight": "{font.weight.regular}",
+          "fontSize": "{font.size.14}",
+          "lineHeight": "1.4",
+          "letterSpacing": "0px"
+        },
+        "$description": "Default body text and inputs"
+      },
+      "prose": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.body}",
+          "fontWeight": "{font.weight.regular}",
+          "fontSize": "{font.size.14}",
+          "lineHeight": "1.55",
+          "letterSpacing": "0px"
+        },
+        "$description": "Longer paragraphs (About dialog)"
+      },
+      "body-sm": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.body}",
+          "fontWeight": "{font.weight.regular}",
+          "fontSize": "{font.size.13}",
+          "lineHeight": "1.5",
+          "letterSpacing": "0px"
+        },
+        "$description": "Disruption body, location line"
+      },
+      "label": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.body}",
+          "fontWeight": "{font.weight.semibold}",
+          "fontSize": "{font.size.13}",
+          "lineHeight": "1.2",
+          "letterSpacing": "0px"
+        },
+        "$description": "Buttons, tabs, names in lists"
+      },
+      "control": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.body}",
+          "fontWeight": "{font.weight.medium}",
+          "fontSize": "{font.size.13}",
+          "lineHeight": "1",
+          "letterSpacing": "0px"
+        },
+        "$description": "Filter chips, highlight chip"
+      },
+      "list-title": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.body}",
+          "fontWeight": "{font.weight.medium}",
+          "fontSize": "{font.size.13-5}",
+          "lineHeight": "1.25",
+          "letterSpacing": "0px"
+        },
+        "$description": "Destination or stop name in a row"
+      },
+      "meta": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.body}",
+          "fontWeight": "{font.weight.regular}",
+          "fontSize": "{font.size.12-5}",
+          "lineHeight": "1.35",
+          "letterSpacing": "0px"
+        },
+        "$description": "Subtitles and state descriptions"
+      },
+      "tooltip": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.body}",
+          "fontWeight": "{font.weight.medium}",
+          "fontSize": "{font.size.12-5}",
+          "lineHeight": "1.3",
+          "letterSpacing": "0px"
+        },
+        "$description": "Map tooltip"
+      },
+      "action": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.body}",
+          "fontWeight": "{font.weight.semibold}",
+          "fontSize": "{font.size.12-5}",
+          "lineHeight": "1",
+          "letterSpacing": "0px"
+        },
+        "$description": "Link buttons"
+      },
+      "caption": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.body}",
+          "fontWeight": "{font.weight.regular}",
+          "fontSize": "{font.size.12}",
+          "lineHeight": "1.45",
+          "letterSpacing": "0px"
+        },
+        "$description": "Section subtitles, legend descriptions, notes"
+      },
+      "label-sm": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.body}",
+          "fontWeight": "{font.weight.medium}",
+          "fontSize": "{font.size.12}",
+          "lineHeight": "1.2",
+          "letterSpacing": "0px"
+        },
+        "$description": "Legend items, day, kiosk stat labels"
+      },
+      "icon-label": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.body}",
+          "fontWeight": "{font.weight.semibold}",
+          "fontSize": "{font.size.12}",
+          "lineHeight": "1",
+          "letterSpacing": "0.48px"
+        },
+        "$description": "Text inside an icon button (language switch)"
+      },
+      "secondary": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.body}",
+          "fontWeight": "{font.weight.regular}",
+          "fontSize": "{font.size.11-5}",
+          "lineHeight": "1.3",
+          "letterSpacing": "0px"
+        },
+        "$description": "Second line in a row (vehicle name, data state)"
+      },
+      "stat-label": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.body}",
+          "fontWeight": "{font.weight.medium}",
+          "fontSize": "{font.size.11-5}",
+          "lineHeight": "1.2",
+          "letterSpacing": "0px"
+        },
+        "$description": "KPI label"
+      },
+      "fine": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.body}",
+          "fontWeight": "{font.weight.regular}",
+          "fontSize": "{font.size.11}",
+          "lineHeight": "1.3",
+          "letterSpacing": "0px"
+        },
+        "$description": "KPI footnote"
+      },
+      "field-label": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.body}",
+          "fontWeight": "{font.weight.medium}",
+          "fontSize": "{font.size.11}",
+          "lineHeight": "1.2",
+          "letterSpacing": "0px"
+        },
+        "$description": "Fact labels (Delay, Speed, Last report)"
+      },
+      "overline": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.body}",
+          "fontWeight": "{font.weight.semibold}",
+          "fontSize": "{font.size.11}",
+          "lineHeight": "1.2",
+          "letterSpacing": "0.99px"
+        },
+        "$description": "Uppercase section heading"
+      },
+      "overline-sm": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.body}",
+          "fontWeight": "{font.weight.semibold}",
+          "fontSize": "{font.size.10-5}",
+          "lineHeight": "1",
+          "letterSpacing": "0.89px"
+        },
+        "$description": "Uppercase legend title, severity, table header"
+      },
+      "attribution": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.body}",
+          "fontWeight": "{font.weight.regular}",
+          "fontSize": "{font.size.10-5}",
+          "lineHeight": "1.35",
+          "letterSpacing": "0px"
+        },
+        "$description": "Map credits"
+      },
+      "tag": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.body}",
+          "fontWeight": "{font.weight.semibold}",
+          "fontSize": "{font.size.10}",
+          "lineHeight": "1",
+          "letterSpacing": "0.9px"
+        },
+        "$description": "Dashed tag (\"Simulated\")"
+      },
+      "tag-sm": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.body}",
+          "fontWeight": "{font.weight.semibold}",
+          "fontSize": "{font.size.9-5}",
+          "lineHeight": "1",
+          "letterSpacing": "0.76px"
+        },
+        "$description": "Dashed tag inside a chip (\"Later\")"
+      },
+      "badge": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.body}",
+          "fontWeight": "{font.weight.bold}",
+          "fontSize": "{font.size.12}",
+          "lineHeight": "1",
+          "letterSpacing": "0.12px"
+        },
+        "$description": "Line badge label"
+      },
+      "badge-lg": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.body}",
+          "fontWeight": "{font.weight.bold}",
+          "fontSize": "{font.size.15}",
+          "lineHeight": "1",
+          "letterSpacing": "0.15px"
+        },
+        "$description": "Large line badge label"
+      },
+      "data-display": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.data}",
+          "fontWeight": "{font.weight.semibold}",
+          "fontSize": "{font.size.54}",
+          "lineHeight": "1",
+          "letterSpacing": "-2.16px"
+        },
+        "$description": "Kiosk clock (40 px on phones)"
+      },
+      "clock": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.data}",
+          "fontWeight": "{font.weight.semibold}",
+          "fontSize": "{font.size.15}",
+          "lineHeight": "1",
+          "letterSpacing": "-0.3px"
+        },
+        "$description": "Top bar clock"
+      },
+      "countdown": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.data}",
+          "fontWeight": "{font.weight.semibold}",
+          "fontSize": "{font.size.15}",
+          "lineHeight": "1.1",
+          "letterSpacing": "0px"
+        },
+        "$description": "Departure countdown (\"4 min\")"
+      },
+      "data-md": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.data}",
+          "fontWeight": "{font.weight.medium}",
+          "fontSize": "{font.size.12-5}",
+          "lineHeight": "1.2",
+          "letterSpacing": "0px"
+        },
+        "$description": "Arrival times, delay in the vehicle table"
+      },
+      "data": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.data}",
+          "fontWeight": "{font.weight.medium}",
+          "fontSize": "{font.size.12}",
+          "lineHeight": "1.25",
+          "letterSpacing": "0px"
+        },
+        "$description": "Percentages and counts in lists"
+      },
+      "data-control": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.data}",
+          "fontWeight": "{font.weight.semibold}",
+          "fontSize": "{font.size.12}",
+          "lineHeight": "1",
+          "letterSpacing": "0px"
+        },
+        "$description": "Segmented control labels (1×, 4×, 16×)"
+      },
+      "data-sm": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.data}",
+          "fontWeight": "{font.weight.medium}",
+          "fontSize": "{font.size.11-5}",
+          "lineHeight": "1",
+          "letterSpacing": "0px"
+        },
+        "$description": "Data age in the vehicle table"
+      },
+      "data-xs": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.data}",
+          "fontWeight": "{font.weight.medium}",
+          "fontSize": "{font.size.11}",
+          "lineHeight": "1.2",
+          "letterSpacing": "0px"
+        },
+        "$description": "Counts in chips, \"since\" times, chart tooltip, keyboard keys"
+      },
+      "data-fine": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.data}",
+          "fontWeight": "{font.weight.regular}",
+          "fontSize": "{font.size.11}",
+          "lineHeight": "1.3",
+          "letterSpacing": "0px"
+        },
+        "$description": "Clock time under a countdown, struck-out scheduled times"
+      },
+      "data-2xs": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.data}",
+          "fontWeight": "{font.weight.medium}",
+          "fontSize": "{font.size.10-5}",
+          "lineHeight": "1",
+          "letterSpacing": "0px"
+        },
+        "$description": "Tab counts, scale bar"
+      },
+      "data-axis": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.data}",
+          "fontWeight": "{font.weight.medium}",
+          "fontSize": "{font.size.10}",
+          "lineHeight": "1",
+          "letterSpacing": "0px"
+        },
+        "$description": "Report strip and chart axis labels (chart axis uses 9.5 px)"
+      }
+    },
+    "space": {
+      "100": {
+        "$type": "spacing",
+        "$value": "4px"
+      },
+      "150": {
+        "$type": "spacing",
+        "$value": "6px"
+      },
+      "200": {
+        "$type": "spacing",
+        "$value": "8px"
+      },
+      "300": {
+        "$type": "spacing",
+        "$value": "12px"
+      },
+      "400": {
+        "$type": "spacing",
+        "$value": "16px"
+      },
+      "500": {
+        "$type": "spacing",
+        "$value": "20px"
+      },
+      "600": {
+        "$type": "spacing",
+        "$value": "24px"
+      },
+      "800": {
+        "$type": "spacing",
+        "$value": "32px"
+      },
+      "050": {
+        "$type": "spacing",
+        "$value": "2px"
+      }
+    },
+    "radius": {
+      "xs": {
+        "$type": "borderRadius",
+        "$value": "4px",
+        "$description": "Small marks and ticks"
+      },
+      "sm": {
+        "$type": "borderRadius",
+        "$value": "6px",
+        "$description": "Line badges"
+      },
+      "md": {
+        "$type": "borderRadius",
+        "$value": "8px",
+        "$description": "Buttons, inputs, icon buttons, segments"
+      },
+      "lg": {
+        "$type": "borderRadius",
+        "$value": "12px",
+        "$description": "Cards and inset boxes"
+      },
+      "xl": {
+        "$type": "borderRadius",
+        "$value": "16px",
+        "$description": "Floating panels, sheets and dialogs"
+      },
+      "full": {
+        "$type": "borderRadius",
+        "$value": "9999px",
+        "$description": "Pills: chips, tags, counts"
+      }
+    },
+    "effect": {
+      "glass-blur": {
+        "$type": "dimension",
+        "$value": "16px",
+        "$description": "Backdrop blur behind glass panels"
+      },
+      "glass-saturate": {
+        "$type": "number",
+        "$value": "1.3",
+        "$description": "Backdrop saturation behind glass panels"
+      }
+    },
+    "shadow": {
+      "thumb": {
+        "$type": "boxShadow",
+        "$value": [
+          {
+            "x": "0px",
+            "y": "1px",
+            "blur": "2px",
+            "spread": "0px",
+            "color": "rgba(0, 0, 0, 0.14)",
+            "type": "dropShadow"
+          }
+        ],
+        "$description": "Selected segment in a segmented control"
+      }
+    },
+    "z-index": {
+      "map-controls": {
+        "$type": "number",
+        "$value": "3",
+        "$description": "Legend, map controls, scale, attribution"
+      },
+      "sheet": {
+        "$type": "number",
+        "$value": "4",
+        "$description": "Overview sheet, kiosk bar"
+      },
+      "highlight": {
+        "$type": "number",
+        "$value": "5",
+        "$description": "Highlight chip"
+      },
+      "detail": {
+        "$type": "number",
+        "$value": "6",
+        "$description": "Detail panel"
+      },
+      "top-bar": {
+        "$type": "number",
+        "$value": "7",
+        "$description": "Brand, filters and clock along the top of the map"
+      },
+      "tooltip": {
+        "$type": "number",
+        "$value": "8",
+        "$description": "Map hover card, above every panel"
+      },
+      "dialog": {
+        "$type": "number",
+        "$value": "10",
+        "$description": "Modal dialog over everything"
+      }
+    },
+    "breakpoint": {
+      "compact-phone": {
+        "$type": "dimension",
+        "$value": "380px",
+        "$description": "Hide the brand mark"
+      },
+      "phone": {
+        "$type": "dimension",
+        "$value": "760px",
+        "$description": "Bottom sheets, compact top bar"
+      },
+      "tablet": {
+        "$type": "dimension",
+        "$value": "1180px",
+        "$description": "Hide city name, day and legend"
+      },
+      "desktop": {
+        "$type": "dimension",
+        "$value": "1400px",
+        "$description": "Hide \"Later\" chips"
+      }
+    },
+    "size": {
+      "top-bar": {
+        "$type": "sizing",
+        "$value": "46px",
+        "$description": "Top bar group height (42 on phones)"
+      },
+      "top-bar-phone": {
+        "$type": "sizing",
+        "$value": "42px",
+        "$description": "Height of a top bar group on phones"
+      },
+      "control": {
+        "$type": "sizing",
+        "$value": "34px",
+        "$description": "Icon buttons and filter chips"
+      },
+      "button": {
+        "$type": "sizing",
+        "$value": "36px",
+        "$description": "Buttons"
+      },
+      "button-sm": {
+        "$type": "sizing",
+        "$value": "30px",
+        "$description": "Small buttons"
+      },
+      "input": {
+        "$type": "sizing",
+        "$value": "38px",
+        "$description": "Search field"
+      },
+      "segment": {
+        "$type": "sizing",
+        "$value": "32px",
+        "$description": "Segmented control item"
+      },
+      "badge": {
+        "$type": "sizing",
+        "$value": "22px",
+        "$description": "Line badge height"
+      },
+      "badge-lg": {
+        "$type": "sizing",
+        "$value": "34px",
+        "$description": "Large line badge height"
+      },
+      "sheet-width": {
+        "$type": "sizing",
+        "$value": "376px",
+        "$description": "Overview sheet width on desktop"
+      },
+      "detail-width": {
+        "$type": "sizing",
+        "$value": "364px",
+        "$description": "Detail panel width on desktop"
+      },
+      "sheet-peek": {
+        "$type": "sizing",
+        "$value": "182px",
+        "$description": "Bottom sheet height when closed on phones"
+      },
+      "vehicle-row": {
+        "$type": "sizing",
+        "$value": "52px",
+        "$description": "Vehicle table row height (virtualised list relies on it)"
+      },
+      "panel-gap": {
+        "$type": "sizing",
+        "$value": "12px",
+        "$description": "Distance between floating panels and the viewport edge (8 on phones)"
+      }
+    },
+    "opacity": {
+      "series-fill": {
+        "$type": "opacity",
+        "$value": "0.12",
+        "$description": "Area under a chart line"
+      },
+      "selected": {
+        "$type": "opacity",
+        "$value": "0.09",
+        "$description": "Selected row (mix of ink)"
+      },
+      "map-dim-vehicle": {
+        "$type": "opacity",
+        "$value": "0.28",
+        "$description": "Vehicles on lines outside the focus"
+      },
+      "map-dim-line": {
+        "$type": "opacity",
+        "$value": "0.16",
+        "$description": "Rail lines outside the focus"
+      },
+      "map-dim-station": {
+        "$type": "opacity",
+        "$value": "0.3",
+        "$description": "Stations outside the focus"
+      },
+      "map-dim-label": {
+        "$type": "opacity",
+        "$value": "0.45",
+        "$description": "Station labels outside the focus"
+      },
+      "map-line": {
+        "$type": "opacity",
+        "$value": "0.78",
+        "$description": "Metro and S-tog lines at rest"
+      },
+      "map-line-regional": {
+        "$type": "opacity",
+        "$value": "0.5",
+        "$description": "Regional lines at rest"
+      },
+      "map-trail": {
+        "$type": "opacity",
+        "$value": "0.32",
+        "$description": "Motion trail behind live vehicles"
+      },
+      "warning-tint": {
+        "$type": "opacity",
+        "$value": "0.2",
+        "$description": "Warning count background (mix of warn colour)"
+      }
+    },
+    "prik": {
+      "inset": {
+        "$type": "dimension",
+        "$value": "2px",
+        "$description": "Gap between the glyph box and the circle edge"
+      },
+      "halo": {
+        "$type": "dimension",
+        "$value": "1.6px",
+        "$description": "Map only: land-coloured ring drawn under each dot"
+      },
+      "ageing": {
+        "fill-opacity": {
+          "$type": "number",
+          "$value": "0.42",
+          "$description": "Fill strength of an ageing dot, so it reads fainter than live"
+        },
+        "stroke-width": {
+          "$type": "dimension",
+          "$value": "1.3px",
+          "$description": "Rim of an ageing dot"
+        },
+        "stroke-inset": {
+          "$type": "dimension",
+          "$value": "0.6px",
+          "$description": "Pulls the ageing rim in so the dot keeps its outer size"
+        }
+      },
+      "estimated": {
+        "stroke-width": {
+          "$type": "dimension",
+          "$value": "1.8px",
+          "$description": "Ring of an estimated dot"
+        },
+        "stroke-inset": {
+          "$type": "dimension",
+          "$value": "0.9px",
+          "$description": "Pulls the estimated ring in so the dot keeps its outer size"
+        }
+      },
+      "timetable": {
+        "stroke-width": {
+          "$type": "dimension",
+          "$value": "1.6px",
+          "$description": "Dashed ring of a timetable-only dot"
+        },
+        "stroke-inset": {
+          "$type": "dimension",
+          "$value": "0.9px",
+          "$description": "Pulls the timetable ring in so the dot keeps its outer size"
+        }
+      }
+    },
+    "map": {
+      "dot-radius": {
+        "bus": {
+          "$type": "dimension",
+          "$value": "3.3px",
+          "$description": "Bus dot radius on the map at the default zoom"
+        },
+        "metro": {
+          "$type": "dimension",
+          "$value": "4.6px",
+          "$description": "Metro dot radius on the map at the default zoom"
+        },
+        "stog": {
+          "$type": "dimension",
+          "$value": "4.8px",
+          "$description": "S-tog dot radius on the map at the default zoom"
+        },
+        "regional": {
+          "$type": "dimension",
+          "$value": "5.3px",
+          "$description": "Regional train dot radius on the map at the default zoom"
+        }
+      },
+      "line-width": {
+        "metro": {
+          "$type": "dimension",
+          "$value": "3.2px",
+          "$description": "Metro line stroke on the map"
+        },
+        "stog": {
+          "$type": "dimension",
+          "$value": "2.5px",
+          "$description": "S-tog line stroke on the map"
+        },
+        "regional": {
+          "$type": "dimension",
+          "$value": "2.1px",
+          "$description": "Regional line stroke on the map"
+        },
+        "focus-extra": {
+          "$type": "dimension",
+          "$value": "1.6px",
+          "$description": "Added to the width of a focused line"
+        },
+        "bus-focus": {
+          "$type": "dimension",
+          "$value": "4px",
+          "$description": "Bus route drawn only when focused"
+        }
+      },
+      "track-spacing": {
+        "metro": {
+          "$type": "dimension",
+          "$value": "3.4px",
+          "$description": "Gap between parallel metro lines sharing a track"
+        },
+        "stog": {
+          "$type": "dimension",
+          "$value": "2.8px",
+          "$description": "Gap between parallel S-tog lines sharing a track"
+        },
+        "regional": {
+          "$type": "dimension",
+          "$value": "2.8px",
+          "$description": "Gap between parallel regional lines sharing a track"
+        }
+      }
+    }
+  },
+  "light": {
+    "color": {
+      "text": {
+        "primary": {
+          "$type": "color",
+          "$value": "#12181B",
+          "$description": "Main text and icons; also the focus ring"
+        },
+        "secondary": {
+          "$type": "color",
+          "$value": "#47535A",
+          "$description": "Supporting text"
+        },
+        "tertiary": {
+          "$type": "color",
+          "$value": "#74818A",
+          "$description": "Hints, captions, inactive controls"
+        },
+        "inverse": {
+          "$type": "color",
+          "$value": "{color.surface.default}",
+          "$description": "Text on inverse surfaces: tooltips, the chart's value tip"
+        }
+      },
+      "surface": {
+        "raised": {
+          "$type": "color",
+          "$value": "#FFFFFF",
+          "$description": "Inputs, selected segment"
+        },
+        "hover": {
+          "$type": "color",
+          "$value": "rgba(18, 24, 27, 0.05)",
+          "$description": "Hover state layer"
+        },
+        "selected": {
+          "$type": "color",
+          "$value": "rgba(18, 24, 27, 0.09)",
+          "$description": "Selected row"
+        },
+        "inverse": {
+          "$type": "color",
+          "$value": "{color.text.primary}",
+          "$description": "Primary buttons, pressed icon buttons, chart tooltip"
+        },
+        "default": {
+          "$type": "color",
+          "$value": "#FAFBF9",
+          "$description": "Opaque panel background; text on inverse surfaces"
+        },
+        "overlay": {
+          "$type": "color",
+          "$value": "rgba(250, 251, 249, 0.9)",
+          "$description": "Translucent floating panels over the map (used with backdrop blur)"
+        },
+        "inset": {
+          "$type": "color",
+          "$value": "#EBEEEB",
+          "$description": "Segmented control track, counts, inset boxes"
+        }
+      },
+      "border": {
+        "subtle": {
+          "$type": "color",
+          "$value": "rgba(18, 24, 27, 0.11)",
+          "$description": "Dividers and panel borders"
+        },
+        "strong": {
+          "$type": "color",
+          "$value": "rgba(18, 24, 27, 0.22)",
+          "$description": "Input borders, dashed tags, axis lines"
+        },
+        "focus": {
+          "$type": "color",
+          "$value": "{color.text.primary}",
+          "$description": "Keyboard focus ring"
+        }
+      },
+      "status": {
+        "info": {
+          "$type": "color",
+          "$value": "#2D5FC4",
+          "$description": "Early, diversions"
+        },
+        "success": {
+          "$type": "color",
+          "$value": "#13915A",
+          "$description": "Healthy, on time, live share at or above 70%"
+        },
+        "warning": {
+          "$type": "color",
+          "$value": "#B06A00",
+          "$description": "Partial, live share 40–69%"
+        },
+        "danger": {
+          "$type": "color",
+          "$value": "#C2410C",
+          "$description": "Late by 3 min or more, live share under 40%, delay disruptions"
+        }
+      },
+      "chart": {
+        "series": {
+          "$type": "color",
+          "$value": "#2B6C8C",
+          "$description": "Single data series (vehicles in service curve)"
+        }
+      },
+      "transit": {
+        "mode": {
+          "bus": {
+            "$type": "color",
+            "$value": "#D99A00",
+            "$description": "All bus lines"
+          },
+          "regional": {
+            "$type": "color",
+            "$value": "#232C31",
+            "$description": "Regional and Øresund trains"
+          },
+          "on-bus": {
+            "$type": "color",
+            "$value": "{color.text.on-color.dark}",
+            "$description": "Label text on bus badges"
+          },
+          "on-regional": {
+            "$type": "color",
+            "$value": "{color.surface.default}",
+            "$description": "Label text on regional train badges"
+          }
+        },
+        "delay": {
+          "on-time": {
+            "$type": "color",
+            "$value": "{color.status.success}",
+            "$description": "Delay text when on time"
+          },
+          "slight": {
+            "$type": "color",
+            "$value": "{color.text.primary}",
+            "$description": "Late by 1–2 min"
+          },
+          "late": {
+            "$type": "color",
+            "$value": "{color.status.danger}",
+            "$description": "Late by 3 min or more"
+          },
+          "early": {
+            "$type": "color",
+            "$value": "{color.status.info}",
+            "$description": "Delay text when early"
+          },
+          "unknown": {
+            "$type": "color",
+            "$value": "{color.text.tertiary}",
+            "$description": "Delay text when there is no real-time data"
+          }
+        },
+        "severity": {
+          "delay": {
+            "$type": "color",
+            "$value": "{color.status.danger}",
+            "$description": "Icon and label for delays"
+          },
+          "data": {
+            "$type": "color",
+            "$value": "{color.text.secondary}",
+            "$description": "Data feed problems"
+          },
+          "diversion": {
+            "$type": "color",
+            "$value": "{color.status.info}",
+            "$description": "Icon and label for diversions"
+          },
+          "planned": {
+            "$type": "color",
+            "$value": "{color.text.secondary}",
+            "$description": "Icon and label for planned works"
+          }
+        }
+      },
+      "data-state": {
+        "no-signal": {
+          "$type": "color",
+          "$value": "#9AA4A9",
+          "$description": "Prik fill when a vehicle has been silent for 5+ min"
+        },
+        "halo": {
+          "$type": "color",
+          "$value": "{color.map.land}",
+          "$description": "Map only: ring under each dot"
+        },
+        "outline": {
+          "$type": "color",
+          "$value": "rgba(18, 24, 27, 0.45)",
+          "$description": "Map only: outline around light line colours on a light map"
+        }
+      },
+      "map": {
+        "water": {
+          "$type": "color",
+          "$value": "#C4D4DD",
+          "$description": "Sea, lakes and the page behind the map"
+        },
+        "land": {
+          "$type": "color",
+          "$value": "#EDEFEB",
+          "$description": "Land, the map's main ground"
+        },
+        "park": {
+          "$type": "color",
+          "$value": "#D8E4D2",
+          "$description": "Parks and green areas"
+        },
+        "street": {
+          "$type": "color",
+          "$value": "#FFFFFF",
+          "$description": "Streets"
+        },
+        "airport": {
+          "$type": "color",
+          "$value": "#E2E5E1",
+          "$description": "Airport grounds"
+        },
+        "runway": {
+          "$type": "color",
+          "$value": "#CBD1CE",
+          "$description": "Runways and taxiways"
+        },
+        "building": {
+          "$type": "color",
+          "$value": "#E2E5E0",
+          "$description": "Building footprints at close zoom"
+        },
+        "rail": {
+          "$type": "color",
+          "$value": "#BCC4C1",
+          "$description": "Rail tracks without a coloured line on them"
+        },
+        "label": {
+          "$type": "color",
+          "$value": "#66737A",
+          "$description": "Place names"
+        },
+        "water-label": {
+          "$type": "color",
+          "$value": "#5F7A88",
+          "$description": "Water names"
+        }
+      }
+    },
+    "shadow": {
+      "panel": {
+        "$type": "boxShadow",
+        "$value": [
+          {
+            "x": "0px",
+            "y": "1px",
+            "blur": "2px",
+            "spread": "0px",
+            "color": "rgba(18, 24, 27, 0.06)",
+            "type": "dropShadow"
+          },
+          {
+            "x": "0px",
+            "y": "10px",
+            "blur": "30px",
+            "spread": "0px",
+            "color": "rgba(18, 24, 27, 0.1)",
+            "type": "dropShadow"
+          }
+        ],
+        "$description": "Floating panels"
+      }
+    }
+  },
+  "dark": {
+    "color": {
+      "text": {
+        "primary": {
+          "$type": "color",
+          "$value": "#E8EDEB",
+          "$description": "Main text and icons; also the focus ring"
+        },
+        "secondary": {
+          "$type": "color",
+          "$value": "#A2ADB1",
+          "$description": "Supporting text"
+        },
+        "tertiary": {
+          "$type": "color",
+          "$value": "#717E84",
+          "$description": "Hints, captions, inactive controls"
+        },
+        "inverse": {
+          "$type": "color",
+          "$value": "{color.surface.default}",
+          "$description": "Text on inverse surfaces: tooltips, the chart's value tip"
+        }
+      },
+      "surface": {
+        "raised": {
+          "$type": "color",
+          "$value": "#1D2428",
+          "$description": "Inputs, selected segment"
+        },
+        "hover": {
+          "$type": "color",
+          "$value": "rgba(232, 237, 235, 0.06)",
+          "$description": "Hover state layer"
+        },
+        "selected": {
+          "$type": "color",
+          "$value": "rgba(232, 237, 235, 0.09)",
+          "$description": "Selected row"
+        },
+        "inverse": {
+          "$type": "color",
+          "$value": "{color.text.primary}",
+          "$description": "Primary buttons, pressed icon buttons, chart tooltip"
+        },
+        "default": {
+          "$type": "color",
+          "$value": "#14191C",
+          "$description": "Opaque panel background; text on inverse surfaces"
+        },
+        "overlay": {
+          "$type": "color",
+          "$value": "rgba(20, 26, 29, 0.88)",
+          "$description": "Translucent floating panels over the map (used with backdrop blur)"
+        },
+        "inset": {
+          "$type": "color",
+          "$value": "#20282C",
+          "$description": "Segmented control track, counts, inset boxes"
+        }
+      },
+      "border": {
+        "subtle": {
+          "$type": "color",
+          "$value": "rgba(232, 237, 235, 0.1)",
+          "$description": "Dividers and panel borders"
+        },
+        "strong": {
+          "$type": "color",
+          "$value": "rgba(232, 237, 235, 0.2)",
+          "$description": "Input borders, dashed tags, axis lines"
+        },
+        "focus": {
+          "$type": "color",
+          "$value": "{color.text.primary}",
+          "$description": "Keyboard focus ring"
+        }
+      },
+      "status": {
+        "info": {
+          "$type": "color",
+          "$value": "#7FA6FF",
+          "$description": "Early, diversions"
+        },
+        "success": {
+          "$type": "color",
+          "$value": "#3CCB80",
+          "$description": "Healthy, on time, live share at or above 70%"
+        },
+        "warning": {
+          "$type": "color",
+          "$value": "#F0A43A",
+          "$description": "Partial, live share 40–69%"
+        },
+        "danger": {
+          "$type": "color",
+          "$value": "#FF8655",
+          "$description": "Late by 3 min or more, live share under 40%, delay disruptions"
+        }
+      },
+      "chart": {
+        "series": {
+          "$type": "color",
+          "$value": "#6DB3D8",
+          "$description": "Single data series (vehicles in service curve)"
+        }
+      },
+      "transit": {
+        "mode": {
+          "bus": {
+            "$type": "color",
+            "$value": "#F2B630",
+            "$description": "All bus lines"
+          },
+          "regional": {
+            "$type": "color",
+            "$value": "#EEF1F0",
+            "$description": "Regional and Øresund trains"
+          },
+          "on-bus": {
+            "$type": "color",
+            "$value": "{color.text.on-color.dark}",
+            "$description": "Label text on bus badges"
+          },
+          "on-regional": {
+            "$type": "color",
+            "$value": "{color.surface.default}",
+            "$description": "Label text on regional train badges"
+          }
+        },
+        "delay": {
+          "on-time": {
+            "$type": "color",
+            "$value": "{color.status.success}",
+            "$description": "Delay text when on time"
+          },
+          "slight": {
+            "$type": "color",
+            "$value": "{color.text.primary}",
+            "$description": "Late by 1–2 min"
+          },
+          "late": {
+            "$type": "color",
+            "$value": "{color.status.danger}",
+            "$description": "Late by 3 min or more"
+          },
+          "early": {
+            "$type": "color",
+            "$value": "{color.status.info}",
+            "$description": "Delay text when early"
+          },
+          "unknown": {
+            "$type": "color",
+            "$value": "{color.text.tertiary}",
+            "$description": "Delay text when there is no real-time data"
+          }
+        },
+        "severity": {
+          "delay": {
+            "$type": "color",
+            "$value": "{color.status.danger}",
+            "$description": "Icon and label for delays"
+          },
+          "data": {
+            "$type": "color",
+            "$value": "{color.text.secondary}",
+            "$description": "Data feed problems"
+          },
+          "diversion": {
+            "$type": "color",
+            "$value": "{color.status.info}",
+            "$description": "Icon and label for diversions"
+          },
+          "planned": {
+            "$type": "color",
+            "$value": "{color.text.secondary}",
+            "$description": "Icon and label for planned works"
+          }
+        }
+      },
+      "data-state": {
+        "no-signal": {
+          "$type": "color",
+          "$value": "#5F6B71",
+          "$description": "Prik fill when a vehicle has been silent for 5+ min"
+        },
+        "halo": {
+          "$type": "color",
+          "$value": "{color.map.land}",
+          "$description": "Map only: ring under each dot"
+        },
+        "outline": {
+          "$type": "color",
+          "$value": "rgba(0, 0, 0, 0)",
+          "$description": "Map only: outline around light line colours on a light map"
+        }
+      },
+      "map": {
+        "water": {
+          "$type": "color",
+          "$value": "#0A1115",
+          "$description": "Sea, lakes and the page behind the map"
+        },
+        "land": {
+          "$type": "color",
+          "$value": "#151B1E",
+          "$description": "Land, the map's main ground"
+        },
+        "park": {
+          "$type": "color",
+          "$value": "#16231E",
+          "$description": "Parks and green areas"
+        },
+        "street": {
+          "$type": "color",
+          "$value": "#252D31",
+          "$description": "Streets"
+        },
+        "airport": {
+          "$type": "color",
+          "$value": "#1C2326",
+          "$description": "Airport grounds"
+        },
+        "runway": {
+          "$type": "color",
+          "$value": "#2B3438",
+          "$description": "Runways and taxiways"
+        },
+        "building": {
+          "$type": "color",
+          "$value": "#1A2125",
+          "$description": "Building footprints at close zoom"
+        },
+        "rail": {
+          "$type": "color",
+          "$value": "#323C41",
+          "$description": "Rail tracks without a coloured line on them"
+        },
+        "label": {
+          "$type": "color",
+          "$value": "#7E8B91",
+          "$description": "Place names"
+        },
+        "water-label": {
+          "$type": "color",
+          "$value": "#4B6774",
+          "$description": "Water names"
+        }
+      }
+    },
+    "shadow": {
+      "panel": {
+        "$type": "boxShadow",
+        "$value": [
+          {
+            "x": "0px",
+            "y": "1px",
+            "blur": "2px",
+            "spread": "0px",
+            "color": "rgba(0, 0, 0, 0.35)",
+            "type": "dropShadow"
+          },
+          {
+            "x": "0px",
+            "y": "14px",
+            "blur": "36px",
+            "spread": "0px",
+            "color": "rgba(0, 0, 0, 0.38)",
+            "type": "dropShadow"
+          }
+        ],
+        "$description": "Floating panels"
+      }
+    }
+  },
+  "$themes": [
+    {
+      "id": "light",
+      "name": "Light",
+      "group": "Theme",
+      "selectedTokenSets": {
+        "base": "enabled",
+        "light": "enabled"
+      }
+    },
+    {
+      "id": "dark",
+      "name": "Dark",
+      "group": "Theme",
+      "selectedTokenSets": {
+        "base": "enabled",
+        "dark": "enabled"
+      }
+    }
+  ],
+  "$metadata": {
+    "tokenSetOrder": [
+      "base",
+      "light",
+      "dark"
+    ]
+  }
+}

@@ -1,0 +1,5 @@
+/* Everything Perron needs on a page: fonts, tokens and base rules. */
+@import './fonts.css';
+@import '../tokens/generated/tokens.css';
+@import '../tokens/generated/typography.css';
+@import './base.css';

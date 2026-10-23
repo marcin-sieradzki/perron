@@ -1,0 +1,40 @@
+{
+  "name": "Perron",
+  "version": "2025.10",
+  "description": "How the token files combine. base always applies; the theme modifier picks light or dark.",
+  "sets": {
+    "base": {
+      "sources": [
+        {
+          "$ref": "base.tokens.json"
+        }
+      ]
+    }
+  },
+  "modifiers": {
+    "theme": {
+      "description": "Colour theme",
+      "contexts": {
+        "light": [
+          {
+            "$ref": "light.tokens.json"
+          }
+        ],
+        "dark": [
+          {
+            "$ref": "dark.tokens.json"
+          }
+        ]
+      },
+      "default": "light"
+    }
+  },
+  "resolutionOrder": [
+    {
+      "$ref": "#/sets/base"
+    },
+    {
+      "$ref": "#/modifiers/theme"
+    }
+  ]
+}

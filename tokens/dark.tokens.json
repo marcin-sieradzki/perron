@@ -1,0 +1,420 @@
+{
+  "color": {
+    "$type": "color",
+    "text": {
+      "primary": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.9098, 0.9294, 0.9216],
+          "hex": "#E8EDEB"
+        },
+        "$description": "Main text and icons; also the focus ring"
+      },
+      "secondary": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.6353, 0.6784, 0.6941],
+          "hex": "#A2ADB1"
+        },
+        "$description": "Supporting text"
+      },
+      "tertiary": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.4431, 0.4941, 0.5176],
+          "hex": "#717E84"
+        },
+        "$description": "Hints, captions, inactive controls"
+      },
+      "inverse": {
+        "$value": "{color.surface.default}",
+        "$description": "Text on inverse surfaces: tooltips, the chart's value tip"
+      }
+    },
+    "surface": {
+      "raised": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.1137, 0.1412, 0.1569],
+          "hex": "#1D2428"
+        },
+        "$description": "Inputs, selected segment"
+      },
+      "hover": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.9098, 0.9294, 0.9216],
+          "alpha": 0.06,
+          "hex": "#E8EDEB"
+        },
+        "$description": "Hover state layer"
+      },
+      "selected": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.9098, 0.9294, 0.9216],
+          "alpha": 0.09,
+          "hex": "#E8EDEB"
+        },
+        "$description": "Selected row"
+      },
+      "inverse": {
+        "$value": "{color.text.primary}",
+        "$description": "Primary buttons, pressed icon buttons, chart tooltip"
+      },
+      "default": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.0784, 0.098, 0.1098],
+          "hex": "#14191C"
+        },
+        "$description": "Opaque panel background; text on inverse surfaces"
+      },
+      "overlay": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.0784, 0.102, 0.1137],
+          "alpha": 0.88,
+          "hex": "#141A1D"
+        },
+        "$description": "Translucent floating panels over the map (used with backdrop blur)"
+      },
+      "inset": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.1255, 0.1569, 0.1725],
+          "hex": "#20282C"
+        },
+        "$description": "Segmented control track, counts, inset boxes"
+      }
+    },
+    "border": {
+      "subtle": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.9098, 0.9294, 0.9216],
+          "alpha": 0.1,
+          "hex": "#E8EDEB"
+        },
+        "$description": "Dividers and panel borders"
+      },
+      "strong": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.9098, 0.9294, 0.9216],
+          "alpha": 0.2,
+          "hex": "#E8EDEB"
+        },
+        "$description": "Input borders, dashed tags, axis lines"
+      },
+      "focus": {
+        "$value": "{color.text.primary}",
+        "$description": "Keyboard focus ring"
+      }
+    },
+    "status": {
+      "info": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.498, 0.651, 1],
+          "hex": "#7FA6FF"
+        },
+        "$description": "Early, diversions"
+      },
+      "success": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.2353, 0.7961, 0.502],
+          "hex": "#3CCB80"
+        },
+        "$description": "Healthy, on time, live share at or above 70%"
+      },
+      "warning": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.9412, 0.6431, 0.2275],
+          "hex": "#F0A43A"
+        },
+        "$description": "Partial, live share 40–69%"
+      },
+      "danger": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [1, 0.5255, 0.3333],
+          "hex": "#FF8655"
+        },
+        "$description": "Late by 3 min or more, live share under 40%, delay disruptions"
+      }
+    },
+    "chart": {
+      "series": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.4275, 0.702, 0.8471],
+          "hex": "#6DB3D8"
+        },
+        "$description": "Single data series (vehicles in service curve)"
+      }
+    },
+    "transit": {
+      "mode": {
+        "bus": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [0.949, 0.7137, 0.1882],
+            "hex": "#F2B630"
+          },
+          "$description": "All bus lines"
+        },
+        "regional": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [0.9333, 0.9451, 0.9412],
+            "hex": "#EEF1F0"
+          },
+          "$description": "Regional and Øresund trains"
+        },
+        "on-bus": {
+          "$value": "{color.text.on-color.dark}",
+          "$description": "Label text on bus badges"
+        },
+        "on-regional": {
+          "$value": "{color.surface.default}",
+          "$description": "Label text on regional train badges"
+        }
+      },
+      "delay": {
+        "on-time": {
+          "$value": "{color.status.success}",
+          "$description": "Delay text when on time"
+        },
+        "slight": {
+          "$value": "{color.text.primary}",
+          "$description": "Late by 1–2 min"
+        },
+        "late": {
+          "$value": "{color.status.danger}",
+          "$description": "Late by 3 min or more"
+        },
+        "early": {
+          "$value": "{color.status.info}",
+          "$description": "Delay text when early"
+        },
+        "unknown": {
+          "$value": "{color.text.tertiary}",
+          "$description": "Delay text when there is no real-time data"
+        }
+      },
+      "severity": {
+        "delay": {
+          "$value": "{color.status.danger}",
+          "$description": "Icon and label for delays"
+        },
+        "data": {
+          "$value": "{color.text.secondary}",
+          "$description": "Data feed problems"
+        },
+        "diversion": {
+          "$value": "{color.status.info}",
+          "$description": "Icon and label for diversions"
+        },
+        "planned": {
+          "$value": "{color.text.secondary}",
+          "$description": "Icon and label for planned works"
+        }
+      }
+    },
+    "data-state": {
+      "no-signal": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.3725, 0.4196, 0.4431],
+          "hex": "#5F6B71"
+        },
+        "$description": "Prik fill when a vehicle has been silent for 5+ min"
+      },
+      "halo": {
+        "$value": "{color.map.land}",
+        "$description": "Map only: ring under each dot"
+      },
+      "outline": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0, 0, 0],
+          "alpha": 0,
+          "hex": "#000000"
+        },
+        "$description": "Map only: outline around light line colours on a light map"
+      }
+    },
+    "map": {
+      "water": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.0392, 0.0667, 0.0824],
+          "hex": "#0A1115"
+        },
+        "$description": "Sea, lakes and the page behind the map"
+      },
+      "land": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.0824, 0.1059, 0.1176],
+          "hex": "#151B1E"
+        },
+        "$description": "Land, the map's main ground"
+      },
+      "park": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.0863, 0.1373, 0.1176],
+          "hex": "#16231E"
+        },
+        "$description": "Parks and green areas"
+      },
+      "street": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.1451, 0.1765, 0.1922],
+          "hex": "#252D31"
+        },
+        "$description": "Streets"
+      },
+      "airport": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.1098, 0.1373, 0.149],
+          "hex": "#1C2326"
+        },
+        "$description": "Airport grounds"
+      },
+      "runway": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.1686, 0.2039, 0.2196],
+          "hex": "#2B3438"
+        },
+        "$description": "Runways and taxiways"
+      },
+      "building": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.102, 0.1294, 0.1451],
+          "hex": "#1A2125"
+        },
+        "$description": "Building footprints at close zoom"
+      },
+      "rail": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.1961, 0.2353, 0.2549],
+          "hex": "#323C41"
+        },
+        "$description": "Rail tracks without a coloured line on them"
+      },
+      "label": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.4941, 0.5451, 0.5686],
+          "hex": "#7E8B91"
+        },
+        "$description": "Place names"
+      },
+      "water-label": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.2941, 0.4039, 0.4549],
+          "hex": "#4B6774"
+        },
+        "$description": "Water names"
+      }
+    }
+  },
+  "shadow": {
+    "$type": "shadow",
+    "panel": {
+      "$value": [
+        {
+          "color": {
+            "colorSpace": "srgb",
+            "components": [0, 0, 0],
+            "alpha": 0.35,
+            "hex": "#000000"
+          },
+          "offsetX": {
+            "value": 0,
+            "unit": "px"
+          },
+          "offsetY": {
+            "value": 1,
+            "unit": "px"
+          },
+          "blur": {
+            "value": 2,
+            "unit": "px"
+          },
+          "spread": {
+            "value": 0,
+            "unit": "px"
+          }
+        },
+        {
+          "color": {
+            "colorSpace": "srgb",
+            "components": [0, 0, 0],
+            "alpha": 0.38,
+            "hex": "#000000"
+          },
+          "offsetX": {
+            "value": 0,
+            "unit": "px"
+          },
+          "offsetY": {
+            "value": 14,
+            "unit": "px"
+          },
+          "blur": {
+            "value": 36,
+            "unit": "px"
+          },
+          "spread": {
+            "value": 0,
+            "unit": "px"
+          }
+        }
+      ],
+      "$description": "Floating panels"
+    }
+  },
+  "$description": "Perron dark theme. Values from the prototype dark media query and [data-theme=\"dark\"]."
+}

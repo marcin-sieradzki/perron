@@ -1,0 +1,31 @@
+/* Perron page defaults. Import once at the app root, after the tokens. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Author styles that set display would otherwise beat the hidden attribute. */
+[hidden] {
+  display: none !important;
+}
+
+/* The page background is the app's to set: the live map uses color.map.water behind its tiles. */
+body {
+  margin: 0;
+  font: var(--perron-typography-body);
+  color: var(--perron-color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--perron-color-border-focus);
+  outline-offset: 2px;
+}
