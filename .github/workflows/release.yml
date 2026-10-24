@@ -4,6 +4,10 @@ name: Release
 # that PR is merged and none are left, it packs the new versions, installs those tarballs in a
 # scratch Vite app (scripts/smoke-consumer.ts), and publishes the same tarballs to npm with
 # provenance, signed in through npm trusted publishing.
+#
+# The Version packages PR is opened with the workflow's own token, and GitHub runs no workflow
+# for that, so CI doesn't check it: this workflow runs the check itself before it pushes. Opening
+# the PR needs "Allow GitHub Actions to create and approve pull requests" in Settings → Actions.
 on:
   push:
     branches: [main]
@@ -34,6 +38,10 @@ jobs:
       # Trusted publishing needs npm 11.5.1 or later.
       - run: npm install -g npm@11
       - run: npm ci
+      - name: Sign commits and tags as the Actions bot
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
       - id: plan
         name: Look for changesets
@@ -49,23 +57,32 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -B changeset-release/main
+          {
+            echo "Merging this PR publishes these versions to npm, with their changelogs in the diff. Every push to main that adds a changeset rewrites it."
+            echo
+            echo '```'
+            npx changeset status --verbose
+            echo '```'
+          } > "$RUNNER_TEMP/body.md"
           npx changeset version
           npm install --package-lock-only --no-audit --no-fund
+          npm run check
           git add -A
           git commit -m "Version packages"
           git push --force origin changeset-release/main
-          if [ "$(gh pr view changeset-release/main --json state -q .state 2>/dev/null)" != "OPEN" ]; then
+          if [ "$(gh pr view changeset-release/main --json state -q .state 2>/dev/null)" = "OPEN" ]; then
+            gh pr edit changeset-release/main --body-file "$RUNNER_TEMP/body.md"
+          else
             gh pr create --base main --head changeset-release/main --title "Version packages" \
-              --body "Merging this PR publishes the versions and changelogs below to npm. It is rewritten on every push to main that adds a changeset."
+              --body-file "$RUNNER_TEMP/body.md"
           fi
 
       - name: Pack the versions npm doesn't have yet
         id: pack
         if: steps.plan.outputs.pending == 'false'
         run: |
+          npm run check
           npx changeset pack --out-dir dist/release
           if find dist/release -name '*.tgz' | grep -q .; then
             echo "packed=true" >> "$GITHUB_OUTPUT"
@@ -87,6 +104,9 @@ jobs:
         if: steps.pack.outputs.packed == 'true'
         env:
           NPM_CONFIG_PROVENANCE: 'true'
-        run: |
-          npx changeset publish --from-pack-dir dist/release
-          git push origin --tags
+        run: npx changeset publish --from-pack-dir dist/release
+
+      # Also after a publish that failed part way, so the versions that made it get their tags.
+      - name: Push the release tags
+        if: always() && steps.pack.outputs.packed == 'true'
+        run: git push origin --tags

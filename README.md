@@ -35,7 +35,7 @@ The build checks every file against the format rule by rule (`scripts/lib/spec.t
 
 ## Releases
 
-Both packages release from CI with [Changesets](https://github.com/changesets/changesets). A PR that changes what a package ships adds a changeset (`npx changeset`): the packages it releases, the bump, and the changelog line. On `main`, `.github/workflows/release.yml` gathers the changesets into a "Version packages" PR. Merging that PR packs the new versions, installs the tarballs in a scratch Vite app (`scripts/smoke-consumer.ts`), and publishes the same tarballs to npm with provenance through npm trusted publishing, so no npm token is kept anywhere.
+Both packages release from CI with [Changesets](https://github.com/changesets/changesets). A PR that changes what a package ships adds a changeset (`npx changeset`): the packages it releases, the bump, and the changelog line. On `main`, `.github/workflows/release.yml` gathers the changesets into a "Version packages" PR. Merging that PR packs the new versions, installs the tarballs in a scratch Vite app (`scripts/smoke-consumer.ts`), and publishes the same tarballs to npm with provenance through npm trusted publishing, so no npm token is kept once the packages exist. The very first publish, before npm can trust the workflow, signs in with a short-lived `NPM_TOKEN` secret that is deleted afterwards.
 
 ## Token names
 
