@@ -1,0 +1,6 @@
+# Written by npm run factory; never by hand.
+component: LinkButton
+layer: component
+deferred:
+  at: 2026-10-24T22:08:28.471Z
+stages: {}
