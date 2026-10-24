@@ -1,0 +1,9 @@
+# Written by npm run factory; never by hand.
+component: Button
+layer: component
+stages:
+  design:
+    status: pending
+    started: 2026-10-24T19:38:51.016Z
+    ended: 2026-10-24T19:42:30.330Z
+    failing: '1. variant values: solid and outline only. 2. color intents: neutral only, no color property drawn. 3. sizes: small (size.button-sm) and medium (size.button, default). 4. State: default, hover, focus, disabled; no pressed. 5. needs a token for the solid hover fill: add color.surface.inverse-hover via design-tokens. 6. disabled: solid on color.surface.inset with color.text.tertiary; outline with no fill, border.width.025 in color.border.subtle, color.text.tertiary label. 7. outline rest fill: none. 8. padding/gap: medium space.400 and space.200 gap; small space.300 and space.150. 9. icons: variants hold root and label only; one extra board shows startIcon.'
