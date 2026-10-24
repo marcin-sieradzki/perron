@@ -33,6 +33,10 @@ The build checks every file against the format rule by rule (`scripts/lib/spec.t
 | `docs/renames.md`                             | Token names that changed or went away, for code written against an older name                                                                         |
 | `.claude/skills/`                             | Agent skills: `design-tokens`, and the others from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT)                                    |
 
+## Releases
+
+Both packages release from CI with [Changesets](https://github.com/changesets/changesets). A PR that changes what a package ships adds a changeset (`npx changeset`): the packages it releases, the bump, and the changelog line. On `main`, `.github/workflows/release.yml` gathers the changesets into a "Version packages" PR. Merging that PR packs the new versions, installs the tarballs in a scratch Vite app (`scripts/smoke-consumer.ts`), and publishes the same tarballs to npm with provenance through npm trusted publishing, so no npm token is kept anywhere.
+
 ## Token names
 
 Every token is `--perron-<group>-<name>` in CSS and `<group>.<name>` in the sources.
@@ -56,6 +60,7 @@ npm run tokens        # rebuild packages/perron/tokens/generated and the tables 
 npm run check         # generated files and tables up to date, typecheck, lint, format, tests
 npm run storybook     # the guideline pages in Storybook, at localhost:6006
 npm run storybook:build  # the docs site in dist/storybook
+npm run smoke         # pack both packages and install them in a scratch Vite app
 ```
 
 Storybook reads `docs/` itself (`scripts/lib/pages.ts`), so its pages change with the markdown and the tokens. Each page has a two-line MDX file in `storybook/pages/`; a Light and Dark switch on every page sets the theme.

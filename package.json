@@ -18,10 +18,12 @@
     "test:watch": "vitest",
     "check": "npm run tokens:check && npm run typecheck && npm run lint && npm run format:check && npm run test",
     "storybook": "storybook dev -p 6006",
-    "storybook:build": "storybook build -o dist/storybook && node scripts/build-site.ts dist/storybook"
+    "storybook:build": "storybook build -o dist/storybook && node scripts/build-site.ts dist/storybook",
+    "smoke": "node scripts/smoke-consumer.ts"
   },
   "devDependencies": {
     "@base-ui/react": "1.9.0",
+    "@changesets/cli": "3.0.3",
     "@mui/material": "9.5.0",
     "@storybook/addon-docs": "^10.6.3",
     "@storybook/react-vite": "^10.6.3",

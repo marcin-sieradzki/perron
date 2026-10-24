@@ -1,0 +1,92 @@
+name: Release
+
+# On main, while changesets wait in .changeset/, this keeps a "Version packages" PR up to date. Once
+# that PR is merged and none are left, it packs the new versions, installs those tarballs in a
+# scratch Vite app (scripts/smoke-consumer.ts), and publishes the same tarballs to npm with
+# provenance, signed in through npm trusted publishing.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+    env:
+      HAS_NPM_TOKEN: ${{ secrets.NPM_TOKEN != '' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      # Trusted publishing needs npm 11.5.1 or later.
+      - run: npm install -g npm@11
+      - run: npm ci
+
+      - id: plan
+        name: Look for changesets
+        run: |
+          if ls .changeset/*.md | grep -qv '/README.md$'; then
+            echo "pending=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "pending=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Open or update the Version packages PR
+        if: steps.plan.outputs.pending == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B changeset-release/main
+          npx changeset version
+          npm install --package-lock-only --no-audit --no-fund
+          git add -A
+          git commit -m "Version packages"
+          git push --force origin changeset-release/main
+          if [ "$(gh pr view changeset-release/main --json state -q .state 2>/dev/null)" != "OPEN" ]; then
+            gh pr create --base main --head changeset-release/main --title "Version packages" \
+              --body "Merging this PR publishes the versions and changelogs below to npm. It is rewritten on every push to main that adds a changeset."
+          fi
+
+      - name: Pack the versions npm doesn't have yet
+        id: pack
+        if: steps.plan.outputs.pending == 'false'
+        run: |
+          npx changeset pack --out-dir dist/release
+          if find dist/release -name '*.tgz' | grep -q .; then
+            echo "packed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Smoke-test the tarballs in a scratch app
+        if: steps.pack.outputs.packed == 'true'
+        run: node scripts/smoke-consumer.ts dist/release
+
+      # Only for the very first publish, before the packages exist on npm to trust this workflow.
+      # Delete the NPM_TOKEN secret once trusted publishing is set up for both packages.
+      - name: Sign in with the bootstrap token
+        if: steps.pack.outputs.packed == 'true' && env.HAS_NPM_TOKEN == 'true'
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+
+      - name: Publish
+        if: steps.pack.outputs.packed == 'true'
+        env:
+          NPM_CONFIG_PROVENANCE: 'true'
+        run: |
+          npx changeset publish --from-pack-dir dist/release
+          git push origin --tags
