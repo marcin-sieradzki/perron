@@ -139,7 +139,8 @@ function firstParamType(checker: ts.TypeChecker, source: ts.SourceFile, name: st
 
 /**
  * Adds to each doc the members of the `<Name>Props` its component takes that react-docgen did not
- * read: those it inherits from Base UI, and the package's own declared in another file. React's
+ * read: those it inherits from Base UI, and the package's own declared in another file; and the
+ * type of a member it read as `unknown`, such as a `readonly T[]`, written as the compiler does. React's
  * own, the HTML attributes, stay out of the table, as MUI's tables leave them out, but for the
  * root's `className`, `style` and `ref`. An inherited
  * member the component destructures with a default gets a row from react-docgen with that default
@@ -158,10 +159,15 @@ function addInherited(docs: ComponentDoc[], src: string, filename: string) {
     if (!type || firstParamType(checker, source, doc.actualName!) !== type) continue
     for (const member of checker.getPropertiesOfType(type)) {
       const read = doc.props?.[member.name]
-      if (read?.tsType) continue
+      if (read?.tsType && read.tsType.name !== 'unknown') continue
       const own = member.declarations?.find((d) => inPackage(d) || inBaseUi(d))
       const at = own ?? (ROOT_PROPS[member.name] ? member.declarations?.[0] : undefined)
       if (!at) continue
+      if (read?.tsType) {
+        // react-docgen read the member but not its type, as for `readonly T[]`: the compiler's
+        read.tsType = { name: propDoc(checker, member, at).tsType!.name } as typeof read.tsType
+        continue
+      }
       const inherited = propDoc(checker, member, at)
       if (!own) {
         inherited.description = ROOT_PROPS[member.name]
