@@ -3,4 +3,9 @@ component: IconButton
 layer: component
 deferred:
   at: 2026-10-24T22:07:30.545Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-24T22:07:33.331Z
+    ended: 2026-10-24T22:12:00.351Z
+    pending: 5
