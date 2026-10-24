@@ -1,0 +1,9 @@
+.pn-Fixture {
+  animation: pn-Fixture-spin var(--perron-duration-blink) infinite;
+}
+
+@keyframes pn-Fixture-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

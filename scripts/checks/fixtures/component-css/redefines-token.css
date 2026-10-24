@@ -1,0 +1,3 @@
+.pn-Fixture {
+  --perron-color-text-primary: var(--perron-color-text-secondary);
+}

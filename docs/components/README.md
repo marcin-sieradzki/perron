@@ -82,7 +82,7 @@ MUI's names, with Base UI's details passed through as the last argument.
 - `className` is merged, not replaced: `pn-<Name>` first, then the caller's.
 - Every prop the props type declares is taken out of `rest` before the spread, so a prop that is invalid on the element never reaches the DOM.
 
-The contract story of 2.6 renders every component with a `ref` and a `data-testid`, and fails unless both land on one element.
+The contract story, `storybook/contract/Contract.stories.tsx`, renders every registered component and pattern past designing with a `ref` and a `data-testid`, and fails unless both land on one element. It renders each with the args of its `Default` story (or its first story) over its meta's, so those args must render it alone, and a new component needs no edit to the contract story.
 
 ## Customising
 
@@ -203,15 +203,15 @@ The rest of the WCAG 2.2 AA target is on [Accessibility](../foundations/accessib
 - The default export is `satisfies Meta<typeof <Name>>`, with `component` set and `title: 'Components/<Name>'`.
 - One story per variant and state the Penpot design shows, named as Penpot names it, so the visual check pairs each story with its export.
 - A `play` test for every behaviour the component promises (dismissal, focus, keyboard), ending in the resting state: popups closed and focus back where it started.
-- Stories run in Chromium with axe in `error` mode, so an axe violation fails CI.
+- Stories run in Chromium with axe in `error` mode (`npm run test:stories`, part of `npm run check`), so an axe violation fails CI. The contract story's `Keyboard` story is the `play` pattern to copy: Tab to the element, expect focus, Shift+Tab back.
 
 ## Patterns
 
 A pattern is a piece of a Mylder screen, such as a departure row. It follows this contract, with three differences:
 
 - Its files are in `packages/perron/src/patterns/<Name>/`, in the same four shapes, and its stories are titled `Patterns/<Name>`.
-- It imports only Perron components and parts, never `@base-ui/react`. **Checked by `patterns`.**
-- It takes Mylder's domain props, such as a departure or a line, and its CSS may also read `color.transit.*`, `color.data-state.*`, `color.chart.*`, `opacity.*` and `prik.*`.
+- Its code imports only Perron's components and parts, `PerronProvider`, React and the files of its own folder, never `@base-ui/react`. A type-only import from another package is fine, and its stories and tests are not its code. **Checked by `patterns`.**
+- It takes Mylder's domain props, such as a departure or a line, and its CSS may also read `color.map.*`, `map.*`, `color.transit.*`, `color.data-state.*`, `color.chart.*`, `opacity.*`, `prik.*` and every `z-index.*` token.
 
 It is exported from `@mylder/perron/patterns`.
 
@@ -227,7 +227,7 @@ In Markdown it is an HTML comment holding `perron-allow(paths): reason`, at the 
 
 | Rule                | Fails on                                                                                      |
 | ------------------- | --------------------------------------------------------------------------------------------- |
-| `component-css`     | A raw colour, length or duration, a `var()` fallback, or a `--perron-*` name no token defines |
+| `component-css`     | Any [CSS](#css) rule: a raw value, a `var()` fallback, any `--perron-*` name no token defines |
 | `props`             | A prop outside the vocabulary's types, a name that is not a prop, or a prop without JSDoc     |
 | `patterns`          | A pattern importing anything but Perron components and parts                                  |
 | `shared-parts`      | A shared part's class, icon or declarations outside its folder                                |
