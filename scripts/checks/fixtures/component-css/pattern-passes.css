@@ -1,0 +1,6 @@
+/* A pattern may also read the map, transit, data-state, chart, opacity and prik tokens. */
+.pn-Fixture {
+  color: var(--perron-color-transit-line-m1);
+  opacity: var(--perron-opacity-series-fill);
+  z-index: var(--perron-z-index-sheet);
+}

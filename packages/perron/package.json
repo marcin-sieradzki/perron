@@ -1,7 +1,7 @@
 {
   "name": "@mylder/perron",
   "version": "0.1.0",
-  "description": "Perron, the design system of Mylder: design tokens, styles, icons and the Mylder mark.",
+  "description": "Perron, the design system of Mylder: design tokens, styles, icons, the Mylder mark, and the React components and patterns built on Base UI, in four locales.",
   "license": "MIT",
   "type": "module",
   "repository": {
@@ -9,7 +9,18 @@
     "url": "git+https://github.com/marcin-sieradzki/perron.git",
     "directory": "packages/perron"
   },
+  "sideEffects": [
+    "**/*.css"
+  ],
   "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./patterns": {
+      "types": "./dist/patterns.d.ts",
+      "default": "./dist/patterns.js"
+    },
     "./perron.css": "./styles/perron.css",
     "./tokens.css": "./tokens/generated/tokens.css",
     "./typography.css": "./tokens/generated/typography.css",
@@ -20,16 +31,26 @@
     "./data/*.json": "./data/*.json"
   },
   "files": [
+    "dist",
     "tokens",
     "styles",
     "icons",
     "logos",
     "data"
   ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json && node scripts/copy-css.ts",
+    "prepack": "npm run build"
+  },
   "dependencies": {
+    "@base-ui/react": "1.9.0",
     "@fontsource/familjen-grotesk": "^5.3.0",
     "@fontsource/jetbrains-mono": "^5.3.0",
     "@fontsource/schibsted-grotesk": "^5.3.0"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "publishConfig": {
     "access": "public"

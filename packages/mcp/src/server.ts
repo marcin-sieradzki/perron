@@ -72,7 +72,7 @@ export function createServer({ cwd = process.cwd() }: Options = {}) {
     {
       title: 'Search Perron docs',
       description:
-        "Search Perron's foundation pages (colour, type, space, icons, motion, data states, the map…), content design (the words Mylder shows) and the glossary. Returns the best matching sections in full.",
+        "Search Perron's foundation pages (colour, type, space, icons, motion, data states, the map…), content design (the words Mylder shows), the glossary, and the component contract and spec template. Returns the best matching sections in full.",
       inputSchema: {
         query: z.string().describe('What to look for, such as `reduced motion` or `delay wording`'),
         limit: z

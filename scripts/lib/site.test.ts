@@ -22,9 +22,18 @@ describe('the docs site', () => {
       expect(lines).toContainEqual(expect.stringMatching(`\\]\\(${SITE}${path}\\): \\S`))
   })
 
+  it('groups llms.txt as the sidebar does: foundations, guidelines, then components', () => {
+    expect(site['llms.txt'].match(/^## .+$/gm)).toEqual([
+      '## Foundations',
+      '## Guidelines',
+      '## Components',
+      '## Optional',
+    ])
+  })
+
   it('describes each page in llms.txt by its opening sentence, links dropped', () => {
     expect(site['llms.txt']).toContain(
-      `- [Content design](${SITE}docs/content-design.md): How every word in Mylder reads: plain sentences, exact about certainty, in English and Danish.\n`,
+      `- [Content design](${SITE}docs/content-design.md): How every word in Mylder reads: plain sentences, exact about certainty, in English, Danish, Swedish and Norwegian Bokmål.\n`,
     )
   })
 

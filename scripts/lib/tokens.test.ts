@@ -6,11 +6,11 @@ import { composite, contrastRatio } from './color.ts'
 import { buildDocs, documentedTokens } from './docs.ts'
 import { PACKAGE } from './paths.ts'
 import { base, theme } from '../../packages/perron/tokens/generated/tokens.ts'
-import { readSources } from '../build-tokens.ts'
+import { readSources } from './token-sources.ts'
 import { buildAll, loadTokens, resolveValue, tokenMap, type TokenSources } from './tokens.ts'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '../..')
-const sources = readSources()
+const sources = readSources(root)
 const tokens = loadTokens(sources)
 
 describe('token sources', () => {

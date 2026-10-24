@@ -5,5 +5,33 @@
     "correctness": "error",
     "suspicious": "warn"
   },
+  "rules": {
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["@mui/**"],
+            "allowTypeImports": true,
+            "message": "MUI is installed for its bundled docs only (get_reference). Build on @base-ui/react; a type-only import is fine."
+          },
+          {
+            "group": ["@base-ui-components/**"],
+            "message": "Base UI's old package name. Import from @base-ui/react/<part>."
+          },
+          {
+            "group": ["@base-ui/react/internals", "@base-ui/react/internals/**"],
+            "message": "Base UI's internals are not its public API. Import from @base-ui/react/<part>."
+          }
+        ]
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["packages/mcp/**", "scripts/**"],
+      "rules": { "no-restricted-imports": "off" }
+    }
+  ],
   "ignorePatterns": ["coverage", "dist", "packages/perron/tokens/generated", "packages/perron/data"]
 }

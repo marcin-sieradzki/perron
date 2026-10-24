@@ -1,0 +1,21 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "rootDir": "src",
+    "outDir": "dist",
+    "rewriteRelativeImportExtensions": true,
+    // a component imports its own CSS, which scripts/copy-css.ts puts beside the built JS
+    "noUncheckedSideEffectImports": false,
+    "types": []
+  },
+  "include": ["src"],
+  "exclude": [
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx",
+    "src/**/*.stories.tsx",
+    "src/**/fixtures",
+    "src/testing"
+  ]
+}

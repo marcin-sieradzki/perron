@@ -1,0 +1,4 @@
+.pn-Fixture {
+  padding: 4px var(--perron-space-200);
+  margin-block: calc(var(--perron-space-100) + 0.5rem);
+}

@@ -13,12 +13,17 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
+      # The whole history, with the release tags that the api-compatibility check compares against
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      # the Chromium the story tests run in (npm run test:stories, part of npm run check)
+      - run: npx playwright install --with-deps chromium
       - run: npm run check
       # Storybook, with llms.txt, AGENTS.md and a Markdown twin of every page beside it
       - run: npm run storybook:build

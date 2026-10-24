@@ -1,7 +1,11 @@
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
-import { readSources } from '../build-tokens.ts'
+import { readSources } from './token-sources.ts'
 import { inlinePointers, validateSources } from './spec.ts'
 import type { TokenSources } from './tokens.ts'
+
+const root = join(dirname(fileURLToPath(import.meta.url)), '../..')
 
 const resolver = {
   version: '2025.10',
@@ -16,7 +20,7 @@ const red = { colorSpace: 'srgb', components: [1, 0, 0], hex: '#FF0000' }
 
 describe('format 2025.10', () => {
   it('passes the Perron token files', () => {
-    expect(validateSources(readSources())).toEqual([])
+    expect(validateSources(readSources(root))).toEqual([])
   })
 
   it('passes every type in its valid form', () => {

@@ -9,7 +9,7 @@ TDD is the red → green loop. This skill is the reference that makes that loop 
 
 When exploring the codebase, read `docs/glossary.md` so test names and interface vocabulary match Perron's domain language, and respect the ADRs in `docs/adr/` for the area you're touching.
 
-In Perron, a test is a Vitest file beside its module (`scripts/lib/tokens.test.ts` tests `tokens.ts`), run by `npm test`. A component's behaviour is tested in the `play` functions of its stories, as the contract in `docs/components/README.md` says.
+In Perron, a test is a Vitest file beside its module (`scripts/lib/tokens.test.ts` tests `tokens.ts`), run by `npm test`. A component's behaviour is tested in the `play` functions of its stories, as the contract in `docs/components/README.md` says; `npm run test:stories` runs every story in headless Chromium, with axe.
 
 ## What a good test is
 

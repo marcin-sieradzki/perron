@@ -22,7 +22,7 @@ Every token's name, type, CSS custom property, value in each theme, the token it
 
 ### `search_docs`
 
-The sections of the foundation pages, content design and the glossary that best match `query`, in full. `limit` sets how many, 3 by default.
+The sections of the foundation pages, content design, the glossary and the component contract that best match `query`, in full. `limit` sets how many, 3 by default.
 
 ### `get_reference`
 
