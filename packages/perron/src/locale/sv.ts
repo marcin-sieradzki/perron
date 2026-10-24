@@ -19,6 +19,7 @@ export const sv: OwnedStrings = {
   diversions: 'Omledningar',
   plannedWorks: 'Planerade arbeten',
   dataFeedProblems: 'Problem med realtidsdata',
+  affectedLines: 'Berörda linjer',
   runningNormally: 'Går som vanligt',
   showOnMap: 'Visa på kartan',
   minutesUnit: 'min',

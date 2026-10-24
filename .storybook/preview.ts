@@ -94,6 +94,7 @@ const preview: Preview = {
             'DataStatePanel',
             'DetailHeader',
             'StopTimeline',
+            'DisruptionCard',
           ],
           // registry:patterns end
           // registry:specs start: written by npm run registry, each built entry's spec page
@@ -117,6 +118,7 @@ const preview: Preview = {
             'DataStatePanel',
             'DetailHeader',
             'StopTimeline',
+            'DisruptionCard',
           ],
           // registry:specs end
         ],

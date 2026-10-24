@@ -1,0 +1,30 @@
+# Written by npm run factory; never by hand.
+component: DisruptionCard
+layer: pattern
+deferred:
+  at: 2026-10-24T22:43:34.238Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-24T22:50:12.196Z
+    ended: 2026-10-24T22:51:37.650Z
+  build:
+    runs: 4
+    status: done
+    started: 2026-10-24T23:18:42.988Z
+    ended: 2026-10-24T23:20:18.706Z
+  review:
+    rounds: 3
+    sentBack: 1
+    findings:
+      p1: 0
+      p2: 0
+      p3: 3
+    status: done
+    started: 2026-10-24T23:20:23.531Z
+    ended: 2026-10-24T23:24:18.820Z
+  docs:
+    failures: 1
+    status: done
+    started: 2026-10-24T23:24:56.593Z
+    ended: 2026-10-24T23:27:44.234Z
