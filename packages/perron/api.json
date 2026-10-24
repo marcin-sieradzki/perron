@@ -371,6 +371,46 @@
       }
     }
   },
+  "Surface": {
+    "extends": [
+      "Omit< useRender.ComponentProps<'div'>, 'children' | 'className' | 'style' | 'ref' >"
+    ],
+    "props": {
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLElement>"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "variant": {
+        "optional": true,
+        "type": [
+          "\"glass\"",
+          "\"inset\"",
+          "\"opaque\"",
+          "\"raised\""
+        ]
+      }
+    }
+  },
   "Text": {
     "extends": [
       "Omit<HTMLAttributes<HTMLElement>, 'color' | 'children' | 'className' | 'style'>",
