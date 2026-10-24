@@ -1,0 +1,17 @@
+# Review: SeverityLabel, round 1
+
+## P1
+
+None.
+
+## P2
+
+- **P2-1.** `packages/perron/src/components/SeverityLabel/SeverityLabel.css:15` The icon's `align-self: flex-start` and its `margin-block-start` (`--perron-font-size-300` × `--perron-font-line-height-snug`) have no row in the spec's Tokens table, and they override the `align-items: center` row "so the icon sits on the text's middle". The calc also copies the size and line height of `typography.label-sm` by hand. If that role changes in `base.tokens.json`, the icon drifts off the first line without any warning. Today it measures centred, at 1.3 px, in all 8 renders. Fix: either give the spec's Tokens table these two rows, with CR-8 as the reason, or tie the offset to the typography role. This breaks the design-qa Spacing line: every spacing value is one the Tokens table names.
+- **P2-2.** `docs/content-design.md:9` The table under "Data-state and delay words" (line 13) now holds the four kinds of disruption. But the rule above it still reads "Data states and delays always use the words in the table below", so it does not cover "Diversions", "Planned works" or "Data feed problems". The rule and the heading should name kinds of disruption, which is what the spec's Owned strings section wants: "so every screen names a disruption the same way in all four languages". This breaks the content-audit Docs step: a page says what its table holds.
+
+## P3
+
+- **P3-1.** `packages/perron/src/components/SeverityLabel/SeverityLabel.tsx:33` `render` is left out of `useRender.ComponentProps` and declared again with the same type, only to carry Perron's own JSDoc and `@default <span />`. The spec asks for this ("Every prop here gets this description as its JSDoc"). The contract says a component "never redeclares a Base UI prop to show it", so the maintainer should decide whether a Perron-specific description is a good enough reason. The next components built on `useRender` will copy whatever is decided here.
+- **P3-2.** `packages/perron/src/components/SeverityLabel/SeverityLabel.tsx:26` `severity` is a new prop name in the Transit category, which has no member past designing to compare with. DisruptionCard and the other members will copy it. MUI's Alert uses `severity` for `'success' | 'info' | 'warning' | 'error'` with a default, while here it is required and holds the kinds of disruption. The spec argues the case. The maintainer should confirm the name before siblings adopt it (the api-consistency rule "a new prop name the next siblings will copy").
+- **P3-3.** `packages/perron/src/components/SeverityLabel/SeverityLabel.tsx:120` `useOwnedStrings` keeps any string that is not `undefined`. So `delaysLabel=""` renders only the coloured icon, which is `aria-hidden`, with an empty `label`: the eye gets an icon alone and the ear gets nothing. That goes against "an icon never carries meaning alone" (Icons) and the checklist line "Everything the eye is told, the ear is told, for every shape each prop accepts". The question is whether an empty `*Label` should fall back to the locale's word, here or in `useOwnedStrings` for every component.
+- **P3-4.** `.changeset/severity-label.md:5` The changelog line says only "Adds `SeverityLabel`". The release also ships three new owned strings in four locales (`diversions`, `plannedWorks`, `dataFeedProblems`), which widens `OwnedStringKey`, and a new JSDoc for `delays`. The content-audit skill says a changed owned string ships with a changeset, so the line could name them.
