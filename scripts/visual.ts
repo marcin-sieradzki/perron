@@ -205,7 +205,8 @@ export async function runVisual(o: VisualOptions): Promise<Report> {
           for (const e of list) (wanted[e.selector] ??= []).push(...e.properties)
           const page = await browser.newPage({ viewport: { width: 1280, height: 800 } })
           try {
-            await page.goto(`${url}/iframe.html?id=${id}&viewMode=story`)
+            // embed mode renders the story without its play, which may close what it opened
+            await page.goto(`${url}/iframe.html?id=${id}&viewMode=story&embed=true`)
             await page.waitForSelector(rootSelector, { timeout: 15_000 })
             await page.evaluate(
               (t) => document.documentElement.setAttribute('data-theme', t),

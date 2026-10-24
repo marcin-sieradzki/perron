@@ -19,6 +19,7 @@ Every cell of the spec is a fact or a decision.
 
 - A **fact** comes from a source: the read-back, the code map, the contract, the Base UI reference, the tokens, the locale files. Finding facts is your job, to the end: when `get_reference` leaves one out, such as a key's behaviour, read the `base-ui` MCP (the hosted docs, which describe the latest release) and confirm it in the installed package under `node_modules/@base-ui/react/`.
 - A **decision** is one the sources leave open: a default the contract doesn't set, a Base UI prop to expose or keep, an owned string's English, a value no token gives. It goes in place as `[PENDING] <the question> Recommended: <your answer>.`, worded so that "yes" accepts the recommendation. Its row or line stays in the spec, so the answer lands where it belongs.
+- An **answer** replaces its `[PENDING]` line with the decision, written as a statement where the question stood, its reason after it: `[PENDING] Does it take a size? Recommended: no, …` answered "yes" becomes "It takes no size: …", and in a table cell, the cell's value. The spec is read as the component's page, so no label ("Answered", "Recommended") and no question stays; the factory refuses a line with either.
 
 ## Steps
 
@@ -65,6 +66,6 @@ The run ends with one outcome and a short summary.
 
 ## Run again, or by hand
 
-A run that finds the spec already written keeps every filled section and works from the answers in it: each one is carried into every section it touches (a token answer into Tokens, a prop answer into Props and Component rules), and steps 3 to 5 run again.
+A run that finds the spec already written keeps every filled section and works from the answers in it: each line still worded as its question or labelled as an answer is rewritten in the answered form first, then each answer is carried into every section it touches (a token answer into Tokens, a prop answer into Props and Component rules), and steps 3 to 5 run again.
 
 Run by the maintainer by hand, step 5 puts the questions with the `grilling` skill, in rounds, each with its recommended answer. Write each answer in place of its `[PENDING]` line, carry it through as above, and ask the next round until none is left.

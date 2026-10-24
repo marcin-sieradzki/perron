@@ -398,6 +398,98 @@
       }
     }
   },
+  "MapControls": {
+    "extends": [
+      "Omit< ToolbarProps, 'orientation' | 'disabled' | 'children' | 'className' | 'style' | 'ref' >"
+    ],
+    "props": {
+      "centerMapLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "disabled": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "mapControlsLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "onCenterMap": {
+        "optional": true,
+        "type": [
+          "(event: MouseEvent<HTMLButtonElement, MouseEvent>) => void"
+        ]
+      },
+      "onZoomIn": {
+        "optional": true,
+        "type": [
+          "(event: MouseEvent<HTMLButtonElement, MouseEvent>) => void"
+        ]
+      },
+      "onZoomOut": {
+        "optional": true,
+        "type": [
+          "(event: MouseEvent<HTMLButtonElement, MouseEvent>) => void"
+        ]
+      },
+      "orientation": {
+        "optional": true,
+        "type": [
+          "\"horizontal\"",
+          "\"vertical\""
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "zoomInDisabled": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "zoomInLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "zoomOutDisabled": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "zoomOutLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      }
+    }
+  },
   "SeverityLabel": {
     "extends": [
       "Omit< useRender.ComponentProps<'span', SeverityLabelState>, 'children' | 'ref' >"

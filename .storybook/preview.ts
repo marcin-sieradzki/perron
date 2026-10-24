@@ -2,10 +2,18 @@ import type { Preview } from '@storybook/react-vite'
 // the tokens, fonts and page defaults every story renders with, as an app loads them at its root
 import '@mylder/perron/perron.css'
 
+// A docs page shows each story's first render, and its play stays the test (the canvas, Vitest).
+// An inline story already skips play (`docs.story.autoplay`, false); a story in its own iframe
+// (`docs.story.inline: false`, as an overlay's) loads that iframe from this URL, and Storybook's
+// embed mode skips play there. storybook/blocks/docs-embed.test.ts holds Storybook to both.
+Object.assign(globalThis, { PREVIEW_URL: 'iframe.html?embed=true' })
+
 const preview: Preview = {
   parameters: {
     // axe in error mode: a violation fails the story's test, and so CI (docs/components/README.md)
     a11y: { test: 'error' },
+    // a story opts in to its play on the docs page with `autoplay: true`, rendering inline
+    docs: { story: { autoplay: false } },
     options: {
       storySort: {
         // the order of the Contents page
@@ -45,6 +53,7 @@ const preview: Preview = {
             'Text',
             'EmptyState',
             'Surface',
+            'MapControls',
             'Sheet',
             'Delay',
             'LineBadge',
@@ -70,6 +79,7 @@ const preview: Preview = {
             'Text',
             'EmptyState',
             'Surface',
+            'MapControls',
             'Sheet',
             'Delay',
             'LineBadge',

@@ -275,6 +275,9 @@ export function cssProblems(
     for (const m of bare.matchAll(NUMBER)) {
       const unit = m[3]?.toLowerCase()
       if (!unit || Number(m[1]) === 0) continue
+      // `1lh` is the height of one line of the element's own typography token, a relation such as
+      // `100%` is, so an icon can centre on a first line: calc((1lh - var(--perron-icon-size)) / 2).
+      if (unit === 'lh' && Number(m[1]) === 1) continue
       if (LENGTH_UNITS.has(unit)) report(d, `raw length ${m[0]}; read a space, size or other token`)
       else if (DURATION_UNITS.has(unit)) report(d, `raw duration ${m[0]}; read a duration token`)
     }

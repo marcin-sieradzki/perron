@@ -1,0 +1,5 @@
+/* MapControls, from docs/components/map-controls.md. It sets nothing: the bar, the separator and
+   the buttons wear Toolbar's look through pn-Toolbar, pn-ToolbarSeparator and pn-ToolbarButton, so
+   the controls match every other toolbar (CR-9). It places nothing either: the screen puts it at
+   the bottom right, size.panel-gap from the edges, at z-index.map-controls (CR-10). The
+   pn-MapControls-* classes are hooks for a caller's CSS. */
