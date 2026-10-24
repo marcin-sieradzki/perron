@@ -27,8 +27,6 @@ export interface LineBadgeProps extends Omit<useRender.ComponentProps<'span'>, '
    * derived), and a badge without a name is colour alone.
    */
   children: ReactNode
-  /** Swaps the root `<span>` for another element, keeping the class and data attributes. */
-  render?: useRender.ComponentProps<'span'>['render']
 }
 
 /** Names one line, such as M1, A or 5C, in its operator's fill and label colour. */
