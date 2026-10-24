@@ -1,0 +1,6 @@
+# Written by npm run factory; never by hand.
+component: Dialog
+layer: component
+deferred:
+  at: 2026-10-24T23:23:29.736Z
+stages: {}
