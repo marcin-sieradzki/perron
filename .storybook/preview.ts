@@ -41,7 +41,11 @@ const preview: Preview = {
             'Button',
             'LinkButton',
             'Toolbar',
+            'Text',
+            'EmptyState',
             'Delay',
+            'LineBadge',
+            'SeverityLabel',
             'StationIcon',
             // registry:components end
           ],
@@ -54,7 +58,11 @@ const preview: Preview = {
             'Button',
             'LinkButton',
             'Toolbar',
+            'Text',
+            'EmptyState',
             'Delay',
+            'LineBadge',
+            'SeverityLabel',
             'StationIcon',
           ],
           // registry:specs end
