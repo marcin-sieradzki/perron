@@ -52,7 +52,7 @@ Each stage but visual runs as the Claude Code workflow `factory-stage` ([`.claud
    2. For design, check the Penpot MCP answers (`high_level_overview`); when it doesn't, ask the maintainer to open the "Perron Design System" file and choose File → MCP Server → Connect, and wait.
    3. For visual, run `npm run visual -- <Name>` yourself. Exit 0 is `done`. Any other exit is `failed`: the failing parts `components/<name>/visual/report.md` names, or the error the command printed when it wrote no report.
    4. For every other stage, start the workflow with `{ stage, name }`, and for review the `round` that `next` gave, and `answers` when the stage runs again after its questions. Keep the run id it returns: when the run is interrupted in this session, start it again with `resumeFromRunId` and the same args, so finished agent calls are not repeated.
-   5. For review, write the returned `review` to `components/<name>/review.md`, unchanged.
+   5. For review, write the returned `review` to `components/<name>/review.md`, its words unchanged, and run `npx prettier --write` on it, so `npm run check` passes.
 
    Done when the command or the workflow has given its outcome.
 

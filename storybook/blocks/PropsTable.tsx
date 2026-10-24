@@ -27,7 +27,7 @@ function Rows({ rows, defaults }: { rows: PropRow[]; defaults: boolean }) {
                 <code>{row.name}</code>
                 {row.required && <sup className="pd-required">*</sup>}
               </td>
-              <td>
+              <td className="pd-prop-type">
                 <code>{row.type}</code>
               </td>
               {defaults && <td>{row.default && <code>{row.default}</code>}</td>}

@@ -18,9 +18,14 @@ function gaugeArgTypes() {
   return Default.argTypes
 }
 
+/** The members GaugeProps declares itself. */
+const OWN = ['variant', 'label', 'loadingLabel', 'className', 'ref', 'disabled']
+
 describe('propRows', () => {
   it('gives each prop in MUI layout, in the order the props type declares, slots last', () => {
-    expect(propRows(gaugeArgTypes())).toEqual([
+    const rows = propRows(gaugeArgTypes())
+    const declared = rows.filter((r) => OWN.includes(r.name) || r.name.startsWith('slotProps.'))
+    expect(declared).toEqual([
       {
         name: 'variant',
         required: false,
@@ -78,6 +83,32 @@ describe('propRows', () => {
         description: 'Props for the `indicator` part.',
       },
     ])
+  })
+
+  it("adds the members the props type inherits from Base UI, with Base UI's JSDoc and default", () => {
+    const rows = propRows(gaugeArgTypes())
+    expect(rows.map((r) => r.name)).toEqual([
+      ...OWN,
+      'style',
+      'aria-valuetext',
+      'format',
+      'getAriaValueText',
+      'locale',
+      'max',
+      'min',
+      'value',
+      'render',
+      'slotProps.track',
+      'slotProps.indicator',
+    ])
+    expect(rows.find((r) => r.name === 'max')).toEqual({
+      name: 'max',
+      required: false,
+      type: 'number',
+      default: '100',
+      description: 'The maximum value',
+    })
+    expect(rows.find((r) => r.name === 'value')?.required).toBe(true)
   })
 })
 

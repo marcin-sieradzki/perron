@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs'
 import { dirname, join, posix } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
-import { PAGES } from './pages.ts'
+import { headingOf, PAGES } from './pages.ts'
 import { buildSite, SITE } from './site.ts'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '../..')
@@ -22,11 +22,14 @@ describe('the docs site', () => {
       expect(lines).toContainEqual(expect.stringMatching(`\\]\\(${SITE}${path}\\): \\S`))
   })
 
-  it('groups llms.txt as the sidebar does: foundations, guidelines, then components', () => {
+  it('groups llms.txt as the sidebar does: foundations, guidelines, components, then specs', () => {
+    // the specs group appears once the first entry past designing brings its spec page
+    const specs = PAGES.some((path) => headingOf(path, site[path]).group === 'Specs')
     expect(site['llms.txt'].match(/^## .+$/gm)).toEqual([
       '## Foundations',
       '## Guidelines',
       '## Components',
+      ...(specs ? ['## Specs'] : []),
       '## Optional',
     ])
   })

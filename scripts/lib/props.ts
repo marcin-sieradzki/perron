@@ -18,9 +18,10 @@ function compilerOptions(root: string): ts.CompilerOptions {
   return ts.parseJsonConfigFileContent(config, ts.sys, root).options
 }
 
+const inNodeModules = (file: string) => /[\\/]node_modules[\\/]/.test(file)
+
 /** Whether a declaration is the package's own, not a library's. */
-export const inPackage = (d: ts.Declaration) =>
-  !/[\\/]node_modules[\\/]/.test(d.getSourceFile().fileName)
+export const inPackage = (d: ts.Declaration) => !inNodeModules(d.getSourceFile().fileName)
 
 /** One file's props type: the symbol it exports as `<Name>Props`, if any, and its type. */
 export interface PropsType {
@@ -29,15 +30,42 @@ export interface PropsType {
   type?: ts.Type
 }
 
-/** One program over `files` (paths from `root`), and the props type `<Name>.tsx` exports. */
-export function propsProgram(root: string, files: string[]) {
+/** A library's files, parsed once per process and root: its programs read the same node_modules. */
+const libraryFiles = new Map<string, ts.SourceFile>()
+
+/**
+ * One program over `files` (paths from `root`), and the props type `<Name>.tsx` exports, or the one
+ * named `name`. `texts` gives a file's text by its path from `root`, in place of the one on disk.
+ */
+export function propsProgram(root: string, files: string[], texts: Record<string, string> = {}) {
+  const options = { ...compilerOptions(root), noEmit: true }
+  const host = ts.createCompilerHost(options)
+  const given = new Map(Object.entries(texts).map(([f, text]) => [join(root, f), text]))
+  const { getSourceFile, fileExists, readFile } = host
+  host.fileExists = (f) => given.has(f) || fileExists.call(host, f)
+  host.readFile = (f) => given.get(f) ?? readFile.call(host, f)
+  host.getSourceFile = (f, language, ...rest) => {
+    const text = given.get(f)
+    if (text !== undefined) return ts.createSourceFile(f, text, language, true)
+    if (!inNodeModules(f)) return getSourceFile.call(host, f, language, ...rest)
+    const key = `${root}\0${f}`
+    let source = libraryFiles.get(key)
+    if (!source) {
+      source = getSourceFile.call(host, f, language, ...rest)
+      if (source) libraryFiles.set(key, source)
+    }
+    return source
+  }
   const program = ts.createProgram(
     files.map((f) => join(root, f)),
-    { ...compilerOptions(root), noEmit: true },
+    options,
+    host,
   )
   const checker = program.getTypeChecker()
-  const propsOf = (file: string): PropsType => {
-    const name = `${basename(file).replace(/\.tsx?$/, '')}Props`
+  const propsOf = (
+    file: string,
+    name = `${basename(file).replace(/\.tsx?$/, '')}Props`,
+  ): PropsType => {
     const source = program.getSourceFile(join(root, file))
     const module = source && checker.getSymbolAtLocation(source)
     const exported = module && checker.getExportsOfModule(module).find((s) => s.name === name)
@@ -46,5 +74,5 @@ export function propsProgram(root: string, files: string[]) {
       exported.flags & ts.SymbolFlags.Alias ? checker.getAliasedSymbol(exported) : exported
     return { name, symbol, type: checker.getDeclaredTypeOfSymbol(symbol) }
   }
-  return { checker, propsOf }
+  return { program, checker, propsOf }
 }

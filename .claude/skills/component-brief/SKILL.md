@@ -51,7 +51,7 @@ Every cell of the spec is a fact or a decision.
 
 3. **Cross-check against the design.** Done when each of these holds: every layer name has an Anatomy row; every code map prop has a Props row; every variant has a Stories row; every token the read-back binds appears in Tokens; every `State` value is a design state the Tokens table covers. A design state the component's Base UI parts produce but the design doesn't show is a `[PENDING]` question for the maintainer.
 
-4. **Finish.** Run `npx prettier --write` on the spec, then `npm run gates -- paths`: the spec is a doc, so every repo path it names exists. Done when the gate passes and `grep '^## '` gives the same headings, in the same order, for the template and the spec.
+4. **Finish.** Run `npx prettier --write` on the spec, then `npm run gates -- paths`: the spec is a doc, so every repo path it names exists. Done when the gate passes, `grep '^## '` gives the same headings, in the same order, for the template and the spec, and every Markdown link in the spec goes to a page the docs site serves, by the template's rule on links.
 
 5. **Put the questions.** Collect every `[PENDING]` in the spec, numbered, with its section. Done when the list is returned (see [Returns](#returns)), or, run by hand, when none is left.
 
