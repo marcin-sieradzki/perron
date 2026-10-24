@@ -1,0 +1,229 @@
+{
+  "component": "ScratchChip",
+  "page": "Scratch",
+  "fileId": "5009c98b-0fb2-816e-8008-d665d727b93c",
+  "containerId": "27fef224-a6c1-80b8-8008-d70e6400d65a",
+  "properties": { "selected": ["false", "true"], "State": ["default", "hover"] },
+  "variants": [
+    {
+      "componentId": "27fef224-a6c1-80b8-8008-d70e637f1d78",
+      "props": { "selected": "false", "State": "default" },
+      "exports": {
+        "png": "8d00f83e458b472a04cef79ef4ac9873ca6b51229f46f508110e10c7a2ba1604",
+        "svg": "5d6e235a8463b76e63955c4f78c527d6d23ae05f49698498a798ebd5f4b47ef5"
+      },
+      "root": {
+        "name": "root",
+        "type": "board",
+        "id": "27fef224-a6c1-80b8-8008-d70e60012b28",
+        "size": { "width": 35, "height": 25 },
+        "layout": {
+          "type": "flex",
+          "dir": "row",
+          "wrap": "nowrap",
+          "alignItems": "center",
+          "justifyContent": "start",
+          "rowGap": 0,
+          "columnGap": 0,
+          "padding": [4, 4, 4, 4],
+          "horizontal": "auto",
+          "vertical": "auto"
+        },
+        "fills": ["#fafbf9"],
+        "strokes": [{ "color": "#12181b1c", "width": 1 }],
+        "radius": [9999, 9999, 9999, 9999],
+        "tokens": {
+          "borderRadiusBottomRight": "radius.full",
+          "strokeColor": "color.border.subtle",
+          "fill": "color.surface.default",
+          "borderRadiusTopRight": "radius.full",
+          "paddingRight": "space.100",
+          "paddingTop": "space.100",
+          "strokeWidth": "border.width.025",
+          "paddingLeft": "space.100",
+          "paddingBottom": "space.100",
+          "borderRadiusBottomLeft": "radius.full",
+          "borderRadiusTopLeft": "radius.full"
+        },
+        "children": [
+          {
+            "name": "label",
+            "type": "text",
+            "id": "27fef224-a6c1-80b8-8008-d70e60032226",
+            "size": { "width": 27, "height": 17, "horizontal": "fix", "vertical": "fix" },
+            "fills": ["#12181b"],
+            "strokes": [],
+            "radius": [0, 0, 0, 0],
+            "tokens": { "fill": "color.text.primary" },
+            "text": "Chip"
+          }
+        ]
+      }
+    },
+    {
+      "componentId": "27fef224-a6c1-80b8-8008-d70e6380eb78",
+      "props": { "selected": "false", "State": "hover" },
+      "exports": {
+        "png": "d0ae9cf7eca5c9787ddca97591f50164b4fd5e288c370f1f09e72bbd4bdc4ad4",
+        "svg": "83feece451f0ee3f93853a20b59806cf411fdc7b8b25ba9ad04cdff048285584"
+      },
+      "root": {
+        "name": "root",
+        "type": "board",
+        "id": "27fef224-a6c1-80b8-8008-d70e605b40dc",
+        "size": { "width": 35, "height": 25 },
+        "layout": {
+          "type": "flex",
+          "dir": "row",
+          "wrap": "nowrap",
+          "alignItems": "center",
+          "justifyContent": "start",
+          "rowGap": 0,
+          "columnGap": 0,
+          "padding": [4, 4, 4, 4],
+          "horizontal": "auto",
+          "vertical": "auto"
+        },
+        "fills": ["#12181b0d"],
+        "strokes": [{ "color": "#12181b1c", "width": 1 }],
+        "radius": [9999, 9999, 9999, 9999],
+        "tokens": {
+          "borderRadiusBottomRight": "radius.full",
+          "strokeColor": "color.border.subtle",
+          "fill": "color.surface.hover",
+          "borderRadiusTopRight": "radius.full",
+          "paddingRight": "space.100",
+          "paddingTop": "space.100",
+          "strokeWidth": "border.width.025",
+          "paddingLeft": "space.100",
+          "paddingBottom": "space.100",
+          "borderRadiusBottomLeft": "radius.full",
+          "borderRadiusTopLeft": "radius.full"
+        },
+        "children": [
+          {
+            "name": "label",
+            "type": "text",
+            "id": "27fef224-a6c1-80b8-8008-d70e605cf4bf",
+            "size": { "width": 27, "height": 17, "horizontal": "fix", "vertical": "fix" },
+            "fills": ["#12181b"],
+            "strokes": [],
+            "radius": [0, 0, 0, 0],
+            "tokens": { "fill": "color.text.primary" },
+            "text": "Chip"
+          }
+        ]
+      }
+    },
+    {
+      "componentId": "27fef224-a6c1-80b8-8008-d70e6381d628",
+      "props": { "selected": "true", "State": "default" },
+      "exports": {
+        "png": "ad131381042c02788a43c0a30d86818a5c4fa72207b83ffa817984360b1445e7",
+        "svg": "3bd5bfe1b4d80fb6492b5d1c8bf5aea46fa0e302723907f180cdc2a43ce9f249"
+      },
+      "root": {
+        "name": "root",
+        "type": "board",
+        "id": "27fef224-a6c1-80b8-8008-d70e60b40c16",
+        "size": { "width": 35, "height": 25 },
+        "layout": {
+          "type": "flex",
+          "dir": "row",
+          "wrap": "nowrap",
+          "alignItems": "center",
+          "justifyContent": "start",
+          "rowGap": 0,
+          "columnGap": 0,
+          "padding": [4, 4, 4, 4],
+          "horizontal": "auto",
+          "vertical": "auto"
+        },
+        "fills": ["#12181b17"],
+        "strokes": [{ "color": "#12181b1c", "width": 1 }],
+        "radius": [9999, 9999, 9999, 9999],
+        "tokens": {
+          "borderRadiusBottomRight": "radius.full",
+          "strokeColor": "color.border.subtle",
+          "fill": "color.surface.selected",
+          "borderRadiusTopRight": "radius.full",
+          "paddingRight": "space.100",
+          "paddingTop": "space.100",
+          "strokeWidth": "border.width.025",
+          "paddingLeft": "space.100",
+          "paddingBottom": "space.100",
+          "borderRadiusBottomLeft": "radius.full",
+          "borderRadiusTopLeft": "radius.full"
+        },
+        "children": [
+          {
+            "name": "label",
+            "type": "text",
+            "id": "27fef224-a6c1-80b8-8008-d70e60b581a3",
+            "size": { "width": 27, "height": 17, "horizontal": "fix", "vertical": "fix" },
+            "fills": ["#12181b"],
+            "strokes": [],
+            "radius": [0, 0, 0, 0],
+            "tokens": { "fill": "color.text.primary" },
+            "text": "Chip"
+          }
+        ]
+      }
+    },
+    {
+      "componentId": "27fef224-a6c1-80b8-8008-d70e6382b76a",
+      "props": { "selected": "true", "State": "hover" },
+      "exports": {
+        "png": "3db5e3eb9ca9f816c0be4f2db002e9838bedce4d766d0ddc4c3d79ed9984cdf7",
+        "svg": "9f3640ef12c4f877ca7637155b3122b6ab49a3b778c947ada2011609127c92a5"
+      },
+      "root": {
+        "name": "root",
+        "type": "board",
+        "id": "27fef224-a6c1-80b8-8008-d70e610bb344",
+        "size": { "width": 35, "height": 25 },
+        "layout": {
+          "type": "flex",
+          "dir": "row",
+          "wrap": "nowrap",
+          "alignItems": "center",
+          "justifyContent": "start",
+          "rowGap": 0,
+          "columnGap": 0,
+          "padding": [4, 4, 4, 4],
+          "horizontal": "auto",
+          "vertical": "auto"
+        },
+        "fills": ["#fff2dd"],
+        "strokes": [{ "color": "#12181b1c", "width": 1 }],
+        "radius": [9999, 9999, 9999, 9999],
+        "tokens": {
+          "borderRadiusBottomRight": "radius.full",
+          "strokeColor": "color.border.subtle",
+          "fill": "color.surface.brand-subtle",
+          "borderRadiusTopRight": "radius.full",
+          "paddingRight": "space.100",
+          "paddingTop": "space.100",
+          "strokeWidth": "border.width.025",
+          "paddingLeft": "space.100",
+          "paddingBottom": "space.100",
+          "borderRadiusBottomLeft": "radius.full",
+          "borderRadiusTopLeft": "radius.full"
+        },
+        "children": [
+          {
+            "name": "label",
+            "type": "text",
+            "id": "27fef224-a6c1-80b8-8008-d70e610d570a",
+            "size": { "width": 27, "height": 17, "horizontal": "fix", "vertical": "fix" },
+            "fills": ["#12181b"],
+            "strokes": [],
+            "radius": [0, 0, 0, 0],
+            "tokens": { "fill": "color.text.primary" },
+            "text": "Chip"
+          }
+        ]
+      }
+    }
+  ]
+}

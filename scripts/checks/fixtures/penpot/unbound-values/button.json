@@ -1,0 +1,299 @@
+{
+  "component": "Button",
+  "page": "Components/Button",
+  "fileId": "00000000-0000-4000-8000-000000000001",
+  "containerId": "00000000-0000-4000-8000-000000000002",
+  "properties": {
+    "variant": ["solid", "outline"],
+    "State": ["default", "hover"]
+  },
+  "variants": [
+    {
+      "componentId": "00000000-0000-4000-8000-000000000010",
+      "props": {
+        "variant": "solid",
+        "State": "default"
+      },
+      "exports": {
+        "png": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "svg": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "root": {
+        "name": "root",
+        "type": "board",
+        "id": "00000000-0000-4000-8000-000000000100",
+        "size": {
+          "width": 72,
+          "height": 36
+        },
+        "layout": {
+          "type": "flex",
+          "dir": "row",
+          "wrap": "nowrap",
+          "alignItems": "center",
+          "justifyContent": "center",
+          "rowGap": 0,
+          "columnGap": 4,
+          "padding": [8, 12, 8, 12],
+          "horizontal": "auto",
+          "vertical": "auto"
+        },
+        "fills": ["#12181b"],
+        "strokes": [
+          {
+            "color": "#a2adb1",
+            "width": 1
+          }
+        ],
+        "radius": [8, 8, 8, 8],
+        "tokens": {
+          "fill": "color.surface.brand",
+          "borderRadiusTopRight": "radius.md",
+          "borderRadiusBottomRight": "radius.md",
+          "borderRadiusBottomLeft": "radius.md",
+          "paddingTop": "space.200",
+          "paddingRight": "space.300",
+          "paddingBottom": "space.200"
+        },
+        "children": [
+          {
+            "name": "label",
+            "type": "text",
+            "id": "00000000-0000-4000-8000-000000000101",
+            "size": {
+              "width": 40,
+              "height": 20,
+              "horizontal": "auto",
+              "vertical": "auto"
+            },
+            "fills": ["#ffffff"],
+            "strokes": [],
+            "tokens": {
+              "fill": "color.text.inverse"
+            },
+            "text": "Label"
+          }
+        ]
+      }
+    },
+    {
+      "componentId": "00000000-0000-4000-8000-000000000011",
+      "props": {
+        "variant": "solid",
+        "State": "hover"
+      },
+      "exports": {
+        "png": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "svg": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+      },
+      "root": {
+        "name": "root",
+        "type": "board",
+        "id": "00000000-0000-4000-8000-000000000110",
+        "size": {
+          "width": 72,
+          "height": 36
+        },
+        "layout": {
+          "type": "flex",
+          "dir": "row",
+          "wrap": "nowrap",
+          "alignItems": "center",
+          "justifyContent": "center",
+          "rowGap": 0,
+          "columnGap": 4,
+          "padding": [8, 12, 8, 12],
+          "horizontal": "auto",
+          "vertical": "auto"
+        },
+        "fills": ["#12181b"],
+        "strokes": [
+          {
+            "color": "#a2adb1",
+            "width": 1
+          }
+        ],
+        "radius": [8, 8, 8, 8],
+        "tokens": {
+          "fill": "color.surface.brand",
+          "strokeColor": "color.border.control",
+          "strokeWidth": "border.width.025",
+          "borderRadiusTopLeft": "radius.md",
+          "borderRadiusTopRight": "radius.md",
+          "borderRadiusBottomRight": "radius.md",
+          "borderRadiusBottomLeft": "radius.md",
+          "paddingTop": "space.200",
+          "paddingRight": "space.300",
+          "paddingBottom": "space.200",
+          "paddingLeft": "space.300",
+          "columnGap": "space.100"
+        },
+        "children": [
+          {
+            "name": "label",
+            "type": "text",
+            "id": "00000000-0000-4000-8000-000000000111",
+            "size": {
+              "width": 40,
+              "height": 20,
+              "horizontal": "auto",
+              "vertical": "auto"
+            },
+            "fills": ["#ffffff"],
+            "strokes": [],
+            "tokens": {
+              "fill": "color.text.inverse"
+            },
+            "text": "Label"
+          }
+        ]
+      }
+    },
+    {
+      "componentId": "00000000-0000-4000-8000-000000000012",
+      "props": {
+        "variant": "outline",
+        "State": "default"
+      },
+      "exports": {
+        "png": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "svg": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+      },
+      "root": {
+        "name": "root",
+        "type": "board",
+        "id": "00000000-0000-4000-8000-000000000120",
+        "size": {
+          "width": 72,
+          "height": 36
+        },
+        "layout": {
+          "type": "flex",
+          "dir": "row",
+          "wrap": "nowrap",
+          "alignItems": "center",
+          "justifyContent": "center",
+          "rowGap": 0,
+          "columnGap": 4,
+          "padding": [8, 12, 8, 12],
+          "horizontal": "auto",
+          "vertical": "auto"
+        },
+        "fills": ["#12181b"],
+        "strokes": [
+          {
+            "color": "#a2adb1",
+            "width": 1
+          }
+        ],
+        "radius": [8, 8, 8, 8],
+        "tokens": {
+          "fill": "color.surface.default",
+          "strokeColor": "color.border.control",
+          "strokeWidth": "border.width.025",
+          "borderRadiusTopLeft": "radius.md",
+          "borderRadiusTopRight": "radius.md",
+          "borderRadiusBottomRight": "radius.md",
+          "borderRadiusBottomLeft": "radius.md",
+          "paddingTop": "space.200",
+          "paddingRight": "space.300",
+          "paddingBottom": "space.200",
+          "paddingLeft": "space.300",
+          "columnGap": "space.100"
+        },
+        "children": [
+          {
+            "name": "label",
+            "type": "text",
+            "id": "00000000-0000-4000-8000-000000000121",
+            "size": {
+              "width": 40,
+              "height": 20,
+              "horizontal": "auto",
+              "vertical": "auto"
+            },
+            "fills": ["#ffffff"],
+            "strokes": [],
+            "tokens": {
+              "fill": "color.text.inverse"
+            },
+            "text": "Label"
+          }
+        ]
+      }
+    },
+    {
+      "componentId": "00000000-0000-4000-8000-000000000013",
+      "props": {
+        "variant": "outline",
+        "State": "hover"
+      },
+      "exports": {
+        "png": "1111111111111111111111111111111111111111111111111111111111111111",
+        "svg": "2222222222222222222222222222222222222222222222222222222222222222"
+      },
+      "root": {
+        "name": "root",
+        "type": "board",
+        "id": "00000000-0000-4000-8000-000000000130",
+        "size": {
+          "width": 72,
+          "height": 36
+        },
+        "layout": {
+          "type": "flex",
+          "dir": "row",
+          "wrap": "nowrap",
+          "alignItems": "center",
+          "justifyContent": "center",
+          "rowGap": 0,
+          "columnGap": 4,
+          "padding": [8, 12, 8, 12],
+          "horizontal": "auto",
+          "vertical": "auto"
+        },
+        "fills": ["#12181b"],
+        "strokes": [
+          {
+            "color": "#a2adb1",
+            "width": 1
+          }
+        ],
+        "radius": [8, 8, 8, 8],
+        "tokens": {
+          "fill": "color.surface.hover",
+          "strokeColor": "color.border.control",
+          "strokeWidth": "border.width.025",
+          "borderRadiusTopLeft": "radius.md",
+          "borderRadiusTopRight": "radius.md",
+          "borderRadiusBottomRight": "radius.md",
+          "borderRadiusBottomLeft": "radius.md",
+          "paddingTop": "space.200",
+          "paddingRight": "space.300",
+          "paddingBottom": "space.200",
+          "paddingLeft": "space.300",
+          "columnGap": "space.100"
+        },
+        "children": [
+          {
+            "name": "label",
+            "type": "text",
+            "id": "00000000-0000-4000-8000-000000000131",
+            "size": {
+              "width": 40,
+              "height": 20,
+              "horizontal": "auto",
+              "vertical": "auto"
+            },
+            "fills": ["#ffffff"],
+            "strokes": [],
+            "tokens": {
+              "fill": "color.text.inverse"
+            },
+            "text": "Label"
+          }
+        ]
+      }
+    }
+  ]
+}

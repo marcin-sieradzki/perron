@@ -16,6 +16,6 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["scripts", "packages", "vitest.config.ts", ".storybook", "storybook"],
+  "include": ["scripts", "packages", "penpot", "vitest.config.ts", ".storybook", "storybook"],
   "exclude": ["**/node_modules", "**/dist", "**/fixtures"]
 }
