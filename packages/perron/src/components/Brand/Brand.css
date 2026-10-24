@@ -32,7 +32,7 @@
 }
 
 /* "Mylder" in the dictionary, shown lowercase as the wordmark, so screen readers meet the name. */
-.pn-Brand[data-variant='full'] .pn-Brand-wordmark {
+.pn-Brand-wordmark {
   font: var(--perron-typography-heading-md);
   font-weight: var(--perron-font-weight-bold);
   letter-spacing: var(--perron-typography-heading-md-tracking);
@@ -57,7 +57,7 @@
     stroke: CanvasText;
   }
 
-  .pn-Brand[data-variant='full'] .pn-Brand-wordmark {
+  .pn-Brand-wordmark {
     color: CanvasText;
   }
 }

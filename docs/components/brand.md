@@ -51,27 +51,27 @@ Brand comes in one size, with no `size` prop: the mark at its drawn size, 27 × 
 
 One row per part, variant and property. Brand is not interactive, so its only design state is rest; rendered as a link through `render`, its focus ring is the one `perron.css` already draws on `:focus-visible`.
 
-| Part                         | State | Property                    | Token                                                            |
-| ---------------------------- | ----- | --------------------------- | ---------------------------------------------------------------- |
-| `root`                       | rest  | `display`                   | none: `inline-flex`, `align-items: center`                       |
-| `root`                       | rest  | `gap`                       | `space.200`                                                      |
-| `root`                       | rest  | `min-block-size`            | `size.target-min`                                                |
-| `root`                       | rest  | `vertical-align`            | none: `middle`, so the lockup sits centred on a line of text     |
-| `root`                       | rest  | `text-decoration`           | none: `none`, so a link through `render` keeps the lockup's look |
-| `mark`                       | rest  | `display`                   | none: `block`                                                    |
-| `mark`                       | rest  | `flex`                      | none: `none`, so it never shrinks in the row (CR-5)              |
-| `mark`                       | rest  | `inline-size`, `block-size` | none: the `<svg>`'s own `width="27"` and `height="19"` (CR-3)    |
-| `bus`                        | rest  | `fill`                      | `color.transit.mode.bus`                                         |
-| `sTog`                       | rest  | `fill`                      | `color.transit.line.a`                                           |
-| `ring`                       | rest  | `fill`                      | none: `none`                                                     |
-| `ring`                       | rest  | `stroke`                    | `color.text.primary`                                             |
-| `wordmark`, `variant='full'` | rest  | `font`                      | `typography.heading-md`                                          |
-| `wordmark`, `variant='full'` | rest  | `font-weight`               | `font.weight.bold`                                               |
-| `wordmark`, `variant='full'` | rest  | `letter-spacing`            | `typography.heading-md-tracking`                                 |
-| `wordmark`, `variant='full'` | rest  | `color`                     | `color.text.primary`                                             |
-| `wordmark`, `variant='full'` | rest  | `text-transform`            | none: `lowercase`                                                |
-| `wordmark`, `variant='full'` | rest  | `white-space`               | none: `nowrap`, so a longer `brandNameLabel` stays on one line   |
-| `label`, `variant='mark'`    | rest  | none                        | none: the `VisuallyHidden` part's own styles, never seen         |
+| Part                      | State | Property                    | Token                                                            |
+| ------------------------- | ----- | --------------------------- | ---------------------------------------------------------------- |
+| `root`                    | rest  | `display`                   | none: `inline-flex`, `align-items: center`                       |
+| `root`                    | rest  | `gap`                       | `space.200`                                                      |
+| `root`                    | rest  | `min-block-size`            | `size.target-min`                                                |
+| `root`                    | rest  | `vertical-align`            | none: `middle`, so the lockup sits centred on a line of text     |
+| `root`                    | rest  | `text-decoration`           | none: `none`, so a link through `render` keeps the lockup's look |
+| `mark`                    | rest  | `display`                   | none: `block`                                                    |
+| `mark`                    | rest  | `flex`                      | none: `none`, so it never shrinks in the row (CR-5)              |
+| `mark`                    | rest  | `inline-size`, `block-size` | none: the `<svg>`'s own `width="27"` and `height="19"` (CR-3)    |
+| `bus`                     | rest  | `fill`                      | `color.transit.mode.bus`                                         |
+| `sTog`                    | rest  | `fill`                      | `color.transit.line.a`                                           |
+| `ring`                    | rest  | `fill`                      | none: `none`                                                     |
+| `ring`                    | rest  | `stroke`                    | `color.text.primary`                                             |
+| `wordmark`                | rest  | `font`                      | `typography.heading-md`                                          |
+| `wordmark`                | rest  | `font-weight`               | `font.weight.bold`                                               |
+| `wordmark`                | rest  | `letter-spacing`            | `typography.heading-md-tracking`                                 |
+| `wordmark`                | rest  | `color`                     | `color.text.primary`                                             |
+| `wordmark`                | rest  | `text-transform`            | none: `lowercase`                                                |
+| `wordmark`                | rest  | `white-space`               | none: `nowrap`, so a longer `brandNameLabel` stays on one line   |
+| `label`, `variant='mark'` | rest  | none                        | none: the `VisuallyHidden` part's own styles, never seen         |
 
 The gap between the mark and the wordmark is `space.200`, and the wordmark's colour is `color.text.primary`, the ring's ink. [Logos](../foundations/logos.md) names neither; `space.200` (8 px) is close to the ring's width (8.9 px), the clear space the mark keeps from everything else, and the mark's one neutral colour is `color.text.primary`.
 
@@ -120,7 +120,7 @@ The brand name is a new owned-string key, `brandName`, with "Mylder" in all four
 ## Component rules
 
 - **CR-1.** The root renders through `useRender` with `defaultTagName: 'span'`, so `render`, `className`, `style` and `ref` behave as the contract's [Root](README.md#root) and [Customising](README.md#customising) say, with no Base UI component underneath. The rest props are merged first, so `pn-Brand` and `data-variant` win over them; a `render` element's own props are merged last, as Base UI does.
-- **CR-2.** The root always carries `data-variant`, `'full'` included, and CSS selects on it: `.pn-Brand[data-variant='full'] .pn-Brand-wordmark`. Its children are the `mark`, then, with `full`, the `wordmark`, or, with `mark`, the `VisuallyHidden` `label`, both holding the `brandName` string with `brandNameLabel` laid over it through `useOwnedStrings({ brandName: brandNameLabel })`.
+- **CR-2.** The root always carries `data-variant`, `'full'` included, so a caller's CSS can select on it; Brand's own CSS needs no variant selector, since the wordmark renders only with `full`, and selects it by its one class, `.pn-Brand-wordmark`. Its children are the `mark`, then, with `full`, the `wordmark`, or, with `mark`, the `VisuallyHidden` `label`, both holding the `brandName` string with `brandNameLabel` laid over it through `useOwnedStrings({ brandName: brandNameLabel })`.
 - **CR-3.** The mark's geometry is `packages/perron/logos/mylder-mark.svg`'s, exactly: `viewBox="0 0 27 19"`, `width="27"`, `height="19"`; the bus dot at (5.5, 12.5), r 4.3; the S-tog dot at (13.5, 5.5), r 4.3; the ring at (21.5, 12.5), r 3.6, stroke width 1.7. Its colours are not in the markup: each shape's `fill` or `stroke` is set in `Brand.css` from the tokens in [Tokens](#tokens), so the mark follows the theme. A test holds the inline circles to the file's, so the two never drift apart.
 - **CR-4.** The mark is `aria-hidden="true"` and `focusable="false"`, with no `<title>`: the brand name in the wordmark or the label is the one thing a screen reader hears, once.
 - **CR-5.** Keep the mark as drawn ([Logos](../foundations/logos.md#usage)): no prop or class recolours, outlines or rearranges its three shapes, and the mark never shrinks below its drawn size in a flex row (`flex: none`).

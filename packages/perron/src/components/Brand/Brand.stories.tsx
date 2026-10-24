@@ -105,9 +105,11 @@ export const Mark: Story = {
     const root = rootOf(canvasElement)
     await expect(root).toHaveAttribute('data-variant', 'mark')
     await expect(root.querySelector('.pn-Brand-wordmark')).toBeNull()
-    // the label: the span after the mark, kept for screen readers in a 1px clipped box
+    // the label: the VisuallyHidden shared part after the mark, kept for screen readers in a 1px clipped box
     const label = root.lastElementChild as HTMLElement
     await expect(label.tagName).toBe('SPAN')
+    // perron-allow(shared-parts): reads the part's class to check the label is VisuallyHidden, not draws it
+    await expect(label).toHaveClass('pn-VisuallyHidden')
     await expect(label).toHaveTextContent(/^Mylder$/)
     await expect(label.getBoundingClientRect().width).toBeLessThanOrEqual(1)
     await expect(getComputedStyle(label).position).toBe('absolute')
@@ -150,7 +152,9 @@ export const BrandNameLabel: Story = {
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    const [full, mark] = canvas.getAllByRole('link', { name: /^perron$/i })
+    const links = canvas.getAllByRole('link', { name: /^perron$/i })
+    await expect(links).toHaveLength(2)
+    const [full, mark] = links
     await expect(canvas.queryByRole('link', { name: /mylder/i })).toBeNull()
     const wordmark = full.querySelector<HTMLElement>('.pn-Brand-wordmark')
     await expect(wordmark).toHaveTextContent(/^Perron$/)
