@@ -99,7 +99,7 @@ export function Delay({
   })
   const rounded = roundedMinutes(minutes)
   const kind = kindOf(rounded)
-  const size = rounded === null ? 0 : Math.abs(rounded)
+  const magnitude = rounded === null ? 0 : Math.abs(rounded)
 
   let children
   if (kind === 'on-time') children = <span className="pn-Delay-value">{strings.onTime}</span>
@@ -116,14 +116,14 @@ export function Delay({
     children = (
       <>
         <span className="pn-Delay-value" aria-hidden="true">
-          {`${kind === 'early' ? MINUS : '+'}${size}`}
+          {`${kind === 'early' ? MINUS : '+'}${magnitude}`}
         </span>{' '}
         <span className="pn-Delay-unit" aria-hidden="true">
           {strings.minutesUnit}
         </span>
         {/* the number in its own element, so the words stay a separate text run (CR-3) */}
         <VisuallyHidden>
-          <span>{size}</span> {kind === 'early' ? strings.minutesEarly : strings.minutesLate}
+          <span>{magnitude}</span> {kind === 'early' ? strings.minutesEarly : strings.minutesLate}
         </VisuallyHidden>
       </>
     )
