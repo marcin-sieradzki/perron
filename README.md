@@ -1,6 +1,6 @@
 # Perron
 
-Perron is the design system of [Mylder](https://github.com/marcin-sieradzki/Mylder), a live map of Copenhagen's buses, S-tog, metro and regional trains. This repository holds its foundations: the design tokens, the build that turns them into CSS, TypeScript and a Penpot file, the fonts, the icons and the Mylder mark, and the guidelines in [docs/foundations/](docs/foundations/README.md), whose pages follow the order of [Rift](https://rift-ds.com/foundations)'s foundations.
+Perron is the design system of [Mylder](https://github.com/marcin-sieradzki/Mylder), a live map of Copenhagen's buses, S-tog, metro and regional trains. This repository holds its foundations: the design tokens, the build that turns them into CSS, TypeScript and a Penpot file, the fonts, the icons and the Mylder mark, and the guidelines in [docs/foundations/](docs/foundations/README.md).
 
 Components come later. They are extracted from the Mylder prototype already, and kept on their own branch until the foundations are settled.
 
@@ -12,20 +12,22 @@ The build checks every file against the format rule by rule (`scripts/lib/spec.t
 
 ## What is here
 
-| Path                          | What it is                                                                                                                                            |
-| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `tokens/*.tokens.json`        | The token sources: `base`, a `light` and a `dark` theme, and `motion-reduced` overrides                                                               |
-| `tokens/perron.resolver.json` | How the files combine (the format's resolver module): base always, then light or dark, then full or reduced motion                                    |
-| `tokens/generated/`           | Built from the sources: `tokens.css`, `typography.css`, `tokens.ts`, and `penpot.tokens.json` in the older flavour Penpot imports. Never edit by hand |
-| `styles/perron.css`           | The one file an app loads: fonts, tokens, typography classes, the icon class and page defaults                                                        |
-| `icons/`                      | The icons as SVG files, and `icons.json`, which lists them by category with the size and use of each                                                  |
-| `logos/`                      | The Mylder mark, one file per theme, and `logos.json`                                                                                                 |
-| `scripts/`                    | The token and docs build and its tests: the format, contrast, icon style and logo colours                                                             |
-| `docs/foundations/`           | One page per foundation, with tables the build fills in                                                                                               |
-| `storybook/`, `.storybook/`   | The same pages in Storybook, with every table drawn live from the tokens: swatches, type specimens, contrast grids, the icons and the mark            |
-| `docs/content-design.md`      | How every word in Mylder reads                                                                                                                        |
-| `docs/renames.md`             | Token names that changed or went away, for code written against an older name                                                                         |
-| `.claude/skills/`             | Agent skills: `design-tokens`, and `writing-for-agents` from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT)                          |
+| Path                            | What it is                                                                                                                                            |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `tokens/*.tokens.json`          | The token sources: `base`, a `light` and a `dark` theme, and `motion-reduced` overrides                                                               |
+| `tokens/perron.resolver.json`   | How the files combine (the format's resolver module): base always, then light or dark, then full or reduced motion                                    |
+| `tokens/generated/`             | Built from the sources: `tokens.css`, `typography.css`, `tokens.ts`, and `penpot.tokens.json` in the older flavour Penpot imports. Never edit by hand |
+| `styles/perron.css`             | The one file an app loads: fonts, tokens, typography classes, the icon class and page defaults                                                        |
+| `icons/`                        | The icons as SVG files, and `icons.json`, which lists them by category with the size and use of each                                                  |
+| `logos/`                        | The Mylder mark, one file per theme, and `logos.json`                                                                                                 |
+| `scripts/`                      | The token and docs build and its tests: the format, contrast, icon style and logo colours                                                             |
+| `docs/foundations/`             | One page per foundation, with tables the build fills in                                                                                               |
+| `storybook/`, `.storybook/`     | The same pages in Storybook, with every table drawn live from the tokens: swatches, type specimens, contrast grids, the icons and the mark            |
+| `docs/content-design.md`        | How every word in Mylder reads                                                                                                                        |
+| `docs/glossary.md`, `docs/adr/` | The words used to talk about Perron, and the decisions behind it                                                                                      |
+| `ROADMAP.md`                    | What comes next: components on Base UI, patterns, the agent loop, the MCP server, step by step                                                        |
+| `docs/renames.md`               | Token names that changed or went away, for code written against an older name                                                                         |
+| `.claude/skills/`               | Agent skills: `design-tokens`, and `writing-for-agents` from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT)                          |
 
 ## Token names
 

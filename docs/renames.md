@@ -10,7 +10,7 @@ Token names that changed or went away, newest first, so code written against an 
 - **Dark inset.** `palette.neutral.700` changed from #20282C to #283237, so dark `color.surface.inset` stands apart from `color.surface.raised`.
 - **Reduced motion.** `tokens.css` sets the transition durations to 0.01 ms under `prefers-reduced-motion: reduce`. A component's own override of those durations can go; its code that stops loops stays.
 - **Icon sizes.** An icon's size reads `icon.size.325` (13 px), `icon.size.400` (16 px) or `icon.size.450` (18 px). The icon SVGs and the mark now live in this repository, in `icons/` and `logos/`.
-- **Docs.** `docs/foundations.md` became one page per foundation in `docs/foundations/`, in the order of Rift's foundations. Its content section is now `docs/content-design.md`.
+- **Docs.** `docs/foundations.md` became one page per foundation in `docs/foundations/`. Its content section is now `docs/content-design.md`.
 
 ## 23 October 2026: palette, status colours and one type set
 
