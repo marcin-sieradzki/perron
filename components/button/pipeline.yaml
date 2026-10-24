@@ -3,9 +3,6 @@ component: Button
 layer: component
 deferred:
   at: 2026-10-24T20:43:47.752Z
-needsHuman:
-  stage: docs
-  reason: "docs failed: Props table lacks focusableWhenDisabled, nativeButton and render: Storybook's react-docgen does not follow ButtonProps' inherited BaseButton.Props, so the inherited rows are missing (Button.tsx lines 10-13)."
 stages:
   design:
     status: done
@@ -30,7 +27,6 @@ stages:
       p3: 2
     ended: 2026-10-24T21:08:22.627Z
   docs:
-    status: failed
-    started: 2026-10-24T21:08:31.905Z
-    ended: 2026-10-24T21:10:16.401Z
-    failing: "Props table lacks focusableWhenDisabled, nativeButton and render: Storybook's react-docgen does not follow ButtonProps' inherited BaseButton.Props, so the inherited rows are missing (Button.tsx lines 10-13)."
+    status: done
+    started: 2026-10-24T21:31:27.108Z
+    ended: 2026-10-24T21:51:29.703Z
