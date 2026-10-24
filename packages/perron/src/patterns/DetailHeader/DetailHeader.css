@@ -1,0 +1,56 @@
+/* DetailHeader, from docs/patterns/detail-header.md: a grid on the detail panel's surface, with no
+   fill, border, radius, padding or shadow of its own (CR-8). Every Tokens row is at rest. */
+
+/* Three columns, the text's minmax(0, 1fr) taking the room left and wrapping (CR-7). The grid has
+   no column gap: the mark and the action carry the space.300 beside the text as margins, so when
+   one is left out (CR-3) its auto column is zero wide and the text takes its room.
+   The rows are a flexible space, the title, the subheader and a flexible space: the mark and the
+   action span all four, so the title and the subheader sit together in the middle of their
+   height, and a missing subheader's row is zero high. */
+.pn-DetailHeader {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-rows: 1fr auto auto 1fr;
+}
+
+.pn-DetailHeader-mark {
+  display: flex;
+  grid-column: 1;
+  grid-row: 1 / -1;
+  align-self: center;
+  align-items: center;
+  margin: 0;
+  margin-inline-end: var(--perron-space-300);
+}
+
+.pn-DetailHeader-title {
+  grid-column: 2;
+  grid-row: 2;
+  margin: 0;
+  font: var(--perron-typography-heading-md);
+  letter-spacing: var(--perron-typography-heading-md-tracking);
+  color: var(--perron-color-text-primary);
+  overflow-wrap: anywhere;
+}
+
+.pn-DetailHeader-subheader {
+  grid-column: 2;
+  grid-row: 3;
+  margin: 0;
+  margin-block-start: var(--perron-space-100);
+  font: var(--perron-typography-body-sm);
+  letter-spacing: var(--perron-typography-body-sm-tracking);
+  color: var(--perron-color-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.pn-DetailHeader-action {
+  display: flex;
+  grid-column: 3;
+  grid-row: 1 / -1;
+  align-self: center;
+  align-items: center;
+  column-gap: var(--perron-space-200);
+  margin: 0;
+  margin-inline-start: var(--perron-space-300);
+}
