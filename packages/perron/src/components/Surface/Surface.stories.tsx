@@ -106,16 +106,6 @@ async function expectShapes(canvasElement: HTMLElement, variant: string) {
   }
 }
 
-/** The one surface the contract story renders: a raised card holding a string. */
-export const Default: Story = {
-  args: { variant: 'raised', children: 'Next train to Lufthavnen in 3 min' },
-  render: (args) => (
-    <Stage background={{ background: 'var(--perron-color-surface-default)' }}>
-      <Surface {...args} style={typography('body')} />
-    </Stage>
-  ),
-}
-
 /** A raised card on the panel's surface, holding a heading, a line of text and a Button. */
 export const Raised: Story = {
   args: { variant: 'raised' },
@@ -132,7 +122,7 @@ export const Raised: Story = {
             </div>
           </Column>
         }
-        text="No disruptions on the M2 line"
+        text="Metro M2 running normally"
         element={<p style={typography('body')}>Step-free access from Frederiksborggade</p>}
       />
     </Stage>
@@ -197,7 +187,7 @@ export const Glass: Story = {
       <Shapes
         variant={args.variant}
         list={panel}
-        text="No disruptions on the M2 line"
+        text="Metro M2 running normally"
         element={<p style={typography('body')}>Step-free access from Frederiksborggade</p>}
       />
     </Stage>
@@ -215,7 +205,7 @@ export const Opaque: Story = {
       <Shapes
         variant={args.variant}
         list={panel}
-        text="No disruptions on the M2 line"
+        text="Metro M2 running normally"
         element={<p style={typography('body')}>Step-free access from Frederiksborggade</p>}
       />
     </Stage>
@@ -225,9 +215,9 @@ export const Opaque: Story = {
   },
 }
 
-const panelRef = createRef<HTMLDivElement>()
-const cardRef = createRef<HTMLDivElement>()
-const boxRef = createRef<HTMLDivElement>()
+const panelRef = createRef<HTMLElement>()
+const cardRef = createRef<HTMLElement>()
+const boxRef = createRef<HTMLElement>()
 
 /**
  * The ladder together: a glass panel rendered as a named `<section>`, holding a raised card that

@@ -7,7 +7,7 @@ import './Surface.css'
 
 export interface SurfaceProps extends Omit<
   useRender.ComponentProps<'div'>,
-  'children' | 'className' | 'style' | 'render' | 'ref'
+  'children' | 'className' | 'style' | 'ref'
 > {
   /**
    * The step of the surface ladder: `raised` for a card inside a panel, `inset` for a box or track
@@ -16,20 +16,14 @@ export interface SurfaceProps extends Omit<
    * @default 'raised'
    */
   variant?: 'raised' | 'inset' | 'glass' | 'opaque'
-  /**
-   * Swaps the root element, keeping the class, data attribute and content: `<section>` or
-   * `<aside>` with `aria-labelledby` for a named region.
-   * @default <div />
-   */
-  render?: useRender.ComponentProps<'div'>['render']
   /** The content the surface holds */
   children?: ReactNode
   /** Reaches the root, merged after `pn-Surface` */
   className?: string
   /** Reaches the root */
   style?: CSSProperties
-  /** Reaches the root element */
-  ref?: Ref<HTMLDivElement>
+  /** Reaches the root element, whichever element `render` makes it */
+  ref?: Ref<HTMLElement>
 }
 
 /**
