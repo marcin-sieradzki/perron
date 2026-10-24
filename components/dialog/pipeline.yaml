@@ -10,6 +10,15 @@ stages:
     ended: 2026-10-24T23:40:14.414Z
   build:
     runs: 2
-    status: done
-    started: 2026-10-24T23:46:58.686Z
-    ended: 2026-10-24T23:52:41.494Z
+    failing: review round 1 found 1 P2 (components/dialog/review.md)
+  review:
+    status: failed
+    started: 2026-10-24T23:52:46.038Z
+    rounds: 1
+    findings:
+      p1: 0
+      p2: 1
+      p3: 3
+    sentBack: 1
+    ended: 2026-10-24T23:58:27.853Z
+    failing: review round 1 found 1 P2 (components/dialog/review.md)
