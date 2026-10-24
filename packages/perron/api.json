@@ -182,6 +182,43 @@
       }
     }
   },
+  "LineBadge": {
+    "extends": [
+      "Omit<useRender.ComponentProps<'span'>, 'children'>"
+    ],
+    "props": {
+      "children": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "line": {
+        "optional": false,
+        "type": [
+          "\"a\"",
+          "\"b\"",
+          "\"bus\"",
+          "\"c\"",
+          "\"e\"",
+          "\"f\"",
+          "\"h\"",
+          "\"m1\"",
+          "\"m2\"",
+          "\"m3\"",
+          "\"m4\"",
+          "\"regional\""
+        ]
+      },
+      "size": {
+        "optional": true,
+        "type": [
+          "\"large\"",
+          "\"medium\""
+        ]
+      }
+    }
+  },
   "StationIcon": {
     "extends": [
       "Omit<ComponentPropsWithRef<'span'>, 'children'>"
