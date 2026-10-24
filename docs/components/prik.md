@@ -13,7 +13,7 @@ Penpot page `Components/Prik`. Family: none, a glyph sized like an icon. Shared 
 | `root`              | The glyph box: an `<svg>`, `--perron-icon-size` square, coloured by the line, named by the data state | none         | `pn-Prik`     | none                                                                   |
 | `dot`               | The `<circle>` inside the box, drawn in the shape of the data state                                   | none         | `pn-Prik-dot` | none: the contract keys `slotProps` by Base UI part, and Prik has none |
 
-[PENDING] Is the root an `<svg role="img">` holding the one `<circle>`, with `ref` on the `<svg>`, the rest props typed as the `<svg>`'s, and no `children`? Recommended: yes; a span around an svg adds an element and nothing else, and a glyph has no content for `children` to give.
+Answered: yes, as recommended (unattended run, to confirm). The question was: Is the root an `<svg role="img">` holding the one `<circle>`, with `ref` on the `<svg>`, the rest props typed as the `<svg>`'s, and no `children`? Recommended: yes; a span around an svg adds an element and nothing else, and a glyph has no content for `children` to give.
 
 ## Base UI parts
 
@@ -36,11 +36,11 @@ In MUI's layout. Every prop here gets this description as its JSDoc. No slots (s
 | `timetableOnlyLabel` | `string`                                                                                        | The locale's | none         | Overrides "Timetable only"                                                                                            |
 | `noSignalLabel`      | `string`                                                                                        | The locale's | none         | Overrides "No signal"                                                                                                 |
 
-[PENDING] Is the data state the prop `state`, with the data-state words in kebab-case as its values, default `'live'` and the root's `data-state` attribute, rather than the contract's `variant`? Recommended: yes; [Data states](../foundations/data-states.md) calls them states, and `variant` would read as a look rather than a fact about the data. Penpot's interaction property is `State`, capitalised, and Prik has no interaction states, so the two never meet.
+[PENDING] The earlier answer named the data state `state`, but the contract's "Names from other libraries" table lists `state`, and the `props` gate (`scripts/checks/props.ts`) fails any props type that declares it, so the build could not pass `npm run check` without an allowance. Is the data state the contract's `variant` instead, with the same five values in kebab-case (`'live' | 'ageing' | 'estimated' | 'timetable-only' | 'no-signal'`), default `'live'`, the first, and the root's `data-variant` attribute, so the `state` row above, CR-7's `data-state` and the Penpot variant property all become `variant`? Recommended: yes; it keeps every contract rule with no `perron-allow` exception, the Penpot variant property `variant` can't be mistaken for the interaction property `State`, and the story names (`Live`, `Ageing`, …) stay the same.
 
-[PENDING] Is the line colour the required prop `line`, taking the ids of the `color.transit.line.*` tokens plus `'bus'` and `'regional'` for `color.transit.mode.*`, with no default and the root's `data-line` attribute? Recommended: yes; a Prik in the wrong colour would name the wrong line, so no default is safe, and `color` is kept for the contract's intents. LineBadge, the next component to take a line, uses the same values.
+Answered: yes, as recommended (unattended run, to confirm). The question was: Is the line colour the required prop `line`, taking the ids of the `color.transit.line.*` tokens plus `'bus'` and `'regional'` for `color.transit.mode.*`, with no default and the root's `data-line` attribute? Recommended: yes; a Prik in the wrong colour would name the wrong line, so no default is safe, and `color` is kept for the contract's intents. LineBadge, the next component to take a line, uses the same values.
 
-[PENDING] Does `size` map `'small'`, `'medium'` and `'large'` to `icon.size.325`, `icon.size.400` and `icon.size.450`, set as `--perron-icon-size` on the root, default `'medium'`? Recommended: yes; `prik.inset` is the gap inside a glyph box, the icon steps are the glyph boxes the system has, and the three line up with caption, label and top-bar text.
+Answered: yes, as recommended (unattended run, to confirm). The question was: Does `size` map `'small'`, `'medium'` and `'large'` to `icon.size.325`, `icon.size.400` and `icon.size.450`, set as `--perron-icon-size` on the root, default `'medium'`? Recommended: yes; `prik.inset` is the gap inside a glyph box, the icon steps are the glyph boxes the system has, and the three line up with caption, label and top-bar text.
 
 ## Tokens
 
@@ -87,7 +87,7 @@ One row per part, state and property. Prik has one design state, rest: it is not
 
 Not read: `prik.halo`, `color.data-state.halo` and `color.data-state.outline` are for the map canvas alone; `prik.live-threshold` and `prik.ageing-threshold` are for whoever decides the state (see CR-3).
 
-[PENDING] Does Prik leave out the `color.data-state.outline` hairline, so a light line colour (M2, F, bus) shows its ring or ageing dot without an outline on a light surface? Recommended: yes; the token's description keeps it to the map, the state's word always sits next to the dot, and the design run can widen it through the `design-tokens` skill if the drawing shows the faint rings need it.
+Answered: yes, as recommended (unattended run, to confirm). The question was: Does Prik leave out the `color.data-state.outline` hairline, so a light line colour (M2, F, bus) shows its ring or ageing dot without an outline on a light surface? Recommended: yes; the token's description keeps it to the map, the state's word always sits next to the dot, and the design run can widen it through the `design-tokens` skill if the drawing shows the faint rings need it.
 
 ## Keyboard and ARIA
 
@@ -135,7 +135,7 @@ Rules for this component alone, numbered so the build and the review can cite th
 - **CR-7.** The root sets `data-state`, `data-line` and `data-size`, defaults included, and the CSS selects on them: `.pn-Prik[data-state='ageing'] .pn-Prik-dot`.
 - **CR-8.** In forced colours the shapes carry the state. Inside `@media (forced-colors: active)`, the root's `color` is `CanvasText`, so live, ageing, estimated and timetable only keep their fills and rings in the system's text colour, and no signal fills with `GrayText`.
 
-[PENDING] In forced colours, is no signal filled with `GrayText`, so it stays apart from a live dot, which otherwise has the same shape? Recommended: yes; `GrayText` is one of the system colours the contract allows there, and it keeps "a grey dot" grey.
+Answered: yes, as recommended (unattended run, to confirm). The question was: In forced colours, is no signal filled with `GrayText`, so it stays apart from a live dot, which otherwise has the same shape? Recommended: yes; `GrayText` is one of the system colours the contract allows there, and it keeps "a grey dot" grey.
 
 ## Stories
 
@@ -151,7 +151,7 @@ One per variant, named by its variant name ([penpot/README.md](../../penpot/READ
 | `Sizes`         | Each state at `small`, `medium` and `large` | Each size's box is its `icon.size.*` square, and in each box every state's outer edge (`r` plus half its stroke) is within 0.1 px of the live dot's |
 | `Lines`         | Each state on each of the twelve lines      | none                                                                                                                                                |
 
-[PENDING] Are Prik's Penpot variants the five states alone, `state` its one variant property, with `line` and `size` shown in the `Sizes` and `Lines` stories rather than as variants? Recommended: yes; five states by three sizes by twelve lines would be 180 variants of one circle, and `line` and `size` only swap a token.
+Answered: yes, as recommended (unattended run, to confirm). The question was: Are Prik's Penpot variants the five states alone, `state` its one variant property, with `line` and `size` shown in the `Sizes` and `Lines` stories rather than as variants? Recommended: yes; five states by three sizes by twelve lines would be 180 variants of one circle, and `line` and `size` only swap a token.
 
 ## Do and don't
 
