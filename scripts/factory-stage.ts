@@ -2,8 +2,11 @@
 // tool, such as a batch slot running as a subagent. It runs .claude/workflows/factory-stage.js
 // with a stand-in for `agent` and prints the call that workflow would make: the agent type, when
 // it names one, and the prompt, ending with the JSON the agent returns, from the workflow's schema.
+// A rerun's `fix`, when the args leave it out, comes from `next` over the pipeline in `dir` (or the
+// current directory), so a send-back's build is told what to fix.
 // Usage: node scripts/factory-stage.ts '{"stage":"build","name":"Chip","dir":"…","port":6011}'
 import { readFileSync } from 'node:fs'
+import { loadPipeline, next, type Env } from './lib/pipeline.ts'
 
 export interface StageCall {
   /** The agent type to start, such as `component-reviewer`; none for a skill's stage */
@@ -43,9 +46,22 @@ export async function stageCall(args: Record<string, unknown>): Promise<StageCal
   return call
 }
 
+/**
+ * `args` with the `fix` that `next` gives for `stage` over the repo at `root`, when `stage` is what
+ * comes next and the args give none.
+ */
+export function withFix(args: Record<string, unknown>, root: string): Record<string, unknown> {
+  const { stage, name } = args
+  if (args.fix || typeof name !== 'string' || !/^[A-Z][A-Za-z0-9]*$/.test(name)) return args
+  const env: Env = { root, run: () => ({ ok: true, output: '' }), now: () => '' }
+  const n = next(loadPipeline(env, name), env)
+  return 'run' in n && n.run === stage && n.fix ? { ...args, fix: n.fix } : args
+}
+
 if (import.meta.url === `file://${process.argv[1]}`) {
   try {
-    const call = await stageCall(JSON.parse(process.argv[2] ?? '{}'))
+    const args = JSON.parse(process.argv[2] ?? '{}')
+    const call = await stageCall(withFix(args, typeof args.dir === 'string' ? args.dir : '.'))
     process.stdout.write(`${JSON.stringify(call, null, 2)}\n`)
   } catch (e) {
     process.stderr.write(`${(e as Error).message}\n`)

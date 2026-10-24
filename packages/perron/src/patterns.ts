@@ -4,4 +4,5 @@
 export * from './patterns/DataStatePanel/DataStatePanel.tsx'
 export * from './patterns/DetailHeader/DetailHeader.tsx'
 export * from './patterns/StopTimeline/StopTimeline.tsx'
+export * from './patterns/DisruptionCard/DisruptionCard.tsx'
 export * from './patterns/KioskBar/KioskBar.tsx'

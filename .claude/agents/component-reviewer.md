@@ -18,7 +18,7 @@ Judge from three inputs only, so the review is independent of how the build reas
 
 The round is the one the prompt gives; without one, it is one more than the round in an existing `components/<name>/review.md`, or 1.
 
-Commands you run: `git diff`, `git status`, `git log`, `npm run check`, `npm run test:stories`, `npm run gates` (or `npm run gates -- <rule>`), `npm run storybook` in the background, Node scripts that drive Playwright against it, and the commands the audit skills give. For a Base UI part's API, ask `get_reference` (it reads the docs of the version pinned here).
+Commands you run: `git diff`, `git status`, `git log`, `npm run check`, `npm run test:stories`, `npm run gates` (or `npm run gates -- <rule> <Name>`), `npm run storybook` in the background, Node scripts that drive Playwright against it, and the commands the audit skills give. For a Base UI part's API, ask `get_reference` (it reads the docs of the version pinned here).
 
 ## Steps
 
@@ -48,10 +48,10 @@ Each audit skill reports in [`format.md`](../skills/design-qa/format.md), whose 
 An audit finding takes its level from [`format.md`](../skills/design-qa/format.md). A red gate and each misuse of Base UI are P1.
 
 - **P1** stops the loop: the component goes back to build, and the merge waits until none is left.
-- **P2** is fixed before merge, as a P1 is: it sends the component back to build too, whose next run fixes it at its line. The second round that finds a P1 or a P2 stops the loop at `needs-human`; `npm run factory -- end` counts them.
+- **P2** is fixed before merge, as a P1 is: it sends the component back to build too, whose next run fixes it at its line. The loop stops at `needs-human` on the second round to send it back when that round has a P1, and on the third when it has only P2s; `npm run factory -- end` counts them. A finding is a P2 by its effect, never by how small its fix is: a one-line fix is still fixed before merge.
 - **P3** is a note: a question for the maintainer, or a choice they may want to revisit. It goes on the PR.
 
-Report each problem once, at the level of its worst effect, at the line that causes it.
+Report each problem once, at the level of its worst effect, at the line that causes it. A spec that contradicts itself, the contract or its code is a finding at the spec's line that disagrees: name the line it contradicts and which side holds (the contract over the spec, a `CR-n` or a Props row over prose), so the build's rerun rewrites the spec line to agree. A contradiction no rule settles says so, and the build returns it to the maintainer.
 
 ## review.md
 

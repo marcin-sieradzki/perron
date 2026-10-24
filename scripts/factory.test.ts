@@ -223,7 +223,7 @@ describe('the factory dry run', () => {
 
     // review round 1 finds a P1: back to build, for a fresh run
     expect(stage('review', () => review(1, 2)).out).toBe(
-      'ended review: failed, round 1: 2 P1, 0 P2, 0 P3: review round 1 found 2 P1 (components/tally/review.md)\nrun: build\nwhy: sent back: review round 1 found 2 P1 (components/tally/review.md)\n',
+      'ended review: failed, round 1: 2 P1, 0 P2, 0 P3: review round 1 found 2 P1 (components/tally/review.md)\nrun: build\nwhy: sent back: review round 1 found 2 P1 (components/tally/review.md)\nfix: review round 1 found 2 P1 (components/tally/review.md). Fix each of its P1 and P2 findings at the line it names:\n- **P1-1.** `Tally.tsx:1` Breaks the contract.\n- **P1-2.** `Tally.tsx:2` Breaks the contract.\n',
     )
     stage('build', () => build())
     expect(run('next Tally').out).toMatch(/^run: review\nround: 2\n/)
@@ -295,15 +295,47 @@ describe('the factory dry run', () => {
   it('sends a P2 back to build as a P1, within the same cap of review rounds', () => {
     throughBrief()
     stage('build', () => build())
-    expect(stage('review', () => review(1, 0, 2)).out).toBe(
-      'ended review: failed, round 1: 0 P1, 2 P2, 0 P3: review round 1 found 2 P2 (components/tally/review.md)\nrun: build\nwhy: sent back: review round 1 found 2 P2 (components/tally/review.md)\n',
+    expect(stage('review', () => review(1, 0, 2)).out).toMatch(
+      /^ended review: failed, round 1: 0 P1, 2 P2, 0 P3: review round 1 found 2 P2 \(components\/tally\/review\.md\)\nrun: build\nwhy: sent back: review round 1 found 2 P2/,
     )
     stage('build', () => build())
     expect(stage('review', () => review(2, 1, 1)).out).toMatch(
-      /\nwait: needs-human\nstage: review\nwhy: 2 review rounds found a P1 or a P2; the last: review round 2 found 1 P1 and 1 P2/,
+      /\nwait: needs-human\nstage: review\nwhy: 2 review rounds found a P1 or a P2, the last a P1: review round 2 found 1 P1 and 1 P2/,
     )
     expect(run('unblock Tally').out).toContain('unblocked review')
     expect(pipeline().stages.review?.sentBack).toBe(0)
+  })
+
+  it('gives a second round with only P2s one round more, and stops at the third', () => {
+    throughBrief()
+    stage('build', () => build())
+    stage('review', () => review(1, 1))
+    stage('build', () => build())
+    // round 2 finds one P2, such as a spec sentence: back to build, not needs-human
+    expect(stage('review', () => review(2, 0, 1)).out).toMatch(
+      /round 2: 0 P1, 1 P2, 0 P3: review round 2 found 1 P2 \(components\/tally\/review\.md\)\nrun: build\n/,
+    )
+    stage('build', () => build())
+    expect(stage('review', () => review(3, 0, 1)).out).toMatch(
+      /\nwait: needs-human\nstage: review\nwhy: 3 review rounds found a P1 or a P2; the last: review round 3 found 1 P2/,
+    )
+    run('unblock Tally')
+    stage('build', () => build())
+    expect(stage('review', () => review(4)).out).toContain('ended review: done, round 4')
+  })
+
+  it("names a review send-back's P1 and P2 findings for the build's rerun, in next --json", () => {
+    throughBrief()
+    stage('build', () => build())
+    stage('review', () => review(1, 0, 2))
+    const n = JSON.parse(run('next Tally --json').out)
+    expect(n).toMatchObject({
+      run: 'build',
+      why: expect.stringMatching(/^sent back: review round 1/),
+    })
+    expect(n.fix).toBe(
+      'review round 1 found 2 P2 (components/tally/review.md). Fix each of its P1 and P2 findings at the line it names:\n- **P2-1.** `Tally.tsx:1` Breaks the contract.\n- **P2-2.** `Tally.tsx:2` Breaks the contract.',
+    )
   })
 
   it('reads the P1 rounds of a pipeline written before P2s sent a component back', () => {
@@ -317,22 +349,33 @@ describe('the factory dry run', () => {
       ),
     )
     expect(pipeline().stages.review).toEqual({ sentBack: 1 })
-    expect(stage('review', () => review(1, 0, 1)).out).toMatch(/wait: needs-human/)
+    expect(stage('review', () => review(1, 1)).out).toMatch(/wait: needs-human/)
   })
 
-  it('reruns a brief that returned pending once its answers are written, to carry them through', () => {
+  it('reruns a brief that returned pending once its answers are written, whichever comes first', () => {
     stage('design', () => design())
     run('approve Tally')
-    expect(stage('brief', () => brief()).out).toContain('run: build')
+    const asked = '[PENDING] Which tone is the default? Recommended: plain.\n'
+    const rerun =
+      /^run: brief\nwhy: the answers are written in docs\/components\/tally\.md; run the brief again/
+
+    // the brief ends pending, then the answer is written: next runs the brief again
     run('begin Tally brief')
-    brief('[PENDING] Which tone is the default? Recommended: plain.\n')
+    brief(asked)
     expect(run('end Tally brief pending').out).toContain('wait: pending-questions')
-    // the answer written in place of its line before the run that asked has ended
-    expect(run('begin Tally brief').code).toBe(0)
+    brief('The default tone is plain.\n')
+    expect(run('next Tally').out).toMatch(rerun)
+    expect(JSON.parse(run('next Tally --json').out).fix).toMatch(/component-brief, "Run again"/)
+
+    // the answer is written before the brief ends pending: the same rerun, never a done brief
+    run('begin Tally brief')
+    brief(asked)
     brief('The default tone is plain.\n')
     expect(run('end Tally brief pending').out).toMatch(
-      /ended brief: failed: the brief returned pending, but docs\/components\/tally\.md has no \[PENDING\] question left.*\nrun: brief\n/,
+      /^ended brief: pending\nrun: brief\nwhy: the answers/,
     )
+    expect(run('begin Tally brief').code).toBe(0)
+    expect(run('end Tally brief done').out).toContain('ended brief: done\nrun: build')
   })
 
   it('stops at needs-human after a second failed docs run, and unblock resets the count', () => {

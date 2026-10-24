@@ -19,6 +19,7 @@ export const da: OwnedStrings = {
   diversions: 'Omkørsler',
   plannedWorks: 'Planlagt arbejde',
   dataFeedProblems: 'Problemer med realtidsdata',
+  affectedLines: 'Berørte linjer',
   runningNormally: 'Kører normalt',
   showOnMap: 'Vis på kort',
   minutesUnit: 'min',

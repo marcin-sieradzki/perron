@@ -136,6 +136,30 @@ export function Press({ focusableWhenDisabled = true, nativeButton = false, ...r
     })
   })
 
+  it('writes a type react-docgen reads as unknown, such as a readonly array, as the compiler does', () => {
+    const src = `
+interface Stop { name: string }
+
+export interface TripProps {
+  /** The stops, in order. */
+  stops: readonly Stop[]
+  /** The names, in order. */
+  names?: readonly string[]
+  /** As an array type. */
+  others: ReadonlyArray<Stop>
+}
+
+export function Trip({ stops }: TripProps) {
+  return <ol>{stops.length}</ol>
+}
+`
+    const props = componentDocs(src, FILE)[0].props!
+    expect(props.stops).toMatchObject({ required: true, tsType: { name: 'readonly Stop[]' } })
+    expect(props.stops.description).toBe('The stops, in order.')
+    expect(props.names.tsType).toEqual({ name: 'readonly string[]' })
+    expect(props.others.tsType).toMatchObject({ raw: 'ReadonlyArray<Stop>' })
+  })
+
   it('finds a component that returns JSX, as react-docgen does', () => {
     const src = `export function Dot({ size }: { /** How big. */ size: number }) { return <span>{size}</span> }`
     expect(componentDocs(src, FILE).map((d) => [d.actualName, Object.keys(d.props ?? {})])).toEqual(

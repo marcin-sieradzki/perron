@@ -35,6 +35,8 @@ export const en = {
   plannedWorks: 'Planned works',
   /** The name of the data kind of disruption: a problem with the real-time data feed. */
   dataFeedProblems: 'Data feed problems',
+  /** A disruption: said just before the list of lines it affects, heard by screen readers only. */
+  affectedLines: 'Affected lines',
   /** A line with no delays or disruptions. */
   runningNormally: 'Running normally',
   /** A link that shows a vehicle, stop or line on the map. */
