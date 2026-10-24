@@ -9,7 +9,16 @@ stages:
     started: 2026-10-24T20:48:16.819Z
     ended: 2026-10-24T20:49:06.012Z
   build:
-    status: done
-    started: 2026-10-24T20:49:06.178Z
     runs: 1
-    ended: 2026-10-24T20:55:39.077Z
+    failing: review round 1 found 1 P1 (components/station-icon/review.md)
+  review:
+    status: failed
+    started: 2026-10-24T20:55:41.430Z
+    rounds: 1
+    findings:
+      p1: 1
+      p2: 1
+      p3: 3
+    p1Rounds: 1
+    ended: 2026-10-24T20:59:30.107Z
+    failing: review round 1 found 1 P1 (components/station-icon/review.md)
