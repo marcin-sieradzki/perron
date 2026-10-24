@@ -1,4 +1,5 @@
-// LineBadge's stories: one per variant of the deferred design, every line at both sizes.
+// LineBadge's stories: Default, then one per variant of the deferred design, every line at both
+// sizes.
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { LineBadge } from './LineBadge.tsx'
 
@@ -22,20 +23,32 @@ const officialPairBelowContrast = {
   a11y: { config: { rules: [{ id: 'color-contrast', enabled: false }] } },
 }
 
+/**
+ * The contract story's args: storybook/contract/subjects.ts takes `Default`, else the first export
+ * in alphabetical order (`ALarge`). M2's pair meets 4.5:1, so axe's color-contrast rule stays on.
+ */
+export const Default: Story = {
+  args: { line: 'm2', size: 'medium', children: 'M2' },
+}
+
 export const M1Medium: Story = {
+  name: 'M1 Medium',
   args: { line: 'm1', size: 'medium', children: 'M1' },
   parameters: officialPairBelowContrast,
 }
 
 export const M2Medium: Story = {
+  name: 'M2 Medium',
   args: { line: 'm2', size: 'medium', children: 'M2' },
 }
 
 export const M3Medium: Story = {
+  name: 'M3 Medium',
   args: { line: 'm3', size: 'medium', children: 'M3' },
 }
 
 export const M4Medium: Story = {
+  name: 'M4 Medium',
   args: { line: 'm4', size: 'medium', children: 'M4' },
   parameters: officialPairBelowContrast,
 }
@@ -76,19 +89,23 @@ export const RegionalMedium: Story = {
 }
 
 export const M1Large: Story = {
+  name: 'M1 Large',
   args: { line: 'm1', size: 'large', children: 'M1' },
   parameters: officialPairBelowContrast,
 }
 
 export const M2Large: Story = {
+  name: 'M2 Large',
   args: { line: 'm2', size: 'large', children: 'M2' },
 }
 
 export const M3Large: Story = {
+  name: 'M3 Large',
   args: { line: 'm3', size: 'large', children: 'M3' },
 }
 
 export const M4Large: Story = {
+  name: 'M4 Large',
   args: { line: 'm4', size: 'large', children: 'M4' },
   parameters: officialPairBelowContrast,
 }
