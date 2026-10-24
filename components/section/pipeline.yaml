@@ -3,4 +3,9 @@ component: Section
 layer: component
 deferred:
   at: 2026-10-24T23:30:50.497Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-24T23:30:59.623Z
+    ended: 2026-10-24T23:35:54.399Z
+    pending: 8
