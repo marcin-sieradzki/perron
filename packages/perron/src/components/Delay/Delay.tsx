@@ -28,20 +28,12 @@ function kindOf(rounded: number | null): DelayKind {
   return rounded < 3 ? 'slight' : 'late'
 }
 
-export interface DelayProps extends Omit<
-  useRender.ComponentProps<'span'>,
-  'children' | 'render' | 'ref'
-> {
+export interface DelayProps extends Omit<useRender.ComponentProps<'span'>, 'children' | 'ref'> {
   /**
    * The delay in minutes: positive when late, negative when early, `0` on time, `null` when no
    * real-time data says (timetable only, no signal). Rounded to the nearest whole minute.
    */
   minutes: number | null
-  /**
-   * Swaps the root element, keeping the class, data attribute and words.
-   * @default <span />
-   */
-  render?: useRender.ComponentProps<'span'>['render']
   /**
    * Overrides "min", the unit after the figure.
    * @default The locale's

@@ -9,10 +9,10 @@ import './Text.css'
 /** The roles set on a `<p>`: sentences. Every other role is a `<span>` (CR-1). */
 const PARAGRAPH_ROLES: ReadonlySet<string> = new Set(['body', 'body-sm'])
 
-export interface TextProps extends Omit<
-  HTMLAttributes<HTMLElement>,
-  'color' | 'children' | 'className' | 'style'
-> {
+export interface TextProps
+  extends
+    Omit<HTMLAttributes<HTMLElement>, 'color' | 'children' | 'className' | 'style'>,
+    Pick<useRender.ComponentProps<'span'>, 'render'> {
   /**
    * The typography role, one per job, as Typography gives them: `data` roles for anything compared
    * down a column, `overline` set in capitals. All sixteen roles, spelled as their tokens are, with
@@ -54,14 +54,6 @@ export interface TextProps extends Omit<
    * @default 'primary'
    */
   emphasis?: 'primary' | 'secondary' | 'tertiary'
-  /**
-   * Swaps the root element, keeping the class and data attributes: `render={<h2 />}` for a heading,
-   * `render={<time dateTime="08:14" />}` for a time. Text renders a `<p>` for `body` and `body-sm`
-   * and a `<span>` for every other role, headings included; a heading's level is the caller's,
-   * through `render`, and a `<span>` is safe inside a button, a label or another paragraph.
-   * @default <p /> for body and body-sm, <span /> otherwise
-   */
-  render?: useRender.RenderProp
   /** The text: a string, an element such as `<strong>` or `<time>`, or a list of both. */
   children?: ReactNode
   /** Joined after `pn-Text` on the root. */
@@ -88,6 +80,7 @@ export function Text({
     'data-emphasis': emphasis,
   }
   return useRender({
+    // with no render, the role picks the element: <p> for sentences, <span> for the rest (CR-1)
     defaultTagName: PARAGRAPH_ROLES.has(variant) ? 'p' : 'span',
     render,
     ref,

@@ -129,7 +129,9 @@ function firstParamType(checker: ts.TypeChecker, source: ts.SourceFile, name: st
 /**
  * Adds to each doc the members of the `<Name>Props` its component takes that react-docgen did not
  * read: those it inherits from Base UI, and the package's own declared in another file. React's
- * own, the HTML attributes, stay out of the table, as MUI's tables leave them out.
+ * own, the HTML attributes, stay out of the table, as MUI's tables leave them out. An inherited
+ * member the component destructures with a default gets a row from react-docgen with that default
+ * and nothing else: it takes the inherited type and JSDoc, and keeps the destructuring default.
  */
 function addInherited(docs: ComponentDoc[], src: string, filename: string) {
   const named = docs.filter((d) => d.actualName && src.includes(`${d.actualName}Props`))
@@ -143,10 +145,13 @@ function addInherited(docs: ComponentDoc[], src: string, filename: string) {
     const { type } = propsOf(file, `${doc.actualName}Props`)
     if (!type || firstParamType(checker, source, doc.actualName!) !== type) continue
     for (const member of checker.getPropertiesOfType(type)) {
-      if (doc.props?.[member.name]) continue
+      const read = doc.props?.[member.name]
+      if (read?.tsType) continue
       const at = member.declarations?.find((d) => inPackage(d) || inBaseUi(d))
       if (!at) continue
-      doc.props = { ...doc.props, [member.name]: propDoc(checker, member, at) }
+      const inherited = propDoc(checker, member, at)
+      if (read?.defaultValue) inherited.defaultValue = read.defaultValue
+      doc.props = { ...doc.props, [member.name]: inherited }
     }
   }
 }

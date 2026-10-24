@@ -53,6 +53,16 @@ describe('specProblems', () => {
     ])
   })
 
+  it("names a Props row for a name the contract's Names from other libraries bans", () => {
+    const spec = filled().replace(
+      '## Props\n\nFilled.\n',
+      '## Props\n\n| Name | Type |\n| --- | --- |\n| `tone` | `string` |\n| `state` | `string` |\n',
+    )
+    expect(specProblems(spec, template, 'Swatch', { state: 'CSS states' }).problems).toEqual([
+      'has a Props row for `state`, a name the contract\'s "Names from other libraries" bans; use CSS states',
+    ])
+  })
+
   it('names a template placeholder left unfilled', () => {
     const spec = filled('Swatch', '| `root` | `<what the root is>` |')
     expect(specProblems(spec, template, 'Swatch').problems).toEqual([
