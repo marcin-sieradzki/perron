@@ -8,7 +8,7 @@ The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-def
 
 Penpot page `Components/Toolbar`. Family: none (the contract's [Families](README.md#families) have no bar of actions; the root borrows the Popups' glass, see Tokens). Shared parts: none (an icon-only button is named by the caller's `aria-label`, not by `VisuallyHidden`).
 
-Answered (recommended): the `Toolbar` folder holds four components, `Toolbar`, `ToolbarButton`, `ToolbarGroup` and `ToolbarSeparator`, each exported with its props type from `Toolbar.tsx`, as an exception to the contract's "one component per folder": Toolbar's Base UI parts share one context (`Toolbar.Button`, `Toolbar.Group` and `Toolbar.Separator` read `Toolbar.Root`'s), so they can't be built or shown apart. The `props` and `api-compatibility` checks read only `ToolbarProps`, so the review holds the other three to the contract.
+The `Toolbar` folder holds four components, `Toolbar`, `ToolbarButton`, `ToolbarGroup` and `ToolbarSeparator`, each exported with its props type from `Toolbar.tsx`, as an exception to the contract's "one component per folder": Toolbar's Base UI parts share one context (`Toolbar.Button`, `Toolbar.Group` and `Toolbar.Separator` read `Toolbar.Root`'s), so they can't be built or shown apart. The `props` and `api-compatibility` checks read only `ToolbarProps`, so the review holds the other three to the contract.
 
 | Part (Penpot layer) | What it is                                                                                                                                  | Base UI part                         | Class                        | `slotProps` key |
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ | ---------------------------- | --------------- |
@@ -40,7 +40,7 @@ Base UI already does: one tab stop for the whole toolbar, a roving `tabIndex` (0
 
 In MUI's layout. Every prop here gets this description as its JSDoc. Slots come last.
 
-Answered (recommended): `Toolbar` passes Base UI's `orientation` (default `'horizontal'`, for the map's vertical column of controls) and `disabled` through as its own props, and inherits `loopFocus` (default `true`) with its Base UI JSDoc.
+`Toolbar` passes Base UI's `orientation` (default `'horizontal'`, for the map's vertical column of controls) and `disabled` through as its own props, and inherits `loopFocus` (default `true`) with its Base UI JSDoc.
 
 ### Toolbar
 
@@ -57,11 +57,11 @@ The caller names the toolbar with `aria-label` or `aria-labelledby`, which reach
 
 ### ToolbarButton
 
-Answered (recommended): `ToolbarButton` has one size, no `size` or `variant` prop, and a quiet neutral look: `size.control` tall and at least as wide, transparent at rest in `color.text.primary`, `color.surface.hover` on hover and press, as the toolbar's glass already marks the bar. `size.control` is the height of icon buttons and filter chips, so a toolbar of icon buttons matches the IconButtons beside it.
+`ToolbarButton` has one size, no `size` or `variant` prop, and a quiet neutral look: `size.control` tall and at least as wide, transparent at rest in `color.text.primary`, `color.surface.hover` on hover and press, as the toolbar's glass already marks the bar. `size.control` is the height of icon buttons and filter chips, so a toolbar of icon buttons matches the IconButtons beside it.
 
-Answered (recommended): `ToolbarButton`'s `color` offers `'neutral' | 'brand'`, the contract's two intents for a toolbar's buttons, with `brand` drawn as a solid brand button (`color.surface.brand` with a `color.border.brand` edge and `color.text.on-color.dark`, `color.surface.brand-hover` on hover and press).
+`ToolbarButton`'s `color` offers `'neutral' | 'brand'`, the contract's two intents for a toolbar's buttons, with `brand` drawn as a solid brand button (`color.surface.brand` with a `color.border.brand` edge and `color.text.on-color.dark`, `color.surface.brand-hover` on hover and press).
 
-Answered (recommended): a `ToolbarButton` with a `startIcon` and no `children` is an icon-only button: square (`size.control` both ways, no inline padding), marked `data-icon-only`, and named by the caller's `aria-label`, which its JSDoc requires. The map's zoom and locate controls are icons alone, and the `props` check would not read a union type that enforces the label.
+A `ToolbarButton` with a `startIcon` and no `children` is an icon-only button: square (`size.control` both ways, no inline padding), marked `data-icon-only`, and named by the caller's `aria-label`, which its JSDoc requires. The map's zoom and locate controls are icons alone, and the `props` check would not read a union type that enforces the label.
 
 | Name                        | Type                   | Default     | Base UI prop            | Description                                                                                                                                                   |
 | --------------------------- | ---------------------- | ----------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -98,9 +98,9 @@ No `slotProps`: each of the four components renders one Base UI part, its own ro
 
 One row per part, state and property. States are the contract's design states: rest is no selector, hover is `:hover` inside `@media (hover: hover)`, pressed is `:active`, focus is `:focus-visible`, disabled is `[data-disabled]`. Every `color` row on `button` sets the button's `color`, which the label and both icons take, since icons draw in `currentColor`.
 
-Answered (recommended): the toolbar's root takes the Popups' glass (`color.surface.overlay`, a `backdrop-filter` of `effect.glass-blur` and `effect.glass-saturate`, `shadow.panel`, a `border.width.025` edge in `color.border.subtle`) and their nesting, `radius.lg` padded `space.100` so the buttons' `radius.md` nests, with `space.100` between items. The map's controls and the top bar's groups float over the map, which [Elevation](../foundations/elevation.md#surfaces) says is glass.
+The toolbar's root takes the Popups' glass (`color.surface.overlay`, a `backdrop-filter` of `effect.glass-blur` and `effect.glass-saturate`, `shadow.panel`, a `border.width.025` edge in `color.border.subtle`) and their nesting, `radius.lg` padded `space.100` so the buttons' `radius.md` nests, with `space.100` between items. The map's controls and the top bar's groups float over the map, which [Elevation](../foundations/elevation.md#surfaces) says is glass.
 
-Answered (recommended): `ToolbarSeparator` is a `border.width.025` hairline in `color.border.subtle`, drawn as a border so forced colours keep it, running across the bar and inset `space.100` from the bar's padding at each end. `color.border.subtle` is the dividers' colour, and a divider only decorates.
+`ToolbarSeparator` is a `border.width.025` hairline in `color.border.subtle`, drawn as a border so forced colours keep it, running across the bar and inset `space.100` from the bar's padding at each end. `color.border.subtle` is the dividers' colour, and a divider only decorates.
 
 The toolbar, its group and its separator:
 
@@ -222,7 +222,7 @@ Rules for this component alone, numbered so the build and the review can cite th
 
 The deferred design's page draws two components: the toolbar, with one variant property, `orientation` (`horizontal`, `vertical`), and its button, with `color` (`neutral`, `brand`) and `State` (`default`, `hover`, `focus`, `disabled`). Each story is named by its variant name (`penpot/README.md`, "Conventions").
 
-Answered (recommended): the button's stories, and a later drawing's exports, are prefixed `Button`, as `ButtonNeutralDefault`, beside the toolbar's `Horizontal` and `Vertical`, since the Penpot conventions name a variant by its property values alone.
+The button's stories, and a later drawing's exports, are prefixed `Button`, as `ButtonNeutralDefault`, beside the toolbar's `Horizontal` and `Vertical`, since the Penpot conventions name a variant by its property values alone.
 
 The toolbar stories render a toolbar named "Map controls" (zoom in, zoom out, a separator, then a group with "Show whole line" and a brand "Show departures"), with `packages/perron/icons/`'s `plus`, `minus` and `locate`. The button stories render one labelled button, "Show whole line", in a toolbar named "Actions", and set `disabled` for a `Disabled` story. The hover and focus stories render at rest: the visual check drives the state, and their `play` tests check it.
 

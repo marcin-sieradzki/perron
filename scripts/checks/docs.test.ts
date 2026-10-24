@@ -53,7 +53,7 @@ describe('docs', () => {
       {
         file: 'docs/components/note.md',
         message:
-          "Note's docs page would show render, which docs/components/note.md's Props table has no row for: give it a row, as for every member of NoteProps, those inherited from Base UI included, which the component does not declare again",
+          "Note's docs page would show render, which docs/components/note.md's Props table has no row for: give it a row, as for every member of NoteProps, those inherited from Base UI and React's `className`, `style` and `ref` included, which the component does not declare again",
       },
       {
         file: 'docs/components/note.md',

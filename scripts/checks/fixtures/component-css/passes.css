@@ -26,6 +26,7 @@
   z-index: var(--perron-z-index-dialog);
   outline-color: transparent;
   fill: currentColor;
+  margin-block-start: calc((1lh - var(--perron-icon-size-325)) / 2);
   content: 'red 4px';
 }
 
