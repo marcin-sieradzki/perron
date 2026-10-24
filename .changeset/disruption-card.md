@@ -2,4 +2,4 @@
 '@mylder/perron': minor
 ---
 
-Adds `DisruptionCard`, and the owned string `affectedLines` in all four locales.
+Adds `DisruptionCard`. Adds the owned string `affectedLines` to every locale; a caller that supplies its own dictionaries adds it too.
