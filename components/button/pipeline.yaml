@@ -8,3 +8,8 @@ stages:
     status: done
     started: 2026-10-24T19:44:52.497Z
     ended: 2026-10-24T20:04:48.947Z
+  brief:
+    status: failed
+    started: 2026-10-24T20:43:51.513Z
+    ended: 2026-10-24T20:48:43.043Z
+    failing: the spec still has the placeholder <key>
