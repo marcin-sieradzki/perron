@@ -29,6 +29,16 @@ export const en = {
   runningNormally: 'Running normally',
   /** A link that shows a vehicle, stop or line on the map. */
   showOnMap: 'Show on map',
+  /** Delay: the unit after a signed figure, as in "+3 min". */
+  minutesUnit: 'min',
+  /** Delay: heard after the number when a vehicle runs late, as in "3 min late". */
+  minutesLate: 'min late',
+  /** Delay: heard after the number when a vehicle runs early, as in "1 min early". */
+  minutesEarly: 'min early',
+  /** Delay: a vehicle or departure running to the timetable. */
+  onTime: 'On time',
+  /** Delay: no real-time data says how late a vehicle runs; heard in place of "—". */
+  delayUnknown: 'Delay unknown',
 }
 
 /** The name of one owned string. */

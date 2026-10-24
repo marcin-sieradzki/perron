@@ -16,4 +16,9 @@ export const nb: OwnedStrings = {
   delays: 'Forsinkelser',
   runningNormally: 'Går som normalt',
   showOnMap: 'Vis på kartet',
+  minutesUnit: 'min',
+  minutesLate: 'min forsinket',
+  minutesEarly: 'min før tiden',
+  onTime: 'I rute',
+  delayUnknown: 'Forsinkelse ukjent',
 }

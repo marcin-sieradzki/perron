@@ -59,6 +59,8 @@ describe("content design's data-state and delay words", () => {
       'Delays',
       'Running normally',
       'Show on map',
+      'On time',
+      'Delay unknown',
     ])
   })
 

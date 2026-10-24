@@ -1,0 +1,27 @@
+/* Delay: one inline run of data text in the delay's colour, read from data-delay. */
+.pn-Delay {
+  font: var(--perron-typography-data);
+  letter-spacing: var(--perron-typography-data-tracking);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.pn-Delay[data-delay='on-time'] {
+  color: var(--perron-color-transit-delay-on-time);
+}
+
+.pn-Delay[data-delay='slight'] {
+  color: var(--perron-color-transit-delay-slight);
+}
+
+.pn-Delay[data-delay='late'] {
+  color: var(--perron-color-transit-delay-late);
+}
+
+.pn-Delay[data-delay='early'] {
+  color: var(--perron-color-transit-delay-early);
+}
+
+.pn-Delay[data-delay='unknown'] {
+  color: var(--perron-color-transit-delay-unknown);
+}

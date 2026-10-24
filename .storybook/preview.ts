@@ -39,6 +39,7 @@ const preview: Preview = {
             'Spec template',
             // registry:components start: written by npm run registry, by category then name
             'Button',
+            'Delay',
             'StationIcon',
             // registry:components end
           ],
@@ -49,6 +50,7 @@ const preview: Preview = {
           [
             // each spec page, as PAGES lists them
             'Button',
+            'Delay',
             'StationIcon',
           ],
           // registry:specs end

@@ -1,0 +1,15 @@
+/* VisuallyHidden: kept in the accessibility tree and out of sight, out of the flow, and out of
+   copied text, so a copy reads what the eye saw. */
+.pn-VisuallyHidden {
+  position: absolute;
+  /* perron-allow(component-css): a 1px box, not 0, so screen readers that skip empty boxes read it */
+  width: 1px;
+  /* perron-allow(component-css): a 1px box, not 0, so screen readers that skip empty boxes read it */
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+  user-select: none;
+}
