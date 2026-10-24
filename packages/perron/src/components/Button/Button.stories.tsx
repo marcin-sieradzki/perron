@@ -26,9 +26,13 @@ const icon = (svg: string) => (
 )
 
 /** A value as it renders, through a probe that reads it as `property`. */
-function resolve(property: 'backgroundColor' | 'borderColor', value: string) {
+function resolve(
+  property: 'backgroundColor' | 'borderColor' | 'outlineWidth' | 'outlineOffset',
+  value: string,
+) {
   const probe = document.createElement('span')
   probe.style.borderStyle = 'solid'
+  probe.style.outlineStyle = 'solid'
   probe.style[property] = value
   document.body.append(probe)
   const rendered = getComputedStyle(probe)[property]
@@ -96,7 +100,8 @@ const focusRing: Play = async ({ canvasElement }) => {
   const ring = getComputedStyle(button)
   await expect(ring.outlineStyle).toBe('solid')
   await expect(ring.outlineColor).toBe(resolve('borderColor', 'var(--perron-color-border-focus)'))
-  await expect(ring.outlineOffset).not.toBe('0px')
+  await expect(ring.outlineWidth).toBe(resolve('outlineWidth', 'var(--perron-focus-width)'))
+  await expect(ring.outlineOffset).toBe(resolve('outlineOffset', 'var(--perron-focus-offset)'))
   await userEvent.tab({ shift: true })
   await expect(button).not.toHaveFocus()
 }

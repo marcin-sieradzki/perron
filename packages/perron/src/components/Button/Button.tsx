@@ -4,8 +4,12 @@ import { Button as BaseButton } from '@base-ui/react/button'
 import type { CSSProperties, ReactNode, Ref } from 'react'
 import './Button.css'
 
-/** Whether a node renders anything: `false`, `true`, `null` and `undefined` leave no icon span. */
-const given = (node: ReactNode) => node != null && typeof node !== 'boolean'
+/**
+ * Whether an icon prop renders anything: `false`, `true`, `null`, `undefined` and `''` leave no
+ * icon span.
+ */
+const rendersSomething = (node: ReactNode) =>
+  node != null && typeof node !== 'boolean' && node !== ''
 
 export interface ButtonProps extends Omit<
   BaseButton.Props,
@@ -75,6 +79,7 @@ export function Button({
   endIcon,
   children,
   className,
+  style,
   ref,
   ...rest
 }: ButtonProps) {
@@ -84,18 +89,19 @@ export function Button({
       ref={ref}
       disabled={disabled}
       className={className ? `pn-Button ${className}` : 'pn-Button'}
+      style={style}
       data-variant={variant}
       data-color={color}
       data-size={size}
       data-full-width={fullWidth ? '' : undefined}
     >
-      {given(startIcon) && (
+      {rendersSomething(startIcon) && (
         <span className="pn-Button-startIcon" aria-hidden="true">
           {startIcon}
         </span>
       )}
       <span className="pn-Button-label">{children}</span>
-      {given(endIcon) && (
+      {rendersSomething(endIcon) && (
         <span className="pn-Button-endIcon" aria-hidden="true">
           {endIcon}
         </span>
