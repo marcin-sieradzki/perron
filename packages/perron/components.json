@@ -12,7 +12,7 @@
     "name": "IconButton",
     "layer": "component",
     "category": "Actions",
-    "status": "building",
+    "status": "stable",
     "baseUiParts": ["Button"],
     "penpotPath": "Components/IconButton",
     "dependsOn": []
