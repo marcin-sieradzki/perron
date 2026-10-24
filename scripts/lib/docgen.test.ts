@@ -26,7 +26,20 @@ describe('componentDocs', () => {
   it('finds a component that returns useRender(...), with its own props', () => {
     const [doc] = componentDocs(TAG, FILE)
     expect(doc.actualName).toBe('Tag')
-    expect(Object.keys(doc.props ?? {})).toEqual(['label', 'variant', 'render'])
+    expect(Object.keys(doc.props ?? {})).toEqual([
+      'label',
+      'variant',
+      'ref',
+      'className',
+      'style',
+      'render',
+    ])
+    // React's root props join the table with Perron's words, since React's types give none
+    expect(doc.props?.ref).toMatchObject({
+      tsType: { name: 'Ref<HTMLSpanElement>' },
+      description: 'Reaches the root element.',
+    })
+    expect(doc.props?.className.description).toMatch(/^Joined after the component's own class/)
     expect(doc.props?.variant.defaultValue).toEqual({ value: "'quiet'", computed: false })
   })
 
@@ -86,6 +99,7 @@ export function Press({ className, ...rest }: PressProps) {
     expect(Object.keys(doc.props ?? {})).toEqual([
       'className',
       'style',
+      'ref',
       'focusableWhenDisabled',
       'nativeButton',
       'render',
