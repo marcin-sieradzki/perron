@@ -18,7 +18,7 @@ Judge from three inputs only, so the review is independent of how the build reas
 
 The round is the one the prompt gives; without one, it is one more than the round in an existing `components/<name>/review.md`, or 1.
 
-Commands you run: `git diff`, `git status`, `git log`, `npm run check`, `npm run test:stories`, `npm run gates` (or `npm run gates -- <rule>`), `npm run storybook` in the background, Node scripts that drive Playwright against it, and the commands the audit skills give. For a Base UI part's API, ask `get_reference` (it reads the docs of the version pinned here).
+Commands you run: `git diff`, `git status`, `git log`, `npm run check`, `npm run test:stories`, `npm run gates` (or `npm run gates -- <rule> <Name>`), `npm run storybook` in the background, Node scripts that drive Playwright against it, and the commands the audit skills give. For a Base UI part's API, ask `get_reference` (it reads the docs of the version pinned here).
 
 ## Steps
 

@@ -2,6 +2,7 @@
 // the Words rule, and the keyboard play pattern each component's stories copy. Hidden from the
 // sidebar; they run in npm run test:stories.
 import type { ComponentProps } from 'react'
+import { createPortal } from 'react-dom'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, userEvent, within } from 'storybook/test'
@@ -24,6 +25,22 @@ function Sample({ ref, className, ...rest }: ComponentProps<'button'>) {
 
 const sample = { name: 'Sample', Component: Sample, args: { children: 'Sample' } }
 
+/**
+ * A root a portal moves out of the canvas to the end of `<body>`, as an overlay's popup is, so the
+ * Root story holds its own lookup to finding one. The server renderer has no portals, so the
+ * OwnedStrings story leaves it out.
+ */
+function PortalSample({ ref, className, ...rest }: ComponentProps<'div'>) {
+  return createPortal(
+    <div
+      {...rest}
+      ref={ref}
+      className={['pn-PortalSample', className].filter(Boolean).join(' ')}
+    />,
+    document.body,
+  )
+}
+
 export default {
   title: 'Contract',
   tags: ['!dev', '!autodocs'],
@@ -39,7 +56,10 @@ const all = [
 ]
 
 /** Every registered component and pattern takes a ref and a data-testid on its root. */
-export const Root: StoryObj = rootStory(all)
+export const Root: StoryObj = rootStory([
+  ...all,
+  { name: 'PortalSample', Component: PortalSample, args: {} },
+])
 
 /**
  * Every word each one's Default story shows or announces, in each locale, is the caller's or the

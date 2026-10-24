@@ -8,8 +8,10 @@
 // `slotProps.<part>` row is the `slotProps` member's). Each prop the spec gives a default shows that
 // default in the table too, from a destructuring default or the member's JSDoc `@default`, such as
 // "The locale's" for an owned-string prop, so the docs stage never meets a row or a Default cell the
-// brief or the build could have settled. A missing file or table has no line to excuse, so this rule
-// takes no perron-allow.
+// brief or the build could have settled. The spec's Stories table and the stories file name the
+// same stories, one row per export, so the story the contract story renders (its `Default`, or its
+// alphabetically first) is one the spec describes. A missing file or table has no line to excuse,
+// so this rule takes no perron-allow.
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { componentDocs, type ComponentDoc } from '../lib/docgen.ts'
@@ -19,6 +21,10 @@ import { folderOf, isBuilt, readRegistry, specPage, type Entry } from '../lib/re
 import { byFileLine, codeSpans, type Check, type Problem } from './lib.ts'
 
 const RULE = 'docs'
+
+/** An entry's stories file, by path from the repo root. */
+const storiesFile = (e: Entry) =>
+  `${PACKAGE}/src/${folderOf(e.layer)}/${e.name}/${e.name}.stories.tsx`
 
 /** An entry's docs page, by path from the repo root. */
 const docsPage = (e: Entry) => `${PACKAGE}/src/${folderOf(e.layer)}/${e.name}/${e.name}.mdx`
@@ -110,6 +116,47 @@ function defaultProblems(e: Entry, doc: ComponentDoc, rows: SpecRow[]): Problem[
   })
 }
 
+/** Each story of the spec's Stories table, by the code span that starts its row, with its line. */
+function storyRows(spec: string) {
+  const lines = spec.split('\n')
+  const start = lines.findIndex((l) => /^## Stories\s*$/.test(l))
+  if (start < 0) return undefined
+  const rows: { name: string; line: number }[] = []
+  for (let i = start + 1; i < lines.length && !lines[i].startsWith('## '); i++) {
+    const name = /^\|\s*`([^`]+)`/.exec(lines[i])?.[1]
+    if (name) rows.push({ name, line: i + 1 })
+  }
+  return rows
+}
+
+/** Each story the stories file exports with no row in the spec's Stories table, and each row it does not export. */
+function storyProblems(root: string, e: Entry): Problem[] {
+  const spec = join(root, specPage(e))
+  const file = join(root, storiesFile(e))
+  if (!existsSync(spec) || !existsSync(file)) return []
+  const rows = storyRows(readFileSync(spec, 'utf8'))
+  if (!rows) return []
+  const exported = [...readFileSync(file, 'utf8').matchAll(/^export const (\w+)/gm)].map(
+    (m) => m[1],
+  )
+  const named = new Set(rows.map((r) => r.name))
+  return [
+    ...exported
+      .filter((s) => !named.has(s))
+      .map((s) => ({
+        file: specPage(e),
+        message: `${storiesFile(e)} exports the story ${s}, which ${specPage(e)}'s Stories table has no row for: give it a row, or take the story out`,
+      })),
+    ...rows
+      .filter((r) => !exported.includes(r.name))
+      .map((r) => ({
+        file: specPage(e),
+        line: r.line,
+        message: `${r.name} is a row of ${specPage(e)}'s Stories table but no story ${storiesFile(e)} exports: export it under that name, or take the row out`,
+      })),
+  ]
+}
+
 /** Where the spec's Props table and the docs page's would differ. */
 function tableProblems(root: string, e: Entry, doc: ComponentDoc): Problem[] {
   const spec = join(root, specPage(e))
@@ -135,6 +182,7 @@ export default {
           message: `${e.name}'s docs page would show no props: its docgen finds no exported function component ${e.name} taking ${e.name}Props`,
         })
       if (doc) problems.push(...tableProblems(root, e, doc))
+      problems.push(...storyProblems(root, e))
       if (DOCUMENTED.has(e.status) && missing(docsPage(e)))
         problems.push({
           file: docsPage(e),

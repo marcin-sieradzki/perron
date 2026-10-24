@@ -1,12 +1,14 @@
 // Runs every check in this folder over the repo, the gates of `npm run check`. Each check is one
 // rule of the component contract (docs/components/README.md, "Checks"), in `<rule>.ts`, whose
 // default export is a `Check`. Every run also reads each `perron-allow(<rule>)` in the repo's text
-// and fails one that names no rule or gives no reason.
-// Usage: node scripts/checks/run.ts [rule…] (npm run gates [-- rule…])
+// and fails one that names no rule or gives no reason. A PascalCase argument names a component or
+// pattern: the run then reports only the problems in its own files, or that name it.
+// Usage: node scripts/checks/run.ts [rule…] [Name…] (npm run gates [-- rule… Name…])
 import { execFileSync } from 'node:child_process'
 import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { kebab } from '../lib/entry.ts'
 import { PACKAGE } from '../lib/paths.ts'
 import { allowanceProblems, byFileLine, format, VENDORED, type Check, type Problem } from './lib.ts'
 
@@ -21,13 +23,38 @@ export async function loadChecks(): Promise<Check[]> {
   return Promise.all(files.map(async (f) => (await import(join(here, f))).default as Check))
 }
 
+export const USAGE = 'usage: npm run gates [-- <rule>… <Name>…]'
+
+/** The command line's rules and the component or pattern names, which are PascalCase. */
+export function parseArgs(argv: string[]) {
+  const names = argv.filter((a) => /^[A-Z][A-Za-z0-9]*$/.test(a))
+  return { rules: argv.filter((a) => !names.includes(a)), names }
+}
+
+/**
+ * Whether `problem` is one of `<Name>`'s: in its folder, its spec or docs page, its Penpot files
+ * or its factory state, or naming it in its message.
+ */
+export function isAbout(problem: Problem, name: string) {
+  const k = kebab(name)
+  const files = [
+    new RegExp(`/${name}/`),
+    new RegExp(`(^|/)${k}\\.(md|mdx)$`),
+    new RegExp(`^penpot/${k}(\\.|/)`),
+    new RegExp(`^components/${k}/`),
+  ]
+  return (
+    files.some((f) => f.test(problem.file)) || new RegExp(`\\b${name}\\b`).test(problem.message)
+  )
+}
+
 /** The checks whose rules `only` names, or all of them when it names none. */
 export function selectChecks(checks: Check[], only: string[]) {
   const rules = checks.map((c) => c.rule).sort()
   const unknown = only.filter((r) => !rules.includes(r))
   if (unknown.length)
     throw new Error(
-      `no check has the rule ${unknown.map((r) => `"${r}"`).join(', ')}; the rules are ${rules.join(', ')}`,
+      `no check has the rule ${unknown.map((r) => `"${r}"`).join(', ')}; the rules are ${rules.join(', ')}, and a PascalCase name narrows them to one component or pattern\n${USAGE}`,
     )
   return only.length ? checks.filter((c) => only.includes(c.rule)) : checks
 }
@@ -69,15 +96,27 @@ export function allowanceCheck(root: string, rules: string[]): Problem[] {
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const checks = await loadChecks()
+  const argv = process.argv.slice(2)
+  if (argv.includes('--help') || argv.includes('-h')) {
+    console.log(
+      `${USAGE}\nrules: ${checks
+        .map((c) => c.rule)
+        .sort()
+        .join(', ')}`,
+    )
+    process.exit(0)
+  }
+  const { rules: only, names } = parseArgs(argv)
   let selected: Check[]
   try {
-    selected = selectChecks(checks, process.argv.slice(2))
+    selected = selectChecks(checks, only)
   } catch (e) {
     console.error((e as Error).message)
     process.exit(1)
   }
   let failed = 0
-  const report = (rule: string, problems: Problem[]) => {
+  const report = (rule: string, all: Problem[]) => {
+    const problems = names.length ? all.filter((p) => names.some((n) => isAbout(p, n))) : all
     for (const line of format(rule, problems)) console.error(line)
     failed += problems.length
   }
