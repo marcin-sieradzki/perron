@@ -3,4 +3,9 @@ component: SeverityLabel
 layer: component
 deferred:
   at: 2026-10-24T21:12:36.133Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-24T21:12:39.390Z
+    ended: 2026-10-24T21:15:54.472Z
+    pending: 3
