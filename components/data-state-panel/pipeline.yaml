@@ -9,16 +9,14 @@ stages:
     started: 2026-10-24T22:41:08.238Z
     ended: 2026-10-24T22:41:56.874Z
   build:
-    runs: 1
-    failing: review round 1 found 1 P1 (components/data-state-panel/review.md)
+    runs: 2
+    status: done
+    started: 2026-10-24T22:55:54.100Z
+    ended: 2026-10-24T23:01:17.868Z
   review:
-    status: failed
-    started: 2026-10-24T22:49:40.326Z
     rounds: 1
+    sentBack: 1
     findings:
       p1: 1
       p2: 2
       p3: 4
-    p1Rounds: 1
-    ended: 2026-10-24T22:55:28.203Z
-    failing: review round 1 found 1 P1 (components/data-state-panel/review.md)

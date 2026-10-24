@@ -7,11 +7,11 @@ export const en = {
   close: 'Close',
   /** A button that clears a field or a filter. */
   clear: 'Clear',
-  /** Announced while content loads. */
+  /** The title of a data view's message while its data loads, also announced. */
   loading: 'Loading',
-  /** A data view whose data came back with nothing in it. */
+  /** The title of a data view's message when its data came back with nothing in it, also announced. */
   noData: 'No data to show',
-  /** A data view whose data could not be loaded. */
+  /** The title of a data view's message when its data could not be loaded, also announced. */
   loadFailed: 'Could not load the data',
   /** Pagination: the button to the page before. */
   previousPage: 'Previous page',

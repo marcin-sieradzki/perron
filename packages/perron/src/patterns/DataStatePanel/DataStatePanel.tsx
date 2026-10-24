@@ -102,12 +102,17 @@ export function DataStatePanel({
     [messageSlotRef],
   )
 
-  // Remembers what has focus inside the message part. A blur that leaves the element in the
-  // document is focus moving on, and forgets it; an element removed with focus on it is kept, for
-  // the status change that removed it (CR-6). The check waits a microtask, past the commit.
+  // Remembers what has focus inside the message part, for the status change that removes it
+  // (CR-6), and forgets it once that can no longer happen: a blur that leaves the element in the
+  // document is focus moving on, checked a microtask later, past the commit; an element removed by
+  // anything but a change of status, such as a new `action`, is forgotten by the observer,
+  // whose callback runs after the commit's layout effects, so the status change sees it first.
   useEffect(() => {
     const node = message.current
     if (!node) return
+    const forgetIfGone = () => {
+      if (focused.current && !focused.current.isConnected) focused.current = null
+    }
     const onFocusIn = (event: FocusEvent) => {
       focused.current = event.target as Element
     }
@@ -117,24 +122,32 @@ export function DataStatePanel({
         if (focused.current === target && target.isConnected) focused.current = null
       })
     }
+    const observer = new MutationObserver(forgetIfGone)
+    observer.observe(node, { childList: true, subtree: true })
     node.addEventListener('focusin', onFocusIn)
     node.addEventListener('focusout', onFocusOut)
     return () => {
+      observer.disconnect()
       node.removeEventListener('focusin', onFocusIn)
       node.removeEventListener('focusout', onFocusOut)
     }
   }, [])
 
   // CR-6: when a change of status removed the element that had focus inside the message part,
-  // focus moves to the message part, never to the page's top. Never otherwise: not on mount.
+  // focus moves to the message part, never to the page's top. Never otherwise: not on mount, and
+  // not for an element something else removed earlier, which the observer has forgotten by now.
+  const previous = useRef(status)
   useLayoutEffect(() => {
+    const changed = previous.current !== status
+    previous.current = status
     const node = message.current
     const last = focused.current
     if (!node || !last || last.isConnected) return
     focused.current = null
+    if (!changed) return
     const active = node.ownerDocument.activeElement
     if (!active || active === node.ownerDocument.body) node.focus()
-  }, [status])
+  })
 
   const explained = status === 'empty' || status === 'error'
 

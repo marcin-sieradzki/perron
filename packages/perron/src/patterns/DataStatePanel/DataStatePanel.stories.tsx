@@ -88,6 +88,26 @@ export const Empty: Story = {
   },
 }
 
+/** The data could not be loaded: the title, a sentence and "Try again". */
+export const Error: Story = {
+  args: {
+    status: 'error',
+    description: 'Try again in a minute.',
+    action: tryAgain,
+  },
+  play: async ({ canvasElement }) => {
+    await expect(region(canvasElement)).toHaveTextContent('Could not load the data')
+    await expect(region(canvasElement)).toHaveTextContent('Try again in a minute.')
+    await expect(within(canvasElement).queryByRole('list')).toBeNull()
+    const button = within(canvasElement).getByRole('button', { name: 'Try again' })
+    const before = document.activeElement
+    await userEvent.tab()
+    await expect(button).toHaveFocus()
+    await userEvent.tab({ shift: true })
+    await expect(document.activeElement).toBe(before)
+  },
+}
+
 /** The caller's state: "Try again" sets `status` to `'loading'`, as a data view's retry would. */
 function Retrying(args: DataStatePanelProps) {
   const [status, setStatus] = useState(args.status)
@@ -105,10 +125,10 @@ function Retrying(args: DataStatePanelProps) {
 }
 
 /**
- * The data could not be loaded: the title, a sentence and "Try again", which starts loading.
+ * The error status, its "Try again" starting to load the data again through the caller's state.
  * Focus moves to the message part once the button it was on is gone (CR-6).
  */
-export const Error: Story = {
+export const ErrorRetry: Story = {
   args: {
     status: 'error',
     description: 'Try again in a minute.',
@@ -118,7 +138,6 @@ export const Error: Story = {
   play: async ({ canvasElement }) => {
     const message = region(canvasElement)
     await expect(message).toHaveTextContent('Could not load the data')
-    await expect(message).toHaveTextContent('Try again in a minute.')
     const button = within(canvasElement).getByRole('button', { name: 'Try again' })
     await userEvent.tab()
     await expect(button).toHaveFocus()
