@@ -114,7 +114,7 @@ No owned strings: the marker shows and announces no words, and the stop's and li
 
 ## Stories
 
-No Penpot design yet, so the stories are named by the variant names the design will have: `variant`, then `size`, each in PascalCase ([Penpot conventions](../../penpot/README.md#conventions)). `line` is a colour, not a Penpot variant property, and the `Lines` story shows every value.
+No Penpot design yet, so the stories are named by the variant names the design will have: `variant`, then `size`, each in PascalCase (the Conventions of `penpot/README.md`). `line` is a colour, not a Penpot variant property, and the `Lines` story shows every value.
 
 | Story            | Shows                                                                                                 | `play` test                                                                                        |
 | ---------------- | ----------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |

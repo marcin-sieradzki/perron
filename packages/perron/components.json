@@ -129,7 +129,7 @@
     "name": "StationIcon",
     "layer": "component",
     "category": "Transit",
-    "status": "designing",
+    "status": "building",
     "baseUiParts": [],
     "penpotPath": "Components/StationIcon",
     "dependsOn": []

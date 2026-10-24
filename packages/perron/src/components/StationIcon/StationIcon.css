@@ -1,0 +1,102 @@
+/* StationIcon: a ring, or a filled dot, in the line's colour (docs/components/station-icon.md).
+   The ring and the dot are drawn in currentColor, and each line sets color, so one rule per line
+   colours both variants (CR-5). */
+.pn-StationIcon {
+  display: inline-block;
+  flex: none;
+  box-sizing: border-box;
+  inline-size: var(--perron-icon-size);
+  block-size: var(--perron-icon-size);
+  border: var(--perron-border-width-050) solid currentColor;
+  border-radius: var(--perron-radius-full);
+  color: var(--perron-color-text-primary);
+  vertical-align: middle;
+}
+
+/* The diameter is the icon size of the text beside it; the ring keeps its width at every size (CR-4). */
+.pn-StationIcon[data-size='small'] {
+  --perron-icon-size: var(--perron-icon-size-325);
+}
+
+.pn-StationIcon[data-size='medium'] {
+  --perron-icon-size: var(--perron-icon-size-400);
+}
+
+.pn-StationIcon[data-size='large'] {
+  --perron-icon-size: var(--perron-icon-size-450);
+}
+
+/* Outlined fills with the raised surface, so it hides a stop timeline's rail running behind it. */
+.pn-StationIcon[data-variant='outlined'] {
+  background: var(--perron-color-surface-raised);
+}
+
+.pn-StationIcon[data-variant='filled'] {
+  background: currentColor;
+}
+
+/* Line colours stay exact: never tinted, adjusted or outlined (CR-6). */
+.pn-StationIcon[data-line='m1'] {
+  color: var(--perron-color-transit-line-m1);
+}
+
+.pn-StationIcon[data-line='m2'] {
+  color: var(--perron-color-transit-line-m2);
+}
+
+.pn-StationIcon[data-line='m3'] {
+  color: var(--perron-color-transit-line-m3);
+}
+
+.pn-StationIcon[data-line='m4'] {
+  color: var(--perron-color-transit-line-m4);
+}
+
+.pn-StationIcon[data-line='a'] {
+  color: var(--perron-color-transit-line-a);
+}
+
+.pn-StationIcon[data-line='b'] {
+  color: var(--perron-color-transit-line-b);
+}
+
+.pn-StationIcon[data-line='c'] {
+  color: var(--perron-color-transit-line-c);
+}
+
+.pn-StationIcon[data-line='e'] {
+  color: var(--perron-color-transit-line-e);
+}
+
+.pn-StationIcon[data-line='f'] {
+  color: var(--perron-color-transit-line-f);
+}
+
+.pn-StationIcon[data-line='h'] {
+  color: var(--perron-color-transit-line-h);
+}
+
+.pn-StationIcon[data-line='bus'] {
+  color: var(--perron-color-transit-mode-bus);
+}
+
+.pn-StationIcon[data-line='regional'] {
+  color: var(--perron-color-transit-mode-regional);
+}
+
+/* The system would reset the dot's fill to Canvas and lose filled against outlined, so the marker
+   sets its own system colours: a CanvasText ring, and a CanvasText dot when filled (CR-7). */
+@media (forced-colors: active) {
+  .pn-StationIcon {
+    forced-color-adjust: none;
+    border-color: CanvasText;
+  }
+
+  .pn-StationIcon[data-variant='outlined'] {
+    background: Canvas;
+  }
+
+  .pn-StationIcon[data-variant='filled'] {
+    background: CanvasText;
+  }
+}
