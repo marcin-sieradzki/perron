@@ -17,6 +17,7 @@ export function buildData(root: string, tokens: ResolvedTokens, docs: Record<str
     ...(r.description ? { description: r.description } : {}),
     values: r.values,
     ...(Object.keys(r.overrides).length ? { overrides: r.overrides } : {}),
+    ...(r.typography ? { typography: r.typography } : {}),
   }))
   const pages = PAGES.map((path) => {
     const markdown = docs[path] ?? readFileSync(join(root, path), 'utf8')

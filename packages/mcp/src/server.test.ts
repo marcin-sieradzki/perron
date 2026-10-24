@@ -55,7 +55,7 @@ describe('the Perron MCP server', () => {
 
   it('answers which token is the warning surface in dark', async () => {
     const { text } = await call('list_tokens', { query: 'surface warning' })
-    const [token] = JSON.parse(text)
+    const [token] = text.split('\n').map((l) => JSON.parse(l))
     expect(token).toMatchObject({
       name: 'color.surface.warning',
       cssVar: '--perron-color-surface-warning',
@@ -64,7 +64,9 @@ describe('the Perron MCP server', () => {
   })
 
   it('filters tokens by type, with their reduced-motion values', async () => {
-    const found = JSON.parse((await call('list_tokens', { type: 'duration' })).text)
+    const found = (await call('list_tokens', { type: 'duration' })).text
+      .split('\n')
+      .map((l) => JSON.parse(l))
     expect(found.every((t: { type: string }) => t.type === 'duration')).toBe(true)
     expect(found).toContainEqual(
       expect.objectContaining({
@@ -74,6 +76,28 @@ describe('the Perron MCP server', () => {
     )
   })
 
+  it('finds a token by its CSS custom property', async () => {
+    const { text } = await call('list_tokens', { query: '--perron-color-surface-warning' })
+    expect(text.split('\n').map((l) => JSON.parse(l).name)).toEqual(['color.surface.warning'])
+  })
+
+  it('lists only the names when nothing filters them', async () => {
+    const { text } = await call('list_tokens', {})
+    expect(text).toMatch(/^\d+ tokens\./)
+    expect(text).toContain('\ncolor.surface.warning (color)\n')
+    expect(text).not.toContain('#3F280A')
+  })
+
+  it("gives a type role's class and capitals", async () => {
+    const [overline] = (await call('list_tokens', { query: 'typography.overline' })).text
+      .split('\n')
+      .map((l) => JSON.parse(l))
+    expect(overline.typography).toMatchObject({
+      className: 'perron-typography-overline',
+      textTransform: 'uppercase',
+    })
+  })
+
   it('says so when no token matches', async () => {
     expect(await call('list_tokens', { query: 'no such token' })).toMatchObject({ isError: true })
   })
@@ -81,6 +105,17 @@ describe('the Perron MCP server', () => {
   it('finds the rule in the docs', async () => {
     const { text } = await call('search_docs', { query: 'reduced motion', limit: 1 })
     expect(text).toMatch(/^From Motion \(docs\/foundations\/motion\.md\):\n\n## /)
+  })
+
+  it('searches content design, which has no sections, in Danish too', async () => {
+    const { text } = await call('search_docs', { query: 'Forsinkelser', limit: 1 })
+    expect(text).toMatch(/^From Content design \(docs\/content-design\.md\)/)
+  })
+
+  it('ignores the filler words of a question', async () => {
+    const { text } = await call('search_docs', { query: 'how should I word a delay', limit: 1 })
+    expect(text).toMatch(/delay/i)
+    expect(text).not.toMatch(/^From Accessibility/)
   })
 
   it("answers what props Base UI's Select.Positioner takes, and only that", async () => {
@@ -96,6 +131,11 @@ describe('the Perron MCP server', () => {
     expect(text).toContain('### Positioner.State')
     expect(text).not.toMatch(/^### Popup$/m)
     expect(text).not.toContain('## Demo')
+  })
+
+  it('finds a component named with an acronym', async () => {
+    const { isError } = await call('get_reference', { library: 'base-ui', component: 'OTPField' })
+    expect(isError).toBe(false)
   })
 
   it('takes a part written into the component name', async () => {
