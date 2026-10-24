@@ -9,7 +9,16 @@ stages:
     started: 2026-10-24T21:19:52.236Z
     ended: 2026-10-24T21:20:41.672Z
   build:
-    status: done
-    started: 2026-10-24T21:20:43.746Z
     runs: 1
-    ended: 2026-10-24T21:28:02.677Z
+    failing: review round 1 found 2 P1 (components/empty-state/review.md)
+  review:
+    status: failed
+    started: 2026-10-24T21:28:04.762Z
+    rounds: 1
+    findings:
+      p1: 2
+      p2: 1
+      p3: 2
+    p1Rounds: 1
+    ended: 2026-10-24T21:32:52.852Z
+    failing: review round 1 found 2 P1 (components/empty-state/review.md)
