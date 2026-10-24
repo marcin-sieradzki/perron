@@ -153,6 +153,10 @@ export const OutlinedMedium: Story = {
     await expect(marker).not.toHaveFocus()
     await userEvent.tab({ shift: true })
     await expect(stop).toHaveFocus()
+    // back to the resting state: focus where it started, before the first stop
+    await userEvent.tab({ shift: true })
+    await expect(stop).not.toHaveFocus()
+    await expect(next).not.toHaveFocus()
   },
 }
 
@@ -164,21 +168,21 @@ export const FilledMedium: Story = { args: { variant: 'filled', size: 'medium' }
 
 export const FilledLarge: Story = { args: { variant: 'filled', size: 'large' } }
 
-/** Every line, and none, named beside its marker. */
+/** Every line, and none, each a stop on it with the line named after the stop's name. */
 const LINES: { line: StationIconProps['line']; name: string }[] = [
-  { line: 'm1', name: 'M1' },
-  { line: 'm2', name: 'M2' },
-  { line: 'm3', name: 'M3' },
-  { line: 'm4', name: 'M4' },
-  { line: 'a', name: 'A' },
-  { line: 'b', name: 'B' },
-  { line: 'c', name: 'C' },
-  { line: 'e', name: 'E' },
-  { line: 'f', name: 'F' },
-  { line: 'h', name: 'H' },
-  { line: 'bus', name: 'Bus' },
-  { line: 'regional', name: 'Regional train' },
-  { line: undefined, name: 'Several lines' },
+  { line: 'm1', name: 'Vestamager, M1' },
+  { line: 'm2', name: 'Lufthavnen, M2' },
+  { line: 'm3', name: 'Marmorkirken, M3' },
+  { line: 'm4', name: 'Orientkaj, M4' },
+  { line: 'a', name: 'Hillerød, A' },
+  { line: 'b', name: 'Farum, B' },
+  { line: 'c', name: 'Klampenborg, C' },
+  { line: 'e', name: 'Køge, E' },
+  { line: 'f', name: 'Grøndal, F' },
+  { line: 'h', name: 'Frederikssund, H' },
+  { line: 'bus', name: 'Rådhuspladsen, bus 5C' },
+  { line: 'regional', name: 'Roskilde, regional train' },
+  { line: undefined, name: 'Nørreport, several lines' },
 ]
 
 /** What the filled marker means, said in words beside it, as the spec's Do and don't asks. */
