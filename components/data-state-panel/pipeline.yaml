@@ -3,4 +3,9 @@ component: DataStatePanel
 layer: pattern
 deferred:
   at: 2026-10-24T22:36:28.443Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-24T22:36:32.176Z
+    ended: 2026-10-24T22:40:48.274Z
+    pending: 10
