@@ -29,9 +29,10 @@ import { layerOf } from './lib/pipeline.ts'
 import {
   compare,
   expectations,
-  forcedStates,
+  drivenStates,
   pixelDiff,
   renderReport,
+  type Interaction,
   type Measured,
   type Report,
   type Run,
@@ -114,15 +115,32 @@ async function storyIds(url: string, title: string) {
   )
 }
 
-/** Forces pseudo-classes such as `:hover` on the first element matching `selector`. */
-async function force(page: Page, selector: string, states: string[]) {
-  if (!states.length) return
-  const cdp = await page.context().newCDPSession(page)
-  await cdp.send('DOM.enable')
-  await cdp.send('CSS.enable')
-  const { root } = await cdp.send('DOM.getDocument', { depth: -1 })
-  const { nodeId } = await cdp.send('DOM.querySelector', { nodeId: root.nodeId, selector })
-  await cdp.send('CSS.forcePseudoState', { nodeId, forcedPseudoClasses: states })
+/**
+ * Drives the interactions on the root of a story at rest: a hover, keyboard focus (Tab until the
+ * root or something in it has focus), or a press held down. Returns what lets a press go.
+ */
+async function drive(page: Page, selector: string, interactions: Interaction[]) {
+  const root = page.locator(selector).first()
+  let release = async () => {}
+  for (const interaction of interactions) {
+    if (interaction === 'hover') await root.hover()
+    if (interaction === 'focus') {
+      let focused = false
+      for (let i = 0; i < 50 && !focused; i++) {
+        await page.keyboard.press('Tab')
+        focused = await root.evaluate((el) => el.contains(document.activeElement))
+      }
+      if (!focused) throw new Error(`Tab never reached ${selector}`)
+    }
+    if (interaction === 'press') {
+      const box = await root.boundingBox()
+      if (!box) throw new Error(`${selector} has no box to press`)
+      await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2)
+      await page.mouse.down()
+      release = () => page.mouse.up()
+    }
+  }
+  return release
 }
 
 /** Each selector's box and computed styles, looked for inside the root first. */
@@ -194,7 +212,7 @@ export async function runVisual(o: VisualOptions): Promise<Report> {
               theme,
             )
             await page.evaluate(() => document.fonts.ready)
-            await force(page, rootSelector, forcedStates(map, v.props))
+            const release = await drive(page, rootSelector, drivenStates(map, v.props))
             run.rows = compare(list, await measure(page, rootSelector, wanted))
             run.pass = run.rows.every((r) => r.pass)
             const expected = join(o.root, exportPath(o.name, variant, theme))
@@ -209,6 +227,7 @@ export async function runVisual(o: VisualOptions): Promise<Report> {
               run.pixelDiff = percent
               run.diffImage = file
             }
+            await release()
           } catch (e) {
             run.error = (e as Error).message.split('\n')[0]
           } finally {

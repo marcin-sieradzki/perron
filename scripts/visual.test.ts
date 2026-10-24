@@ -36,8 +36,8 @@ describe('the visual stage', () => {
     expect(designProblems(repo, `${fixture}/penpot`)).toEqual([])
   })
 
-  it('passes each part drawn true, in light and dark, with the hover state forced', () => {
-    for (const variant of ['PlainDefault', 'PlainHover'])
+  it('passes each part drawn true, in light and dark, with hover, keyboard focus and a press driven', () => {
+    for (const variant of ['PlainDefault', 'PlainHover', 'PlainFocus', 'PlainPressed'])
       for (const theme of ['light', 'dark'])
         expect(run(variant, theme).rows.filter((r) => !r.pass)).toEqual([])
     expect(run('PlainHover', 'dark').rows).toContainEqual({
@@ -45,6 +45,13 @@ describe('the visual stage', () => {
       check: 'fill (color.surface.hover)',
       expected: 'rgba(235, 238, 235, 0.06)',
       measured: 'rgba(235, 238, 235, 0.06)',
+      pass: true,
+    })
+    expect(run('PlainFocus', 'light').rows).toContainEqual({
+      part: 'root',
+      check: 'fill (color.surface.selected)',
+      expected: 'rgba(18, 24, 27, 0.09)',
+      measured: 'rgba(18, 24, 27, 0.09)',
       pass: true,
     })
   })

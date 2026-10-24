@@ -4,7 +4,7 @@ import type { CodeMap, Layer } from '../checks/penpot.ts'
 import {
   compare,
   expectations,
-  forcedStates,
+  drivenStates,
   pixelDiff,
   renderReport,
   sameCss,
@@ -211,18 +211,32 @@ describe('compare', () => {
   })
 })
 
-describe('forcedStates', () => {
-  it("forces the pseudo-classes a variant's State maps to, and nothing for an attribute state", () => {
-    const states: CodeMap = {
-      component: 'Swatch',
-      properties: {
-        State: { state: { default: null, hover: ':hover', disabled: '[data-disabled]' } },
+describe('drivenStates', () => {
+  const states: CodeMap = {
+    component: 'Swatch',
+    properties: {
+      State: {
+        state: {
+          default: null,
+          hover: ':hover',
+          focus: ':focus-visible',
+          pressed: ':active',
+          disabled: '[data-disabled]',
+        },
       },
-      layers: {},
-    }
-    expect(forcedStates(states, { State: 'hover' })).toEqual(['hover'])
-    expect(forcedStates(states, { State: 'disabled' })).toEqual([])
-    expect(forcedStates(states, { State: 'default' })).toEqual([])
+    },
+    layers: {},
+  }
+
+  it("drives the interaction a variant's State maps to", () => {
+    expect(drivenStates(states, { State: 'hover' })).toEqual(['hover'])
+    expect(drivenStates(states, { State: 'focus' })).toEqual(['focus'])
+    expect(drivenStates(states, { State: 'pressed' })).toEqual(['press'])
+  })
+
+  it('drives nothing for rest or an attribute state, which the story sets', () => {
+    expect(drivenStates(states, { State: 'default' })).toEqual([])
+    expect(drivenStates(states, { State: 'disabled' })).toEqual([])
   })
 })
 

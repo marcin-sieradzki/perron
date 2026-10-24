@@ -154,7 +154,7 @@ beforeEach(() => {
 afterEach(() => rmSync(root, { recursive: true }))
 
 describe('the factory dry run', () => {
-  it('stops at design-approval, then at pending-questions, then at needs-human after three red builds', () => {
+  it('stops at design-approval, then at pending-questions, then at needs-human after a failed build run', () => {
     expect(run('next Tally').out).toBe('run: design\nwhy: Tally has no design yet\n')
     expect(run('begin Tally brief')).toMatchObject({
       code: 1,
@@ -186,28 +186,27 @@ describe('the factory dry run', () => {
     expect(run('begin Tally build').err).toBe('refused: build cannot begin: brief is not done\n')
     expect(stage('brief', () => brief()).out).toContain('ended brief: done\nrun: build')
 
-    // build: a red npm run check counts an attempt, whatever the stage says; the third stops it
-    checks = [false, false, false]
-    expect(stage('build', () => build()).out).toMatch(
-      /^ended build: failed, attempt 1 of 3: npm run check failed: lint/,
-    )
-    expect(run('next Tally').out).toMatch(
-      /^run: build\nwhy: the last run failed: .* \(attempt 2 of 3\)/,
-    )
-    stage('build', () => build())
-    expect(stage('build', () => build()).out).toMatch(
-      /ended build: failed, attempt 3 of 3.*\nwait: needs-human\nstage: build\nwhy: build failed 3 times/,
+    // build: the stage spends its three attempts inside one run, so a failed run stops the loop
+    expect(stage('build', () => build(), 'failed', 'npm run check: 2 lint errors').out).toBe(
+      'ended build: failed: npm run check: 2 lint errors\nwait: needs-human\nstage: build\nwhy: build failed after its 3 attempts: npm run check: 2 lint errors\n',
     )
     expect(run('begin Tally build').err).toMatch(
       /build cannot begin: Tally waits at needs-human \(build\)/,
     )
-    expect(ran.filter((c) => c === 'npm run check')).toHaveLength(3)
+    run('unblock Tally')
+
+    // a run that says done is checked: a red npm run check is a failed run all the same
+    checks = [false]
+    expect(stage('build', () => build()).out).toMatch(
+      /^ended build: failed: npm run check failed: lint.*\nwait: needs-human\n/,
+    )
+    expect(ran.filter((c) => c === 'npm run check')).toHaveLength(1)
     expect(pipeline()).toMatchObject({
       needsHuman: { stage: 'build' },
-      stages: { build: { status: 'failed', attempts: 3 } },
+      stages: { build: { status: 'failed', runs: 2 } },
     })
 
-    // the maintainer fixes it and unblocks, and the build has its attempts again
+    // the maintainer fixes it and unblocks, and a fresh run begins
     expect(run('unblock Tally').out).toContain('unblocked build\nrun: build')
     expect(stage('build', () => build()).out).toContain('ended build: done\nrun: review')
   })
@@ -217,9 +216,9 @@ describe('the factory dry run', () => {
     expect(run('begin Tally review').err).toBe('refused: review cannot begin: build is not done\n')
     expect(stage('build', () => build()).out).toContain('run: review')
 
-    // review round 1 finds a P1: back to build, with its attempts reset
+    // review round 1 finds a P1: back to build, for a fresh run
     expect(stage('review', () => review(1, 2)).out).toBe(
-      'ended review: failed, round 1: 2 P1, 0 P2, 0 P3: review round 1 found 2 P1 (components/tally/review.md)\nrun: build\nwhy: sent back: review round 1 found 2 P1 (components/tally/review.md) (attempt 1 of 3)\n',
+      'ended review: failed, round 1: 2 P1, 0 P2, 0 P3: review round 1 found 2 P1 (components/tally/review.md)\nrun: build\nwhy: sent back: review round 1 found 2 P1 (components/tally/review.md)\n',
     )
     stage('build', () => build())
 

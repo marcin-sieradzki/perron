@@ -105,7 +105,7 @@ describe('serializePipeline', () => {
         started: '2026-10-24T09:00:00.000Z',
         ended: '2026-10-24T09:30:00.000Z',
       },
-      build: { status: 'failed' as const, attempts: 3, failing: "it's red: ".repeat(20) },
+      build: { status: 'failed' as const, runs: 2, failing: "it's red: ".repeat(20) },
       review: { rounds: 1, p1Rounds: 1, findings: { p1: 1, p2: 0, p3: 2 } },
     },
   }

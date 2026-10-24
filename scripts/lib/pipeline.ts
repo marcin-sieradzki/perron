@@ -1,8 +1,8 @@
 // The factory's state for one component or pattern, `components/<name>/pipeline.yaml`, and the
 // rules that move it through the loop of ROADMAP.md, "Phase 4": design, brief, build, review, docs,
 // visual. Every gate is checked from the files and by running the checks, never taken on a stage's
-// word, and the caps of ADR 0008 (3 build attempts, 2 review rounds with a P1, 1 visual send-back)
-// stop the loop at `needs-human`. scripts/factory.ts is the command line over it and the only writer.
+// word, and the caps of ADR 0008 stop the loop at `needs-human`: a failed build run (the build
+// stage spends its 3 attempts inside one run), 2 review rounds with a P1, a second visual failure. scripts/factory.ts is the command line over it and the only writer.
 import { createHash } from 'node:crypto'
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
@@ -22,7 +22,10 @@ export type Outcome = (typeof OUTCOMES)[number]
 /** Where the loop stops for the maintainer. */
 export type Gate = 'design-approval' | 'pending-questions' | 'needs-human' | 'done'
 
-/** The budgets of ADR 0008: build attempts, review rounds with a P1, visual failures. */
+/**
+ * The budgets of ADR 0008: build attempts (spent inside one build run, so one failed run stops
+ * the loop), review rounds with a P1, visual failures.
+ */
 export const CAPS = { build: 3, review: 2, visual: 2 } as const
 
 /** The spec template every spec keeps the sections of. */
@@ -37,8 +40,8 @@ export interface StageState {
   failing?: string
   /** brief: the `[PENDING]` questions left in the spec */
   pending?: number
-  /** build: red attempts since the stage was last sent back */
-  attempts?: number
+  /** build: runs begun, each a fresh set of the build stage's attempts */
+  runs?: number
   /** review: rounds reviewed, and how many of them found a P1 */
   rounds?: number
   p1Rounds?: number
@@ -272,8 +275,6 @@ function refusal(p: Pipeline, stage: Stage, env: Env): string | undefined {
     )
     if (pending) problems.push(`has ${pending} [PENDING] question${pending > 1 ? 's' : ''}`)
     if (problems.length) return `the spec ${files.spec} is not complete: it ${problems.join('; ')}`
-    if ((p.stages.build?.attempts ?? 0) >= CAPS.build)
-      return `build has had its ${CAPS.build} attempts`
   }
   if (stage === 'visual') {
     const missing = missingExports(p, env)
@@ -310,14 +311,13 @@ export function next(p: Pipeline, env: Env): Next {
             ? `the spec ${filesOf(p.component, p.layer).spec} has ${s.pending} [PENDING] question${s.pending === 1 ? '' : 's'} for the maintainer`
             : (s.failing ?? `${stage} has questions for the maintainer`),
       }
-    const attempt = stage === 'build' ? ` (attempt ${(s.attempts ?? 0) + 1} of ${CAPS.build})` : ''
     const round = stage === 'review' ? ` (round ${(s.rounds ?? 0) + 1})` : ''
     const why = s.failing
       ? `${s.status === 'failed' ? 'the last run failed' : 'sent back'}: ${s.failing}`
       : stage === 'design'
         ? `${p.component} has no design yet`
         : `${STAGES[STAGES.indexOf(stage) - 1]} is done`
-    return { run: stage, why: `${why}${attempt}${round}` }
+    return { run: stage, why: `${why}${round}` }
   }
   return {
     wait: 'done',
@@ -327,9 +327,9 @@ export function next(p: Pipeline, env: Env): Next {
 
 /** Keeps only a stage's counters, for a stage whose latest run no longer counts. */
 function counters(s: StageState = {}): StageState {
-  const { attempts, rounds, p1Rounds, findings, failures } = s
+  const { runs, rounds, p1Rounds, findings, failures } = s
   return Object.fromEntries(
-    Object.entries({ attempts, rounds, p1Rounds, findings, failures }).filter(
+    Object.entries({ runs, rounds, p1Rounds, findings, failures }).filter(
       ([, v]) => v !== undefined,
     ),
   )
@@ -345,9 +345,10 @@ export function begin(p: Pipeline, stage: Stage, env: Env): Result {
     if (out.stages[later]) out.stages[later] = counters(out.stages[later])
   const s = (out.stages[stage] = { ...counters(out.stages[stage]), status: 'running' as const })
   s.started = env.now()
+  if (stage === 'build') s.runs = (s.runs ?? 0) + 1
   const extra =
     stage === 'build'
-      ? ` (attempt ${(s.attempts ?? 0) + 1} of ${CAPS.build})`
+      ? ` (run ${s.runs})`
       : stage === 'review'
         ? ` (round ${(s.rounds ?? 0) + 1})`
         : ''
@@ -369,16 +370,15 @@ export function unblock(p: Pipeline): Result {
   const out = clone(p)
   const stage = out.needsHuman!.stage
   const s = stageOf(out, stage)
-  if (stage === 'build') s.attempts = 0
   if (stage === 'review') s.p1Rounds = 0
   if (stage === 'visual') s.failures = 0
   delete out.needsHuman
   return { ok: true, pipeline: out, said: `unblocked ${stage}` }
 }
 
-/** Sends the component back to build: attempts start again, and every later run is void. */
+/** Sends the component back to build for a fresh run, and voids every run after it. */
 function sendBack(p: Pipeline, from: Stage, reason: string) {
-  p.stages.build = { ...counters(p.stages.build), attempts: 0, failing: reason }
+  p.stages.build = { ...counters(p.stages.build), failing: reason }
   for (const later of STAGES.slice(STAGES.indexOf('build') + 1, STAGES.indexOf(from)))
     p.stages[later] = counters(p.stages[later])
 }
@@ -488,15 +488,11 @@ export function end(
       break
     case 'build':
       if (outcome === 'done') verdict = buildGate(p, env)
-      if (verdict.outcome === 'failed') {
-        s.attempts = (s.attempts ?? 0) + 1
-        note = `, attempt ${s.attempts} of ${CAPS.build}`
-        if (s.attempts >= CAPS.build)
-          out.needsHuman = {
-            stage,
-            reason: `build failed ${CAPS.build} times; the last: ${verdict.failing}`,
-          }
-      }
+      if (verdict.outcome === 'failed')
+        out.needsHuman = {
+          stage,
+          reason: `build failed after its ${CAPS.build} attempts: ${verdict.failing}`,
+        }
       break
     case 'review': {
       const round = (s.rounds ?? 0) + 1

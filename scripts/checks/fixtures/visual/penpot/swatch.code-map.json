@@ -11,7 +11,9 @@
     "State": {
       "state": {
         "default": null,
-        "hover": ":hover"
+        "hover": ":hover",
+        "focus": ":focus-visible",
+        "pressed": ":active"
       }
     }
   },

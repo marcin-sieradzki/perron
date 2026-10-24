@@ -141,17 +141,27 @@ export function compare(list: Expectation[], measured: Measured): Row[] {
   })
 }
 
-const PSEUDO = new Set(['hover', 'focus', 'focus-visible', 'focus-within', 'active'])
+/** An interaction the visual stage drives on a story at rest: hover, keyboard focus, or a press. */
+export type Interaction = 'hover' | 'focus' | 'press'
+
+const DRIVEN: Record<string, Interaction> = {
+  hover: 'hover',
+  focus: 'focus',
+  'focus-visible': 'focus',
+  'focus-within': 'focus',
+  active: 'press',
+}
 
 /**
- * The pseudo-classes to force on the root for a variant: those its state property maps to in the
- * code map, such as `:hover`. An attribute state, such as `[data-disabled]`, is the story's to set.
+ * The interactions to drive on the root for a variant: those its state property maps to in the
+ * code map, such as `:hover`, since a story renders at rest. An attribute state, such as
+ * `[data-disabled]`, comes from the story's own args.
  */
-export function forcedStates(map: CodeMap, props: Record<string, string>) {
+export function drivenStates(map: CodeMap, props: Record<string, string>): Interaction[] {
   return Object.entries(props).flatMap(([property, value]) => {
     const entry = map.properties[property]
     const selector = entry && 'state' in entry ? entry.state[value] : null
-    return (selector?.match(/:([\w-]+)/g) ?? []).map((s) => s.slice(1)).filter((s) => PSEUDO.has(s))
+    return (selector?.match(/:([\w-]+)/g) ?? []).flatMap((s) => DRIVEN[s.slice(1)] ?? [])
   })
 }
 

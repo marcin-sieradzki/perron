@@ -7,7 +7,7 @@ import './Swatch.css'
 
 function Swatch({ tone = 'plain' }: { tone?: 'plain' | 'brand' }) {
   return (
-    <span className="pn-Swatch" data-tone={tone}>
+    <span className="pn-Swatch" data-tone={tone} tabIndex={0}>
       <span className="pn-Swatch-dot" />
     </span>
   )
@@ -19,4 +19,6 @@ type Story = StoryObj<typeof Swatch>
 
 export const PlainDefault: Story = { args: { tone: 'plain' } }
 export const PlainHover: Story = { args: { tone: 'plain' } }
+export const PlainFocus: Story = { args: { tone: 'plain' } }
+export const PlainPressed: Story = { args: { tone: 'plain' } }
 export const BrandDefault: Story = { args: { tone: 'brand' } }
