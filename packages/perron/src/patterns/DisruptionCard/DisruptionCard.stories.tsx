@@ -49,9 +49,19 @@ const readsKind = async (canvasElement: HTMLElement, word: string) => {
   await expect(isInaccessible(label)).toBe(false)
 }
 
-/** The list named "Affected lines" holds one item per line, with its short name, in this order. */
-const listsLines = async (canvasElement: HTMLElement, names: string[]) => {
-  const list = within(canvasElement).getByRole('list', { name: 'Affected lines' })
+/**
+ * `label` is read just before an unnamed list in the header, which holds one item per line, with
+ * its short name, in this order.
+ */
+const listsLines = async (scope: HTMLElement, names: string[], label = 'Affected lines') => {
+  const list = within(scope).getByRole('list')
+  await expect(list).toHaveAccessibleName('')
+  await expect(list.closest('.pn-DisruptionCard-header')).not.toBeNull()
+  const said = list.previousElementSibling as HTMLElement | null
+  await expect(said?.textContent).toBe(label)
+  await expect(isInaccessible(said as HTMLElement)).toBe(false)
+  // read, never seen: the VisuallyHidden part's 1 px clipped box
+  await expect(said?.getBoundingClientRect().width).toBeLessThanOrEqual(1)
   const items = within(list).getAllByRole('listitem')
   await expect(items.map((item) => item.textContent)).toEqual(names)
   for (const item of items) await expect(item).toHaveClass('pn-DisruptionCard-line', 'pn-LineBadge')
@@ -91,7 +101,7 @@ export const Delay: Story = {
   args: { ...delay, slotProps: { title: { render: <h3 /> } } },
   play: async ({ canvasElement, step }) => {
     await step('"Delays" is read', () => readsKind(canvasElement, 'Delays'))
-    await step('a list named "Affected lines" holds M2 and M3', () =>
+    await step('"Affected lines" is read just before an unnamed list holding M2 and M3', () =>
       listsLines(canvasElement, ['M2', 'M3']),
     )
     await step('the title is a level-3 heading', async () => {
@@ -101,16 +111,16 @@ export const Delay: Story = {
       })
       await expect(heading).toHaveClass('pn-DisruptionCard-title', 'pn-Text')
     })
-    await step('affectedLinesLabel="Lines" names the list "Lines"', async () => {
+    await step('affectedLinesLabel="Lines" is read just before the list', async () => {
       const props: DisruptionCardProps = { ...delay, affectedLinesLabel: 'Lines' }
       const host = document.createElement('div')
       canvasElement.append(host)
       const root = createRoot(host)
       root.render(<DisruptionCard {...props} />)
       try {
-        const list = await waitFor(() => within(host).getByRole('list', { name: 'Lines' }))
-        await expect(within(list).getAllByRole('listitem')).toHaveLength(2)
-        await expect(within(host).queryByRole('list', { name: 'Affected lines' })).toBeNull()
+        await waitFor(() => within(host).getByRole('list'))
+        await listsLines(host, ['M2', 'M3'], 'Lines')
+        await expect(within(host).queryByText('Affected lines')).toBeNull()
         expectOwnedStrings(
           renderToStaticMarkup(
             <PerronProvider locale="da">
@@ -142,7 +152,7 @@ export const Diversion: Story = {
   },
 }
 
-/** Planned works on three S-tog lines, in a 320 px container, the narrowest screen. */
+/** Planned works on three S-tog lines, in a 200 px container, so the badges wrap under the kind. */
 export const Planned: Story = {
   args: {
     severity: 'planned',
@@ -156,7 +166,7 @@ export const Planned: Story = {
   },
   decorators: [
     (Story) => (
-      <div style={{ maxInlineSize: 320 }}>
+      <div style={{ maxInlineSize: 200 }}>
         <Story />
       </div>
     ),

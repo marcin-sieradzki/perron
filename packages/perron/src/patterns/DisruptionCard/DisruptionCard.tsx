@@ -1,6 +1,7 @@
 // DisruptionCard: one disruption on Copenhagen's network as a raised card: its kind, the lines it
 // touches, a short title and a plain sentence. A pattern: it composes Surface, SeverityLabel,
-// LineBadge and Text, and imports nothing from Base UI. Spec: docs/patterns/disruption-card.md.
+// LineBadge, Text and the VisuallyHidden part, and imports nothing from Base UI.
+// Spec: docs/patterns/disruption-card.md.
 import type { ComponentPropsWithRef, ReactNode } from 'react'
 import { useOwnedStrings } from '../../PerronProvider.tsx'
 import { LineBadge } from '../../components/LineBadge/LineBadge.tsx'
@@ -14,6 +15,7 @@ import { Surface } from '../../components/Surface/Surface.tsx'
 import type { SurfaceProps } from '../../components/Surface/Surface.tsx'
 import { Text } from '../../components/Text/Text.tsx'
 import type { TextProps } from '../../components/Text/Text.tsx'
+import { VisuallyHidden } from '../../parts/VisuallyHidden/VisuallyHidden.tsx'
 import './DisruptionCard.css'
 
 /** One line a disruption touches: the line whose colours its badge takes, and its short name. */
@@ -48,7 +50,7 @@ export interface DisruptionCardProps extends Omit<SurfaceProps, 'variant' | 'chi
    */
   children?: ReactNode
   /**
-   * Overrides "Affected lines", the name screen readers hear for the list of line badges.
+   * Overrides "Affected lines", the words screen readers hear just before the list of line badges.
    *
    * @default The locale's
    */
@@ -126,25 +128,26 @@ export function DisruptionCard({
           className={classes('pn-DisruptionCard-severity', label?.className)}
           severity={severity}
         />
-        {/* CR-4: no list for no lines, so no empty list is announced */}
+        {/* CR-4: no list for no lines, so no empty list is announced. The list has no name of its
+            own: "Affected lines" is said just before it, so a card made a link keeps the badges'
+            names in its own */}
         {lines?.length ? (
-          <ul
-            {...list}
-            className={classes('pn-DisruptionCard-lines', list?.className)}
-            aria-label={strings.affectedLines}
-          >
-            {lines.map((entry) => (
-              <LineBadge
-                key={`${entry.line}-${entry.name}`}
-                className="pn-DisruptionCard-line"
-                render={LIST_ITEM}
-                line={entry.line}
-                size="medium"
-              >
-                {entry.name}
-              </LineBadge>
-            ))}
-          </ul>
+          <>
+            <VisuallyHidden>{strings.affectedLines}</VisuallyHidden>
+            <ul {...list} className={classes('pn-DisruptionCard-lines', list?.className)}>
+              {lines.map((entry) => (
+                <LineBadge
+                  key={`${entry.line}-${entry.name}`}
+                  className="pn-DisruptionCard-line"
+                  render={LIST_ITEM}
+                  line={entry.line}
+                  size="medium"
+                >
+                  {entry.name}
+                </LineBadge>
+              ))}
+            </ul>
+          </>
         ) : null}
       </div>
       {/* CR-5: a <p> until slotProps.title.render swaps it for a heading */}
