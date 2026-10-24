@@ -118,11 +118,13 @@ describe('specProblems', () => {
   })
   it('passes every spec in the repo, so a merged spec is one a brief may end on', () => {
     const banned = readPropRules(readFileSync(join(root, CONTRACT), 'utf8')).banned
-    const specs = readdirSync(join(root, 'docs/components')).filter(
-      (f) => f.endsWith('.md') && f !== 'README.md' && f !== 'TEMPLATE.md',
+    const specs = ['components', 'patterns'].flatMap((dir) =>
+      readdirSync(join(root, 'docs', dir))
+        .filter((f) => f.endsWith('.md') && f !== 'README.md' && f !== 'TEMPLATE.md')
+        .map((f) => `docs/${dir}/${f}`),
     )
     for (const f of specs) {
-      const spec = readFileSync(join(root, 'docs/components', f), 'utf8')
+      const spec = readFileSync(join(root, f), 'utf8')
       const name = /^# (.+)$/m.exec(spec)?.[1] ?? ''
       expect({ f, ...specProblems(spec, template, name, banned) }).toEqual({
         f,
