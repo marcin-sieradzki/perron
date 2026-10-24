@@ -1,0 +1,6 @@
+# Written by npm run factory; never by hand.
+component: KioskBar
+layer: pattern
+deferred:
+  at: 2026-10-24T23:39:56.412Z
+stages: {}
