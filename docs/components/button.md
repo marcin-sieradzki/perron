@@ -2,7 +2,7 @@
 
 A button that runs one action on the screen it sits on, such as "Show departures", in ink (`neutral`) or, for the one main action of a screen, in the brand yellow (`brand`).
 
-The design is deferred ([ADR 0010](../adr/0010-unattended-runs-with-design-deferred.md)): this spec decides what the drawing would. The read-back `penpot/button.json`, drawn before the contract gave action components the `brand` colour, is one source among the contract, the foundations and the tokens, and the spec follows it wherever it holds.
+The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): this spec decides what the drawing would. The read-back `penpot/button.json`, drawn before the contract gave action components the `brand` colour, is one source among the contract, the foundations and the tokens, and the spec follows it wherever it holds.
 
 ## Anatomy
 
@@ -181,7 +181,7 @@ Rules for this component alone, numbered so the build and the review can cite th
 
 ## Stories
 
-The deferred design's variant properties, in this order: `variant` (`solid`, `outline`), `color` (`neutral`, `brand`), `size` (`medium`, `small`) and `State` (`default`, `hover`, `focus`, `disabled`). Each story is named by its variant name ([penpot/README.md](../../penpot/README.md#conventions)), renders the label "Show departures", as the read-back does, and sets `disabled` for a `Disabled` story. The hover and focus stories render at rest: the visual check drives the state itself, and their `play` tests check it.
+The deferred design's variant properties, in this order: `variant` (`solid`, `outline`), `color` (`neutral`, `brand`), `size` (`medium`, `small`) and `State` (`default`, `hover`, `focus`, `disabled`). Each story is named by its variant name (`penpot/README.md`, "Conventions"), renders the label "Show departures", as the read-back does, and sets `disabled` for a `Disabled` story. The hover and focus stories render at rest: the visual check drives the state itself, and their `play` tests check it.
 
 `color` is a variant property, after `variant`, so the stories and a later drawing's exports are named `SolidNeutralMediumDefault` and `SolidBrandMediumDefault` rather than the read-back's `SolidMediumDefault`, 32 variants in all: the contract gives every action component `brand` beside `neutral`, and the design run that ends the deferral redraws the page with it.
 
