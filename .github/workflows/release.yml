@@ -38,6 +38,8 @@ jobs:
       # Trusted publishing needs npm 11.5.1 or later.
       - run: npm install -g npm@11
       - run: npm ci
+      # the Chromium the story tests run in (npm run test:stories, part of npm run check)
+      - run: npx playwright install --with-deps chromium
       - name: Sign commits and tags as the Actions bot
         run: |
           git config user.name "github-actions[bot]"
