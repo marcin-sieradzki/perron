@@ -20,5 +20,7 @@ stages:
       p1: 0
       p2: 0
       p3: 3
+    status: running
+    started: 2026-10-24T23:20:23.531Z
   docs:
     failures: 1
