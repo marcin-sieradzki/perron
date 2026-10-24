@@ -45,13 +45,13 @@ In MUI's layout. Every prop here gets this description as its JSDoc. Slots come 
 | `children`                  | `ReactNode`            | none        | none                    | The label: the words that name the action, in sentence case. Required in practice: a button with no words is an IconButton.                         |
 | `className`, `style`, `ref` | React's                | none        | `className`, `style`    | Reach the root. `className` is merged after `pn-Button`.                                                                                            |
 
-No `slotProps`: Button has one Base UI part, `Button`, which is the root, and the root takes the component's own props. The label and icon spans are not Base UI parts. No `<key>Label` props: Button owns no strings.
+No `slotProps`: Button has one Base UI part, `Button`, which is the root, and the root takes the component's own props. The label and icon spans are not Base UI parts. No label-override props: Button owns no strings.
 
-[PENDING] Pass Base UI's `focusableWhenDisabled` and `nativeButton` through unchanged, keeping their Base UI JSDoc, rather than leaving them out of `ButtonProps`? Recommended: yes; `nativeButton={false}` is what lets `render` give a non-button element without a development warning, and `focusableWhenDisabled` lets a disabled button keep focus in a toolbar or explain itself through a tooltip.
+Button passes Base UI's `focusableWhenDisabled` and `nativeButton` through unchanged, keeping their Base UI JSDoc: `nativeButton={false}` lets `render` give a non-button element without a development warning, and `focusableWhenDisabled` lets a disabled button keep focus in a toolbar or explain itself through a tooltip.
 
-[PENDING] Offer `endIcon` beside `startIcon`, though the code map maps only `startIcon`? Recommended: yes; the contract names the two as a pair, MUI's Button takes both, and a "Next" or "Open in Rejseplanen" action reads with its icon after the words.
+Button offers `endIcon` beside `startIcon`, though the code map maps only `startIcon`: the contract names the two as a pair, MUI's Button takes both, and a "Next" or "Open in Rejseplanen" action reads with its icon after the words.
 
-[PENDING] Offer `fullWidth`, which the read-back doesn't show? Recommended: yes; a bottom sheet's main action fills the sheet on a phone, the contract names `fullWidth` as its example boolean, and it is MUI's Button prop.
+Button offers `fullWidth`, which the read-back doesn't show: a bottom sheet's main action fills the sheet on a phone, the contract names `fullWidth` as its example boolean, and it is MUI's Button prop.
 
 ## Tokens
 
@@ -119,11 +119,11 @@ All variants and colours:
 | `root` | disabled | `border-color`     | `color.border.subtle` |
 | `root` | disabled | `color`            | `color.text.tertiary` |
 
-[PENDING] Does a brand outline button take `color.surface.hover` on hover, as the neutral outline does, rather than `color.surface.brand-subtle`? Recommended: yes; `color.surface.hover` is the hover layer every control shares, and `brand-subtle` is a tinted background, not a state.
+A brand outline button takes `color.surface.hover` on hover, as the neutral outline does, not `color.surface.brand-subtle`: `color.surface.hover` is the hover layer every control shares, and `brand-subtle` is a tinted background, not a state.
 
-[PENDING] Does a disabled brand button look exactly like a disabled neutral one (solid: `color.surface.inset` with no edge; outline: a `color.border.subtle` edge), with `color.text.tertiary` text? Recommended: yes; disabled is a colour, `color.text.tertiary`, and a yellow that can't be pressed shouldn't still mark the main action.
+A disabled brand button looks exactly like a disabled neutral one (solid: `color.surface.inset` with no edge; outline: a `color.border.subtle` edge), with `color.text.tertiary` text: disabled is a colour, and a yellow that can't be pressed shouldn't still mark the main action.
 
-[PENDING] The read-back shows no pressed state, which a native button has (`:active`). Does pressed take the hover row's tokens, in a rule outside `@media (hover: hover)` so a touch press shows too? Recommended: yes; no token is made for a pressed fill, and a press on a phone otherwise shows nothing.
+The read-back shows no pressed state, which a native button has (`:active`). Pressed takes the hover row's tokens, in a rule outside `@media (hover: hover)` so a touch press shows too: no token is made for a pressed fill, and a press on a phone otherwise shows nothing.
 
 ## Keyboard and ARIA
 
@@ -171,15 +171,15 @@ Rules for this component alone, numbered so the build and the review can cite th
 - **CR-9.** `{...rest}` reaches the root before the component's own attributes, and `variant`, `color`, `size`, `fullWidth`, `startIcon` and `endIcon` are taken out of `rest` first, so none reaches the DOM.
 - **CR-10.** A `brand` button keeps its `color.border.brand` edge at rest and on hover, in both variants: the light-theme yellow fill reaches only 2.1:1 on the surfaces, and the edge carries the 3:1 ([Semantic colours](../foundations/semantic-colours.md#brand)).
 
-[PENDING] Does every variant draw a `border.width.025` border, `transparent` on a neutral solid button and a disabled solid one, so all four looks share one width and height and the label sits in the same place, and Windows' forced colours draw an edge round every button? Recommended: yes; the read-back's solid button has no stroke while the outline and the brand edge have one, and a border only some buttons carry makes a brand button 2 px wider than the same neutral one.
+Every variant draws a `border.width.025` border, `transparent` on a neutral solid button and a disabled solid one, so all four looks share one width and height, the label sits in the same place, and Windows' forced colours draw an edge round every button: a border only some buttons carry makes a brand button 2 px wider than the same neutral one.
 
-[PENDING] Does the label stay on one line (`white-space: nowrap`), the button growing with it, rather than wrapping inside the fixed `size.button` height? Recommended: yes; a button's height is fixed by its token, a wrapped label would overflow it, and button labels are short by content design.
+The label stays on one line (`white-space: nowrap`), the button growing with it, rather than wrapping inside the fixed `size.button` height: a wrapped label would overflow it, and button labels are short by content design.
 
 ## Stories
 
 The deferred design's variant properties, in this order: `variant` (`solid`, `outline`), `color` (`neutral`, `brand`), `size` (`medium`, `small`) and `State` (`default`, `hover`, `focus`, `disabled`). Each story is named by its variant name ([penpot/README.md](../../penpot/README.md#conventions)), renders the label "Show departures", as the read-back does, and sets `disabled` for a `Disabled` story. The hover and focus stories render at rest: the visual check drives the state itself, and their `play` tests check it.
 
-[PENDING] Add `color` to the variant properties, after `variant`, so the stories and a later drawing's exports are named `SolidNeutralMediumDefault` and `SolidBrandMediumDefault` rather than the read-back's `SolidMediumDefault`, 32 variants in all? Recommended: yes; the contract gives every action component `brand` beside `neutral`, the design run that ends the deferral redraws the page with it, and Penpot's naming rule then gives these names.
+`color` is a variant property, after `variant`, so the stories and a later drawing's exports are named `SolidNeutralMediumDefault` and `SolidBrandMediumDefault` rather than the read-back's `SolidMediumDefault`, 32 variants in all: the contract gives every action component `brand` beside `neutral`, and the design run that ends the deferral redraws the page with it.
 
 | Story                          | Shows                                                                                              | `play` test                                                                                 |
 | ------------------------------ | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
