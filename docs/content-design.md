@@ -14,15 +14,18 @@ How every word in Mylder reads: plain sentences, exact about certainty, in Engli
 
 Components take these from the locale dictionaries in `packages/perron/src/locale/`, which a test holds to this table. Change a word in this table and in the locale dictionaries together.
 
-| English          | Danish             | Swedish          | Norwegian Bokmål   |
-| ---------------- | ------------------ | ---------------- | ------------------ |
-| Live             | Live               | Live             | Live               |
-| Ageing           | Ældre              | Äldre            | Eldre              |
-| Estimated        | Beregnet           | Beräknad         | Beregnet           |
-| Timetable only   | Kun køreplan       | Endast tidtabell | Kun rutetabell     |
-| No signal        | Intet signal       | Ingen signal     | Ingen signal       |
-| Delays           | Forsinkelser       | Förseningar      | Forsinkelser       |
-| Running normally | Kører normalt      | Går som vanligt  | Går som normalt    |
-| Show on map      | Vis på kort        | Visa på kartan   | Vis på kartet      |
-| On time          | Til tiden          | I tid            | I rute             |
-| Delay unknown    | Forsinkelse ukendt | Försening okänd  | Forsinkelse ukjent |
+| English            | Danish                     | Swedish                  | Norwegian Bokmål           |
+| ------------------ | -------------------------- | ------------------------ | -------------------------- |
+| Live               | Live                       | Live                     | Live                       |
+| Ageing             | Ældre                      | Äldre                    | Eldre                      |
+| Estimated          | Beregnet                   | Beräknad                 | Beregnet                   |
+| Timetable only     | Kun køreplan               | Endast tidtabell         | Kun rutetabell             |
+| No signal          | Intet signal               | Ingen signal             | Ingen signal               |
+| Delays             | Forsinkelser               | Förseningar              | Forsinkelser               |
+| Diversions         | Omkørsler                  | Omledningar              | Omkjøringer                |
+| Planned works      | Planlagt arbejde           | Planerade arbeten        | Planlagt arbeid            |
+| Data feed problems | Problemer med realtidsdata | Problem med realtidsdata | Problemer med sanntidsdata |
+| Running normally   | Kører normalt              | Går som vanligt          | Går som normalt            |
+| Show on map        | Vis på kort                | Visa på kartan           | Vis på kartet              |
+| On time            | Til tiden                  | I tid                    | I rute                     |
+| Delay unknown      | Forsinkelse ukendt         | Försening okänd          | Forsinkelse ukjent         |

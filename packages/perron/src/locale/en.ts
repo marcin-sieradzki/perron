@@ -23,8 +23,14 @@ export const en = {
   timetableOnly: 'Timetable only',
   /** Data state: silent for over 5 minutes. */
   noSignal: 'No signal',
-  /** The heading over a line's delays. */
+  /** A line's delays: a heading, and the name of the delay kind of disruption. */
   delays: 'Delays',
+  /** The name of the diversion kind of disruption: a line running on a changed route. */
+  diversions: 'Diversions',
+  /** The name of the planned kind of disruption: planned works on a line. */
+  plannedWorks: 'Planned works',
+  /** The name of the data kind of disruption: a problem with the real-time data feed. */
+  dataFeedProblems: 'Data feed problems',
   /** A line with no delays or disruptions. */
   runningNormally: 'Running normally',
   /** A link that shows a vehicle, stop or line on the map. */

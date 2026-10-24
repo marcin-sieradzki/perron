@@ -1,0 +1,37 @@
+/* SeverityLabel: the kind's icon and name in one inline run, coloured once on the root (CR-2). */
+.pn-SeverityLabel {
+  /* CR-8: the name wraps inside the label, and the icon stays beside its first line */
+  display: inline-flex;
+  align-items: center;
+  gap: var(--perron-space-100);
+  font: var(--perron-typography-label-sm);
+  letter-spacing: var(--perron-typography-label-sm-tracking);
+  --perron-icon-size: var(--perron-icon-size-325);
+}
+
+/* CR-8: the icon sits on the middle of the name's first line, the line box of
+   typography.label-sm, so a wrapped name keeps it beside its first line; on one line this is
+   where align-items: center puts it. */
+.pn-SeverityLabel-icon {
+  align-self: flex-start;
+  margin-block-start: calc(
+    (var(--perron-font-size-300) * var(--perron-font-line-height-snug) - var(--perron-icon-size)) /
+      2
+  );
+}
+
+.pn-SeverityLabel[data-severity='delay'] {
+  color: var(--perron-color-transit-severity-delay);
+}
+
+.pn-SeverityLabel[data-severity='data'] {
+  color: var(--perron-color-transit-severity-data);
+}
+
+.pn-SeverityLabel[data-severity='diversion'] {
+  color: var(--perron-color-transit-severity-diversion);
+}
+
+.pn-SeverityLabel[data-severity='planned'] {
+  color: var(--perron-color-transit-severity-planned);
+}

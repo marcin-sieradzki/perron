@@ -4,7 +4,7 @@ The kind of a disruption on a line, as its icon and its name in its colour, such
 
 ## Anatomy
 
-Penpot page `Components/SeverityLabel`, not drawn yet: the design is deferred ([ADR 0010](../adr/0010-unattended-runs-with-design-deferred.md)), so this spec decides the drawing. Family: none. Shared parts: none.
+Penpot page `Components/SeverityLabel`, not drawn yet: the design is deferred (`docs/adr/0010-unattended-runs-with-design-deferred.md`), so this spec decides the drawing. Family: none. Shared parts: none.
 
 SeverityLabel has no Base UI part: it is a label with no behaviour, and the registry gives it no `baseUiParts`. Its root renders through Base UI's `useRender` hook (`@base-ui/react/use-render`), which gives it the `render` prop, and its inner parts are plain elements.
 
