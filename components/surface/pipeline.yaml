@@ -3,4 +3,9 @@ component: Surface
 layer: component
 deferred:
   at: 2026-10-24T22:10:41.444Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-24T22:10:43.896Z
+    ended: 2026-10-24T22:14:35.157Z
+    pending: 5
