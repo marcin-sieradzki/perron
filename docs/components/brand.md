@@ -126,11 +126,12 @@ The brand name is a new owned-string key, `brandName`, with "Mylder" in all four
 
 No Penpot design yet, so the stories are named by the variant names the design will have: `variant`, each value in PascalCase (the Conventions of `penpot/README.md`). Each renders on a `color.surface.raised` ground, as in a top bar's glass group; the build's light and dark Storybook themes show both marks.
 
-| Story  | Shows                                                                              | `play` test                                                                                                                                       |
-| ------ | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Full` | `variant='full'`: the mark beside the wordmark "mylder"                            | The root has `data-variant="full"` and the text "Mylder"; the mark is `aria-hidden`; Tab passes the lockup by                                     |
-| `Mark` | `variant='mark'`: the mark alone                                                   | No wordmark is shown; the `VisuallyHidden` label holds "Mylder", so the root's text is still the brand name                                       |
-| `Link` | `variant='full'` rendered as a link to the start screen, `render={<a href="/" />}` | The page has a link named "Mylder" (case-insensitive); Tab focuses it, its box is at least `size.target-min` tall, and Shift+Tab moves focus back |
+| Story     | Shows                                                                                                                                                      | `play` test                                                                                                                                       |
+| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Default` | The default props, `variant='full'`, as the docs page and the contract story show Brand; the contract story renders it, and its args pass every rule alone | The root has `data-variant="full"`, the text "Mylder" and a `ref` on the root `<span>`                                                            |
+| `Full`    | `variant='full'`: the mark beside the wordmark "mylder"                                                                                                    | The root has `data-variant="full"` and the text "Mylder"; the mark is `aria-hidden`; Tab passes the lockup by                                     |
+| `Mark`    | `variant='mark'`: the mark alone                                                                                                                           | No wordmark is shown; the `VisuallyHidden` label holds "Mylder", so the root's text is still the brand name                                       |
+| `Link`    | `variant='full'` rendered as a link to the start screen, `render={<a href="/" />}`                                                                         | The page has a link named "Mylder" (case-insensitive); Tab focuses it, its box is at least `size.target-min` tall, and Shift+Tab moves focus back |
 
 ## Do and don't
 
