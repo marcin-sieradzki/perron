@@ -140,6 +140,7 @@ export const ErrorRetry: Story = {
     const message = region(canvasElement)
     await expect(message).toHaveTextContent('Could not load the data')
     const button = within(canvasElement).getByRole('button', { name: 'Try again' })
+    const before = document.activeElement
     await userEvent.tab()
     await expect(button).toHaveFocus()
     await userEvent.keyboard('{Enter}')
@@ -148,6 +149,6 @@ export const ErrorRetry: Story = {
     await expect(message).toHaveFocus()
     await expect(document.activeElement).not.toBe(document.body)
     message.blur()
-    await expect(document.body).toHaveFocus()
+    await expect(document.activeElement).toBe(before)
   },
 }
