@@ -1,0 +1,49 @@
+/* EmptyState: a centred column on its container's surface, with no fill, border or shadow of its
+   own. Every row of docs/components/empty-state.md's Tokens table is at rest. */
+.pn-EmptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--perron-space-100);
+  margin: 0;
+  padding-block: var(--perron-space-600);
+  padding-inline: var(--perron-space-400);
+  text-align: center;
+  /* CR-6: a long stop name wraps on a 320 px screen */
+  overflow-wrap: anywhere;
+}
+
+/* CR-7: the colour sits on the part, and the icon draws in currentColor. The part sizes the icon
+   it holds, at the 16 px step the set's default icons are drawn for; an icon drawn for another
+   step sets its own step here through slotProps.icon. */
+.pn-EmptyState-icon {
+  --perron-icon-size: var(--perron-icon-size-400);
+
+  display: flex;
+  margin: 0;
+  margin-block-end: var(--perron-space-200);
+  color: var(--perron-color-text-secondary);
+}
+
+.pn-EmptyState-title {
+  margin: 0;
+  font: var(--perron-typography-heading-sm);
+  letter-spacing: var(--perron-typography-heading-sm-tracking);
+  color: var(--perron-color-text-primary);
+}
+
+.pn-EmptyState-description {
+  margin: 0;
+  font: var(--perron-typography-body-sm);
+  letter-spacing: var(--perron-typography-body-sm-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.pn-EmptyState-action {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--perron-space-200);
+  margin: 0;
+  margin-block-start: var(--perron-space-300);
+}

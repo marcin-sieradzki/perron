@@ -1,0 +1,19 @@
+import { Meta, Stories, Title } from '@storybook/addon-docs/blocks'
+import { PropsTable } from '../../../../../storybook/blocks/PropsTable.tsx'
+import { SpecProse } from '../../../../../storybook/blocks/SpecProse.tsx'
+import * as EmptyStateStories from './EmptyState.stories.tsx'
+
+<Meta of={EmptyStateStories} />
+
+<Title />
+
+<SpecProse path="docs/components/empty-state.md" intro />
+
+<Stories title="Examples" />
+
+<PropsTable of={EmptyStateStories} />
+
+<SpecProse
+  path="docs/components/empty-state.md"
+  sections={['Keyboard and ARIA', 'Owned strings', "Do and don't"]}
+/>
