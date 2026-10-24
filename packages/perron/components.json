@@ -120,7 +120,7 @@
     "name": "LineBadge",
     "layer": "component",
     "category": "Transit",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/LineBadge",
     "dependsOn": []

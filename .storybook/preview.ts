@@ -42,6 +42,7 @@ const preview: Preview = {
             'Toolbar',
             'EmptyState',
             'Delay',
+            'LineBadge',
             'StationIcon',
             // registry:components end
           ],
@@ -55,6 +56,7 @@ const preview: Preview = {
             'Toolbar',
             'EmptyState',
             'Delay',
+            'LineBadge',
             'StationIcon',
           ],
           // registry:specs end
