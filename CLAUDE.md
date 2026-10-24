@@ -11,4 +11,5 @@ The tokens follow the W3C Design Tokens Community Group's [Design Tokens specifi
 - Tables in `docs/foundations/` sit between `<!-- tokens -->`, `<!-- contrast -->` and `<!-- files -->` markers and are rebuilt by `npm run tokens`; edit the prose around them.
 - A new page in `docs/`: add it to `PAGES` in `scripts/lib/pages.ts`, give it an MDX file in `storybook/pages/` and a place in `.storybook/preview.ts`'s sort order; a test checks all three.
 - Skills and this file: write them with the `writing-for-agents` skill.
+- A change to what `@mylder/perron` or `@mylder/perron-mcp` ships adds a changeset (`npx changeset`), which the release workflow turns into a version and a changelog line.
 - Work is done when `npm run check` passes.
