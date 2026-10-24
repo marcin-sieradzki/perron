@@ -7,9 +7,10 @@
 //   folder at the top of the repo, such as `docs/` or `.claude/` (resolved from the root).
 // Placeholders (`<Name>`, `*`, `…`, `{a,b}`) and fenced code blocks are skipped. ROADMAP.md is a
 // plan whose code spans name files later phases write, so only its links are read. The vendored
-// skills, writing-for-agents and software-factory, are copied from upstream unchanged (prettier
-// skips them too) and name upstream's paths, so they are not read. A deliberate exception is an
-// HTML comment, `<!-- perron-allow(paths): reason -->`, on the line or the line above.
+// skills, writing-for-agents, software-factory and vercel-react-best-practices, are copied from
+// upstream unchanged (prettier skips them too) and name upstream's paths, so they are not read.
+// A deliberate exception is an HTML comment, `<!-- perron-allow(paths): reason -->`, on the line
+// or the line above.
 import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { dirname, join, normalize } from 'node:path'
 import { byFileLine, excuse, VENDORED, walk, type Check, type Problem } from './lib.ts'

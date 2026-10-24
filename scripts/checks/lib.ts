@@ -28,7 +28,11 @@ export const byFileLine = (a: Problem, b: Problem) =>
 export const CONTRACT = 'docs/components/README.md'
 
 /** The skills copied unchanged from upstream, which name upstream's paths and rules. */
-export const VENDORED = ['.claude/skills/writing-for-agents/', '.claude/skills/software-factory/']
+export const VENDORED = [
+  '.claude/skills/writing-for-agents/',
+  '.claude/skills/software-factory/',
+  '.claude/skills/vercel-react-best-practices/',
+]
 
 const ALLOW = /perron-allow\(([\w-]+)\)(?::\s*(.*?))?\s*(?:\*\/|-->|$)/g
 

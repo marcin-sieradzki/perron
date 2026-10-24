@@ -4,3 +4,4 @@ packages/perron/tokens/generated
 packages/perron/data
 .claude/skills/writing-for-agents
 .claude/skills/software-factory
+.claude/skills/vercel-react-best-practices
