@@ -46,7 +46,9 @@ export interface DisruptionCardProps extends Omit<SurfaceProps, 'variant' | 'chi
   title: ReactNode
   /**
    * The sentence under the title: where, why and for how long, and how sure we are. "M2 and M3
-   * trains between Kongens Nytorv and Christianshavn run slower than planned."
+   * trains between Kongens Nytorv and Christianshavn run slower than planned." Left out, or a value
+   * that renders nothing (`null`, a boolean, `''` or an array of only such values), it renders no
+   * `description`
    */
   children?: ReactNode
   /**

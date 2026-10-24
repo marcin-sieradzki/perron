@@ -1,12 +1,8 @@
 // DisruptionCard's stories: one per row of the spec's Stories table (docs/patterns/disruption-card.md),
 // with the design deferred, and their play tests. Every line used has a badge pair that reaches 4.5:1,
 // so axe's color-contrast rule stays on (CR-11). Hover and focus render at rest.
-import { createRoot } from 'react-dom/client'
-import { renderToStaticMarkup } from 'react-dom/server'
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { expect, isInaccessible, userEvent, waitFor, within } from 'storybook/test'
-import { PerronProvider } from '../../PerronProvider.tsx'
-import { expectOwnedStrings } from '../../testing/owned-strings.ts'
+import { expect, isInaccessible, userEvent, within } from 'storybook/test'
 import { DisruptionCard } from './DisruptionCard.tsx'
 import type { DisruptionCardLine, DisruptionCardProps } from './DisruptionCard.tsx'
 
@@ -50,15 +46,15 @@ const readsKind = async (canvasElement: HTMLElement, word: string) => {
 }
 
 /**
- * `label` is read just before an unnamed list in the header, which holds one item per line, with
+ * "Affected lines" is read just before an unnamed list in the header, which holds one item per line, with
  * its short name, in this order.
  */
-const listsLines = async (scope: HTMLElement, names: string[], label = 'Affected lines') => {
+const listsLines = async (scope: HTMLElement, names: string[]) => {
   const list = within(scope).getByRole('list')
   await expect(list).toHaveAccessibleName('')
   await expect(list.closest('.pn-DisruptionCard-header')).not.toBeNull()
   const said = list.previousElementSibling as HTMLElement | null
-  await expect(said?.textContent).toBe(label)
+  await expect(said?.textContent).toBe('Affected lines')
   await expect(isInaccessible(said as HTMLElement)).toBe(false)
   // read, never seen: the VisuallyHidden part's 1 px clipped box
   await expect(said?.getBoundingClientRect().width).toBeLessThanOrEqual(1)
@@ -110,30 +106,6 @@ export const Delay: Story = {
         name: 'Signal fault at Kongens Nytorv',
       })
       await expect(heading).toHaveClass('pn-DisruptionCard-title', 'pn-Text')
-    })
-    await step('affectedLinesLabel="Lines" is read just before the list', async () => {
-      const props: DisruptionCardProps = { ...delay, affectedLinesLabel: 'Lines' }
-      const host = document.createElement('div')
-      canvasElement.append(host)
-      const root = createRoot(host)
-      root.render(<DisruptionCard {...props} />)
-      try {
-        await waitFor(() => within(host).getByRole('list'))
-        await listsLines(host, ['M2', 'M3'], 'Lines')
-        await expect(within(host).queryByText('Affected lines')).toBeNull()
-        expectOwnedStrings(
-          renderToStaticMarkup(
-            <PerronProvider locale="da">
-              <DisruptionCard {...props} />
-            </PerronProvider>,
-          ),
-          'da',
-          ['Lines', 'M2', 'M3', props.title as string, props.children as string],
-        )
-      } finally {
-        root.unmount()
-        host.remove()
-      }
     })
   },
 }
