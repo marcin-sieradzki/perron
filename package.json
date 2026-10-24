@@ -22,7 +22,7 @@
     "test:stories": "vitest run --project stories --project fixtures",
     "test:watch": "vitest --project unit",
     "check": "npm run tokens:check && npm run registry:check && npm run api:check && npm run typecheck && npm run gates && npm run lint && npm run format:check && npm run test && npm run test:stories",
-    "storybook": "storybook dev -p 6006",
+    "storybook": "storybook dev -p ${STORYBOOK_PORT:-6006}",
     "storybook:build": "storybook build -o dist/storybook && node scripts/build-site.ts dist/storybook",
     "smoke": "node scripts/smoke-consumer.ts",
     "gates": "node scripts/checks/run.ts",

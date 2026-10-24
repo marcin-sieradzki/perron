@@ -84,7 +84,7 @@ A `color` value is an intent: what the colour means. Each has its tokens; a comp
 | `danger`  | `color.text.danger`  | `color.surface.danger`       | `color.status.danger`      | none                                                   |
 | `info`    | `color.text.info`    | `color.surface.info`         | `color.status.info`        | none                                                   |
 
-`brand` belongs to the hero page, and `color.text.brand` is never a link or a button's text. The status intents have no solid fill, because no text colour is measured on `color.status.*`.
+`brand` is the primary colour: a brand button marks the main action, with `color.surface.brand-hover` on hover and a `color.border.brand` edge, and `color.text.brand` labels its outline. It is never a link. Each action component (Button, IconButton, a Toolbar's buttons) offers `brand` beside `neutral`; the default stays `neutral`, so a screen has one brand action at most. The status intents have no solid fill, because no text colour is measured on `color.status.*`.
 
 ## State and events
 
@@ -169,10 +169,10 @@ Tokens only.
 
 The tokens each layer's CSS reads. `palette.*` stays behind the semantic tokens.
 
-| Layer                     | Reads                                                                                                                                                                                                                                                              |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Component and shared part | `color.text.*`, `color.surface.*`, `color.border.*`, `color.status.*`, `color.scrim`, `typography.*`, `font.*`, `space.*`, `size.*`, `radius.*`, `border.width.*`, `focus.*`, `icon.size.*`, `shadow.*`, `effect.*`, `duration.*`, `easing.*` and `z-index.dialog` |
-| Pattern                   | A component's, and `color.map.*`, `map.*`, `color.transit.*`, `color.data-state.*`, `color.chart.*`, `opacity.*`, `prik.*` and every `z-index.*`                                                                                                                   |
+| Layer                     | Reads                                                                                                                                                                                                                                                                                                                                                                         |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Component and shared part | `color.text.*`, `color.surface.*`, `color.border.*`, `color.status.*`, `color.scrim`, `typography.*`, `font.*`, `space.*`, `size.*`, `radius.*`, `border.width.*`, `focus.*`, `icon.size.*`, `shadow.*`, `effect.*`, `duration.*`, `easing.*`, `z-index.dialog`, and for Mylder's vocabulary (line badges, delays, Prik) `color.transit.*`, `color.data-state.*` and `prik.*` |
+| Pattern                   | A component's, and `color.map.*`, `map.*`, `color.chart.*`, `opacity.*` and every `z-index.*`                                                                                                                                                                                                                                                                                 |
 
 ### Media queries
 

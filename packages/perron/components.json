@@ -1,1 +1,437 @@
-[]
+[
+  {
+    "name": "Button",
+    "layer": "component",
+    "category": "Actions",
+    "status": "designing",
+    "baseUiParts": ["Button"],
+    "penpotPath": "Components/Button",
+    "dependsOn": []
+  },
+  {
+    "name": "IconButton",
+    "layer": "component",
+    "category": "Actions",
+    "status": "designing",
+    "baseUiParts": ["Button"],
+    "penpotPath": "Components/IconButton",
+    "dependsOn": ["Button"]
+  },
+  {
+    "name": "LinkButton",
+    "layer": "component",
+    "category": "Actions",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Components/LinkButton",
+    "dependsOn": ["Button"]
+  },
+  {
+    "name": "Text",
+    "layer": "component",
+    "category": "Display",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Components/Text",
+    "dependsOn": []
+  },
+  {
+    "name": "Surface",
+    "layer": "component",
+    "category": "Layout",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Components/Surface",
+    "dependsOn": []
+  },
+  {
+    "name": "Section",
+    "layer": "component",
+    "category": "Layout",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Components/Section",
+    "dependsOn": []
+  },
+  {
+    "name": "Kbd",
+    "layer": "component",
+    "category": "Display",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Components/Kbd",
+    "dependsOn": []
+  },
+  {
+    "name": "Tag",
+    "layer": "component",
+    "category": "Display",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Components/Tag",
+    "dependsOn": []
+  },
+  {
+    "name": "Count",
+    "layer": "component",
+    "category": "Display",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Components/Count",
+    "dependsOn": []
+  },
+  {
+    "name": "EmptyState",
+    "layer": "component",
+    "category": "Feedback",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Components/EmptyState",
+    "dependsOn": []
+  },
+  {
+    "name": "Prik",
+    "layer": "component",
+    "category": "Transit",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Components/Prik",
+    "dependsOn": []
+  },
+  {
+    "name": "PrikLabel",
+    "layer": "component",
+    "category": "Transit",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Components/PrikLabel",
+    "dependsOn": ["Prik"]
+  },
+  {
+    "name": "PrikLegend",
+    "layer": "component",
+    "category": "Transit",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Components/PrikLegend",
+    "dependsOn": ["Prik"]
+  },
+  {
+    "name": "LineBadge",
+    "layer": "component",
+    "category": "Transit",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Components/LineBadge",
+    "dependsOn": []
+  },
+  {
+    "name": "StationIcon",
+    "layer": "component",
+    "category": "Transit",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Components/StationIcon",
+    "dependsOn": []
+  },
+  {
+    "name": "Delay",
+    "layer": "component",
+    "category": "Transit",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Components/Delay",
+    "dependsOn": []
+  },
+  {
+    "name": "SeverityLabel",
+    "layer": "component",
+    "category": "Transit",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Components/SeverityLabel",
+    "dependsOn": []
+  },
+  {
+    "name": "Stat",
+    "layer": "component",
+    "category": "Display",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Components/Stat",
+    "dependsOn": []
+  },
+  {
+    "name": "FactList",
+    "layer": "component",
+    "category": "Display",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Components/FactList",
+    "dependsOn": []
+  },
+  {
+    "name": "NormalService",
+    "layer": "component",
+    "category": "Transit",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Components/NormalService",
+    "dependsOn": []
+  },
+  {
+    "name": "Attribution",
+    "layer": "component",
+    "category": "Map",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Components/Attribution",
+    "dependsOn": []
+  },
+  {
+    "name": "Brand",
+    "layer": "component",
+    "category": "Display",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Components/Brand",
+    "dependsOn": []
+  },
+  {
+    "name": "SegmentedControl",
+    "layer": "component",
+    "category": "Inputs",
+    "status": "designing",
+    "baseUiParts": ["ToggleGroup", "Toggle"],
+    "penpotPath": "Components/SegmentedControl",
+    "dependsOn": []
+  },
+  {
+    "name": "Tabs",
+    "layer": "component",
+    "category": "Navigation",
+    "status": "designing",
+    "baseUiParts": ["Tabs.Root", "Tabs.List", "Tabs.Tab", "Tabs.Indicator", "Tabs.Panel"],
+    "penpotPath": "Components/Tabs",
+    "dependsOn": []
+  },
+  {
+    "name": "FilterChip",
+    "layer": "component",
+    "category": "Inputs",
+    "status": "designing",
+    "baseUiParts": ["Toggle"],
+    "penpotPath": "Components/FilterChip",
+    "dependsOn": []
+  },
+  {
+    "name": "HighlightChip",
+    "layer": "component",
+    "category": "Inputs",
+    "status": "designing",
+    "baseUiParts": ["Toggle"],
+    "penpotPath": "Components/HighlightChip",
+    "dependsOn": []
+  },
+  {
+    "name": "SearchField",
+    "layer": "component",
+    "category": "Inputs",
+    "status": "designing",
+    "baseUiParts": [
+      "Field.Root",
+      "Field.Label",
+      "Autocomplete.Root",
+      "Autocomplete.InputGroup",
+      "Autocomplete.Input",
+      "Autocomplete.Clear",
+      "Autocomplete.Portal",
+      "Autocomplete.Positioner",
+      "Autocomplete.Popup",
+      "Autocomplete.List",
+      "Autocomplete.Item",
+      "Autocomplete.Empty"
+    ],
+    "penpotPath": "Components/SearchField",
+    "dependsOn": []
+  },
+  {
+    "name": "Dialog",
+    "layer": "component",
+    "category": "Overlays",
+    "status": "designing",
+    "baseUiParts": [
+      "Dialog.Root",
+      "Dialog.Trigger",
+      "Dialog.Portal",
+      "Dialog.Backdrop",
+      "Dialog.Popup",
+      "Dialog.Title",
+      "Dialog.Description",
+      "Dialog.Close"
+    ],
+    "penpotPath": "Components/Dialog",
+    "dependsOn": []
+  },
+  {
+    "name": "Sheet",
+    "layer": "component",
+    "category": "Overlays",
+    "status": "designing",
+    "baseUiParts": [
+      "Drawer.Root",
+      "Drawer.Trigger",
+      "Drawer.Portal",
+      "Drawer.Backdrop",
+      "Drawer.Viewport",
+      "Drawer.Popup",
+      "Drawer.Content",
+      "Drawer.Title",
+      "Drawer.Close"
+    ],
+    "penpotPath": "Components/Sheet",
+    "dependsOn": []
+  },
+  {
+    "name": "Meter",
+    "layer": "component",
+    "category": "Display",
+    "status": "designing",
+    "baseUiParts": ["Meter.Root", "Meter.Label", "Meter.Track", "Meter.Indicator", "Meter.Value"],
+    "penpotPath": "Components/Meter",
+    "dependsOn": []
+  },
+  {
+    "name": "MapTooltip",
+    "layer": "component",
+    "category": "Overlays",
+    "status": "designing",
+    "baseUiParts": [
+      "Tooltip.Provider",
+      "Tooltip.Root",
+      "Tooltip.Trigger",
+      "Tooltip.Portal",
+      "Tooltip.Positioner",
+      "Tooltip.Popup"
+    ],
+    "penpotPath": "Components/MapTooltip",
+    "dependsOn": []
+  },
+  {
+    "name": "Toolbar",
+    "layer": "component",
+    "category": "Actions",
+    "status": "designing",
+    "baseUiParts": ["Toolbar.Root", "Toolbar.Group", "Toolbar.Button", "Toolbar.Separator"],
+    "penpotPath": "Components/Toolbar",
+    "dependsOn": []
+  },
+  {
+    "name": "MapControls",
+    "layer": "component",
+    "category": "Map",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Components/MapControls",
+    "dependsOn": ["Toolbar", "IconButton"]
+  },
+  {
+    "name": "DepartureRow",
+    "layer": "pattern",
+    "category": "Departures",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Patterns/DepartureRow",
+    "dependsOn": ["LineBadge", "Delay", "Prik"]
+  },
+  {
+    "name": "DetailHeader",
+    "layer": "pattern",
+    "category": "Detail",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Patterns/DetailHeader",
+    "dependsOn": ["LineBadge", "StationIcon"]
+  },
+  {
+    "name": "DetailPanel",
+    "layer": "pattern",
+    "category": "Detail",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Patterns/DetailPanel",
+    "dependsOn": ["Sheet", "DetailHeader"]
+  },
+  {
+    "name": "DisruptionCard",
+    "layer": "pattern",
+    "category": "Disruptions",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Patterns/DisruptionCard",
+    "dependsOn": ["SeverityLabel", "LineBadge"]
+  },
+  {
+    "name": "DataStatePanel",
+    "layer": "pattern",
+    "category": "Data",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Patterns/DataStatePanel",
+    "dependsOn": ["EmptyState"]
+  },
+  {
+    "name": "StopTimeline",
+    "layer": "pattern",
+    "category": "Detail",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Patterns/StopTimeline",
+    "dependsOn": ["StationIcon", "Delay"]
+  },
+  {
+    "name": "ReportStrip",
+    "layer": "pattern",
+    "category": "Data",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Patterns/ReportStrip",
+    "dependsOn": ["PrikLabel"]
+  },
+  {
+    "name": "VehicleTable",
+    "layer": "pattern",
+    "category": "Data",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Patterns/VehicleTable",
+    "dependsOn": ["LineBadge", "Delay", "PrikLabel"]
+  },
+  {
+    "name": "DayProfileChart",
+    "layer": "pattern",
+    "category": "Data",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Patterns/DayProfileChart",
+    "dependsOn": []
+  },
+  {
+    "name": "ScaleBar",
+    "layer": "pattern",
+    "category": "Map",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Patterns/ScaleBar",
+    "dependsOn": []
+  },
+  {
+    "name": "KioskBar",
+    "layer": "pattern",
+    "category": "Shell",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Patterns/KioskBar",
+    "dependsOn": ["Brand", "Stat"]
+  }
+]

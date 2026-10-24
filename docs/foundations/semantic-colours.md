@@ -17,19 +17,19 @@ Every colour token in both themes. A `color` token says what a colour is for and
 
 <!-- tokens: color.text.* -->
 
-| Token                       | Light                             | Dark                              | Use                                                                             |
-| --------------------------- | --------------------------------- | --------------------------------- | ------------------------------------------------------------------------------- |
-| `color.text.on-color.dark`  | `#12181B` (palette.neutral.900)   | `#12181B` (palette.neutral.900)   | Dark text on a coloured fill (bus, light line colours)                          |
-| `color.text.on-color.light` | `#FFFFFF` (palette.neutral.0)     | `#FFFFFF` (palette.neutral.0)     | White text on a coloured fill                                                   |
-| `color.text.primary`        | `#12181B` (palette.neutral.900)   | `#EBEEEB` (palette.neutral.100)   | Main text and icons; also the focus ring                                        |
-| `color.text.secondary`      | `#47535A` (palette.neutral.600)   | `#A2ADB1` (palette.neutral.300)   | Supporting text                                                                 |
-| `color.text.tertiary`       | `#74818A` (palette.neutral.500)   | `#74818A` (palette.neutral.500)   | Hints, captions, inactive controls                                              |
-| `color.text.inverse`        | `#FAFBF9` (color.surface.default) | `#12181B` (color.surface.default) | Text on inverse surfaces: tooltips, the chart's value tip                       |
-| `color.text.success`        | `#067849` (palette.green.700)     | `#3CCB80` (palette.green.300)     | Text in the success colour: on time, running normally                           |
-| `color.text.warning`        | `#965A00` (palette.orange.700)    | `#F0A43A` (palette.orange.300)    | Text in the warning colour                                                      |
-| `color.text.danger`         | `#AD3600` (palette.red.700)       | `#FF8655` (palette.red.300)       | Text in the danger colour: late, delay disruptions                              |
-| `color.text.info`           | `#2351AF` (palette.blue.700)      | `#7FA6FF` (palette.blue.300)      | Text in the info colour: early, diversions                                      |
-| `color.text.brand`          | `#896001` (palette.yellow.700)    | `#F2B630` (palette.yellow.300)    | Text in the brand colour, for emphasis on the hero page; never links or buttons |
+| Token                       | Light                             | Dark                              | Use                                                                                        |
+| --------------------------- | --------------------------------- | --------------------------------- | ------------------------------------------------------------------------------------------ |
+| `color.text.on-color.dark`  | `#12181B` (palette.neutral.900)   | `#12181B` (palette.neutral.900)   | Dark text on a coloured fill (bus, light line colours)                                     |
+| `color.text.on-color.light` | `#FFFFFF` (palette.neutral.0)     | `#FFFFFF` (palette.neutral.0)     | White text on a coloured fill                                                              |
+| `color.text.primary`        | `#12181B` (palette.neutral.900)   | `#EBEEEB` (palette.neutral.100)   | Main text and icons; also the focus ring                                                   |
+| `color.text.secondary`      | `#47535A` (palette.neutral.600)   | `#A2ADB1` (palette.neutral.300)   | Supporting text                                                                            |
+| `color.text.tertiary`       | `#74818A` (palette.neutral.500)   | `#74818A` (palette.neutral.500)   | Hints, captions, inactive controls                                                         |
+| `color.text.inverse`        | `#FAFBF9` (color.surface.default) | `#12181B` (color.surface.default) | Text on inverse surfaces: tooltips, the chart's value tip                                  |
+| `color.text.success`        | `#067849` (palette.green.700)     | `#3CCB80` (palette.green.300)     | Text in the success colour: on time, running normally                                      |
+| `color.text.warning`        | `#965A00` (palette.orange.700)    | `#F0A43A` (palette.orange.300)    | Text in the warning colour                                                                 |
+| `color.text.danger`         | `#AD3600` (palette.red.700)       | `#FF8655` (palette.red.300)       | Text in the danger colour: late, delay disruptions                                         |
+| `color.text.info`           | `#2351AF` (palette.blue.700)      | `#7FA6FF` (palette.blue.300)      | Text in the info colour: early, diversions                                                 |
+| `color.text.brand`          | `#896001` (palette.yellow.700)    | `#F2B630` (palette.yellow.300)    | Text in the brand colour: brand outline buttons and emphasis on the hero page; never links |
 
 <!-- /tokens -->
 
@@ -37,18 +37,19 @@ Every colour token in both themes. A `color` token says what a colour is for and
 
 What each surface is for, and how they stack, is on [Elevation](elevation.md).
 
-<!-- tokens: color.surface.default color.surface.raised color.surface.inset color.surface.overlay color.surface.hover color.surface.selected color.surface.inverse color.scrim -->
+<!-- tokens: color.surface.default color.surface.raised color.surface.inset color.surface.overlay color.surface.hover color.surface.selected color.surface.inverse color.surface.inverse-hover color.scrim -->
 
-| Token                    | Light                           | Dark                            | Use                                                                |
-| ------------------------ | ------------------------------- | ------------------------------- | ------------------------------------------------------------------ |
-| `color.surface.default`  | `#FAFBF9` (palette.neutral.50)  | `#12181B` (palette.neutral.900) | Opaque panel background; text on inverse surfaces                  |
-| `color.surface.raised`   | `#FFFFFF` (palette.neutral.0)   | `#1D2428` (palette.neutral.800) | Inputs, selected segment                                           |
-| `color.surface.inset`    | `#EBEEEB` (palette.neutral.100) | `#283237` (palette.neutral.700) | Segmented control track, counts, inset boxes                       |
-| `color.surface.overlay`  | `rgba(250, 251, 249, 0.9)`      | `rgba(18, 24, 27, 0.88)`        | Translucent floating panels over the map (used with backdrop blur) |
-| `color.surface.hover`    | `rgba(18, 24, 27, 0.05)`        | `rgba(235, 238, 235, 0.06)`     | Hover state layer                                                  |
-| `color.surface.selected` | `rgba(18, 24, 27, 0.09)`        | `rgba(235, 238, 235, 0.09)`     | Selected row                                                       |
-| `color.surface.inverse`  | `#12181B` (color.text.primary)  | `#EBEEEB` (color.text.primary)  | Primary buttons, pressed icon buttons, chart tooltip               |
-| `color.scrim`            | `rgba(10, 14, 16, 0.42)`        | `rgba(10, 14, 16, 0.42)`        | Backdrop behind modal dialogs                                      |
+| Token                         | Light                           | Dark                            | Use                                                                 |
+| ----------------------------- | ------------------------------- | ------------------------------- | ------------------------------------------------------------------- |
+| `color.surface.default`       | `#FAFBF9` (palette.neutral.50)  | `#12181B` (palette.neutral.900) | Opaque panel background; text on inverse surfaces                   |
+| `color.surface.raised`        | `#FFFFFF` (palette.neutral.0)   | `#1D2428` (palette.neutral.800) | Inputs, selected segment                                            |
+| `color.surface.inset`         | `#EBEEEB` (palette.neutral.100) | `#283237` (palette.neutral.700) | Segmented control track, counts, inset boxes                        |
+| `color.surface.overlay`       | `rgba(250, 251, 249, 0.9)`      | `rgba(18, 24, 27, 0.88)`        | Translucent floating panels over the map (used with backdrop blur)  |
+| `color.surface.hover`         | `rgba(18, 24, 27, 0.05)`        | `rgba(235, 238, 235, 0.06)`     | Hover state layer                                                   |
+| `color.surface.selected`      | `rgba(18, 24, 27, 0.09)`        | `rgba(235, 238, 235, 0.09)`     | Selected row                                                        |
+| `color.surface.inverse`       | `#12181B` (color.text.primary)  | `#EBEEEB` (color.text.primary)  | Primary buttons, pressed icon buttons, chart tooltip                |
+| `color.surface.inverse-hover` | `#1D2428` (palette.neutral.800) | `#A2ADB1` (palette.neutral.300) | Hover fill of a primary button, one step from color.surface.inverse |
+| `color.scrim`                 | `rgba(10, 14, 16, 0.42)`        | `rgba(10, 14, 16, 0.42)`        | Backdrop behind modal dialogs                                       |
 
 <!-- /tokens -->
 
@@ -66,6 +67,7 @@ What each surface is for, and how they stack, is on [Elevation](elevation.md).
 | `color.border.subtle`  | `rgba(18, 24, 27, 0.11)`       | `rgba(235, 238, 235, 0.1)`     | Dividers and panel borders                                                                  |
 | `color.border.strong`  | `rgba(18, 24, 27, 0.22)`       | `rgba(235, 238, 235, 0.2)`     | Dashed tags, axis lines: lines that decorate rather than show where a control is            |
 | `color.border.control` | `rgba(18, 24, 27, 0.47)`       | `rgba(235, 238, 235, 0.39)`    | Edges that show where a control is: inputs, outline buttons. 3:1 or better on every surface |
+| `color.border.brand`   | `#896001` (palette.yellow.700) | `#F2B630` (palette.yellow.300) | Edge of a brand button, solid or outline, so the yellow reaches 3:1 on every surface        |
 | `color.border.focus`   | `#12181B` (color.text.primary) | `#EBEEEB` (color.text.primary) | Keyboard focus ring                                                                         |
 
 <!-- /tokens -->
@@ -95,18 +97,21 @@ Status colours are reserved for health, delays and problems: success, warning, d
 
 ## Brand
 
-The brand colour is the yellow of the bus dot in the [Mylder mark](logos.md). It belongs to the hero page and to moments of emphasis there: a band, a call to action, a highlighted word. Text on the brand fill is always `color.text.on-color.dark`.
+The brand colour is the yellow of the bus dot in the [Mylder mark](logos.md), and Perron's primary colour. It marks the main action, as a brand button, and moments of emphasis on the hero page: a band, a highlighted word. Text on the brand fill is always `color.text.on-color.dark`.
 
-- Inside the map app, actions stay ink (`color.surface.inverse`), so the vehicles keep the colour.
-- Keep the brand colour for emphasis: links, status and vehicles have their own colours.
+- A brand button, solid or outline, has a `color.border.brand` edge: the light-theme fill reaches only 2.1:1 on the surfaces, and the edge carries the 3:1. Its hover fill is `color.surface.brand-hover`.
+- Ink actions (`color.surface.inverse`) stay for everything else, so the yellow keeps meaning the main action.
+- A brand button shares the bus badge's fill and ink label. Keep it out of rows of line and mode badges, where it reads as one.
+- Links, status and vehicles have their own colours.
 
-<!-- tokens: color.surface.brand color.surface.brand-subtle color.text.brand -->
+<!-- tokens: color.surface.brand color.surface.brand-hover color.surface.brand-subtle color.text.brand -->
 
-| Token                        | Light                          | Dark                           | Use                                                                                                 |
-| ---------------------------- | ------------------------------ | ------------------------------ | --------------------------------------------------------------------------------------------------- |
-| `color.surface.brand`        | `#D99A00` (palette.yellow.500) | `#F2B630` (palette.yellow.300) | Brand fill: hero bands and calls to action on the hero page. Text on it is color.text.on-color.dark |
-| `color.surface.brand-subtle` | `#FFF2DD` (palette.yellow.100) | `#3B2B07` (palette.yellow.900) | Tinted brand background                                                                             |
-| `color.text.brand`           | `#896001` (palette.yellow.700) | `#F2B630` (palette.yellow.300) | Text in the brand colour, for emphasis on the hero page; never links or buttons                     |
+| Token                        | Light                          | Dark                           | Use                                                                                               |
+| ---------------------------- | ------------------------------ | ------------------------------ | ------------------------------------------------------------------------------------------------- |
+| `color.surface.brand`        | `#D99A00` (palette.yellow.500) | `#F2B630` (palette.yellow.300) | Brand fill: brand buttons, hero bands and calls to action. Text on it is color.text.on-color.dark |
+| `color.surface.brand-hover`  | `#B07B05` (palette.yellow.600) | `#D99A00` (palette.yellow.500) | Hover fill of a brand button, one step from color.surface.brand                                   |
+| `color.surface.brand-subtle` | `#FFF2DD` (palette.yellow.100) | `#3B2B07` (palette.yellow.900) | Tinted brand background                                                                           |
+| `color.text.brand`           | `#896001` (palette.yellow.700) | `#F2B630` (palette.yellow.300) | Text in the brand colour: brand outline buttons and emphasis on the hero page; never links        |
 
 <!-- /tokens -->
 

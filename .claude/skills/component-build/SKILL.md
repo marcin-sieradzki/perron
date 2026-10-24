@@ -16,7 +16,7 @@ It runs in a fresh context the `factory` skill starts, so it cannot ask the main
 1. **Pre-flight.** Read, before the first write:
    - **the contract**, [docs/components/README.md](../../../docs/components/README.md), whole;
    - **the spec**, `docs/components/<name>.md`, whole;
-   - **the read-back**, `penpot/<name>.json`, with the code map `penpot/<name>.code-map.json`, every export `penpot/<name>/<Variant>.light.png` and `penpot/<name>/<Variant>.dark.png`, and the Conventions of [penpot/README.md](../../../penpot/README.md), which name each variant;
+   - **the read-back**, `penpot/<name>.json`, with the code map `penpot/<name>.code-map.json`, every export `penpot/<name>/<Variant>.light.png` and `penpot/<name>/<Variant>.dark.png`, and the Conventions of [penpot/README.md](../../../penpot/README.md), which name each variant. With the design deferred (`deferred` in `components/<name>/pipeline.yaml`, [ADR 0010](../../../docs/adr/0010-unattended-runs-with-design-deferred.md)), the spec stands in for all of these: its Stories table names the variants and its Tokens table their values;
    - **the reference component**: Button's `.tsx`, `.css` and stories, at the paths of the contract's Files table, once phase 5 has built it. Until then, the contract's own examples (Root, Customising, Styling, Words) and the `Keyboard` story in `storybook/contract/Contract.stories.tsx` for a `play` test.
 
    Then what the code reaches for: `packages/perron/src/PerronProvider.tsx`, `packages/perron/src/locale/en.ts` and `packages/perron/src/testing/owned-strings.ts`; the entry for `<Name>` in `packages/perron/components.json`, and the code of each entry in its `dependsOn` and each shared part the spec's Anatomy names; the Perron MCP's `get_reference` (`library: 'base-ui'`) for each Base UI part the spec names.
@@ -27,9 +27,9 @@ It runs in a fresh context the `factory` skill starts, so it cannot ask the main
 
 2. **Write** the three files to the contract and the spec, the reference component's shape where it has one:
    - **`<Name>.tsx`**: each Props row a member of `<Name>Props`, its description the JSDoc; each Base UI part the spec's Base UI parts table names, with what Perron sets and what it passes through; each `CR-n` kept, and what "Base UI already does" left to Base UI.
-   - **`<Name>.css`**: for each Tokens row, its part's class, its state's selector from the code map, and its token.
+   - **`<Name>.css`**: for each Tokens row, its part's class, its state's selector from the code map (with the design deferred, from the contract's Design states), and its token.
    - **Owned strings**: each new key in all four locale files in `packages/perron/src/locale/`, the English from the spec, the Danish, Swedish and Norwegian by [content design](../../../docs/content-design.md).
-   - **`<Name>.stories.tsx`**: one story per variant in the read-back, exported under its variant name, such as `SolidHover`, its props from the code map. The meta's `args` hold every required prop and caller word, so any story renders alone: the contract story renders `Default`, or else the first export in alphabetical order, as a module namespace lists them. A state a prop reaches (disabled, invalid, selected, `defaultOpen`) is set in its story's args; hover, focus and pressed render at rest, and the renderer drives them. A `play` test for each the spec's Stories table names, ending at rest; a render with more words, such as an open popup, gets its own `expectOwnedStrings` call.
+   - **`<Name>.stories.tsx`**: one story per variant in the read-back, or per row of the spec's Stories table with the design deferred, exported under its variant name, such as `SolidHover`, its props from the code map or the spec. The meta's `args` hold every required prop and caller word, so any story renders alone: the contract story renders `Default`, or else the first export in alphabetical order, as a module namespace lists them. A state a prop reaches (disabled, invalid, selected, `defaultOpen`) is set in its story's args; hover, focus and pressed render at rest, and the renderer drives them. A `play` test for each the spec's Stories table names, ending at rest; a render with more words, such as an open popup, gets its own `expectOwnedStrings` call.
 
    Run `npx prettier --write` on every file you wrote. Done when every row of the spec's Anatomy, Base UI parts, Props, Tokens, Owned strings and Stories, and every `CR-n`, has its line in code, and on a rerun every finding from the pre-flight is fixed.
 
@@ -37,7 +37,7 @@ It runs in a fresh context the `factory` skill starts, so it cannot ask the main
    - the spec's Storybook page, `storybook/pages/<name>.mdx`, as `storybook/pages/contract.mdx` with `title="Specs/<Name>"` and the spec's path;
    - a changeset, `.changeset/<name>.md`, `'@mylder/perron': minor`, "Adds `<Name>`.", since a `building` entry ships in the barrel.
 
-   Done when `npm run registry:check` passes, both files exist, and `npm run storybook` lists every story under `Components/<Name>` in `http://localhost:6006/index.json`.
+   Done when `npm run registry:check` passes, both files exist, and `npm run storybook` lists every story under `Components/<Name>` in `index.json` on its port ([design-qa/rendering.md](../design-qa/rendering.md)).
 
 4. **Self-gate.** With Storybook still running, three passes over the rendered stories, each by its skill, rendering as [design-qa/rendering.md](../design-qa/rendering.md) says and reporting in [design-qa/format.md](../design-qa/format.md):
    - **Design quality**: [`design-qa`](../design-qa/SKILL.md) on `<Name>`, every story in light and dark, with hover, focus and pressed driven by Playwright from the code map's selectors.

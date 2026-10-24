@@ -5,7 +5,7 @@ Perron targets [WCAG 2.2](https://www.w3.org/TR/WCAG22/) level AA. Part of it th
 ## What the build checks
 
 - **Text contrast (1.4.3).** Every text colour reaches 4.5:1 on `color.surface.default`, `raised` and `inset`, in both themes. The test lists the deliberate misses by name: `color.text.tertiary` and `color.transit.delay.unknown`, which are only for hints, captions and the "—" of an unknown delay, always next to stronger text. Status and brand text also reach 4.5:1 on their own tinted surfaces.
-- **Non-text contrast (1.4.11).** What shows where a control is, or what state something is in, reaches 3:1 against every surface: `color.border.control`, the focus ring and the status fills. Decorative lines, `color.border.subtle` and `color.border.strong`, are exempt, and their descriptions say so.
+- **Non-text contrast (1.4.11).** What shows where a control is, or what state something is in, reaches 3:1 against every surface: `color.border.control`, `color.border.brand`, the focus ring and the status fills. Decorative lines, `color.border.subtle` and `color.border.strong`, are exempt, and their descriptions say so.
 - **The focus ring (2.4.7, 1.4.11)** reaches 3:1 on every surface and on the map's land, water and parks.
 - **The surface ladder.** `color.surface.inset` stands apart from `color.surface.raised` by at least 1.15:1 in both themes, so an inset track reads without a border. See [Elevation](elevation.md#surfaces).
 - **Line badges.** Label colours on line colours are measured, and the official pairs that miss are listed. See [Semantic colours](semantic-colours.md#line-colours).
@@ -39,11 +39,12 @@ Perron targets [WCAG 2.2](https://www.w3.org/TR/WCAG22/) level AA. Part of it th
 
 ### Controls, focus and status fills on surfaces
 
-<!-- contrast 3: color.border.control color.border.focus color.status.* on color.surface.default color.surface.raised color.surface.inset -->
+<!-- contrast 3: color.border.control color.border.brand color.border.focus color.status.* on color.surface.default color.surface.raised color.surface.inset -->
 
 | Colour                 | Light default | Light raised | Light inset | Dark default | Dark raised | Dark inset |
 | ---------------------- | ------------- | ------------ | ----------- | ------------ | ----------- | ---------- |
 | `color.border.control` | 3.10:1        | 3.12:1       | 3.03:1      | 3.32:1       | 3.26:1      | 3.04:1     |
+| `color.border.brand`   | 5.41:1        | 5.62:1       | 4.81:1      | 9.82:1       | 8.62:1      | 7.19:1     |
 | `color.border.focus`   | 17.26:1       | 17.92:1      | 15.32:1     | 15.32:1      | 13.45:1     | 11.21:1    |
 | `color.status.success` | 3.87:1        | 4.02:1       | 3.44:1      | 8.57:1       | 7.52:1      | 6.27:1     |
 | `color.status.warning` | 4.12:1        | 4.28:1       | 3.66:1      | 8.60:1       | 7.55:1      | 6.29:1     |

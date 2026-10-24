@@ -6,6 +6,7 @@
 //   end <Name> <stage> <done|failed|pending> [--failing "<check and why>"]
 //                                                 checks the stage's gate, records it, prints next
 //   approve <Name>                                the maintainer's design approval
+//   defer <Name>                                  runs the loop without design and visual (ADR 0010)
 //   unblock <Name>                                clears needs-human once the maintainer has acted
 import { spawnSync } from 'node:child_process'
 import { mkdirSync, writeFileSync } from 'node:fs'
@@ -14,6 +15,7 @@ import { fileURLToPath } from 'node:url'
 import {
   approve,
   begin,
+  defer,
   end,
   filesOf,
   loadPipeline,
@@ -29,7 +31,7 @@ import {
   type Stage,
 } from './lib/pipeline.ts'
 
-const USAGE = `usage: npm run factory -- next|approve|unblock <Name> [--json]
+const USAGE = `usage: npm run factory -- next|approve|defer|unblock <Name> [--json]
        npm run factory -- begin <Name> <stage> [--json]
        npm run factory -- end <Name> <stage> <done|failed|pending> [--failing "<check and why>"] [--json]
 stages: ${STAGES.join(', ')}`
@@ -84,6 +86,9 @@ export function factory(argv: string[], env: Env): Printed {
       break
     case 'approve':
       result = approve(p, env)
+      break
+    case 'defer':
+      result = defer(p, env)
       break
     case 'unblock':
       result = unblock(p)

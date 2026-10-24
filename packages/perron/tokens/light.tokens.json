@@ -36,7 +36,7 @@
       },
       "brand": {
         "$value": "{palette.yellow.700}",
-        "$description": "Text in the brand colour, for emphasis on the hero page; never links or buttons"
+        "$description": "Text in the brand colour: brand outline buttons and emphasis on the hero page; never links"
       }
     },
     "surface": {
@@ -83,6 +83,10 @@
         "$value": "{color.text.primary}",
         "$description": "Primary buttons, pressed icon buttons, chart tooltip"
       },
+      "inverse-hover": {
+        "$value": "{palette.neutral.800}",
+        "$description": "Hover fill of a primary button, one step from color.surface.inverse"
+      },
       "success": {
         "$value": "{palette.green.100}",
         "$description": "Tinted background for a success message"
@@ -101,7 +105,11 @@
       },
       "brand": {
         "$value": "{palette.yellow.500}",
-        "$description": "Brand fill: hero bands and calls to action on the hero page. Text on it is color.text.on-color.dark"
+        "$description": "Brand fill: brand buttons, hero bands and calls to action. Text on it is color.text.on-color.dark"
+      },
+      "brand-hover": {
+        "$value": "{palette.yellow.600}",
+        "$description": "Hover fill of a brand button, one step from color.surface.brand"
       },
       "brand-subtle": {
         "$value": "{palette.yellow.100}",
@@ -135,6 +143,10 @@
           "hex": "#12181B"
         },
         "$description": "Edges that show where a control is: inputs, outline buttons. 3:1 or better on every surface"
+      },
+      "brand": {
+        "$value": "{palette.yellow.700}",
+        "$description": "Edge of a brand button, solid or outline, so the yellow reaches 3:1 on every surface"
       },
       "focus": {
         "$value": "{color.text.primary}",

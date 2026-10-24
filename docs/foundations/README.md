@@ -7,7 +7,7 @@ Perron is the design system of Mylder, a live map of Copenhagen's public transpo
 Mylder is Danish for a swarm or a throng: the city's vehicles, moving all at once. It has one look, in a light and a dark theme.
 
 - **Honest.** Every vehicle shows how fresh its data is, and every sentence says no more than the data knows.
-- **Calm.** The map and the vehicles carry the colour. The interface around them is ink, glass and neutral surfaces.
+- **Calm.** The map and the vehicles carry the colour. The interface around them is ink, glass and neutral surfaces, with the brand yellow kept for the main action.
 - **Of Copenhagen.** The operators' own line colours, the city's names, Danish and English side by side, the 24-hour clock.
 
 The mark is on [Logos](logos.md), the brand colour on [Semantic colours](semantic-colours.md#brand), and the voice in [Content design](../content-design.md).

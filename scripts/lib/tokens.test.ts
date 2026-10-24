@@ -147,9 +147,8 @@ describe('contrast', () => {
       expect(contrastRatio(t['color.text.brand'], t['color.surface.brand-subtle'])).toBeGreaterThan(
         4.5,
       )
-      expect(
-        contrastRatio(t['color.text.on-color.dark'], t['color.surface.brand']),
-      ).toBeGreaterThan(4.5)
+      for (const fill of ['color.surface.brand', 'color.surface.brand-hover'] as const)
+        expect(contrastRatio(t['color.text.on-color.dark'], t[fill])).toBeGreaterThan(4.5)
     }
   })
 
@@ -160,6 +159,7 @@ describe('contrast', () => {
       const grounds = [...surfaces, 'color.map.land', 'color.map.water', 'color.map.park']
       const marks = [
         'color.border.control',
+        'color.border.brand',
         'color.border.focus',
         ...['success', 'warning', 'danger', 'info'].map((s) => `color.status.${s}`),
       ]
