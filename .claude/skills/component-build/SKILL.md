@@ -35,7 +35,7 @@ It runs in a fresh context the `factory` skill starts, so it cannot ask the main
 
 3. **Register.** In `packages/perron/components.json`, set the entry's `status` to `building`, and its `baseUiParts` and `dependsOn` to what the code imports; when that changes either from what the brief read, rewrite each spec line that names it (the intro, Anatomy, Base UI parts) in step with it, since the spec is the component's page; with no entry, add one with every field `scripts/lib/entry.ts` lists, in its family's category. Run `npm run generate`, which runs `registry` (the barrels, the exports and the sort order), then `api` and `tokens`, which rebuild `packages/perron/data/docs.json` with the spec page `registry` adds to `PAGES`, so the first `npm run check` finds nothing stale. Then what it leaves to you:
    - the spec's Storybook page, `storybook/pages/<name>.mdx`, as `storybook/pages/contract.mdx` with `title="Specs/<Name>"` and the spec's path;
-   - a changeset, `.changeset/<name>.md`, `'@mylder/perron': minor`, "Adds `<Name>`.", since a `building` entry ships in the barrel.
+   - a changeset, `.changeset/<name>.md`, `'@mylder/perron': minor`, "Adds `<Name>`.", since a `building` entry ships in the barrel, followed by each owned string key it adds to the locales, by name ("and the owned strings `zoomInLabel` and `zoomOutLabel`, in all four locales"), since the dictionaries ship too.
 
    Done when `npm run registry:check` passes, both files exist, and `npm run storybook` lists every story under `Components/<Name>` in `index.json` on its port ([design-qa/rendering.md](../design-qa/rendering.md)).
 
@@ -45,6 +45,8 @@ It runs in a fresh context the `factory` skill starts, so it cannot ask the main
    - **API consistency**: [`api-consistency`](../api-consistency/SKILL.md) on `<Name>`, which scopes it to the family.
 
    Fix every Defect and Polish finding at its line, then run all three passes again. Done when one round of all three finds no Defect and no Polish. Each Direction finding goes in the summary. A finding whose fix would break the spec, the read-back or a token is not the build's to make: return `failed`, naming the finding and the line it traces to.
+
+   **A spec that contradicts itself** is the build's to correct, on a rerun or here: where a review finding, or the build's own reading, shows one spec line disagreeing with another, with the contract or with a `CR-n`, rewrite the line that disagrees so it says what the side the finding names as right already decides, then run `npm run tokens`. That carries a decision already made; when neither side settles it, the fix is a new decision: return `failed`, naming both lines.
 
 5. **Gates.** Stop Storybook and run `npm run check`, which holds the gates and the story tests (axe and every `play`). A red run is an attempt: fix its first failing check, run the self-gate again on every story the fix changes, and run the check again. Between runs, `npx vitest run --project stories <path to the stories file>` tests the stories alone and counts no attempt. Done when the check passes. At the third red run, stop.
 

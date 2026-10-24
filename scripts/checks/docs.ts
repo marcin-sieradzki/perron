@@ -157,6 +157,16 @@ function storyProblems(root: string, e: Entry): Problem[] {
   ]
 }
 
+/** Each member whose type the docs page would show as `unknown`, where docgen could not read it. */
+function unknownTypes(e: Entry, doc: ComponentDoc): Problem[] {
+  return Object.entries(doc.props ?? {})
+    .filter(([, p]) => p.tsType?.name === 'unknown' && !/^unknown\b/.test(p.tsType.raw ?? ''))
+    .map(([name]) => ({
+      file: codeFile(e),
+      message: `${e.name}'s docs page would show the type of ${name} as unknown: docgen cannot read the type as written; write it another way, such as ReadonlyArray<T> for readonly T[]`,
+    }))
+}
+
 /** Where the spec's Props table and the docs page's would differ. */
 function tableProblems(root: string, e: Entry, doc: ComponentDoc): Problem[] {
   const spec = join(root, specPage(e))
@@ -181,7 +191,7 @@ export default {
           file: codeFile(e),
           message: `${e.name}'s docs page would show no props: its docgen finds no exported function component ${e.name} taking ${e.name}Props`,
         })
-      if (doc) problems.push(...tableProblems(root, e, doc))
+      if (doc) problems.push(...tableProblems(root, e, doc), ...unknownTypes(e, doc))
       problems.push(...storyProblems(root, e))
       if (DOCUMENTED.has(e.status) && missing(docsPage(e)))
         problems.push({

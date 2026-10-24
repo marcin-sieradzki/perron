@@ -51,7 +51,7 @@ An audit finding takes its level from [`format.md`](../skills/design-qa/format.m
 - **P2** is fixed before merge, as a P1 is: it sends the component back to build too, whose next run fixes it at its line. The loop stops at `needs-human` on the second round to send it back when that round has a P1, and on the third when it has only P2s; `npm run factory -- end` counts them. A finding is a P2 by its effect, never by how small its fix is: a one-line fix is still fixed before merge.
 - **P3** is a note: a question for the maintainer, or a choice they may want to revisit. It goes on the PR.
 
-Report each problem once, at the level of its worst effect, at the line that causes it.
+Report each problem once, at the level of its worst effect, at the line that causes it. A spec that contradicts itself, the contract or its code is a finding at the spec's line that disagrees: name the line it contradicts and which side holds (the contract over the spec, a `CR-n` or a Props row over prose), so the build's rerun rewrites the spec line to agree. A contradiction no rule settles says so, and the build returns it to the maintainer.
 
 ## review.md
 
