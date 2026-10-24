@@ -108,6 +108,10 @@ function typeBreach(
   }
 }
 
+/** `render` is always Base UI's, and the docs page shows Base UI's JSDoc for it (contract, Props). */
+const REDECLARED_RENDER =
+  "render is Base UI's: inherit it from the Base UI props type (useRender.ComponentProps<'<element>'> with no Base UI part) instead of declaring it, and give its spec row inherited under Base UI prop"
+
 const prefix = (name: string) =>
   `${name} is a boolean with is, has or should in front; name it as an adjective, such as ${name.replace(/^(is|has|should)(\w)/, (_, __, c: string) => c.toLowerCase())}`
 
@@ -166,6 +170,7 @@ export function propsProblems(root: string, files: string[]): Problem[] {
           report(prefix(member.name))
         continue
       }
+      if (member.name === 'render') report(REDECLARED_RENDER)
       const breach = typeBreach(checker, rules, member.name, own, t)
       if (breach) report(breach)
       if (!decls.filter(inPackage).some(hasDoc)) report(`${member.name} has no JSDoc comment`)

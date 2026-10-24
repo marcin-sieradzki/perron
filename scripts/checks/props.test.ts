@@ -22,6 +22,7 @@ const FAILING: [string, RegExp, number][] = [
     5,
   ],
   ['Undocumented', /(label|hint) has no JSDoc comment/, 2],
+  ['Render', /render is Base UI's: inherit it/, 1],
   ['Unexported', /exports no UnexportedProps/, 1],
 ]
 
