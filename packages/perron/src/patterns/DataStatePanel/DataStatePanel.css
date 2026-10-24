@@ -1,0 +1,13 @@
+/* DataStatePanel: no fill, border, radius, padding or gap of its own, so it takes the surface it
+   sits on, and every message wears EmptyState's look. docs/patterns/data-state-panel.md sets no
+   token of its own. */
+
+/* CR-7: a block that sizes to its container, with no width, height or minimum of its own */
+.pn-DataStatePanel {
+  display: block;
+}
+
+/* CR-2: the live region, empty while ready, so it takes no space then */
+.pn-DataStatePanel-message {
+  display: block;
+}

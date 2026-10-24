@@ -64,6 +64,7 @@ const preview: Preview = {
           'Patterns',
           [
             // each registered pattern
+            'DataStatePanel',
             'DetailHeader',
             'StopTimeline',
           ],
@@ -84,6 +85,7 @@ const preview: Preview = {
             'LineBadge',
             'SeverityLabel',
             'StationIcon',
+            'DataStatePanel',
             'DetailHeader',
             'StopTimeline',
           ],

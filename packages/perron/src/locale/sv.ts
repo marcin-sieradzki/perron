@@ -6,6 +6,8 @@ export const sv: OwnedStrings = {
   close: 'Stäng',
   clear: 'Rensa',
   loading: 'Laddar',
+  noData: 'Inga data att visa',
+  loadFailed: 'Kunde inte ladda data',
   previousPage: 'Föregående sida',
   nextPage: 'Nästa sida',
   live: 'Live',
