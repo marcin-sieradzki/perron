@@ -2,7 +2,7 @@
 
 The map's zoom in, zoom out and centre buttons, in one glass bar that is one tab stop, named and labelled in the reader's language.
 
-The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the contract, the foundations, the tokens, the Base UI reference and the specs of the entries it depends on, [Toolbar](toolbar.md) and [IconButton](icon-button.md). The extracted prototype component is not in any branch this run can reach.
+The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the contract, the foundations, the tokens, the Base UI reference and the spec of [Toolbar](toolbar.md), the one entry it depends on, and of [IconButton](icon-button.md), which it does not use (see Anatomy). The extracted prototype component is not in any branch this run can reach.
 
 ## Anatomy
 
