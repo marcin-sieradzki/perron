@@ -5,5 +5,5 @@
     "correctness": "error",
     "suspicious": "warn"
   },
-  "ignorePatterns": ["coverage", "tokens/generated"]
+  "ignorePatterns": ["coverage", "dist", "tokens/generated"]
 }

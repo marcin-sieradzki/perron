@@ -13,13 +13,14 @@ import { iconGrid, readIcons, readLogos, type Asset } from './assets.ts'
 import { composite, contrastRatio } from './color.ts'
 import { resolveValue, tokenMap, toCss, type ResolvedTokens, type Token } from './tokens.ts'
 
-const TOKENS = /(<!-- tokens: ([^>]*?) -->)[\s\S]*?(<!-- \/tokens -->)/g
-const CONTRAST = /(<!-- contrast ([\d.]+): ([^>]*?) on ([^>]*?) -->)[\s\S]*?(<!-- \/contrast -->)/g
-const FILES = /(<!-- files: (icons|logos) -->)[\s\S]*?(<!-- \/files -->)/g
+export const TOKENS = /(<!-- tokens: ([^>]*?) -->)[\s\S]*?(<!-- \/tokens -->)/g
+export const CONTRAST =
+  /(<!-- contrast ([\d.]+): ([^>]*?) on ([^>]*?) -->)[\s\S]*?(<!-- \/contrast -->)/g
+export const FILES = /(<!-- files: (icons|logos) -->)[\s\S]*?(<!-- \/files -->)/g
 const REF = /^\{([^{}]+)\}$/
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '../..')
 
-const words = (s: string) => s.trim().split(/\s+/)
+export const words = (s: string) => s.trim().split(/\s+/)
 const title = (s: string) => s[0].toUpperCase() + s.slice(1)
 const parent = (name: string) => name.slice(0, name.lastIndexOf('.'))
 const leaf = (name: string) => name.slice(name.lastIndexOf('.') + 1)
@@ -30,7 +31,7 @@ const matches = (pattern: string, name: string) =>
  * The tokens the patterns name, in pattern order, then source order, except that numbered
  * siblings run in number order: JSON objects put `100` before `050`.
  */
-function select(tokens: ResolvedTokens, patterns: string[]) {
+export function select(tokens: ResolvedTokens, patterns: string[]) {
   const all = [...tokens.base, ...tokens.themes[tokens.defaultTheme]]
   const groups = new Map<string, Token[]>()
   for (const p of patterns)
@@ -45,7 +46,7 @@ function select(tokens: ResolvedTokens, patterns: string[]) {
 }
 
 /** The CSS text of a token's value in one theme, as the build would write it with aliases followed. */
-function literal(tokens: ResolvedTokens, type: string, value: unknown, theme: string) {
+export function literal(tokens: ResolvedTokens, type: string, value: unknown, theme: string) {
   return toCss(type, resolveValue(value, tokenMap(tokens, theme)), () => null)
 }
 
