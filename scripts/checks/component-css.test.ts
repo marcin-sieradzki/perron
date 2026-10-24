@@ -59,7 +59,7 @@ describe('component-css', () => {
     ['raw-hex.css', /raw colour #12181b/, 1],
     ['raw-colour-function.css', /raw colour (rgb|oklch)\(/, 2],
     ['named-colour.css', /raw colour red/, 1],
-    ['raw-length.css', /raw length (4px|0\.5rem)/, 2],
+    ['raw-length.css', /raw length (4px|0\.5rem|0\.5lh)/, 3],
     ['raw-duration.css', /raw duration 200ms/, 1],
     ['var-fallback.css', /var\(--perron-space-200\) has a fallback/, 1],
     ['unknown-token.css', /--perron-space-250 is not a token/, 1],

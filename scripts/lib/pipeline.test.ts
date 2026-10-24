@@ -1,7 +1,9 @@
-import { readFileSync } from 'node:fs'
+import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import * as prettier from 'prettier'
 import { describe, expect, it } from 'vitest'
+import { CONTRACT } from '../checks/lib.ts'
+import { readPropRules } from '../checks/props.ts'
 import { parsePipeline, reviewFindings, serializePipeline, specProblems } from './pipeline.ts'
 
 const root = join(import.meta.dirname, '../..')
@@ -34,6 +36,25 @@ describe('specProblems', () => {
   it("does not count the template's own mention of [PENDING] in a code span", () => {
     const spec = filled('Swatch', 'A value no token gives is `[PENDING] needs a token for <what>`.')
     expect(specProblems(spec, template, 'Swatch')).toEqual({ pending: 0, problems: [] })
+  })
+
+  it('names an answer left as its question, or under an Answered label', () => {
+    const spec = filled(
+      'Swatch',
+      [
+        'Answered yes, the recommended answer: Does it take a `tone`? It reads the theme.',
+        'Does it take a `size`? Recommended: no.',
+        'Answered (recommended): it takes no `size`.',
+        'It takes a `tone`, since it reads the theme.',
+      ].join('\n\n'),
+    )
+    const lines = spec.split('\n')
+    const at = (start: string) => lines.findIndex((l) => l.startsWith(start)) + 1
+    expect(specProblems(spec, template, 'Swatch').problems).toEqual(
+      [at('Answered yes'), at('Does it'), at('Answered (')].map((n) =>
+        expect.stringMatching(new RegExp(`^has an answer left .* at line ${n};`)),
+      ),
+    )
   })
 
   it('names a missing template section', () => {
@@ -95,6 +116,23 @@ describe('specProblems', () => {
       'starts with "# Spec template", not "# Swatch"',
     ])
   })
+  it('passes every spec in the repo, so a merged spec is one a brief may end on', () => {
+    const banned = readPropRules(readFileSync(join(root, CONTRACT), 'utf8')).banned
+    const specs = ['components', 'patterns'].flatMap((dir) =>
+      readdirSync(join(root, 'docs', dir))
+        .filter((f) => f.endsWith('.md') && f !== 'README.md' && f !== 'TEMPLATE.md')
+        .map((f) => `docs/${dir}/${f}`),
+    )
+    for (const f of specs) {
+      const spec = readFileSync(join(root, f), 'utf8')
+      const name = /^# (.+)$/m.exec(spec)?.[1] ?? ''
+      expect({ f, ...specProblems(spec, template, name, banned) }).toEqual({
+        f,
+        pending: 0,
+        problems: [],
+      })
+    }
+  })
 })
 
 describe('reviewFindings', () => {
@@ -136,7 +174,7 @@ describe('serializePipeline', () => {
         ended: '2026-10-24T09:30:00.000Z',
       },
       build: { status: 'failed' as const, runs: 2, failing: "it's red: ".repeat(20) },
-      review: { rounds: 1, p1Rounds: 1, findings: { p1: 1, p2: 0, p3: 2 } },
+      review: { rounds: 1, sentBack: 1, findings: { p1: 1, p2: 0, p3: 2 } },
     },
   }
 
