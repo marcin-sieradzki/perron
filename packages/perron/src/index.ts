@@ -5,3 +5,4 @@
 export { PerronProvider, useOwnedStrings } from './PerronProvider.tsx'
 export type { PerronProviderProps } from './PerronProvider.tsx'
 export type { Locale, OwnedStringKey, OwnedStrings } from './locale/index.ts'
+export * from './components/Prik/Prik.tsx'

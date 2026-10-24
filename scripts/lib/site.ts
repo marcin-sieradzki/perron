@@ -2,8 +2,8 @@
 // path in the repo, `llms.txt` with one line per page, and an `AGENTS.md` for apps that install
 // Perron. The twins keep their repo paths, so their links to each other and to the package's icons
 // and logos work unchanged on the site.
-import { readdirSync, readFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { existsSync, readdirSync, readFileSync } from 'node:fs'
+import { join, posix } from 'node:path'
 import { headingOf, PAGES } from './pages.ts'
 import { PACKAGE } from './paths.ts'
 
@@ -34,6 +34,14 @@ export function buildSite(root: string) {
   const out: Record<string, string> = {}
   const read = (path: string) => readFileSync(join(root, path), 'utf8')
   for (const path of PAGES) out[path] = read(path)
+  // the repo's Markdown a page links to, such as a spec's ADR or penpot/README.md, rides along at
+  // its own path, so the twin's relative links resolve on the site as in the repo
+  for (const path of PAGES)
+    for (const [, ref] of out[path].matchAll(/\]\(([^)#\s]+\.md)[^)]*\)/g)) {
+      const target = posix.join(posix.dirname(path), ref)
+      if (!/^[a-z]+:/.test(ref) && !(target in out) && existsSync(join(root, target)))
+        out[target] = read(target)
+    }
   for (const dir of ['icons', 'logos'])
     for (const file of readdirSync(join(root, PACKAGE, dir)))
       if (file.endsWith('.svg'))

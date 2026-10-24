@@ -1,0 +1,117 @@
+/* Prik: a dot in its line colour, shaped by its data state (docs/components/prik.md). The line
+   colour is the root's color, and the dot draws in currentColor (CR-2). */
+
+.pn-Prik {
+  inline-size: var(--perron-icon-size);
+  block-size: var(--perron-icon-size);
+  flex: none;
+}
+
+/* The glyph box */
+.pn-Prik[data-size='small'] {
+  --perron-icon-size: var(--perron-icon-size-325);
+}
+
+.pn-Prik[data-size='medium'] {
+  --perron-icon-size: var(--perron-icon-size-400);
+}
+
+.pn-Prik[data-size='large'] {
+  --perron-icon-size: var(--perron-icon-size-450);
+}
+
+/* The line colour */
+.pn-Prik[data-line='m1'] {
+  color: var(--perron-color-transit-line-m1);
+}
+
+.pn-Prik[data-line='m2'] {
+  color: var(--perron-color-transit-line-m2);
+}
+
+.pn-Prik[data-line='m3'] {
+  color: var(--perron-color-transit-line-m3);
+}
+
+.pn-Prik[data-line='m4'] {
+  color: var(--perron-color-transit-line-m4);
+}
+
+.pn-Prik[data-line='a'] {
+  color: var(--perron-color-transit-line-a);
+}
+
+.pn-Prik[data-line='b'] {
+  color: var(--perron-color-transit-line-b);
+}
+
+.pn-Prik[data-line='c'] {
+  color: var(--perron-color-transit-line-c);
+}
+
+.pn-Prik[data-line='e'] {
+  color: var(--perron-color-transit-line-e);
+}
+
+.pn-Prik[data-line='f'] {
+  color: var(--perron-color-transit-line-f);
+}
+
+.pn-Prik[data-line='h'] {
+  color: var(--perron-color-transit-line-h);
+}
+
+.pn-Prik[data-line='bus'] {
+  color: var(--perron-color-transit-mode-bus);
+}
+
+.pn-Prik[data-line='regional'] {
+  color: var(--perron-color-transit-mode-regional);
+}
+
+/* The dot. Each state's radius is the live dot's less its own stroke inset, so every state keeps
+   one outer size (CR-1). */
+.pn-Prik-dot {
+  cx: 50%;
+  cy: 50%;
+  r: calc(50% - var(--perron-prik-inset));
+  fill: currentColor;
+}
+
+.pn-Prik[data-variant='ageing'] .pn-Prik-dot {
+  r: calc(50% - var(--perron-prik-inset) - var(--perron-prik-ageing-stroke-inset));
+  fill-opacity: var(--perron-prik-ageing-fill-opacity);
+  stroke: currentColor;
+  stroke-width: var(--perron-prik-ageing-stroke-width);
+}
+
+.pn-Prik[data-variant='estimated'] .pn-Prik-dot {
+  r: calc(50% - var(--perron-prik-inset) - var(--perron-prik-estimated-stroke-inset));
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--perron-prik-estimated-stroke-width);
+}
+
+.pn-Prik[data-variant='timetable-only'] .pn-Prik-dot {
+  r: calc(50% - var(--perron-prik-inset) - var(--perron-prik-timetable-stroke-inset));
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--perron-prik-timetable-stroke-width);
+  stroke-dasharray: var(--perron-prik-timetable-dash);
+}
+
+/* A silent vehicle is grey, whatever its line (CR-2). */
+.pn-Prik[data-variant='no-signal'] .pn-Prik-dot {
+  fill: var(--perron-color-data-state-no-signal);
+}
+
+/* In forced colours the shapes carry the state (CR-8). */
+@media (forced-colors: active) {
+  .pn-Prik[data-line] {
+    color: CanvasText;
+  }
+
+  .pn-Prik[data-variant='no-signal'] .pn-Prik-dot {
+    fill: GrayText;
+  }
+}

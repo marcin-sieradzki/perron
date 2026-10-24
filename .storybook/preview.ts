@@ -38,11 +38,17 @@ const preview: Preview = {
             'Contract',
             'Spec template',
             // registry:components start: written by npm run registry, by category then name
+            'Prik',
             // registry:components end
           ],
           // registry:patterns start: written by npm run registry, by category then name
           // registry:patterns end
           // registry:specs start: written by npm run registry, each built entry's spec page
+          'Specs',
+          [
+            // each spec page, as PAGES lists them
+            'Prik',
+          ],
           // registry:specs end
         ],
       },
