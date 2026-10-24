@@ -1,0 +1,6 @@
+# Written by npm run factory; never by hand.
+component: Section
+layer: component
+deferred:
+  at: 2026-10-24T23:30:50.497Z
+stages: {}
