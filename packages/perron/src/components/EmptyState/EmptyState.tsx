@@ -17,7 +17,7 @@ export interface EmptyStateProps extends Omit<
   title: ReactNode
   /** The sentence under the title: why it is empty and what to try. "Try a line number such as 5C." */
   children?: ReactNode
-  /** An icon from Perron's set above the title, for the eye only: it is hidden from screen readers */
+  /** An icon from Perron's set above the title, for the eye only: it is hidden from screen readers. It renders at 16 px; an icon drawn for another step takes its `icon.size.*` through `--perron-icon-size` on the icon itself */
   icon?: ReactNode
   /** What the person can do about it, such as a button that clears the search, below the sentence */
   action?: ReactNode
