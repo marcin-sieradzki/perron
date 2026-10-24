@@ -97,7 +97,7 @@ export const LongTitle: Story = {
     line: 'm3',
     lineName: undefined,
     title: 'Københavns Hovedbanegård (Tietgensgade)',
-    subheader: 'Metro M3 and S-tog, entrance on Tietgensgade',
+    subheader: 'Metro M3, entrance on Tietgensgade',
     action: showOnMap,
   },
   decorators: [
@@ -108,6 +108,8 @@ export const LongTitle: Story = {
     ),
   ],
   play: async ({ canvasElement }) => {
+    // measure in the library's own fonts, not a fallback that wraps differently
+    await document.fonts.ready
     const canvas = within(canvasElement)
     const root = canvasElement.querySelector('.pn-DetailHeader')!
     const title = canvas.getByRole('heading', { level: 2 })
