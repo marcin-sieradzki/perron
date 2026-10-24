@@ -3,4 +3,9 @@ component: StopTimeline
 layer: pattern
 deferred:
   at: 2026-10-24T22:34:41.279Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-24T22:34:45.415Z
+    ended: 2026-10-24T22:40:34.008Z
+    pending: 7
