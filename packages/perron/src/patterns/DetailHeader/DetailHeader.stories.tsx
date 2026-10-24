@@ -5,7 +5,7 @@ import { expect, userEvent, within } from 'storybook/test'
 import { Button } from '../../components/Button/Button.tsx'
 import { DetailHeader } from './DetailHeader.tsx'
 
-/** The caller's action: one outlined neutral Button, as the spec's Do and don't asks. */
+/** The caller's action: one outlined neutral Button. */
 const showOnMap = (
   <Button variant="outline" color="neutral">
     Show on map
