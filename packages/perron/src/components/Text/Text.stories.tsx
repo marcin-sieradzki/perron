@@ -38,12 +38,8 @@ const rootOf = (canvasElement: HTMLElement) => {
 
 const bodyRef = createRef<HTMLElement>()
 
+// passes none of variant, color or emphasis, so the play test checks the defaults fill them in
 export const BodyNeutralPrimary: Story = {
-  args: {
-    variant: 'body',
-    color: 'neutral',
-    emphasis: 'primary',
-  },
   render: (args) => <Text {...args} ref={bodyRef} />,
   play: async ({ canvasElement }) => {
     const root = rootOf(canvasElement)
