@@ -1,0 +1,19 @@
+import { Meta, Stories, Title } from '@storybook/addon-docs/blocks'
+import { PropsTable } from '../../../../../storybook/blocks/PropsTable.tsx'
+import { SpecProse } from '../../../../../storybook/blocks/SpecProse.tsx'
+import * as StopTimelineStories from './StopTimeline.stories.tsx'
+
+<Meta of={StopTimelineStories} />
+
+<Title />
+
+<SpecProse path="docs/patterns/stop-timeline.md" intro />
+
+<Stories title="Examples" />
+
+<PropsTable of={StopTimelineStories} />
+
+<SpecProse
+  path="docs/patterns/stop-timeline.md"
+  sections={['Keyboard and ARIA', 'Owned strings', "Do and don't"]}
+/>

@@ -66,6 +66,7 @@ const preview: Preview = {
             // each registered pattern
             'DataStatePanel',
             'DetailHeader',
+            'StopTimeline',
             'DisruptionCard',
           ],
           // registry:patterns end
@@ -87,6 +88,7 @@ const preview: Preview = {
             'StationIcon',
             'DataStatePanel',
             'DetailHeader',
+            'StopTimeline',
             'DisruptionCard',
           ],
           // registry:specs end

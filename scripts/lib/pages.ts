@@ -42,6 +42,7 @@ export const PAGES = [
   'docs/components/station-icon.md',
   'docs/patterns/data-state-panel.md',
   'docs/patterns/detail-header.md',
+  'docs/patterns/stop-timeline.md',
   'docs/patterns/disruption-card.md',
   // registry:specs end
 ]

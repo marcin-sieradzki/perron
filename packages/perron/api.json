@@ -669,6 +669,103 @@
       }
     }
   },
+  "StopTimeline": {
+    "extends": [
+      "Omit< ComponentPropsWithoutRef<'ol'>, 'children' | 'className' | 'style' >"
+    ],
+    "props": {
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "delayUnknownLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "line": {
+        "optional": true,
+        "type": [
+          "\"a\"",
+          "\"b\"",
+          "\"bus\"",
+          "\"c\"",
+          "\"e\"",
+          "\"f\"",
+          "\"h\"",
+          "\"m1\"",
+          "\"m2\"",
+          "\"m3\"",
+          "\"m4\"",
+          "\"regional\"",
+          "undefined"
+        ]
+      },
+      "minutesEarlyLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "minutesLateLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "minutesUnitLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "nextStopIndex": {
+        "optional": true,
+        "type": [
+          "number"
+        ]
+      },
+      "nextStopLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "onTimeLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "passedLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLOListElement>"
+        ]
+      },
+      "stops": {
+        "optional": false,
+        "type": [
+          "StopTimelineStop[]"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      }
+    }
+  },
   "Surface": {
     "extends": [
       "Omit< useRender.ComponentProps<'div'>, 'children' | 'className' | 'style' | 'ref' >"
