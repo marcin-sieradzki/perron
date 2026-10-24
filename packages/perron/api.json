@@ -1,4 +1,80 @@
 {
+  "Button": {
+    "extends": [
+      "Omit< BaseButton.Props, 'className' | 'style' | 'color' | 'children' | 'disabled' | 'ref' >"
+    ],
+    "props": {
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "color": {
+        "optional": true,
+        "type": [
+          "\"brand\"",
+          "\"neutral\""
+        ]
+      },
+      "disabled": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "endIcon": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "fullWidth": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLButtonElement>"
+        ]
+      },
+      "size": {
+        "optional": true,
+        "type": [
+          "\"medium\"",
+          "\"small\""
+        ]
+      },
+      "startIcon": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "variant": {
+        "optional": true,
+        "type": [
+          "\"outline\"",
+          "\"solid\""
+        ]
+      }
+    }
+  },
   "StationIcon": {
     "extends": [
       "Omit<ComponentPropsWithRef<'span'>, 'children'>"

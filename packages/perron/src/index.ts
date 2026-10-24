@@ -5,4 +5,5 @@
 export { PerronProvider, useOwnedStrings } from './PerronProvider.tsx'
 export type { PerronProviderProps } from './PerronProvider.tsx'
 export type { Locale, OwnedStringKey, OwnedStrings } from './locale/index.ts'
+export * from './components/Button/Button.tsx'
 export * from './components/StationIcon/StationIcon.tsx'

@@ -1,0 +1,124 @@
+/* Button, from docs/components/button.md. Every state changes colours only (CR-3), at once (CR-8),
+   and the colour is set on the root, which the label and the icons take (CR-6). */
+
+.pn-Button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--perron-space-200);
+  block-size: var(--perron-size-button);
+  margin: 0;
+  padding-block: 0;
+  padding-inline: var(--perron-space-400);
+  /* every variant has the edge, transparent where it shows none, so all four share one box (CR-11) */
+  border: var(--perron-border-width-025) solid transparent;
+  border-radius: var(--perron-radius-md);
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.pn-Button[data-size='small'] {
+  gap: var(--perron-space-150);
+  block-size: var(--perron-size-button-sm);
+  padding-inline: var(--perron-space-300);
+}
+
+.pn-Button[data-full-width] {
+  inline-size: 100%;
+}
+
+.pn-Button-label {
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+}
+
+.pn-Button-startIcon,
+.pn-Button-endIcon {
+  display: inline-flex;
+  flex: none;
+  --perron-icon-size: var(--perron-icon-size-400);
+}
+
+/* solid, neutral */
+
+.pn-Button[data-variant='solid'][data-color='neutral'] {
+  border-color: transparent;
+  background-color: var(--perron-color-surface-inverse);
+  color: var(--perron-color-text-inverse);
+}
+
+@media (hover: hover) {
+  .pn-Button[data-variant='solid'][data-color='neutral']:hover:not([data-disabled]) {
+    background-color: var(--perron-color-surface-inverse-hover);
+  }
+}
+
+.pn-Button[data-variant='solid'][data-color='neutral']:active:not([data-disabled]) {
+  background-color: var(--perron-color-surface-inverse-hover);
+}
+
+/* solid, brand: the edge stays at rest, on hover and pressed (CR-10) */
+
+.pn-Button[data-variant='solid'][data-color='brand'] {
+  border-color: var(--perron-color-border-brand);
+  background-color: var(--perron-color-surface-brand);
+  color: var(--perron-color-text-on-color-dark);
+}
+
+@media (hover: hover) {
+  .pn-Button[data-variant='solid'][data-color='brand']:hover:not([data-disabled]) {
+    background-color: var(--perron-color-surface-brand-hover);
+  }
+}
+
+.pn-Button[data-variant='solid'][data-color='brand']:active:not([data-disabled]) {
+  background-color: var(--perron-color-surface-brand-hover);
+}
+
+/* outline, neutral */
+
+.pn-Button[data-variant='outline'][data-color='neutral'] {
+  border-color: var(--perron-color-border-control);
+  background-color: transparent;
+  color: var(--perron-color-text-primary);
+}
+
+/* outline, brand */
+
+.pn-Button[data-variant='outline'][data-color='brand'] {
+  border-color: var(--perron-color-border-brand);
+  background-color: transparent;
+  color: var(--perron-color-text-brand);
+}
+
+/* outline, both colours: the hover layer every control shares */
+
+@media (hover: hover) {
+  .pn-Button[data-variant='outline']:hover:not([data-disabled]) {
+    background-color: var(--perron-color-surface-hover);
+  }
+}
+
+.pn-Button[data-variant='outline']:active:not([data-disabled]) {
+  background-color: var(--perron-color-surface-hover);
+}
+
+/* disabled, both colours alike: a colour, never an opacity. After the colours, which it ties. */
+
+.pn-Button[data-variant='solid'][data-disabled] {
+  border-color: transparent;
+  background-color: var(--perron-color-surface-inset);
+  color: var(--perron-color-text-tertiary);
+}
+
+.pn-Button[data-variant='outline'][data-disabled] {
+  border-color: var(--perron-color-border-subtle);
+  color: var(--perron-color-text-tertiary);
+}
+
+@media (forced-colors: active) {
+  .pn-Button[data-disabled] {
+    border-color: GrayText;
+    color: GrayText;
+  }
+}
