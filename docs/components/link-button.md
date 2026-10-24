@@ -149,6 +149,8 @@ Rules for this component alone, numbered so the build and the review can cite th
 - **CR-11.** The label stays on one line (`white-space: nowrap`), the link growing with it, rather than wrapping inside the fixed `size.button` height, as Button's CR-12 does.
 - **CR-12.** Changes of state are immediate: no `duration.*` token fits the change, so the CSS has no transition.
 - **CR-13.** The caller's props reach the root through `mergeProps`, the component's own last, so the component's class, data attributes and children win, and `variant`, `size`, `fullWidth`, `startIcon` and `endIcon` are taken out first, so none reaches the DOM. `className` is merged after `pn-LinkButton`.
+- **CR-14.** LinkButton takes no `color` and no `disabled`: it is always ink, Button's `neutral`, and has no disabled state. Its props type is the `<a>` element's with React's non-standard `color` attribute omitted, so `color="brand"` is a type error rather than an attribute on the DOM; the `<a>` element's type already has no `disabled`.
+- **CR-15.** `href` is declared in LinkButton's own props, optional, with its Props row's description as its JSDoc, and reaches the root's `<a>` as its `href`.
 
 ## Stories
 
