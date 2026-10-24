@@ -1,0 +1,22 @@
+{
+  "component": "Chip",
+  "properties": {
+    "variant": {
+      "prop": "variant",
+      "values": {
+        "solid": "solid",
+        "outline": "outline"
+      }
+    },
+    "State": {
+      "state": {
+        "default": null,
+        "hover": ":hover"
+      }
+    }
+  },
+  "layers": {
+    "root": "root",
+    "label": "label"
+  }
+}

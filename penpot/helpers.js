@@ -31,13 +31,13 @@ storage.bind = (shape, property, tokenName) => {
 /** SHA-256 of a byte array, as hex. The plugin sandbox has no crypto, so this is plain JS. */
 storage.sha256 = (bytes) => {
   const k = []
-  const h = []
+  const state = []
   const frac = (x) => ((x - Math.floor(x)) * 2 ** 32) >>> 0
   for (let n = 2, found = 0; found < 64; n++) {
     let prime = true
     for (let d = 2; d * d <= n; d++) if (n % d === 0) prime = false
     if (!prime) continue
-    if (found < 8) h[found] = frac(Math.sqrt(n))
+    if (found < 8) state[found] = frac(Math.sqrt(n))
     k[found++] = frac(Math.cbrt(n))
   }
   const length = bytes.length
@@ -56,12 +56,12 @@ storage.sha256 = (bytes) => {
       const s1 = rotr(w[i - 2], 17) ^ rotr(w[i - 2], 19) ^ (w[i - 2] >>> 10)
       w[i] = (w[i - 16] + s0 + w[i - 7] + s1) >>> 0
     }
-    let [a, b, c, d, e, f, g, hh] = h
+    let [a, b, c, d, e, f, g, h] = state
     for (let i = 0; i < 64; i++) {
       const t1 =
-        (hh + (rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25)) + ((e & f) ^ (~e & g)) + k[i] + w[i]) >>> 0
+        (h + (rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25)) + ((e & f) ^ (~e & g)) + k[i] + w[i]) >>> 0
       const t2 = ((rotr(a, 2) ^ rotr(a, 13) ^ rotr(a, 22)) + ((a & b) ^ (a & c) ^ (b & c))) >>> 0
-      hh = g
+      h = g
       g = f
       f = e
       e = (d + t1) >>> 0
@@ -70,9 +70,9 @@ storage.sha256 = (bytes) => {
       b = a
       a = (t1 + t2) >>> 0
     }
-    ;[a, b, c, d, e, f, g, hh].forEach((x, i) => (h[i] = (h[i] + x) >>> 0))
+    ;[a, b, c, d, e, f, g, h].forEach((x, i) => (state[i] = (state[i] + x) >>> 0))
   }
-  return h.map((x) => x.toString(16).padStart(8, '0')).join('')
+  return state.map((x) => x.toString(16).padStart(8, '0')).join('')
 }
 
 /**
@@ -104,19 +104,19 @@ const layer = (shape, name) => {
     out.size.horizontal = shape.layoutChild.horizontalSizing
     out.size.vertical = shape.layoutChild.verticalSizing
   }
-  const lay = shape.flex || shape.grid
-  if (lay)
+  const own = shape.flex || shape.grid
+  if (own)
     out.layout = {
       type: shape.flex ? 'flex' : 'grid',
-      dir: lay.dir,
-      ...(shape.flex ? { wrap: lay.wrap } : {}),
-      alignItems: lay.alignItems,
-      justifyContent: lay.justifyContent,
-      rowGap: lay.rowGap,
-      columnGap: lay.columnGap,
-      padding: [lay.topPadding, lay.rightPadding, lay.bottomPadding, lay.leftPadding],
-      horizontal: lay.horizontalSizing,
-      vertical: lay.verticalSizing,
+      dir: own.dir,
+      ...(shape.flex ? { wrap: own.wrap } : {}),
+      alignItems: own.alignItems,
+      justifyContent: own.justifyContent,
+      rowGap: own.rowGap,
+      columnGap: own.columnGap,
+      padding: [own.topPadding, own.rightPadding, own.bottomPadding, own.leftPadding],
+      horizontal: own.horizontalSizing,
+      vertical: own.verticalSizing,
     }
   out.fills = Array.isArray(shape.fills)
     ? shape.fills.map((f) => colour(f.fillColor, f.fillOpacity))
@@ -138,11 +138,22 @@ const layer = (shape, name) => {
   return out
 }
 
-/** A board's PNG and SVG exports, hashed. */
-const exportsOf = async (shape) => ({
-  png: storage.sha256(await shape.export({ type: 'png', scale: 1 })),
-  svg: storage.sha256(await shape.export({ type: 'svg' })),
-})
+const UUID = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/g
+
+/**
+ * A board's PNG and SVG exports, hashed. Each SVG export carries fresh render ids, so its ids are
+ * blanked before hashing, which leaves a hash that changes only when the drawing does.
+ */
+const exportsOf = async (shape) => {
+  const svg = await shape.export({ type: 'svg' })
+  let text = ''
+  for (let i = 0; i < svg.length; i++) text += String.fromCharCode(svg[i])
+  const blanked = Uint8Array.from(text.replace(UUID, 'id'), (ch) => ch.charCodeAt(0))
+  return {
+    png: storage.sha256(await shape.export({ type: 'png', scale: 1 })),
+    svg: storage.sha256(blanked),
+  }
+}
 
 /**
  * Reads a component back into the format of `penpot/<name>.json`: `container` is its variant

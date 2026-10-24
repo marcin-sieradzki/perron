@@ -3,20 +3,29 @@
   "page": "Scratch",
   "fileId": "5009c98b-0fb2-816e-8008-d665d727b93c",
   "containerId": "27fef224-a6c1-80b8-8008-d70e6400d65a",
-  "properties": { "selected": ["false", "true"], "State": ["default", "hover"] },
+  "properties": {
+    "selected": ["false", "true"],
+    "State": ["default", "hover"]
+  },
   "variants": [
     {
       "componentId": "27fef224-a6c1-80b8-8008-d70e637f1d78",
-      "props": { "selected": "false", "State": "default" },
+      "props": {
+        "selected": "false",
+        "State": "default"
+      },
       "exports": {
         "png": "8d00f83e458b472a04cef79ef4ac9873ca6b51229f46f508110e10c7a2ba1604",
-        "svg": "5d6e235a8463b76e63955c4f78c527d6d23ae05f49698498a798ebd5f4b47ef5"
+        "svg": "881eb1341f9a0b096b7b55139d69beecc011e21a7c1ffb768bab24cec07064bc"
       },
       "root": {
         "name": "root",
         "type": "board",
         "id": "27fef224-a6c1-80b8-8008-d70e60012b28",
-        "size": { "width": 35, "height": 25 },
+        "size": {
+          "width": 35,
+          "height": 25
+        },
         "layout": {
           "type": "flex",
           "dir": "row",
@@ -30,7 +39,12 @@
           "vertical": "auto"
         },
         "fills": ["#fafbf9"],
-        "strokes": [{ "color": "#12181b1c", "width": 1 }],
+        "strokes": [
+          {
+            "color": "#12181b1c",
+            "width": 1
+          }
+        ],
         "radius": [9999, 9999, 9999, 9999],
         "tokens": {
           "borderRadiusBottomRight": "radius.full",
@@ -50,11 +64,18 @@
             "name": "label",
             "type": "text",
             "id": "27fef224-a6c1-80b8-8008-d70e60032226",
-            "size": { "width": 27, "height": 17, "horizontal": "fix", "vertical": "fix" },
+            "size": {
+              "width": 27,
+              "height": 17,
+              "horizontal": "fix",
+              "vertical": "fix"
+            },
             "fills": ["#12181b"],
             "strokes": [],
             "radius": [0, 0, 0, 0],
-            "tokens": { "fill": "color.text.primary" },
+            "tokens": {
+              "fill": "color.text.primary"
+            },
             "text": "Chip"
           }
         ]
@@ -62,16 +83,22 @@
     },
     {
       "componentId": "27fef224-a6c1-80b8-8008-d70e6380eb78",
-      "props": { "selected": "false", "State": "hover" },
+      "props": {
+        "selected": "false",
+        "State": "hover"
+      },
       "exports": {
         "png": "d0ae9cf7eca5c9787ddca97591f50164b4fd5e288c370f1f09e72bbd4bdc4ad4",
-        "svg": "83feece451f0ee3f93853a20b59806cf411fdc7b8b25ba9ad04cdff048285584"
+        "svg": "af36f1116943c915f8f64be21cae5cf5fd85691b16f2635fbad3e78415c16c45"
       },
       "root": {
         "name": "root",
         "type": "board",
         "id": "27fef224-a6c1-80b8-8008-d70e605b40dc",
-        "size": { "width": 35, "height": 25 },
+        "size": {
+          "width": 35,
+          "height": 25
+        },
         "layout": {
           "type": "flex",
           "dir": "row",
@@ -85,7 +112,12 @@
           "vertical": "auto"
         },
         "fills": ["#12181b0d"],
-        "strokes": [{ "color": "#12181b1c", "width": 1 }],
+        "strokes": [
+          {
+            "color": "#12181b1c",
+            "width": 1
+          }
+        ],
         "radius": [9999, 9999, 9999, 9999],
         "tokens": {
           "borderRadiusBottomRight": "radius.full",
@@ -105,11 +137,18 @@
             "name": "label",
             "type": "text",
             "id": "27fef224-a6c1-80b8-8008-d70e605cf4bf",
-            "size": { "width": 27, "height": 17, "horizontal": "fix", "vertical": "fix" },
+            "size": {
+              "width": 27,
+              "height": 17,
+              "horizontal": "fix",
+              "vertical": "fix"
+            },
             "fills": ["#12181b"],
             "strokes": [],
             "radius": [0, 0, 0, 0],
-            "tokens": { "fill": "color.text.primary" },
+            "tokens": {
+              "fill": "color.text.primary"
+            },
             "text": "Chip"
           }
         ]
@@ -117,16 +156,22 @@
     },
     {
       "componentId": "27fef224-a6c1-80b8-8008-d70e6381d628",
-      "props": { "selected": "true", "State": "default" },
+      "props": {
+        "selected": "true",
+        "State": "default"
+      },
       "exports": {
         "png": "ad131381042c02788a43c0a30d86818a5c4fa72207b83ffa817984360b1445e7",
-        "svg": "3bd5bfe1b4d80fb6492b5d1c8bf5aea46fa0e302723907f180cdc2a43ce9f249"
+        "svg": "289301ab92b6f30e0a65d001abe6b61b4a74ecbcb69e12d078d54371ea8a0fcf"
       },
       "root": {
         "name": "root",
         "type": "board",
         "id": "27fef224-a6c1-80b8-8008-d70e60b40c16",
-        "size": { "width": 35, "height": 25 },
+        "size": {
+          "width": 35,
+          "height": 25
+        },
         "layout": {
           "type": "flex",
           "dir": "row",
@@ -140,7 +185,12 @@
           "vertical": "auto"
         },
         "fills": ["#12181b17"],
-        "strokes": [{ "color": "#12181b1c", "width": 1 }],
+        "strokes": [
+          {
+            "color": "#12181b1c",
+            "width": 1
+          }
+        ],
         "radius": [9999, 9999, 9999, 9999],
         "tokens": {
           "borderRadiusBottomRight": "radius.full",
@@ -160,11 +210,18 @@
             "name": "label",
             "type": "text",
             "id": "27fef224-a6c1-80b8-8008-d70e60b581a3",
-            "size": { "width": 27, "height": 17, "horizontal": "fix", "vertical": "fix" },
+            "size": {
+              "width": 27,
+              "height": 17,
+              "horizontal": "fix",
+              "vertical": "fix"
+            },
             "fills": ["#12181b"],
             "strokes": [],
             "radius": [0, 0, 0, 0],
-            "tokens": { "fill": "color.text.primary" },
+            "tokens": {
+              "fill": "color.text.primary"
+            },
             "text": "Chip"
           }
         ]
@@ -172,16 +229,22 @@
     },
     {
       "componentId": "27fef224-a6c1-80b8-8008-d70e6382b76a",
-      "props": { "selected": "true", "State": "hover" },
+      "props": {
+        "selected": "true",
+        "State": "hover"
+      },
       "exports": {
         "png": "3db5e3eb9ca9f816c0be4f2db002e9838bedce4d766d0ddc4c3d79ed9984cdf7",
-        "svg": "9f3640ef12c4f877ca7637155b3122b6ab49a3b778c947ada2011609127c92a5"
+        "svg": "8c9d615ad3e2e89eac879a19671d1b9833915db9eeb11824a52a4a905ca7245d"
       },
       "root": {
         "name": "root",
         "type": "board",
         "id": "27fef224-a6c1-80b8-8008-d70e610bb344",
-        "size": { "width": 35, "height": 25 },
+        "size": {
+          "width": 35,
+          "height": 25
+        },
         "layout": {
           "type": "flex",
           "dir": "row",
@@ -195,7 +258,12 @@
           "vertical": "auto"
         },
         "fills": ["#fff2dd"],
-        "strokes": [{ "color": "#12181b1c", "width": 1 }],
+        "strokes": [
+          {
+            "color": "#12181b1c",
+            "width": 1
+          }
+        ],
         "radius": [9999, 9999, 9999, 9999],
         "tokens": {
           "borderRadiusBottomRight": "radius.full",
@@ -215,11 +283,18 @@
             "name": "label",
             "type": "text",
             "id": "27fef224-a6c1-80b8-8008-d70e610d570a",
-            "size": { "width": 27, "height": 17, "horizontal": "fix", "vertical": "fix" },
+            "size": {
+              "width": 27,
+              "height": 17,
+              "horizontal": "fix",
+              "vertical": "fix"
+            },
             "fills": ["#12181b"],
             "strokes": [],
             "radius": [0, 0, 0, 0],
-            "tokens": { "fill": "color.text.primary" },
+            "tokens": {
+              "fill": "color.text.primary"
+            },
             "text": "Chip"
           }
         ]

@@ -223,7 +223,7 @@ Each rule is one script, `scripts/checks/<rule>.ts`, run by `npm run check`. A d
 /* perron-allow(component-css): the map canvas reads this length in script */
 ```
 
-In Markdown it is an HTML comment holding `perron-allow(paths): reason`, at the end of the line it excuses: prettier sets a comment on its own line apart from the text below it. A rule whose breach has no line, `docs` and `api-compatibility`, takes no allowance.
+In Markdown it is an HTML comment holding `perron-allow(paths): reason`, at the end of the line it excuses: prettier sets a comment on its own line apart from the text below it. A rule whose breach has no line, `docs` and `api-compatibility`, takes no allowance, and nor does `penpot`, whose files are JSON.
 
 | Rule                | Fails on                                                                                      |
 | ------------------- | --------------------------------------------------------------------------------------------- |

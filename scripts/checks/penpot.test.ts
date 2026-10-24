@@ -51,6 +51,18 @@ describe('penpot', () => {
     expect(problems[0].file).toBe('scripts/checks/fixtures/penpot/unmapped/button.code-map.json')
   })
 
+  it('fails interaction states mapped to a prop', () => {
+    expect(lint('state-prop').map((p) => p.message)).toEqual([
+      'maps State to the prop state; interaction states map to CSS states',
+    ])
+  })
+
+  it("fails another component's code map", () => {
+    expect(lint('other-component').map((p) => p.message)).toEqual([
+      'maps Chip, but the design is Button',
+    ])
+  })
+
   it('fails a code map missing a property', () => {
     expect(lint('unmapped-property').map((p) => p.message)).toEqual([
       'maps no prop or state for the property State',
@@ -67,7 +79,7 @@ describe('penpot', () => {
   })
 
   it('knows base and theme tokens', () => {
-    const names = tokenNames(root)
+    const names = tokenNames()
     expect(names.has('space.200')).toBe(true)
     expect(names.has('color.text.primary')).toBe(true)
   })

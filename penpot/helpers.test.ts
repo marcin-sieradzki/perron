@@ -11,8 +11,7 @@ import {
 } from '../scripts/checks/penpot.ts'
 
 const here = dirname(fileURLToPath(import.meta.url))
-const root = join(here, '..')
-const tokens = tokenNames(root)
+const tokens = tokenNames()
 
 type Fake = Record<string, unknown>
 interface Helpers {
@@ -107,7 +106,9 @@ describe('readBack', () => {
       borderRadiusTopRight: 4,
       borderRadiusBottomRight: 4,
       borderRadiusBottomLeft: 4,
-      export: async ({ type }: { type: string }) => new TextEncoder().encode(type + selected),
+      // Like Penpot's, each SVG export carries a fresh render id
+      export: async ({ type }: { type: string }) =>
+        new TextEncoder().encode(`${type} ${selected} <g id="strokes-${crypto.randomUUID()}">`),
     })
     const label = shape({
       type: 'text',
@@ -138,6 +139,12 @@ describe('readBack', () => {
       ],
     },
   }
+
+  it('hashes an unchanged SVG the same on every export', async () => {
+    const [a, b] = [await install().readBack(container), await install().readBack(container)]
+    expect(a.variants[0].exports.svg).toBe(b.variants[0].exports.svg)
+    expect(a.variants[0].exports.svg).not.toBe(a.variants[1].exports.svg)
+  })
 
   it('writes the format the penpot check reads', async () => {
     const design = await install().readBack(container)
