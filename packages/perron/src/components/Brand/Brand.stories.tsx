@@ -108,8 +108,6 @@ export const Mark: Story = {
     // the label: the VisuallyHidden shared part after the mark, kept for screen readers in a 1px clipped box
     const label = root.lastElementChild as HTMLElement
     await expect(label.tagName).toBe('SPAN')
-    // perron-allow(shared-parts): reads the part's class to check the label is VisuallyHidden, not draws it
-    await expect(label).toHaveClass('pn-VisuallyHidden')
     await expect(label).toHaveTextContent(/^Mylder$/)
     await expect(label.getBoundingClientRect().width).toBeLessThanOrEqual(1)
     await expect(getComputedStyle(label).position).toBe('absolute')

@@ -16,7 +16,7 @@ export interface BrandProps extends Omit<useRender.ComponentProps<'span'>, 'chil
   variant?: 'full' | 'mark'
   /**
    * Overrides "Mylder", the brand name seen in the wordmark, shown lowercase, with
-   * `variant='full'`, and heard alone with `variant='mark'`
+   * `variant='full'`, and heard alone with `variant='mark'`.
    * @default The locale's
    */
   brandNameLabel?: string
