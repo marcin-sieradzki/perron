@@ -10,7 +10,7 @@ SeverityLabel has no Base UI part: it is a label with no behaviour, and the regi
 
 | Part (Penpot layer) | What it is                                                                                                                              | Base UI part                                   | Class                    | `slotProps` key |
 | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- | ------------------------ | --------------- |
-| `root`              | The whole label, one inline run: a `<span>` laid out as an inline flex row, in the kind's colour                                        | none: a `<span>` rendered by `useRender`       | `pn-SeverityLabel`       | none            |
+| `root`              | The whole label, one inline run: a `<span>` laid out as an inline grid, the icon beside the name, in the kind's colour                  | none: a `<span>` rendered by `useRender`       | `pn-SeverityLabel`       | none            |
 | `icon`              | The kind's icon from `packages/perron/icons/`, an inline `<svg>` drawn in `currentColor` at `icon.size.325`, hidden from screen readers | none: a plain `<svg>`, no behaviour to borrow  | `pn-SeverityLabel-icon`  | none            |
 | `label`             | The kind's name, "Delays", "Diversions", "Planned works" or "Data feed problems", the words the eye and the ear both get                | none: a plain `<span>`, no behaviour to borrow | `pn-SeverityLabel-label` | none            |
 
@@ -52,21 +52,27 @@ SeverityLabel is not interactive, so its one design state is rest; each row's st
 
 SeverityLabel comes in one size, with no `size` prop: set in `typography.label-sm`, with a `space.100` gap between the icon and the name and the icon at `icon.size.325`, the disruption icons' size "inline with label and caption text". `typography.label-sm` (12 px, 500) keeps the label below a card's `typography.heading-sm` title rather than competing with it; a second size can join later as a `size` prop without a break.
 
-| Part    | State                             | Property                    | Token                                                                     |
-| ------- | --------------------------------- | --------------------------- | ------------------------------------------------------------------------- |
-| `root`  | rest, every `data-severity`       | `display`                   | none: the keyword `inline-flex`                                           |
-| `root`  | rest, every `data-severity`       | `align-items`               | none: the keyword `center`, so the icon sits on the text's middle         |
-| `root`  | rest, every `data-severity`       | `gap`                       | `space.100`                                                               |
-| `root`  | rest, every `data-severity`       | `font`                      | `typography.label-sm`                                                     |
-| `root`  | rest, every `data-severity`       | `letter-spacing`            | `typography.label-sm-tracking`                                            |
-| `root`  | rest, every `data-severity`       | `--perron-icon-size`        | `icon.size.325`                                                           |
-| `root`  | rest, `data-severity='delay'`     | `color`                     | `color.transit.severity.delay`                                            |
-| `root`  | rest, `data-severity='data'`      | `color`                     | `color.transit.severity.data`                                             |
-| `root`  | rest, `data-severity='diversion'` | `color`                     | `color.transit.severity.diversion`                                        |
-| `root`  | rest, `data-severity='planned'`   | `color`                     | `color.transit.severity.planned`                                          |
-| `icon`  | rest, every `data-severity`       | `inline-size`, `block-size` | `--perron-icon-size`, through the `.perron-icon` class `perron.css` gives |
-| `icon`  | rest, every `data-severity`       | `stroke`, `fill`            | none: `currentColor`, the root's colour                                   |
-| `label` | rest, every `data-severity`       | `color`                     | none: inherits the root's                                                 |
+| Part           | State                             | Property                    | Token                                                                                                                                                             |
+| -------------- | --------------------------------- | --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `root`         | rest, every `data-severity`       | `display`                   | none: the keyword `inline-grid`                                                                                                                                   |
+| `root`         | rest, every `data-severity`       | `grid-template-columns`     | none: `auto 1fr`, the icon's column and the name's                                                                                                                |
+| `root`         | rest, every `data-severity`       | `grid-template-rows`        | none: `auto 1fr`, the name's first line and the rest of its lines (CR-8)                                                                                          |
+| `root`         | rest, every `data-severity`       | `align-items`               | none: the keyword `center`, so the icon sits on the middle of the first row, the name's first line (CR-8)                                                         |
+| `root`         | rest, every `data-severity`       | `column-gap`                | `space.100`                                                                                                                                                       |
+| `root`         | rest, every `data-severity`       | `font`                      | `typography.label-sm`                                                                                                                                             |
+| `root`         | rest, every `data-severity`       | `letter-spacing`            | `typography.label-sm-tracking`                                                                                                                                    |
+| `root`         | rest, every `data-severity`       | `--perron-icon-size`        | `icon.size.325`                                                                                                                                                   |
+| `root`         | rest, `data-severity='delay'`     | `color`                     | `color.transit.severity.delay`                                                                                                                                    |
+| `root`         | rest, `data-severity='data'`      | `color`                     | `color.transit.severity.data`                                                                                                                                     |
+| `root`         | rest, `data-severity='diversion'` | `color`                     | `color.transit.severity.diversion`                                                                                                                                |
+| `root`         | rest, `data-severity='planned'`   | `color`                     | `color.transit.severity.planned`                                                                                                                                  |
+| `root::before` | rest, every `data-severity`       | `content`                   | none: `'\200b' / ''`, a zero-width space screen readers skip, as a strut one line of `typography.label-sm` tall, so the first row is the name's first line (CR-8) |
+| `root::before` | rest, every `data-severity`       | `grid-row`, `grid-column`   | none: `1` and `1`, the icon's cell (CR-8)                                                                                                                         |
+| `icon`         | rest, every `data-severity`       | `inline-size`, `block-size` | `--perron-icon-size`, through the `.perron-icon` class `perron.css` gives                                                                                         |
+| `icon`         | rest, every `data-severity`       | `stroke`, `fill`            | none: `currentColor`, the root's colour                                                                                                                           |
+| `icon`         | rest, every `data-severity`       | `grid-row`, `grid-column`   | none: `1` and `1`, the strut's cell, the name's first line (CR-8)                                                                                                 |
+| `label`        | rest, every `data-severity`       | `color`                     | none: inherits the root's                                                                                                                                         |
+| `label`        | rest, every `data-severity`       | `grid-row`, `grid-column`   | none: `1 / span 2` and `2`, both rows of the second column (CR-8)                                                                                                 |
 
 Every `color.transit.severity.*` token reaches 4.5:1 on `color.surface.default`, `raised` and `inset` in both themes ([Accessibility](../foundations/accessibility.md#text-on-surfaces)), so the name reads as text and the icon as a mark wherever the label sits.
 
@@ -100,7 +106,7 @@ What axe won't catch, from the contract, each with how this component meets it:
 
 Every word SeverityLabel shows is its own; the caller gives only `severity`. The names are the kinds of disruption as `packages/perron/icons/icons.json` and [Data states](../foundations/data-states.md#kinds-of-disruption) name them, set in sentence case.
 
-The four names are "Delays", "Diversions", "Planned works" and "Data feed problems": the names the icons and the tokens already give, plural as names of a kind rather than of one event. They reuse the existing `delays` key, its JSDoc widened to "A line's delays: a heading, and the name of the delay kind of disruption", and add `diversions`, `plannedWorks` and `dataFeedProblems`. All four join the data-state and delay words table of `docs/content-design.md`, so every screen names a disruption the same way in all four languages.
+The four names are "Delays", "Diversions", "Planned works" and "Data feed problems": the names the icons and the tokens already give, plural as names of a kind rather than of one event. They reuse the existing `delays` key, its JSDoc widened to "A line's delays: a heading, and the name of the delay kind of disruption", and add `diversions`, `plannedWorks` and `dataFeedProblems`. All four join the data-state, delay and disruption words table of `docs/content-design.md`, so every screen names a disruption the same way in all four languages.
 
 | Key                | English              | Override                | Seen or heard where                                                          |
 | ------------------ | -------------------- | ----------------------- | ---------------------------------------------------------------------------- |
@@ -120,7 +126,7 @@ Each new key gets a JSDoc line like its neighbours in `packages/perron/src/local
 - **CR-5.** SeverityLabel reads its words with `useOwnedStrings({ delays: delaysLabel, diversions: diversionsLabel, plannedWorks: plannedWorksLabel, dataFeedProblems: dataFeedProblemsLabel })` from `packages/perron/src/PerronProvider.tsx`, and shows only the one its `severity` names.
 - **CR-6.** The root renders through `useRender` with `mergeProps`: SeverityLabel's own props (`className` starting with `pn-SeverityLabel`, `data-severity`, the children) win over the caller's rest props, and `severity` and every `*Label` prop are taken out of the rest before the merge, so none reaches the DOM.
 - **CR-7.** SeverityLabel is not a live region. A screen that adds or changes a disruption announces it in its own polite live region, as [Accessibility](../foundations/accessibility.md#what-a-person-checks) asks.
-- **CR-8.** The `label` never wraps between the icon and the word: the root is `inline-flex`, so a long translated name wraps inside `label` and the icon stays beside its first line.
+- **CR-8.** The `label` never wraps between the icon and the word: the root is an `inline-grid` whose first row is one line of the name's typography, so a long translated name wraps inside `label` and the icon stays centred beside its first line, as it sits on a name of one line.
 
 ## Stories
 

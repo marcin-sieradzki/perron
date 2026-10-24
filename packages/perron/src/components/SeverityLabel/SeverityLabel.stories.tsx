@@ -1,7 +1,7 @@
 import { createRoot } from 'react-dom/client'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { expect, waitFor, within } from 'storybook/test'
+import { expect, getRoles, isInaccessible, waitFor, within } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { dictionaries } from '../../locale/index.ts'
 import type { Locale, OwnedStringKey } from '../../locale/index.ts'
@@ -19,6 +19,14 @@ export default meta
 
 type Story = StoryObj<typeof meta>
 
+/** The text under `node` that the accessibility tree exposes: its text, less every hidden subtree. */
+const exposedText = (node: Node): string =>
+  node instanceof Element && isInaccessible(node)
+    ? ''
+    : node.nodeType === Node.TEXT_NODE
+      ? (node.textContent ?? '')
+      : Array.from(node.childNodes, exposedText).join('')
+
 /**
  * The play test every story shares: the root carries `data-severity`, its only text is the kind's
  * name, the icon is hidden from screen readers, and every locale shows its own word.
@@ -35,11 +43,19 @@ const reads =
     await step(`the accessible text is "${word}"`, async () => {
       await expect(root?.textContent).toBe(word)
       await expect(label).toBeVisible()
+      await expect(isInaccessible(label)).toBe(false)
+      await expect(exposedText(root!)).toBe(word)
+      // the CR-8 strut is generated content with empty alternative text, so it adds nothing
+      await expect(getComputedStyle(root!, '::before').content).toBe('"​" / ""')
     })
     await step('the icon is aria-hidden', async () => {
-      const icon = root?.querySelector('svg')
+      const icon = root!.querySelector('svg')!
       await expect(icon).toHaveAttribute('aria-hidden', 'true')
       await expect(icon).toHaveAttribute('focusable', 'false')
+      // out of the accessibility tree, with no role and no name, so no role query finds it
+      await expect(isInaccessible(icon)).toBe(true)
+      await expect(icon).not.toHaveAccessibleName()
+      await expect(Object.values(getRoles(canvasElement)).flat()).not.toContain(icon)
     })
     await step('each locale shows its own word for the kind', () => {
       for (const locale of Object.keys(dictionaries) as Locale[]) {
