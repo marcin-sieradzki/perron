@@ -330,7 +330,7 @@
     "name": "MapControls",
     "layer": "component",
     "category": "Map",
-    "status": "building",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/MapControls",
     "dependsOn": ["Toolbar"]
