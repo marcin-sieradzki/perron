@@ -51,8 +51,9 @@ const REVIEW = {
 
 const { stage, name, round, answers, dir, port } = args ?? {}
 const answered = answers ? ` The maintainer answered your last run's questions: ${answers}` : ''
-const where = dir
-  ? `Work only in the worktree ${dir}: run every command from it, with STORYBOOK_PORT=${port ?? 6006} exported in each shell, and read and write files only under it. Every repo path below is relative to it. `
+if (dir && !port) throw new Error(`factory-stage needs a port with dir ${dir}`)
+const worktreeNote = dir
+  ? `Work only in the worktree ${dir}: run every command from it, with STORYBOOK_PORT=${port} exported in each shell, and read and write files only under it. Every repo path below is relative to it. `
   : ''
 if (!name || !(stage in SKILLS || stage === 'review'))
   throw new Error(`factory-stage needs { stage, name }; got ${JSON.stringify(args)}`)
@@ -66,7 +67,7 @@ const label = `${stage}:${name}`
 
 if (stage === 'review') {
   const result = await agent(
-    `${where}Review ${name}, round ${round ?? 1}. Return review.md's whole text as \`review\`.`,
+    `${worktreeNote}Review ${name}, round ${round ?? 1}. Return review.md's whole text as \`review\`.`,
     { label, phase: 'Stage', agentType: 'component-reviewer', schema: REVIEW },
   )
   return (
@@ -79,7 +80,7 @@ if (stage === 'review') {
 }
 
 return await agent(
-  `${where}Read .claude/skills/${SKILLS[stage]}/SKILL.md and follow it for ${name}, to its Returns section. ` +
+  `${worktreeNote}Read .claude/skills/${SKILLS[stage]}/SKILL.md and follow it for ${name}, to its Returns section. ` +
     'You run in a fresh context that the factory started: nobody answers questions mid-run, so return them. ' +
     `Your outcome is recorded by the factory in components/${kebab}/pipeline.yaml, which it alone writes.` +
     answered,

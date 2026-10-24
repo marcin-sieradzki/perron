@@ -64,12 +64,12 @@ Each stage but visual runs as the Claude Code workflow `factory-stage` ([`.claud
 
 When the maintainer asks for an unattended run, with the design deferred ([ADR 0010](../../../docs/adr/0010-unattended-runs-with-design-deferred.md)), the steps above change in four places, and nothing waits on the maintainer:
 
-- **Pre-flight.** Run `npm run factory -- defer <Name>` after step 1, unless `next` already says the design is deferred.
+- **Pre-flight.** Run `npm run factory -- defer <Name>` after step 1, unless `next` already says the design is deferred. A design waiting at `design-approval` that can't be deferred, because it was approved before, is left as `needs-human` is. A batch never begins a design stage.
 - **`pending-questions`.** Answer every question with its own recommended answer, exactly as the maintainer's "all recommended" would, and keep each one, with its section, for the PR's **Decisions to confirm**.
 - **`needs-human`.** Push the branch, open the PR as a draft with the reason at the top, and go on to the next component whose `dependsOn` doesn't reach this one.
-- **The PR.** Step 6's body gains **Decisions to confirm** after the run summary. Then:
+- **The PR.** Step 6's body gains **Decisions to confirm** after the run summary and leaves out the visual report, since a deferred design has none; the merge below replaces step 6's hand-over. Then:
   1. Run the [`code-review`](../code-review/SKILL.md) skill on `component/<name>` against `main`, with the spec as its spec.
-  2. Every hard Standards violation, and every missing or wrong Spec requirement, is fixed on the branch by one fresh agent given the review, until `npm run check` passes; then push and review once more. A second review that still finds one turns the PR into a draft, as `needs-human` does. Judgement-call smells and scope notes go in the PR body.
+  2. Every hard Standards violation, and every missing or wrong Spec requirement, is fixed on the branch by one fresh agent given the review, until `npm run check` passes; then push and review once more. Done when a review finds none. A second review that still finds one turns the PR into a draft, as `needs-human` does. Judgement-call smells and scope notes go in the PR body.
   3. `gh pr checks <n> --watch`. Done when every check passes; a red check is fixed the same way, once.
   4. `gh pr merge <n> --merge --delete-branch`, then `git checkout main && git pull`.
 

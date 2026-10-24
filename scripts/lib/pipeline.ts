@@ -255,8 +255,8 @@ const roundOf = (s: StageState = {}) => (s.rounds ?? 0) + 1
 
 /** Whether the approval stands: none, or given for a read-back that has since changed. */
 function approvalProblem(p: Pipeline, env: Env) {
-  const files = filesOf(p.component, p.layer)
   if (p.deferred) return undefined
+  const files = filesOf(p.component, p.layer)
   if (!p.approval)
     return `the design is not approved; the maintainer approves it in Penpot, then ${npm(p.component, 'approve')}`
   if (p.approval.readBack !== sha256(env, files.readBack))
@@ -269,11 +269,10 @@ function refusal(p: Pipeline, stage: Stage, env: Env): string | undefined {
   if (p.needsHuman)
     return `${p.component} waits at needs-human (${p.needsHuman.stage}): ${p.needsHuman.reason}. Once it is fixed, the maintainer runs ${npm(p.component, 'unblock')}`
   if (stage === 'design') return undefined
-  if (!stagesOf(p).includes(stage))
+  const stages = stagesOf(p)
+  if (!stages.includes(stage))
     return `the design is deferred, so there are no exports to compare; a design run ends the deferral`
-  const before = stagesOf(p)
-    .slice(0, stagesOf(p).indexOf(stage))
-    .find((s) => p.stages[s]?.status !== 'done')
+  const before = stages.slice(0, stages.indexOf(stage)).find((s) => p.stages[s]?.status !== 'done')
   if (before) return `${before} is not done`
   const approval = approvalProblem(p, env)
   if (approval) return approval
