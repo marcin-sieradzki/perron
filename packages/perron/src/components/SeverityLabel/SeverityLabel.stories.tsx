@@ -46,7 +46,7 @@ const reads =
       await expect(isInaccessible(label)).toBe(false)
       await expect(exposedText(root!)).toBe(word)
       // the CR-8 strut is generated content with empty alternative text, so it adds nothing
-      await expect(getComputedStyle(root!, '::before').content).toBe('"​" / ""')
+      await expect(getComputedStyle(root!, '::before').content).toBe('"\u200b" / ""')
     })
     await step('the icon is aria-hidden', async () => {
       const icon = root!.querySelector('svg')!
