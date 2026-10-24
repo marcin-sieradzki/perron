@@ -1,0 +1,24 @@
+/* A made-up component for the visual stage's test: a padded, bordered box around a dot. */
+.pn-Swatch {
+  display: inline-flex;
+  padding: var(--perron-space-200);
+  border: var(--perron-border-width-025) solid var(--perron-color-border-control);
+  border-radius: var(--perron-radius-md);
+  background-color: var(--perron-color-surface-raised);
+}
+
+.pn-Swatch:hover {
+  background-color: var(--perron-color-surface-hover);
+}
+
+.pn-Swatch[data-tone='brand'] {
+  background-color: var(--perron-color-surface-brand);
+}
+
+.pn-Swatch-dot {
+  display: block;
+  width: var(--perron-icon-size-400);
+  height: var(--perron-icon-size-400);
+  border-radius: var(--perron-radius-full);
+  background-color: var(--perron-color-text-primary);
+}
