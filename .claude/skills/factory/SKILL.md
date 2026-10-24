@@ -1,6 +1,6 @@
 ---
 name: factory
-description: 'Run one component or pattern through the loop, design to visual check, stopping only at a gate, a question or a cap.'
+description: 'Run one component or pattern through the loop, design to visual check, stopping only at a gate, a question or a cap; or, as a batch, every ready entry of the registry unattended with the design deferred.'
 disable-model-invocation: true
 argument-hint: '<Name> | batch'
 ---
