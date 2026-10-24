@@ -13,9 +13,9 @@
   overflow-wrap: anywhere;
 }
 
-/* CR-7: the colour sits on the part, and the icon draws in currentColor */
+/* CR-7: the colour sits on the part, and the icon draws in currentColor. No size is set here: each
+   icon keeps the step its grid was drawn for, 16 px by default through .perron-icon. */
 .pn-EmptyState-icon {
-  --perron-icon-size: var(--perron-icon-size-450);
   display: flex;
   margin: 0;
   margin-block-end: var(--perron-space-200);

@@ -8,7 +8,7 @@ import './EmptyState.css'
 
 export interface EmptyStateProps extends Omit<
   useRender.ComponentProps<'div'>,
-  'title' | 'children' | 'render'
+  'title' | 'children'
 > {
   /**
    * What is empty, in a few words: "No matches for Nørrebro st". Required. Replaces the HTML
@@ -21,8 +21,6 @@ export interface EmptyStateProps extends Omit<
   icon?: ReactNode
   /** What the person can do about it, such as a button that clears the search, below the sentence */
   action?: ReactNode
-  /** Swaps the root element, keeping its class and props */
-  render?: useRender.RenderProp
   /** Props for each inner part, merged with the part's own, which win */
   slotProps?: {
     /** Props for the `icon` part */
@@ -36,8 +34,12 @@ export interface EmptyStateProps extends Omit<
   }
 }
 
-/** A node that renders something: `null`, `undefined` and booleans render nothing (CR-1). */
-const given = (node: ReactNode) => node != null && typeof node !== 'boolean'
+/**
+ * A node that renders something. `null`, `undefined`, a boolean, `''` and an array of only such
+ * values render nothing, so their part is left out (CR-1).
+ */
+const given = (node: ReactNode): boolean =>
+  Array.isArray(node) ? node.some(given) : node != null && typeof node !== 'boolean' && node !== ''
 
 /**
  * One inner part: its `slotProps` value merged with the part's own props, its own last, so its

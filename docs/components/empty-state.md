@@ -44,13 +44,12 @@ In MUI's layout. Every prop here gets this description as its JSDoc. Slots come 
 | `children`              | `ReactNode`                       |         | none                        | The sentence under the title: why it is empty and what to try. "Try a line number such as 5C."             |
 | `icon`                  | `ReactNode`                       |         | none                        | An icon from Perron's set above the title, for the eye only: it is hidden from screen readers              |
 | `action`                | `ReactNode`                       |         | none                        | What the person can do about it, such as a button that clears the search, below the sentence               |
-| `render`                | `useRender.RenderProp`            |         | `useRender`'s `render`      | Swaps the root element, keeping its class and props                                                        |
 | `slotProps.icon`        | `useRender.ComponentProps<'div'>` |         | `useRender` for icon        | Props for the `icon` part                                                                                  |
 | `slotProps.title`       | `useRender.ComponentProps<'p'>`   |         | `useRender` for title       | Props for the `title` part. Its `render` makes the title a heading: `render: <h3 />`                       |
 | `slotProps.description` | `useRender.ComponentProps<'div'>` |         | `useRender` for description | Props for the `description` part                                                                           |
 | `slotProps.action`      | `useRender.ComponentProps<'div'>` |         | `useRender` for action      | Props for the `action` part                                                                                |
 
-`className`, `style`, `ref` and the other `div` props reach the root, as the contract's Root section says. No owned string, so no `*Label` prop.
+`render`, `className`, `style`, `ref` and the other `div` props reach the root, as the contract's Root section says; `render` is inherited from `useRender`, with Base UI's JSDoc, and not declared again. No owned string, so no `*Label` prop.
 
 - Decided: `children` is the sentence under the title, the way MUI's `Alert` takes its message, rather than a separate `description` prop, so the common call reads `<EmptyState title="No departures">Nothing leaves this stop in the next hour.</EmptyState>`. The part keeps the name `description` for its class and `slotProps` key.
 - Decided: the names `title`, `icon` and `action` are taken from MUI (`CardHeader`'s `title`, `Alert`'s `icon` and `action`), and `title` is taken out of the root's props so the HTML `title` attribute never reaches the element; an EmptyState has no use for a hover tooltip.
@@ -66,7 +65,6 @@ One row per part, state and property. EmptyState has no interactive state of its
 | `root`        | rest  | `padding-inline`     | `space.400`                           |
 | `root`        | rest  | `gap`                | `space.100`                           |
 | `icon`        | rest  | `color`              | `color.text.secondary`                |
-| `icon`        | rest  | `--perron-icon-size` | `icon.size.450`                       |
 | `icon`        | rest  | `margin-block-end`   | `space.200`                           |
 | `title`       | rest  | `font`               | `typography.heading-sm`               |
 | `title`       | rest  | `letter-spacing`     | `typography.heading-sm`, its tracking |
@@ -81,7 +79,7 @@ The root is a flex column with `align-items: center` and `text-align: center`; t
 
 - Decided: the root has no fill, border, radius or shadow, so EmptyState takes the surface of the panel, sheet or popup it sits in. It is content, not a card, and a surface of its own would join no family and stack a box inside a box.
 - Decided: the layout is a centred column, padded `space.600` on the block axis and `space.400` on the inline axis, with the gaps in the table above. Centred is how an empty list reads at a glance in a narrow sheet, 24 px matches the space between blocks of a pane, and 16 px inline keeps text clear of a 320 px screen's edges.
-- Decided: the icon is a bare icon from Perron's set at `icon.size.450`, in `color.text.secondary`, with no disc or tile behind it. The brand keeps the interface calm, the largest icon step is 18 px, and a disc would need a size token no foundation gives it.
+- Decided: the icon is a bare icon from Perron's set, in `color.text.secondary`, with no disc or tile behind it, and EmptyState sets no size on it: each icon renders at its own size in `icons.json` (16 px by default, through `.perron-icon`), the step its grid was drawn for. A larger icon needs a new drawing, as the icon foundation's Sizes section says, never a scaled one. The brand keeps the interface calm, and a disc would need a size token no foundation gives it.
 - Decided: the title is `typography.heading-sm` in `color.text.primary`, and the sentence `typography.body-sm` in `color.text.secondary`. The roles' own uses are "card titles" and "the line under a title", and both colours meet 4.5:1 on every surface.
 
 ## Keyboard and ARIA
@@ -123,7 +121,7 @@ No owned strings: every word EmptyState shows comes from the caller, through `ti
 
 Rules for this component alone, numbered so the build and the review can cite them.
 
-- **CR-1.** The optional parts render only when given: no `icon` part without `icon`, no `description` part without `children`, no `action` part without `action`. A `null`, `undefined` or `false` value counts as not given, so no empty wrapper takes up a gap.
+- **CR-1.** The optional parts render only when given: no `icon` part without `icon`, no `description` part without `children`, no `action` part without `action`. A value that renders nothing (`null`, `undefined`, a boolean, `''`, or an array of only such values) counts as not given, so no empty wrapper takes up a gap.
 - **CR-2.** The `icon` part always carries `aria-hidden="true"`, after the caller's `slotProps.icon`, so a caller cannot make the icon speak; the title says what it shows.
 - **CR-3.** `title`, `icon`, `action`, `children`, `slotProps` and `render` are taken out of the rest props before they reach the root, so the HTML `title` attribute never reaches the element.
 - **CR-4.** Each inner part's props are its `slotProps` value merged with `mergeProps`, the component's own props last, so its class, `aria-hidden` and children stay while the caller's `className` joins and its `render` swaps the element.
