@@ -25,6 +25,7 @@ The build checks every file against the format rule by rule (`scripts/lib/spec.t
 | `storybook/`, `.storybook/`     | The same pages in Storybook, with every table drawn live from the tokens: swatches, type specimens, contrast grids, the icons and the mark            |
 | `docs/content-design.md`        | How every word in Mylder reads                                                                                                                        |
 | `docs/glossary.md`, `docs/adr/` | The words used to talk about Perron, and the decisions behind it                                                                                      |
+| `docs/agents/`                  | How the engineering skills file, link and close work in this repository's GitHub Issues                                                               |
 | `ROADMAP.md`                    | What comes next: components on Base UI, patterns, the agent loop, the MCP server, step by step                                                        |
 | `docs/renames.md`               | Token names that changed or went away, for code written against an older name                                                                         |
 | `.claude/skills/`               | Agent skills: `design-tokens`, and the others from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT)                                    |
