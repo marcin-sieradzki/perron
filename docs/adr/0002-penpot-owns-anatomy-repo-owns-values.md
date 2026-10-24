@@ -4,4 +4,4 @@ Every component is designed in Penpot before it is built, and the design is the 
 
 ## Consequences
 
-Design work runs only where the Penpot MCP runs: in an open, connected Penpot tab on Marcin's Mac. The visual gate compares geometry and colour per named part rather than pixels, because Penpot and Chromium render text differently.
+Design work runs only where the Penpot MCP runs: in an open, connected Penpot tab on the maintainer's machine. The visual gate compares geometry and colour per named part rather than pixels, because Penpot and Chromium render text differently.
