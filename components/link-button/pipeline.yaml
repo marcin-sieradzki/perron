@@ -3,4 +3,9 @@ component: LinkButton
 layer: component
 deferred:
   at: 2026-10-24T22:08:28.471Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-24T22:08:30.786Z
+    ended: 2026-10-24T22:12:56.997Z
+    pending: 6
