@@ -31,21 +31,14 @@ describe('component-css', () => {
       'duration.*',
       'easing.*',
       'z-index.dialog',
+      'color.transit.*',
+      'color.data-state.*',
+      'prik.*',
     ]
     expect(rules.families).toEqual({
       component,
       part: component,
-      pattern: [
-        ...component,
-        'color.map.*',
-        'map.*',
-        'color.transit.*',
-        'color.data-state.*',
-        'color.chart.*',
-        'opacity.*',
-        'prik.*',
-        'z-index.*',
-      ],
+      pattern: [...component, 'color.map.*', 'map.*', 'color.chart.*', 'opacity.*', 'z-index.*'],
     })
     expect(rules.media).toEqual([
       '(hover: hover)',
@@ -76,7 +69,7 @@ describe('component-css', () => {
     ['theme.css', /data-theme|prefers-color-scheme/, 2],
     ['system-colour.css', /system colour (ButtonText|LinkText)/, 2],
     ['palette.css', /palette\.neutral\.500 is outside the families component CSS reads/, 1],
-    ['pattern-token.css', /color\.transit\.line\.m1 is outside the families/, 1],
+    ['pattern-token.css', /color\.map\.land is outside the families/, 1],
     ['z-index.css', /z-index\.sheet is outside the families component CSS reads/, 1],
     ['raw-font.css', /raw font/, 1],
     ['tracking.css', /letter-spacing: var\(--perron-typography-label-tracking\)/, 1],
