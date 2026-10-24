@@ -1,0 +1,3 @@
+.pn-Fixture {
+  transition: opacity 200ms var(--perron-easing-standard);
+}

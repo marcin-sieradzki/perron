@@ -201,8 +201,8 @@ The rest of the WCAG 2.2 AA target is on [Accessibility](../foundations/accessib
 A pattern is a piece of a Mylder screen, such as a departure row. It follows this contract, with three differences:
 
 - Its files are in `packages/perron/src/patterns/<Name>/`, in the same four shapes, and its stories are titled `Patterns/<Name>`.
-- It imports only Perron components and parts, never `@base-ui/react`. **Checked by `patterns`.**
-- It takes Mylder's domain props, such as a departure or a line, and its CSS may also read `color.transit.*`, `color.data-state.*`, `color.chart.*`, `opacity.*` and `prik.*`.
+- Its code imports only Perron's components and parts, `PerronProvider`, React and the files of its own folder, never `@base-ui/react`. A type-only import from another package is fine, and its stories and tests are not its code. **Checked by `patterns`.**
+- It takes Mylder's domain props, such as a departure or a line, and its CSS may also read `color.map.*`, `map.*`, `color.transit.*`, `color.data-state.*`, `color.chart.*`, `opacity.*`, `prik.*` and every `z-index.*` token.
 
 It is exported from `@mylder/perron/patterns`.
 
@@ -216,7 +216,7 @@ Each rule is one script, `scripts/checks/<rule>.ts`, run by `npm run check`. A d
 
 | Rule                | Fails on                                                                                      |
 | ------------------- | --------------------------------------------------------------------------------------------- |
-| `component-css`     | A raw colour, length or duration, a `var()` fallback, or a `--perron-*` name no token defines |
+| `component-css`     | Any [CSS](#css) rule: a raw value, a `var()` fallback, any `--perron-*` name no token defines |
 | `props`             | A prop outside the vocabulary's types, a name that is not a prop, or a prop without JSDoc     |
 | `patterns`          | A pattern importing anything but Perron components and parts                                  |
 | `shared-parts`      | A shared part's class, icon or declarations outside its folder                                |
