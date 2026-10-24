@@ -211,6 +211,75 @@
       }
     }
   },
+  "LinkButton": {
+    "extends": [
+      "Omit< useRender.ComponentProps<'a'>, 'children' | 'ref' | 'color' | 'href' | 'className' | 'style' >"
+    ],
+    "props": {
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "endIcon": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "fullWidth": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "href": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLAnchorElement>"
+        ]
+      },
+      "size": {
+        "optional": true,
+        "type": [
+          "\"medium\"",
+          "\"small\""
+        ]
+      },
+      "startIcon": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "variant": {
+        "optional": true,
+        "type": [
+          "\"outline\"",
+          "\"solid\""
+        ]
+      }
+    }
+  },
   "SeverityLabel": {
     "extends": [
       "Omit< useRender.ComponentProps<'span', SeverityLabelState>, 'children' | 'ref' >"

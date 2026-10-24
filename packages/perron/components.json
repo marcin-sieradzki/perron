@@ -21,7 +21,7 @@
     "name": "LinkButton",
     "layer": "component",
     "category": "Actions",
-    "status": "building",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/LinkButton",
     "dependsOn": ["Button"]
