@@ -1,0 +1,9 @@
+/* Read, not seen: the box fills its positioned parent and the clip hides all of it, so it takes no
+   room, adds no scroll and catches no pointer. */
+.pn-VisuallyHidden {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  clip-path: inset(50%);
+}

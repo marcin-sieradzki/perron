@@ -28,7 +28,8 @@ export function rootStory(subjects: Subject[]): StoryObj {
       </>
     ),
     play: async ({ canvasElement, step }) => {
-      const canvas = within(canvasElement)
+      // the whole document, so a root a portal moves to the end of <body>, such as a sheet's, is found
+      const canvas = within(canvasElement.ownerDocument.body)
       for (const { name } of subjects)
         await step(`${name}: ref and data-testid land on one element`, async () => {
           const root = canvas.getByTestId(testId(name))

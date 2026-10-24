@@ -277,7 +277,7 @@
     "name": "Sheet",
     "layer": "component",
     "category": "Overlays",
-    "status": "designing",
+    "status": "building",
     "baseUiParts": [
       "Drawer.Root",
       "Drawer.Trigger",
