@@ -3,7 +3,7 @@
 // pattern: it builds on Perron's EmptyState and plain divs, never on Base UI.
 // Spec: docs/patterns/data-state-panel.md.
 import { useCallback, useEffect, useLayoutEffect, useRef } from 'react'
-import type { ComponentPropsWithRef, ReactNode, Ref } from 'react'
+import type { ComponentPropsWithRef, CSSProperties, ReactNode, Ref } from 'react'
 import { EmptyState } from '../../components/EmptyState/EmptyState.tsx'
 import type { EmptyStateProps } from '../../components/EmptyState/EmptyState.tsx'
 import { useOwnedStrings } from '../../PerronProvider.tsx'
@@ -44,6 +44,12 @@ export interface DataStatePanelProps extends Omit<ComponentPropsWithRef<'div'>, 
    * @default The locale's
    */
   loadFailedLabel?: string
+  /** Joined after `pn-DataStatePanel` on the root */
+  className?: string
+  /** Reaches the root */
+  style?: CSSProperties
+  /** Reaches the root element */
+  ref?: Ref<HTMLDivElement>
   /** Props for each inner part, merged with the part's own, which win */
   slotProps?: {
     /** Props for the `message` part */
@@ -145,6 +151,9 @@ export function DataStatePanel({
     if (!node || !last || last.isConnected) return
     focused.current = null
     if (!changed) return
+    // Only when focus has fallen to the page's body, as it does when the focused element leaves
+    // the document: an element that took focus in the same change, such as one the caller focused
+    // in its own effect, keeps it.
     const active = node.ownerDocument.activeElement
     if (!active || active === node.ownerDocument.body) node.focus()
   })

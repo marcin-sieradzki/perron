@@ -126,7 +126,8 @@ function Retrying(args: DataStatePanelProps) {
 
 /**
  * The error status, its "Try again" starting to load the data again through the caller's state.
- * Focus moves to the message part once the button it was on is gone (CR-6).
+ * Focus moves to the message part once the button it was on is gone (CR-6), and leaves it at the
+ * end, so focus ends where it started.
  */
 export const ErrorRetry: Story = {
   args: {
@@ -146,5 +147,7 @@ export const ErrorRetry: Story = {
     await expect(button).not.toBeInTheDocument()
     await expect(message).toHaveFocus()
     await expect(document.activeElement).not.toBe(document.body)
+    message.blur()
+    await expect(document.body).toHaveFocus()
   },
 }

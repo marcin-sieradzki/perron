@@ -92,6 +92,12 @@
           "ReactNode"
         ]
       },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
       "description": {
         "optional": true,
         "type": [
@@ -116,6 +122,12 @@
           "string"
         ]
       },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
       "slotProps": {
         "optional": true,
         "type": [
@@ -129,6 +141,12 @@
           "\"error\"",
           "\"loading\"",
           "\"ready\""
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
         ]
       }
     }
