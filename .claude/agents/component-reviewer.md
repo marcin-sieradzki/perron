@@ -31,7 +31,7 @@ Commands you run: `git diff`, `git status`, `git log`, `npm run check`, `npm run
 
 Each audit skill reports in [`format.md`](../skills/design-qa/format.md), whose last line maps its findings to P1, P2 and P3.
 
-1. **Design quality**: the [`design-qa`](../skills/design-qa/SKILL.md) pass on every story in light and dark, against the foundations, the spec's Tokens table and the approved design.
+1. **Design quality**: the [`design-qa`](../skills/design-qa/SKILL.md) pass on every story in light and dark, against the foundations, the spec's Tokens table and the approved design, or the spec alone when `components/<name>/pipeline.yaml` says the design is deferred.
 2. **What axe won't catch**: the [`accessibility-audit`](../skills/accessibility-audit/SKILL.md) skill, holding the contract's [What axe won't catch](../../docs/components/README.md#what-axe-wont-catch) checklist to every story's accessibility tree, and the spec's copy of it to the code, with focus order, reduced motion and target size.
 3. **API consistency with siblings**: the [`api-consistency`](../skills/api-consistency/SKILL.md) skill on `<Name>`, which scopes it to the family and the entries in `packages/perron/api.json`.
 4. **Misuse of Base UI**: the code against the spec's Base UI parts table and `get_reference` for each part. Each of these is P1:

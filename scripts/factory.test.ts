@@ -326,6 +326,35 @@ describe('the factory dry run', () => {
     expect(existsSync(join(root, 'components/tally/pipeline.yaml'))).toBe(false)
   })
 
+  it('runs brief to docs without design and visual once the design is deferred', () => {
+    expect(run('defer Tally').out).toBe(
+      'deferred the design of Tally\nrun: brief\nwhy: the design is deferred\n',
+    )
+    expect(run('defer Tally').err).toMatch(/already deferred/)
+    stage('brief', () => brief())
+    // no read-back, so the stories follow the spec and no variant is required
+    write('packages/perron/src/components/Tally/Tally.stories.tsx', 'export const Default = {}\n')
+    expect(stage('build', () => build()).out).toContain('ended build: done\nrun: review')
+    review(1)
+    stage('review', () => {})
+    expect(stage('docs', () => build('stable')).out).toContain(
+      'ended docs: done\nwait: done\nwhy: every stage passed, with the design deferred',
+    )
+    expect(run('begin Tally visual').err).toMatch(/visual cannot begin: the design is deferred/)
+    expect(ran).not.toContain('npm run gates -- penpot')
+
+    // a design run ends the deferral and voids every later stage
+    expect(run('begin Tally design').code).toBe(0)
+    expect(pipeline().deferred).toBeUndefined()
+    expect(pipeline().stages.brief?.status).toBeUndefined()
+  })
+
+  it('refuses to defer a design already approved', () => {
+    stage('design', () => design())
+    run('approve Tally')
+    expect(run('defer Tally').err).toMatch(/cannot defer: the design is already approved/)
+  })
+
   it('writes pipeline.yaml with a header and a map per stage', () => {
     stage('design', () => design())
     expect(read('components/tally/pipeline.yaml')).toBe(

@@ -1,6 +1,6 @@
 ---
 name: component-brief
-description: 'Turn an approved Penpot design into its spec, every template section filled, with the questions the sources leave open put to the maintainer.'
+description: 'Turn an approved Penpot design, or with the design deferred the contract and the prototype, into its spec, every template section filled, with the questions the sources leave open put to the maintainer.'
 disable-model-invocation: true
 argument-hint: '<Name>'
 ---
@@ -8,6 +8,10 @@ argument-hint: '<Name>'
 The brief stage of the component loop ([ROADMAP](../../../ROADMAP.md), "Phase 4: The agent loop"). It runs after the maintainer has approved the design, and turns the read-back into the spec the build and the review work from: `docs/components/<name>.md`, or `docs/patterns/<name>.md` for a pattern, copied from the [spec template](../../../docs/components/TEMPLATE.md). `<Name>` is the skill's argument, in PascalCase; `<name>` is the same in kebab-case.
 
 The design is fixed by now: this skill reads Penpot's files and writes only the spec.
+
+## With the design deferred
+
+When `components/<name>/pipeline.yaml` says `deferred` ([ADR 0010](../../../docs/adr/0010-unattended-runs-with-design-deferred.md)), there is no read-back, code map or export, and the spec decides what the drawing would have: the variant properties and their values, the parts and their layer names, the design states, and the token for every part in every state. Its sources are the contract, the foundations, `list_tokens`, the Base UI reference, the specs of the entries in `dependsOn`, and the extracted prototype component, the behaviour reference on the Mylder repository's `perron/components` branch, read with `git show origin/perron/components:<path>` from `~/Documents/Mylder`. Each choice these leave open is a `[PENDING]` question like any other. Step 3 checks the spec against itself: every Stories row a combination of the Props values, every Tokens row a part and design state from Anatomy and the contract. A component already drawn and then deferred keeps its read-back as one more source, never the authority.
 
 ## Facts and decisions
 

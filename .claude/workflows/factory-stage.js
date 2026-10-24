@@ -3,7 +3,8 @@
 // then records the outcome with `npm run factory -- end`, the only writer of the pipeline file.
 // Each stage reads its own skill, or for review runs as the component-reviewer agent, so it never
 // sees another stage's reasoning. The visual stage is one command, which the factory skill runs
-// itself.
+// itself. A batch that runs components side by side passes `dir`, the component's worktree, and
+// `port`, its Storybook port, so parallel runs never share files or a Storybook.
 export const meta = {
   name: 'factory-stage',
   description:
@@ -48,8 +49,11 @@ const REVIEW = {
   required: ['review'],
 }
 
-const { stage, name, round, answers } = args ?? {}
+const { stage, name, round, answers, dir, port } = args ?? {}
 const answered = answers ? ` The maintainer answered your last run's questions: ${answers}` : ''
+const where = dir
+  ? `Work only in the worktree ${dir}: run every command from it, with STORYBOOK_PORT=${port ?? 6006} exported in each shell, and read and write files only under it. Every repo path below is relative to it. `
+  : ''
 if (!name || !(stage in SKILLS || stage === 'review'))
   throw new Error(`factory-stage needs { stage, name }; got ${JSON.stringify(args)}`)
 const kebab = name
@@ -62,7 +66,7 @@ const label = `${stage}:${name}`
 
 if (stage === 'review') {
   const result = await agent(
-    `Review ${name}, round ${round ?? 1}. Return review.md's whole text as \`review\`.`,
+    `${where}Review ${name}, round ${round ?? 1}. Return review.md's whole text as \`review\`.`,
     { label, phase: 'Stage', agentType: 'component-reviewer', schema: REVIEW },
   )
   return (
@@ -75,7 +79,7 @@ if (stage === 'review') {
 }
 
 return await agent(
-  `Read .claude/skills/${SKILLS[stage]}/SKILL.md and follow it for ${name}, to its Returns section. ` +
+  `${where}Read .claude/skills/${SKILLS[stage]}/SKILL.md and follow it for ${name}, to its Returns section. ` +
     'You run in a fresh context that the factory started: nobody answers questions mid-run, so return them. ' +
     `Your outcome is recorded by the factory in components/${kebab}/pipeline.yaml, which it alone writes.` +
     answered,

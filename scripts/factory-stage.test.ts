@@ -69,4 +69,9 @@ describe('factory-stage', () => {
     await expect(run({ stage: 'ship', name: 'Chip' })).rejects.toThrow(/stage, name/)
     await expect(run({ stage: 'build' })).rejects.toThrow(/stage, name/)
   })
+
+  it('pins every agent to its worktree and Storybook port when a batch gives them', async () => {
+    const { calls } = await run({ stage: 'build', name: 'Chip', dir: '/wt/chip', port: 6011 })
+    expect(calls[0].prompt).toMatch(/^Work only in the worktree \/wt\/chip: .*STORYBOOK_PORT=6011/)
+  })
 })

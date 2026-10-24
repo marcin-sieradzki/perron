@@ -4,7 +4,7 @@ How the audit skills render what they judge: every story of a component or patte
 
 ## Serve it
 
-- **Stories:** start `npm run storybook` in the background and wait until `http://localhost:6006/index.json` answers. Its `entries` of `type: "story"` give each story's `id` and `title`: `Components/<Name>` or `Patterns/<Name>`. A story renders alone at `http://localhost:6006/iframe.html?id=<story-id>&viewMode=story`.
+- **Stories:** start `npm run storybook` in the background, on the port `STORYBOOK_PORT` names (6006 when it is unset; a factory batch gives each worktree its own), and wait until `http://localhost:<port>/index.json` answers. Its `entries` of `type: "story"` give each story's `id` and `title`: `Components/<Name>` or `Patterns/<Name>`. A story renders alone at `http://localhost:<port>/iframe.html?id=<story-id>&viewMode=story`.
 - **A screen:** the URL its app's dev server gives, such as a Mylder screen. Render it at each breakpoint in `docs/foundations/layout.md` and at 320 px wide.
 
 Stop the server when the audit is done.
@@ -25,7 +25,7 @@ Save it in your scratchpad and run it from the repo root, so `playwright` resolv
 import { chromium } from 'playwright'
 
 const [out, prefix] = process.argv.slice(2)
-const base = 'http://localhost:6006'
+const base = `http://localhost:${process.env.STORYBOOK_PORT ?? 6006}`
 const index = await (await fetch(`${base}/index.json`)).json()
 const stories = Object.values(index.entries).filter(
   (e) => e.type === 'story' && e.title.startsWith(prefix),

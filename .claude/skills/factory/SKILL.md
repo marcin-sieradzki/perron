@@ -19,6 +19,7 @@ The loop's state is `components/<name>/pipeline.yaml`, and `npm run factory`, wh
 | `begin <Name> <stage>`                                     | Records the stage as running, or refuses with the reason (exit 1)        |
 | `end <Name> <stage> <done\|failed\|pending> [--failing …]` | Checks the stage's gate from the files, records the result, prints next  |
 | `approve <Name>`                                           | Records the maintainer's design approval, tied to the current read-back  |
+| `defer <Name>`                                             | Takes design and visual out of the loop until a design run begins        |
 | `unblock <Name>`                                           | Clears `needs-human` once the maintainer has fixed what stopped the loop |
 
 ## Stages
@@ -58,6 +59,30 @@ Each stage but visual runs as the Claude Code workflow `factory-stage` ([`.claud
 5. **Record it.** `npm run factory -- end <Name> <stage> <outcome>`, with `--failing "<the run's failing text, or its numbered questions>"` for `failed` and `pending`. Then commit the stage's files and the pipeline file together: `<Name>: <stage> <outcome>`. Done when `end` has printed what comes next and the commit is made. Go back to step 2.
 
 6. **Open the PR.** Push `component/<name>`, then open its PR with `gh pr create --base main --head component/<name> --title "<Name>" --body-file <file>`, ready for review. The body holds, in this order: a summary of the run, stage by stage; every Direction finding the stages reported; each P2 and P3 finding still in `components/<name>/review.md`; and the whole of `components/<name>/visual/report.md`. Tell the maintainer the PR's link; the maintainer merges it. Done when the PR is open and its link is sent.
+
+## Unattended runs
+
+When the maintainer asks for an unattended run, with the design deferred ([ADR 0010](../../../docs/adr/0010-unattended-runs-with-design-deferred.md)), the steps above change in four places, and nothing waits on the maintainer:
+
+- **Pre-flight.** Run `npm run factory -- defer <Name>` after step 1, unless `next` already says the design is deferred.
+- **`pending-questions`.** Answer every question with its own recommended answer, exactly as the maintainer's "all recommended" would, and keep each one, with its section, for the PR's **Decisions to confirm**.
+- **`needs-human`.** Push the branch, open the PR as a draft with the reason at the top, and go on to the next component whose `dependsOn` doesn't reach this one.
+- **The PR.** Step 6's body gains **Decisions to confirm** after the run summary. Then:
+  1. Run the [`code-review`](../code-review/SKILL.md) skill on `component/<name>` against `main`, with the spec as its spec.
+  2. Every hard Standards violation, and every missing or wrong Spec requirement, is fixed on the branch by one fresh agent given the review, until `npm run check` passes; then push and review once more. A second review that still finds one turns the PR into a draft, as `needs-human` does. Judgement-call smells and scope notes go in the PR body.
+  3. `gh pr checks <n> --watch`. Done when every check passes; a red check is fixed the same way, once.
+  4. `gh pr merge <n> --merge --delete-branch`, then `git checkout main && git pull`.
+
+  Done when the PR is merged and `main` holds it.
+
+**A batch** runs the components of `packages/perron/components.json` side by side, up to three at a time. A component is **ready** when its entry isn't `stable` on `main`, it has no open PR, and every entry in its `dependsOn` is `stable` on `main`. While fewer than three run and one is ready, take the first ready one in the registry's order and give it a slot:
+
+1. **Worktree.** `git worktree add ../perron-worktrees/<name> -b component/<name> main` (or with the existing branch), then `npm ci` in it. Its Storybook port is 6010 plus its slot number, and every command you run for it, `npm run factory` included, runs from its worktree with `STORYBOOK_PORT` set to that port.
+2. **Stages.** Start each stage's workflow with `dir`, the worktree's absolute path, and `port` in its args, besides `stage` and `name`. Run each component's stages in order; different components' stages run at the same time.
+3. **Merge, one component at a time.** Before a PR's code review, rebase its branch on the latest `main`. Each conflict in a shared file keeps both sides: both registry entries, both locale keys. Then run `npm run registry` and `npm run api` and commit what they rewrite, so the barrels, exports and API report are regenerated, never hand-merged, and `npm run check` passes. Merge as above, then the next PR waiting.
+4. **Free the slot.** `git worktree remove ../perron-worktrees/<name>` once the PR is merged or left as a draft, and fill the slot with the next ready component.
+
+Done when no component is ready and none runs; then say which ones were merged and which were left as drafts, with each draft's reason.
 
 ## Resuming
 

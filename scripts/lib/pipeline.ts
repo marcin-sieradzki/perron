@@ -3,7 +3,8 @@
 // visual. Every gate is checked from the files and by running the checks, never taken on a stage's
 // word, and the caps of ADR 0008 stop the loop at `needs-human`: a failed build run (the build
 // stage spends its 3 attempts inside one run), a failed docs run, 2 review rounds with a P1, a
-// second visual failure. scripts/factory.ts is the command line over it and the only writer.
+// second visual failure. A deferred design (ADR 0010) takes design and visual out of the loop until
+// a design run begins. scripts/factory.ts is the command line over it and the only writer.
 import { createHash } from 'node:crypto'
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
@@ -67,6 +68,8 @@ export interface Pipeline {
   layer: Layer
   /** The maintainer's design approval, with the SHA-256 of the read-back it approved */
   approval?: { readBack: string; at: string }
+  /** The design is deferred (ADR 0010): the loop runs from the spec, without design and visual */
+  deferred?: { at: string }
   /** A cap was hit or a stage cannot go on: the maintainer acts, then runs `unblock` */
   needsHuman?: { stage: Stage; reason: string }
   stages: Partial<Record<Stage, StageState>>
@@ -133,9 +136,16 @@ function readBack(env: Pick<Env, 'root'>, name: string): Design | undefined {
   }
 }
 
-/** The variant names of `<Name>`'s read-back, which are its exports' and stories' names. */
-function variantsOf(env: Env, name: string) {
-  const design = readBack(env, name)
+/** The stages `p` goes through: all of them, or all but design and visual once it is deferred. */
+const stagesOf = (p: Pipeline): readonly Stage[] =>
+  p.deferred ? STAGES.filter((s) => s !== 'design' && s !== 'visual') : STAGES
+
+/**
+ * The variant names of `<Name>`'s read-back, which are its exports' and stories' names; none for a
+ * deferred design, whose stories follow the spec.
+ */
+function variantsOf(env: Env, name: string, deferred = false) {
+  const design = deferred ? undefined : readBack(env, name)
   return design ? design.variants.map((v) => variantName(design.properties, v.props)) : []
 }
 
@@ -214,6 +224,7 @@ export function serializePipeline(p: Pipeline) {
     component: p.component,
     layer: p.layer,
     ...(p.approval && { approval: p.approval }),
+    ...(p.deferred && { deferred: p.deferred }),
     ...(p.needsHuman && { needsHuman: p.needsHuman }),
     stages,
   }
@@ -245,6 +256,7 @@ const roundOf = (s: StageState = {}) => (s.rounds ?? 0) + 1
 /** Whether the approval stands: none, or given for a read-back that has since changed. */
 function approvalProblem(p: Pipeline, env: Env) {
   const files = filesOf(p.component, p.layer)
+  if (p.deferred) return undefined
   if (!p.approval)
     return `the design is not approved; the maintainer approves it in Penpot, then ${npm(p.component, 'approve')}`
   if (p.approval.readBack !== sha256(env, files.readBack))
@@ -257,7 +269,11 @@ function refusal(p: Pipeline, stage: Stage, env: Env): string | undefined {
   if (p.needsHuman)
     return `${p.component} waits at needs-human (${p.needsHuman.stage}): ${p.needsHuman.reason}. Once it is fixed, the maintainer runs ${npm(p.component, 'unblock')}`
   if (stage === 'design') return undefined
-  const before = STAGES.slice(0, STAGES.indexOf(stage)).find((s) => p.stages[s]?.status !== 'done')
+  if (!stagesOf(p).includes(stage))
+    return `the design is deferred, so there are no exports to compare; a design run ends the deferral`
+  const before = stagesOf(p)
+    .slice(0, stagesOf(p).indexOf(stage))
+    .find((s) => p.stages[s]?.status !== 'done')
   if (before) return `${before} is not done`
   const approval = approvalProblem(p, env)
   if (approval) return approval
@@ -289,7 +305,8 @@ function missingExports(p: Pipeline, env: Env) {
 export function next(p: Pipeline, env: Env): Next {
   if (p.needsHuman)
     return { wait: 'needs-human', stage: p.needsHuman.stage, why: p.needsHuman.reason }
-  for (const stage of STAGES) {
+  const stages = stagesOf(p)
+  for (const stage of stages) {
     if (stage !== 'design') {
       const approval = approvalProblem(p, env)
       if (approval) return { wait: 'design-approval', stage: 'design', why: approval }
@@ -316,12 +333,16 @@ export function next(p: Pipeline, env: Env): Next {
       ? `${s.status === 'failed' ? 'the last run failed' : 'sent back'}: ${s.failing}`
       : stage === 'design'
         ? `${p.component} has no design yet`
-        : `${STAGES[STAGES.indexOf(stage) - 1]} is done`
+        : stage === stages[0]
+          ? `the design is deferred`
+          : `${stages[stages.indexOf(stage) - 1]} is done`
     return { run: stage, ...round, why }
   }
   return {
     wait: 'done',
-    why: `every stage passed; ${p.component}'s PR is ready for the maintainer`,
+    why: p.deferred
+      ? `every stage passed, with the design deferred; ${p.component}'s PR is ready`
+      : `every stage passed; ${p.component}'s PR is ready for the maintainer`,
   }
 }
 
@@ -340,7 +361,10 @@ export function begin(p: Pipeline, stage: Stage, env: Env): Result {
   const why = refusal(p, stage, env)
   if (why) return { ok: false, why: `${stage} cannot begin: ${why}` }
   const out = clone(p)
-  if (stage === 'design') delete out.approval
+  if (stage === 'design') {
+    delete out.approval
+    delete out.deferred
+  }
   for (const later of STAGES.slice(STAGES.indexOf(stage) + 1))
     if (out.stages[later]) out.stages[later] = counters(out.stages[later])
   const s = (out.stages[stage] = { ...counters(out.stages[stage]), status: 'running' as const })
@@ -358,6 +382,20 @@ export function approve(p: Pipeline, env: Env): Result {
   const out = clone(p)
   out.approval = { readBack: sha256(env, filesOf(p.component, p.layer).readBack), at: env.now() }
   return { ok: true, pipeline: out, said: `approved the design at ${out.approval.readBack}` }
+}
+
+/**
+ * Defers the design (ADR 0010): brief, build, review and docs run from the spec alone, and a
+ * later design run ends the deferral and voids the stages after it.
+ */
+export function defer(p: Pipeline, env: Env): Result {
+  if (p.stages.design?.status === 'running')
+    return { ok: false, why: `cannot defer: design is running; end it first` }
+  if (p.approval) return { ok: false, why: `cannot defer: the design is already approved` }
+  if (p.deferred) return { ok: false, why: `the design of ${p.component} is already deferred` }
+  const out = clone(p)
+  out.deferred = { at: env.now() }
+  return { ok: true, pipeline: out, said: `deferred the design of ${p.component}` }
 }
 
 /** Clears a needs-human stop once the maintainer has acted, resetting the cap it hit. */
@@ -418,7 +456,7 @@ function buildGate(p: Pipeline, env: Env): Verdict {
     const exported = new Set(
       [...read(env, files.stories).matchAll(/^export const (\w+)/gm)].map((m) => m[1]),
     )
-    const missing = variantsOf(env, p.component).filter((v) => !exported.has(v))
+    const missing = variantsOf(env, p.component, !!p.deferred).filter((v) => !exported.has(v))
     if (missing.length) problems.push(`${files.stories} exports no story ${missing.join(', ')}`)
   }
   if (problems.length) return { outcome: 'failed', failing: problems.join('; ') }
