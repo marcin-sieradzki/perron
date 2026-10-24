@@ -4,7 +4,10 @@
 // is off (.storybook/main.ts) and .storybook/perron-docgen.ts runs this one in its place; the
 // docs check and the props table's test read components through it too. react-docgen cannot follow
 // an imported type, so the members `<Name>Props` inherits from Base UI, such as `render`, come from
-// the TypeScript compiler, read the way the props API (props.ts) reads `<Name>Props`.
+// the TypeScript compiler, read the way the props API (props.ts) reads `<Name>Props`. A default
+// the component cannot write as a destructuring default, such as `render`'s `<span />` or an
+// owned-string prop's "The locale's", is its JSDoc's `@default`, which react-docgen leaves in the
+// description; it becomes the prop's default here, as Base UI's members' do.
 import { dirname, relative } from 'node:path'
 import ts from 'typescript'
 import {
@@ -148,6 +151,18 @@ function addInherited(docs: ComponentDoc[], src: string, filename: string) {
   }
 }
 
+/** The text of a `@default` tag in a JSDoc description: up to the next tag or the end. */
+const DEFAULT_TAG = /^@default[ \t]+(.+?)\s*(?=^@\w|(?![\s\S]))/ms
+
+/** Gives each of a doc's own props with no destructuring default the one its `@default` names. */
+function addTaggedDefaults(doc: ComponentDoc) {
+  for (const prop of Object.values(doc.props ?? {})) {
+    if (prop.defaultValue) continue
+    const tagged = DEFAULT_TAG.exec(prop.description ?? '')?.[1]
+    if (tagged) prop.defaultValue = { value: tagged.replace(/\s+/g, ' '), computed: false }
+  }
+}
+
 /**
  * The components `src`, the file at `filename`, declares and exports, as the docs page's docgen
  * reads them, each with every member of its `<Name>Props` but React's own; one a file only
@@ -167,6 +182,7 @@ export function componentDocs(src: string, filename: string): ComponentDoc[] {
     throw e
   }
   const own = docs.filter((d) => d.definedInFile === filename)
+  own.forEach(addTaggedDefaults)
   addInherited(own, src, filename)
   return own
 }

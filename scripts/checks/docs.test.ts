@@ -36,6 +36,17 @@ describe('docs', () => {
     ])
   })
 
+  it('names a prop whose default the docs page would not show as the spec gives it', () => {
+    // Flag's variant, render and closedLabel show theirs; openLabel has no @default
+    expect(docs.run(fixture('defaults'))).toEqual([
+      {
+        file: 'packages/perron/src/components/Flag/Flag.tsx',
+        message:
+          "Flag's docs page would show no default for openLabel, where docs/components/flag.md:13 gives \"The locale's\": give it as the destructuring default or as `@default The locale's` in its JSDoc",
+      },
+    ])
+  })
+
   it('passes on the repo', () => {
     expect(docs.run(join(here, '../..'))).toEqual([])
   })

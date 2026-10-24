@@ -30,6 +30,45 @@ describe('componentDocs', () => {
     expect(doc.props?.variant.defaultValue).toEqual({ value: "'quiet'", computed: false })
   })
 
+  it("takes an own prop's default from its JSDoc's @default when it has no destructuring default", () => {
+    const src = `
+import { useRender } from '@base-ui/react/use-render'
+
+export interface FlagProps extends Omit<useRender.ComponentProps<'span'>, 'render'> {
+  /**
+   * Swaps the root element.
+   *
+   * @default <span />
+   */
+  render?: useRender.ComponentProps<'span'>['render']
+  /**
+   * Overrides "Closed", the flag's word.
+   *
+   * @default The locale's
+   */
+  closedLabel?: string
+  /**
+   * How loud the flag is.
+   *
+   * @default 'loud'
+   */
+  variant?: 'quiet' | 'loud'
+  /** The flag's own words, with no default. */
+  label?: string
+}
+
+export function Flag({ render, closedLabel, variant = 'quiet', label, ...rest }: FlagProps) {
+  return useRender({ defaultTagName: 'span', render, props: { ...rest, children: label ?? closedLabel ?? variant } })
+}
+`
+    const props = componentDocs(src, FILE)[0].props!
+    expect(props.render.defaultValue).toEqual({ value: '<span />', computed: false })
+    expect(props.closedLabel.defaultValue).toEqual({ value: "The locale's", computed: false })
+    // the destructuring default is what the component does, so it wins over the tag
+    expect(props.variant.defaultValue).toEqual({ value: "'quiet'", computed: false })
+    expect(props.label.defaultValue).toBeUndefined()
+  })
+
   it("adds the members its props type inherits from Base UI, with Base UI's JSDoc, not React's", () => {
     const src = `
 import { Button as BaseButton } from '@base-ui/react/button'
