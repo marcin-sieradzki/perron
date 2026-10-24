@@ -3,4 +3,9 @@ component: DisruptionCard
 layer: pattern
 deferred:
   at: 2026-10-24T22:43:34.238Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-24T22:43:38.280Z
+    ended: 2026-10-24T22:49:51.115Z
+    pending: 8
