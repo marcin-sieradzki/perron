@@ -9,16 +9,13 @@ stages:
     started: 2026-10-24T22:40:40.535Z
     ended: 2026-10-24T22:41:39.653Z
   build:
+    runs: 2
     status: done
-    started: 2026-10-24T22:41:39.895Z
-    runs: 1
-    ended: 2026-10-24T22:50:50.807Z
+    started: 2026-10-24T22:56:47.787Z
+    ended: 2026-10-24T23:02:31.790Z
   review:
-    status: done
-    started: 2026-10-24T22:50:54.684Z
     rounds: 1
     findings:
       p1: 0
       p2: 3
       p3: 3
-    ended: 2026-10-24T22:56:16.045Z

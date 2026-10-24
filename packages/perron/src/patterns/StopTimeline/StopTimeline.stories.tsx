@@ -1,8 +1,10 @@
 // StopTimeline's stories: one per row of the spec's Stories table (docs/patterns/stop-timeline.md),
 // with the design deferred, and their play tests, which read the accessibility tree.
 import { renderToStaticMarkup } from 'react-dom/server'
+import type { ReactElement } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, isInaccessible, userEvent, within } from 'storybook/test'
+import { Button } from '../../components/Button/Button.tsx'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { dictionaries, type Locale } from '../../locale/index.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
@@ -66,13 +68,39 @@ async function expectHeardNotSeen(element: HTMLElement | null) {
 /** The stops of the timeline in `root`, as list items. */
 const itemsOf = (root: HTMLElement) => within(root).getAllByRole('listitem')
 
+/** A timeline rendered to markup and read back as elements, for the shapes no story draws. */
+function renderOff(element: ReactElement) {
+  const host = document.createElement('div')
+  host.innerHTML = renderToStaticMarkup(element)
+  const items = [...host.querySelectorAll('li')]
+  return {
+    host,
+    items,
+    /** Each stop's place, from its `data-stop`. */
+    places: items.map((item) => item.dataset.stop),
+    /** The index of the stop with `aria-current`, or -1. */
+    current: items.findIndex((item) => item.hasAttribute('aria-current')),
+  }
+}
+
+/** The places `nextStopIndex` gives a trip of seven stops, as CR-2 reads it. */
+const placesAt = (next: number) =>
+  TRIP.map((_, index) => (index < next ? 'passed' : index === next ? 'next' : 'upcoming'))
+
 /**
  * Three passed, one next, three upcoming. Only the fourth stop is current and says "Next stop", the
  * first three say "Passed", the rail and markers are hidden, each time carries its `dateTime`, and
- * Tab passes the timeline by.
+ * Tab passes the timeline by, from the panel's control before it to the one after it.
  */
 export const Default: Story = {
   args: { nextStopIndex: 3 },
+  render: (args) => (
+    <div style={{ display: 'grid', justifyItems: 'start', gap: 'var(--perron-space-300)' }}>
+      <Button variant="outline">Show on map</Button>
+      <StopTimeline {...args} />
+      <Button variant="outline">All departures</Button>
+    </div>
+  ),
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement)
     const list = canvas.getByRole('list')
@@ -155,19 +183,50 @@ export const Default: Story = {
         await expect(markup).not.toContain(word)
     })
 
-    await step('Tab passes the timeline by', async () => {
+    await step('at the first stop, nothing is passed and the first stop is next', async () => {
+      const { places, current } = renderOff(<StopTimeline stops={TRIP} nextStopIndex={0} />)
+      await expect(places).toEqual(placesAt(0))
+      await expect(current).toBe(0)
+    })
+
+    await step('at the last stop, every other stop is passed and the last is next', async () => {
+      const {
+        places,
+        current,
+        host,
+        items: stops,
+      } = renderOff(<StopTimeline stops={TRIP} nextStopIndex={6} />)
+      await expect(places).toEqual(placesAt(6))
+      await expect(current).toBe(6)
+      // "Passed" is heard after every stop but the last, which says "Next stop"
+      for (const [index, item] of stops.entries())
+        await expect(within(item).queryByText('Passed') !== null).toBe(index < 6)
+      await expect(host.querySelector('.pn-StopTimeline-next')?.closest('li')).toBe(stops[6])
+    })
+
+    await step('Tab passes the timeline by, to the next focusable element', async () => {
+      const before = canvas.getByRole('button', { name: 'Show on map' })
+      const after = canvas.getByRole('button', { name: 'All departures' })
       const start = document.activeElement
       await userEvent.tab()
-      await expect(list.contains(document.activeElement)).toBe(false)
+      await expect(before).toHaveFocus()
+      await userEvent.tab()
+      await expect(after).toHaveFocus()
+      await userEvent.tab({ shift: true })
+      await expect(before).toHaveFocus()
+      // back to the resting state: focus where it started
       await userEvent.tab({ shift: true })
       await expect(document.activeElement).toBe(start)
     })
   },
 }
 
-/** No `nextStopIndex`: the vehicle's place is unknown, so no stop is passed or next. */
+/**
+ * No `nextStopIndex`: the vehicle's place is unknown, so no stop is passed or next. A negative index,
+ * or one that is not a whole number, is as unknown.
+ */
 export const NotStarted: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement)
     const items = itemsOf(canvas.getByRole('list'))
     await expect(items).toHaveLength(7)
@@ -179,13 +238,26 @@ export const NotStarted: Story = {
     await expect(canvas.queryByText('Next stop')).toBeNull()
     for (const marker of canvasElement.querySelectorAll('.pn-StopTimeline-marker'))
       await expect(marker).toHaveAttribute('data-variant', 'outlined')
+
+    for (const next of [-1, 1.5, Number.NaN, Number.POSITIVE_INFINITY])
+      await step(`nextStopIndex ${next} places no stop: every stop upcoming`, async () => {
+        const { places, current, host } = renderOff(
+          <StopTimeline stops={TRIP} nextStopIndex={next} />,
+        )
+        await expect(places).toEqual(TRIP.map(() => 'upcoming'))
+        await expect(current).toBe(-1)
+        await expect(host).not.toHaveTextContent('Passed')
+        await expect(host).not.toHaveTextContent('Next stop')
+        for (const marker of host.querySelectorAll('.pn-StopTimeline-marker'))
+          await expect(marker).toHaveAttribute('data-variant', 'outlined')
+      })
   },
 }
 
 /** `nextStopIndex` past the last stop: the trip is over and every stop passed. */
 export const Finished: Story = {
   args: { nextStopIndex: 7 },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement)
     const items = itemsOf(canvas.getByRole('list'))
     for (const item of items) {
@@ -193,6 +265,13 @@ export const Finished: Story = {
       await expect(item).not.toHaveAttribute('aria-current')
     }
     await expect(canvas.queryByText('Next stop')).toBeNull()
+
+    await step('an index well past the last stop is the same finished trip', async () => {
+      const { places, current, host } = renderOff(<StopTimeline stops={TRIP} nextStopIndex={20} />)
+      await expect(places).toEqual(TRIP.map(() => 'passed'))
+      await expect(current).toBe(-1)
+      await expect(host).not.toHaveTextContent('Next stop')
+    })
   },
 }
 
@@ -273,7 +352,7 @@ export const WithoutTimes: Story = {
       </div>
     </div>
   ),
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement)
     await expect(canvasElement.querySelector('time')).toBeNull()
     await expect(canvasElement.querySelector('.pn-Delay')).toBeNull()
@@ -287,6 +366,13 @@ export const WithoutTimes: Story = {
     const long = within(canvas.getByTestId('trip')).getByText(NAMES_ONLY[3].name)
     const lineHeight = parseFloat(getComputedStyle(long).lineHeight)
     await expect(long.getBoundingClientRect().height).toBeGreaterThan(lineHeight * 1.5)
+
+    await step('an empty trip renders an empty list', async () => {
+      const { host, items } = renderOff(<StopTimeline stops={[]} nextStopIndex={0} />)
+      await expect(host.querySelector('ol.pn-StopTimeline')).not.toBeNull()
+      await expect(items).toHaveLength(0)
+      await expect(host).toHaveTextContent('')
+    })
   },
 }
 

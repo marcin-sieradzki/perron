@@ -70,44 +70,50 @@ StopTimeline takes Delay's five label props, `minutesUnitLabel`, `minutesLateLab
 
 StopTimeline is not interactive, so its one design state is rest; a row's part names the `data-stop` value it applies to where it differs. The pattern is not one of the contract's families: it draws no fill, border or radius around itself, and no dividers, since the rail joins the stops. StationIcon and Delay keep their own tokens, as their specs give them.
 
-| Part                                  | State | Property                | Token                                                                                                                  |
-| ------------------------------------- | ----- | ----------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `root`                                | rest  | `margin`, `padding`     | none: `0`                                                                                                              |
-| `root`                                | rest  | `list-style`            | none: the keyword `none`                                                                                               |
-| `root`                                | rest  | `grid-template-columns` | `icon.size.325` for the marker's column, then the name's (`1fr`), the time's (`auto`) and the delay's (`auto`)         |
-| `root`                                | rest  | `column-gap`            | `space.300`                                                                                                            |
-| `stop`                                | rest  | `grid-template-columns` | none: the keyword `subgrid`, so every stop's time and delay line up down the list                                      |
-| `stop`                                | rest  | `padding-block`         | `space.150`                                                                                                            |
-| `rail`                                | rest  | `inline-size`           | `border.width.050`, the weight of StationIcon's ring                                                                   |
-| `rail`, root with no `data-line`      | rest  | `background`            | `color.text.primary`, as a neutral StationIcon                                                                         |
-| `rail`, root `data-line='m1'`         | rest  | `background`            | `color.transit.line.m1`                                                                                                |
-| `rail`, root `data-line='m2'`         | rest  | `background`            | `color.transit.line.m2`                                                                                                |
-| `rail`, root `data-line='m3'`         | rest  | `background`            | `color.transit.line.m3`                                                                                                |
-| `rail`, root `data-line='m4'`         | rest  | `background`            | `color.transit.line.m4`                                                                                                |
-| `rail`, root `data-line='a'`          | rest  | `background`            | `color.transit.line.a`                                                                                                 |
-| `rail`, root `data-line='b'`          | rest  | `background`            | `color.transit.line.b`                                                                                                 |
-| `rail`, root `data-line='c'`          | rest  | `background`            | `color.transit.line.c`                                                                                                 |
-| `rail`, root `data-line='e'`          | rest  | `background`            | `color.transit.line.e`                                                                                                 |
-| `rail`, root `data-line='f'`          | rest  | `background`            | `color.transit.line.f`                                                                                                 |
-| `rail`, root `data-line='h'`          | rest  | `background`            | `color.transit.line.h`                                                                                                 |
-| `rail`, root `data-line='bus'`        | rest  | `background`            | `color.transit.mode.bus`                                                                                               |
-| `rail`, root `data-line='regional'`   | rest  | `background`            | `color.transit.mode.regional`                                                                                          |
-| `rail` in a `data-stop='passed'` stop | rest  | `background`            | `color.border.strong`, whatever the line                                                                               |
-| `marker`                              | rest  | every property          | none: StationIcon's own, `size='small'` (`icon.size.325`), in the line's colour                                        |
-| `name`                                | rest  | `font`                  | `typography.label`                                                                                                     |
-| `name`                                | rest  | `letter-spacing`        | `typography.label-tracking`                                                                                            |
-| `name`                                | rest  | `color`                 | `color.text.primary`                                                                                                   |
-| `name` in a `data-stop='passed'` stop | rest  | `color`                 | `color.text.secondary`                                                                                                 |
-| `next`                                | rest  | `font`                  | `typography.caption`                                                                                                   |
-| `next`                                | rest  | `letter-spacing`        | `typography.caption-tracking`                                                                                          |
-| `next`                                | rest  | `color`                 | `color.text.secondary`                                                                                                 |
-| `passed`                              | rest  | none                    | none: the VisuallyHidden part's own styles, never seen                                                                 |
-| `time`                                | rest  | `font`                  | `typography.data`                                                                                                      |
-| `time`                                | rest  | `letter-spacing`        | `typography.data-tracking`                                                                                             |
-| `time`                                | rest  | `font-variant-numeric`  | none: the keyword `tabular-nums`, so times line up                                                                     |
-| `time`                                | rest  | `color`                 | `color.text.primary`                                                                                                   |
-| `time` in a `data-stop='passed'` stop | rest  | `color`                 | `color.text.secondary`                                                                                                 |
-| `delay`                               | rest  | every property          | none: Delay's own, `typography.data` in the delay's `color.transit.delay.*`, passed or not, so its kind's colour holds |
+| Part                                  | State | Property                | Token                                                                                                                             |
+| ------------------------------------- | ----- | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `root`                                | rest  | `margin`, `padding`     | none: `0`                                                                                                                         |
+| `root`                                | rest  | `list-style`            | none: the keyword `none`                                                                                                          |
+| `root`                                | rest  | `grid-template-columns` | `icon.size.325` for the marker's column, then the name's (`1fr`), the time's (`auto`) and the delay's (`auto`)                    |
+| `root`                                | rest  | `column-gap`            | `space.300`                                                                                                                       |
+| `stop`                                | rest  | `grid-template-columns` | none: the keyword `subgrid`, so every stop's time and delay line up down the list                                                 |
+| `stop`                                | rest  | `padding-block`         | `space.150`                                                                                                                       |
+| `stop`                                | rest  | `font`                  | `typography.label`, the name's, so `1lh` in the `marker` and the `rail`, which inherit it, is one line of the name                |
+| `stop`                                | rest  | `letter-spacing`        | `typography.label-tracking`                                                                                                       |
+| `rail`                                | rest  | `inline-size`           | `border.width.050`, the weight of StationIcon's ring                                                                              |
+| `rail`                                | rest  | `inset-inline-start`    | none: `calc((icon.size.325 - border.width.050) / 2)`, centring it on the markers' column                                          |
+| `rail`                                | rest  | `inset-block-start`     | none: `calc(space.150 + 1lh / 2)`, the stop's padding and half a line of the name, so it starts at its marker's centre (CR-6)     |
+| `rail`                                | rest  | `inset-block-end`       | none: `calc(-1 * (space.150 + 1lh / 2))`, the same length past the stop's end, so it reaches the next stop's marker centre (CR-6) |
+| `rail`, root with no `data-line`      | rest  | `background`            | `color.text.primary`, as a neutral StationIcon                                                                                    |
+| `rail`, root `data-line='m1'`         | rest  | `background`            | `color.transit.line.m1`                                                                                                           |
+| `rail`, root `data-line='m2'`         | rest  | `background`            | `color.transit.line.m2`                                                                                                           |
+| `rail`, root `data-line='m3'`         | rest  | `background`            | `color.transit.line.m3`                                                                                                           |
+| `rail`, root `data-line='m4'`         | rest  | `background`            | `color.transit.line.m4`                                                                                                           |
+| `rail`, root `data-line='a'`          | rest  | `background`            | `color.transit.line.a`                                                                                                            |
+| `rail`, root `data-line='b'`          | rest  | `background`            | `color.transit.line.b`                                                                                                            |
+| `rail`, root `data-line='c'`          | rest  | `background`            | `color.transit.line.c`                                                                                                            |
+| `rail`, root `data-line='e'`          | rest  | `background`            | `color.transit.line.e`                                                                                                            |
+| `rail`, root `data-line='f'`          | rest  | `background`            | `color.transit.line.f`                                                                                                            |
+| `rail`, root `data-line='h'`          | rest  | `background`            | `color.transit.line.h`                                                                                                            |
+| `rail`, root `data-line='bus'`        | rest  | `background`            | `color.transit.mode.bus`                                                                                                          |
+| `rail`, root `data-line='regional'`   | rest  | `background`            | `color.transit.mode.regional`                                                                                                     |
+| `rail` in a `data-stop='passed'` stop | rest  | `background`            | `color.border.strong`, whatever the line                                                                                          |
+| `marker`                              | rest  | `margin-block-start`    | none: `calc((1lh - icon.size.325) / 2)`, centring it on the name's first line (CR-7)                                              |
+| `marker`                              | rest  | every other property    | none: StationIcon's own, `size='small'` (`icon.size.325`), in the line's colour                                                   |
+| `name`                                | rest  | `font`                  | `typography.label`                                                                                                                |
+| `name`                                | rest  | `letter-spacing`        | `typography.label-tracking`                                                                                                       |
+| `name`                                | rest  | `color`                 | `color.text.primary`                                                                                                              |
+| `name` in a `data-stop='passed'` stop | rest  | `color`                 | `color.text.secondary`                                                                                                            |
+| `next`                                | rest  | `font`                  | `typography.caption`                                                                                                              |
+| `next`                                | rest  | `letter-spacing`        | `typography.caption-tracking`                                                                                                     |
+| `next`                                | rest  | `color`                 | `color.text.secondary`                                                                                                            |
+| `passed`                              | rest  | none                    | none: the VisuallyHidden part's own styles, never seen                                                                            |
+| `time`                                | rest  | `font`                  | `typography.data`                                                                                                                 |
+| `time`                                | rest  | `letter-spacing`        | `typography.data-tracking`                                                                                                        |
+| `time`                                | rest  | `font-variant-numeric`  | none: the keyword `tabular-nums`, so times line up                                                                                |
+| `time`                                | rest  | `color`                 | `color.text.primary`                                                                                                              |
+| `time` in a `data-stop='passed'` stop | rest  | `color`                 | `color.text.secondary`                                                                                                            |
+| `delay`                               | rest  | every property          | none: Delay's own, `typography.data` in the delay's `color.transit.delay.*`, passed or not, so its kind's colour holds            |
 
 The text follows the contract's row treatment: a name in `typography.label`, its second line ("Next stop") in `typography.caption` with `color.text.secondary`. `typography.data` is the role for "times, delays, counts and percentages in lists", and matches Delay's, so a time and its delay read as one figure.
 

@@ -15,7 +15,8 @@
   grid-template-columns: var(--perron-icon-size-325) minmax(0, 1fr);
 }
 
-/* Each stop lays its parts on the root's columns (CR-7); it holds its piece of rail. */
+/* Each stop lays its parts on the root's columns (CR-7); it holds its piece of rail. Its type is the
+   name's, so `1lh` in the marker and the rail, which inherit it, is one line of the name. */
 .pn-StopTimeline-stop {
   position: relative;
   display: grid;
@@ -23,39 +24,27 @@
   grid-template-columns: subgrid;
   align-items: baseline;
   padding-block: var(--perron-space-150);
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
 }
 
-/* The marker sits beside the name's first line: its centre on the centre of that line's box, and
-   above the rail, whose piece it hides behind its fill (CR-5). */
+/* The marker sits beside the name's first line: its centre on the centre of that line, one `1lh`
+   of the name's type, and above the rail, whose piece it hides behind its fill (CR-5, CR-7). */
 .pn-StopTimeline-marker {
   position: relative;
   grid-row: 1;
   grid-column: 1;
   align-self: start;
-  margin-block-start: calc(
-    (
-        var(--perron-font-size-325) * var(--perron-font-line-height-snug) -
-          var(--perron-icon-size-325)
-      ) /
-      2
-  );
+  margin-block-start: calc((1lh - var(--perron-icon-size-325)) / 2);
 }
 
-/* The piece of rail from this stop's marker centre to the next stop's: the next stop's marker
-   centre sits as far below this stop's end as this stop's marker centre sits below its start (CR-6). */
+/* The piece of rail from this stop's marker centre to the next stop's, on the markers' centre line:
+   the next stop's marker centre sits as far below this stop's end as this stop's marker centre
+   sits below its start, its padding and half a line of the name (CR-6). */
 .pn-StopTimeline-rail {
   position: absolute;
-  inset-block: calc(
-      var(--perron-space-150) +
-        (var(--perron-font-size-325) * var(--perron-font-line-height-snug)) / 2
-    )
-    calc(
-      -1 *
-        (
-          var(--perron-space-150) +
-            (var(--perron-font-size-325) * var(--perron-font-line-height-snug)) / 2
-        )
-    );
+  inset-block: calc(var(--perron-space-150) + 1lh / 2)
+    calc(-1 * (var(--perron-space-150) + 1lh / 2));
   inset-inline-start: calc((var(--perron-icon-size-325) - var(--perron-border-width-050)) / 2);
   inline-size: var(--perron-border-width-050);
   background: var(--perron-color-text-primary);
