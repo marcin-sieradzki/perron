@@ -1,0 +1,11 @@
+# Written by npm run factory; never by hand.
+component: EmptyState
+layer: component
+deferred:
+  at: 2026-10-24T21:15:16.730Z
+stages:
+  brief:
+    status: pending
+    started: 2026-10-24T21:15:19.362Z
+    ended: 2026-10-24T21:19:39.665Z
+    pending: 9
