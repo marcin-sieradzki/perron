@@ -6,6 +6,8 @@ export const da: OwnedStrings = {
   close: 'Luk',
   clear: 'Ryd',
   loading: 'Indlæser',
+  noData: 'Ingen data at vise',
+  loadFailed: 'Kunne ikke indlæse data',
   previousPage: 'Forrige side',
   nextPage: 'Næste side',
   live: 'Live',

@@ -9,6 +9,10 @@ export const en = {
   clear: 'Clear',
   /** Announced while content loads. */
   loading: 'Loading',
+  /** A data view whose data came back with nothing in it. */
+  noData: 'No data to show',
+  /** A data view whose data could not be loaded. */
+  loadFailed: 'Could not load the data',
   /** Pagination: the button to the page before. */
   previousPage: 'Previous page',
   /** Pagination: the button to the page after. */
