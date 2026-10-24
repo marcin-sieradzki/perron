@@ -1,0 +1,3 @@
+# Strings a component owns come from locale dictionaries
+
+A string the caller sees and chooses, such as a button's text, is the caller's: children or a prop. A string the component owns, such as a pagination button's "Previous page" or a dialog's close label, comes from Perron's dictionaries for English, Danish, Swedish and Norwegian Bokmål, picked by `PerronProvider`'s `locale`, and a `*Label` prop overrides it on one instance. Making every string a prop was the alternative; Perron's riders read four languages, and a caller should not have to translate a component's own words. Agents write the translations.

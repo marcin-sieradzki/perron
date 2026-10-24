@@ -1,0 +1,3 @@
+# Agents read Base UI and MUI from the pinned packages first
+
+Base UI and MUI both ship their documentation as Markdown inside their npm packages: the same pages Base UI's `llms.txt` links to, with every part's props, data attributes and types, and MUI's API pages with their props and slots tables. The Perron MCP's `get_reference` tool returns the API reference section of those installed pages, and skills read it before anything else. The hosted sources, `@mui/mcp` and Base UI's `llms.txt` through `mcpdoc`, sit beside it in `.mcp.json` for usage and examples, but they describe the latest release, not the one Perron pins, and a session reaches them only where base-ui.com and mui.com are allowed. `@mui/material` is installed as a dev dependency for its docs only.

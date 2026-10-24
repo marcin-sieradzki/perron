@@ -4,7 +4,7 @@ const preview: Preview = {
   parameters: {
     options: {
       storySort: {
-        // the order of the Contents page, which follows Rift's foundations
+        // the order of the Contents page
         order: [
           'Foundations',
           [

@@ -24,6 +24,7 @@ export const PAGES = [
   'docs/foundations/data-states.md',
   'docs/foundations/map.md',
   'docs/content-design.md',
+  'docs/glossary.md',
 ]
 
 export interface TokenValue {
