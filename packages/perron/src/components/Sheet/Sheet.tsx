@@ -4,7 +4,6 @@
 import { Drawer } from '@base-ui/react/drawer'
 import { mergeProps } from '@base-ui/react/merge-props'
 import type { ReactElement, ReactNode, Ref } from 'react'
-import { numeric } from '@mylder/perron/tokens.ts'
 import { useOwnedStrings } from '../../PerronProvider.tsx'
 import { CloseButton } from '../../parts/CloseButton/CloseButton.tsx'
 import './Sheet.css'
@@ -15,8 +14,27 @@ type SnapPointDetails = Drawer.Root.SnapPointChangeEventDetails
 /** The edge a sheet slides from, and the swipe that dismisses it (CR-3). */
 const SWIPE = { left: 'left', right: 'right', bottom: 'down' } as const
 
-/** A bottom sheet's snap points when the caller gives none: the peek, then full height (CR-9). */
-const DEFAULT_SNAP_POINTS: Drawer.Root.SnapPoint[] = [numeric['size.sheet-peek'], 1]
+/** Full height alone: the snap points while there is no peek to read. */
+const FULL_HEIGHT: Drawer.Root.SnapPoint[] = [1]
+
+/** The peek, a `px` string from `size.sheet-peek`, then full height; read once and kept (CR-9). */
+let withPeek: Drawer.Root.SnapPoint[] | undefined
+
+/**
+ * A bottom sheet's snap points when the caller gives none: the peek, then full height (CR-9). The
+ * peek is read from its custom property when the first bottom sheet renders, and the array is kept,
+ * so every render passes Base UI the same one. With no document, as on a server, or no token
+ * stylesheet yet, there is no peek to read, and the sheet snaps to full height alone until there is.
+ */
+function defaultSnapPoints(): Drawer.Root.SnapPoint[] {
+  if (withPeek === undefined && typeof document !== 'undefined') {
+    const peek = getComputedStyle(document.documentElement)
+      .getPropertyValue('--perron-size-sheet-peek')
+      .trim()
+    if (peek) withPeek = [peek, 1]
+  }
+  return withPeek ?? FULL_HEIGHT
+}
 
 export interface SheetProps extends Omit<Drawer.Popup.Props, 'children' | 'title'> {
   /**
@@ -73,7 +91,8 @@ export interface SheetProps extends Omit<Drawer.Popup.Props, 'children' | 'title
   /**
    * The heights a bottom sheet snaps to: a fraction of the viewport from 0 to 1, pixels above 1, or
    * a `px` or `rem` string. Ignored on a side sheet. A bottom sheet with no `snapPoints` snaps to
-   * `size.sheet-peek` (read in script from `tokens.ts`) and to full height, `1`, starting at the
+   * `size.sheet-peek` (read once, when a bottom sheet first renders, from its custom property
+   * `--perron-size-sheet-peek` with `getComputedStyle`) and to full height, `1`, starting at the
    * peek; `onSnapPointChange` takes MUI's shape, `(event, snapPoint, details)`, with `event` being
    * `details.event`.
    * @default With `anchor` `'bottom'`: `size.sheet-peek` and `1`
@@ -152,7 +171,7 @@ export function Sheet({
 }: SheetProps) {
   const strings = useOwnedStrings({ close: closeLabel })
   const bottom = anchor === 'bottom'
-  const points = snapPoints ?? DEFAULT_SNAP_POINTS
+  const points = bottom ? (snapPoints ?? defaultSnapPoints()) : []
 
   const handleOpenChange = (next: boolean, details: ChangeDetails) => {
     if (next) onOpen?.(details.event, details)
