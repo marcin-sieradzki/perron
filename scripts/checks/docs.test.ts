@@ -25,6 +25,17 @@ describe('docs', () => {
     ])
   })
 
+  it("names a building entry whose code the docs page's docgen reads no props from", () => {
+    // Tag returns useRender(...) and is read; Blank takes no props
+    expect(docs.run(fixture('docgen'))).toEqual([
+      {
+        file: 'packages/perron/src/components/Blank/Blank.tsx',
+        message:
+          "Blank's docs page would show no props: its docgen finds no exported function component Blank taking BlankProps",
+      },
+    ])
+  })
+
   it('passes on the repo', () => {
     expect(docs.run(join(here, '../..'))).toEqual([])
   })

@@ -1,15 +1,15 @@
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { composeStories } from '@storybook/react-vite'
-import { parse } from 'react-docgen'
 import { describe, expect, it } from 'vitest'
+import { componentDocs } from '../../scripts/lib/docgen.ts'
 import { propRows, specProse } from './component-page.ts'
 import { Gauge } from './fixtures/Gauge.tsx'
 
-/** The fixture's argTypes as a docs page gets them: react-docgen, then Storybook's enhancers. */
+/** The fixture's argTypes as a docs page gets them: Perron's docgen, then Storybook's enhancers. */
 function gaugeArgTypes() {
   const file = join(import.meta.dirname, 'fixtures/Gauge.tsx')
-  const [docgen] = parse(readFileSync(file, 'utf8'), { filename: file })
+  const [docgen] = componentDocs(readFileSync(file, 'utf8'), file)
   Object.assign(Gauge, { __docgenInfo: docgen })
   const { Default } = composeStories({
     default: { component: Gauge, args: { label: 'Battery' } },

@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Tag",
+    "layer": "component",
+    "category": "Display",
+    "status": "building",
+    "baseUiParts": [],
+    "penpotPath": "Components/Tag",
+    "dependsOn": []
+  },
+  {
+    "name": "Blank",
+    "layer": "component",
+    "category": "Display",
+    "status": "building",
+    "baseUiParts": [],
+    "penpotPath": "Components/Blank",
+    "dependsOn": []
+  }
+]
