@@ -5,7 +5,7 @@ Perron's work is tracked in this repository's GitHub Issues, through the `gh` CL
 ## Specs
 
 - **A component's spec** is its page, `docs/components/<name>.md`, in the layout of `docs/components/TEMPLATE.md` (ROADMAP 2.2). The factory's brief stage writes it from the Penpot design, and it ships in the component's PR. The component's issue is filed by the factory's decompose run, one per entry in `components.json`.
-- **Any other spec**, such as a script, a check, an MCP tool or a piece of the factory, is a GitHub issue. Its tickets are its sub-issues.
+- **Any other spec**, such as a roadmap phase, a script, a check or a piece of the factory, is a GitHub issue. Its tickets are its sub-issues.
 
 ## Operations
 
