@@ -35,6 +35,8 @@ export const en = {
   plannedWorks: 'Planned works',
   /** The name of the data kind of disruption: a problem with the real-time data feed. */
   dataFeedProblems: 'Data feed problems',
+  /** A disruption: said just before the list of lines it affects, heard by screen readers only. */
+  affectedLines: 'Affected lines',
   /** A line with no delays or disruptions. */
   runningNormally: 'Running normally',
   /** A link that shows a vehicle, stop or line on the map. */
@@ -49,6 +51,10 @@ export const en = {
   onTime: 'On time',
   /** Delay: no real-time data says how late a vehicle runs; heard in place of "—". */
   delayUnknown: 'Delay unknown',
+  /** Stat: no data gives the figure; heard in place of "—". */
+  unknown: 'Unknown',
+  /** Brand: the brand name, a name and never translated; the wordmark shows it lowercase. */
+  brandName: 'Mylder',
   /** A stop timeline: under the stop the vehicle reaches next. */
   nextStop: 'Next stop',
   /** A stop timeline: heard after the name of a stop the vehicle has passed. */
