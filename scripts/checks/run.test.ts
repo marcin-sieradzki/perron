@@ -1,7 +1,14 @@
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
-import { allowanceFiles, allowanceCheck, loadChecks, selectChecks } from './run.ts'
+import {
+  allowanceFiles,
+  allowanceCheck,
+  isAbout,
+  loadChecks,
+  parseArgs,
+  selectChecks,
+} from './run.ts'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '../..')
 
@@ -26,6 +33,19 @@ describe('the gates', () => {
     expect(() => selectChecks(checks, ['props', 'prop'])).toThrow(
       /^no check has the rule "prop"; the rules are api-compatibility, component-css/,
     )
+  })
+
+  it('take a PascalCase argument as a component or pattern, and keep only its problems', () => {
+    expect(parseArgs(['docs', 'MapControls'])).toEqual({ rules: ['docs'], names: ['MapControls'] })
+    expect(parseArgs([])).toEqual({ rules: [], names: [] })
+    const about = (file: string, message = 'a problem') => isAbout({ file, message }, 'MapControls')
+    expect(about('packages/perron/src/components/MapControls/MapControls.tsx')).toBe(true)
+    expect(about('docs/components/map-controls.md')).toBe(true)
+    expect(about('storybook/pages/map-controls.mdx')).toBe(true)
+    expect(about('penpot/map-controls.json')).toBe(true)
+    expect(about('packages/perron/api.json', 'MapControls lost the prop onZoomIn')).toBe(true)
+    expect(about('docs/components/map.md')).toBe(false)
+    expect(about('packages/perron/src/components/Map/Map.tsx', 'MapControlsLike')).toBe(false)
   })
 
   it('read allowances in the repo text, not in fixtures, tests, vendored skills or generated data', () => {

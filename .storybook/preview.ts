@@ -8,7 +8,32 @@ import '@mylder/perron/perron.css'
 // embed mode skips play there. storybook/blocks/docs-embed.test.ts holds Storybook to both.
 Object.assign(globalThis, { PREVIEW_URL: 'iframe.html?embed=true' })
 
+/** Words in every script the stories write, so each face loads the subsets they need. */
+const SAMPLE = 'Aa Ææ Øø Åå Ää Öö 0123 →'
+
+let fonts: Promise<void> | undefined
+/**
+ * Loads every face of the library's fonts (styles/fonts.css) before the first story renders, so
+ * a `play` that measures text measures it in them, on CI's Linux as on a Mac, never in a fallback
+ * that wraps differently; and fails the story when one does not load. A browser loads a face only
+ * once text asks for it, so `document.fonts.ready` alone can resolve before any has begun.
+ */
+export function libraryFonts() {
+  fonts ??= (async () => {
+    const specs = new Set(
+      [...document.fonts].map(
+        (f) => `${f.style} ${f.weight} 16px "${f.family.replace(/^["']|["']$/g, '')}"`,
+      ),
+    )
+    for (const spec of specs)
+      if (!(await document.fonts.load(spec, SAMPLE)).length)
+        throw new Error(`the font ${spec} did not load, so stories would measure a fallback`)
+  })()
+  return fonts
+}
+
 const preview: Preview = {
+  loaders: [libraryFonts],
   parameters: {
     // axe in error mode: a violation fails the story's test, and so CI (docs/components/README.md)
     a11y: { test: 'error' },
@@ -50,6 +75,8 @@ const preview: Preview = {
             'IconButton',
             'LinkButton',
             'Toolbar',
+            'Brand',
+            'Stat',
             'Text',
             'EmptyState',
             'Surface',
@@ -68,6 +95,7 @@ const preview: Preview = {
             'DataStatePanel',
             'DetailHeader',
             'StopTimeline',
+            'DisruptionCard',
           ],
           // registry:patterns end
           // registry:specs start: written by npm run registry, each built entry's spec page
@@ -78,6 +106,8 @@ const preview: Preview = {
             'IconButton',
             'LinkButton',
             'Toolbar',
+            'Brand',
+            'Stat',
             'Text',
             'EmptyState',
             'Surface',
@@ -90,6 +120,7 @@ const preview: Preview = {
             'DataStatePanel',
             'DetailHeader',
             'StopTimeline',
+            'DisruptionCard',
           ],
           // registry:specs end
         ],
