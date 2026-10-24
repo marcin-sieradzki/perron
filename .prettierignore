@@ -1,6 +1,7 @@
 coverage
 package-lock.json
 packages/perron/tokens/generated
+packages/perron/api.json
 packages/perron/data
 .claude/skills/writing-for-agents
 .claude/skills/software-factory

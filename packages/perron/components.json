@@ -93,7 +93,7 @@
     "name": "Prik",
     "layer": "component",
     "category": "Transit",
-    "status": "building",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/Prik",
     "dependsOn": []
