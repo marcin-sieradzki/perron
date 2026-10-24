@@ -14,7 +14,7 @@ Perron is one context: the design system's foundations. Mylder, the app, is its 
 ```
 /
 ├── CLAUDE.md
-├── tokens/                     ← the values, each with a $description
+├── packages/perron/tokens/     ← the values, each with a $description
 └── docs/
     ├── glossary.md             ← the terms
     ├── adr/                    ← decisions and why
@@ -44,7 +44,7 @@ When relationships between concepts are being discussed, stress-test them with s
 
 ### Cross-reference with the sources
 
-When the user states how something works, check whether `tokens/`, `docs/foundations/`, `icons/icons.json` and `logos/logos.json` agree. If you find a contradiction, surface it: "The data-states page lists five Prik states, but you just described four. Which is right?"
+When the user states how something works, check whether `packages/perron/tokens/`, `docs/foundations/`, `packages/perron/icons/icons.json` and `packages/perron/logos/logos.json` agree. If you find a contradiction, surface it: "The data-states page lists five Prik states, but you just described four. Which is right?"
 
 ### Update docs/glossary.md inline
 

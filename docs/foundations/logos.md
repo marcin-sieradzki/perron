@@ -1,6 +1,6 @@
 # Logos
 
-The Mylder mark, and how it is used. The files are in `logos/`, and `logos/logos.json` lists them with the ground each is drawn for.
+The Mylder mark, and how it is used. The files are in `packages/perron/logos/`, and `logos.json` there lists them with the ground each is drawn for.
 
 ## The mark
 
@@ -29,9 +29,9 @@ The mark is a bus dot, an S-tog dot and an estimated ring: three of the ways a v
 
 ### Brand
 
-| Logo                                                | File                         | Theme | Use              |
-| --------------------------------------------------- | ---------------------------- | ----- | ---------------- |
-| <img src="../../logos/mylder-mark.svg" alt="">      | `logos/mylder-mark.svg`      | Light | On light grounds |
-| <img src="../../logos/mylder-mark-dark.svg" alt=""> | `logos/mylder-mark-dark.svg` | Dark  | On dark grounds  |
+| Logo                                                                | File                         | Theme | Use              |
+| ------------------------------------------------------------------- | ---------------------------- | ----- | ---------------- |
+| <img src="../../packages/perron/logos/mylder-mark.svg" alt="">      | `logos/mylder-mark.svg`      | Light | On light grounds |
+| <img src="../../packages/perron/logos/mylder-mark-dark.svg" alt=""> | `logos/mylder-mark-dark.svg` | Dark  | On dark grounds  |
 
 <!-- /files -->

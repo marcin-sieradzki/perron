@@ -11,6 +11,7 @@ import { fileURLToPath } from 'node:url'
 import * as prettier from 'prettier'
 import { iconGrid, readIcons, readLogos, type Asset } from './assets.ts'
 import { composite, contrastRatio } from './color.ts'
+import { PACKAGE } from './paths.ts'
 import { resolveValue, tokenMap, toCss, type ResolvedTokens, type Token } from './tokens.ts'
 
 export const TOKENS = /(<!-- tokens: ([^>]*?) -->)[\s\S]*?(<!-- \/tokens -->)/g
@@ -155,7 +156,7 @@ function fileTables<T extends Asset>(
     .map((category) => {
       const rows = list
         .filter((a) => a.category === category)
-        .map((a) => cells(a, `<img src="../../${dir}/${a.name}.svg" alt="">`))
+        .map((a) => cells(a, `<img src="../../${PACKAGE}/${dir}/${a.name}.svg" alt="">`))
       return `### ${category}\n\n${grid(head, rows)}`
     })
     .join('\n\n')

@@ -2,6 +2,11 @@
 
 Token names that changed or went away, newest first, so code written against an older name can follow. The components on Mylder's `perron/components` branch use the names before 23 October 2026.
 
+## 24 October 2026: the package
+
+- **Package name.** Perron installs as `@mylder/perron`. Each import keeps its path after the name: `@mylder/perron/perron.css`, `@mylder/perron/tokens.ts`, `@mylder/perron/icons/plus.svg`. No token name changed.
+- **Folders.** In this repository the tokens, styles, icons and logos moved from the root into `packages/perron/`.
+
 ## 23 October 2026: borders, focus and reduced motion
 
 - **Control edges.** Inputs and outline buttons move from `color.border.strong` to the new `color.border.control`, which reaches 3:1 on every surface. `color.border.strong` stays for lines that decorate, such as dashed tags and chart axes.

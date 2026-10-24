@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url'
 import type { Plugin } from 'vite'
 import { readSources } from '../scripts/build-tokens.ts'
 import { readPages } from '../scripts/lib/pages.ts'
+import { PACKAGE } from '../scripts/lib/paths.ts'
 import { loadTokens } from '../scripts/lib/tokens.ts'
 
 const ID = 'virtual:perron/pages'
@@ -21,7 +22,10 @@ export function perronPages(): Plugin {
       return `export default ${JSON.stringify(pages)}`
     },
     configureServer(server) {
-      server.watcher.add(['tokens', 'docs', 'icons', 'logos'].map((d) => join(root, d)))
+      server.watcher.add([
+        join(root, 'docs'),
+        ...['tokens', 'icons', 'logos'].map((d) => join(root, PACKAGE, d)),
+      ])
       server.watcher.on('change', (file) => {
         if (!watched.test(file) || file.includes('/generated/')) return
         const mod = server.moduleGraph.getModuleById(`\0${ID}`)

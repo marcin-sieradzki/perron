@@ -2,17 +2,11 @@
   "name": "perron",
   "private": true,
   "version": "0.0.0",
-  "description": "Perron, the design system of Mylder: design tokens and foundations.",
+  "description": "The Perron repository: the @mylder/perron and @mylder/perron-mcp packages, the token build, Storybook and the docs.",
   "type": "module",
-  "exports": {
-    "./perron.css": "./styles/perron.css",
-    "./tokens.css": "./tokens/generated/tokens.css",
-    "./typography.css": "./tokens/generated/typography.css",
-    "./tokens.ts": "./tokens/generated/tokens.ts",
-    "./tokens/*.json": "./tokens/*.json",
-    "./icons/*": "./icons/*",
-    "./logos/*": "./logos/*"
-  },
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "tokens": "node scripts/build-tokens.ts",
     "tokens:check": "node scripts/build-tokens.ts --check",
@@ -25,11 +19,6 @@
     "check": "npm run tokens:check && npm run typecheck && npm run lint && npm run format:check && npm run test",
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build -o dist/storybook"
-  },
-  "dependencies": {
-    "@fontsource/familjen-grotesk": "^5.3.0",
-    "@fontsource/jetbrains-mono": "^5.3.0",
-    "@fontsource/schibsted-grotesk": "^5.3.0"
   },
   "devDependencies": {
     "@storybook/addon-docs": "^10.6.3",

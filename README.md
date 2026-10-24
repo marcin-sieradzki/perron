@@ -12,23 +12,25 @@ The build checks every file against the format rule by rule (`scripts/lib/spec.t
 
 ## What is here
 
-| Path                            | What it is                                                                                                                                            |
-| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `tokens/*.tokens.json`          | The token sources: `base`, a `light` and a `dark` theme, and `motion-reduced` overrides                                                               |
-| `tokens/perron.resolver.json`   | How the files combine (the format's resolver module): base always, then light or dark, then full or reduced motion                                    |
-| `tokens/generated/`             | Built from the sources: `tokens.css`, `typography.css`, `tokens.ts`, and `penpot.tokens.json` in the older flavour Penpot imports. Never edit by hand |
-| `styles/perron.css`             | The one file an app loads: fonts, tokens, typography classes, the icon class and page defaults                                                        |
-| `icons/`                        | The icons as SVG files, and `icons.json`, which lists them by category with the size and use of each                                                  |
-| `logos/`                        | The Mylder mark, one file per theme, and `logos.json`                                                                                                 |
-| `scripts/`                      | The token and docs build and its tests: the format, contrast, icon style and logo colours                                                             |
-| `docs/foundations/`             | One page per foundation, with tables the build fills in                                                                                               |
-| `storybook/`, `.storybook/`     | The same pages in Storybook, with every table drawn live from the tokens: swatches, type specimens, contrast grids, the icons and the mark            |
-| `docs/content-design.md`        | How every word in Mylder reads                                                                                                                        |
-| `docs/glossary.md`, `docs/adr/` | The words used to talk about Perron, and the decisions behind it                                                                                      |
-| `docs/agents/`                  | How the engineering skills file, link and close work in this repository's GitHub Issues                                                               |
-| `ROADMAP.md`                    | What comes next: components on Base UI, patterns, the agent loop, the MCP server, step by step                                                        |
-| `docs/renames.md`               | Token names that changed or went away, for code written against an older name                                                                         |
-| `.claude/skills/`               | Agent skills: `design-tokens`, and the others from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT)                                    |
+| Path                                          | What it is                                                                                                                                            |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/perron/`                            | The `@mylder/perron` package, published to npm, which holds the next six paths                                                                        |
+| `packages/perron/tokens/*.tokens.json`        | The token sources: `base`, a `light` and a `dark` theme, and `motion-reduced` overrides                                                               |
+| `packages/perron/tokens/perron.resolver.json` | How the files combine (the format's resolver module): base always, then light or dark, then full or reduced motion                                    |
+| `packages/perron/tokens/generated/`           | Built from the sources: `tokens.css`, `typography.css`, `tokens.ts`, and `penpot.tokens.json` in the older flavour Penpot imports. Never edit by hand |
+| `packages/perron/styles/perron.css`           | The one file an app loads: fonts, tokens, typography classes, the icon class and page defaults                                                        |
+| `packages/perron/icons/`                      | The icons as SVG files, and `icons.json`, which lists them by category with the size and use of each                                                  |
+| `packages/perron/logos/`                      | The Mylder mark, one file per theme, and `logos.json`                                                                                                 |
+| `packages/mcp/`                               | The `@mylder/perron-mcp` package, the MCP server for agents (empty until ROADMAP 1.5)                                                                 |
+| `scripts/`                                    | The token and docs build and its tests: the format, contrast, icon style and logo colours                                                             |
+| `docs/foundations/`                           | One page per foundation, with tables the build fills in                                                                                               |
+| `storybook/`, `.storybook/`                   | The same pages in Storybook, with every table drawn live from the tokens: swatches, type specimens, contrast grids, the icons and the mark            |
+| `docs/content-design.md`                      | How every word in Mylder reads                                                                                                                        |
+| `docs/glossary.md`, `docs/adr/`               | The words used to talk about Perron, and the decisions behind it                                                                                      |
+| `docs/agents/`                                | How the engineering skills file, link and close work in this repository's GitHub Issues                                                               |
+| `ROADMAP.md`                                  | What comes next: components on Base UI, patterns, the agent loop, the MCP server, step by step                                                        |
+| `docs/renames.md`                             | Token names that changed or went away, for code written against an older name                                                                         |
+| `.claude/skills/`                             | Agent skills: `design-tokens`, and the others from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT)                                    |
 
 ## Token names
 
@@ -49,7 +51,7 @@ Node 22 or later.
 
 ```sh
 npm install
-npm run tokens        # rebuild tokens/generated and the tables in docs/foundations
+npm run tokens        # rebuild packages/perron/tokens/generated and the tables in docs/foundations
 npm run check         # generated files and tables up to date, typecheck, lint, format, tests
 npm run storybook     # the guideline pages in Storybook, at localhost:6006
 ```

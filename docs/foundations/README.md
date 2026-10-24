@@ -14,7 +14,7 @@ The mark is on [Logos](logos.md), the brand colour on [Semantic colours](semanti
 
 ## Pages
 
-Each page gives the rules for one foundation, then its tokens or files. The tables are rebuilt from `tokens/`, `icons/` and `logos/` by `npm run tokens`, so a page always shows what the build ships. Edit the prose around a table, never the table.
+Each page gives the rules for one foundation, then its tokens or files. The tables are rebuilt from the package's `tokens/`, `icons/` and `logos/` folders by `npm run tokens`, so a page always shows what the build ships. Edit the prose around a table, never the table.
 
 | Page                                      | What it covers                                                        |
 | ----------------------------------------- | --------------------------------------------------------------------- |
@@ -38,9 +38,9 @@ Two more pages hold what only a live map needs:
 
 ## Using the tokens
 
-- Load `perron.css` once at the app root. It brings the fonts, the custom properties for both themes and for reduced motion, the typography classes and a few page defaults.
+- Install `@mylder/perron` and load `@mylder/perron/perron.css` once at the app root. It brings the fonts, the custom properties for both themes and for reduced motion, the typography classes and a few page defaults.
 - Pages name tokens the way the sources do, `color.text.primary`. In CSS that token is `var(--perron-color-text-primary)`: `--perron-`, then the name with dots as hyphens. Never copy a value.
-- In script, `tokens/generated/tokens.ts` has every value per theme, typed by name, and the reduced motion values under `modifiers`.
+- In script, `@mylder/perron/tokens.ts` has every value per theme, typed by name, and the reduced motion values under `modifiers`.
 - Light is the default theme. Set `data-theme="dark"` on any element for dark; without it, the system's dark mode applies. Reduced motion follows the system setting on its own.
-- Icons and logos are SVG files in `icons/` and `logos/`, listed with their use in `icons.json` and `logos.json`.
-- Change a token in `tokens/*.tokens.json`, then run `npm run tokens`. The generated files and the tables on these pages are never edited by hand.
+- Icons and logos are SVG files in `@mylder/perron/icons/` and `@mylder/perron/logos/`, listed with their use in `icons.json` and `logos.json`.
+- Change a token in `packages/perron/tokens/*.tokens.json`, then run `npm run tokens`. The generated files and the tables on these pages are never edited by hand.

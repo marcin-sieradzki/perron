@@ -1,0 +1,35 @@
+{
+  "name": "@mylder/perron",
+  "version": "0.0.0",
+  "description": "Perron, the design system of Mylder: design tokens, styles, icons and the Mylder mark.",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marcin-sieradzki/perron.git",
+    "directory": "packages/perron"
+  },
+  "exports": {
+    "./perron.css": "./styles/perron.css",
+    "./tokens.css": "./tokens/generated/tokens.css",
+    "./typography.css": "./tokens/generated/typography.css",
+    "./tokens.ts": "./tokens/generated/tokens.ts",
+    "./tokens/*.json": "./tokens/*.json",
+    "./icons/*": "./icons/*",
+    "./logos/*": "./logos/*"
+  },
+  "files": [
+    "tokens",
+    "styles",
+    "icons",
+    "logos"
+  ],
+  "dependencies": {
+    "@fontsource/familjen-grotesk": "^5.3.0",
+    "@fontsource/jetbrains-mono": "^5.3.0",
+    "@fontsource/schibsted-grotesk": "^5.3.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

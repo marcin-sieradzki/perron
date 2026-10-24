@@ -5,5 +5,5 @@
     "correctness": "error",
     "suspicious": "warn"
   },
-  "ignorePatterns": ["coverage", "dist", "tokens/generated"]
+  "ignorePatterns": ["coverage", "dist", "packages/perron/tokens/generated"]
 }

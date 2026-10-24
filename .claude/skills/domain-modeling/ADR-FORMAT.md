@@ -39,7 +39,7 @@ If a decision is easy to reverse, skip it: you'll just reverse it. If it's not s
 ### What qualifies
 
 - **The shape of the tokens.** "Only colour tokens read the palette." "Base, then a theme, then a motion context, combined by the resolver."
-- **How Perron meets Mylder.** "Mylder loads one file, `styles/perron.css`, and reads tokens only through `--perron-*` properties."
+- **How Perron meets Mylder.** "Mylder loads one file, `@mylder/perron/perron.css`, and reads tokens only through `--perron-*` properties."
 - **Formats and tools that carry lock-in.** The token format, the build, the design tool. Not every dependency: just the ones that would take a quarter to swap out.
 - **Boundary and scope decisions.** "One brand only, no brand modifier." "Components wait on their own branch until the foundations settle." The explicit no-s are as valuable as the yes-s.
 - **Deliberate deviations from the obvious path.** "A custom token build instead of Style Dictionary because X." Anything where a reasonable reader would assume the opposite. These stop the next person from "fixing" something that was deliberate.
