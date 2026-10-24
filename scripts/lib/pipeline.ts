@@ -2,9 +2,10 @@
 // rules that move it through the loop of ROADMAP.md, "Phase 4": design, brief, build, review, docs,
 // visual. Every gate is checked from the files and by running the checks, never taken on a stage's
 // word, and the caps of ADR 0008 stop the loop at `needs-human`: a failed build run (the build
-// stage spends its 3 attempts inside one run), 2 review rounds with a P1 or a P2, a second failed
-// docs run, a second visual failure. A first such review round, docs failure or visual failure
-// sends the component back to build. A deferred design (ADR 0010) takes design and visual out of the loop until
+// stage spends its 3 attempts inside one run), a second review round to find a P1 (a third, when
+// the round finds only P2s), a second failed docs run, a second visual failure. Short of its cap,
+// a review round with a P1 or a P2, a docs failure or a visual failure sends the component back
+// to build, and `next` names what the rerun fixes. A deferred design (ADR 0010) takes design and visual out of the loop until
 // a design run begins. scripts/factory.ts is the command line over it and the only writer.
 import { createHash } from 'node:crypto'
 import { existsSync, readFileSync } from 'node:fs'
@@ -39,12 +40,14 @@ export type Gate = 'design-approval' | 'pending-questions' | 'needs-human' | 'do
 /**
  * The budgets of ADR 0008 the factory counts: review rounds with a P1 or a P2, docs and visual
  * failures. A P2 is fixed before merge, as a P1 is, so either sends the component back to build.
- * The build stage spends its 3 attempts inside one run, so the factory stops at the first failed
+ * A round counts toward `review` when it finds a P1, and toward `reviewP2` whatever it finds: a
+ * round with only P2s, usually a line or a sentence to fix, gets one round more before the loop
+ * stops, where a P1 in the second round stops it. The build stage spends its 3 attempts inside one run, so the factory stops at the first failed
  * build run. A docs failure is a fault in a source the build wrote (code, types, JSDoc, stories)
  * or the spec, so the first goes back to build, as a review's P1 does; the build returns `failed`
  * when the fix is the spec's or the shared tooling's, and that stops the loop.
  */
-export const CAPS = { review: 2, docs: 2, visual: 2 } as const
+export const CAPS = { review: 2, reviewP2: 3, docs: 2, visual: 2 } as const
 
 /** The spec template every spec keeps the sections of. */
 export const TEMPLATE = 'docs/components/TEMPLATE.md'
@@ -94,7 +97,17 @@ export interface Env {
 
 /** What comes next: a stage to run, with its round for review, or the gate the loop waits at. */
 export type Next =
-  { run: Stage; round?: number; why: string } | { wait: Gate; stage?: Stage; why: string }
+  | {
+      run: Stage
+      round?: number
+      why: string
+      /**
+       * On a rerun, what it fixes first, to pass to the stage as `fix`: the reason it was sent
+       * back or failed, with a review's P1 and P2 findings word for word, or the answers to carry
+       */
+      fix?: string
+    }
+  | { wait: Gate; stage?: Stage; why: string }
 
 /** A command's result: the new pipeline when it was accepted, or why it was refused. */
 export type Result = { ok: true; pipeline: Pipeline; said: string } | { ok: false; why: string }
@@ -236,6 +249,23 @@ function bannedNames(env: Env) {
 
 const LEVELS = ['P1', 'P2', 'P3'] as const
 
+/** The text under a review's `## <level>` heading, up to the next heading; none without one. */
+function levelSection(text: string, level: (typeof LEVELS)[number]) {
+  const at = text.search(new RegExp(`^## ${level}\\s*$`, 'm'))
+  if (at < 0) return undefined
+  const rest = text.slice(at).split('\n').slice(1).join('\n')
+  const end = rest.search(/^#{1,2} /m)
+  return rest.slice(0, end >= 0 ? end : undefined)
+}
+
+/** A review's P1 and P2 findings, word for word: what the build's rerun fixes first. */
+export function blockingFindings(text: string) {
+  return (['P1', 'P2'] as const)
+    .map((level) => levelSection(text, level)?.trim() ?? '')
+    .filter((body) => body && body !== 'None.')
+    .join('\n')
+}
+
 /**
  * The findings of a `review.md` by level, counted by their `- **P<level>-<k>.**` prefix, and what
  * keeps it from being round `round` of `<Name>`'s review in the format of
@@ -248,13 +278,11 @@ export function reviewFindings(text: string, name: string, round: number) {
   if (heading !== want) problems.push(`is headed "${heading}", not "${want}"`)
   const counts = { p1: 0, p2: 0, p3: 0 }
   for (const level of LEVELS) {
-    const at = text.search(new RegExp(`^## ${level}\\s*$`, 'm'))
-    if (at < 0) {
+    const body = levelSection(text, level)
+    if (body === undefined) {
       problems.push(`has no "## ${level}" section`)
       continue
     }
-    const rest = text.slice(at).split('\n').slice(1).join('\n')
-    const body = rest.slice(0, rest.search(/^#{1,2} /m) >= 0 ? rest.search(/^#{1,2} /m) : undefined)
     const n = body.match(new RegExp(`^- \\*\\*${level}-\\d+\\.\\*\\*`, 'gm'))?.length ?? 0
     if (!n && body.trim() !== 'None.')
       problems.push(`has a "## ${level}" section that lists no finding and does not say None.`)
@@ -360,6 +388,25 @@ function missingExports(p: Pipeline, env: Env) {
     .filter((rel) => !exists(env, rel))
 }
 
+/** The `[PENDING]` questions left in the spec at `spec`, or nothing when it cannot be read. */
+function specPending(env: Env, spec: string) {
+  if (!exists(env, spec) || !exists(env, TEMPLATE)) return undefined
+  return specProblems(read(env, spec), read(env, TEMPLATE), '').pending
+}
+
+/**
+ * What a rerun fixes first: the reason it was sent back or failed, and for a review's send-back
+ * that round's P1 and P2 findings from review.md, word for word.
+ */
+function fixOf(p: Pipeline, failing: string, env: Env) {
+  const { review } = filesOf(p.component, p.layer)
+  const round = /^review round (\d+) found/.exec(failing)?.[1]
+  if (!round || !exists(env, review)) return failing
+  const text = read(env, review)
+  if (reviewFindings(text, p.component, Number(round)).problems.length) return failing
+  return `${failing}. Fix each of its P1 and P2 findings at the line it names:\n${blockingFindings(text)}`
+}
+
 /** What comes next for `p`: the stage to run, or the gate it waits at. Never writes. */
 export function next(p: Pipeline, env: Env): Next {
   if (p.needsHuman)
@@ -379,15 +426,28 @@ export function next(p: Pipeline, env: Env): Next {
         ...round,
         why: `${stage} began at ${s.started} and has not ended; run it again`,
       }
-    if (s.status === 'pending')
+    if (s.status === 'pending') {
+      if (stage !== 'brief')
+        return {
+          wait: 'pending-questions',
+          stage,
+          why: s.failing ?? `${stage} has questions for the maintainer`,
+        }
+      // the brief that asked runs again once every answer is written in the spec
+      const { spec } = filesOf(p.component, p.layer)
+      const left = specPending(env, spec) ?? s.pending ?? 0
+      if (!left)
+        return {
+          run: stage,
+          why: `the answers are written in ${spec}; run the brief again to carry them through the spec`,
+          fix: `The maintainer's answers are written in ${spec} in place of their [PENDING] lines: rewrite any still worded as a question or labelled, then carry each one into every section it touches (component-brief, "Run again"), and run its steps 3 to 5 again.`,
+        }
       return {
         wait: 'pending-questions',
         stage,
-        why:
-          stage === 'brief'
-            ? `the spec ${filesOf(p.component, p.layer).spec} has ${s.pending} [PENDING] question${s.pending === 1 ? '' : 's'} for the maintainer`
-            : (s.failing ?? `${stage} has questions for the maintainer`),
+        why: `the spec ${spec} has ${left} [PENDING] question${left === 1 ? '' : 's'} for the maintainer`,
       }
+    }
     const why = s.failing
       ? `${s.status === 'failed' ? 'the last run failed' : 'sent back'}: ${s.failing}`
       : stage === 'design'
@@ -395,7 +455,7 @@ export function next(p: Pipeline, env: Env): Next {
         : stage === stages[0]
           ? `the design is deferred`
           : `${stages[stages.indexOf(stage) - 1]} is done`
-    return { run: stage, ...round, why }
+    return { run: stage, ...round, why, ...(s.failing && { fix: fixOf(p, s.failing, env) }) }
   }
   return {
     wait: 'done',
@@ -587,13 +647,9 @@ export function end(
       break
     case 'brief':
       if (outcome !== 'failed') verdict = briefGate(p, env)
-      // Answers written before the run that asked has ended: the brief runs again to carry each
-      // one into the sections it touches, as component-brief's "Run again" does.
-      if (outcome === 'pending' && verdict.outcome === 'done')
-        verdict = {
-          outcome: 'failed',
-          failing: `the brief returned pending, but ${files.spec} has no [PENDING] question left: its answers are written, so run the brief again to carry them through the spec`,
-        }
+      // A brief that asked stays pending though its answers were written before it ended, so
+      // `next` runs it again to carry each one through the spec (component-brief, "Run again").
+      if (outcome === 'pending' && verdict.outcome === 'done') verdict = { outcome: 'pending' }
       break
     case 'build':
       if (outcome === 'done') verdict = buildGate(p, env)
@@ -621,10 +677,15 @@ export function end(
       const levels = [found.p1 && `${found.p1} P1`, found.p2 && `${found.p2} P2`].filter(Boolean)
       const reason = `review round ${round} found ${levels.join(' and ')} (${files.review})`
       verdict = { outcome: 'failed', failing: reason }
-      if (s.sentBack >= CAPS.review)
+      if (found.p1 && s.sentBack >= CAPS.review)
         out.needsHuman = {
           stage,
-          reason: `${CAPS.review} review rounds found a P1 or a P2; the last: ${reason}`,
+          reason: `${s.sentBack} review rounds found a P1 or a P2, the last a P1: ${reason}`,
+        }
+      else if (s.sentBack >= CAPS.reviewP2)
+        out.needsHuman = {
+          stage,
+          reason: `${s.sentBack} review rounds found a P1 or a P2; the last: ${reason}`,
         }
       else sendBack(out, stage, reason)
       break
