@@ -37,18 +37,19 @@ Every colour token in both themes. A `color` token says what a colour is for and
 
 What each surface is for, and how they stack, is on [Elevation](elevation.md).
 
-<!-- tokens: color.surface.default color.surface.raised color.surface.inset color.surface.overlay color.surface.hover color.surface.selected color.surface.inverse color.scrim -->
+<!-- tokens: color.surface.default color.surface.raised color.surface.inset color.surface.overlay color.surface.hover color.surface.selected color.surface.inverse color.surface.inverse-hover color.scrim -->
 
-| Token                    | Light                           | Dark                            | Use                                                                |
-| ------------------------ | ------------------------------- | ------------------------------- | ------------------------------------------------------------------ |
-| `color.surface.default`  | `#FAFBF9` (palette.neutral.50)  | `#12181B` (palette.neutral.900) | Opaque panel background; text on inverse surfaces                  |
-| `color.surface.raised`   | `#FFFFFF` (palette.neutral.0)   | `#1D2428` (palette.neutral.800) | Inputs, selected segment                                           |
-| `color.surface.inset`    | `#EBEEEB` (palette.neutral.100) | `#283237` (palette.neutral.700) | Segmented control track, counts, inset boxes                       |
-| `color.surface.overlay`  | `rgba(250, 251, 249, 0.9)`      | `rgba(18, 24, 27, 0.88)`        | Translucent floating panels over the map (used with backdrop blur) |
-| `color.surface.hover`    | `rgba(18, 24, 27, 0.05)`        | `rgba(235, 238, 235, 0.06)`     | Hover state layer                                                  |
-| `color.surface.selected` | `rgba(18, 24, 27, 0.09)`        | `rgba(235, 238, 235, 0.09)`     | Selected row                                                       |
-| `color.surface.inverse`  | `#12181B` (color.text.primary)  | `#EBEEEB` (color.text.primary)  | Primary buttons, pressed icon buttons, chart tooltip               |
-| `color.scrim`            | `rgba(10, 14, 16, 0.42)`        | `rgba(10, 14, 16, 0.42)`        | Backdrop behind modal dialogs                                      |
+| Token                         | Light                           | Dark                            | Use                                                                 |
+| ----------------------------- | ------------------------------- | ------------------------------- | ------------------------------------------------------------------- |
+| `color.surface.default`       | `#FAFBF9` (palette.neutral.50)  | `#12181B` (palette.neutral.900) | Opaque panel background; text on inverse surfaces                   |
+| `color.surface.raised`        | `#FFFFFF` (palette.neutral.0)   | `#1D2428` (palette.neutral.800) | Inputs, selected segment                                            |
+| `color.surface.inset`         | `#EBEEEB` (palette.neutral.100) | `#283237` (palette.neutral.700) | Segmented control track, counts, inset boxes                        |
+| `color.surface.overlay`       | `rgba(250, 251, 249, 0.9)`      | `rgba(18, 24, 27, 0.88)`        | Translucent floating panels over the map (used with backdrop blur)  |
+| `color.surface.hover`         | `rgba(18, 24, 27, 0.05)`        | `rgba(235, 238, 235, 0.06)`     | Hover state layer                                                   |
+| `color.surface.selected`      | `rgba(18, 24, 27, 0.09)`        | `rgba(235, 238, 235, 0.09)`     | Selected row                                                        |
+| `color.surface.inverse`       | `#12181B` (color.text.primary)  | `#EBEEEB` (color.text.primary)  | Primary buttons, pressed icon buttons, chart tooltip                |
+| `color.surface.inverse-hover` | `#1D2428` (palette.neutral.800) | `#A2ADB1` (palette.neutral.300) | Hover fill of a primary button, one step from color.surface.inverse |
+| `color.scrim`                 | `rgba(10, 14, 16, 0.42)`        | `rgba(10, 14, 16, 0.42)`        | Backdrop behind modal dialogs                                       |
 
 <!-- /tokens -->
 

@@ -83,6 +83,10 @@
         "$value": "{color.text.primary}",
         "$description": "Primary buttons, pressed icon buttons, chart tooltip"
       },
+      "inverse-hover": {
+        "$value": "{palette.neutral.300}",
+        "$description": "Hover fill of a primary button, one step from color.surface.inverse"
+      },
       "success": {
         "$value": "{palette.green.900}",
         "$description": "Tinted background for a success message"

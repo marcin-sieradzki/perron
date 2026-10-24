@@ -1076,6 +1076,11 @@
           "$value": "{color.text.primary}",
           "$description": "Primary buttons, pressed icon buttons, chart tooltip"
         },
+        "inverse-hover": {
+          "$type": "color",
+          "$value": "{palette.neutral.800}",
+          "$description": "Hover fill of a primary button, one step from color.surface.inverse"
+        },
         "success": {
           "$type": "color",
           "$value": "{palette.green.100}",
@@ -1424,6 +1429,11 @@
           "$type": "color",
           "$value": "{color.text.primary}",
           "$description": "Primary buttons, pressed icon buttons, chart tooltip"
+        },
+        "inverse-hover": {
+          "$type": "color",
+          "$value": "{palette.neutral.300}",
+          "$description": "Hover fill of a primary button, one step from color.surface.inverse"
         },
         "success": {
           "$type": "color",

@@ -224,6 +224,7 @@
   --perron-color-surface-hover: rgba(18, 24, 27, 0.05);
   --perron-color-surface-selected: rgba(18, 24, 27, 0.09);
   --perron-color-surface-inverse: var(--perron-color-text-primary);
+  --perron-color-surface-inverse-hover: var(--perron-palette-neutral-800);
   --perron-color-surface-success: var(--perron-palette-green-100);
   --perron-color-surface-warning: var(--perron-palette-orange-100);
   --perron-color-surface-danger: var(--perron-palette-red-100);
@@ -288,6 +289,7 @@
     --perron-color-surface-hover: rgba(235, 238, 235, 0.06);
     --perron-color-surface-selected: rgba(235, 238, 235, 0.09);
     --perron-color-surface-inverse: var(--perron-color-text-primary);
+    --perron-color-surface-inverse-hover: var(--perron-palette-neutral-300);
     --perron-color-surface-success: var(--perron-palette-green-900);
     --perron-color-surface-warning: var(--perron-palette-orange-900);
     --perron-color-surface-danger: var(--perron-palette-red-900);
@@ -352,6 +354,7 @@
   --perron-color-surface-hover: rgba(235, 238, 235, 0.06);
   --perron-color-surface-selected: rgba(235, 238, 235, 0.09);
   --perron-color-surface-inverse: var(--perron-color-text-primary);
+  --perron-color-surface-inverse-hover: var(--perron-palette-neutral-300);
   --perron-color-surface-success: var(--perron-palette-green-900);
   --perron-color-surface-warning: var(--perron-palette-orange-900);
   --perron-color-surface-danger: var(--perron-palette-red-900);
