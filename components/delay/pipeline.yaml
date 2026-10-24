@@ -3,4 +3,9 @@ component: Delay
 layer: component
 deferred:
   at: 2026-10-24T20:44:09.625Z
-stages: {}
+stages:
+  brief:
+    status: failed
+    started: 2026-10-24T20:44:12.355Z
+    ended: 2026-10-24T20:48:04.301Z
+    failing: the spec still has the placeholder <value>
