@@ -1,6 +1,7 @@
 // A component's props table on its docs page, in MUI's layout: name, type, default and
-// description, read from the docgen of the component its stories' meta names. Its slots, one row
-// per `slotProps` key, follow in a table of their own.
+// description, read from the docgen of the component its stories' meta names, or of a component
+// given itself, such as a compound component's part. Its slots, one row per `slotProps` key,
+// follow in a table of their own.
 import { Unstyled, useOf } from '@storybook/addon-docs/blocks'
 import Markdown from 'markdown-to-jsx/react'
 import { propRows, type PropRow } from './component-page.ts'
@@ -42,10 +43,17 @@ function Rows({ rows, defaults }: { rows: PropRow[]; defaults: boolean }) {
   )
 }
 
-/** `of` is the component's stories module, the one `<Meta of>` names. */
+/**
+ * `of` is the component's stories module, the one `<Meta of>` names, or a component itself: a part
+ * of a compound component, such as `ToolbarButton`, which has no stories meta of its own.
+ */
 export function PropsTable({ of }: { of: unknown }) {
-  const resolved = useOf(of as Parameters<typeof useOf>[0], ['meta'])
-  const rows = propRows(resolved.preparedMeta.argTypes)
+  const resolved = useOf(of as Parameters<typeof useOf>[0], ['meta', 'component'])
+  const argTypes =
+    resolved.type === 'component'
+      ? resolved.projectAnnotations.parameters?.docs?.extractArgTypes?.(resolved.component)
+      : resolved.preparedMeta.argTypes
+  const rows = propRows(argTypes ?? {})
   const props = rows.filter((r) => !r.name.startsWith(SLOT))
   const slots = rows.filter((r) => r.name.startsWith(SLOT))
   return (

@@ -51,6 +51,8 @@ For a pattern, read `docs/patterns/<name>.md` for the spec, `packages/perron/src
    />
    ```
 
+   A compound component, whose parts `<Name>.tsx` exports beside the root (Toolbar's `ToolbarButton`, `ToolbarGroup`, `ToolbarSeparator`), adds `import { <Part>, … } from './<Name>.tsx'` and, after the root's `<PropsTable>`, one block per part in the order of the spec's Props tables: an `<h2>` naming the part inside `<Unstyled><div className="pd-page">`, then `<PropsTable of={<Part>} />`, which reads the part's docgen with no stories file of its own. Toolbar's page is that shape applied.
+
    What each block draws, in order: the component's name; the spec's opening sentence; every story, live, with its code; the props table in MUI's layout (name, type, default, description, a required prop marked `*`), then a slots table with one row per `slotProps` key; then the three spec sections under their own headings. A prop's description is its JSDoc, and a slot's is "Props for the `<part>` part". Done when the file matches the shape line for line.
 
 3. **Turn the entry stable.** In `packages/perron/components.json`, set the entry's `status` to `stable`, then run `npm run registry` and `npm run api`. Done when `packages/perron/api.json` holds `<Name>` with every member `<Name>Props` declares itself (the API leaves out the members Base UI owns).
