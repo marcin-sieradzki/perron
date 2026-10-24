@@ -1,0 +1,6 @@
+# Written by npm run factory; never by hand.
+component: FactList
+layer: component
+deferred:
+  at: 2026-10-24T23:39:13.778Z
+stages: {}
