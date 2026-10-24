@@ -1,5 +1,5 @@
 // Every locale's dictionary holds every owned string the English one defines, and nothing else,
-// and content design's table of data-state and delay words says what the dictionaries say.
+// and content design's table of data-state, delay and disruption words says what the dictionaries say.
 import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -24,7 +24,7 @@ describe.each(Object.keys(dictionaries) as Locale[])('the %s dictionary', (local
   })
 })
 
-describe("content design's data-state and delay words", () => {
+describe("content design's data-state, delay and disruption words", () => {
   const root = join(dirname(fileURLToPath(import.meta.url)), '../../../..')
   const page = readFileSync(join(root, 'docs/content-design.md'), 'utf8')
   const [header, , ...rows] = page
@@ -49,7 +49,7 @@ describe("content design's data-state and delay words", () => {
     expect(header?.map((language) => LANGUAGES[language])).toEqual(['en', 'da', 'sv', 'nb'])
   })
 
-  it('list every data-state and delay word', () => {
+  it('list every data-state, delay and disruption word', () => {
     expect(rows.map(([english]) => english)).toEqual([
       'Live',
       'Ageing',
@@ -57,8 +57,13 @@ describe("content design's data-state and delay words", () => {
       'Timetable only',
       'No signal',
       'Delays',
+      'Diversions',
+      'Planned works',
+      'Data feed problems',
       'Running normally',
       'Show on map',
+      'On time',
+      'Delay unknown',
     ])
   })
 

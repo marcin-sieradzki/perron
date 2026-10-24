@@ -23,12 +23,28 @@ export const en = {
   timetableOnly: 'Timetable only',
   /** Data state: silent for over 5 minutes. */
   noSignal: 'No signal',
-  /** The heading over a line's delays. */
+  /** A line's delays: a heading, and the name of the delay kind of disruption. */
   delays: 'Delays',
+  /** The name of the diversion kind of disruption: a line running on a changed route. */
+  diversions: 'Diversions',
+  /** The name of the planned kind of disruption: planned works on a line. */
+  plannedWorks: 'Planned works',
+  /** The name of the data kind of disruption: a problem with the real-time data feed. */
+  dataFeedProblems: 'Data feed problems',
   /** A line with no delays or disruptions. */
   runningNormally: 'Running normally',
   /** A link that shows a vehicle, stop or line on the map. */
   showOnMap: 'Show on map',
+  /** Delay: the unit after a signed figure, as in "+3 min". */
+  minutesUnit: 'min',
+  /** Delay: heard after the number when a vehicle runs late, as in "3 min late". */
+  minutesLate: 'min late',
+  /** Delay: heard after the number when a vehicle runs early, as in "1 min early". */
+  minutesEarly: 'min early',
+  /** Delay: a vehicle or departure running to the timetable. */
+  onTime: 'On time',
+  /** Delay: no real-time data says how late a vehicle runs; heard in place of "—". */
+  delayUnknown: 'Delay unknown',
 }
 
 /** The name of one owned string. */

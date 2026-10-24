@@ -1,0 +1,28 @@
+# Written by npm run factory; never by hand.
+component: Delay
+layer: component
+deferred:
+  at: 2026-10-24T20:44:09.625Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-24T20:48:20.489Z
+    ended: 2026-10-24T20:49:08.681Z
+  build:
+    status: done
+    started: 2026-10-24T20:49:08.838Z
+    runs: 1
+    ended: 2026-10-24T20:56:14.189Z
+  review:
+    status: done
+    started: 2026-10-24T20:56:16.586Z
+    rounds: 1
+    findings:
+      p1: 0
+      p2: 0
+      p3: 3
+    ended: 2026-10-24T20:59:43.338Z
+  docs:
+    status: done
+    started: 2026-10-24T21:51:39.491Z
+    ended: 2026-10-24T21:53:31.857Z

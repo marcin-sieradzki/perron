@@ -1,0 +1,44 @@
+import { Meta, Stories, Title, Unstyled } from '@storybook/addon-docs/blocks'
+import { PropsTable } from '../../../../../storybook/blocks/PropsTable.tsx'
+import { SpecProse } from '../../../../../storybook/blocks/SpecProse.tsx'
+import * as ToolbarStories from './Toolbar.stories.tsx'
+import { ToolbarButton, ToolbarGroup, ToolbarSeparator } from './Toolbar.tsx'
+
+<Meta of={ToolbarStories} />
+
+<Title />
+
+<SpecProse path="docs/components/toolbar.md" intro />
+
+<Stories title="Examples" />
+
+<PropsTable of={ToolbarStories} />
+
+<Unstyled>
+  <div className="pd-page">
+    <h2>ToolbarButton</h2>
+  </div>
+</Unstyled>
+
+<PropsTable of={ToolbarButton} />
+
+<Unstyled>
+  <div className="pd-page">
+    <h2>ToolbarGroup</h2>
+  </div>
+</Unstyled>
+
+<PropsTable of={ToolbarGroup} />
+
+<Unstyled>
+  <div className="pd-page">
+    <h2>ToolbarSeparator</h2>
+  </div>
+</Unstyled>
+
+<PropsTable of={ToolbarSeparator} />
+
+<SpecProse
+  path="docs/components/toolbar.md"
+  sections={['Keyboard and ARIA', 'Owned strings', "Do and don't"]}
+/>

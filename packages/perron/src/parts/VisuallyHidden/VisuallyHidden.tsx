@@ -1,10 +1,13 @@
-// The VisuallyHidden shared part: text a screen reader reads and the eye doesn't see, for a word the
-// eye gets from an icon or a shape. Internal: composed by components, never exported.
+// The VisuallyHidden shared part: text for screen readers only. Internal: composed by components,
+// never registered or exported. Its class and its hiding declarations live only in this folder.
 import type { ComponentProps } from 'react'
 import './VisuallyHidden.css'
 
-/** Text for screen readers only, laid over its positioned parent and clipped to nothing. */
-export function VisuallyHidden({ className, ...rest }: ComponentProps<'span'>) {
+/** The props of VisuallyHidden: a `<span>`'s. */
+export type VisuallyHiddenProps = ComponentProps<'span'>
+
+/** Text a screen reader reads and the eye never sees, such as a delay said in words. */
+export function VisuallyHidden({ className, ...rest }: VisuallyHiddenProps) {
   return (
     <span
       {...rest}

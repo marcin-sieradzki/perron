@@ -1,0 +1,16 @@
+{
+  "component": "Button",
+  "properties": {
+    "variant": { "prop": "variant", "values": { "solid": "solid", "outline": "outline" } },
+    "size": { "prop": "size", "values": { "medium": "medium", "small": "small" } },
+    "State": {
+      "state": {
+        "default": null,
+        "hover": ":hover",
+        "focus": ":focus-visible",
+        "disabled": "[data-disabled]"
+      }
+    }
+  },
+  "layers": { "root": "root", "label": "label", "focusRing": "root", "startIcon": "startIcon" }
+}

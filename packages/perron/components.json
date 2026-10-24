@@ -3,7 +3,7 @@
     "name": "Button",
     "layer": "component",
     "category": "Actions",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": ["Button"],
     "penpotPath": "Components/Button",
     "dependsOn": []
@@ -12,16 +12,16 @@
     "name": "IconButton",
     "layer": "component",
     "category": "Actions",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": ["Button"],
     "penpotPath": "Components/IconButton",
-    "dependsOn": ["Button"]
+    "dependsOn": []
   },
   {
     "name": "LinkButton",
     "layer": "component",
     "category": "Actions",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/LinkButton",
     "dependsOn": ["Button"]
@@ -30,7 +30,7 @@
     "name": "Text",
     "layer": "component",
     "category": "Display",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/Text",
     "dependsOn": []
@@ -39,7 +39,7 @@
     "name": "Surface",
     "layer": "component",
     "category": "Layout",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/Surface",
     "dependsOn": []
@@ -84,7 +84,7 @@
     "name": "EmptyState",
     "layer": "component",
     "category": "Feedback",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/EmptyState",
     "dependsOn": []
@@ -120,7 +120,7 @@
     "name": "LineBadge",
     "layer": "component",
     "category": "Transit",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/LineBadge",
     "dependsOn": []
@@ -138,7 +138,7 @@
     "name": "Delay",
     "layer": "component",
     "category": "Transit",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/Delay",
     "dependsOn": []
@@ -147,7 +147,7 @@
     "name": "SeverityLabel",
     "layer": "component",
     "category": "Transit",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/SeverityLabel",
     "dependsOn": []
@@ -321,7 +321,7 @@
     "name": "Toolbar",
     "layer": "component",
     "category": "Actions",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": ["Toolbar.Root", "Toolbar.Group", "Toolbar.Button", "Toolbar.Separator"],
     "penpotPath": "Components/Toolbar",
     "dependsOn": []
@@ -348,7 +348,7 @@
     "name": "DetailHeader",
     "layer": "pattern",
     "category": "Detail",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Patterns/DetailHeader",
     "dependsOn": ["LineBadge", "StationIcon"]

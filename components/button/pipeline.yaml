@@ -1,0 +1,32 @@
+# Written by npm run factory; never by hand.
+component: Button
+layer: component
+deferred:
+  at: 2026-10-24T20:43:47.752Z
+stages:
+  design:
+    status: done
+    started: 2026-10-24T19:44:52.497Z
+    ended: 2026-10-24T20:04:48.947Z
+  brief:
+    status: done
+    started: 2026-10-24T20:49:05.780Z
+    ended: 2026-10-24T20:50:46.633Z
+  build:
+    status: done
+    started: 2026-10-24T20:50:46.918Z
+    runs: 1
+    ended: 2026-10-24T21:00:47.065Z
+  review:
+    status: done
+    started: 2026-10-24T21:00:47.381Z
+    rounds: 1
+    findings:
+      p1: 0
+      p2: 1
+      p3: 2
+    ended: 2026-10-24T21:08:22.627Z
+  docs:
+    status: done
+    started: 2026-10-24T21:31:27.108Z
+    ended: 2026-10-24T21:51:29.703Z

@@ -1,0 +1,29 @@
+# Written by npm run factory; never by hand.
+component: EmptyState
+layer: component
+deferred:
+  at: 2026-10-24T21:15:16.730Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-24T21:19:52.236Z
+    ended: 2026-10-24T21:20:41.672Z
+  build:
+    runs: 3
+    status: done
+    started: 2026-10-24T21:34:18.250Z
+    ended: 2026-10-24T21:37:18.343Z
+  review:
+    rounds: 2
+    p1Rounds: 1
+    findings:
+      p1: 0
+      p2: 2
+      p3: 3
+    status: done
+    started: 2026-10-24T21:37:18.510Z
+    ended: 2026-10-24T21:41:09.648Z
+  docs:
+    status: done
+    started: 2026-10-24T21:58:26.494Z
+    ended: 2026-10-24T22:00:28.395Z

@@ -1,9 +1,15 @@
-/* Read, not seen: the box fills its positioned parent and the clip hides all of it, so it takes no
-   room, adds no scroll and catches no pointer. */
+/* VisuallyHidden: kept in the accessibility tree and out of sight, out of the flow, and out of
+   copied text, so a copy reads what the eye saw. */
 .pn-VisuallyHidden {
   position: absolute;
-  inset: 0;
+  /* perron-allow(component-css): a 1px box, not 0, so screen readers that skip empty boxes read it */
+  width: 1px;
+  /* perron-allow(component-css): a 1px box, not 0, so screen readers that skip empty boxes read it */
+  height: 1px;
+  padding: 0;
   overflow: hidden;
-  white-space: nowrap;
   clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+  user-select: none;
 }

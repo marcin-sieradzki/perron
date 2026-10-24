@@ -1,0 +1,28 @@
+# Written by npm run factory; never by hand.
+component: LinkButton
+layer: component
+deferred:
+  at: 2026-10-24T22:08:28.471Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-24T22:13:00.395Z
+    ended: 2026-10-24T22:13:43.372Z
+  build:
+    status: done
+    started: 2026-10-24T22:13:43.536Z
+    runs: 1
+    ended: 2026-10-24T22:21:55.084Z
+  review:
+    status: done
+    started: 2026-10-24T22:22:01.296Z
+    rounds: 1
+    findings:
+      p1: 0
+      p2: 1
+      p3: 3
+    ended: 2026-10-24T22:32:43.835Z
+  docs:
+    status: done
+    started: 2026-10-24T22:34:00.282Z
+    ended: 2026-10-24T22:35:44.290Z
