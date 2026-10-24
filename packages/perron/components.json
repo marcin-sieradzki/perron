@@ -321,7 +321,7 @@
     "name": "Toolbar",
     "layer": "component",
     "category": "Actions",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": ["Toolbar.Root", "Toolbar.Group", "Toolbar.Button", "Toolbar.Separator"],
     "penpotPath": "Components/Toolbar",
     "dependsOn": []

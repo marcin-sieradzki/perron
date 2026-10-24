@@ -207,5 +207,49 @@
         ]
       }
     }
+  },
+  "Toolbar": {
+    "extends": [
+      "Inherited< BaseToolbar.Root.Props, 'orientation' | 'disabled' >"
+    ],
+    "props": {
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "disabled": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "orientation": {
+        "optional": true,
+        "type": [
+          "\"horizontal\"",
+          "\"vertical\""
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      }
+    }
   }
 }
