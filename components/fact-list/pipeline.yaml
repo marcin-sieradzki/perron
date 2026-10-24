@@ -9,16 +9,14 @@ stages:
     started: 2026-10-24T23:45:17.068Z
     ended: 2026-10-24T23:46:37.552Z
   build:
-    runs: 1
-    failing: review round 1 found 2 P2 (components/fact-list/review.md)
+    runs: 2
+    status: done
+    started: 2026-10-24T23:56:54.277Z
+    ended: 2026-10-24T23:58:19.067Z
   review:
-    status: failed
-    started: 2026-10-24T23:52:20.374Z
     rounds: 1
+    sentBack: 1
     findings:
       p1: 0
       p2: 2
       p3: 3
-    sentBack: 1
-    ended: 2026-10-24T23:56:49.035Z
-    failing: review round 1 found 2 P2 (components/fact-list/review.md)
