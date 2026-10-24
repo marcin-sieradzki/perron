@@ -1,5 +1,6 @@
 // Sheet's stories: one per anchor, a bottom sheet at each snap point, and a modal sheet, each open
-// by defaultOpen, with play tests for dismissal, focus and the keys (docs/components/sheet.md).
+// by defaultOpen with the trigger that opens it again, with play tests for dismissal, focus and the
+// keys (docs/components/sheet.md).
 import { createRoot } from 'react-dom/client'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, screen, userEvent, waitFor, within } from 'storybook/test'
@@ -30,10 +31,14 @@ const meta = {
   args: {
     title: TITLE,
     children: body(LINES),
+    trigger: <button type="button">{TRIGGER}</button>,
     defaultOpen: true,
     onOpen: fn(),
     onClose: fn(),
   },
+  // Each sheet portals to the end of <body> with position: fixed and locks the page, so on the docs
+  // page each story renders in its own iframe rather than inline.
+  parameters: { docs: { story: { inline: false, height: '480px' } } },
 } satisfies Meta<typeof Sheet>
 
 export default meta
@@ -49,7 +54,8 @@ const closed = () => waitFor(() => expect(screen.queryByRole('dialog')).toBeNull
 /** The overview sheet: from the left, open, with a title and a few lines of body. */
 export const Left: Story = {
   args: { anchor: 'left' },
-  play: async ({ args, step }) => {
+  play: async ({ canvasElement, args, step }) => {
+    const trigger = within(canvasElement).getByRole('button', { name: TRIGGER })
     await sheet()
     await step('the open sheet holds only owned and caller words, in da (CR-12)', async () => {
       const host = document.createElement('div')
@@ -65,25 +71,30 @@ export const Left: Story = {
         expect(found).not.toBeNull()
         return found as Element
       })
-      expectOwnedStrings(da.outerHTML, 'da', [TITLE, ...LINES])
+      expectOwnedStrings(da.outerHTML, 'da', [TITLE, ...LINES, TRIGGER])
       root.unmount()
       host.remove()
     })
-    await step('Esc closes it with reason escape-key', async () => {
-      await userEvent.keyboard('{Escape}')
-      await expect(args.onClose).toHaveBeenCalledWith(
-        expect.anything(),
-        'escape-key',
-        expect.anything(),
-      )
-      await closed()
-    })
+    await step(
+      'Esc closes it with reason escape-key, and focus returns to the trigger',
+      async () => {
+        await userEvent.keyboard('{Escape}')
+        await expect(args.onClose).toHaveBeenCalledWith(
+          expect.anything(),
+          'escape-key',
+          expect.anything(),
+        )
+        await closed()
+        await waitFor(() => expect(trigger).toHaveFocus())
+        trigger.blur()
+      },
+    )
   },
 }
 
 /** The detail panel: from the right, open, with the trigger that opens it again. */
 export const Right: Story = {
-  args: { anchor: 'right', trigger: <button type="button">{TRIGGER}</button> },
+  args: { anchor: 'right' },
   // the page goes on after the trigger, as the map's controls do, so Tab has somewhere to go
   render: (args) => (
     <>
@@ -145,7 +156,8 @@ export const Right: Story = {
 export const Bottom: Story = {
   // a body taller than the peek, so the peek cuts it and a swipe up shows the rest
   args: { anchor: 'bottom', children: body([...LINES, ...LONG.slice(0, 6)]) },
-  play: async ({ args, step }) => {
+  play: async ({ canvasElement, args, step }) => {
+    const trigger = within(canvasElement).getByRole('button', { name: TRIGGER })
     const dialog = await sheet()
     const content = dialog.querySelector('.pn-Sheet-content') as HTMLElement
     await step('at the peek, the body ends on screen, takes focus and scrolls', async () => {
@@ -165,38 +177,60 @@ export const Bottom: Story = {
       await expect(last.getBoundingClientRect().bottom).toBeLessThanOrEqual(window.innerHeight + 1)
       content.scrollTop = 0
     })
-    await step('Esc closes it with reason escape-key', async () => {
-      await userEvent.keyboard('{Escape}')
-      await expect(args.onClose).toHaveBeenCalledWith(
-        expect.anything(),
-        'escape-key',
-        expect.anything(),
-      )
-      await closed()
-    })
+    await step(
+      'Esc closes it with reason escape-key, and focus returns to the trigger',
+      async () => {
+        await userEvent.keyboard('{Escape}')
+        await expect(args.onClose).toHaveBeenCalledWith(
+          expect.anything(),
+          'escape-key',
+          expect.anything(),
+        )
+        await closed()
+        await waitFor(() => expect(trigger).toHaveFocus())
+        trigger.blur()
+      },
+    )
   },
 }
 
 /** The bottom sheet at full height, with a body long enough to scroll under the header. */
 export const BottomExpanded: Story = {
   args: { anchor: 'bottom', defaultSnapPoint: 1, children: body(LONG) },
-  play: async () => {
+  play: async ({ canvasElement, args, step }) => {
+    const trigger = within(canvasElement).getByRole('button', { name: TRIGGER })
     const dialog = await sheet()
-    const header = dialog.querySelector('.pn-Sheet-header') as HTMLElement
-    const content = dialog.querySelector('.pn-Sheet-content') as HTMLElement
-    await waitFor(() => expect(content.scrollHeight).toBeGreaterThan(content.clientHeight))
-    await waitFor(() => expect(content).toHaveAttribute('tabindex', '0'))
-    const top = header.getBoundingClientRect().top
-    content.scrollTop = content.scrollHeight
-    await waitFor(() => expect(content.scrollTop).toBeGreaterThan(0))
-    await expect(header.getBoundingClientRect().top).toBe(top)
-    content.scrollTop = 0
+    await step('the content scrolls and the header stays in place', async () => {
+      const header = dialog.querySelector('.pn-Sheet-header') as HTMLElement
+      const content = dialog.querySelector('.pn-Sheet-content') as HTMLElement
+      await waitFor(() => expect(content.scrollHeight).toBeGreaterThan(content.clientHeight))
+      await waitFor(() => expect(content).toHaveAttribute('tabindex', '0'))
+      const top = header.getBoundingClientRect().top
+      content.scrollTop = content.scrollHeight
+      await waitFor(() => expect(content.scrollTop).toBeGreaterThan(0))
+      await expect(header.getBoundingClientRect().top).toBe(top)
+      content.scrollTop = 0
+    })
+    await step(
+      'Esc closes it with reason escape-key, and focus returns to the trigger',
+      async () => {
+        await userEvent.keyboard('{Escape}')
+        await expect(args.onClose).toHaveBeenCalledWith(
+          expect.anything(),
+          'escape-key',
+          expect.anything(),
+        )
+        await closed()
+        await waitFor(() => expect(trigger).toHaveFocus())
+        trigger.blur()
+      },
+    )
   },
 }
 
 /** A modal sheet: from the left, over the scrim, with the trigger that opens it again. */
 export const Modal: Story = {
-  args: { anchor: 'left', modal: true, trigger: <button type="button">{TRIGGER}</button> },
+  args: { anchor: 'left', modal: true },
   play: async ({ canvasElement, args, step }) => {
     const trigger = within(canvasElement).getByRole('button', { name: TRIGGER, hidden: true })
     await sheet()

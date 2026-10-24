@@ -96,7 +96,7 @@ export interface SheetProps extends Omit<Drawer.Popup.Props, 'children' | 'title
    * `size.sheet-peek` (read once, when a bottom sheet first renders, from its custom property
    * `--perron-size-sheet-peek` with `getComputedStyle`) and to full height, `1`, starting at the
    * peek.
-   * @default With `anchor` `'bottom'`: `size.sheet-peek` and `1`
+   * @default With anchor 'bottom': size.sheet-peek and 1
    */
   snapPoints?: Drawer.Root.SnapPoint[]
   /** The snap point a bottom sheet is at, for a controlled snap point. */
