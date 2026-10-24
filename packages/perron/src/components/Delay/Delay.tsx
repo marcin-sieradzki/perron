@@ -1,6 +1,6 @@
 // Delay: how late or early a vehicle or departure runs, as a short figure in the delay's colour,
 // such as "+3 min", with the same said in words to a screen reader. Spec: docs/components/delay.md.
-import type { Ref } from 'react'
+import type { CSSProperties, Ref } from 'react'
 import { mergeProps } from '@base-ui/react/merge-props'
 import { useRender } from '@base-ui/react/use-render'
 import { VisuallyHidden } from '../../parts/VisuallyHidden/VisuallyHidden.tsx'
@@ -67,6 +67,10 @@ export interface DelayProps extends Omit<
    * @default The locale's
    */
   delayUnknownLabel?: string
+  /** Reaches the root, merged after `pn-Delay` */
+  className?: string
+  /** Reaches the root */
+  style?: CSSProperties
   /** Reaches the root element. */
   ref?: Ref<HTMLSpanElement>
 }
