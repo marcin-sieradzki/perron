@@ -330,10 +330,10 @@
     "name": "MapControls",
     "layer": "component",
     "category": "Map",
-    "status": "designing",
+    "status": "building",
     "baseUiParts": [],
     "penpotPath": "Components/MapControls",
-    "dependsOn": ["Toolbar", "IconButton"]
+    "dependsOn": ["Toolbar"]
   },
   {
     "name": "DepartureRow",

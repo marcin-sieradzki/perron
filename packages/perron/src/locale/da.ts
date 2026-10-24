@@ -24,4 +24,8 @@ export const da: OwnedStrings = {
   minutesEarly: 'min før tid',
   onTime: 'Til tiden',
   delayUnknown: 'Forsinkelse ukendt',
+  mapControls: 'Kortknapper',
+  zoomIn: 'Zoom ind',
+  zoomOut: 'Zoom ud',
+  centerMap: 'Centrér kortet',
 }

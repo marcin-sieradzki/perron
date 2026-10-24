@@ -24,4 +24,8 @@ export const sv: OwnedStrings = {
   minutesEarly: 'min före',
   onTime: 'I tid',
   delayUnknown: 'Försening okänd',
+  mapControls: 'Kartknappar',
+  zoomIn: 'Zooma in',
+  zoomOut: 'Zooma ut',
+  centerMap: 'Centrera kartan',
 }
