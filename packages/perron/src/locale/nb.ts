@@ -27,6 +27,8 @@ export const nb: OwnedStrings = {
   onTime: 'I rute',
   delayUnknown: 'Forsinkelse ukjent',
   unknown: 'Ukjent',
+  nextStop: 'Neste stopp',
+  passed: 'Passert',
   mapControls: 'Kartknapper',
   zoomIn: 'Zoom inn',
   zoomOut: 'Zoom ut',

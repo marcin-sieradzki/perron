@@ -27,6 +27,8 @@ export const sv: OwnedStrings = {
   onTime: 'I tid',
   delayUnknown: 'Försening okänd',
   unknown: 'Okänd',
+  nextStop: 'Nästa hållplats',
+  passed: 'Passerad',
   mapControls: 'Kartknappar',
   zoomIn: 'Zooma in',
   zoomOut: 'Zooma ut',
