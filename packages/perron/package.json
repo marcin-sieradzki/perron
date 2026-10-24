@@ -9,7 +9,14 @@
     "url": "git+https://github.com/marcin-sieradzki/perron.git",
     "directory": "packages/perron"
   },
+  "sideEffects": [
+    "**/*.css"
+  ],
   "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
     "./perron.css": "./styles/perron.css",
     "./tokens.css": "./tokens/generated/tokens.css",
     "./typography.css": "./tokens/generated/typography.css",
@@ -20,12 +27,17 @@
     "./data/*.json": "./data/*.json"
   },
   "files": [
+    "dist",
     "tokens",
     "styles",
     "icons",
     "logos",
     "data"
   ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "prepack": "npm run build"
+  },
   "dependencies": {
     "@fontsource/familjen-grotesk": "^5.3.0",
     "@fontsource/jetbrains-mono": "^5.3.0",
