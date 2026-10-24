@@ -1,0 +1,28 @@
+# Written by npm run factory; never by hand.
+component: IconButton
+layer: component
+deferred:
+  at: 2026-10-24T22:07:30.545Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-24T22:12:09.355Z
+    ended: 2026-10-24T22:13:35.097Z
+  build:
+    status: done
+    started: 2026-10-24T22:13:37.173Z
+    runs: 1
+    ended: 2026-10-24T22:18:41.080Z
+  review:
+    status: done
+    started: 2026-10-24T22:18:43.121Z
+    rounds: 1
+    findings:
+      p1: 0
+      p2: 2
+      p3: 2
+    ended: 2026-10-24T22:24:17.271Z
+  docs:
+    status: done
+    started: 2026-10-24T22:24:23.109Z
+    ended: 2026-10-24T22:27:09.072Z

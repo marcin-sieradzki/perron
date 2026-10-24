@@ -12,16 +12,16 @@
     "name": "IconButton",
     "layer": "component",
     "category": "Actions",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": ["Button"],
     "penpotPath": "Components/IconButton",
-    "dependsOn": ["Button"]
+    "dependsOn": []
   },
   {
     "name": "LinkButton",
     "layer": "component",
     "category": "Actions",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/LinkButton",
     "dependsOn": ["Button"]
@@ -39,7 +39,7 @@
     "name": "Surface",
     "layer": "component",
     "category": "Layout",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/Surface",
     "dependsOn": []
@@ -348,7 +348,7 @@
     "name": "DetailHeader",
     "layer": "pattern",
     "category": "Detail",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Patterns/DetailHeader",
     "dependsOn": ["LineBadge", "StationIcon"]

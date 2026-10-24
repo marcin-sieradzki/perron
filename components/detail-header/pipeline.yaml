@@ -1,0 +1,28 @@
+# Written by npm run factory; never by hand.
+component: DetailHeader
+layer: pattern
+deferred:
+  at: 2026-10-24T22:15:53.156Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-24T22:15:55.850Z
+    ended: 2026-10-24T22:21:17.072Z
+  build:
+    status: done
+    started: 2026-10-24T22:21:38.398Z
+    runs: 1
+    ended: 2026-10-24T22:27:31.986Z
+  review:
+    status: done
+    started: 2026-10-24T22:27:34.284Z
+    rounds: 1
+    findings:
+      p1: 0
+      p2: 0
+      p3: 3
+    ended: 2026-10-24T22:31:18.956Z
+  docs:
+    status: done
+    started: 2026-10-24T22:31:29.103Z
+    ended: 2026-10-24T22:32:58.038Z

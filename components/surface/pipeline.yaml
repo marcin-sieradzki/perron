@@ -1,0 +1,29 @@
+# Written by npm run factory; never by hand.
+component: Surface
+layer: component
+deferred:
+  at: 2026-10-24T22:10:41.444Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-24T22:14:48.299Z
+    ended: 2026-10-24T22:15:33.297Z
+  build:
+    runs: 2
+    status: done
+    started: 2026-10-24T22:25:21.933Z
+    ended: 2026-10-24T22:28:13.525Z
+  review:
+    rounds: 2
+    sentBack: 1
+    findings:
+      p1: 0
+      p2: 0
+      p3: 1
+    status: done
+    started: 2026-10-24T22:28:13.696Z
+    ended: 2026-10-24T22:31:35.297Z
+  docs:
+    status: done
+    started: 2026-10-24T22:31:36.153Z
+    ended: 2026-10-24T22:33:04.021Z

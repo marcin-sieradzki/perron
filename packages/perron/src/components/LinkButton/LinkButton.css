@@ -1,0 +1,79 @@
+/* LinkButton, from docs/components/link-button.md: Button's tokens for the same variant and size in
+   its neutral colour (CR-3). Every state changes colours only (CR-5), at once (CR-12), and the
+   colour is set on the root, which the label and the icons take (CR-8). */
+
+.pn-LinkButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--perron-space-200);
+  block-size: var(--perron-size-button);
+  margin: 0;
+  padding-block: 0;
+  padding-inline: var(--perron-space-400);
+  /* every variant has the edge, transparent where it shows none, so both share one box (CR-10) */
+  border: var(--perron-border-width-025) solid transparent;
+  border-radius: var(--perron-radius-md);
+  /* the shape marks the link, in every state (CR-6) */
+  text-decoration: none;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.pn-LinkButton[data-size='small'] {
+  gap: var(--perron-space-150);
+  block-size: var(--perron-size-button-sm);
+  padding-inline: var(--perron-space-300);
+}
+
+.pn-LinkButton[data-full-width] {
+  inline-size: 100%;
+}
+
+.pn-LinkButton-label {
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+}
+
+.pn-LinkButton-startIcon,
+.pn-LinkButton-endIcon {
+  display: inline-flex;
+  flex: none;
+  --perron-icon-size: var(--perron-icon-size-400);
+}
+
+/* solid. The colours match a visited link too: no :visited rule changes them (CR-6). */
+
+.pn-LinkButton[data-variant='solid'] {
+  border-color: transparent;
+  background-color: var(--perron-color-surface-inverse);
+  color: var(--perron-color-text-inverse);
+}
+
+@media (hover: hover) {
+  .pn-LinkButton[data-variant='solid']:hover {
+    background-color: var(--perron-color-surface-inverse-hover);
+  }
+}
+
+.pn-LinkButton[data-variant='solid']:active {
+  background-color: var(--perron-color-surface-inverse-hover);
+}
+
+/* outline */
+
+.pn-LinkButton[data-variant='outline'] {
+  border-color: var(--perron-color-border-control);
+  background-color: transparent;
+  color: var(--perron-color-text-primary);
+}
+
+@media (hover: hover) {
+  .pn-LinkButton[data-variant='outline']:hover {
+    background-color: var(--perron-color-surface-hover);
+  }
+}
+
+.pn-LinkButton[data-variant='outline']:active {
+  background-color: var(--perron-color-surface-hover);
+}
