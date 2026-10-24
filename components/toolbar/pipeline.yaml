@@ -22,3 +22,6 @@ stages:
       p2: 3
       p3: 5
     ended: 2026-10-24T21:30:38.798Z
+  docs:
+    status: running
+    started: 2026-10-24T21:30:56.773Z
