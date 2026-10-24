@@ -1,0 +1,48 @@
+/* Section: a heading above the caller's content, on its container's surface, with no fill, border,
+   padding, margin or shadow of its own and no width of its own (CR-5). Every row of
+   docs/components/section.md's Tokens table is at rest. No overflow, so a focused child's ring is
+   never cut (CR-8). */
+.pn-Section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-300);
+  margin: 0;
+}
+
+/* CR-6: the header wraps, the action moving below the title when the two don't fit on one line,
+   in the same reading order. */
+.pn-Section-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--perron-space-200);
+  margin: 0;
+}
+
+/* CR-6: the title grows and can shrink below its longest word, breaking a long word inside itself.
+   CR-7: the capitals are style over sentence-case text, as the overline role's class sets them. */
+.pn-Section-title {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  margin: 0;
+  font: var(--perron-typography-overline);
+  letter-spacing: var(--perron-typography-overline-tracking);
+  color: var(--perron-color-text-secondary);
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+/* CR-6: the action keeps its own size at the inline end. */
+.pn-Section-action {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--perron-space-200);
+  margin: 0;
+  margin-inline-start: auto;
+}
+
+/* The content's look and layout are the caller's. */
+.pn-Section-content {
+  margin: 0;
+}
