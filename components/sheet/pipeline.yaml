@@ -3,9 +3,6 @@ component: Sheet
 layer: component
 deferred:
   at: 2026-10-24T21:03:51.759Z
-needsHuman:
-  stage: docs
-  reason: 'docs failed: Sheet.stories.tsx (build): every story renders inline on the docs page with defaultOpen, so all five sheets portal over the page and Modal locks scroll and aria-hides the docs. Fix: meta parameters.docs.story { inline: false, height }. Also snapPoints @default shows markdown backticks.'
 stages:
   brief:
     status: done
@@ -13,9 +10,7 @@ stages:
     ended: 2026-10-24T21:12:38.653Z
   build:
     runs: 4
-    status: done
-    started: 2026-10-24T21:44:11.759Z
-    ended: 2026-10-24T21:51:32.951Z
+    failing: "docs failed: Sheet.stories.tsx (build): with docs.story inline:false each story's play test runs in its docs iframe, so Left/Right/BottomExpanded close their sheets and Bottom/Modal fail on focus competition. Overlay stories need a library-wide way to skip play on the docs page (e.g. a shared helper or docs tooling)."
   review:
     rounds: 2
     p1Rounds: 1
@@ -23,11 +18,9 @@ stages:
       p1: 0
       p2: 2
       p3: 5
-    status: done
-    started: 2026-10-24T21:51:33.124Z
-    ended: 2026-10-24T21:59:10.190Z
   docs:
+    failures: 1
     status: failed
-    started: 2026-10-24T22:01:56.668Z
-    ended: 2026-10-24T22:04:59.972Z
-    failing: 'Sheet.stories.tsx (build): every story renders inline on the docs page with defaultOpen, so all five sheets portal over the page and Modal locks scroll and aria-hides the docs. Fix: meta parameters.docs.story { inline: false, height }. Also snapPoints @default shows markdown backticks.'
+    started: 2026-10-24T22:46:45.239Z
+    ended: 2026-10-24T22:50:26.761Z
+    failing: "Sheet.stories.tsx (build): with docs.story inline:false each story's play test runs in its docs iframe, so Left/Right/BottomExpanded close their sheets and Bottom/Modal fail on focus competition. Overlay stories need a library-wide way to skip play on the docs page (e.g. a shared helper or docs tooling)."
