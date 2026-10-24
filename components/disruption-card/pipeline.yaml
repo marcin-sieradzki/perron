@@ -9,8 +9,10 @@ stages:
     started: 2026-10-24T22:50:12.196Z
     ended: 2026-10-24T22:51:37.650Z
   build:
-    runs: 3
-    failing: "docs failed: Stage: build. DisruptionCard.tsx:41 lines?: readonly DisruptionCardLine[] reads as 'unknown' in react-docgen, so the docs props table shows unknown. Fix: lines?: ReadonlyArray<DisruptionCardLine>, then npm run api."
+    runs: 4
+    status: done
+    started: 2026-10-24T23:18:42.988Z
+    ended: 2026-10-24T23:20:18.706Z
   review:
     rounds: 2
     sentBack: 1
@@ -19,8 +21,4 @@ stages:
       p2: 0
       p3: 3
   docs:
-    status: failed
-    started: 2026-10-24T23:16:52.124Z
     failures: 1
-    ended: 2026-10-24T23:18:38.592Z
-    failing: "Stage: build. DisruptionCard.tsx:41 lines?: readonly DisruptionCardLine[] reads as 'unknown' in react-docgen, so the docs props table shows unknown. Fix: lines?: ReadonlyArray<DisruptionCardLine>, then npm run api."

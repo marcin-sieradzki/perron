@@ -38,7 +38,7 @@ export interface DisruptionCardProps extends Omit<SurfaceProps, 'variant' | 'chi
    * its colours and `name` the short name riders know, "M2", "5C". Leave it out, or pass an empty
    * array, for a disruption across the network, such as a data feed problem.
    */
-  lines?: readonly DisruptionCardLine[]
+  lines?: ReadonlyArray<DisruptionCardLine>
   /**
    * What is happening, in a few words: "Signal fault at Kongens Nytorv". Required. Replaces the
    * HTML `title` attribute.
