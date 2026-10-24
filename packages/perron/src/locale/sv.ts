@@ -25,4 +25,8 @@ export const sv: OwnedStrings = {
   onTime: 'I tid',
   delayUnknown: 'Försening okänd',
   brandName: 'Mylder',
+  mapControls: 'Kartknappar',
+  zoomIn: 'Zooma in',
+  zoomOut: 'Zooma ut',
+  centerMap: 'Centrera kartan',
 }

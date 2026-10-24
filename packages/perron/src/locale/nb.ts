@@ -25,4 +25,8 @@ export const nb: OwnedStrings = {
   onTime: 'I rute',
   delayUnknown: 'Forsinkelse ukjent',
   brandName: 'Mylder',
+  mapControls: 'Kartknapper',
+  zoomIn: 'Zoom inn',
+  zoomOut: 'Zoom ut',
+  centerMap: 'Sentrer kartet',
 }
