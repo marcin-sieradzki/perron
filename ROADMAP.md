@@ -221,7 +221,7 @@ After the design step, three agent contexts run in sequence, rather than as an a
   - misuse of Base UI: rebuilt behaviour, a lost `render` or ref;
   - the owned strings and docs, against `docs/content-design.md`.
 - [ ] **4.6 `factory` orchestrator skill.** Local. `/factory <Name>` runs one component through the loop:
-  - It owns `components/<name>/pipeline.yaml` (stage, approvals, attempts, open P1s) and is the only one that writes it.
+  - It owns `components/<name>/pipeline.yaml` (stage, approvals, attempts, open P1s, and the scorecard of 5.5) and is the only one that writes it.
   - It starts each stage (design, brief, build, review, docs, visual) in order, and refuses one whose input is missing or unapproved.
   - It drives the component through every stage it can, and stops only at a gate, a `[PENDING]` question or a cap.
   - Each stage runs in a fresh context, as a resumable Claude Code workflow, so an interrupted run picks up where it stopped.
@@ -241,8 +241,8 @@ After the design step, three agent contexts run in sequence, rather than as an a
 
 ## Phase 5: Tracer bullet, Button
 
-- [ ] **5.1 Button through the whole loop.** Local. Run `/factory Button` from Penpot to a released `@mylder/perron@0.2.0`, and switch Mylder's own buttons to it. Log every place where the loop stalled or an agent guessed.
-- [ ] **5.2 Retro.** Any. Fix the skills, checks and templates the log points at, before the next component starts. **Done** when every log entry is fixed, or written down as a known gap in the contract.
+- [ ] **5.1 Button through the whole loop.** Local. Run `/factory Button` from Penpot to a released `@mylder/perron@0.2.0`, and switch Mylder's own buttons to it. Log every place where the loop stalled or an agent guessed, and keep every stage's transcript: the log and the transcripts are what 5.2 checks the scorers against.
+- [ ] **5.2 Retro.** Local, where the transcripts are. Fix the skills, checks and templates the log points at, before the next component starts. Write the three scorers of 5.5 and run them on Button's transcripts: a scorer that misses a log entry it should catch, or fails a run the log is happy with, gets its rubric rewritten. **Done** when every log entry is fixed, or written down as a known gap in the contract, and the scorers agree with the log.
 - [ ] **5.3 Perron MCP, components.** Any.
   - Add `list_components`, `get_component` (spec, props, code map) and `get_design` (read-back and exports) to the server.
   - Generate a `.md` prop contract per component for the docs site and `llms.txt`.
@@ -258,14 +258,58 @@ After the design step, three agent contexts run in sequence, rather than as an a
     - the PR is marked ready.
   - **The PR.** The build stage opens one draft PR per component, holding the spec, code, stories, docs page, read-back and visual report. It is marked ready once review and the visual check pass.
   - **Penpot.** When the tab isn't connected, the design run opens the file and presses File → MCP Server → Connect through Claude in Chrome. If that fails, it adds `needs-human` and stops.
-  - **Throttle.** One component in flight at first. Raise it once components pass through without `needs-human`.
+  - **Throttle.** One component in flight at first. Raise it once five components in a row pass through without `needs-human`.
   - **More than one in flight.** Raising the throttle brings in two things:
     - **The App.** Maintainer, then Any. The factory gets its own GitHub App, `perron-factory`, installed on this repository only, with write access to contents, issues and pull requests, so its comments notify the maintainer and its PRs can be approved. Its private key lives in the macOS Keychain. `scripts/factory-token.ts` mints a one-hour installation token into `GH_TOKEN`, so the maintainer's own login stays as it is.
-    - **Tracing.** Claude Code's runs go to a self-hosted Langfuse on the maintainer's machine through its Claude Code hook.
-  - **Retro run.** After every fifth merged component, it reads those five issues, PRs, reviews and transcripts, and opens one PR to the skills, checks and templates.
+    - **Tracing.** Claude Code's runs go to a self-hosted Langfuse on the maintainer's machine through its Claude Code hook, with each run's scorecard attached to its trace as scores.
+  - **Retro run.** After every fifth merged component, as 5.5 describes.
   - **Visibility.** A GitHub Project board in this repository's Projects, with one column per stage, which adds every new issue through its built-in workflow.
 
   **Done** when `/factory` takes a made-up component from a filed issue to a ready PR in a fresh session, stopping at the design gate and resuming from the label alone.
+
+- [ ] **5.5 Scored retros.** Local, built with 5.4, so the first component the factory takes is scored. The factory improves the way a component does, through a PR the maintainer merges ([ADR 0009](docs/adr/0009-factory-improves-through-scored-retros.md)).
+  - **Scorecard.** At the end of each stage run, `scripts/factory-score.ts` reads the run's transcript, gate output and review, and the factory writes the result into `pipeline.yaml`:
+    - the attempts, and the check that failed on each;
+    - the pre-flight: whether each named file was read before the first write;
+    - the review findings, by P1, P2 and P3, per round;
+    - the `[PENDING]` questions asked;
+    - the tool calls, the files read more than twice, the tokens and the minutes;
+    - the model, and where the transcript is archived.
+
+    Claude Code deletes transcripts older than `cleanupPeriodDays` (30 by default), and five components can take longer than that, so the factory copies each stage's transcript, with its subagents' transcripts, to an archive on the maintainer's machine, outside the repo. Their format is internal to Claude Code and changes between versions, so the script reads only what it needs and says which fields it could not find.
+
+  - **Scorers.** One rubric file each in `.claude/skills/factory-retro/scorers/`, naming the stages it reads, its levels (pass, fail, insufficient evidence) and an example of each. Every verdict gives a one-sentence reason and the transcript lines behind it. Three to start, written in 5.2:
+    - `guess`: the run used a value, token, prop or behaviour its sources don't give, instead of reading it or asking a `[PENDING]` question;
+    - `efficiency`: the run lost effort to reworking its own mistakes, reading files again, running calls one by one that could run together, or repeating checks that had passed;
+    - `reviewability`: what the maintainer reads (comments, the PR, the spec, code comments and tests) says what changed in as few words as it can.
+
+    Code quality has no scorer: the gates and the reviewer judge it, and the scorecard keeps their findings. No stage skill points at the scorers.
+
+  - **Memory.** Each stage's summary comment ends with a **Learned** line when the run found something a later run will need, such as a Base UI quirk, a Penpot workaround or a token the spec forgot. Nothing else carries a fact from one run to the next: the repo's `.claude/settings.json` sets `autoMemoryEnabled` to `false`, so Claude Code keeps no memory of its own on the maintainer's machine, where a fact would skip review and the cloud fallback could never read it.
+
+  - **Retro run.** When five components have merged since the last retro, `/factory` runs the `factory-retro` skill before it takes the next component:
+    1. **Pre-flight:** the last retro PR, and the five components' scorecards, issues and PRs.
+    2. **Check the last retro.** For each prediction in its PR, did the failure come back? A change that didn't hold is revised or reverted in this PR.
+    3. **Score.** Each scorer runs over the whole batch in a fresh context of its own, on a smaller model than the stages use.
+    4. **Pick.** A run is worth a look when a scorer failed it, it hit a cap, or it cost a touch. Group those runs by cause. A cause needs two runs, or one touch, before anything changes.
+    5. **Fix.** For each cause, find the line that is missing, wrong or unclear, and fix it on the highest rung that prevents the failure:
+       1. a check in `npm run check`;
+       2. a rule in the contract, or a line in the spec template;
+       3. a skill's pre-flight, steps or completion criteria;
+       4. a fact, in its one home;
+       5. a factory setting: a cap, or a stage's model.
+
+       Rewrite the line with the `writing-for-agents` skill rather than adding a paragraph beside it. The **Learned** lines from the stage summaries go to their homes the same way, and an answer the maintainer gave to the same `[PENDING]` question twice becomes a rule in the contract.
+
+    6. **Replay.** For a change to a stage skill or a stage's model, run that stage again on the frozen inputs of the batch's worst run, from the retro branch, and put both scorecards in the PR.
+    7. **Open one PR**, labelled `retro`. For each change, it gives the runs it cites (each with the scorer's reason and a short excerpt, secrets removed), the rung, and a prediction of what the next batch will show. A table follows, comparing this batch with the last: touches per component, build attempts, review rounds, P1s in the first round, escapes (problems the maintainer found that review missed), `needs-human`, each scorer's pass rate, tokens and minutes.
+
+  - **Limits.**
+    - The retro never merges, and never opens a second retro PR while one is open. The factory keeps building in the meantime.
+    - It may edit the skills, the agents, the contract and template, the checks, `penpot/README.md` and the factory's settings. It files a token gap as an issue for the `design-tokens` skill, and never touches component code, the ADRs or the vendored skills, the ones with a `LICENSE` file.
+    - A failure no scorer caught, or a verdict the maintainer disagrees with, changes a scorer in a PR of its own, never beside an instruction change.
+
+  **Done** when a retro on a made-up batch, with one failure planted in two runs, opens a PR that cites both runs, rewrites the line behind them and makes a prediction, and a replay of Button's build stage writes a scorecard.
 
 ## Phase 6: Components, in waves
 
