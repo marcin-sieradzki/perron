@@ -44,6 +44,7 @@ const preview: Preview = {
             'EmptyState',
             'Delay',
             'LineBadge',
+            'SeverityLabel',
             'StationIcon',
             // registry:components end
           ],
@@ -59,6 +60,7 @@ const preview: Preview = {
             'EmptyState',
             'Delay',
             'LineBadge',
+            'SeverityLabel',
             'StationIcon',
           ],
           // registry:specs end
