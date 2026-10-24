@@ -144,6 +144,11 @@
           "$type": "color",
           "$value": "#D99A00"
         },
+        "600": {
+          "$type": "color",
+          "$value": "#B07B05",
+          "$description": "Hover fill of a light-theme brand button, between the fill and the text step"
+        },
         "700": {
           "$type": "color",
           "$value": "#896001"
@@ -1037,7 +1042,7 @@
         "brand": {
           "$type": "color",
           "$value": "{palette.yellow.700}",
-          "$description": "Text in the brand colour, for emphasis on the hero page; never links or buttons"
+          "$description": "Text in the brand colour: brand outline buttons and emphasis on the hero page; never links"
         }
       },
       "surface": {
@@ -1104,7 +1109,12 @@
         "brand": {
           "$type": "color",
           "$value": "{palette.yellow.500}",
-          "$description": "Brand fill: hero bands and calls to action on the hero page. Text on it is color.text.on-color.dark"
+          "$description": "Brand fill: brand buttons, hero bands and calls to action. Text on it is color.text.on-color.dark"
+        },
+        "brand-hover": {
+          "$type": "color",
+          "$value": "{palette.yellow.600}",
+          "$description": "Hover fill of a brand button, one step from color.surface.brand"
         },
         "brand-subtle": {
           "$type": "color",
@@ -1127,6 +1137,11 @@
           "$type": "color",
           "$value": "rgba(18, 24, 27, 0.47)",
           "$description": "Edges that show where a control is: inputs, outline buttons. 3:1 or better on every surface"
+        },
+        "brand": {
+          "$type": "color",
+          "$value": "{palette.yellow.700}",
+          "$description": "Edge of a brand button, solid or outline, so the yellow reaches 3:1 on every surface"
         },
         "focus": {
           "$type": "color",
@@ -1391,7 +1406,7 @@
         "brand": {
           "$type": "color",
           "$value": "{palette.yellow.300}",
-          "$description": "Text in the brand colour, for emphasis on the hero page; never links or buttons"
+          "$description": "Text in the brand colour: brand outline buttons and emphasis on the hero page; never links"
         }
       },
       "surface": {
@@ -1458,7 +1473,12 @@
         "brand": {
           "$type": "color",
           "$value": "{palette.yellow.300}",
-          "$description": "Brand fill: hero bands and calls to action on the hero page. Text on it is color.text.on-color.dark"
+          "$description": "Brand fill: brand buttons, hero bands and calls to action. Text on it is color.text.on-color.dark"
+        },
+        "brand-hover": {
+          "$type": "color",
+          "$value": "{palette.yellow.500}",
+          "$description": "Hover fill of a brand button, one step from color.surface.brand"
         },
         "brand-subtle": {
           "$type": "color",
@@ -1481,6 +1501,11 @@
           "$type": "color",
           "$value": "rgba(235, 238, 235, 0.39)",
           "$description": "Edges that show where a control is: inputs, outline buttons. 3:1 or better on every surface"
+        },
+        "brand": {
+          "$type": "color",
+          "$value": "{palette.yellow.300}",
+          "$description": "Edge of a brand button, solid or outline, so the yellow reaches 3:1 on every surface"
         },
         "focus": {
           "$type": "color",

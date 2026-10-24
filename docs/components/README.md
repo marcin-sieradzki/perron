@@ -84,7 +84,7 @@ A `color` value is an intent: what the colour means. Each has its tokens; a comp
 | `danger`  | `color.text.danger`  | `color.surface.danger`       | `color.status.danger`      | none                                                   |
 | `info`    | `color.text.info`    | `color.surface.info`         | `color.status.info`        | none                                                   |
 
-`brand` belongs to the hero page, and `color.text.brand` is never a link or a button's text. The status intents have no solid fill, because no text colour is measured on `color.status.*`.
+`brand` is the primary colour: a brand button marks the main action, with `color.surface.brand-hover` on hover and a `color.border.brand` edge, and `color.text.brand` labels its outline. It is never a link. The status intents have no solid fill, because no text colour is measured on `color.status.*`.
 
 ## State and events
 

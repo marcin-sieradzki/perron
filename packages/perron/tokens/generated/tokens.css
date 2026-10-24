@@ -34,6 +34,7 @@
   --perron-palette-yellow-100: #FFF2DD;
   --perron-palette-yellow-300: #F2B630;
   --perron-palette-yellow-500: #D99A00;
+  --perron-palette-yellow-600: #B07B05;
   --perron-palette-yellow-700: #896001;
   --perron-palette-yellow-900: #3B2B07;
   --perron-color-text-on-color-dark: var(--perron-palette-neutral-900);
@@ -230,10 +231,12 @@
   --perron-color-surface-danger: var(--perron-palette-red-100);
   --perron-color-surface-info: var(--perron-palette-blue-100);
   --perron-color-surface-brand: var(--perron-palette-yellow-500);
+  --perron-color-surface-brand-hover: var(--perron-palette-yellow-600);
   --perron-color-surface-brand-subtle: var(--perron-palette-yellow-100);
   --perron-color-border-subtle: rgba(18, 24, 27, 0.11);
   --perron-color-border-strong: rgba(18, 24, 27, 0.22);
   --perron-color-border-control: rgba(18, 24, 27, 0.47);
+  --perron-color-border-brand: var(--perron-palette-yellow-700);
   --perron-color-border-focus: var(--perron-color-text-primary);
   --perron-color-status-success: var(--perron-palette-green-500);
   --perron-color-status-warning: var(--perron-palette-orange-500);
@@ -295,10 +298,12 @@
     --perron-color-surface-danger: var(--perron-palette-red-900);
     --perron-color-surface-info: var(--perron-palette-blue-900);
     --perron-color-surface-brand: var(--perron-palette-yellow-300);
+    --perron-color-surface-brand-hover: var(--perron-palette-yellow-500);
     --perron-color-surface-brand-subtle: var(--perron-palette-yellow-900);
     --perron-color-border-subtle: rgba(235, 238, 235, 0.1);
     --perron-color-border-strong: rgba(235, 238, 235, 0.2);
     --perron-color-border-control: rgba(235, 238, 235, 0.39);
+    --perron-color-border-brand: var(--perron-palette-yellow-300);
     --perron-color-border-focus: var(--perron-color-text-primary);
     --perron-color-status-success: var(--perron-palette-green-300);
     --perron-color-status-warning: var(--perron-palette-orange-300);
@@ -360,10 +365,12 @@
   --perron-color-surface-danger: var(--perron-palette-red-900);
   --perron-color-surface-info: var(--perron-palette-blue-900);
   --perron-color-surface-brand: var(--perron-palette-yellow-300);
+  --perron-color-surface-brand-hover: var(--perron-palette-yellow-500);
   --perron-color-surface-brand-subtle: var(--perron-palette-yellow-900);
   --perron-color-border-subtle: rgba(235, 238, 235, 0.1);
   --perron-color-border-strong: rgba(235, 238, 235, 0.2);
   --perron-color-border-control: rgba(235, 238, 235, 0.39);
+  --perron-color-border-brand: var(--perron-palette-yellow-300);
   --perron-color-border-focus: var(--perron-color-text-primary);
   --perron-color-status-success: var(--perron-palette-green-300);
   --perron-color-status-warning: var(--perron-palette-orange-300);
