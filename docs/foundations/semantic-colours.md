@@ -11,7 +11,7 @@ Every colour token in both themes. A `color` token says what a colour is for and
 
 ## Text
 
-- Three text colours for the interface. Use `color.text.primary` for what people read first, and `color.text.secondary` for supporting text. Keep `color.text.tertiary` for hints, axis labels and captions next to stronger text: it misses 4.5:1 on purpose (the figures are on [Accessibility](accessibility.md)), so set sentences people must read in primary or secondary.
+- Three text colours for the interface. Use `color.text.primary` for what people read first, and `color.text.secondary` for supporting text. Keep `color.text.tertiary` for hints, axis labels, captions and the "—" of an unknown delay or figure, next to stronger text: it misses 4.5:1 on purpose (the figures are on [Accessibility](accessibility.md)), so set sentences people must read in primary or secondary.
 - `color.text.inverse` sits on `color.surface.inverse`, the primary button and pressed toggles.
 - On a coloured fill, text is `color.text.on-color.dark` or `color.text.on-color.light`, whichever the fill was paired with.
 
