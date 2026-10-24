@@ -7,7 +7,7 @@ import { base, theme } from '../../packages/perron/tokens/generated/tokens.ts'
 import { iconGrid, readIcons, readLogos } from './assets.ts'
 import { PACKAGE } from './paths.ts'
 
-const root = join(dirname(fileURLToPath(import.meta.url)), '../..', PACKAGE)
+const root = join(dirname(fileURLToPath(import.meta.url)), '../..')
 const attr = (svg: string, name: string) => new RegExp(`<svg[^>]* ${name}="([^"]*)"`).exec(svg)?.[1]
 
 describe('icons', () => {
@@ -58,9 +58,10 @@ describe('logos', () => {
 describe('manifests', () => {
   const tree = (manifest: object, files: string[]) => {
     const d = mkdtempSync(join(tmpdir(), 'perron-'))
-    mkdirSync(join(d, 'icons'))
-    writeFileSync(join(d, 'icons/icons.json'), JSON.stringify(manifest))
-    for (const f of files) writeFileSync(join(d, 'icons', `${f}.svg`), '<svg/>')
+    const icons = join(d, PACKAGE, 'icons')
+    mkdirSync(icons, { recursive: true })
+    writeFileSync(join(icons, 'icons.json'), JSON.stringify(manifest))
+    for (const f of files) writeFileSync(join(icons, `${f}.svg`), '<svg/>')
     return d
   }
 

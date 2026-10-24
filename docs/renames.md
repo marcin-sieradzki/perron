@@ -2,6 +2,11 @@
 
 Token names that changed or went away, newest first, so code written against an older name can follow. The components on Mylder's `perron/components` branch use the names before 23 October 2026.
 
+## 24 October 2026: the package
+
+- **Package name.** Perron installs as `@mylder/perron`. Each import keeps its path after the name: `@mylder/perron/perron.css`, `@mylder/perron/tokens.ts`, `@mylder/perron/icons/plus.svg`. No token name changed.
+- **Folders.** In this repository the tokens, styles, icons and logos moved from the root into `packages/perron/`.
+
 ## 23 October 2026: borders, focus and reduced motion
 
 - **Control edges.** Inputs and outline buttons move from `color.border.strong` to the new `color.border.control`, which reaches 3:1 on every surface. `color.border.strong` stays for lines that decorate, such as dashed tags and chart axes.
@@ -9,7 +14,7 @@ Token names that changed or went away, newest first, so code written against an 
 - **Thumb shadow.** `shadow.thumb` moved from base into the themes, stronger in dark. The name is unchanged.
 - **Dark inset.** `palette.neutral.700` changed from #20282C to #283237, so dark `color.surface.inset` stands apart from `color.surface.raised`.
 - **Reduced motion.** `tokens.css` sets the transition durations to 0.01 ms under `prefers-reduced-motion: reduce`. A component's own override of those durations can go; its code that stops loops stays.
-- **Icon sizes.** An icon's size reads `icon.size.325` (13 px), `icon.size.400` (16 px) or `icon.size.450` (18 px). The icon SVGs and the mark now live in this repository, in `packages/perron/icons/` and `packages/perron/logos/`.
+- **Icon sizes.** An icon's size reads `icon.size.325` (13 px), `icon.size.400` (16 px) or `icon.size.450` (18 px). The icon SVGs and the mark now live in this repository, in `icons/` and `logos/`.
 - **Docs.** `docs/foundations.md` became one page per foundation in `docs/foundations/`. Its content section is now `docs/content-design.md`.
 
 ## 23 October 2026: palette, status colours and one type set

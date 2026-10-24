@@ -170,7 +170,7 @@ Penpot owns each component's anatomy and variants. The repo owns the token value
   - `penpot/<name>.code-map.json` maps each Penpot property and layer to a React prop or a CSS state.
 
   The checks, in `npm run check`:
-  - every token name exists in `tokens/`;
+  - every token name exists in `packages/perron/tokens/`;
   - the code map covers every variant value and named layer;
   - no layer has an unbound fill, stroke, radius, padding or gap.
 
