@@ -42,7 +42,7 @@ These names mean one thing in every component. A prop outside the list is the co
 | `name`                                     | `string`                                                                           | On every control whose value a form submits.                                                                         |
 | `render`                                   | Base UI's `render`                                                                 | Swaps the root element. See [Customising](#customising).                                                             |
 | `slotProps`                                | One key per inner Base UI part                                                     | The only way inside. See [Customising](#customising).                                                                |
-| `<string>Label`                            | `string`                                                                           | Overrides one owned string on one instance: `closeLabel`, `previousPageLabel`. See [Words](#words).                  |
+| `<key>Label`                               | `string`                                                                           | Overrides one owned string on one instance: `closeLabel`, `previousPageLabel`. See [Words](#words).                  |
 | `children`, `className`, `style`, `ref`    | React's                                                                            | Reach the root. See [Root](#root).                                                                                   |
 
 - `sx`, `classes`, `component`, `as`, `styled`, `theme`, `state`, `onValueChange`, `onOpenChange`, `leftIcon` and `rightIcon` are not props of any component.
@@ -185,8 +185,8 @@ The rest of the WCAG 2.2 AA target is on [Accessibility](../foundations/accessib
 ## Words
 
 - Visible content comes from the caller, as `children` or a prop: a button's text, a dialog's title.
-- A string the component owns, such as a pagination button's "Previous page" or a dialog's "Close", comes from the locale dictionaries in `packages/perron/src/locale/` (`en.ts`, `da.ts`, `sv.ts`, `nb.ts`), picked by `PerronProvider`'s `locale`.
-- Each owned string has a `<string>Label` prop that overrides it on one instance.
+- A string the component owns, such as a pagination button's "Previous page" or a dialog's "Close", comes from the locale dictionaries in `packages/perron/src/locale/` (`en.ts`, `da.ts`, `sv.ts`, `nb.ts`), in the locale `PerronProvider` sets. A new one is a key in `en.ts` and in each of the others.
+- Each owned string has a `<key>Label` prop that overrides it on one instance: `close` is `closeLabel`. The component reads its strings with the overrides laid over them: `const strings = useOwnedStrings({ close: closeLabel })`, from `packages/perron/src/PerronProvider.tsx`.
 - Owned strings follow [content design](../content-design.md): sentence case, the fixed data-state words, no exclamation marks. The spec gives the English; agents write the Danish, Swedish and Norwegian.
 
 ## Stories

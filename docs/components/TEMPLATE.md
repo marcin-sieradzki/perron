@@ -39,7 +39,7 @@ In MUI's layout. Every prop here gets this description as its JSDoc. Slots come 
 | `size`             | `'small' \| 'medium' \| 'large'`  | `'medium'`   | none                 | `<…>`                        |
 | `disabled`         | `boolean`                         | `false`      | `disabled`           | `<…>`                        |
 | `onChange`         | `(event, value, details) => void` |              | `onValueChange`      | `<when it fires>`            |
-| `<string>Label`    | `string`                          | The locale's | none                 | Overrides "`<English text>`" |
+| `<key>Label`       | `string`                          | The locale's | none                 | Overrides "`<English text>`" |
 | `slotProps.<part>` | `<Component>.<Part>.Props`        |              | `<Component>.<Part>` | Props for the `<part>` part  |
 
 ## Tokens
@@ -78,11 +78,11 @@ What axe won't catch, from the contract, each with how this component meets it:
 
 ## Owned strings
 
-Every word the component shows or announces on its own. The English is here; agents write the Danish, Swedish and Norwegian in the locale files.
+Every word the component shows or announces on its own. Reuse a key `packages/perron/src/locale/en.ts` already has; a new key gets its English here, and agents write the Danish, Swedish and Norwegian in the locale files.
 
-| String     | English           | Override        | Seen or heard where                   |
-| ---------- | ----------------- | --------------- | ------------------------------------- |
-| `<string>` | `<Sentence case>` | `<string>Label` | `<the part, and how it is announced>` |
+| Key     | English           | Override     | Seen or heard where                   |
+| ------- | ----------------- | ------------ | ------------------------------------- |
+| `<key>` | `<Sentence case>` | `<key>Label` | `<the part, and how it is announced>` |
 
 ## Component rules
 
