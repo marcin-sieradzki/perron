@@ -45,3 +45,13 @@ _Avoid_: Internal label, default text
 **Intent**:
 A value of a component's `color` prop, backed by tokens: what the colour means, not which colour it is.
 _Avoid_: Tone, colour name
+
+## The factory
+
+**Factory**:
+The local system of Claude Code runs that moves each component through the loop, from its issue to a ready PR.
+_Avoid_: Pipeline, bot
+
+**Run**:
+One start of the factory on one component, from the moment it claims the issue to the next gate, cap or ready PR. It remembers only what the issue, the PR and `pipeline.yaml` hold.
+_Avoid_: Session, job

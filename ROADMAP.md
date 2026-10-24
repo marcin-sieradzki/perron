@@ -1,6 +1,6 @@
 # Roadmap
 
-How Perron grows from foundations into Mylder's full design system. It has three layers: foundations, components on [Base UI](https://base-ui.com) with APIs shaped like [MUI](https://mui.com/material-ui/)'s, and patterns built from those components for Mylder's own screens. Each component and pattern is designed in Penpot before it is built, by a small loop of agents, with the maintainer holding two gates. It keeps what Perron already has: DTCG tokens as the source, one brand, and Mylder's colours and voice.
+How Perron grows from foundations into Mylder's full design system. It has three layers: foundations, components on [Base UI](https://base-ui.com) with APIs shaped like [MUI](https://mui.com/material-ui/)'s, and patterns built from those components for Mylder's own screens. Each component and pattern is designed in Penpot before it is built, by a small loop of agents that a local software factory drives, with the maintainer holding two gates. It keeps what Perron already has: DTCG tokens as the source, one brand, and Mylder's colours and voice.
 
 The decisions behind the plan are in [docs/adr/](docs/adr/), and the words it uses are in [docs/glossary.md](docs/glossary.md).
 
@@ -178,16 +178,16 @@ Penpot owns each component's anatomy and variants. The repo owns the token value
 
 ## Phase 4: The agent loop
 
-After the design step, three agent contexts run in sequence, rather than as an agent team. The maintainer holds two gates, and code checks everything between them. Every skill starts with a **pre-flight**: the files it must read before it may write, named so that no agent can skip them.
+After the design step, three agent contexts run in sequence, rather than as an agent team. The maintainer holds two gates, approving the design in Penpot and merging the component's PR, and code checks everything between them. Every skill starts with a **pre-flight**: the files it must read before it may write, named so that no agent can skip them.
 
-| Stage  | Runs                        | Reads                                                                 | Writes                                                           | Gate                                                                |
-| ------ | --------------------------- | --------------------------------------------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------- |
-| Design | Local                       | The contract, the foundations, tokens through the MCP                 | The Penpot page, `penpot/<name>.json`, the code map, the exports | 3.3 checks; **the maintainer approves the design in Penpot**        |
-| Brief  | Local                       | The read-back, `get_reference` for the Base UI parts, the contract    | `docs/components/<name>.md`, with `[PENDING]` questions          | Template complete; the maintainer answers the `[PENDING]` questions |
-| Build  | Any                         | The approved spec, the read-back and the reference component          | Component, CSS, stories (one per variant, named as in Penpot)    | `npm run check` and story tests; 3 attempts, then stop              |
-| Review | Any, fresh-context subagent | The spec, the diff and the gate output, never the builder's reasoning | `review.md`, with P1, P2 and P3 findings                         | No P1; 2 rounds, then the maintainer                                |
-| Docs   | Any                         | The spec, the stories, the props API                                  | The component's docs page                                        | The docs check of 2.5                                               |
-| Visual | Any, with the local exports | Storybook and the read-back                                           | A geometry and colour report, and pixel-diff images              | Parts within 1 px and on their tokens; **the maintainer signs off** |
+| Stage  | Runs                        | Reads                                                                 | Writes                                                           | Gate                                                             |
+| ------ | --------------------------- | --------------------------------------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------- |
+| Design | Local                       | The contract, the foundations, tokens through the MCP                 | The Penpot page, `penpot/<name>.json`, the code map, the exports | 3.3 checks; **the maintainer approves the design in Penpot**     |
+| Brief  | Local                       | The read-back, `get_reference` for the Base UI parts, the contract    | `docs/components/<name>.md`, with `[PENDING]` questions          | Template complete; every `[PENDING]` question answered           |
+| Build  | Any                         | The approved spec, the read-back and the reference component          | Component, CSS, stories (one per variant, named as in Penpot)    | `npm run check` and story tests; 3 attempts, then stop           |
+| Review | Any, fresh-context subagent | The spec, the diff and the gate output, never the builder's reasoning | `review.md`, with P1, P2 and P3 findings                         | No P1; 2 rounds, then `needs-human`                              |
+| Docs   | Any                         | The spec, the stories, the props API                                  | The component's docs page                                        | The docs check of 2.5                                            |
+| Visual | Any, with the local exports | Storybook and the read-back                                           | A geometry and colour report, and pixel-diff images              | Parts within 1 px and on their tokens; the report goes on the PR |
 
 - [ ] **4.1 `component-design` skill.** Local. Draws a component or pattern in Penpot from the contract with the 3.2 helpers, checks it, exports PNGs in light and dark, and writes the read-back and the code map. Penpot's own prompting guides apply: read before writing, make small reversible changes, and never assume a missing value.
 - [ ] **4.2 `component-brief` skill.** Local. Turns the read-back into the spec:
@@ -197,7 +197,7 @@ After the design step, three agent contexts run in sequence, rather than as an a
   - the keyboard and ARIA contract, from the Base UI reference;
   - the component rules, such as `CR-1`: Base UI's Select already handles typeahead, so don't rebuild it.
 
-  A question the sources can't answer goes in as `[PENDING]`, and the `grilling` skill puts it to the maintainer.
+  A question the sources can't answer goes in as `[PENDING]` and is put to the maintainer: as a comment on the component's issue once 5.4 is in, and with the `grilling` skill before that.
 
 - [ ] **4.3 `component-build` skill.** Any. Steps:
   1. **Pre-flight:** the contract, the spec, the read-back, and the reference component. That is Button once 5.1 has built it: its `.tsx`, `.css` and stories show the contract applied.
@@ -220,10 +220,13 @@ After the design step, three agent contexts run in sequence, rather than as an a
   - API consistency with sibling components;
   - misuse of Base UI: rebuilt behaviour, a lost `render` or ref;
   - the owned strings and docs, against `docs/content-design.md`.
-- [ ] **4.6 `build-component` orchestrator skill.**
+- [ ] **4.6 `factory` orchestrator skill.** Local. `/factory <Name>` runs one component through the loop:
   - It owns `components/<name>/pipeline.yaml` (stage, approvals, attempts, open P1s) and is the only one that writes it.
-  - It starts each stage (design, brief, build, review, docs, visual) and refuses one whose input is missing or unapproved.
-  - It runs every stage in one local session. In the cloud it runs Build, Review, Docs and Visual, and stops at a local stage to tell the maintainer what to start.
+  - It starts each stage (design, brief, build, review, docs, visual) in order, and refuses one whose input is missing or unapproved.
+  - It drives the component through every stage it can, and stops only at a gate, a `[PENDING]` question or a cap.
+  - Each stage runs in a fresh context, as a resumable Claude Code workflow, so an interrupted run picks up where it stopped.
+
+  5.4 connects it to GitHub Issues.
 
   **Done**, for the whole phase, when a dry run on a made-up component reaches each gate and stops there.
 
@@ -238,15 +241,32 @@ After the design step, three agent contexts run in sequence, rather than as an a
 
 ## Phase 5: Tracer bullet, Button
 
-- [ ] **5.1 Button through the whole loop.** Local. Run `build-component Button` from Penpot to a released `@mylder/perron@0.2.0`, and switch Mylder's own buttons to it. Log every place where the loop stalled or an agent guessed.
+- [ ] **5.1 Button through the whole loop.** Local. Run `/factory Button` from Penpot to a released `@mylder/perron@0.2.0`, and switch Mylder's own buttons to it. Log every place where the loop stalled or an agent guessed.
 - [ ] **5.2 Retro.** Any. Fix the skills, checks and templates the log points at, before the next component starts. **Done** when every log entry is fixed, or written down as a known gap in the contract.
 - [ ] **5.3 Perron MCP, components.** Any.
   - Add `list_components`, `get_component` (spec, props, code map) and `get_design` (read-back and exports) to the server.
   - Generate a `.md` prop contract per component for the docs site and `llms.txt`.
+- [ ] **5.4 The factory.** Local, after 5.2. Puts `/factory` behind GitHub Issues, as [ADR 0008](docs/adr/0008-local-component-factory.md) describes, so a component goes from a filed issue to a ready PR with the maintainer acting only at the two gates.
+  - **Identity.** Maintainer, then Any. A GitHub App, `perron-factory`, installed on this repository only, with write access to contents, issues and pull requests. Its private key lives in the macOS Keychain. `scripts/factory-token.ts` mints a one-hour installation token, and the factory passes it as `GH_TOKEN` to its own `gh` and `git push` calls only, so the maintainer's own login stays as it is.
+  - **Labels.** One per stage (`design`, `brief`, `build`, `review`, `docs`, `visual`), plus `design-approved`, `needs-human`, and `factory:running`, the claim.
+  - **Dependencies.** `dependsOn` in `components.json` is the source. A dependency is done when its PR is merged to main.
+  - **Decompose run.** Files one issue per registry entry, with its category, Base UI parts, dependencies as "Blocked by #n", and the matching component from the extracted prototype as a behaviour reference. A second run syncs the issues to the registry and files nothing twice.
+  - **`/factory` with no name** picks the next issue whose dependencies are all done and which carries no claim. With a name, it takes that one. It claims the issue, drives it as far as it can, posts one summary comment per stage, removes the claim, and stops when:
+    - the design is drawn: the PNGs in light and dark go on the issue, the maintainer is mentioned, and the brief starts once `design-approved` is added;
+    - a `[PENDING]` question is asked as an issue comment;
+    - a cap is hit: `needs-human`, with a comment saying what is failing;
+    - the PR is marked ready.
+  - **The PR.** The build stage opens one draft PR per component, holding the spec, code, stories, docs page, read-back and visual report. It is marked ready once review and the visual check pass.
+  - **Penpot.** When the tab isn't connected, the design run opens the file and presses File → MCP Server → Connect through Claude in Chrome. If that fails, it adds `needs-human` and stops.
+  - **Throttle.** One component in flight at first. Raise it once components pass through without `needs-human`.
+  - **Retro run.** After every fifth merged component, it reads those five issues, PRs, reviews and transcripts, and opens one PR to the skills, checks and templates.
+  - **Visibility.** A GitHub Project board over the issues, by stage label. With more than one component in flight, Claude Code's OpenTelemetry export goes to a self-hosted Langfuse on the maintainer's machine.
+
+  **Done** when `/factory` takes a made-up component from a filed issue to a ready PR in a fresh session, stopping at the design gate and resuming from the label alone.
 
 ## Phase 6: Components, in waves
 
-Rebuild the components extracted from the Mylder prototype, each through the loop. Use the old code only as a reference for behaviour and for how Mylder uses it. Each wave ends with a release that Mylder adopts.
+Rebuild the components extracted from the Mylder prototype, each through the factory, in the order their dependencies allow. Use the old code only as a reference for behaviour and for how Mylder uses it. Each wave ends with a release that Mylder adopts.
 
 - [ ] **Wave 1, actions and primitives:** IconButton, LinkButton, Text, VisuallyHidden, Surface, Section, Kbd, Tag, Count, EmptyState.
 - [ ] **Wave 2, Mylder's vocabulary:** Prik, PrikLabel, PrikLegend, LineBadge, StationIcon, Delay, SeverityLabel, Stat, FactList, NormalService, Attribution, Brand.
