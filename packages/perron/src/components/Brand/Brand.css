@@ -1,0 +1,63 @@
+/* Brand: the Mylder mark beside the wordmark (docs/components/brand.md). The mark's colours are set
+   here from the tokens, not in its markup, so it follows the theme (CR-3). */
+
+/* At least size.target-min tall, so a lockup rendered as a link is a big enough target. */
+.pn-Brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--perron-space-200);
+  min-block-size: var(--perron-size-target-min);
+  vertical-align: middle;
+  /* rendered as a link, the lockup keeps its look: no browser underline under the wordmark */
+  text-decoration: none;
+}
+
+/* At its drawn size, from the svg's own width and height; it never shrinks in a row (CR-5). */
+.pn-Brand-mark {
+  display: block;
+  flex: none;
+}
+
+.pn-Brand-bus {
+  fill: var(--perron-color-transit-mode-bus);
+}
+
+.pn-Brand-sTog {
+  fill: var(--perron-color-transit-line-a);
+}
+
+.pn-Brand-ring {
+  fill: none;
+  stroke: var(--perron-color-text-primary);
+}
+
+/* "Mylder" in the dictionary, shown lowercase as the wordmark, so screen readers meet the name. */
+.pn-Brand[data-variant='full'] .pn-Brand-wordmark {
+  font: var(--perron-typography-heading-md);
+  font-weight: var(--perron-font-weight-bold);
+  letter-spacing: var(--perron-typography-heading-md-tracking);
+  color: var(--perron-color-text-primary);
+  text-transform: lowercase;
+  white-space: nowrap;
+}
+
+/* The system would replace the mark's colours, and a forced dark Canvas could hide the ring, so the
+   mark sets its own system colour: the dots fill and the ring strokes in CanvasText (CR-6). */
+@media (forced-colors: active) {
+  .pn-Brand-mark {
+    forced-color-adjust: none;
+  }
+
+  .pn-Brand-bus,
+  .pn-Brand-sTog {
+    fill: CanvasText;
+  }
+
+  .pn-Brand-ring {
+    stroke: CanvasText;
+  }
+
+  .pn-Brand[data-variant='full'] .pn-Brand-wordmark {
+    color: CanvasText;
+  }
+}
