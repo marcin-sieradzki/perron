@@ -1,0 +1,6 @@
+# Written by npm run factory; never by hand.
+component: Tabs
+layer: component
+deferred:
+  at: 2026-10-24T23:32:18.928Z
+stages: {}
