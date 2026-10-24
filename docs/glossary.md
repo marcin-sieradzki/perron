@@ -19,8 +19,12 @@ The rules every component follows: its props, events, styling, files and checks.
 _Avoid_: Guidelines, conventions
 
 **Spec**:
-One component's page in `docs/components/`: its anatomy, Base UI parts, props, tokens, keyboard behaviour and owned strings.
+What a piece of work must do, written before it is built. A component's spec is its page in `docs/components/`: its anatomy, Base UI parts, props, tokens, keyboard behaviour and owned strings. Any other spec, such as one for a roadmap phase, is a GitHub issue.
 _Avoid_: Brief, design doc
+
+**Ticket**:
+One sub-issue of a spec's issue: a slice of the work that can be built and checked on its own, naming the tickets that block it.
+_Avoid_: Task, story
 
 **Read-back**:
 The machine-readable copy of a component's Penpot design, `penpot/<name>.json`, that code and checks are compared against.
