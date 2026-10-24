@@ -35,6 +35,7 @@ export const PAGES = [
   'docs/components/text.md',
   'docs/components/empty-state.md',
   'docs/components/surface.md',
+  'docs/components/map-controls.md',
   'docs/components/delay.md',
   'docs/components/line-badge.md',
   'docs/components/severity-label.md',
