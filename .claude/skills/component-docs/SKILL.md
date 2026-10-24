@@ -16,8 +16,8 @@ For a pattern, read `docs/patterns/<name>.md` for the spec, `packages/perron/src
 1. **Pre-flight.** Read, before the first write:
    - the spec, `docs/components/<name>.md`;
    - the stories, `packages/perron/src/components/<Name>/<Name>.stories.tsx`;
-   - the props API: `<Name>Props` in `packages/perron/src/components/<Name>/<Name>.tsx`, each member with its JSDoc and its default where the component takes the prop apart. Its **members**, everywhere in this skill, are those it declares and those it inherits from Base UI, such as `render` or `nativeButton`, which keep Base UI's JSDoc and `@default`; the HTML element's attributes, from React's types, are not members here and get no row, as in MUI's tables;
-   - `components/<name>/review.md`, whose `## P1` says `None.`;
+   - the props API: `<Name>Props` in `packages/perron/src/components/<Name>/<Name>.tsx`, each member with its JSDoc and its default where the component takes the prop apart. Its **members**, everywhere in this skill, are those it declares and those it inherits from Base UI, such as `render` or `nativeButton`, which keep Base UI's JSDoc and `@default`; the HTML element's attributes, from React's types, are not members here and get no row, as in MUI's tables, but for `className`, `style` and `ref`, which every table shows;
+   - `components/<name>/review.md`, whose `## P1` and `## P2` say `None.`;
    - the contract's [Files](../../../docs/components/README.md#files) section, with its status table.
 
    Then hold the sources against each other:

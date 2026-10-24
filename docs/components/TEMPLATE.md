@@ -6,7 +6,7 @@ How to fill it:
 
 - Replace this heading with the component's name, `# Button`, and this paragraph and list with one sentence on what the component is for.
 - Fill every `<…>` placeholder, and replace the example rows with the component's own.
-- Write a question the sources can't answer in place, as `[PENDING] <the question>`, and put it to the maintainer. The spec is done when every section is filled and no `[PENDING]` is left.
+- Write a question the sources can't answer in place, as `[PENDING] <the question>`, and put it to the maintainer. Its answer replaces the whole line with the decision, a statement with its reason, and no "Answered" label. The spec is done when every section is filled and no `[PENDING]` is left.
 - Link only a page the docs site serves: the foundations, the guidelines, the contract and the other specs. Write any other repo path, such as an ADR (`docs/adr/0010-unattended-runs-with-design-deferred.md`), `penpot/README.md` or the read-back, as a code span, as the contract does; `scripts/lib/site.test.ts` fails on a link the site can't follow.
 - Keep every section, in this order. A section that doesn't apply says why in one line: "No owned strings: every word comes from the caller."
 
@@ -34,15 +34,16 @@ Base UI already does: `<behaviour Base UI handles, such as typeahead or focus re
 
 In MUI's layout, one row per prop the docs page shows, slots last: each prop the component declares, its description becoming the JSDoc, and each it inherits from Base UI, such as `render`, which reads `inherited` under Base UI prop and gives Base UI's type, default and description while the code inherits it as it is (the contract's [Props](../components/README.md#props)).
 
-| Name               | Type                              | Default      | Base UI prop         | Description                  |
-| ------------------ | --------------------------------- | ------------ | -------------------- | ---------------------------- |
-| `variant`          | `'<value>' \| '<value>'`          | `'<value>'`  | none                 | `<what each value is for>`   |
-| `size`             | `'small' \| 'medium' \| 'large'`  | `'medium'`   | none                 | `<…>`                        |
-| `disabled`         | `boolean`                         | `false`      | `disabled`           | `<…>`                        |
-| `onChange`         | `(event, value, details) => void` |              | `onValueChange`      | `<when it fires>`            |
-| `render`           | Base UI's `render`                |              | inherited            | `<Base UI's description>`    |
-| `<key>Label`       | `string`                          | The locale's | none                 | Overrides "`<English text>`" |
-| `slotProps.<part>` | `<Component>.<Part>.Props`        |              | `<Component>.<Part>` | Props for the `<part>` part  |
+| Name                        | Type                              | Default      | Base UI prop         | Description                                         |
+| --------------------------- | --------------------------------- | ------------ | -------------------- | --------------------------------------------------- |
+| `variant`                   | `'<value>' \| '<value>'`          | `'<value>'`  | none                 | `<what each value is for>`                          |
+| `size`                      | `'small' \| 'medium' \| 'large'`  | `'medium'`   | none                 | `<…>`                                               |
+| `disabled`                  | `boolean`                         | `false`      | `disabled`           | `<…>`                                               |
+| `onChange`                  | `(event, value, details) => void` |              | `onValueChange`      | `<when it fires>`                                   |
+| `render`                    | Base UI's `render`                |              | inherited            | `<Base UI's description>`                           |
+| `className`, `style`, `ref` | React's                           |              | none                 | Reach the root; `className` joins after `pn-<Name>` |
+| `<key>Label`                | `string`                          | The locale's | none                 | Overrides "`<English text>`"                        |
+| `slotProps.<part>`          | `<Component>.<Part>.Props`        |              | `<Component>.<Part>` | Props for the `<part>` part                         |
 
 ## Tokens
 
@@ -94,7 +95,7 @@ Rules for this component alone, numbered so the build and the review can cite th
 
 ## Stories
 
-One per variant and state the Penpot design shows, named as Penpot names it.
+One per variant and state the Penpot design shows, named as Penpot names it. The contract story renders one of them with axe on: the `Default` story when there is one, or else the first export in alphabetical order (`ALarge` before `M1Medium`), never the table's first row. Its Shows cell says so, and its args pass every rule alone.
 
 | Story           | Shows                       | `play` test                          |
 | --------------- | --------------------------- | ------------------------------------ |

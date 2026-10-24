@@ -33,7 +33,7 @@ It runs in a fresh context the `factory` skill starts, so it cannot ask the main
 
    Run `npx prettier --write` on every file you wrote. Done when every row of the spec's Anatomy, Base UI parts, Props, Tokens, Owned strings and Stories, and every `CR-n`, has its line in code, and on a rerun every finding from the pre-flight is fixed.
 
-3. **Register.** In `packages/perron/components.json`, set the entry's `status` to `building`, and its `baseUiParts` and `dependsOn` to what the code imports; with no entry, add one with every field `scripts/lib/entry.ts` lists, in its family's category. Run `npm run registry`, which writes the barrels, the exports and the sort order. Then what it leaves to you:
+3. **Register.** In `packages/perron/components.json`, set the entry's `status` to `building`, and its `baseUiParts` and `dependsOn` to what the code imports; when that changes either from what the brief read, rewrite each spec line that names it (the intro, Anatomy, Base UI parts) in step with it, since the spec is the component's page; with no entry, add one with every field `scripts/lib/entry.ts` lists, in its family's category. Run `npm run generate`, which runs `registry` (the barrels, the exports and the sort order), then `api` and `tokens`, which rebuild `packages/perron/data/docs.json` with the spec page `registry` adds to `PAGES`, so the first `npm run check` finds nothing stale. Then what it leaves to you:
    - the spec's Storybook page, `storybook/pages/<name>.mdx`, as `storybook/pages/contract.mdx` with `title="Specs/<Name>"` and the spec's path;
    - a changeset, `.changeset/<name>.md`, `'@mylder/perron': minor`, "Adds `<Name>`.", since a `building` entry ships in the barrel.
 
