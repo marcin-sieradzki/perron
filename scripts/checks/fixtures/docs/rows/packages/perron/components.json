@@ -1,0 +1,11 @@
+[
+  {
+    "name": "Note",
+    "layer": "component",
+    "category": "Display",
+    "status": "building",
+    "baseUiParts": [],
+    "penpotPath": "Components/Note",
+    "dependsOn": []
+  }
+]

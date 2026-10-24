@@ -21,7 +21,7 @@ For a pattern, read `docs/patterns/<name>.md` for the spec, `packages/perron/src
    - the contract's [Files](../../../docs/components/README.md#files) section, with its status table.
 
    Then hold the sources against each other:
-   - every row of the spec's Props table is a member of `<Name>Props` with the same default and a type that agrees, and every member is a row;
+   - every row of the spec's Props table is a member of `<Name>Props` with the same default and a type that agrees, and every member is a row, an inherited one reading `inherited` under Base UI prop (the contract's [Props](../../../docs/components/README.md#props)); `npm run gates -- docs` holds the rows and members to each other;
    - every story the spec's Stories table names is an export of the stories file;
    - the spec has the sections the page shows: `Keyboard and ARIA`, `Owned strings` and `Do and don't`, and no `[PENDING]`.
 

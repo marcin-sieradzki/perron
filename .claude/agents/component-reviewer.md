@@ -40,6 +40,7 @@ Each audit skill reports in [`format.md`](../skills/design-qa/format.md), whose 
    - **A lost ref**: `ref` or the rest props landing anywhere but the root, or `{...rest}` after the component's own attributes.
    - **A lost slot**: a `slotProps` key that does not reach its part, or that is spread instead of merged with `mergeProps` from `@base-ui/react/merge-props`, the component's own props last.
    - **A leaked Base UI name**: `onValueChange` or `onOpenChange` in the props type, or an import from outside `@base-ui/react/<component>`.
+   - **A redeclared Base UI prop**: `<Name>Props` declaring again a member it would inherit from Base UI, such as `render`, so Perron's JSDoc replaces Base UI's. The spec's Props row for that member, reading `inherited` under Base UI prop, is the contract's [Props](../../docs/components/README.md#props) rule kept: the row documents the inherited member, and the `docs` gate needs it.
 5. **Owned strings and docs**: the [`content-audit`](../skills/content-audit/SKILL.md) skill on `<Name>`: its owned strings in all four locales, the words in its code, spec and stories, and every JSDoc comment on `<Name>Props`.
 
 ## Levels

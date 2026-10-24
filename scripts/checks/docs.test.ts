@@ -47,6 +47,23 @@ describe('docs', () => {
     ])
   })
 
+  it("names a member the spec's Props table has no row for, and a row with no member", () => {
+    // Note inherits render from Base UI, which its spec leaves out; its spec's tone is no member
+    expect(docs.run(fixture('rows'))).toEqual([
+      {
+        file: 'docs/components/note.md',
+        message:
+          "Note's docs page would show render, which docs/components/note.md's Props table has no row for: give it a row, as for every member of NoteProps, those inherited from Base UI included, which the component does not declare again",
+      },
+      {
+        file: 'docs/components/note.md',
+        line: 10,
+        message:
+          "tone is a row of docs/components/note.md's Props table but no member of NoteProps, so the docs page would leave it out: give NoteProps the member, or take the row out",
+      },
+    ])
+  })
+
   it('passes on the repo', () => {
     expect(docs.run(join(here, '../..'))).toEqual([])
   })
