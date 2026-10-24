@@ -7,7 +7,7 @@ argument-hint: '<Name>'
 
 The docs stage of the factory loop, for one component or pattern, `<Name>` (`<name>` in kebab-case). It runs in a fresh context once review has passed, so the page shows the API the reviewer accepted. It writes the docs page, `<Name>.mdx` beside the code, turns the registry entry `stable` and rebuilds what follows from that. It ends by returning its outcome (see [Returns](#returns)), which the factory records; `npm run factory`, which only the `factory` skill runs, is the only writer of `components/<name>/pipeline.yaml`.
 
-The page reads its sources live: the spec's prose through the `SpecProse` block, the stories, and the props table through the `PropsTable` block, which reads the component's docgen. So the page's quality is the sources' quality. The docs stage writes the page and the registry entry, and the spec, the code and the stories stay as the brief and the build wrote them. A **fault in a source** is the outcome: return `failed`, naming the source and the stage it belongs to (the brief for the spec, the build for the code, its types and JSDoc, and the stories), and the maintainer decides. Every page has the one shape in step 2; once phase 5 has built Button, Button's page is that shape applied, the reference to compare with.
+The page reads its sources live: the spec's prose through the `SpecProse` block, the stories, and the props table through the `PropsTable` block, which reads the component's docgen. So the page's quality is the sources' quality. The docs stage writes the page and the registry entry, and the spec, the code and the stories stay as the brief and the build wrote them. A **fault in a source** is the outcome: return `failed`, naming the source, its line, the mismatch and the stage it belongs to (the brief for the spec, the build for the code, its types and JSDoc, and the stories). The factory sends a first failed docs run back to build, whose fresh run reads your `failing` text as its first work; a second stops the loop for the maintainer. Every page has the one shape in step 2; once phase 5 has built Button, Button's page is that shape applied, the reference to compare with.
 
 For a pattern, read `docs/patterns/<name>.md` for the spec, `packages/perron/src/patterns/<Name>/` for the folder, and `patterns-<name>` for the Storybook id, everywhere this skill says otherwise.
 
@@ -51,6 +51,8 @@ For a pattern, read `docs/patterns/<name>.md` for the spec, `packages/perron/src
    />
    ```
 
+   A compound component, whose parts `<Name>.tsx` exports beside the root (Toolbar's `ToolbarButton`, `ToolbarGroup`, `ToolbarSeparator`), adds `import { <Part>, … } from './<Name>.tsx'` and, after the root's `<PropsTable>`, one block per part in the order of the spec's Props tables: an `<h2>` naming the part inside `<Unstyled><div className="pd-page">`, then `<PropsTable of={<Part>} />`, which reads the part's docgen with no stories file of its own. Toolbar's page is that shape applied.
+
    What each block draws, in order: the component's name; the spec's opening sentence; every story, live, with its code; the props table in MUI's layout (name, type, default, description, a required prop marked `*`), then a slots table with one row per `slotProps` key; then the three spec sections under their own headings. A prop's description is its JSDoc, and a slot's is "Props for the `<part>` part". Done when the file matches the shape line for line.
 
 3. **Turn the entry stable.** In `packages/perron/components.json`, set the entry's `status` to `stable`, then run `npm run registry` and `npm run api`. Done when `packages/perron/api.json` holds `<Name>` with every member `<Name>Props` declares itself (the API leaves out the members Base UI owns).
@@ -66,4 +68,4 @@ For a pattern, read `docs/patterns/<name>.md` for the spec, `packages/perron/src
 The run ends with one outcome and a short summary.
 
 - **`done`**: the page's path, and the entry now `stable`.
-- **`failed`**: the fault in a source, with the source or the red check, the line or the output, the mismatch, and the stage it belongs to. The maintainer decides where it is fixed.
+- **`failed`**: the fault in a source, with the source or the red check, the line or the output, the mismatch, and the stage it belongs to. The build's next run fixes it from this text, so name the fix where you can ("add `@default 'plain'` to `tone`'s JSDoc").

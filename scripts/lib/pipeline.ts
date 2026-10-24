@@ -2,8 +2,9 @@
 // rules that move it through the loop of ROADMAP.md, "Phase 4": design, brief, build, review, docs,
 // visual. Every gate is checked from the files and by running the checks, never taken on a stage's
 // word, and the caps of ADR 0008 stop the loop at `needs-human`: a failed build run (the build
-// stage spends its 3 attempts inside one run), a failed docs run, 2 review rounds with a P1, a
-// second visual failure. A deferred design (ADR 0010) takes design and visual out of the loop until
+// stage spends its 3 attempts inside one run), 2 review rounds with a P1, a second failed docs run,
+// a second visual failure. A first P1 round, docs failure or visual failure sends the component
+// back to build. A deferred design (ADR 0010) takes design and visual out of the loop until
 // a design run begins. scripts/factory.ts is the command line over it and the only writer.
 import { createHash } from 'node:crypto'
 import { existsSync, readFileSync } from 'node:fs'
@@ -19,6 +20,8 @@ import {
   variantName,
   visualPath,
 } from './design.ts'
+import { CONTRACT } from '../checks/lib.ts'
+import { readPropRules } from '../checks/props.ts'
 import { folderOf, kebab, type Layer } from './entry.ts'
 import { PACKAGE } from './paths.ts'
 
@@ -34,10 +37,13 @@ export type Outcome = (typeof OUTCOMES)[number]
 export type Gate = 'design-approval' | 'pending-questions' | 'needs-human' | 'done'
 
 /**
- * The budgets of ADR 0008 the factory counts: review rounds with a P1, visual failures. The build
- * stage spends its 3 attempts inside one run, so the factory stops at the first failed build run.
+ * The budgets of ADR 0008 the factory counts: review rounds with a P1, docs and visual failures.
+ * The build stage spends its 3 attempts inside one run, so the factory stops at the first failed
+ * build run. A docs failure is a fault in a source the build wrote (code, types, JSDoc, stories)
+ * or the spec, so the first goes back to build, as a review's P1 does; the build returns `failed`
+ * when the fix is the spec's or the shared tooling's, and that stops the loop.
  */
-export const CAPS = { review: 2, visual: 2 } as const
+export const CAPS = { review: 2, docs: 2, visual: 2 } as const
 
 /** The spec template every spec keeps the sections of. */
 export const TEMPLATE = 'docs/components/TEMPLATE.md'
@@ -58,7 +64,7 @@ export interface StageState {
   p1Rounds?: number
   /** review: the latest round's findings by level */
   findings?: { p1: number; p2: number; p3: number }
-  /** visual: failed reports */
+  /** docs: failed runs; visual: failed reports */
   failures?: number
 }
 
@@ -172,7 +178,12 @@ function unfilledText(spec: string, template: string) {
  * placeholder left, the template's title kept, and the `[PENDING]` questions left (a code span
  * that starts with `[PENDING]` mentions the marker and is not a question).
  */
-export function specProblems(spec: string, template: string, name: string) {
+export function specProblems(
+  spec: string,
+  template: string,
+  name: string,
+  banned: Record<string, string> = {},
+) {
   const problems: string[] = []
   const headings = (md: string) => [...md.matchAll(/^## (.+?)\s*$/gm)].map((m) => m[1])
   const wanted = headings(template)
@@ -193,8 +204,24 @@ export function specProblems(spec: string, template: string, name: string) {
   const unfilled = unfilledText(spec, template)
   for (const p of placeholders)
     if (unfilled.includes(p)) problems.push(`still has the placeholder ${p}`)
+  for (const prop of propNames(spec))
+    if (banned[prop])
+      problems.push(
+        `has a Props row for \`${prop}\`, a name the contract's "Names from other libraries" bans; use ${banned[prop]}`,
+      )
   const pending = spec.replace(PENDING_MENTION, '').match(/\[PENDING\]/g)?.length ?? 0
   return { pending, problems }
+}
+
+/** The prop each row of the spec's Props tables names: the first code span of its first cell. */
+function propNames(spec: string) {
+  const props = /^## Props\s*$([\s\S]*?)(?=^## |(?![\s\S]))/m.exec(spec)?.[1] ?? ''
+  return [...props.matchAll(/^\|\s*`([^`]+)`/gm)].map((m) => m[1])
+}
+
+/** The names the contract's "Names from other libraries" table bans, when the contract is there. */
+function bannedNames(env: Env) {
+  return exists(env, CONTRACT) ? readPropRules(read(env, CONTRACT)).banned : {}
 }
 
 const LEVELS = ['P1', 'P2', 'P3'] as const
@@ -299,6 +326,7 @@ function refusal(p: Pipeline, stage: Stage, env: Env): string | undefined {
       read(env, files.spec),
       read(env, TEMPLATE),
       p.component,
+      bannedNames(env),
     )
     if (pending) problems.push(`has ${pending} [PENDING] question${pending > 1 ? 's' : ''}`)
     if (problems.length) return `the spec ${files.spec} is not complete: it ${problems.join('; ')}`
@@ -420,7 +448,7 @@ export function unblock(p: Pipeline): Result {
   const stage = out.needsHuman!.stage
   const s = stageOf(out, stage)
   if (stage === 'review') s.p1Rounds = 0
-  if (stage === 'visual') s.failures = 0
+  if (stage === 'docs' || stage === 'visual') s.failures = 0
   delete out.needsHuman
   return { ok: true, pipeline: out, said: `unblocked ${stage}` }
 }
@@ -456,7 +484,12 @@ function designGate(p: Pipeline, env: Env): Verdict {
 function briefGate(p: Pipeline, env: Env): Verdict {
   const { spec } = filesOf(p.component, p.layer)
   if (!exists(env, spec)) return { outcome: 'failed', failing: `there is no spec at ${spec}` }
-  const { pending, problems } = specProblems(read(env, spec), read(env, TEMPLATE), p.component)
+  const { pending, problems } = specProblems(
+    read(env, spec),
+    read(env, TEMPLATE),
+    p.component,
+    bannedNames(env),
+  )
   if (problems.length) return { outcome: 'failed', failing: `the spec ${problems.join('; ')}` }
   return pending ? { outcome: 'pending', pending } : { outcome: 'done' }
 }
@@ -568,11 +601,16 @@ export function end(
       else sendBack(out, stage, reason)
       break
     }
-    case 'docs':
+    case 'docs': {
       if (outcome === 'done') verdict = docsGate(p, env)
-      if (verdict.outcome === 'failed')
-        out.needsHuman = { stage, reason: `docs failed: ${verdict.failing}` }
+      if (verdict.outcome !== 'failed') break
+      s.failures = (s.failures ?? 0) + 1
+      const reason = `docs failed: ${verdict.failing}`
+      if (s.failures >= CAPS.docs)
+        out.needsHuman = { stage, reason: `docs failed ${CAPS.docs} times; the last: ${reason}` }
+      else sendBack(out, stage, reason)
       break
+    }
     case 'visual': {
       const report = freshReport(p, env)
       if (!report) {

@@ -77,7 +77,7 @@
   },
   "Delay": {
     "extends": [
-      "Omit< useRender.ComponentProps<'span'>, 'children' | 'render' | 'ref' >"
+      "Omit<useRender.ComponentProps<'span'>, 'children' | 'ref'>"
     ],
     "props": {
       "className": {
@@ -127,14 +127,6 @@
         "optional": true,
         "type": [
           "Ref<HTMLSpanElement>"
-        ]
-      },
-      "render": {
-        "optional": true,
-        "type": [
-          "ComponentRenderFn<HTMLProps, {}>",
-          "ReactElement<unknown, string | JSXElementConstructor<any>>",
-          "undefined"
         ]
       },
       "style": {
@@ -328,7 +320,7 @@
   },
   "StationIcon": {
     "extends": [
-      "Omit<ComponentPropsWithRef<'span'>, 'children'>"
+      "Omit<useRender.ComponentProps<'span'>, 'children'>"
     ],
     "props": {
       "className": {
@@ -360,12 +352,6 @@
           "Ref<HTMLSpanElement>"
         ]
       },
-      "render": {
-        "optional": true,
-        "type": [
-          "RenderProp<Record<string, unknown>>"
-        ]
-      },
       "size": {
         "optional": true,
         "type": [
@@ -391,7 +377,8 @@
   },
   "Text": {
     "extends": [
-      "Omit< HTMLAttributes<HTMLElement>, 'color' | 'children' | 'className' | 'style' >"
+      "Omit<HTMLAttributes<HTMLElement>, 'color' | 'children' | 'className' | 'style'>",
+      "Pick<useRender.ComponentProps<'span'>, 'render'>"
     ],
     "props": {
       "children": {
@@ -429,12 +416,6 @@
         "optional": true,
         "type": [
           "Ref<HTMLElement>"
-        ]
-      },
-      "render": {
-        "optional": true,
-        "type": [
-          "RenderProp<Record<string, unknown>>"
         ]
       },
       "style": {

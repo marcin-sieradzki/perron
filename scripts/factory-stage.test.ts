@@ -3,6 +3,7 @@
 // stage it has no agent for is refused.
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
+import { stageCall } from './factory-stage.ts'
 
 interface Call {
   prompt: string
@@ -73,5 +74,23 @@ describe('factory-stage', () => {
   it('pins every agent to its worktree and Storybook port when a batch gives them', async () => {
     const { calls } = await run({ stage: 'build', name: 'Chip', dir: '/wt/chip', port: 6011 })
     expect(calls[0].prompt).toMatch(/^Work only in the worktree \/wt\/chip: .*STORYBOOK_PORT=6011/)
+  })
+})
+
+describe('stageCall, for an orchestrator without the Workflow tool', () => {
+  it("gives the workflow's prompt and agent type, ending with the JSON shape to return", async () => {
+    const build = await stageCall({ stage: 'build', name: 'Chip', dir: '/wt/chip', port: 6011 })
+    expect(build.agentType).toBeUndefined()
+    expect(build.prompt).toMatch(/^Work only in the worktree \/wt\/chip: /)
+    expect(build.prompt).toContain('.claude/skills/component-build/SKILL.md')
+    expect(build.prompt).toMatch(/returning only one JSON object[\s\S]*"outcome"/)
+
+    const review = await stageCall({ stage: 'review', name: 'Chip', round: 2 })
+    expect(review.agentType).toBe('component-reviewer')
+    expect(review.prompt).toMatch(/round 2[\s\S]*"review"/)
+  })
+
+  it('refuses what the workflow refuses', async () => {
+    await expect(stageCall({ stage: 'visual', name: 'Chip' })).rejects.toThrow(/stage, name/)
   })
 })

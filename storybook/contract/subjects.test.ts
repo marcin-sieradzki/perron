@@ -35,12 +35,12 @@ describe('subjects', () => {
     ])
   })
 
-  it('takes the first story when there is no Default', () => {
+  it('takes the alphabetically first story when there is no Default, whatever the file order', () => {
     const stories = {
       '../../packages/perron/src/components/Button/Button.stories.tsx': {
         default: {},
-        Primary: { args: { children: 'Save' } },
         Secondary: { args: { children: 'Cancel' } },
+        Primary: { args: { children: 'Save' } },
       },
     }
     expect(subjects([entry('Button')], { Button }, stories)[0].args).toEqual({ children: 'Save' })
