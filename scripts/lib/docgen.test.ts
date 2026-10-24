@@ -98,6 +98,30 @@ export function Press({ className, ...rest }: PressProps) {
     expect(doc.props?.nativeButton.description).toMatch(/^Whether the component renders a native/)
   })
 
+  it('gives an inherited member the component destructures with a default its type and JSDoc', () => {
+    const src = `
+import { Button as BaseButton } from '@base-ui/react/button'
+
+export interface PressProps extends BaseButton.Props {}
+
+export function Press({ focusableWhenDisabled = true, nativeButton = false, ...rest }: PressProps) {
+  return <BaseButton {...rest} focusableWhenDisabled={focusableWhenDisabled} nativeButton={nativeButton} />
+}
+`
+    const [doc] = componentDocs(src, FILE)
+    expect(doc.props?.focusableWhenDisabled).toMatchObject({
+      required: false,
+      tsType: { name: 'boolean' },
+      defaultValue: { value: 'true', computed: false },
+    })
+    expect(doc.props?.focusableWhenDisabled.description).toMatch(/focusable when disabled/)
+    // the destructuring default wins over Base UI's @default true
+    expect(doc.props?.nativeButton).toMatchObject({
+      tsType: { name: 'boolean' },
+      defaultValue: { value: 'false', computed: false },
+    })
+  })
+
   it('finds a component that returns JSX, as react-docgen does', () => {
     const src = `export function Dot({ size }: { /** How big. */ size: number }) { return <span>{size}</span> }`
     expect(componentDocs(src, FILE).map((d) => [d.actualName, Object.keys(d.props ?? {})])).toEqual(
