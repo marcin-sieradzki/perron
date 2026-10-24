@@ -30,7 +30,7 @@ Brand imports no Base UI component: the registry gives it no `baseUiParts`, and 
 
 The root is a `<span>`, so the lockup is phrasing content and fits inside a link, a heading or a button the caller renders it as.
 
-Base UI already does: swapping the root element for the one `render` gives, keeping the class, data attribute and children; merging the caller's `ref` with the element's; and merging event handlers, `className` and `style` through `mergeProps`, the caller's other props overwriting the component's.
+Base UI already does: swapping the root element for the one `render` gives, keeping the class, data attribute and children; merging the caller's `ref` with the element's; and merging event handlers, `className` and `style` through `mergeProps`; a `render` element's own props are merged last (CR-1).
 
 ## Props
 
