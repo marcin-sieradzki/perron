@@ -18,13 +18,19 @@ describe('EmptyState', () => {
     ['[]', { icon: [], children: [], action: [] }],
     ['an array of nothing', { icon: [null, false], children: ['', [undefined]], action: [true] }],
   ])('renders only the title when the optional parts are %s', (_, props) => {
-    const markup = renderToStaticMarkup(<EmptyState title="No departures" {...props} />)
+    const markup = renderToStaticMarkup(
+      <EmptyState title="No departures in the next hour" {...props} />,
+    )
     expect(parts(markup)).toEqual(['title'])
   })
 
   it('renders a part whose array holds something', () => {
     const markup = renderToStaticMarkup(
-      <EmptyState title="No departures" icon={[null, <svg key="icon" />]} action={['', 0]}>
+      <EmptyState
+        title="No departures in the next hour"
+        icon={[null, <svg key="icon" />]}
+        action={['', 0]}
+      >
         {['', 'Try a line number such as 5C.']}
       </EmptyState>,
     )
@@ -32,7 +38,7 @@ describe('EmptyState', () => {
   })
 
   it('keeps the HTML title attribute and render off the root (CR-3)', () => {
-    const markup = renderToStaticMarkup(<EmptyState title="No departures" />)
+    const markup = renderToStaticMarkup(<EmptyState title="No departures in the next hour" />)
     expect(markup).toMatch(/^<div class="pn-EmptyState">/)
   })
 })

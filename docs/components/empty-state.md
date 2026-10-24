@@ -77,7 +77,7 @@ One row per part, state and property. EmptyState has no interactive state of its
 | `action`      | rest  | `gap`                | `space.200`                           |
 | `action`      | rest  | `margin-block-start` | `space.300`                           |
 
-The root is a flex column with `align-items: center` and `text-align: center`; the action is a flex row that wraps, centred. The spacing comes out as 12 px from icon to title (`space.100` and `space.200`), 4 px from title to sentence, and 16 px from sentence to action (`space.100` and `space.300`). Every part resets the margins a `p` brings.
+The root is a flex column with `align-items: center` and `text-align: center`; the action is a flex row that wraps, centred. The spacing comes out as 12 px from icon to title (`space.100` and `space.200`), 4 px from title to sentence, and 16 px from sentence to action (`space.100` and `space.300`). Every part and the root reset the margins a `p` brings, and the icon part is a flex box so an inline SVG adds no baseline gap below it.
 
 - Decided: the root has no fill, border, radius or shadow, so EmptyState takes the surface of the panel, sheet or popup it sits in. It is content, not a card, and a surface of its own would join no family and stack a box inside a box.
 - Decided: the layout is a centred column, padded `space.600` on the block axis and `space.400` on the inline axis, with the gaps in the table above. Centred is how an empty list reads at a glance in a narrow sheet, 24 px matches the space between blocks of a pane, and 16 px inline keeps text clear of a 320 px screen's edges.
@@ -124,7 +124,7 @@ No owned strings: every word EmptyState shows comes from the caller, through `ti
 Rules for this component alone, numbered so the build and the review can cite them.
 
 - **CR-1.** The optional parts render only when given: no `icon` part without `icon`, no `description` part without `children`, no `action` part without `action`. A value that renders nothing (`null`, `undefined`, a boolean, `''`, or an array of only such values) counts as not given, so no empty wrapper takes up a gap.
-- **CR-2.** The `icon` part always carries `aria-hidden="true"`, after the caller's `slotProps.icon`, so a caller cannot make the icon speak; the title says what it shows.
+- **CR-2.** The `icon` part always carries `aria-hidden="true"`, after the caller's `slotProps.icon` props, so those props cannot make the icon speak; the title says what it shows. A `render` element's own props are the caller's: `useRender` merges them last, as Base UI does, so a caller that swaps the icon's element leaves `aria-hidden` off it.
 - **CR-3.** `title`, `icon`, `action`, `children`, `slotProps` and `render` are taken out of the rest props before they reach the root, so the HTML `title` attribute never reaches the element.
 - **CR-4.** Each inner part's props are its `slotProps` value merged with `mergeProps`, the component's own props last, so its class, `aria-hidden` and children stay while the caller's `className` joins and its `render` swaps the element.
 - **CR-5.** EmptyState never moves focus, sets no `tabindex` and adds no role to the root; the caller decides whether it is announced.
