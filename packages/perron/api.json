@@ -650,6 +650,37 @@
       }
     }
   },
+  "Stat": {
+    "extends": [
+      "Omit<useRender.ComponentProps<'div'>, 'children'>"
+    ],
+    "props": {
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "label": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ label?: ComponentProps<\"div\", {}, HTMLProps> | undefined; value?: ComponentProps<\"div\", {}, HTMLProps> | undefined; }"
+        ]
+      },
+      "unknownLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      }
+    }
+  },
   "StationIcon": {
     "extends": [
       "Omit<useRender.ComponentProps<'span'>, 'children'>"

@@ -26,6 +26,7 @@ export const da: OwnedStrings = {
   minutesEarly: 'min før tid',
   onTime: 'Til tiden',
   delayUnknown: 'Forsinkelse ukendt',
+  unknown: 'Ukendt',
   brandName: 'Mylder',
   nextStop: 'Næste stop',
   passed: 'Passeret',

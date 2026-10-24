@@ -33,6 +33,7 @@ export const PAGES = [
   'docs/components/link-button.md',
   'docs/components/toolbar.md',
   'docs/components/brand.md',
+  'docs/components/stat.md',
   'docs/components/text.md',
   'docs/components/empty-state.md',
   'docs/components/surface.md',
