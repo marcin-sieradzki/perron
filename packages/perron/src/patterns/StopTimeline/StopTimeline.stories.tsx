@@ -95,10 +95,15 @@ const placesAt = (next: number) =>
 export const Default: Story = {
   args: { nextStopIndex: 3 },
   render: (args) => (
-    <div style={{ display: 'grid', justifyItems: 'start', gap: 'var(--perron-space-300)' }}>
-      <Button variant="outline">Show on map</Button>
+    // the timeline takes the panel's width, as in every other story; only the buttons start-align
+    <div style={{ display: 'grid', gap: 'var(--perron-space-300)' }}>
+      <Button variant="outline" style={{ justifySelf: 'start' }}>
+        Show on map
+      </Button>
       <StopTimeline {...args} />
-      <Button variant="outline">All departures</Button>
+      <Button variant="outline" style={{ justifySelf: 'start' }}>
+        All departures
+      </Button>
     </div>
   ),
   play: async ({ canvasElement, step }) => {
@@ -106,6 +111,10 @@ export const Default: Story = {
     const list = canvas.getByRole('list')
     const items = itemsOf(list)
     await expect(items).toHaveLength(7)
+    // the timeline fills its panel, so the times and delays sit in their columns at its edge (CR-7)
+    await expect(list.getBoundingClientRect().width).toBe(
+      list.parentElement!.getBoundingClientRect().width,
+    )
 
     await step('only the fourth stop is current, and says "Next stop"', async () => {
       for (const [index, item] of items.entries()) {
