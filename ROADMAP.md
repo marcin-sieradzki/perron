@@ -65,10 +65,11 @@ Nothing here builds a component. It builds what every component is checked again
     - `size`: `small | medium | large`;
     - adjective booleans: `disabled`, `fullWidth`;
     - `startIcon` and `endIcon`.
-  - **State and events:** Base UI's, not MUI's.
-    - `value`, `defaultValue` and `onValueChange(value, details)`;
-    - `open`, `defaultOpen` and `onOpenChange`.
-    - A component that renders a native `<input>` or `<textarea>` also keeps the native `onChange(event)`, beside `onValueChange`, so form libraries that register the field (React Hook Form, Formik) work. Composite controls such as Select, Checkbox and Slider carry a `name`, so Base UI's hidden input reaches a native form and `FormData`, and connect to a form library through its controller.
+  - **State and events:** MUI's names, with Base UI's details passed through.
+    - `value`, `defaultValue` and `onChange(event, value, details)`, where `details` carries Base UI's reason and `cancel()`. A component that renders a native `<input>` or `<textarea>` passes the native `onChange(event)` itself, so React Hook Form's `register()` and Formik work unchanged.
+    - `open`, `defaultOpen`, `onOpen(event)` and `onClose(event, reason)`.
+    - Each component adapts Base UI's `onValueChange` and `onOpenChange` to these names once, inside the component.
+    - Composite controls such as Select, Checkbox and Slider carry a `name`, so Base UI's hidden input reaches a native form and `FormData`; form libraries connect to them through their controller.
   - **Customising:**
     - Base UI's `render` prop swaps the element.
     - `slotProps`, keyed by Base UI part, is the only way inside.
