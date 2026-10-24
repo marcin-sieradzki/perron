@@ -105,7 +105,7 @@ MUI's names, with Base UI's details passed through as the last argument.
 - `className` is merged, not replaced: `pn-<Name>` first, then the caller's.
 - Every prop the props type declares is taken out of `rest` before the spread, so a prop that is invalid on the element never reaches the DOM.
 
-The contract story, `storybook/contract/Contract.stories.tsx`, renders every registered component and pattern past designing with a `ref` and a `data-testid`, and fails unless both land on one element. It renders each with the args of its `Default` story (or its first story) over its meta's, so those args must render it alone, and a new component needs no edit to the contract story.
+The contract story, `storybook/contract/Contract.stories.tsx`, renders every registered component and pattern past designing with a `ref` and a `data-testid`, and fails unless both land on one element. It renders each with the args of its `Default` story over its meta's, or, with no `Default`, of its alphabetically first story (a module namespace lists exports alphabetically, not in the file's order), so those args must render it alone, and a new component needs no edit to the contract story.
 
 ## Customising
 
