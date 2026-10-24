@@ -8,7 +8,8 @@
 import { execFileSync } from 'node:child_process'
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { API, codeFile, readApi, type Api } from '../lib/api.ts'
+import { API, readApi, type Api } from '../lib/api.ts'
+import { codeFile } from '../lib/props.ts'
 import { REGISTRY, readRegistry } from '../lib/registry.ts'
 import type { Check, Problem } from './lib.ts'
 

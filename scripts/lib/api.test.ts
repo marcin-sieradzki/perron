@@ -31,7 +31,7 @@ describe('apiFiles', () => {
 
 describe('propsApi', () => {
   it('needs the exported <Name>Props', () => {
-    const file = join(fixture, 'packages/perron/src/components/Chip/Chip.tsx')
-    expect(() => propsApi([{ name: 'Missing', file }])).toThrow('does not export MissingProps')
+    const file = 'packages/perron/src/components/Bare/Bare.tsx'
+    expect(() => propsApi(fixture, [file])).toThrow(`${file} exports no BareProps`)
   })
 })

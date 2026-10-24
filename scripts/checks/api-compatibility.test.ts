@@ -8,8 +8,9 @@ import { API, apiFiles, propsApi } from '../lib/api.ts'
 import check, { breakingChanges, compareApi, latestRelease } from './api-compatibility.ts'
 
 const here = dirname(fileURLToPath(import.meta.url))
+const root = join(here, '../..')
 const button = (tree: string) =>
-  propsApi([{ name: 'Button', file: join(here, 'fixtures/api-compatibility', tree, 'Button.tsx') }])
+  propsApi(root, [`scripts/checks/fixtures/api-compatibility/${tree}/Button.tsx`])
 
 describe('compareApi', () => {
   it('lets the API grow: wider unions, new optional props, a prop made optional', () => {
@@ -224,6 +225,6 @@ describe('api-compatibility', () => {
   })
 
   it('passes on the repo', () => {
-    expect(check.run(join(here, '../..'))).toEqual([])
+    expect(check.run(root)).toEqual([])
   })
 })

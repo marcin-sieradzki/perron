@@ -1,10 +1,10 @@
 // The props rule: each component's `<Name>Props`, read with the TypeScript compiler, keeps to the
 // vocabulary of the contract's "Props" and "State and events" sections (docs/components/README.md).
 import { existsSync, readFileSync } from 'node:fs'
-import { basename, join, relative } from 'node:path'
+import { join, relative } from 'node:path'
 import ts from 'typescript'
-import { PACKAGE } from '../lib/paths.ts'
-import { readRegistry, type Entry } from '../lib/registry.ts'
+import { codeFile, inPackage, propsProgram } from '../lib/props.ts'
+import { readRegistry } from '../lib/registry.ts'
 import { excuse, type Check, type Problem } from './lib.ts'
 
 const RULE = 'props'
@@ -30,19 +30,6 @@ const EVENTS: Record<string, string[][]> = {
   onOpen: [['event', 'details']],
   onClose: [['event', 'reason', 'details']],
 }
-
-/** The code file of a registered entry, by the contract's file convention. */
-export const codeFile = (e: Entry) =>
-  `${PACKAGE}/src/${e.layer === 'pattern' ? 'patterns' : 'components'}/${e.name}/${e.name}.tsx`
-
-/** The compiler options of the repo's tsconfig.json, so types resolve as `npm run typecheck` sees them. */
-function options(root: string) {
-  const path = join(root, 'tsconfig.json')
-  const { config } = ts.readConfigFile(path, ts.sys.readFile)
-  return ts.parseJsonConfigFileContent(config, ts.sys, root).options
-}
-
-const inPackage = (d: ts.Declaration) => !/[\\/]node_modules[\\/]/.test(d.getSourceFile().fileName)
 
 /** The parts of `t` without undefined and null: an optional `size` is still its literals. */
 const parts = (checker: ts.TypeChecker, t: ts.Type) => {
@@ -109,11 +96,7 @@ const hasDoc = (d: ts.Declaration) =>
  */
 export function propsProblems(root: string, files: string[]): Problem[] {
   if (!files.length) return []
-  const program = ts.createProgram(
-    files.map((f) => join(root, f)),
-    { ...options(root), noEmit: true },
-  )
-  const checker = program.getTypeChecker()
+  const { checker, propsOf } = propsProgram(root, files)
   const problems: Problem[] = []
   const lineOf = (node: ts.Node) => {
     const sf = node.getSourceFile()
@@ -121,11 +104,8 @@ export function propsProblems(root: string, files: string[]): Problem[] {
   }
   const fileOf = (node: ts.Node) => relative(root, node.getSourceFile().fileName)
   for (const file of files) {
-    const name = `${basename(file).replace(/\.tsx?$/, '')}Props`
-    const source = program.getSourceFile(join(root, file))
-    const module = source && checker.getSymbolAtLocation(source)
-    const symbol = module && checker.getExportsOfModule(module).find((s) => s.name === name)
-    if (!symbol?.declarations?.length) {
+    const { name, symbol, type } = propsOf(file)
+    if (!symbol?.declarations?.length || !type) {
       problems.push({
         file,
         line: 1,
@@ -134,9 +114,6 @@ export function propsProblems(root: string, files: string[]): Problem[] {
       continue
     }
     const at = symbol.declarations[0]
-    const type = checker.getDeclaredTypeOfSymbol(
-      symbol.flags & ts.SymbolFlags.Alias ? checker.getAliasedSymbol(symbol) : symbol,
-    )
     const members = type.isUnion()
       ? [...new Map(type.types.flatMap((t) => t.getProperties()).map((p) => [p.name, p])).values()]
       : checker.getPropertiesOfType(type)
