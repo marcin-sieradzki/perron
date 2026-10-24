@@ -25,14 +25,14 @@ Write every agent-facing file a step creates (a skill, an agent, `CLAUDE.md`, a 
 
   **Done** when `@mylder/perron@0.1.0` (foundations only) is on npm and Mylder can install it.
 
-- [ ] **1.4 Docs site.** Any. Deploy Storybook to GitHub Pages from CI. From the same sources, the build also writes:
+- [x] **1.4 Docs site.** Any. Deploy Storybook to GitHub Pages from CI. From the same sources, the build also writes:
   - `llms.txt`, one line per page;
   - a `.md` twin of every page;
   - a consumer `AGENTS.md`: install, rules, where to look.
 
   **Done** when the site is live and `llms.txt` lists every page in `PAGES`.
 
-- [ ] **1.5 Perron MCP, foundations and references.** Any. A stdio MCP server in `packages/mcp`, run with `npx @mylder/perron-mcp`. It reads only generated data shipped in `@mylder/perron`, plus, in the repo, the docs bundled in the installed libraries. First tools:
+- [x] **1.5 Perron MCP, foundations and references.** Any. A stdio MCP server in `packages/mcp`, run with `npx @mylder/perron-mcp`. It reads only generated data shipped in `@mylder/perron`, plus, in the repo, the docs bundled in the installed libraries. First tools:
   - `list_tokens`: name, type, value per theme, description;
   - `search_docs`: foundation pages and content design;
   - `get_reference(library, component, part)`: only the API reference section of a Base UI or MUI page, from `node_modules/@base-ui/react/docs/` or `node_modules/@mui/material/docs/material-ui/`. It is exact for the pinned version and small enough to read; Base UI's Select page is 180 KB, mostly demos.

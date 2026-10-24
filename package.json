@@ -21,6 +21,8 @@
     "storybook:build": "storybook build -o dist/storybook && node scripts/build-site.ts dist/storybook"
   },
   "devDependencies": {
+    "@base-ui/react": "1.9.0",
+    "@mui/material": "9.5.0",
     "@storybook/addon-docs": "^10.6.3",
     "@storybook/react-vite": "^10.6.3",
     "@types/node": "^24.19.2",

@@ -16,13 +16,15 @@
     "./tokens.ts": "./tokens/generated/tokens.ts",
     "./tokens/*.json": "./tokens/*.json",
     "./icons/*": "./icons/*",
-    "./logos/*": "./logos/*"
+    "./logos/*": "./logos/*",
+    "./data/*.json": "./data/*.json"
   },
   "files": [
     "tokens",
     "styles",
     "icons",
-    "logos"
+    "logos",
+    "data"
   ],
   "dependencies": {
     "@fontsource/familjen-grotesk": "^5.3.0",
