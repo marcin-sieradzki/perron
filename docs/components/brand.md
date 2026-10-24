@@ -18,7 +18,7 @@ The mark is drawn inline as an `<svg>` whose three shapes take their colours fro
 | `wordmark`          | The brand name, "Mylder", set lowercase in `typography.heading-md` bold. Only with `variant='full'`                                   | none: a plain `<span>`, no behaviour to borrow | `pn-Brand-wordmark`                 | none            |
 | `label`             | With `variant='mark'`, the brand name for screen readers only, in place of the wordmark. Never seen, so a drawing has no layer for it | none: the `VisuallyHidden` shared part         | `pn-VisuallyHidden`, the part's own | none            |
 
-[PENDING] Does Brand have one variant property, `variant`, with `full` (the mark and the wordmark, the default) and `mark` (the mark alone, the brand name read to screen readers through `VisuallyHidden`), and leave hiding it under `breakpoint.compact-phone` to the screen or pattern that places it, since a component reads no `breakpoint.*` token and sizes to its container? Recommended: yes; [Logos](../foundations/logos.md#usage) keeps the mark alone for where space is tight, and [Layout](../foundations/layout.md#breakpoints)'s "the brand mark goes" is the screen's rule, applied by its caller.
+Brand has one variant property, `variant`, with `full` (the mark and the wordmark, the default) and `mark` (the mark alone, the brand name read to screen readers through `VisuallyHidden`). Hiding it under `breakpoint.compact-phone` is left to the screen or pattern that places it, since a component reads no `breakpoint.*` token and sizes to its container: [Logos](../foundations/logos.md#usage) keeps the mark alone for where space is tight, and [Layout](../foundations/layout.md#breakpoints)'s "the brand mark goes" is the screen's rule, applied by its caller.
 
 ## Base UI parts
 
@@ -45,7 +45,7 @@ In MUI's layout. Every prop here gets this description as its JSDoc. Brand takes
 | `style`          | `CSSProperties`        |              | none         | Reaches the root                                                                                                                                                                          |
 | `ref`            | `Ref<HTMLSpanElement>` |              | none         | Reaches the root                                                                                                                                                                          |
 
-[PENDING] Does Brand come in one size, with no `size` prop: the mark at its drawn size, 27 × 19 px, from the inline `<svg>`'s own `width` and `height` attributes as the logo file sets them, and the wordmark in `typography.heading-md`? Recommended: yes; [Logos](../foundations/logos.md#usage) sets the drawn size as the smallest the mark may be and gives the wordmark one role, no token holds a larger mark or wordmark, and a larger brand for the kiosk bar can join as a `size` value through the `design-tokens` skill when that pattern needs it.
+Brand comes in one size, with no `size` prop: the mark at its drawn size, 27 × 19 px, from the inline `<svg>`'s own `width` and `height` attributes as the logo file sets them, and the wordmark in `typography.heading-md`. [Logos](../foundations/logos.md#usage) sets the drawn size as the smallest the mark may be and gives the wordmark one role, no token holds a larger mark or wordmark, and a larger brand for the kiosk bar can join as a `size` value through the `design-tokens` skill when that pattern needs it.
 
 ## Tokens
 
@@ -68,9 +68,9 @@ One row per part, variant and property. Brand is not interactive, so its only de
 | `wordmark`, `variant='full'` | rest  | `text-transform`            | none: `lowercase`                                             |
 | `label`, `variant='mark'`    | rest  | none                        | none: the `VisuallyHidden` part's own styles, never seen      |
 
-[PENDING] Is the gap between the mark and the wordmark `space.200`, and the wordmark's colour `color.text.primary`, the ring's ink? Recommended: yes; [Logos](../foundations/logos.md) names neither, `space.200` (8 px) is close to the ring's width (8.9 px), the clear space the mark keeps from everything else, and the mark's one neutral colour is `color.text.primary`.
+The gap between the mark and the wordmark is `space.200`, and the wordmark's colour is `color.text.primary`, the ring's ink. [Logos](../foundations/logos.md) names neither; `space.200` (8 px) is close to the ring's width (8.9 px), the clear space the mark keeps from everything else, and the mark's one neutral colour is `color.text.primary`.
 
-[PENDING] Does the root keep a `min-block-size` of `size.target-min`, so the lockup is at least 24 px tall when a caller renders it as a link to the start screen? Recommended: yes; the wordmark's line is 23 px (20 px at 1.15) and the mark 19 px, a pixel short of the contract's smallest target, and the extra pixel changes nothing in a 46 px top bar.
+The root keeps a `min-block-size` of `size.target-min`, so the lockup is at least 24 px tall when a caller renders it as a link to the start screen: the wordmark's line is 23 px (20 px at 1.15) and the mark 19 px, a pixel short of the contract's smallest target, and the extra pixel changes nothing in a 46 px top bar.
 
 The mark's colours are the logo file's, held by the tokens [Logos](../foundations/logos.md#the-mark) names: bus `#D99A00` light and `#F2B630` dark, S-tog A `#00A1DE` in both, the ring `#12181B` light and `#EBEEEB` dark.
 
@@ -110,7 +110,7 @@ The brand name is a word the component shows and announces that the caller doesn
 | ----------- | -------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------- |
 | `brandName` | `Mylder` | `brandNameLabel` | The `wordmark`, shown lowercase as "mylder" with `variant='full'`; the `VisuallyHidden` label, read only, with `variant='mark'` |
 
-[PENDING] Is the brand name a new owned-string key, `brandName`, with "Mylder" in all four locales (a name, not translated), shown lowercase through `text-transform: lowercase` on the wordmark rather than written lowercase in the dictionary? Recommended: yes; the logo file's title and the docs write the name "Mylder", screen readers then meet a capitalised name, the wordmark still reads "mylder" as [Logos](../foundations/logos.md#usage) asks, and a `brandNameLabel` override is lowercased the same way.
+The brand name is a new owned-string key, `brandName`, with "Mylder" in all four locales (a name, not translated), shown lowercase through `text-transform: lowercase` on the wordmark rather than written lowercase in the dictionary. The logo file's title and the docs write the name "Mylder", so screen readers meet a capitalised name, the wordmark still reads "mylder" as [Logos](../foundations/logos.md#usage) asks, and a `brandNameLabel` override is lowercased the same way.
 
 ## Component rules
 
@@ -119,7 +119,7 @@ The brand name is a word the component shows and announces that the caller doesn
 - **CR-3.** The mark's geometry is `packages/perron/logos/mylder-mark.svg`'s, exactly: `viewBox="0 0 27 19"`, `width="27"`, `height="19"`; the bus dot at (5.5, 12.5), r 4.3; the S-tog dot at (13.5, 5.5), r 4.3; the ring at (21.5, 12.5), r 3.6, stroke width 1.7. Its colours are not in the markup: each shape's `fill` or `stroke` is set in `Brand.css` from the tokens in [Tokens](#tokens), so the mark follows the theme. A test holds the inline circles to the file's, so the two never drift apart.
 - **CR-4.** The mark is `aria-hidden="true"` and `focusable="false"`, with no `<title>`: the brand name in the wordmark or the label is the one thing a screen reader hears, once.
 - **CR-5.** Keep the mark as drawn ([Logos](../foundations/logos.md#usage)): no prop or class recolours, outlines or rearranges its three shapes, and the mark never shrinks below its drawn size in a flex row (`flex: none`).
-- **CR-6.** [PENDING] In `(forced-colors: active)`, do the bus and S-tog dots fill and the ring stroke in `CanvasText`, and the wordmark take `CanvasText`, so the mark stays visible when the system replaces colours ([Accessibility](../foundations/accessibility.md#what-a-person-checks))? Recommended: yes; the ring's `color.text.primary` can vanish on a forced dark `Canvas`, the three shapes still tell the mark apart by their place, fill and ring, and StationIcon does the same.
+- **CR-6.** In `(forced-colors: active)`, the bus and S-tog dots fill and the ring strokes in `CanvasText`, and the wordmark takes `CanvasText`, so the mark stays visible when the system replaces colours ([Accessibility](../foundations/accessibility.md#what-a-person-checks)): the ring's `color.text.primary` can vanish on a forced dark `Canvas`, the three shapes still tell the mark apart by their place, fill and ring, and StationIcon does the same.
 - **CR-7.** Brand reads no `breakpoint.*` token and no media query beyond the contract's three: the screen or pattern that places it hides it, or picks `variant='mark'`, at its own breakpoints, such as [Layout](../foundations/layout.md#breakpoints)'s `breakpoint.compact-phone`.
 
 ## Stories
