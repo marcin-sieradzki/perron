@@ -31,18 +31,28 @@ function Stop({
   note,
   children,
   size,
+  as: Element = 'div',
 }: {
   name: string
   note?: string
   children: ReactNode
   size: keyof typeof TEXT
+  as?: 'div' | 'li'
 }) {
   return (
-    <div style={{ ...row, ...typography(TEXT[size]) }}>
+    <Element style={{ ...row, ...typography(TEXT[size]) }}>
       {children}
-      <span>{name}</span>
-      {note && <span style={{ color: 'var(--perron-color-text-secondary)' }}>{note}</span>}
-    </div>
+      {/* the name and the note wrap as one line of text */}
+      <span>
+        {name}
+        {note && (
+          <>
+            {' '}
+            <span style={{ color: 'var(--perron-color-text-secondary)' }}>{note}</span>
+          </>
+        )}
+      </span>
+    </Element>
   )
 }
 
@@ -142,38 +152,70 @@ const LINES: { line: StationIconProps['line']; name: string }[] = [
   { line: undefined, name: 'Several lines' },
 ]
 
+/** What the filled marker means, said in words beside it, as the spec's Do and don't asks. */
+const NOTE = 'Next stop'
+
+/**
+ * Each line is its own two-stop list, so each list fills one stop and says why in words beside it:
+ * an outlined stop, then the filled next stop.
+ */
 export const Lines: Story = {
   args: { size: 'medium' },
   render: (args) => (
     <div
       style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(2, max-content)',
-        gap: 'var(--perron-space-100) var(--perron-space-400)',
+        gridTemplateColumns: 'repeat(2, minmax(0, max-content))',
+        rowGap: 'var(--perron-space-100)',
       }}
     >
-      {LINES.map(({ line, name }) =>
-        (['outlined', 'filled'] as const).map((variant) => (
-          <Stop key={`${name}-${variant}`} name={name} size="medium">
-            <StationIcon
-              {...args}
-              variant={variant}
-              line={line}
-              data-testid={`marker-${line ?? 'none'}-${variant}`}
-            />
-          </Stop>
-        )),
-      )}
+      {LINES.map(({ line, name }) => (
+        <ul
+          key={name}
+          style={{
+            display: 'grid',
+            gridColumn: '1 / -1',
+            gridTemplateColumns: 'subgrid',
+            columnGap: 'var(--perron-space-400)',
+            margin: 0,
+            padding: 0,
+            listStyle: 'none',
+          }}
+        >
+          {(['outlined', 'filled'] as const).map((variant) => (
+            <Stop
+              key={variant}
+              as="li"
+              name={name}
+              note={variant === 'filled' ? NOTE : undefined}
+              size="medium"
+            >
+              <StationIcon
+                {...args}
+                variant={variant}
+                line={line}
+                data-testid={`marker-${line ?? 'none'}-${variant}`}
+              />
+            </Stop>
+          ))}
+        </ul>
+      ))}
     </div>
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    for (const { line } of LINES)
+    const lists = canvas.getAllByRole('list')
+    await expect(lists).toHaveLength(LINES.length)
+    for (const [index, { line, name }] of LINES.entries()) {
+      // one filled stop per list, with its meaning in words beside it
+      const items = within(lists[index]).getAllByRole('listitem')
+      await expect(items.map((item) => item.textContent)).toEqual([name, `${name} ${NOTE}`])
       for (const variant of ['outlined', 'filled']) {
         const marker = canvas.getByTestId(`marker-${line ?? 'none'}-${variant}`)
         if (line) await expect(marker).toHaveAttribute('data-line', line)
         else await expect(marker).not.toHaveAttribute('data-line')
         await expect(marker).toHaveAttribute('data-variant', variant)
       }
+    }
   },
 }

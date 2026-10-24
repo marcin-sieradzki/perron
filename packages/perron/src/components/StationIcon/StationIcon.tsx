@@ -14,8 +14,7 @@ export interface StationIconProps extends Omit<ComponentPropsWithRef<'span'>, 'c
   /**
    * The line or mode whose colour the marker takes: a metro or S-tog line by its id, or `bus` or
    * `regional` for every line of that mode. Left out, the marker is neutral, for a station several
-   * lines serve. Named and typed exactly as LineBadge's line prop: whichever of the two is built
-   * second takes the other's name and type.
+   * lines serve.
    */
   line?: 'm1' | 'm2' | 'm3' | 'm4' | 'a' | 'b' | 'c' | 'e' | 'f' | 'h' | 'bus' | 'regional'
   /**
