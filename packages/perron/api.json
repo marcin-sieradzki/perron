@@ -1,1 +1,65 @@
-{}
+{
+  "StationIcon": {
+    "extends": [
+      "Omit<ComponentPropsWithRef<'span'>, 'children'>"
+    ],
+    "props": {
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "line": {
+        "optional": true,
+        "type": [
+          "\"a\"",
+          "\"b\"",
+          "\"bus\"",
+          "\"c\"",
+          "\"e\"",
+          "\"f\"",
+          "\"h\"",
+          "\"m1\"",
+          "\"m2\"",
+          "\"m3\"",
+          "\"m4\"",
+          "\"regional\""
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLSpanElement>"
+        ]
+      },
+      "render": {
+        "optional": true,
+        "type": [
+          "RenderProp<Record<string, unknown>>"
+        ]
+      },
+      "size": {
+        "optional": true,
+        "type": [
+          "\"large\"",
+          "\"medium\"",
+          "\"small\""
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "variant": {
+        "optional": true,
+        "type": [
+          "\"filled\"",
+          "\"outlined\""
+        ]
+      }
+    }
+  }
+}

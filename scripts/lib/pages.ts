@@ -28,6 +28,7 @@ export const PAGES = [
   'docs/components/README.md',
   'docs/components/TEMPLATE.md',
   // registry:specs start: each spec page, written by npm run registry
+  'docs/components/station-icon.md',
   // registry:specs end
 ]
 

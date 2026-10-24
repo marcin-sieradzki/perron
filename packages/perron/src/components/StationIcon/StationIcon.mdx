@@ -1,0 +1,19 @@
+import { Meta, Stories, Title } from '@storybook/addon-docs/blocks'
+import { PropsTable } from '../../../../../storybook/blocks/PropsTable.tsx'
+import { SpecProse } from '../../../../../storybook/blocks/SpecProse.tsx'
+import * as StationIconStories from './StationIcon.stories.tsx'
+
+<Meta of={StationIconStories} />
+
+<Title />
+
+<SpecProse path="docs/components/station-icon.md" intro />
+
+<Stories title="Examples" />
+
+<PropsTable of={StationIconStories} />
+
+<SpecProse
+  path="docs/components/station-icon.md"
+  sections={['Keyboard and ARIA', 'Owned strings', "Do and don't"]}
+/>
