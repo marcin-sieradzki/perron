@@ -12,10 +12,10 @@
     "name": "IconButton",
     "layer": "component",
     "category": "Actions",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": ["Button"],
     "penpotPath": "Components/IconButton",
-    "dependsOn": ["Button"]
+    "dependsOn": []
   },
   {
     "name": "LinkButton",
@@ -39,7 +39,7 @@
     "name": "Surface",
     "layer": "component",
     "category": "Layout",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/Surface",
     "dependsOn": []
