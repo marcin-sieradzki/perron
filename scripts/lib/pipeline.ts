@@ -20,6 +20,8 @@ import {
   variantName,
   visualPath,
 } from './design.ts'
+import { CONTRACT } from '../checks/lib.ts'
+import { readPropRules } from '../checks/props.ts'
 import { folderOf, kebab, type Layer } from './entry.ts'
 import { PACKAGE } from './paths.ts'
 
@@ -176,7 +178,12 @@ function unfilledText(spec: string, template: string) {
  * placeholder left, the template's title kept, and the `[PENDING]` questions left (a code span
  * that starts with `[PENDING]` mentions the marker and is not a question).
  */
-export function specProblems(spec: string, template: string, name: string) {
+export function specProblems(
+  spec: string,
+  template: string,
+  name: string,
+  banned: Record<string, string> = {},
+) {
   const problems: string[] = []
   const headings = (md: string) => [...md.matchAll(/^## (.+?)\s*$/gm)].map((m) => m[1])
   const wanted = headings(template)
@@ -197,8 +204,24 @@ export function specProblems(spec: string, template: string, name: string) {
   const unfilled = unfilledText(spec, template)
   for (const p of placeholders)
     if (unfilled.includes(p)) problems.push(`still has the placeholder ${p}`)
+  for (const prop of propNames(spec))
+    if (banned[prop])
+      problems.push(
+        `has a Props row for \`${prop}\`, a name the contract's "Names from other libraries" bans; use ${banned[prop]}`,
+      )
   const pending = spec.replace(PENDING_MENTION, '').match(/\[PENDING\]/g)?.length ?? 0
   return { pending, problems }
+}
+
+/** The prop each row of the spec's Props tables names: the first code span of its first cell. */
+function propNames(spec: string) {
+  const props = /^## Props\s*$([\s\S]*?)(?=^## |(?![\s\S]))/m.exec(spec)?.[1] ?? ''
+  return [...props.matchAll(/^\|\s*`([^`]+)`/gm)].map((m) => m[1])
+}
+
+/** The names the contract's "Names from other libraries" table bans, when the contract is there. */
+function bannedNames(env: Env) {
+  return exists(env, CONTRACT) ? readPropRules(read(env, CONTRACT)).banned : {}
 }
 
 const LEVELS = ['P1', 'P2', 'P3'] as const
@@ -303,6 +326,7 @@ function refusal(p: Pipeline, stage: Stage, env: Env): string | undefined {
       read(env, files.spec),
       read(env, TEMPLATE),
       p.component,
+      bannedNames(env),
     )
     if (pending) problems.push(`has ${pending} [PENDING] question${pending > 1 ? 's' : ''}`)
     if (problems.length) return `the spec ${files.spec} is not complete: it ${problems.join('; ')}`
@@ -460,7 +484,12 @@ function designGate(p: Pipeline, env: Env): Verdict {
 function briefGate(p: Pipeline, env: Env): Verdict {
   const { spec } = filesOf(p.component, p.layer)
   if (!exists(env, spec)) return { outcome: 'failed', failing: `there is no spec at ${spec}` }
-  const { pending, problems } = specProblems(read(env, spec), read(env, TEMPLATE), p.component)
+  const { pending, problems } = specProblems(
+    read(env, spec),
+    read(env, TEMPLATE),
+    p.component,
+    bannedNames(env),
+  )
   if (problems.length) return { outcome: 'failed', failing: `the spec ${problems.join('; ')}` }
   return pending ? { outcome: 'pending', pending } : { outcome: 'done' }
 }
