@@ -1,4 +1,6 @@
 import type { CSSProperties } from 'react'
+import { flushSync } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, within } from 'storybook/test'
 import { Prik } from './Prik.tsx'
@@ -77,17 +79,33 @@ export const TimetableOnly: Story = {
 /** A grey dot, whatever the line. */
 export const NoSignal: Story = {
   args: { variant: 'no-signal' },
-  play: async ({ canvasElement }) => {
-    const root = within(canvasElement).getByRole('img', { name: 'No signal' })
-    const dot = root.querySelector('.pn-Prik-dot')!
+  play: async ({ canvasElement, step }) => {
     // the token as the browser resolves a colour, read from a probe and then removed
     const probe = document.createElement('span')
     probe.style.color = 'var(--perron-color-data-state-no-signal)'
     canvasElement.append(probe)
     const grey = getComputedStyle(probe).color
     probe.remove()
-    await expect(getComputedStyle(dot).fill).toBe(grey)
-    await expect(getComputedStyle(dot).fill).not.toBe(getComputedStyle(root).color)
+    const filledGrey = async (root: Element) => {
+      const dot = root.querySelector('.pn-Prik-dot')!
+      await expect(getComputedStyle(dot).fill).toBe(grey)
+      await expect(getComputedStyle(dot).fill).not.toBe(getComputedStyle(root).color)
+    }
+    await filledGrey(within(canvasElement).getByRole('img', { name: 'No signal' }))
+    // every line, each Prik rendered in a root of its own beside the story's and then removed
+    const host = document.createElement('div')
+    canvasElement.append(host)
+    const react = createRoot(host)
+    try {
+      for (const [line, label] of LINES)
+        await step(`${label}: filled grey`, async () => {
+          flushSync(() => react.render(<Prik variant="no-signal" line={line} />))
+          await filledGrey(within(host).getByRole('img', { name: 'No signal' }))
+        })
+    } finally {
+      react.unmount()
+      host.remove()
+    }
   },
 }
 
@@ -186,6 +204,24 @@ export const Sizes: Story = {
   },
 }
 
+/**
+ * The rules inside the stylesheets' `(forced-colors: active)` blocks for Prik, as one stylesheet that
+ * applies them unconditionally: a play test cannot turn forced colours on.
+ */
+function forcedColourRules() {
+  const found: string[] = []
+  const collect = (rules: CSSRuleList) => {
+    for (const rule of rules)
+      if (rule instanceof CSSMediaRule && rule.media.mediaText.includes('forced-colors: active'))
+        found.push(...[...rule.cssRules].map((r) => r.cssText).filter((t) => t.includes('pn-Prik')))
+      else if (rule instanceof CSSGroupingRule) collect(rule.cssRules)
+  }
+  for (const sheet of document.styleSheets) collect(sheet.cssRules)
+  const sheet = new CSSStyleSheet()
+  sheet.replaceSync(found.join('\n'))
+  return sheet
+}
+
 /** Each state on each of the twelve lines. */
 export const Lines: Story = {
   render: (args) => (
@@ -194,4 +230,34 @@ export const Lines: Story = {
       rows={LINES.map(([line, label]) => ({ key: line, label, props: { line } }))}
     />
   ),
+  play: async ({ canvasElement, step }) => {
+    const forced = forcedColourRules()
+    await expect(
+      forced.cssRules.length,
+      'Prik rules inside (forced-colors: active)',
+    ).toBeGreaterThan(0)
+    // a dot's shape without its colour: filled or not, how strongly, rimmed or not, and its dash
+    const shape = (prik: Element) => {
+      const style = getComputedStyle(prik.querySelector('.pn-Prik-dot')!)
+      const rim =
+        style.strokeDasharray === 'none' ? 'solid rim' : `rim dashed ${style.strokeDasharray}`
+      return [
+        style.fill === 'none' ? 'no fill' : `fill ${style.fillOpacity}`,
+        style.stroke === 'none' ? 'no rim' : rim,
+      ].join(', ')
+    }
+    document.adoptedStyleSheets = [...document.adoptedStyleSheets, forced]
+    try {
+      for (const [line, label] of LINES)
+        await step(`${label}: in forced colours, each state a shape of its own`, async () => {
+          const priks = [...canvasElement.querySelectorAll(`.pn-Prik[data-line='${line}']`)]
+          await expect(priks).toHaveLength(VARIANTS.length)
+          await expect(new Set(priks.map(shape)).size, priks.map(shape).join(' | ')).toBe(
+            VARIANTS.length,
+          )
+        })
+    } finally {
+      document.adoptedStyleSheets = document.adoptedStyleSheets.filter((s) => s !== forced)
+    }
+  },
 }

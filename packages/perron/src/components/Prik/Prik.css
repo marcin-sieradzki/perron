@@ -105,13 +105,19 @@
   fill: var(--perron-color-data-state-no-signal);
 }
 
-/* In forced colours the shapes carry the state (CR-8). */
+/* In forced colours the shapes carry the state (CR-8). No signal, a solid dot like live
+   elsewhere, takes a shape of its own here: a grey dot rimmed with timetable only's dashes, at the
+   one outer size (CR-1). */
 @media (forced-colors: active) {
   .pn-Prik[data-line] {
     color: CanvasText;
   }
 
   .pn-Prik[data-variant='no-signal'] .pn-Prik-dot {
+    r: calc(50% - var(--perron-prik-inset) - var(--perron-prik-timetable-stroke-inset));
     fill: GrayText;
+    stroke: currentColor;
+    stroke-width: var(--perron-prik-timetable-stroke-width);
+    stroke-dasharray: var(--perron-prik-timetable-dash);
   }
 }

@@ -46,44 +46,51 @@ Answered: yes, as recommended (unattended run, to confirm). The question was: Do
 
 One row per part, state and property. Prik has one design state, rest: it is not focusable, hoverable or pressable. The data states and lines are props, written in the Part column as the root's attribute.
 
-| Part                               | State | Property                    | Token                                                  |
-| ---------------------------------- | ----- | --------------------------- | ------------------------------------------------------ |
-| `root` (`size='medium'`)           | rest  | `--perron-icon-size`        | `icon.size.400`                                        |
-| `root` (`size='small'`)            | rest  | `--perron-icon-size`        | `icon.size.325`                                        |
-| `root` (`size='large'`)            | rest  | `--perron-icon-size`        | `icon.size.450`                                        |
-| `root`                             | rest  | `inline-size`, `block-size` | `icon.size.*`, through `--perron-icon-size`            |
-| `root` (`line='m1'`)               | rest  | `color`                     | `color.transit.line.m1`                                |
-| `root` (`line='m2'`)               | rest  | `color`                     | `color.transit.line.m2`                                |
-| `root` (`line='m3'`)               | rest  | `color`                     | `color.transit.line.m3`                                |
-| `root` (`line='m4'`)               | rest  | `color`                     | `color.transit.line.m4`                                |
-| `root` (`line='a'`)                | rest  | `color`                     | `color.transit.line.a`                                 |
-| `root` (`line='b'`)                | rest  | `color`                     | `color.transit.line.b`                                 |
-| `root` (`line='c'`)                | rest  | `color`                     | `color.transit.line.c`                                 |
-| `root` (`line='e'`)                | rest  | `color`                     | `color.transit.line.e`                                 |
-| `root` (`line='f'`)                | rest  | `color`                     | `color.transit.line.f`                                 |
-| `root` (`line='h'`)                | rest  | `color`                     | `color.transit.line.h`                                 |
-| `root` (`line='bus'`)              | rest  | `color`                     | `color.transit.mode.bus`                               |
-| `root` (`line='regional'`)         | rest  | `color`                     | `color.transit.mode.regional`                          |
-| `dot` (`variant='live'`)           | rest  | `r`                         | `calc(50% - prik.inset)`                               |
-| `dot` (`variant='live'`)           | rest  | `fill`                      | `currentColor`, the line                               |
-| `dot` (`variant='ageing'`)         | rest  | `r`                         | `calc(50% - prik.inset - prik.ageing.stroke-inset)`    |
-| `dot` (`variant='ageing'`)         | rest  | `fill`                      | `currentColor`, the line                               |
-| `dot` (`variant='ageing'`)         | rest  | `fill-opacity`              | `prik.ageing.fill-opacity`                             |
-| `dot` (`variant='ageing'`)         | rest  | `stroke`                    | `currentColor`, the line                               |
-| `dot` (`variant='ageing'`)         | rest  | `stroke-width`              | `prik.ageing.stroke-width`                             |
-| `dot` (`variant='estimated'`)      | rest  | `r`                         | `calc(50% - prik.inset - prik.estimated.stroke-inset)` |
-| `dot` (`variant='estimated'`)      | rest  | `fill`                      | `none`                                                 |
-| `dot` (`variant='estimated'`)      | rest  | `stroke`                    | `currentColor`, the line                               |
-| `dot` (`variant='estimated'`)      | rest  | `stroke-width`              | `prik.estimated.stroke-width`                          |
-| `dot` (`variant='timetable-only'`) | rest  | `r`                         | `calc(50% - prik.inset - prik.timetable.stroke-inset)` |
-| `dot` (`variant='timetable-only'`) | rest  | `fill`                      | `none`                                                 |
-| `dot` (`variant='timetable-only'`) | rest  | `stroke`                    | `currentColor`, the line                               |
-| `dot` (`variant='timetable-only'`) | rest  | `stroke-width`              | `prik.timetable.stroke-width`                          |
-| `dot` (`variant='timetable-only'`) | rest  | `stroke-dasharray`          | `prik.timetable.dash`                                  |
-| `dot` (`variant='no-signal'`)      | rest  | `r`                         | `calc(50% - prik.inset)`                               |
-| `dot` (`variant='no-signal'`)      | rest  | `fill`                      | `color.data-state.no-signal`                           |
+| Part                                          | State | Property                    | Token                                                  |
+| --------------------------------------------- | ----- | --------------------------- | ------------------------------------------------------ |
+| `root` (`size='medium'`)                      | rest  | `--perron-icon-size`        | `icon.size.400`                                        |
+| `root` (`size='small'`)                       | rest  | `--perron-icon-size`        | `icon.size.325`                                        |
+| `root` (`size='large'`)                       | rest  | `--perron-icon-size`        | `icon.size.450`                                        |
+| `root`                                        | rest  | `inline-size`, `block-size` | `icon.size.*`, through `--perron-icon-size`            |
+| `root` (`line='m1'`)                          | rest  | `color`                     | `color.transit.line.m1`                                |
+| `root` (`line='m2'`)                          | rest  | `color`                     | `color.transit.line.m2`                                |
+| `root` (`line='m3'`)                          | rest  | `color`                     | `color.transit.line.m3`                                |
+| `root` (`line='m4'`)                          | rest  | `color`                     | `color.transit.line.m4`                                |
+| `root` (`line='a'`)                           | rest  | `color`                     | `color.transit.line.a`                                 |
+| `root` (`line='b'`)                           | rest  | `color`                     | `color.transit.line.b`                                 |
+| `root` (`line='c'`)                           | rest  | `color`                     | `color.transit.line.c`                                 |
+| `root` (`line='e'`)                           | rest  | `color`                     | `color.transit.line.e`                                 |
+| `root` (`line='f'`)                           | rest  | `color`                     | `color.transit.line.f`                                 |
+| `root` (`line='h'`)                           | rest  | `color`                     | `color.transit.line.h`                                 |
+| `root` (`line='bus'`)                         | rest  | `color`                     | `color.transit.mode.bus`                               |
+| `root` (`line='regional'`)                    | rest  | `color`                     | `color.transit.mode.regional`                          |
+| `dot` (`variant='live'`)                      | rest  | `r`                         | `calc(50% - prik.inset)`                               |
+| `dot` (`variant='live'`)                      | rest  | `fill`                      | `currentColor`, the line                               |
+| `dot` (`variant='ageing'`)                    | rest  | `r`                         | `calc(50% - prik.inset - prik.ageing.stroke-inset)`    |
+| `dot` (`variant='ageing'`)                    | rest  | `fill`                      | `currentColor`, the line                               |
+| `dot` (`variant='ageing'`)                    | rest  | `fill-opacity`              | `prik.ageing.fill-opacity`                             |
+| `dot` (`variant='ageing'`)                    | rest  | `stroke`                    | `currentColor`, the line                               |
+| `dot` (`variant='ageing'`)                    | rest  | `stroke-width`              | `prik.ageing.stroke-width`                             |
+| `dot` (`variant='estimated'`)                 | rest  | `r`                         | `calc(50% - prik.inset - prik.estimated.stroke-inset)` |
+| `dot` (`variant='estimated'`)                 | rest  | `fill`                      | `none`                                                 |
+| `dot` (`variant='estimated'`)                 | rest  | `stroke`                    | `currentColor`, the line                               |
+| `dot` (`variant='estimated'`)                 | rest  | `stroke-width`              | `prik.estimated.stroke-width`                          |
+| `dot` (`variant='timetable-only'`)            | rest  | `r`                         | `calc(50% - prik.inset - prik.timetable.stroke-inset)` |
+| `dot` (`variant='timetable-only'`)            | rest  | `fill`                      | `none`                                                 |
+| `dot` (`variant='timetable-only'`)            | rest  | `stroke`                    | `currentColor`, the line                               |
+| `dot` (`variant='timetable-only'`)            | rest  | `stroke-width`              | `prik.timetable.stroke-width`                          |
+| `dot` (`variant='timetable-only'`)            | rest  | `stroke-dasharray`          | `prik.timetable.dash`                                  |
+| `dot` (`variant='no-signal'`)                 | rest  | `r`                         | `calc(50% - prik.inset)`                               |
+| `dot` (`variant='no-signal'`)                 | rest  | `fill`                      | `color.data-state.no-signal`                           |
+| `dot` (`variant='no-signal'`, forced colours) | rest  | `r`                         | `calc(50% - prik.inset - prik.timetable.stroke-inset)` |
+| `dot` (`variant='no-signal'`, forced colours) | rest  | `fill`                      | `GrayText`                                             |
+| `dot` (`variant='no-signal'`, forced colours) | rest  | `stroke`                    | `currentColor`, `CanvasText`                           |
+| `dot` (`variant='no-signal'`, forced colours) | rest  | `stroke-width`              | `prik.timetable.stroke-width`                          |
+| `dot` (`variant='no-signal'`, forced colours) | rest  | `stroke-dasharray`          | `prik.timetable.dash`                                  |
 
 `cx` and `cy` are `50%`. On a square box, `r: 50%` is half its side, so each radius keeps the dot `prik.inset` inside the box; each `stroke-inset` pulls a rim in by about half its width, so every state has the same outer size.
+
+In forced colours no signal borrows timetable only's dashed rim, at its radius, width and dash, around its grey fill (CR-8): the rim is the same drawing, so it reads the `prik.timetable.*` tokens rather than adding its own.
 
 Not read: `prik.halo`, `color.data-state.halo` and `color.data-state.outline` are for the map canvas alone; `prik.live-threshold` and `prik.ageing-threshold` are for whoever decides the state (see CR-3).
 
@@ -103,7 +110,7 @@ What axe won't catch, from the contract, each with how this component meets it:
 - [ ] Everything the eye is told, the ear is told, for every shape each prop accepts: each of the five shapes is named by its state's word; the line colour is not named, because the caller names the line in words nearby, as [Semantic colours](../foundations/semantic-colours.md#line-colours) asks.
 - [ ] Every landmark and named region has an accessible name: none here.
 - [ ] Every default label can be overridden: `liveLabel`, `ageingLabel`, `estimatedLabel`, `timetableOnlyLabel`, `noSignalLabel`.
-- [ ] Every shape the type accepts renders, in every variant: every `variant` on every `line` at every `size`, in the `Lines` and `Sizes` stories; Prik takes no `ReactNode`.
+- [ ] Every shape the type accepts renders, in every variant: every `variant` on every `line` at every `size`, in the `Lines` and `Sizes` stories; Prik takes no `ReactNode`. In forced colours each state keeps a shape of its own (CR-8), which the `Lines` story's `play` test checks on every line.
 - [ ] A hidden copy kept for animation is `aria-hidden`, and a collapsed region is `inert`: none here; nothing animates or collapses.
 - [ ] Native semantics first: an `<svg>` with `role="img"`, the role the SVG accessibility mapping gives a named graphic; no element says "image" more natively for an inline drawing.
 - [ ] Focus moves in reading order and returns on close: Prik takes no focus and opens nothing.
@@ -133,9 +140,11 @@ Rules for this component alone, numbered so the build and the review can cite th
 - **CR-5.** Prik is never the only place a state is said to the eye: a screen writes the state in words next to it, as PrikLabel and PrikLegend do ([Data states](../foundations/data-states.md)).
 - **CR-6.** The root is `role="img"` with `aria-label` set to the state's owned string, so a Prik on its own is never silent. A caller that shows the same word next to it, such as PrikLabel, passes `aria-hidden`, which reaches the root with the rest props, so the word is heard once.
 - **CR-7.** The root sets `data-variant`, `data-line` and `data-size`, defaults included, and the CSS selects on them: `.pn-Prik[data-variant='ageing'] .pn-Prik-dot`.
-- **CR-8.** In forced colours the shapes carry the state. Inside `@media (forced-colors: active)`, the root's `color` is `CanvasText`, so live, ageing, estimated and timetable only keep their fills and rings in the system's text colour, and no signal fills with `GrayText`.
+- **CR-8.** In forced colours the shapes carry the state, each state a shape of its own. Inside `@media (forced-colors: active)`, the root's `color` is `CanvasText`, so live, ageing, estimated and timetable only keep their fills and rings in the system's text colour. No signal, a solid dot like live elsewhere, becomes a dot filled with `GrayText` and rimmed with timetable only's dashes in `CanvasText`, at timetable only's radius, so it keeps the one outer size (CR-1). Its fill sets it apart from the empty dashed ring of timetable only, and its dashed rim from live's plain dot and ageing's solid rim, without relying on `GrayText` against `CanvasText`. Outside forced colours it stays the grey dot of [Data states](../foundations/data-states.md).
 
 Answered: yes, as recommended (unattended run, to confirm). The question was: In forced colours, is no signal filled with `GrayText`, so it stays apart from a live dot, which otherwise has the same shape? Recommended: yes; `GrayText` is one of the system colours the contract allows there, and it keeps "a grey dot" grey.
+
+Note: the code review found `GrayText` alone too close to `CanvasText` to tell no signal from live (about 1.5:1 under Chromium's emulated contrast theme), so CR-8 now also gives no signal timetable only's dashed rim in forced colours. The `GrayText` fill stays.
 
 ## Stories
 
@@ -147,11 +156,13 @@ One per variant, named by its variant name ([penpot/README.md](../../penpot/READ
 | `Ageing`        | `variant='ageing'`: a fainter dot with a rim | The root is an `img` named "Ageing"                                                                                                                 |
 | `Estimated`     | `variant='estimated'`: a ring                | The root is an `img` named "Estimated"                                                                                                              |
 | `TimetableOnly` | `variant='timetable-only'`: a dashed ring    | The root is an `img` named "Timetable only"                                                                                                         |
-| `NoSignal`      | `variant='no-signal'`: a grey dot            | The root is an `img` named "No signal", its dot filled grey whatever the line                                                                       |
+| `NoSignal`      | `variant='no-signal'`: a grey dot            | The root is an `img` named "No signal", its dot filled grey whatever the line: the meta's and each of the twelve, rendered in turn                  |
 | `Sizes`         | Each state at `small`, `medium` and `large`  | Each size's box is its `icon.size.*` square, and in each box every state's outer edge (`r` plus half its stroke) is within 0.1 px of the live dot's |
-| `Lines`         | Each state on each of the twelve lines       | none                                                                                                                                                |
+| `Lines`         | Each state on each of the twelve lines       | With the stylesheet's forced-colours rules applied, on each line the five states' dots differ in shape (fill, its opacity, rim and dash), CR-8      |
 
 Answered: yes, as recommended (unattended run, to confirm). The question was: Are Prik's Penpot variants the five states alone, `state` its one variant property, with `line` and `size` shown in the `Sizes` and `Lines` stories rather than as variants? Recommended: yes; five states by three sizes by twelve lines would be 180 variants of one circle, and `line` and `size` only swap a token.
+
+Note: a later answer, under Props, renamed the property `variant`; the Penpot variant property is `variant`.
 
 ## Do and don't
 
