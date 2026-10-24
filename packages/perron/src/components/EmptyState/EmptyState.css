@@ -13,9 +13,12 @@
   overflow-wrap: anywhere;
 }
 
-/* CR-7: the colour sits on the part, and the icon draws in currentColor. No size is set here: each
-   icon keeps the step its grid was drawn for, 16 px by default through .perron-icon. */
+/* CR-7: the colour sits on the part, and the icon draws in currentColor. The part sizes the icon
+   it holds, at the 16 px step the set's default icons are drawn for; an icon drawn for another
+   step sets its own step here through slotProps.icon. */
 .pn-EmptyState-icon {
+  --perron-icon-size: var(--perron-icon-size-400);
+
   display: flex;
   margin: 0;
   margin-block-end: var(--perron-space-200);
