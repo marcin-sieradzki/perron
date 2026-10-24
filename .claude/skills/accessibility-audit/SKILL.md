@@ -7,7 +7,7 @@ axe runs on every story in `npm run test:stories`, so most of WCAG's machine-che
 
 ## Scope
 
-One argument: a `<Name>`, a list of names, `all` (every entry in `packages/perron/components.json` past `designing`), or a screen's URL. With no entry past `designing` and no URL, report "Checked: nothing; no entry is past designing" and stop.
+One argument: a `<Name>`, a list of names, `all` (every entry in `packages/perron/components.json` past `designing`), or a screen's URL. With no entry past `designing` and no URL, report the empty scope of [`format.md`](../design-qa/format.md).
 
 ## Pre-flight
 

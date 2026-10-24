@@ -7,13 +7,13 @@ argument-hint: '<Name>'
 
 The design stage of the component loop ([ROADMAP](../../../ROADMAP.md), "Phase 4: The agent loop"). It draws one component or pattern in the "Perron Design System" Penpot file with the helpers in `penpot/helpers.js`, reads the drawing back into the repo, and exports every variant in both themes. Penpot owns the anatomy and the repo owns the values ([ADR 0002](../../../docs/adr/0002-penpot-owns-anatomy-repo-owns-values.md)).
 
-It runs Local, through the Penpot MCP, in the tab the maintainer has connected. It ends at the **design gate**: it returns `done` and the maintainer approves the design in Penpot, through the `factory` skill, which alone writes the loop's state. This skill draws, checks and reports; the approval is the maintainer's.
+It runs Local, through the Penpot MCP, in the tab the maintainer has connected. It ends at the **design gate**: it returns `done`, and the maintainer approves the design in Penpot, which the `factory` skill records; `npm run factory`, which only the `factory` skill runs, is the only writer of `components/<name>/pipeline.yaml`. This skill draws, checks and reports; the approval is the maintainer's.
 
 ## Names
 
 - `<Name>` is the skill's argument, in PascalCase; `<name>` is the same in kebab-case.
 - A component's page is `Components/<Name>`; a pattern's is `Patterns/<Name>`. Everything else below is the same for both.
-- A **variant name** is its property values joined in PascalCase, `SolidHover`, or `Default` without variants, by the conventions of `penpot/README.md`. A hyphenated value joins the same way: `brand-subtle` is `BrandSubtle`.
+- A **variant name**, such as `SolidHover`, follows the Conventions of [penpot/README.md](../../../penpot/README.md).
 
 ## Writes
 

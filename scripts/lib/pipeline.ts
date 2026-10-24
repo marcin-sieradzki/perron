@@ -2,13 +2,23 @@
 // rules that move it through the loop of ROADMAP.md, "Phase 4": design, brief, build, review, docs,
 // visual. Every gate is checked from the files and by running the checks, never taken on a stage's
 // word, and the caps of ADR 0008 stop the loop at `needs-human`: a failed build run (the build
-// stage spends its 3 attempts inside one run), 2 review rounds with a P1, a second visual failure. scripts/factory.ts is the command line over it and the only writer.
+// stage spends its 3 attempts inside one run), a failed docs run, 2 review rounds with a P1, a
+// second visual failure. scripts/factory.ts is the command line over it and the only writer.
 import { createHash } from 'node:crypto'
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { parse, stringify } from 'yaml'
-import { codeMapPath, exportPath, readBackPath, THEMES, variantName } from './design.ts'
-import { folderOf, kebab, parseRegistry, type Entry, type Layer } from './entry.ts'
+import {
+  codeMapPath,
+  exportPath,
+  layerOf,
+  readBackPath,
+  registryEntry,
+  THEMES,
+  variantName,
+  visualPath,
+} from './design.ts'
+import { folderOf, kebab, type Layer } from './entry.ts'
 import { PACKAGE } from './paths.ts'
 
 /** The stages, in the order a component goes through them. */
@@ -23,10 +33,10 @@ export type Outcome = (typeof OUTCOMES)[number]
 export type Gate = 'design-approval' | 'pending-questions' | 'needs-human' | 'done'
 
 /**
- * The budgets of ADR 0008: build attempts (spent inside one build run, so one failed run stops
- * the loop), review rounds with a P1, visual failures.
+ * The budgets of ADR 0008 the factory counts: review rounds with a P1, visual failures. The build
+ * stage spends its 3 attempts inside one run, so the factory stops at the first failed build run.
  */
-export const CAPS = { build: 3, review: 2, visual: 2 } as const
+export const CAPS = { review: 2, visual: 2 } as const
 
 /** The spec template every spec keeps the sections of. */
 export const TEMPLATE = 'docs/components/TEMPLATE.md'
@@ -72,8 +82,9 @@ export interface Env {
   now(): string
 }
 
-/** What comes next: a stage to run, or the gate the loop waits at. */
-export type Next = { run: Stage; why: string } | { wait: Gate; stage?: Stage; why: string }
+/** What comes next: a stage to run, with its round for review, or the gate the loop waits at. */
+export type Next =
+  { run: Stage; round?: number; why: string } | { wait: Gate; stage?: Stage; why: string }
 
 /** A command's result: the new pipeline when it was accepted, or why it was refused. */
 export type Result = { ok: true; pipeline: Pipeline; said: string } | { ok: false; why: string }
@@ -90,8 +101,8 @@ export function filesOf(name: string, layer: Layer) {
     stories: `${dir}/${name}.stories.tsx`,
     pipeline: `${state}/pipeline.yaml`,
     review: `${state}/review.md`,
-    report: `${state}/visual/report.json`,
-    reportMd: `${state}/visual/report.md`,
+    report: `${visualPath(name)}/report.json`,
+    reportMd: `${visualPath(name)}/report.md`,
   }
 }
 
@@ -109,18 +120,7 @@ export function sha256(env: Pick<Env, 'root'>, rel: string) {
     : ''
 }
 
-function registryEntry(env: Pick<Env, 'root'>, name: string): Entry | undefined {
-  try {
-    return parseRegistry(JSON.parse(read(env, `${PACKAGE}/components.json`))).find(
-      (e) => e.name === name,
-    )
-  } catch {
-    return undefined
-  }
-}
-
 interface Design {
-  page?: string
   properties: Record<string, string[]>
   variants: { props: Record<string, string> }[]
 }
@@ -131,13 +131,6 @@ function readBack(env: Pick<Env, 'root'>, name: string): Design | undefined {
   } catch {
     return undefined
   }
-}
-
-/** The layer of `<Name>`: its registry entry's, else its Penpot page's, else a component. */
-export function layerOf(env: Pick<Env, 'root'>, name: string): Layer {
-  const entry = registryEntry(env, name)
-  if (entry) return entry.layer
-  return readBack(env, name)?.page?.startsWith('Patterns/') ? 'pattern' : 'component'
 }
 
 /** The variant names of `<Name>`'s read-back, which are its exports' and stories' names. */
@@ -182,7 +175,8 @@ const LEVELS = ['P1', 'P2', 'P3'] as const
 
 /**
  * The findings of a `review.md` by level, counted by their `- **P<level>-<k>.**` prefix, and what
- * keeps it from being round `round` of `<Name>`'s review in the format of the phase 4 notes.
+ * keeps it from being round `round` of `<Name>`'s review in the format of
+ * `.claude/agents/component-reviewer.md`.
  */
 export function reviewFindings(text: string, name: string, round: number) {
   const problems: string[] = []
@@ -245,6 +239,8 @@ export function loadPipeline(env: Env, name: string): Pipeline {
 const clone = (p: Pipeline): Pipeline => structuredClone(p)
 const stageOf = (p: Pipeline, s: Stage) => (p.stages[s] ??= {})
 const npm = (name: string, command: string) => `npm run factory -- ${command} ${name}`
+/** The review round a run of review is: one past the rounds already reviewed. */
+const roundOf = (s: StageState = {}) => (s.rounds ?? 0) + 1
 
 /** Whether the approval stands: none, or given for a read-back that has since changed. */
 function approvalProblem(p: Pipeline, env: Env) {
@@ -300,8 +296,13 @@ export function next(p: Pipeline, env: Env): Next {
     }
     const s = p.stages[stage] ?? {}
     if (s.status === 'done') continue
+    const round = stage === 'review' ? { round: roundOf(s) } : {}
     if (s.status === 'running')
-      return { run: stage, why: `${stage} began at ${s.started} and has not ended; run it again` }
+      return {
+        run: stage,
+        ...round,
+        why: `${stage} began at ${s.started} and has not ended; run it again`,
+      }
     if (s.status === 'pending')
       return {
         wait: 'pending-questions',
@@ -311,13 +312,12 @@ export function next(p: Pipeline, env: Env): Next {
             ? `the spec ${filesOf(p.component, p.layer).spec} has ${s.pending} [PENDING] question${s.pending === 1 ? '' : 's'} for the maintainer`
             : (s.failing ?? `${stage} has questions for the maintainer`),
       }
-    const round = stage === 'review' ? ` (round ${(s.rounds ?? 0) + 1})` : ''
     const why = s.failing
       ? `${s.status === 'failed' ? 'the last run failed' : 'sent back'}: ${s.failing}`
       : stage === 'design'
         ? `${p.component} has no design yet`
         : `${STAGES[STAGES.indexOf(stage) - 1]} is done`
-    return { run: stage, why: `${why}${round}` }
+    return { run: stage, ...round, why }
   }
   return {
     wait: 'done',
@@ -347,11 +347,7 @@ export function begin(p: Pipeline, stage: Stage, env: Env): Result {
   s.started = env.now()
   if (stage === 'build') s.runs = (s.runs ?? 0) + 1
   const extra =
-    stage === 'build'
-      ? ` (run ${s.runs})`
-      : stage === 'review'
-        ? ` (round ${(s.rounds ?? 0) + 1})`
-        : ''
+    stage === 'build' ? ` (run ${s.runs})` : stage === 'review' ? ` (round ${roundOf(s)})` : ''
   return { ok: true, pipeline: out, said: `began ${stage}${extra}` }
 }
 
@@ -489,13 +485,10 @@ export function end(
     case 'build':
       if (outcome === 'done') verdict = buildGate(p, env)
       if (verdict.outcome === 'failed')
-        out.needsHuman = {
-          stage,
-          reason: `build failed after its ${CAPS.build} attempts: ${verdict.failing}`,
-        }
+        out.needsHuman = { stage, reason: `build failed: ${verdict.failing}` }
       break
     case 'review': {
-      const round = (s.rounds ?? 0) + 1
+      const round = roundOf(s)
       const found = exists(env, files.review)
         ? reviewFindings(read(env, files.review), p.component, round)
         : { p1: 0, p2: 0, p3: 0, problems: [`${files.review} is missing`] }
@@ -524,6 +517,8 @@ export function end(
     }
     case 'docs':
       if (outcome === 'done') verdict = docsGate(p, env)
+      if (verdict.outcome === 'failed')
+        out.needsHuman = { stage, reason: `docs failed: ${verdict.failing}` }
       break
     case 'visual': {
       const report = freshReport(p, env)

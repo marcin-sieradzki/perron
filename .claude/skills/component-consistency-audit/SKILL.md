@@ -18,7 +18,7 @@ Read these before writing anything:
 
 ## Steps
 
-1. **List** the entries past `designing`, each with its family and the shared parts its spec names. With none, the report is "Checked: nothing; no entry is past designing", and the audit ends. Done when every entry has its row.
+1. **List** the entries past `designing`, each with its family and the shared parts its spec names. With none, report the empty scope of [`format.md`](../design-qa/format.md). Done when every entry has its row.
 2. **Run** `npm run gates -- shared-parts component-css`. Done when they pass, or each failure is a Defect.
 3. **Parts drawn twice.** For each entry, list what it draws itself rather than composes: each element with a rule of its own in its CSS, and each icon it imports. Compare the lists across entries: one icon in two entries' own markup, one block of declarations in two stylesheets, one structure (an icon button that closes, a tick beside a choice) built twice. Done when every entry's list has been compared with every other's.
 4. **Family surfaces.** Render each family member's stories, and read the root's computed fill, border, radius, text and height at rest, hover and selected. Compare them with the family's row in the contract and with the other members, and compare the tokens each member's read-back binds. Done when every member of every family has been compared in every state its row names.

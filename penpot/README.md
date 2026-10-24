@@ -19,7 +19,7 @@ Before anything else in a Penpot session, pass the whole of [`helpers.js`](helpe
 - **Variant properties are React props.** Each property's name and values are the prop's name and values, such as `variant` with `solid` and `outline`.
 - **Layers are parts.** Each layer is named for the part it becomes: `root`, `label`, `startIcon`. Penpot names a main instance after its component; the read-back writes it as `root`.
 - **Interaction states are a `State` property**, with values such as `default`, `hover`, `focus` and `disabled`, mapped to CSS states in the code map.
-- **A variant's name** is its property values, in the read-back's property order, each in PascalCase, joined: `{ variant: 'solid', State: 'hover' }` is `SolidHover`. A component without variants has one variant, `Default`. Its stories and exports carry this name, so the visual check pairs them without a lookup.
+- **A variant's name** is its property values, in the read-back's property order, each in PascalCase, joined: `{ variant: 'solid', State: 'hover' }` is `SolidHover`, and a hyphenated value joins the same way, `brand-subtle` as `BrandSubtle`. A component without variants has one variant, `Default`. Its stories and exports carry this name, so the visual check pairs them without a lookup.
 - **Every value is a token.** Bind each fill, stroke, radius, padding and gap with `storage.bind`; a literal value fails the check. A zero radius, padding or gap needs no token.
 
 ## Read-back

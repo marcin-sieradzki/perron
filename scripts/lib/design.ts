@@ -1,7 +1,11 @@
 // The names that follow from a design read back from Penpot (penpot/README.md, "Read-back"): each
-// variant's name, which is also its story's export name, its PNG exports, and the Storybook title
-// its stories sit under. The factory and the visual stage both pair files by these names.
-import { kebab, type Layer } from './entry.ts'
+// variant's name, which is also its story's export name, its PNG exports, the Storybook title its
+// stories sit under, the entry's layer, and where the visual stage writes. The factory and the
+// visual stage both pair files by these names.
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
+import { kebab, parseRegistry, type Entry, type Layer } from './entry.ts'
+import { PACKAGE } from './paths.ts'
 
 /** The two themes every design is exported and compared in. */
 export const THEMES = ['light', 'dark'] as const
@@ -40,3 +44,31 @@ export const exportPath = (name: string, variant: string, theme: Theme) =>
 /** The Storybook title of an entry's stories: `Components/<Name>` or `Patterns/<Name>`. */
 export const storyTitle = (name: string, layer: Layer) =>
   `${layer === 'component' ? 'Components' : 'Patterns'}/${name}`
+
+/** The visual stage's folder for `<Name>`, by path from the repo root. */
+export const visualPath = (name: string) => `components/${kebab(name)}/visual`
+
+/** The registry entry of `<Name>` in the tree at `root`, or nothing. */
+export function registryEntry(env: { root: string }, name: string): Entry | undefined {
+  try {
+    return parseRegistry(
+      JSON.parse(readFileSync(join(env.root, `${PACKAGE}/components.json`), 'utf8')),
+    ).find((e) => e.name === name)
+  } catch {
+    return undefined
+  }
+}
+
+/** The layer of `<Name>`: its registry entry's, else its Penpot page's, else a component. */
+export function layerOf(env: { root: string }, name: string): Layer {
+  const entry = registryEntry(env, name)
+  if (entry) return entry.layer
+  try {
+    const { page } = JSON.parse(readFileSync(join(env.root, readBackPath(name)), 'utf8')) as {
+      page?: string
+    }
+    return page?.startsWith('Patterns/') ? 'pattern' : 'component'
+  } catch {
+    return 'component'
+  }
+}

@@ -7,7 +7,7 @@ The design-quality pass on its own: render what is in scope in both themes, judg
 
 ## Scope
 
-One argument: a `<Name>`, a list of names, `all` (every entry in `packages/perron/components.json` past `designing`), or a screen's URL. With no entry past `designing` and no URL, report "Checked: nothing; no entry is past designing" and stop.
+One argument: a `<Name>`, a list of names, `all` (every entry in `packages/perron/components.json` past `designing`), or a screen's URL. With no entry past `designing` and no URL, report the empty scope of [`format.md`](format.md).
 
 ## Pre-flight
 

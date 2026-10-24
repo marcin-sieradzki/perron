@@ -2,11 +2,12 @@
 name: component-docs
 description: The docs stage. Writes a reviewed component's or pattern's Storybook docs page and turns its entry stable.
 disable-model-invocation: true
+argument-hint: '<Name>'
 ---
 
-The docs stage of the factory loop, for one component or pattern, `<Name>`. It runs in a fresh context once review has passed, so the page shows the API the reviewer accepted. It writes the docs page, `<Name>.mdx` beside the code, turns the registry entry `stable` and rebuilds what follows from that. It ends by returning an outcome to the `factory` skill, which owns `components/<name>/pipeline.yaml`: `done`, or `failed` with what is wrong.
+The docs stage of the factory loop, for one component or pattern, `<Name>` (`<name>` in kebab-case). It runs in a fresh context once review has passed, so the page shows the API the reviewer accepted. It writes the docs page, `<Name>.mdx` beside the code, turns the registry entry `stable` and rebuilds what follows from that. It ends by returning its outcome (see [Returns](#returns)), which the factory records; `npm run factory`, which only the `factory` skill runs, is the only writer of `components/<name>/pipeline.yaml`.
 
-The page is drawn from sources, never copied from them: the spec's prose through the `SpecProse` block, the stories live, and the props table through the `PropsTable` block, which reads the component's docgen. So the page's quality is the sources' quality, and a fault in a source goes back to its stage. The docs stage changes the page and the registry, and nothing the build or the brief wrote. Every page has the one shape in step 2; once phase 5 has built Button, Button's page is that shape applied, the reference to compare with.
+The page reads its sources live: the spec's prose through the `SpecProse` block, the stories, and the props table through the `PropsTable` block, which reads the component's docgen. So the page's quality is the sources' quality. The docs stage writes the page and the registry entry, and the spec, the code and the stories stay as the brief and the build wrote them. A **fault in a source** is the outcome: return `failed`, naming the source and the stage it belongs to (the brief for the spec, the build for the code, its types and JSDoc, and the stories), and the maintainer decides. Every page has the one shape in step 2; once phase 5 has built Button, Button's page is that shape applied, the reference to compare with.
 
 For a pattern, read `docs/patterns/<name>.md` for the spec, `packages/perron/src/patterns/<Name>/` for the folder, and `patterns-<name>` for the Storybook id, everywhere this skill says otherwise.
 
@@ -24,9 +25,9 @@ For a pattern, read `docs/patterns/<name>.md` for the spec, `packages/perron/src
    - every story the spec's Stories table names is an export of the stories file;
    - the spec has the sections the page shows: `Keyboard and ARIA`, `Owned strings` and `Do and don't`, and no `[PENDING]`.
 
-   Done when every check holds. A check that fails is the outcome: return `failed`, naming the source, the line and the mismatch, and write nothing.
+   Done when every check holds. A check that fails is a fault in a source, found before the first write: return `failed`, naming the source, its stage, the line and the mismatch.
 
-2. **Write the page** at `packages/perron/src/components/<Name>/<Name>.mdx`, in exactly this shape, with `<Name>` and `<name>` filled in and nothing added:
+2. **Write the page** at `packages/perron/src/components/<Name>/<Name>.mdx`, in exactly this shape, line for line, with `<Name>` and `<name>` filled in:
 
    ```mdx
    import { Meta, Stories, Title } from '@storybook/addon-docs/blocks'
@@ -54,8 +55,15 @@ For a pattern, read `docs/patterns/<name>.md` for the spec, `packages/perron/src
 
 3. **Turn the entry stable.** In `packages/perron/components.json`, set the entry's `status` to `stable`, then run `npm run registry` and `npm run api`. Done when `packages/perron/api.json` holds `<Name>` with every member of `<Name>Props`.
 
-4. **Look at the page.** Start `npm run storybook` and open `http://localhost:6006/iframe.html?viewMode=docs&id=components-<name>--docs` with Playwright, once with its `colorScheme` set to `light` and once to `dark`, and take a full-page screenshot of each. Done when, in both themes, every story renders, the props table has a row for every member of `<Name>Props` with the type and default the spec gives, the slots table has every `slotProps` key the spec's Anatomy gives, and each spec section shows under its heading. A row that is wrong is a fault in the code's types or JSDoc: return `failed`, naming the prop.
+4. **Look at the page.** Start `npm run storybook` and open `http://localhost:6006/iframe.html?viewMode=docs&id=components-<name>--docs` with Playwright, once with its `colorScheme` set to `light` and once to `dark`, and take a full-page screenshot of each. Done when, in both themes, every story renders, the props table has a row for every member of `<Name>Props` with the type and default the spec gives, the slots table has every `slotProps` key the spec's Anatomy gives, and each spec section shows under its heading. A row that is wrong is a fault in a source, the code's types or JSDoc: return `failed`, naming the prop and the build as its stage.
 
-5. **Gates.** Run `npm run gates -- docs`, then `npm run check`. Done when both pass. A red check that the page or the registry change caused is this stage's to fix; any other is the outcome: return `failed` with the check and its output.
+5. **Gates.** Run `npm run gates -- docs`, then `npm run check`. Done when both pass. A red check that the page or the registry change caused is this stage's to fix; any other is a fault in a source: return `failed` with the check, its output and the stage it belongs to.
 
-6. **Return** `done` with a two-line summary: the page's path, and the entry now `stable`.
+6. **Return** `done`, in the shape of [Returns](#returns). Done when the summary names the page's path and the entry's status, `stable`.
+
+## Returns
+
+The run ends with one outcome and a short summary.
+
+- **`done`**: the page's path, and the entry now `stable`.
+- **`failed`**: the fault in a source, with the source or the red check, the line or the output, the mismatch, and the stage it belongs to. The maintainer decides where it is fixed.

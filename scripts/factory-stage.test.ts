@@ -1,6 +1,6 @@
 // The factory's stage workflow, .claude/workflows/factory-stage.js, run with stand-ins for the
 // Workflow tool's globals: each stage starts one agent on the right skill or agent type, and a
-// stage the loop doesn't have is refused.
+// stage it has no agent for is refused.
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 
@@ -59,12 +59,13 @@ describe('factory-stage', () => {
     expect(result).toMatchObject({ outcome: 'done', review: '# Review: Chip, round 2' })
   })
 
-  it('runs visual through npm run visual', async () => {
-    const { calls } = await run({ stage: 'visual', name: 'Chip' })
-    expect(calls[0].prompt).toContain('npm run visual -- Chip')
+  it('tells a stage where the factory records its outcome', async () => {
+    const { calls } = await run({ stage: 'build', name: 'DatePicker' })
+    expect(calls[0].prompt).toContain('components/date-picker/pipeline.yaml')
   })
 
-  it('refuses a stage the loop does not have, or no name', async () => {
+  it('refuses visual, which the factory runs without an agent, a stage the loop does not have, or no name', async () => {
+    await expect(run({ stage: 'visual', name: 'Chip' })).rejects.toThrow(/stage, name/)
     await expect(run({ stage: 'ship', name: 'Chip' })).rejects.toThrow(/stage, name/)
     await expect(run({ stage: 'build' })).rejects.toThrow(/stage, name/)
   })

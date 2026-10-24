@@ -188,7 +188,7 @@ describe('the factory dry run', () => {
 
     // build: the stage spends its three attempts inside one run, so a failed run stops the loop
     expect(stage('build', () => build(), 'failed', 'npm run check: 2 lint errors').out).toBe(
-      'ended build: failed: npm run check: 2 lint errors\nwait: needs-human\nstage: build\nwhy: build failed after its 3 attempts: npm run check: 2 lint errors\n',
+      'ended build: failed: npm run check: 2 lint errors\nwait: needs-human\nstage: build\nwhy: build failed: npm run check: 2 lint errors\n',
     )
     expect(run('begin Tally build').err).toMatch(
       /build cannot begin: Tally waits at needs-human \(build\)/,
@@ -216,11 +216,16 @@ describe('the factory dry run', () => {
     expect(run('begin Tally review').err).toBe('refused: review cannot begin: build is not done\n')
     expect(stage('build', () => build()).out).toContain('run: review')
 
+    // review names its round, in next and in --json
+    expect(run('next Tally').out).toBe('run: review\nround: 1\nwhy: build is done\n')
+    expect(JSON.parse(run('next Tally --json').out)).toMatchObject({ run: 'review', round: 1 })
+
     // review round 1 finds a P1: back to build, for a fresh run
     expect(stage('review', () => review(1, 2)).out).toBe(
       'ended review: failed, round 1: 2 P1, 0 P2, 0 P3: review round 1 found 2 P1 (components/tally/review.md)\nrun: build\nwhy: sent back: review round 1 found 2 P1 (components/tally/review.md)\n',
     )
     stage('build', () => build())
+    expect(run('next Tally').out).toMatch(/^run: review\nround: 2\n/)
 
     // a review.md left from round 1 is not round 2's review
     expect(stage('review', () => {}).out).toMatch(
@@ -230,10 +235,14 @@ describe('the factory dry run', () => {
       'ended review: done, round 2: 0 P1, 0 P2, 0 P3\nrun: docs',
     )
 
-    // docs: the entry must be stable, and the docs check pass
+    // docs: the entry must be stable, and the docs check pass; a failed docs run stops the loop
     expect(stage('docs', () => {}).out).toMatch(
-      /ended docs: failed: Tally's entry is building, not stable/,
+      /ended docs: failed: Tally's entry is building, not stable\nwait: needs-human\nstage: docs\nwhy: docs failed: Tally's entry is building, not stable/,
     )
+    expect(run('begin Tally docs').err).toMatch(
+      /docs cannot begin: Tally waits at needs-human \(docs\)/,
+    )
+    expect(run('unblock Tally').out).toContain('unblocked docs\nrun: docs')
     expect(stage('docs', () => build('stable')).out).toContain('ended docs: done\nrun: visual')
     expect(ran).toContain('npm run gates -- docs')
 

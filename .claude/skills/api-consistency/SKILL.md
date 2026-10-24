@@ -13,7 +13,7 @@ One argument:
 - A family from the contract's Families table, or a `category`: its members.
 - `all`: every entry. The default when run by hand.
 
-Only entries past `designing` have code. A scope with one member compares it with the contract alone. A scope with none reports "Checked: nothing; no entry is past designing" and stops.
+Only entries past `designing` have code. A scope with one member compares it with the contract alone. A scope with none is the empty scope of [`format.md`](../design-qa/format.md).
 
 ## Pre-flight
 

@@ -18,14 +18,14 @@ import type { CodeMap, ReadBack } from './checks/penpot.ts'
 import {
   codeMapPath,
   exportPath,
+  layerOf,
   readBackPath,
   storyTitle,
   THEMES,
   variantName,
+  visualPath,
   type Theme,
 } from './lib/design.ts'
-import { kebab } from './lib/entry.ts'
-import { layerOf } from './lib/pipeline.ts'
 import {
   compare,
   expectations,
@@ -178,7 +178,7 @@ export async function runVisual(o: VisualOptions): Promise<Report> {
       throw new Error(`there is no ${rel}; the design stage writes it`)
   const design = JSON.parse(readFileSync(join(o.root, readBackPath(o.name)), 'utf8')) as ReadBack
   const map = JSON.parse(readFileSync(join(o.root, codeMapPath(o.name)), 'utf8')) as CodeMap
-  const out = o.out ?? join(o.root, `components/${kebab(o.name)}/visual`)
+  const out = o.out ?? join(o.root, visualPath(o.name))
   const title = storyTitle(o.name, layerOf({ root: o.root }, o.name))
   const rootSelector = `.pn-${o.name}`
   mkdirSync(out, { recursive: true })
@@ -288,10 +288,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     process.exit(1)
   })
   const failed = report.runs.filter((r) => !r.pass)
-  const where = relative(
-    process.cwd(),
-    join(repoRoot, `components/${kebab(name)}/visual/report.md`),
-  )
+  const where = relative(process.cwd(), join(repoRoot, visualPath(name), 'report.md'))
   console.log(
     report.pass
       ? `${name} passes in all ${report.runs.length} stories; see ${where}`
