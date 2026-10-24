@@ -1,0 +1,32 @@
+// PerronProvider sets the locale for the components inside it, and useOwnedStrings gives a
+// component its owned strings in that locale, with any *Label props laid over them.
+import { createContext, useContext } from 'react'
+import type { ReactNode } from 'react'
+import { dictionaries } from './locale/index.ts'
+import type { Locale, OwnedStrings } from './locale/index.ts'
+
+const LocaleContext = createContext<Locale>('en')
+
+export interface PerronProviderProps {
+  /** The language of every owned string inside, such as a dialog's close label. */
+  locale?: Locale
+  children?: ReactNode
+}
+
+/** Sets the locale of the Perron components inside it. Without a provider, they speak English. */
+export function PerronProvider({ locale = 'en', children }: PerronProviderProps) {
+  return <LocaleContext.Provider value={locale}>{children}</LocaleContext.Provider>
+}
+
+/**
+ * The owned strings in the nearest PerronProvider's locale. Pass a component's `*Label` props as
+ * `overrides` to replace one string on one instance; an undefined override keeps the dictionary's.
+ *
+ * @example const strings = useOwnedStrings({ close: closeLabel })
+ */
+export function useOwnedStrings(overrides: Partial<OwnedStrings> = {}): OwnedStrings {
+  const strings = { ...dictionaries[useContext(LocaleContext)] }
+  for (const [key, value] of Object.entries(overrides) as [keyof OwnedStrings, string][])
+    if (value !== undefined) strings[key] = value
+  return strings
+}

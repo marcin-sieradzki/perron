@@ -15,4 +15,12 @@ import { theme } from '@mylder/perron/tokens.ts'
 
 Read a token in CSS as `var(--perron-color-text-primary)`, and never copy a value. Light is the default theme; set `data-theme="dark"` on any element for dark. The icons and the mark are SVG files under `@mylder/perron/icons/` and `@mylder/perron/logos/`.
 
+Wrap the app in `PerronProvider` to set the language of the words Perron's components show on their own, such as a dialog's close label: `en` (the default), `da`, `sv` or `nb`.
+
+```tsx
+import { PerronProvider } from '@mylder/perron'
+
+;<PerronProvider locale="da">{app}</PerronProvider>
+```
+
 The rules for each foundation, and the source, are in the [Perron repository](https://github.com/marcin-sieradzki/perron).

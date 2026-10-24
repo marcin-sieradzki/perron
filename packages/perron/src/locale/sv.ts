@@ -1,0 +1,19 @@
+// The Swedish owned strings, one for every key of the English dictionary.
+import type { OwnedStrings } from './en.ts'
+
+/** Every owned string in Swedish. */
+export const sv: OwnedStrings = {
+  close: 'Stäng',
+  clear: 'Rensa',
+  loading: 'Laddar',
+  previousPage: 'Föregående sida',
+  nextPage: 'Nästa sida',
+  live: 'Live',
+  ageing: 'Äldre',
+  estimated: 'Beräknad',
+  timetableOnly: 'Endast tidtabell',
+  noSignal: 'Ingen signal',
+  delays: 'Förseningar',
+  runningNormally: 'Går som vanligt',
+  showOnMap: 'Visa på kartan',
+}
