@@ -1,0 +1,29 @@
+# Written by npm run factory; never by hand.
+component: Brand
+layer: component
+deferred:
+  at: 2026-10-24T22:52:10.345Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-24T22:56:37.297Z
+    ended: 2026-10-24T22:57:52.234Z
+  build:
+    runs: 2
+    status: done
+    started: 2026-10-24T23:09:02.448Z
+    ended: 2026-10-24T23:14:04.553Z
+  review:
+    rounds: 3
+    sentBack: 0
+    findings:
+      p1: 0
+      p2: 0
+      p3: 4
+    status: done
+    started: 2026-10-24T23:18:57.049Z
+    ended: 2026-10-24T23:21:05.149Z
+  docs:
+    status: done
+    started: 2026-10-24T23:21:12.017Z
+    ended: 2026-10-24T23:23:22.095Z

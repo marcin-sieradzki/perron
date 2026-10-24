@@ -1,0 +1,29 @@
+# Written by npm run factory; never by hand.
+component: DataStatePanel
+layer: pattern
+deferred:
+  at: 2026-10-24T22:36:28.443Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-24T22:41:08.238Z
+    ended: 2026-10-24T22:41:56.874Z
+  build:
+    runs: 2
+    status: done
+    started: 2026-10-24T22:55:54.100Z
+    ended: 2026-10-24T23:01:17.868Z
+  review:
+    rounds: 2
+    sentBack: 1
+    findings:
+      p1: 0
+      p2: 0
+      p3: 5
+    status: done
+    started: 2026-10-24T23:01:21.745Z
+    ended: 2026-10-24T23:08:08.159Z
+  docs:
+    status: done
+    started: 2026-10-24T23:08:18.239Z
+    ended: 2026-10-24T23:10:15.718Z

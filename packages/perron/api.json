@@ -1,4 +1,42 @@
 {
+  "Brand": {
+    "extends": [
+      "Omit<useRender.ComponentProps<'span'>, 'children' | 'ref'>"
+    ],
+    "props": {
+      "brandNameLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLSpanElement>"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "variant": {
+        "optional": true,
+        "type": [
+          "\"full\"",
+          "\"mark\""
+        ]
+      }
+    }
+  },
   "Button": {
     "extends": [
       "Omit< BaseButton.Props, 'className' | 'style' | 'color' | 'children' | 'disabled' | 'ref' >"
@@ -71,6 +109,82 @@
         "type": [
           "\"outline\"",
           "\"solid\""
+        ]
+      }
+    }
+  },
+  "DataStatePanel": {
+    "extends": [
+      "Omit<ComponentPropsWithRef<'div'>, 'children'>"
+    ],
+    "props": {
+      "action": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "description": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "loadFailedLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "loadingLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "noDataLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ message?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; emptyState?: Omit<EmptyStateProps, \"title\" | \"children\" | \"action\"> | undefined; }"
+        ]
+      },
+      "status": {
+        "optional": true,
+        "type": [
+          "\"empty\"",
+          "\"error\"",
+          "\"loading\"",
+          "\"ready\""
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
         ]
       }
     }
@@ -194,6 +308,70 @@
         "type": [
           "\"line\"",
           "\"stop\""
+        ]
+      }
+    }
+  },
+  "DisruptionCard": {
+    "extends": [
+      "Omit<SurfaceProps, 'variant' | 'children' | 'title'>"
+    ],
+    "props": {
+      "affectedLinesLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "lines": {
+        "optional": true,
+        "type": [
+          "readonly DisruptionCardLine[]"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLElement>"
+        ]
+      },
+      "severity": {
+        "optional": false,
+        "type": [
+          "\"data\"",
+          "\"delay\"",
+          "\"diversion\"",
+          "\"planned\""
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ header?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; severity?: Omit<SeverityLabelProps, \"severity\"> | undefined; lines?: DetailedHTMLProps<HTMLAttributes<HTMLUListElement>, HTMLUListElement> | undefined; title?: Omit<TextProps, \"children\" | \"variant\"> | undefined; description?: Omit<TextProps, \"children\" | \"variant\"> | undefined; }"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "title": {
+        "optional": false,
+        "type": [
+          "ReactNode"
         ]
       }
     }
@@ -536,6 +714,37 @@
       }
     }
   },
+  "Stat": {
+    "extends": [
+      "Omit<useRender.ComponentProps<'div'>, 'children'>"
+    ],
+    "props": {
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "label": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ label?: ComponentProps<\"div\", {}, HTMLProps> | undefined; value?: ComponentProps<\"div\", {}, HTMLProps> | undefined; }"
+        ]
+      },
+      "unknownLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      }
+    }
+  },
   "StationIcon": {
     "extends": [
       "Omit<useRender.ComponentProps<'span'>, 'children'>"
@@ -589,6 +798,103 @@
         "type": [
           "\"filled\"",
           "\"outlined\""
+        ]
+      }
+    }
+  },
+  "StopTimeline": {
+    "extends": [
+      "Omit< ComponentPropsWithoutRef<'ol'>, 'children' | 'className' | 'style' >"
+    ],
+    "props": {
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "delayUnknownLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "line": {
+        "optional": true,
+        "type": [
+          "\"a\"",
+          "\"b\"",
+          "\"bus\"",
+          "\"c\"",
+          "\"e\"",
+          "\"f\"",
+          "\"h\"",
+          "\"m1\"",
+          "\"m2\"",
+          "\"m3\"",
+          "\"m4\"",
+          "\"regional\"",
+          "undefined"
+        ]
+      },
+      "minutesEarlyLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "minutesLateLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "minutesUnitLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "nextStopIndex": {
+        "optional": true,
+        "type": [
+          "number"
+        ]
+      },
+      "nextStopLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "onTimeLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "passedLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLOListElement>"
+        ]
+      },
+      "stops": {
+        "optional": false,
+        "type": [
+          "StopTimelineStop[]"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
         ]
       }
     }

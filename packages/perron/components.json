@@ -156,7 +156,7 @@
     "name": "Stat",
     "layer": "component",
     "category": "Display",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/Stat",
     "dependsOn": []
@@ -192,7 +192,7 @@
     "name": "Brand",
     "layer": "component",
     "category": "Display",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/Brand",
     "dependsOn": []
@@ -366,16 +366,16 @@
     "name": "DisruptionCard",
     "layer": "pattern",
     "category": "Disruptions",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Patterns/DisruptionCard",
-    "dependsOn": ["SeverityLabel", "LineBadge"]
+    "dependsOn": ["SeverityLabel", "LineBadge", "Surface", "Text"]
   },
   {
     "name": "DataStatePanel",
     "layer": "pattern",
     "category": "Data",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Patterns/DataStatePanel",
     "dependsOn": ["EmptyState"]
@@ -384,7 +384,7 @@
     "name": "StopTimeline",
     "layer": "pattern",
     "category": "Detail",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Patterns/StopTimeline",
     "dependsOn": ["StationIcon", "Delay"]
