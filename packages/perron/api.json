@@ -174,6 +174,63 @@
       }
     }
   },
+  "IconButton": {
+    "extends": [
+      "Omit< BaseButton.Props, 'className' | 'style' | 'color' | 'children' | 'disabled' | 'ref' >"
+    ],
+    "props": {
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "color": {
+        "optional": true,
+        "type": [
+          "\"brand\"",
+          "\"neutral\""
+        ]
+      },
+      "disabled": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "label": {
+        "optional": false,
+        "type": [
+          "string"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLButtonElement>"
+        ]
+      },
+      "size": {
+        "optional": true,
+        "type": [
+          "\"large\"",
+          "\"medium\""
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      }
+    }
+  },
   "LineBadge": {
     "extends": [
       "Omit<useRender.ComponentProps<'span'>, 'children'>"
