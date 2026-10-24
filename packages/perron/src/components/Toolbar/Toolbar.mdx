@@ -2,9 +2,7 @@ import { Meta, Stories, Title, Unstyled } from '@storybook/addon-docs/blocks'
 import { PropsTable } from '../../../../../storybook/blocks/PropsTable.tsx'
 import { SpecProse } from '../../../../../storybook/blocks/SpecProse.tsx'
 import * as ToolbarStories from './Toolbar.stories.tsx'
-import * as ToolbarButtonStories from './ToolbarButton.stories.tsx'
-import * as ToolbarGroupStories from './ToolbarGroup.stories.tsx'
-import * as ToolbarSeparatorStories from './ToolbarSeparator.stories.tsx'
+import { ToolbarButton, ToolbarGroup, ToolbarSeparator } from './Toolbar.tsx'
 
 <Meta of={ToolbarStories} />
 
@@ -22,7 +20,7 @@ import * as ToolbarSeparatorStories from './ToolbarSeparator.stories.tsx'
   </div>
 </Unstyled>
 
-<PropsTable of={ToolbarButtonStories} />
+<PropsTable of={ToolbarButton} />
 
 <Unstyled>
   <div className="pd-page">
@@ -30,7 +28,7 @@ import * as ToolbarSeparatorStories from './ToolbarSeparator.stories.tsx'
   </div>
 </Unstyled>
 
-<PropsTable of={ToolbarGroupStories} />
+<PropsTable of={ToolbarGroup} />
 
 <Unstyled>
   <div className="pd-page">
@@ -38,7 +36,7 @@ import * as ToolbarSeparatorStories from './ToolbarSeparator.stories.tsx'
   </div>
 </Unstyled>
 
-<PropsTable of={ToolbarSeparatorStories} />
+<PropsTable of={ToolbarSeparator} />
 
 <SpecProse
   path="docs/components/toolbar.md"

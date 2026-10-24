@@ -9,8 +9,9 @@ type Args = Record<string, unknown>
 export type StoryModule = Record<string, { args?: Args } | undefined>
 
 /**
- * Each built entry with its export from the barrels and the args of its `Default` story (or its
- * first story) over its meta's args. `stories` is keyed by path, ending
+ * Each built entry with its export from the barrels and the args of its `Default` story over its
+ * meta's args; with no `Default`, its alphabetically first story, as a module namespace lists its
+ * exports (the file's own order doesn't reach it under Vitest). `stories` is keyed by path, ending
  * `/components/<Name>/<Name>.stories.tsx` or `/patterns/<Name>/<Name>.stories.tsx`.
  */
 export function subjects(
@@ -28,7 +29,7 @@ export function subjects(
       path.endsWith(`/${folderOf(layer)}/${name}/${name}.stories.tsx`),
     )?.[1]
     const { default: meta, ...named } = file ?? {}
-    const story = named.Default ?? Object.values(named)[0]
+    const story = named.Default ?? named[Object.keys(named).sort()[0]]
     return {
       name,
       Component: Component as Subject['Component'],

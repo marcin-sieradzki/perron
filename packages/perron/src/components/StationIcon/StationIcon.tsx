@@ -1,11 +1,11 @@
 // StationIcon: a round marker that stands for a stop beside its name, in the colour of the line
 // that serves it. Decorative, so always hidden from assistive technology (docs/components/station-icon.md).
-import type { ComponentPropsWithRef, CSSProperties, Ref } from 'react'
+import type { CSSProperties, Ref } from 'react'
 import { mergeProps } from '@base-ui/react/merge-props'
 import { useRender } from '@base-ui/react/use-render'
 import './StationIcon.css'
 
-export interface StationIconProps extends Omit<ComponentPropsWithRef<'span'>, 'children'> {
+export interface StationIconProps extends Omit<useRender.ComponentProps<'span'>, 'children'> {
   /**
    * `outlined` is a ring around the surface colour, for any stop; `filled` is a solid dot in the
    * line's colour, for the one stop that matters most, such as the vehicle's next stop.
@@ -23,12 +23,6 @@ export interface StationIconProps extends Omit<ComponentPropsWithRef<'span'>, 'c
    * sizes, so the marker matches an icon beside the same text.
    */
   size?: 'small' | 'medium' | 'large'
-  /**
-   * Swaps the root `<span>` for another element, which takes its class, data attributes and
-   * `aria-hidden`; the element's own props are the caller's and merge last, as in Base UI, so leave
-   * `aria-hidden` and `data-*` off it
-   */
-  render?: useRender.RenderProp
   /** Merged after `pn-StationIcon` on the root */
   className?: string
   /** Reaches the root */
