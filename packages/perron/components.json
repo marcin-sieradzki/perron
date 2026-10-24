@@ -138,7 +138,7 @@
     "name": "Delay",
     "layer": "component",
     "category": "Transit",
-    "status": "building",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/Delay",
     "dependsOn": []
