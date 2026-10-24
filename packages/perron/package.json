@@ -1,6 +1,6 @@
 {
   "name": "@mylder/perron",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Perron, the design system of Mylder: design tokens, styles, icons and the Mylder mark.",
   "license": "MIT",
   "type": "module",
