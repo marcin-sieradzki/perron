@@ -30,6 +30,7 @@ export const PAGES = [
   // registry:specs start: each spec page, written by npm run registry
   'docs/components/button.md',
   'docs/components/station-icon.md',
+  'docs/components/delay.md',
   // registry:specs end
 ]
 

@@ -16,4 +16,9 @@ export const da: OwnedStrings = {
   delays: 'Forsinkelser',
   runningNormally: 'Kører normalt',
   showOnMap: 'Vis på kort',
+  minutesUnit: 'min',
+  minutesLate: 'min forsinket',
+  minutesEarly: 'min før tid',
+  onTime: 'Til tiden',
+  delayUnknown: 'Forsinkelse ukendt',
 }

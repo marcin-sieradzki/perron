@@ -6,7 +6,7 @@ How late or early a vehicle or departure runs, as a short figure in the delay's 
 
 Penpot page `Components/Delay`. Family: none. Shared parts: VisuallyHidden.
 
-The design is deferred ([ADR 0010](../adr/0010-unattended-runs-with-design-deferred.md)), so the layers below are the ones the drawing will name. Delay has no Base UI part: it is display text with no behaviour, so its root renders through Base UI's `useRender` hook (`@base-ui/react/use-render`), which gives it the `render` prop, and its inner parts are plain elements.
+The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`), so the layers below are the ones the drawing will name. Delay has no Base UI part: it is display text with no behaviour, so its root renders through Base UI's `useRender` hook (`@base-ui/react/use-render`), which gives it the `render` prop, and its inner parts are plain elements.
 
 | Part (Penpot layer) | What it is                                                                                                                          | Base UI part                                   | Class                               | `slotProps` key |
 | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- | ----------------------------------- | --------------- |

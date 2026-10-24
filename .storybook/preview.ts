@@ -40,6 +40,7 @@ const preview: Preview = {
             // registry:components start: written by npm run registry, by category then name
             'Button',
             'StationIcon',
+            'Delay',
             // registry:components end
           ],
           // registry:patterns start: written by npm run registry, by category then name
@@ -50,6 +51,7 @@ const preview: Preview = {
             // each spec page, as PAGES lists them
             'Button',
             'StationIcon',
+            'Delay',
           ],
           // registry:specs end
         ],

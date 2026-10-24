@@ -16,4 +16,9 @@ export const sv: OwnedStrings = {
   delays: 'Förseningar',
   runningNormally: 'Går som vanligt',
   showOnMap: 'Visa på kartan',
+  minutesUnit: 'min',
+  minutesLate: 'min försenad',
+  minutesEarly: 'min före',
+  onTime: 'I tid',
+  delayUnknown: 'Försening okänd',
 }
