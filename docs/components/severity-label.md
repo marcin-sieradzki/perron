@@ -45,6 +45,8 @@ The kind is required, with no default, and typed `'delay' | 'data' | 'diversion'
 | `plannedWorksLabel`     | `string`                                        | The locale's | none                | Overrides "Planned works", the name shown for `severity='planned'`                                                                                                                        |
 | `dataFeedProblemsLabel` | `string`                                        | The locale's | none                | Overrides "Data feed problems", the name shown for `severity='data'`                                                                                                                      |
 | `ref`                   | `Ref<HTMLSpanElement>`                          |              | `useRender`'s `ref` | Reaches the root element                                                                                                                                                                  |
+| `className`             | `string`                                        |              | none                | Joined after `pn-SeverityLabel` on the root                                                                                                                                               |
+| `style`                 | `CSSProperties`                                 |              | none                | Reaches the root                                                                                                                                                                          |
 
 ## Tokens
 

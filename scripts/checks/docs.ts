@@ -82,7 +82,7 @@ function rowProblems(e: Entry, doc: ComponentDoc, rows: SpecRow[]): Problem[] {
     .filter((m) => !named.has(m))
     .map((m) => ({
       file: specPage(e),
-      message: `${e.name}'s docs page would show ${m}, which ${specPage(e)}'s Props table has no row for: give it a row, as for every member of ${e.name}Props, those inherited from Base UI included, which the component does not declare again`,
+      message: `${e.name}'s docs page would show ${m}, which ${specPage(e)}'s Props table has no row for: give it a row, as for every member of ${e.name}Props, those inherited from Base UI and React's \`className\`, \`style\` and \`ref\` included, which the component does not declare again`,
     }))
   const extra = rows.flatMap((r) =>
     r.names
