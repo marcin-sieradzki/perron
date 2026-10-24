@@ -1,5 +1,5 @@
-// search_docs: the sections of Perron's pages (the foundations, content design and the glossary)
-// that best match a query, from the data @mylder/perron ships.
+// search_docs: the sections of Perron's pages (the foundations, content design, the glossary and
+// the component contract) that best match a query, from the data @mylder/perron ships.
 import { sections } from './markdown.ts'
 
 export interface DocPage {

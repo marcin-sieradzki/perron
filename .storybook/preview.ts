@@ -23,6 +23,17 @@ const preview: Preview = {
             'Map',
           ],
           'Guidelines',
+          [
+            // the pages outside docs/foundations and docs/components, in PAGES order
+            'Content design',
+            'Glossary',
+          ],
+          'Components',
+          [
+            // the contract and its template first, then each registered component
+            'Contract',
+            'Spec template',
+          ],
         ],
       },
     },
