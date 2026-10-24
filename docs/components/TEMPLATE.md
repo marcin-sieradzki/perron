@@ -32,7 +32,7 @@ Base UI already does: `<behaviour Base UI handles, such as typeahead or focus re
 
 ## Props
 
-In MUI's layout. Every prop here gets this description as its JSDoc. Slots come last.
+In MUI's layout, one row per prop the docs page shows, slots last: each prop the component declares, its description becoming the JSDoc, and each it inherits from Base UI, such as `render`, which reads `inherited` under Base UI prop and gives Base UI's type, default and description while the code inherits it as it is (the contract's [Props](../components/README.md#props)).
 
 | Name               | Type                              | Default      | Base UI prop         | Description                  |
 | ------------------ | --------------------------------- | ------------ | -------------------- | ---------------------------- |
@@ -40,6 +40,7 @@ In MUI's layout. Every prop here gets this description as its JSDoc. Slots come 
 | `size`             | `'small' \| 'medium' \| 'large'`  | `'medium'`   | none                 | `<…>`                        |
 | `disabled`         | `boolean`                         | `false`      | `disabled`           | `<…>`                        |
 | `onChange`         | `(event, value, details) => void` |              | `onValueChange`      | `<when it fires>`            |
+| `render`           | Base UI's `render`                |              | inherited            | `<Base UI's description>`    |
 | `<key>Label`       | `string`                          | The locale's | none                 | Overrides "`<English text>`" |
 | `slotProps.<part>` | `<Component>.<Part>.Props`        |              | `<Component>.<Part>` | Props for the `<part>` part  |
 
