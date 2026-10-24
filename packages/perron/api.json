@@ -282,6 +282,83 @@
       }
     }
   },
+  "Text": {
+    "extends": [
+      "Omit< HTMLAttributes<HTMLElement>, 'color' | 'children' | 'className' | 'style' >"
+    ],
+    "props": {
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "color": {
+        "optional": true,
+        "type": [
+          "\"brand\"",
+          "\"danger\"",
+          "\"info\"",
+          "\"neutral\"",
+          "\"success\"",
+          "\"warning\""
+        ]
+      },
+      "emphasis": {
+        "optional": true,
+        "type": [
+          "\"primary\"",
+          "\"secondary\"",
+          "\"tertiary\""
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLElement>"
+        ]
+      },
+      "render": {
+        "optional": true,
+        "type": [
+          "RenderProp<Record<string, unknown>>"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "variant": {
+        "optional": true,
+        "type": [
+          "\"badge\"",
+          "\"body\"",
+          "\"body-sm\"",
+          "\"caption\"",
+          "\"data\"",
+          "\"data-lg\"",
+          "\"data-sm\"",
+          "\"data-xl\"",
+          "\"display\"",
+          "\"heading-lg\"",
+          "\"heading-md\"",
+          "\"heading-sm\"",
+          "\"label\"",
+          "\"label-sm\"",
+          "\"overline\"",
+          "\"stat\""
+        ]
+      }
+    }
+  },
   "Toolbar": {
     "extends": [
       "Inherited< BaseToolbar.Root.Props, 'orientation' | 'disabled' >"
