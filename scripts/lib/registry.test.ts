@@ -3,7 +3,8 @@ import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
-import { buildRegistry, parseRegistry, REGISTRY, registryFiles } from './registry.ts'
+import { headingOf } from './pages.ts'
+import { buildRegistry, parseRegistry, REGISTRY, registryFiles, specPage } from './registry.ts'
 import { syncFiles } from './sync.ts'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '../..')
@@ -162,25 +163,55 @@ describe('buildRegistry', () => {
     expect({ ...pkg, exports: undefined }).toEqual({ ...before, exports: undefined })
   })
 
-  it('sorts the sidebar by category then name, after the contract pages', () => {
-    // each group at 10 spaces, its titles at 12, as pages.test.ts reads them
+  // each group at 10 spaces, its titles at 12, as pages.test.ts reads them
+  const sidebar = (preview: string) => {
     const order: Record<string, string[]> = {}
     let group = ''
-    for (const [, indent, name] of out['.storybook/preview.ts'].matchAll(
-      /^( {10}| {12})'([^']+)',$/gm,
-    ))
+    for (const [, indent, name] of preview.matchAll(/^( {10}| {12})'([^']+)',$/gm))
       if (indent.length === 10) order[(group = name)] = []
       else order[group].push(name)
+    return order
+  }
+  const specPages = (pagesTs: string) => {
+    const pages = [...pagesTs.matchAll(/^ {2}'(docs\/[^']+)',$/gm)].map((m) => m[1])
+    return pages.slice(pages.indexOf('docs/components/TEMPLATE.md') + 1)
+  }
+
+  it('sorts the sidebar by category then name, after the contract pages', () => {
+    const order = sidebar(out['.storybook/preview.ts'])
     expect(order.Components).toEqual(['Contract', 'Spec template', 'Button', 'IconButton', 'Alert'])
     expect(order.Patterns).toEqual(['DepartureRow'])
-    expect(Object.keys(order).at(-1)).toBe('Patterns')
+    expect(Object.keys(order).slice(-3)).toEqual(['Components', 'Patterns', 'Specs'])
+  })
+
+  it('writes no Patterns or Specs group while no entry is built', () => {
+    const order = sidebar(buildRegistry([], read)['.storybook/preview.ts'])
+    expect(Object.keys(order).at(-1)).toBe('Components')
+  })
+
+  it("titles each spec page apart from its entry's own docs, in the sidebar's Specs order", () => {
+    // a spec's heading is its entry's PascalCase name, as TEMPLATE.md says
+    const titles = specPages(out['scripts/lib/pages.ts']).map((path) => {
+      const entry = fixture.find((e) => specPage(e) === path)!
+      const { group, title } = headingOf(path, `# ${entry.name}\n`)
+      expect(`${group}/${title}`).not.toBe(
+        `${entry.layer === 'component' ? 'Components' : 'Patterns'}/${entry.name}`,
+      )
+      return `${group}/${title}`
+    })
+    expect(titles).toEqual([
+      'Specs/Button',
+      'Specs/IconButton',
+      'Specs/Alert',
+      'Specs/DepartureRow',
+    ])
+    expect(sidebar(out['.storybook/preview.ts']).Specs).toEqual(
+      titles.map((t) => t.slice('Specs/'.length)),
+    )
   })
 
   it('lists each spec page past designing in PAGES, after the contract pages', () => {
-    const pages = [...out['scripts/lib/pages.ts'].matchAll(/^ {2}'(docs\/[^']+)',$/gm)].map(
-      (m) => m[1],
-    )
-    expect(pages.slice(pages.indexOf('docs/components/TEMPLATE.md') + 1)).toEqual([
+    expect(specPages(out['scripts/lib/pages.ts'])).toEqual([
       'docs/components/button.md',
       'docs/components/icon-button.md',
       'docs/components/alert.md',

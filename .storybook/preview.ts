@@ -26,7 +26,7 @@ const preview: Preview = {
           ],
           'Guidelines',
           [
-            // the pages outside docs/foundations and docs/components, in PAGES order
+            // the pages outside docs/foundations, docs/components and docs/patterns, in PAGES order
             'Content design',
             'Glossary',
           ],
@@ -40,6 +40,8 @@ const preview: Preview = {
           ],
           // registry:patterns start: written by npm run registry, by category then name
           // registry:patterns end
+          // registry:specs start: written by npm run registry, each built entry's spec page
+          // registry:specs end
         ],
       },
     },

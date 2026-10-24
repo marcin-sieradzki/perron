@@ -5,6 +5,7 @@ import type { ComponentProps } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, userEvent, within } from 'storybook/test'
 import registry from '../../packages/perron/components.json' with { type: 'json' }
+import { parseRegistry } from '../../scripts/lib/entry.ts'
 import * as components from '../../packages/perron/src/index.ts'
 import * as patterns from '../../packages/perron/src/patterns.ts'
 import { rootStory } from './root.tsx'
@@ -29,7 +30,7 @@ export default {
 export const Root: StoryObj = rootStory([
   sample,
   ...subjects(
-    registry,
+    parseRegistry(registry),
     { ...components, ...patterns },
     import.meta.glob<StoryModule>('../../packages/perron/src/*/*/*.stories.tsx', { eager: true }),
   ),

@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
+import type { Entry, Layer, Status } from '../../scripts/lib/entry.ts'
 import { subjects } from './subjects.ts'
 
-const entry = (name: string, status = 'building', layer = 'component') => ({
+const entry = (name: string, status: Status = 'building', layer: Layer = 'component'): Entry => ({
   name,
   layer,
   category: 'Actions',
