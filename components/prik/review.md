@@ -18,6 +18,7 @@ None.
   - The rings and ageing rims of M2 (1.80:1), F (1.61:1), bus (2.36:1), C (2.42:1) and A (2.83:1) miss it on the light default surface.
 
   The spec deliberately leaves out `color.data-state.outline` and relies on the word beside the dot (CR-5). WCAG may then not count the dot as required, but the foundation's wording does not make that exception. The maintainer should confirm the unattended answer, or widen the outline or the no-signal token through `design-tokens`.
+
 - **P3-3.** `packages/perron/src/components/Prik/Prik.tsx:15` Two prop names here are new, and PrikLabel, PrikLegend, LineBadge and DepartureRow will copy them (api-consistency: a new name siblings will copy is Direction). Both were answered "to confirm" in an unattended run:
   - `variant` is used for the data state, not a visual variant, so a later PrikLabel couldn't also have a visual `variant`.
   - `line` mixes line ids with the two modes, `'bus'` and `'regional'`.
