@@ -109,6 +109,11 @@ body,
   white-space: nowrap;
 }
 
+/* a prop's type wraps, so a long one, such as Base UI's render, leaves room for its description */
+.pd-page td.pd-prop-type code {
+  white-space: normal;
+}
+
 .pd-cell {
   display: flex;
   align-items: center;

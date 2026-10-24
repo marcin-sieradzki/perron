@@ -2,6 +2,7 @@ coverage
 package-lock.json
 packages/perron/tokens/generated
 packages/perron/data
+packages/perron/api.json
 .claude/skills/writing-for-agents
 .claude/skills/software-factory
 .claude/skills/vercel-react-best-practices

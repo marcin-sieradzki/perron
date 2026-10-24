@@ -54,7 +54,7 @@ These names mean one thing in every component. A prop outside the list is the co
 | `<key>Label`                               | `string`                                     | Overrides one owned string on one instance: `closeLabel`, `previousPageLabel`. See [Words](#words).                  |
 | `children`, `className`, `style`, `ref`    | React's                                      | Reach the root. See [Root](#root).                                                                                   |
 
-Every member the props type declares itself has a JSDoc comment. Members it inherits from Base UI or the HTML element keep theirs.
+Every member the props type declares itself has a JSDoc comment. Members it inherits from Base UI or the HTML element keep theirs. The docs page's props table lists every member the props type declares and every one it inherits from Base UI, with Base UI's JSDoc and `@default`, so a component never redeclares a Base UI prop to show it; the HTML element's attributes reach the root and get no row, as in MUI's tables.
 
 ### Names from other libraries
 

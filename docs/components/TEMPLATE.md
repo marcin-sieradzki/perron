@@ -7,6 +7,7 @@ How to fill it:
 - Replace this heading with the component's name, `# Button`, and this paragraph and list with one sentence on what the component is for.
 - Fill every `<…>` placeholder, and replace the example rows with the component's own.
 - Write a question the sources can't answer in place, as `[PENDING] <the question>`, and put it to the maintainer. The spec is done when every section is filled and no `[PENDING]` is left.
+- Link only a page the docs site serves: the foundations, the guidelines, the contract and the other specs. Write any other repo path, such as an ADR (`docs/adr/0010-unattended-runs-with-design-deferred.md`), `penpot/README.md` or the read-back, as a code span, as the contract does; `scripts/lib/site.test.ts` fails on a link the site can't follow.
 - Keep every section, in this order. A section that doesn't apply says why in one line: "No owned strings: every word comes from the caller."
 
 ## Anatomy

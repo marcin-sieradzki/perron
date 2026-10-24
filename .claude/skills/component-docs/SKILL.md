@@ -16,7 +16,7 @@ For a pattern, read `docs/patterns/<name>.md` for the spec, `packages/perron/src
 1. **Pre-flight.** Read, before the first write:
    - the spec, `docs/components/<name>.md`;
    - the stories, `packages/perron/src/components/<Name>/<Name>.stories.tsx`;
-   - the props API: `<Name>Props` in `packages/perron/src/components/<Name>/<Name>.tsx`, each member with its JSDoc and its default where the component takes the prop apart;
+   - the props API: `<Name>Props` in `packages/perron/src/components/<Name>/<Name>.tsx`, each member with its JSDoc and its default where the component takes the prop apart. Its **members**, everywhere in this skill, are those it declares and those it inherits from Base UI, such as `render` or `nativeButton`, which keep Base UI's JSDoc and `@default`; the HTML element's attributes, from React's types, are not members here and get no row, as in MUI's tables;
    - `components/<name>/review.md`, whose `## P1` says `None.`;
    - the contract's [Files](../../../docs/components/README.md#files) section, with its status table.
 
@@ -53,9 +53,9 @@ For a pattern, read `docs/patterns/<name>.md` for the spec, `packages/perron/src
 
    What each block draws, in order: the component's name; the spec's opening sentence; every story, live, with its code; the props table in MUI's layout (name, type, default, description, a required prop marked `*`), then a slots table with one row per `slotProps` key; then the three spec sections under their own headings. A prop's description is its JSDoc, and a slot's is "Props for the `<part>` part". Done when the file matches the shape line for line.
 
-3. **Turn the entry stable.** In `packages/perron/components.json`, set the entry's `status` to `stable`, then run `npm run registry` and `npm run api`. Done when `packages/perron/api.json` holds `<Name>` with every member of `<Name>Props`.
+3. **Turn the entry stable.** In `packages/perron/components.json`, set the entry's `status` to `stable`, then run `npm run registry` and `npm run api`. Done when `packages/perron/api.json` holds `<Name>` with every member `<Name>Props` declares itself (the API leaves out the members Base UI owns).
 
-4. **Look at the page.** Start `npm run storybook` and open `iframe.html?viewMode=docs&id=components-<name>--docs` on its port ([design-qa/rendering.md](../design-qa/rendering.md)) with Playwright, once with its `colorScheme` set to `light` and once to `dark`, and take a full-page screenshot of each. Done when, in both themes, every story renders, the props table has a row for every member of `<Name>Props` with the type and default the spec gives, the slots table has every `slotProps` key the spec's Anatomy gives, and each spec section shows under its heading. A row that is wrong is a fault in a source, the code's types or JSDoc: return `failed`, naming the prop and the build as its stage.
+4. **Look at the page.** Start `npm run storybook` and open `iframe.html?viewMode=docs&id=components-<name>--docs` on its port ([design-qa/rendering.md](../design-qa/rendering.md)) with Playwright, once with its `colorScheme` set to `light` and once to `dark`, and take a full-page screenshot of each. Done when, in both themes, every story renders, the props table has a row for every member of `<Name>Props`, inherited ones included, with the default the spec gives and a type that agrees with the spec's (an inherited member shows Base UI's own type and JSDoc), the slots table has every `slotProps` key the spec's Anatomy gives, and each spec section shows under its heading. A row that is wrong is a fault in a source, the code's types or JSDoc: return `failed`, naming the prop and the build as its stage.
 
 5. **Gates.** Run `npm run gates -- docs`, then `npm run check`. Done when both pass. A red check that the page or the registry change caused is this stage's to fix; any other is a fault in a source: return `failed` with the check, its output and the stage it belongs to.
 
