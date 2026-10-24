@@ -55,7 +55,7 @@ Button offers `fullWidth`, which the read-back doesn't show: a bottom sheet's ma
 
 ## Tokens
 
-One row per part, state and property. States are the contract's design states; Penpot's `State` values map through the code map: `default` is rest, `hover` is `:hover` inside `@media (hover: hover)`, `focus` is `:focus-visible`, `disabled` is `[data-disabled]`. Every `color` row sets the root's `color`, which the label and both icons take, since icons draw in `currentColor`.
+One row per part, state and property. States are the contract's design states; Penpot's `State` values map through the code map: `default` is rest, `hover` is `:hover` inside `@media (hover: hover)`, `focus` is `:focus-visible`, `disabled` is `[data-disabled]`; pressed, which the read-back doesn't draw, is `:active`. Every `color` row sets the root's `color`, which the label and both icons take, since icons draw in `currentColor`.
 
 All variants and colours:
 
@@ -82,6 +82,7 @@ All variants and colours:
 | `root` | rest     | `border-color`     | `transparent`                 |
 | `root` | rest     | `color`            | `color.text.inverse`          |
 | `root` | hover    | `background-color` | `color.surface.inverse-hover` |
+| `root` | pressed  | `background-color` | `color.surface.inverse-hover` |
 | `root` | disabled | `background-color` | `color.surface.inset`         |
 | `root` | disabled | `color`            | `color.text.tertiary`         |
 
@@ -93,6 +94,7 @@ All variants and colours:
 | `root` | rest     | `border-color`     | `color.border.brand`        |
 | `root` | rest     | `color`            | `color.text.on-color.dark`  |
 | `root` | hover    | `background-color` | `color.surface.brand-hover` |
+| `root` | pressed  | `background-color` | `color.surface.brand-hover` |
 | `root` | disabled | `background-color` | `color.surface.inset`       |
 | `root` | disabled | `border-color`     | `transparent`               |
 | `root` | disabled | `color`            | `color.text.tertiary`       |
@@ -105,6 +107,7 @@ All variants and colours:
 | `root` | rest     | `border-color`     | `color.border.control` |
 | `root` | rest     | `color`            | `color.text.primary`   |
 | `root` | hover    | `background-color` | `color.surface.hover`  |
+| `root` | pressed  | `background-color` | `color.surface.hover`  |
 | `root` | disabled | `border-color`     | `color.border.subtle`  |
 | `root` | disabled | `color`            | `color.text.tertiary`  |
 
@@ -116,6 +119,7 @@ All variants and colours:
 | `root` | rest     | `border-color`     | `color.border.brand`  |
 | `root` | rest     | `color`            | `color.text.brand`    |
 | `root` | hover    | `background-color` | `color.surface.hover` |
+| `root` | pressed  | `background-color` | `color.surface.hover` |
 | `root` | disabled | `border-color`     | `color.border.subtle` |
 | `root` | disabled | `color`            | `color.text.tertiary` |
 
@@ -169,11 +173,11 @@ Rules for this component alone, numbered so the build and the review can cite th
 - **CR-7.** The icon spans are `aria-hidden="true"`, rendered only when their prop is given, and set `--perron-icon-size` to `icon.size.400` in both sizes, so an icon from `packages/perron/icons/` (drawn on the 16 px grid for controls) renders at its own step.
 - **CR-8.** Changes of state are immediate: no `duration.*` token fits a button's state change, so the CSS has no transition.
 - **CR-9.** `{...rest}` reaches the root before the component's own attributes, and `variant`, `color`, `size`, `fullWidth`, `startIcon` and `endIcon` are taken out of `rest` first, so none reaches the DOM.
-- **CR-10.** A `brand` button keeps its `color.border.brand` edge at rest and on hover, in both variants: the light-theme yellow fill reaches only 2.1:1 on the surfaces, and the edge carries the 3:1 ([Semantic colours](../foundations/semantic-colours.md#brand)).
+- **CR-10.** A `brand` button keeps its `color.border.brand` edge at rest, on hover and pressed, in both variants: the light-theme yellow fill reaches only 2.1:1 on the surfaces, and the edge carries the 3:1 ([Semantic colours](../foundations/semantic-colours.md#brand)).
 
-Every variant draws a `border.width.025` border, `transparent` on a neutral solid button and a disabled solid one, so all four looks share one width and height, the label sits in the same place, and Windows' forced colours draw an edge round every button: a border only some buttons carry makes a brand button 2 px wider than the same neutral one.
-
-The label stays on one line (`white-space: nowrap`), the button growing with it, rather than wrapping inside the fixed `size.button` height: a wrapped label would overflow it, and button labels are short by content design.
+- **CR-11.** Every variant draws a `border.width.025` border, `transparent` on a neutral solid button and a disabled solid one, so all four looks share one width and height, the label sits in the same place, and Windows' forced colours draw an edge round every button: a border only some buttons carry makes a brand button 2 px wider than the same neutral one.
+- **CR-12.** The label stays on one line (`white-space: nowrap`), the button growing with it, rather than wrapping inside the fixed `size.button` height: a wrapped label would overflow it, and button labels are short by content design.
+- **CR-13.** Pressed (`:active`) takes the hover row's tokens, in a rule outside `@media (hover: hover)` so a press on a touch screen shows, and, like hover, never applies to a disabled button: the rule excludes `[data-disabled]`, since a button with `focusableWhenDisabled` has no native `disabled` and still matches `:active`.
 
 ## Stories
 
