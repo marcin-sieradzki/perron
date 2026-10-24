@@ -192,7 +192,7 @@
     "name": "Brand",
     "layer": "component",
     "category": "Display",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/Brand",
     "dependsOn": []
