@@ -1,0 +1,6 @@
+# Written by npm run factory; never by hand.
+component: DataStatePanel
+layer: pattern
+deferred:
+  at: 2026-10-24T22:36:28.443Z
+stages: {}
