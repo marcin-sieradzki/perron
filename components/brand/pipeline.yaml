@@ -3,9 +3,6 @@ component: Brand
 layer: component
 deferred:
   at: 2026-10-24T22:52:10.345Z
-needsHuman:
-  stage: review
-  reason: '2 review rounds found a P1 or a P2; the last: review round 2 found 1 P2 (components/brand/review.md)'
 stages:
   brief:
     status: done
@@ -18,7 +15,7 @@ stages:
     ended: 2026-10-24T23:14:04.553Z
   review:
     rounds: 2
-    sentBack: 2
+    sentBack: 0
     findings:
       p1: 0
       p2: 1

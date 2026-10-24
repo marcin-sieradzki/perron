@@ -375,7 +375,7 @@
     "name": "DataStatePanel",
     "layer": "pattern",
     "category": "Data",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Patterns/DataStatePanel",
     "dependsOn": ["EmptyState"]
