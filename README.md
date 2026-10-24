@@ -14,14 +14,15 @@ The build checks every file against the format rule by rule (`scripts/lib/spec.t
 
 | Path                                          | What it is                                                                                                                                            |
 | --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/perron/`                            | The `@mylder/perron` package, published to npm, which holds the next six paths                                                                        |
+| `packages/perron/`                            | The `@mylder/perron` package, published to npm, which holds the next six paths and `data/`, the tokens and docs as JSON for the MCP server            |
 | `packages/perron/tokens/*.tokens.json`        | The token sources: `base`, a `light` and a `dark` theme, and `motion-reduced` overrides                                                               |
 | `packages/perron/tokens/perron.resolver.json` | How the files combine (the format's resolver module): base always, then light or dark, then full or reduced motion                                    |
 | `packages/perron/tokens/generated/`           | Built from the sources: `tokens.css`, `typography.css`, `tokens.ts`, and `penpot.tokens.json` in the older flavour Penpot imports. Never edit by hand |
 | `packages/perron/styles/perron.css`           | The one file an app loads: fonts, tokens, typography classes, the icon class and page defaults                                                        |
 | `packages/perron/icons/`                      | The icons as SVG files, and `icons.json`, which lists them by category with the size and use of each                                                  |
 | `packages/perron/logos/`                      | The Mylder mark, one file per theme, and `logos.json`                                                                                                 |
-| `packages/mcp/`                               | The `@mylder/perron-mcp` package, the MCP server for agents (empty until ROADMAP 1.5)                                                                 |
+| `packages/mcp/`                               | The `@mylder/perron-mcp` package, the MCP server for agents: tokens, docs and the pinned Base UI and MUI references                                   |
+| `.mcp.json`                                   | The MCP servers a session here gets: Perron's own, from source, and the hosted MUI and Base UI docs                                                   |
 | `scripts/`                                    | The token and docs build and its tests: the format, contrast, icon style and logo colours                                                             |
 | `docs/foundations/`                           | One page per foundation, with tables the build fills in                                                                                               |
 | `storybook/`, `.storybook/`                   | The same pages in Storybook, with every table drawn live from the tokens: swatches, type specimens, contrast grids, the icons and the mark            |

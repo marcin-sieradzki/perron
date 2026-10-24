@@ -1,0 +1,28 @@
+{
+  "mcpServers": {
+    "perron": {
+      "command": "node",
+      "args": ["packages/mcp/src/cli.ts"]
+    },
+    "mui": {
+      "command": "npx",
+      "args": ["-y", "@mui/mcp@0.1.8"]
+    },
+    "base-ui": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "mcpdoc==0.0.10",
+        "--with",
+        "mcp<2",
+        "mcpdoc",
+        "--urls",
+        "BaseUI:https://base-ui.com/llms.txt",
+        "--allowed-domains",
+        "base-ui.com",
+        "--transport",
+        "stdio"
+      ]
+    }
+  }
+}

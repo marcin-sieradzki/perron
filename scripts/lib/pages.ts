@@ -99,7 +99,11 @@ function value(tokens: ResolvedTokens, t: Token, theme: string, raw: unknown): T
   return alias ? { css, alias } : { css }
 }
 
-function tokenSegment(tokens: ResolvedTokens, patterns: string[]): Segment {
+/** The rows of a `tokens` block: each token's values per theme and its overrides. */
+export function tokenSegment(
+  tokens: ResolvedTokens,
+  patterns: string[],
+): Extract<Segment, { kind: 'tokens' }> {
   const list = select(tokens, patterns)
   if (!list.length) throw new Error(`No token matches <!-- tokens: ${patterns.join(' ')} -->`)
   const themed = new Set(tokens.themes[tokens.defaultTheme].map((t) => t.name))
