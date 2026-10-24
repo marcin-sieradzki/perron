@@ -3,6 +3,7 @@
 // default, so the map beside it stays usable. Spec: docs/components/sheet.md.
 import { Drawer } from '@base-ui/react/drawer'
 import { mergeProps } from '@base-ui/react/merge-props'
+import { useCallback, useState } from 'react'
 import type { ReactElement, ReactNode, Ref } from 'react'
 import { useOwnedStrings } from '../../PerronProvider.tsx'
 import { CloseButton } from '../../parts/CloseButton/CloseButton.tsx'
@@ -150,6 +151,57 @@ function withClass<State>(own: string, theirs: ClassName<State>): ClassName<Stat
 
 const join = (own: string, theirs: string | undefined) => (theirs ? `${own} ${theirs}` : own)
 
+/** Points the caller's ref at the node, and returns what undoes it when the node goes. */
+function setRef<T>(ref: Ref<T> | undefined, node: T): () => void {
+  if (typeof ref === 'function') {
+    const cleanup = ref(node)
+    return typeof cleanup === 'function' ? cleanup : () => ref(null)
+  }
+  if (ref) {
+    ref.current = node
+    return () => {
+      ref.current = null
+    }
+  }
+  return () => {}
+}
+
+/**
+ * Whether the body overflows, its `scrollHeight` greater than its `clientHeight`, so it takes a Tab
+ * stop only while it scrolls. A `ResizeObserver` watches the body, whose box a snap point resizes,
+ * and each block in it, whose height its words change; the blocks are watched again when the
+ * caller's children change. Returns the flag and the ref for `Drawer.Content`, which also sets the
+ * caller's own `slotProps.content.ref`, since `mergeProps` merges no refs.
+ */
+function useOverflowing(theirs: Ref<HTMLDivElement> | undefined) {
+  const [overflowing, setOverflowing] = useState(false)
+  const ref = useCallback(
+    (node: HTMLDivElement) => {
+      const unset = setRef(theirs, node)
+      const measure = () => setOverflowing(node.scrollHeight > node.clientHeight)
+      // measured on attach too, so a body that overflows from the start has its Tab stop at once
+      measure()
+      if (typeof ResizeObserver === 'undefined') return unset
+      const resize = new ResizeObserver(measure)
+      const watch = () => {
+        resize.disconnect()
+        resize.observe(node)
+        for (const block of node.children) resize.observe(block)
+      }
+      const blocks = new MutationObserver(watch)
+      watch()
+      blocks.observe(node, { childList: true })
+      return () => {
+        blocks.disconnect()
+        resize.disconnect()
+        unset()
+      }
+    },
+    [theirs],
+  )
+  return [overflowing, ref] as const
+}
+
 /** A panel that slides in from an edge and floats over the map. */
 export function Sheet({
   anchor = 'left',
@@ -172,6 +224,7 @@ export function Sheet({
   ...rest
 }: SheetProps) {
   const strings = useOwnedStrings({ close: closeLabel })
+  const [overflowing, contentRef] = useOverflowing(slotProps?.content?.ref)
   const bottom = anchor === 'bottom'
   const points = bottom ? (snapPoints ?? defaultSnapPoints()) : []
 
@@ -241,8 +294,13 @@ export function Sheet({
               />
             </div>
             <Drawer.Content
-              // focusable, so a body taller than the sheet scrolls from the keyboard too
-              {...mergeProps<typeof Drawer.Content>({ tabIndex: 0 }, slotProps?.content)}
+              // a Tab stop only while it scrolls, so a body taller than the sheet scrolls from the
+              // keyboard too; the sheet's own props come last (CR-2)
+              {...mergeProps<typeof Drawer.Content>(
+                slotProps?.content,
+                overflowing ? { tabIndex: 0 } : undefined,
+              )}
+              ref={contentRef}
               className={withClass('pn-Sheet-content', slotProps?.content?.className)}
             >
               {children}

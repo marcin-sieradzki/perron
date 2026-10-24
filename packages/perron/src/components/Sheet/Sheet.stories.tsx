@@ -104,22 +104,24 @@ export const Right: Story = {
       const dialog = await sheet()
       await waitFor(() => expect(dialog).toContainElement(document.activeElement as HTMLElement))
     })
-    await step('Tab leaves the sheet, which stays open; Shift+Tab comes back', async () => {
-      const dialog = await sheet()
-      const close = within(dialog).getByRole('button', { name: 'Close' })
-      const content = dialog.querySelector('.pn-Sheet-content')
-      // reading order inside: the close button, then the body
-      close.focus()
-      await userEvent.tab()
-      await expect(content).toHaveFocus()
-      await userEvent.tab()
-      await waitFor(() =>
-        expect(within(canvasElement).getByRole('button', { name: NEXT })).toHaveFocus(),
-      )
-      await expect(screen.getByRole('dialog', { name: TITLE })).toBeVisible()
-      await userEvent.tab({ shift: true })
-      await waitFor(() => expect(content).toHaveFocus())
-    })
+    await step(
+      'a short body takes no Tab stop: Tab leaves the sheet, which stays open; Shift+Tab comes back',
+      async () => {
+        const dialog = await sheet()
+        const close = within(dialog).getByRole('button', { name: 'Close' })
+        const content = dialog.querySelector('.pn-Sheet-content') as HTMLElement
+        await expect(content.scrollHeight).toBeLessThanOrEqual(content.clientHeight)
+        await expect(content).not.toHaveAttribute('tabindex')
+        close.focus()
+        await userEvent.tab()
+        await waitFor(() =>
+          expect(within(canvasElement).getByRole('button', { name: NEXT })).toHaveFocus(),
+        )
+        await expect(screen.getByRole('dialog', { name: TITLE })).toBeVisible()
+        await userEvent.tab({ shift: true })
+        await waitFor(() => expect(close).toHaveFocus())
+      },
+    )
     await step(
       'Enter on the close button closes it, and focus returns to the trigger',
       async () => {
@@ -151,6 +153,8 @@ export const Bottom: Story = {
       await waitFor(() =>
         expect(content.getBoundingClientRect().bottom).toBeLessThanOrEqual(window.innerHeight + 1),
       )
+      // the Tab stop follows the overflow, on the frame after the sheet settles at its peek
+      await waitFor(() => expect(content).toHaveAttribute('tabindex', '0'))
       within(dialog).getByRole('button', { name: 'Close' }).focus()
       await userEvent.tab()
       await expect(content).toHaveFocus()
@@ -181,6 +185,7 @@ export const BottomExpanded: Story = {
     const header = dialog.querySelector('.pn-Sheet-header') as HTMLElement
     const content = dialog.querySelector('.pn-Sheet-content') as HTMLElement
     await waitFor(() => expect(content.scrollHeight).toBeGreaterThan(content.clientHeight))
+    await waitFor(() => expect(content).toHaveAttribute('tabindex', '0'))
     const top = header.getBoundingClientRect().top
     content.scrollTop = content.scrollHeight
     await waitFor(() => expect(content.scrollTop).toBeGreaterThan(0))
