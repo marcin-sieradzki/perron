@@ -65,9 +65,11 @@ Nothing here builds a component. It builds what every component is checked again
     - `size`: `small | medium | large`;
     - adjective booleans: `disabled`, `fullWidth`;
     - `startIcon` and `endIcon`.
-  - **State and events:** Base UI's, not MUI's.
-    - `value`, `defaultValue` and `onValueChange(value, details)`;
-    - `open`, `defaultOpen` and `onOpenChange`.
+  - **State and events:** MUI's names, with Base UI's details passed through.
+    - `value`, `defaultValue` and `onChange(event, value, details)`, where `details` carries Base UI's reason and `cancel()`. A component that renders a native `<input>` or `<textarea>` passes the native `onChange(event)` itself, so React Hook Form's `register()` and Formik work unchanged.
+    - `open`, `defaultOpen`, `onOpen(event)` and `onClose(event, reason)`.
+    - Each component adapts Base UI's `onValueChange` and `onOpenChange` to these names once, inside the component.
+    - Composite controls such as Select, Checkbox and Slider carry a `name`, so Base UI's hidden input reaches a native form and `FormData`; form libraries connect to them through their controller.
   - **Customising:**
     - Base UI's `render` prop swaps the element.
     - `slotProps`, keyed by Base UI part, is the only way inside.
@@ -77,7 +79,19 @@ Nothing here builds a component. It builds what every component is checked again
     - `data-variant`, `data-color` and `data-size`, plus Base UI's own `data-*` states;
     - plain CSS that reads them and uses only `--perron-*` tokens;
     - tokens stay on `:root`, because popups render in a portal.
-  - **Root:** `ref` and the rest props reach the root element, and every prop has JSDoc.
+  - **Root:** `ref` and the rest props reach the root element, with `{...rest}` written before the component's own attributes so they win. A prop that is invalid on the rendered element is dropped, never spread. Every prop has JSDoc.
+  - **Change:** deprecate, never remove. An old prop keeps working, marked `@deprecated` with its replacement named.
+  - **Design states are CSS states.** Hover, focus, pressed and disabled come from pseudo-classes and Base UI's `data-*`, never from a `state` prop.
+  - **Shared parts, drawn once:** a list of the parts every component reuses (the checkbox indicator, the selected mark, the close button, visually hidden text), each drawn in one place. A component composes them and never draws its own.
+  - **What axe won't catch:** a checklist written into every component from the start.
+    - Everything the eye is told, the ear is told: an `aria-hidden` mark has a text equivalent, for every shape the prop accepts.
+    - Every landmark and named region has an accessible name, from the component's own heading through `aria-labelledby` where it has one.
+    - Every default label can be overridden.
+    - A shape the type accepts is never silently dropped by one rendering.
+    - A hidden copy kept for animation is `aria-hidden`, and a collapsed region is `inert`.
+    - Native semantics first, and no ARIA added for its own sake.
+  - **CSS:** tokens only. Icons are sized through `icon.size.*`, motion through `duration.*` and `easing.*`, and stacking through `z-index.*`. No dark-theme overrides, since the semantic tokens carry both themes. A family of components (rows, fields, popups) shares one fill, border, radius, hover and selected treatment, written in the contract.
+  - **Stories:** `satisfies Meta<typeof Name>` with `component` set, one story per variant and state the Penpot design shows, named as in Penpot, and a `play` test for every behaviour the component promises (dismissal, focus, keyboard), ending in the resting state.
   - **Words:** visible content, such as a button's text, comes from the caller. Every string a component owns, such as a pagination button's "Previous page", comes from the locale dictionaries of 2.3, and a `*Label` prop can override it on one instance.
   - **Files:**
     - code: `packages/perron/src/components/<Name>/<Name>.tsx`, `<Name>.css` and `<Name>.stories.tsx`;
@@ -112,6 +126,8 @@ Nothing here builds a component. It builds what every component is checked again
   - **Component CSS:** no raw colour, length or duration, no `var()` fallback, and no `--perron-*` name that the tokens don't define.
   - **Props:** the vocabulary of 2.2, and JSDoc on every prop, read with the TypeScript compiler API.
   - **Patterns:** a pattern imports only Perron components, never Base UI.
+  - **Shared parts:** no second drawing of a part on the 2.2 list.
+  - **Docs:** every registered component has its docs page (4.4).
   - **API compatibility:** the generated props API of each `stable` component may only grow against the last release tag. Deliberate breaks go in a table.
   - **Paths:** every path a doc or skill names exists.
 
@@ -164,13 +180,14 @@ Penpot owns each component's anatomy and variants. The repo owns the token value
 
 After the design step, three agent contexts run in sequence, rather than as an agent team. The maintainer holds two gates, and code checks everything between them. Every skill starts with a **pre-flight**: the files it must read before it may write, named so that no agent can skip them.
 
-| Stage  | Runs                        | Reads                                                                 | Writes                                                                   | Gate                                                                |
-| ------ | --------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------- |
-| Design | Local                       | The contract, the foundations, tokens through the MCP                 | The Penpot page, `penpot/<name>.json`, the code map, the exports         | 3.3 checks; **the maintainer approves the design in Penpot**        |
-| Brief  | Local                       | The read-back, `get_reference` for the Base UI parts, the contract    | `docs/components/<name>.md`, with `[PENDING]` questions                  | Template complete; the maintainer answers the `[PENDING]` questions |
-| Build  | Any                         | The approved spec and the read-back only                              | Component, CSS, stories (one per variant, named as in Penpot), docs page | `npm run check` and story tests; 3 attempts, then stop              |
-| Review | Any, fresh-context subagent | The spec, the diff and the gate output, never the builder's reasoning | `review.md`, with P1, P2 and P3 findings                                 | No P1; 2 rounds, then the maintainer                                |
-| Visual | Any, with the local exports | Storybook and the read-back                                           | A geometry and colour report, and pixel-diff images                      | Parts within 1 px and on their tokens; **the maintainer signs off** |
+| Stage  | Runs                        | Reads                                                                 | Writes                                                           | Gate                                                                |
+| ------ | --------------------------- | --------------------------------------------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Design | Local                       | The contract, the foundations, tokens through the MCP                 | The Penpot page, `penpot/<name>.json`, the code map, the exports | 3.3 checks; **the maintainer approves the design in Penpot**        |
+| Brief  | Local                       | The read-back, `get_reference` for the Base UI parts, the contract    | `docs/components/<name>.md`, with `[PENDING]` questions          | Template complete; the maintainer answers the `[PENDING]` questions |
+| Build  | Any                         | The approved spec, the read-back and the reference component          | Component, CSS, stories (one per variant, named as in Penpot)    | `npm run check` and story tests; 3 attempts, then stop              |
+| Review | Any, fresh-context subagent | The spec, the diff and the gate output, never the builder's reasoning | `review.md`, with P1, P2 and P3 findings                         | No P1; 2 rounds, then the maintainer                                |
+| Docs   | Any                         | The spec, the stories, the props API                                  | The component's docs page                                        | The docs check of 2.5                                               |
+| Visual | Any, with the local exports | Storybook and the read-back                                           | A geometry and colour report, and pixel-diff images              | Parts within 1 px and on their tokens; **the maintainer signs off** |
 
 - [ ] **4.1 `component-design` skill.** Local. Draws a component or pattern in Penpot from the contract with the 3.2 helpers, checks it, exports PNGs in light and dark, and writes the read-back and the code map. Penpot's own prompting guides apply: read before writing, make small reversible changes, and never assume a missing value.
 - [ ] **4.2 `component-brief` skill.** Local. Turns the read-back into the spec:
@@ -182,22 +199,38 @@ After the design step, three agent contexts run in sequence, rather than as an a
 
   A question the sources can't answer goes in as `[PENDING]`, and the `grilling` skill puts it to the maintainer.
 
-- [ ] **4.3 `component-build` skill.** Any. Its pre-flight reads the spec and the read-back. It builds to the contract and runs the gates. It gets three attempts at a red gate, then stops and says what is failing.
-- [ ] **4.4 `component-reviewer` agent.** Any. `.claude/agents/component-reviewer.md`, with read-only tools plus the test commands. Its rubric covers:
+- [ ] **4.3 `component-build` skill.** Any. Steps:
+  1. **Pre-flight:** the contract, the spec, the read-back, and the reference component. That is Button once 5.1 has built it: its `.tsx`, `.css` and stories show the contract applied.
+  2. **Write** the three files to the contract, and register the component in `components.json`.
+  3. **Self-gate**, looped until clean before the reviewer sees anything:
+     - a design-quality pass on every story in both themes, fixing every Defect and Polish finding;
+     - the accessibility tree of the rendered stories listed (each landmark and control with its name and state, and any text inside `aria-hidden` or `inert`) and checked against the 2.2 checklist;
+     - `api-consistency` scoped to the component's family.
+  4. **Gates:** `npm run check` and the story tests. Three attempts at a red gate, then it stops and says what is failing.
+- [ ] **4.4 `component-docs` skill.** Any. Runs after Review passes, so the page shows the final API. It writes the component's Storybook docs page:
+  - the spec's prose;
+  - the stories as live examples;
+  - an autodocs props table in MUI's layout (name, type, default, description), with slots after it.
+
+  Button's page is the reference. In phase 9 the same skill writes the website page.
+
+- [ ] **4.5 `component-reviewer` agent.** Any. `.claude/agents/component-reviewer.md`, with read-only tools plus the test commands. Its rubric covers:
   - a design-quality pass on the rendered stories in both themes (alignment, spacing, contrast, states that don't move geometry), with findings sorted into Defect, Polish or Direction;
-  - the accessibility checks axe can't make: focus order, announcements, reduced motion, target size;
+  - the 2.2 checklist of what axe won't catch, plus focus order, reduced motion and target size;
   - API consistency with sibling components;
   - misuse of Base UI: rebuilt behaviour, a lost `render` or ref;
   - the owned strings and docs, against `docs/content-design.md`.
-- [ ] **4.5 `build-component` orchestrator skill.**
+- [ ] **4.6 `build-component` orchestrator skill.**
   - It owns `components/<name>/pipeline.yaml` (stage, approvals, attempts, open P1s) and is the only one that writes it.
-  - It starts each stage and refuses one whose input is missing or unapproved.
-  - It runs every stage in one local session. In the cloud it runs Build, Review and Visual, and stops at a local stage to tell the maintainer what to start.
+  - It starts each stage (design, brief, build, review, docs, visual) and refuses one whose input is missing or unapproved.
+  - It runs every stage in one local session. In the cloud it runs Build, Review, Docs and Visual, and stops at a local stage to tell the maintainer what to start.
 
   **Done**, for the whole phase, when a dry run on a made-up component reaches each gate and stops there.
 
-- [ ] **4.6 Library audits.** Any. Skills that run across the whole library:
+- [ ] **4.7 Library audits.** Any. Skills that run across the whole library:
+  - `design-qa`, the design-quality pass of 4.3 and 4.5 on its own, for any component or screen;
   - `api-consistency`;
+  - `component-consistency-audit`, which finds a shared part drawn twice, or a family member with a surface of its own;
   - `accessibility-audit`;
   - `content-audit`;
   - `drift-audit`, which checks that docs and skills still match the repo by running what they say;
@@ -244,7 +277,13 @@ Patterns are built only from Perron components, take Mylder's domain props (a de
 
   **Done** when a fresh Vite app, after `init`, gets a correct Perron screen from one prompt.
 
-- [ ] **8.2 DESIGN.md.** Any. Generate a `DESIGN.md` for the brand from the tokens and foundation pages, in the token front-matter DESIGN.md format, for design agents working outside the repo.
+- [ ] **8.2 Blueprints.** Any. Three files that anyone, person or agent, can download and hand to a builder, each shown as a page with a download link in a "Blueprints" section of the docs:
+  - **`CLAUDE.md`:** the context for extending Perron. The repo's `CLAUDE.md` with the contract's rules and the steps to add a component, built from those files, never edited by hand.
+  - **`DESIGN.md`:** the design spec in one file, generated from the tokens, the foundation pages and the component specs, with the tokens as front matter in the DESIGN.md format.
+  - **`content-design.md`:** the voice, as it is.
+
+  They are generated, so they never drift from their sources, and the drift check of 2.4 covers them. **Done** when each downloads from Storybook and matches its sources.
+
 - [ ] **8.3 Evals.** Any. A small `evals/` set of agent prompts with checks, such as "build a departures list with Perron", run before each release. A change to a skill or the MCP then shows up as a better or worse score.
 
 ## Phase 9: Website
