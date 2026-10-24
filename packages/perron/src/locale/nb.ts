@@ -26,4 +26,8 @@ export const nb: OwnedStrings = {
   minutesEarly: 'min før tiden',
   onTime: 'I rute',
   delayUnknown: 'Forsinkelse ukjent',
+  mapControls: 'Kartknapper',
+  zoomIn: 'Zoom inn',
+  zoomOut: 'Zoom ut',
+  centerMap: 'Sentrer kartet',
 }
