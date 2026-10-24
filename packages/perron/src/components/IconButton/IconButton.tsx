@@ -47,7 +47,7 @@ export interface IconButtonProps extends Omit<
   ref?: Ref<HTMLButtonElement>
 }
 
-/** A button that runs one action and shows it as an icon alone, such as zoom in or about. */
+/** A button that runs one action and shows it as an icon alone, such as zoom in or show help. */
 export function IconButton({
   label,
   color = 'neutral',
