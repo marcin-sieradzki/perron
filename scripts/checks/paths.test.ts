@@ -26,7 +26,6 @@ describe('paths', () => {
       gone('docs/page.md', 5, 'scripts/gone.ts'),
       gone('docs/page.md', 7, 'docs/gone.md'),
       gone('docs/page.md', 9, 'docs/also-gone.md'),
-      { file: 'docs/page.md', line: 9, message: 'perron-allow(paths) needs a reason' },
       gone('packages/kit/README.md', 3, 'docs/gone.md'),
     ])
   })

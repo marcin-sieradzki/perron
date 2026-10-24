@@ -2,12 +2,12 @@ import { readdirSync, readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
-import { readSources } from '../build-tokens.ts'
+import { readSources } from './token-sources.ts'
 import { headingOf, PAGES, readPages } from './pages.ts'
 import { loadTokens } from './tokens.ts'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '../..')
-const pages = readPages(root, loadTokens(readSources()))
+const pages = readPages(root, loadTokens(readSources(root)))
 const mdx = readdirSync(join(root, 'storybook/pages')).map((f) =>
   readFileSync(join(root, 'storybook/pages', f), 'utf8'),
 )
@@ -28,10 +28,13 @@ describe('Storybook pages', () => {
       )
   })
 
-  it('group pages by folder: foundations, components, and the guidelines beside them', () => {
+  it('group pages by folder: foundations, the contract, the specs, and the guidelines beside them', () => {
     const group = (path: string) => headingOf(path, '# Title\n').group
     expect(group('docs/foundations/motion.md')).toBe('Foundations')
     expect(group('docs/components/README.md')).toBe('Components')
+    expect(group('docs/components/TEMPLATE.md')).toBe('Components')
+    expect(group('docs/components/date-picker.md')).toBe('Specs')
+    expect(group('docs/patterns/departure-row.md')).toBe('Specs')
     expect(group('docs/content-design.md')).toBe('Guidelines')
   })
 
@@ -43,7 +46,8 @@ describe('Storybook pages', () => {
       if (indent.length === 10) order.push({ group: name, titles: [] })
       else order.at(-1)!.titles.push(name)
     const groups = [...new Set(pages.map((p) => p.group))]
-    expect(order.map((o) => o.group)).toEqual(groups)
+    // the Patterns group holds the patterns' own stories and docs, which are no page of docs/
+    expect(order.map((o) => o.group).filter((g) => g !== 'Patterns')).toEqual(groups)
     for (const { group, titles } of order) {
       const listed = pages.filter((p) => p.group === group).map((p) => p.title)
       // its pages first; under Components, the registered components follow

@@ -1,7 +1,7 @@
 {
   "name": "@mylder/perron",
   "version": "0.1.0",
-  "description": "Perron, the design system of Mylder: design tokens, styles, icons and the Mylder mark.",
+  "description": "Perron, the design system of Mylder: design tokens, styles, icons, the Mylder mark, and the React components and patterns built on Base UI, in four locales.",
   "license": "MIT",
   "type": "module",
   "repository": {
@@ -39,7 +39,7 @@
     "data"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "tsc -p tsconfig.build.json && node scripts/copy-css.ts",
     "prepack": "npm run build"
   },
   "dependencies": {

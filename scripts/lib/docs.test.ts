@@ -1,9 +1,13 @@
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
-import { readSources } from '../build-tokens.ts'
+import { readSources } from './token-sources.ts'
 import { documentedTokens, fillTables } from './docs.ts'
 import { loadTokens } from './tokens.ts'
 
-const tokens = loadTokens(readSources())
+const root = join(dirname(fileURLToPath(import.meta.url)), '../..')
+
+const tokens = loadTokens(readSources(root))
 const tokenBlock = (patterns: string) => `<!-- tokens: ${patterns} -->\nold\n<!-- /tokens -->`
 const contrastBlock = (spec: string) => `<!-- contrast ${spec} -->\nold\n<!-- /contrast -->`
 

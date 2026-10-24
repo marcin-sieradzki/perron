@@ -1,28 +1,51 @@
 // The props rule: each component's `<Name>Props`, read with the TypeScript compiler, keeps to the
 // vocabulary of the contract's "Props" and "State and events" sections (docs/components/README.md).
+// The intents, the sizes and the names from other libraries come from the contract's tables.
 import { existsSync, readFileSync } from 'node:fs'
 import { join, relative } from 'node:path'
 import ts from 'typescript'
 import { codeFile, inPackage, propsProgram } from '../lib/props.ts'
-import { readRegistry } from '../lib/registry.ts'
-import { excuse, type Check, type Problem } from './lib.ts'
+import { isBuilt, readRegistry } from '../lib/registry.ts'
+import {
+  byFileLine,
+  codeSpans,
+  CONTRACT,
+  excuse,
+  section,
+  tableRows,
+  type Check,
+  type Problem,
+} from './lib.ts'
 
 const RULE = 'props'
 
-const INTENTS = ['neutral', 'brand', 'success', 'warning', 'danger', 'info']
-const SIZES = ['small', 'medium', 'large']
-const BANNED: Record<string, string> = {
-  sx: 'restyle through className',
-  classes: 'restyle through className, on the root or in slotProps',
-  component: 'swap the root with render',
-  as: 'swap the root with render',
-  styled: 'restyle through className',
-  theme: 'the tokens carry the themes',
-  state: "read Base UI's data attributes",
-  onValueChange: 'adapt it to onChange(event, value, details)',
-  onOpenChange: 'adapt it to onOpen(event, details) and onClose(event, reason, details)',
-  leftIcon: 'use startIcon',
-  rightIcon: 'use endIcon',
+/** What the contract's tables say a props type takes. */
+export interface PropRules {
+  /** The `color` values, from "Intents" */
+  intents: string[]
+  /** The `size` values, from the `size` row of the "Props" table */
+  sizes: string[]
+  /** Each name from "Names from other libraries", with what a component takes in its place */
+  banned: Record<string, string>
+}
+
+/** The rules of the contract's "Props", "Names from other libraries" and "Intents" tables. */
+export function readPropRules(contract: string): PropRules {
+  const size = tableRows(section(contract, 'Props')).find(([prop]) =>
+    codeSpans(prop).includes('size'),
+  )
+  if (!size) throw new Error(`${CONTRACT}, "Props", has no size row`)
+  const banned: Record<string, string> = {}
+  for (const [use, names] of tableRows(section(contract, 'Names from other libraries'))) {
+    const plain = use.replaceAll('`', '')
+    for (const name of codeSpans(names))
+      banned[name] = /^[A-Z][a-z]/.test(plain) ? plain[0].toLowerCase() + plain.slice(1) : plain
+  }
+  return {
+    intents: tableRows(section(contract, 'Intents')).map(([intent]) => codeSpans(intent)[0]),
+    sizes: [...size[1].matchAll(/'([^']+)'/g)].map((m) => m[1]),
+    banned,
+  }
 }
 const BOOLEANS = ['disabled', 'fullWidth', 'required', 'readOnly', 'open', 'defaultOpen']
 const EVENTS: Record<string, string[][]> = {
@@ -31,32 +54,39 @@ const EVENTS: Record<string, string[][]> = {
   onClose: [['event', 'reason', 'details']],
 }
 
-/** The parts of `t` without undefined and null: an optional `size` is still its literals. */
-const parts = (checker: ts.TypeChecker, t: ts.Type) => {
+/** The members of the union `t`, without undefined and null: an optional `size` is still its literals. */
+const unionMembers = (checker: ts.TypeChecker, t: ts.Type) => {
   const n = checker.getNonNullableType(t)
   return n.isUnion() ? n.types : [n]
 }
 
 /** What is wrong with the type of one member the props type declares itself, if anything. */
-function typeBreach(checker: ts.TypeChecker, name: string, decl: ts.Declaration, t: ts.Type) {
-  const ps = parts(checker, t)
+function typeBreach(
+  checker: ts.TypeChecker,
+  rules: PropRules,
+  name: string,
+  decl: ts.Declaration,
+  t: ts.Type,
+) {
+  const { intents, sizes } = rules
+  const ps = unionMembers(checker, t)
   const text = checker.typeToString(checker.getNonNullableType(t))
   const literals = ps.every((p) => p.isStringLiteral())
   const values = ps.map((p) => (p.isStringLiteral() ? p.value : checker.typeToString(p)))
   const isBool = ps.every((p) => p.flags & ts.TypeFlags.BooleanLike)
   if (name === 'variant' && !literals)
     return `variant is a union of string literals, the Penpot values, not ${text}`
-  if (name === 'color' && !(literals && values.every((v) => INTENTS.includes(v))))
-    return `color takes only the intents ${INTENTS.join(', ')}; not ${
+  if (name === 'color' && !(literals && values.every((v) => intents.includes(v))))
+    return `color takes only the intents ${intents.join(', ')}; not ${
       values
-        .filter((v) => !INTENTS.includes(v))
+        .filter((v) => !intents.includes(v))
         .map((v) => `'${v}'`)
         .join(', ') || text
     }`
-  if (name === 'size' && !(literals && values.every((v) => SIZES.includes(v))))
-    return `size takes only small, medium and large; not ${
+  if (name === 'size' && !(literals && values.every((v) => sizes.includes(v))))
+    return `size takes only ${sizes.join(', ')}; not ${
       values
-        .filter((v) => !SIZES.includes(v))
+        .filter((v) => !sizes.includes(v))
         .map((v) => `'${v}'`)
         .join(', ') || text
     }`
@@ -96,6 +126,7 @@ const hasDoc = (d: ts.Declaration) =>
  */
 export function propsProblems(root: string, files: string[]): Problem[] {
   if (!files.length) return []
+  const rules = readPropRules(readFileSync(join(root, CONTRACT), 'utf8'))
   const { checker, propsOf } = propsProgram(root, files)
   const problems: Problem[] = []
   const lineOf = (node: ts.Node) => {
@@ -113,21 +144,21 @@ export function propsProblems(root: string, files: string[]): Problem[] {
       })
       continue
     }
-    const at = symbol.declarations[0]
+    const propsDecl = symbol.declarations[0]
     const members = type.isUnion()
       ? [...new Map(type.types.flatMap((t) => t.getProperties()).map((p) => [p.name, p])).values()]
       : checker.getPropertiesOfType(type)
     for (const member of members) {
       const decls = member.declarations ?? []
       const own = decls.find(inPackage)
-      const where = own ?? at
+      const where = own ?? propsDecl
       const report = (message: string) =>
         problems.push({ file: fileOf(where), line: lineOf(where), message })
-      if (BANNED[member.name])
-        report(`${member.name} is not a prop of any component; ${BANNED[member.name]}`)
+      const instead = rules.banned[member.name]
+      if (instead) report(`${member.name} is not a prop of any component; use ${instead}`)
       const t = checker.getTypeOfSymbol(member)
       if (!own) {
-        const ps = parts(checker, t)
+        const ps = unionMembers(checker, t)
         if (
           ps.every((p) => p.flags & ts.TypeFlags.BooleanLike) &&
           /^(is|has|should)[A-Z]/.test(member.name)
@@ -135,13 +166,13 @@ export function propsProblems(root: string, files: string[]): Problem[] {
           report(prefix(member.name))
         continue
       }
-      const breach = typeBreach(checker, member.name, own, t)
+      const breach = typeBreach(checker, rules, member.name, own, t)
       if (breach) report(breach)
       if (!decls.filter(inPackage).some(hasDoc)) report(`${member.name} has no JSDoc comment`)
     }
   }
   const unique = [...new Map(problems.map((p) => [`${p.file}:${p.line}:${p.message}`, p])).values()]
-  return excuse(unique, RULE, (f) => readFileSync(join(root, f), 'utf8'))
+  return excuse(unique, RULE, (f) => readFileSync(join(root, f), 'utf8')).sort(byFileLine)
 }
 
 export default {
@@ -152,9 +183,9 @@ export default {
     for (const entry of readRegistry(root)) {
       const file = codeFile(entry)
       if (existsSync(join(root, file))) files.push(file)
-      else if (entry.status !== 'designing')
+      else if (isBuilt(entry))
         problems.push({ file, message: `${entry.name} is ${entry.status} but has no ${file}` })
     }
-    return [...problems, ...propsProblems(root, files)]
+    return [...problems, ...propsProblems(root, files)].sort(byFileLine)
   },
 } satisfies Check

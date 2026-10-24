@@ -26,7 +26,7 @@ export function PerronProvider({ locale = 'en', children }: PerronProviderProps)
  */
 export function useOwnedStrings(overrides: Partial<OwnedStrings> = {}): OwnedStrings {
   const strings = { ...dictionaries[useContext(LocaleContext)] }
-  for (const [key, value] of Object.entries(overrides) as [keyof OwnedStrings, string][])
-    if (value !== undefined) strings[key] = value
+  const given = Object.entries(overrides) as [keyof OwnedStrings, string | undefined][]
+  for (const [key, value] of given) if (value !== undefined) strings[key] = value
   return strings
 }

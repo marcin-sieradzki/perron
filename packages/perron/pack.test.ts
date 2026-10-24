@@ -1,6 +1,6 @@
 // The published tarball of @mylder/perron, as `npm pack` would build it after its prepack build:
-// every export and every stylesheet import resolves to a file inside it, and it carries every icon
-// and logo.
+// every export, every relative import of the built code (its CSS included) and every stylesheet
+// import resolves to a file inside it, and it carries every icon and logo.
 import { execFileSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 import { dirname, join, posix } from 'node:path'
@@ -41,6 +41,19 @@ describe('the @mylder/perron tarball', () => {
       const pattern = new RegExp(`^${escape(target.slice(2)).replace('*', '[^/]+')}$`)
       expect(files.some((f) => pattern.test(f))).toBe(true)
     }
+  })
+
+  it('carries every file the built code imports by a relative path, its CSS included', () => {
+    const relative = /(?:\bfrom\s*|\bimport\s*\(?\s*)['"](\.{1,2}\/[^'"]+)['"]/g
+    const code = files.filter((f) => f.startsWith('dist/') && f.endsWith('.js'))
+    expect(code.length).toBeGreaterThan(0)
+    const missing = code.flatMap((file) =>
+      [...readFileSync(join(dir, file), 'utf8').matchAll(relative)]
+        .map((m) => posix.join(posix.dirname(file), m[1]))
+        .filter((target) => !files.includes(target))
+        .map((target) => `${file} imports ${target}`),
+    )
+    expect(missing).toEqual([])
   })
 
   it('carries every file perron.css imports, and theirs', () => {

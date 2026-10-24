@@ -3,7 +3,7 @@
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import type { Plugin } from 'vite'
-import { readSources } from '../scripts/build-tokens.ts'
+import { readSources } from '../scripts/lib/token-sources.ts'
 import { readPages } from '../scripts/lib/pages.ts'
 import { PACKAGE } from '../scripts/lib/paths.ts'
 import { loadTokens } from '../scripts/lib/tokens.ts'
@@ -18,7 +18,7 @@ export function perronPages(): Plugin {
     resolveId: (id) => (id === ID ? `\0${ID}` : undefined),
     load(id) {
       if (id !== `\0${ID}`) return
-      const pages = readPages(root, loadTokens(readSources()))
+      const pages = readPages(root, loadTokens(readSources(root)))
       return `export default ${JSON.stringify(pages)}`
     },
     configureServer(server) {

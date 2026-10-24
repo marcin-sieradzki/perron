@@ -4,11 +4,10 @@ import { existsSync } from 'node:fs'
 import { basename, join } from 'node:path'
 import ts from 'typescript'
 import { PACKAGE } from './paths.ts'
-import type { Entry } from './registry.ts'
+import { folderOf, type Entry } from './entry.ts'
 
 /** The code file of a registered entry, by the contract's file convention. */
-export const codeFile = (e: Entry) =>
-  `${PACKAGE}/src/${e.layer === 'pattern' ? 'patterns' : 'components'}/${e.name}/${e.name}.tsx`
+export const codeFile = (e: Entry) => `${PACKAGE}/src/${folderOf(e.layer)}/${e.name}/${e.name}.tsx`
 
 /** The options of `root`'s tsconfig.json, so types resolve as `npm run typecheck` sees them. */
 function compilerOptions(root: string): ts.CompilerOptions {

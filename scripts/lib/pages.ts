@@ -85,7 +85,7 @@ export interface Page {
   path: string
   /** The page's `#` heading */
   title: string
-  /** The sidebar group: Foundations or Components by folder, else Guidelines */
+  /** The sidebar group: Foundations, Components, Specs or Guidelines, as `headingOf` says */
   group: string
   segments: Segment[]
 }
@@ -213,21 +213,27 @@ function filesSegment(tokens: ResolvedTokens, root: string, dir: string): Segmen
   return { kind: 'icons', categories: byCategory(icons) }
 }
 
-/** The sidebar group of each folder under docs/; a page anywhere else is a guideline. */
-const GROUPS: Record<string, string> = {
-  'docs/foundations/': 'Foundations',
-  'docs/components/': 'Components',
-  'docs/patterns/': 'Patterns',
+/** The contract's own pages, the top of the Components group. */
+const CONTRACT_PAGES = ['docs/components/README.md', 'docs/components/TEMPLATE.md']
+
+/**
+ * A page's sidebar group: Foundations for docs/foundations/, Components for the contract's pages,
+ * Specs for every other page in docs/components/ or docs/patterns/ (each registered entry's spec,
+ * titled by its PascalCase name, so it never takes the id of the entry's own `Components/<Name>`
+ * docs), and Guidelines for the rest.
+ */
+function groupOf(path: string) {
+  if (path.startsWith('docs/foundations/')) return 'Foundations'
+  if (CONTRACT_PAGES.includes(path)) return 'Components'
+  if (path.startsWith('docs/components/') || path.startsWith('docs/patterns/')) return 'Specs'
+  return 'Guidelines'
 }
 
 /** A page's title and sidebar group, from its path and its `#` heading. */
 export function headingOf(path: string, markdown: string): Pick<Page, 'title' | 'group'> {
   const heading = /^# (.+)$/m.exec(markdown)
   if (!heading) throw new Error(`${path} has no # heading`)
-  return {
-    title: heading[1],
-    group: Object.entries(GROUPS).find(([dir]) => path.startsWith(dir))?.[1] ?? 'Guidelines',
-  }
+  return { title: heading[1], group: groupOf(path) }
 }
 
 /** One page: its prose between the blocks, and each block as rows. */

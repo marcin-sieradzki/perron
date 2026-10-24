@@ -12,7 +12,7 @@ How every word in Mylder reads: plain sentences, exact about certainty, in Engli
 
 ## Data-state and delay words
 
-Components take these from the locale dictionaries in `packages/perron/src/locale/`, which a test holds to this table. Change a word in both.
+Components take these from the locale dictionaries in `packages/perron/src/locale/`, which a test holds to this table. Change a word in this table and in the locale dictionaries together.
 
 | English          | Danish        | Swedish          | Norwegian Bokmål |
 | ---------------- | ------------- | ---------------- | ---------------- |

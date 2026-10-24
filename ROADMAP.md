@@ -48,7 +48,7 @@ Write every agent-facing file a step creates (a skill, an agent, `CLAUDE.md`, a 
 
 Nothing here builds a component. It builds what every component is checked against.
 
-- [ ] **2.1 Dependencies.** Any.
+- [x] **2.1 Dependencies.** Any.
   - Add `@base-ui/react`, pinned exactly (1.9.0 today), with `react` and `react-dom` 19 as peers.
   - Add `@mui/material` as an exact dev dependency, used only for its bundled docs.
   - Add one line to `CLAUDE.md`: library API questions go to `get_reference`.
@@ -59,7 +59,7 @@ Nothing here builds a component. It builds what every component is checked again
 
   **Done** when a test import of `@base-ui/react/button` builds and a banned import fails `npm run check`.
 
-- [ ] **2.2 The contract.** Any. Write `docs/components/README.md`, the rules every component follows, and beside it the spec template `docs/components/TEMPLATE.md`. The rules, from the ADRs:
+- [x] **2.2 The contract.** Any. Write `docs/components/README.md`, the rules every component follows, and beside it the spec template `docs/components/TEMPLATE.md`. The rules, from the ADRs:
   - **Props:** Base UI underneath, MUI-shaped props on top.
     - `variant`, and `color` limited to token-backed intents;
     - `size`: `small | medium | large`;
@@ -101,7 +101,7 @@ Nothing here builds a component. It builds what every component is checked again
   - every rule above has a home in the contract;
   - the template has a section each for anatomy, Base UI parts, props, tokens per part and state, keyboard and ARIA, owned strings, and do and don't.
 
-- [ ] **2.3 Locales.** Any.
+- [x] **2.3 Locales.** Any.
   - `PerronProvider`, with `locale` set to `en` (the default), `da`, `sv` or `nb`.
   - One dictionary per locale in `packages/perron/src/locale/`.
   - A test fails when a key is missing from any locale, or when a component renders an owned string that is not in the dictionary.
@@ -110,7 +110,7 @@ Nothing here builds a component. It builds what every component is checked again
 
   **Done** when the provider switches a sample string in all four languages.
 
-- [ ] **2.4 Registry.** Any. `components.json` lists each component and pattern:
+- [x] **2.4 Registry.** Any. `components.json` lists each component and pattern:
   - name, layer (`component | pattern`) and category;
   - status: `designing | building | stable | deprecated`;
   - Base UI parts and Penpot path.
@@ -120,20 +120,20 @@ Nothing here builds a component. It builds what every component is checked again
   - the package `exports`;
   - the Storybook sort order and the page lists.
 
-  A drift check (`git diff --exit-code` after generating) fails when a generated file is stale. **Done** when adding a dummy entry fails `npm run check` until the generators run.
+  A drift check (`npm run registry:check`, an in-memory `--check` like `tokens:check`) fails when a generated file is stale. **Done** when adding a dummy entry fails `npm run check` until the generators run.
 
-- [ ] **2.5 Gates as code.** Any. Add checks to `npm run check`, one script per rule, a test with a failing fixture for each, and an in-place `/* perron-allow(<rule>): reason */` for a deliberate exception. The rules:
+- [x] **2.5 Gates as code.** Any. Add checks to `npm run check`, one script per rule, a test with a failing fixture for each, and an in-place `/* perron-allow(<rule>): reason */` for a deliberate exception. The rules:
   - **Component CSS:** no raw colour, length or duration, no `var()` fallback, and no `--perron-*` name that the tokens don't define.
   - **Props:** the vocabulary of 2.2, and JSDoc on every prop, read with the TypeScript compiler API.
   - **Patterns:** a pattern imports only Perron components, never Base UI.
   - **Shared parts:** no second drawing of a part on the 2.2 list.
-  - **Docs:** every registered component has its docs page (4.4).
-  - **API compatibility:** the generated props API of each `stable` component may only grow against the last release tag. Deliberate breaks go in a table.
-  - **Paths:** every path a doc or skill names exists.
+  - **Docs:** every registered component has its spec from `building` on, and its docs page (4.4) from `stable` on.
+  - **API compatibility:** the generated props API of each `stable` or `deprecated` component may only grow against the last release tag. Deliberate breaks go in a table.
+  - **Paths:** every path a doc or skill names exists, the vendored skills and this roadmap's own code spans aside.
 
   **Done** when every check fails on its fixture.
 
-- [ ] **2.6 Story tests.** Any.
+- [x] **2.6 Story tests.** Any.
   - Add `@storybook/addon-vitest` and `@storybook/addon-a11y`, with axe in `error` mode, run headless in Chromium in CI.
   - A contract story renders every component with a `ref` and a `data-testid`, and fails unless both land on one element.
   - `play` functions test the keyboard behaviour.

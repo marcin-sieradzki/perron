@@ -6,6 +6,8 @@
     "rootDir": "src",
     "outDir": "dist",
     "rewriteRelativeImportExtensions": true,
+    // a component imports its own CSS, which scripts/copy-css.ts puts beside the built JS
+    "noUncheckedSideEffectImports": false,
     "types": []
   },
   "include": ["src"],
