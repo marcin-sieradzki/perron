@@ -1,0 +1,6 @@
+# Written by npm run factory; never by hand.
+component: Prik
+layer: component
+deferred:
+  at: 2026-10-24T20:43:50.400Z
+stages: {}
