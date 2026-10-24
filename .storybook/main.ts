@@ -7,8 +7,9 @@ const config: StorybookConfig = {
     '../storybook/pages/*.mdx',
     '../packages/perron/src/**/*.mdx',
     '../packages/perron/src/**/*.stories.tsx',
+    '../storybook/contract/*.stories.tsx',
   ],
-  addons: ['@storybook/addon-docs'],
+  addons: ['@storybook/addon-docs', '@storybook/addon-a11y', '@storybook/addon-vitest'],
   core: { disableTelemetry: true },
   viteFinal: (vite) => ({ ...vite, plugins: [...(vite.plugins ?? []), perronPages()] }),
 }

@@ -82,7 +82,7 @@ MUI's names, with Base UI's details passed through as the last argument.
 - `className` is merged, not replaced: `pn-<Name>` first, then the caller's.
 - Every prop the props type declares is taken out of `rest` before the spread, so a prop that is invalid on the element never reaches the DOM.
 
-The contract story of 2.6 renders every component with a `ref` and a `data-testid`, and fails unless both land on one element.
+The contract story, `storybook/contract/Contract.stories.tsx`, renders every registered component and pattern past designing with a `ref` and a `data-testid`, and fails unless both land on one element. It renders each with the args of its `Default` story (or its first story) over its meta's, so those args must render it alone, and a new component needs no edit to the contract story.
 
 ## Customising
 
@@ -194,7 +194,7 @@ The rest of the WCAG 2.2 AA target is on [Accessibility](../foundations/accessib
 - The default export is `satisfies Meta<typeof <Name>>`, with `component` set and `title: 'Components/<Name>'`.
 - One story per variant and state the Penpot design shows, named as Penpot names it, so the visual check pairs each story with its export.
 - A `play` test for every behaviour the component promises (dismissal, focus, keyboard), ending in the resting state: popups closed and focus back where it started.
-- Stories run in Chromium with axe in `error` mode, so an axe violation fails CI.
+- Stories run in Chromium with axe in `error` mode (`npm run test:stories`, part of `npm run check`), so an axe violation fails CI. The contract story's `Keyboard` story is the `play` pattern to copy: Tab to the element, expect focus, Shift+Tab back.
 
 ## Patterns
 
