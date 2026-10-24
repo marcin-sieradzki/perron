@@ -3,4 +3,9 @@ component: Dialog
 layer: component
 deferred:
   at: 2026-10-24T23:23:29.736Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-24T23:23:36.676Z
+    ended: 2026-10-24T23:35:26.901Z
+    pending: 8
