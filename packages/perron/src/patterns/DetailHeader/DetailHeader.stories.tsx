@@ -97,7 +97,7 @@ export const LongTitle: Story = {
     line: 'm3',
     lineName: undefined,
     title: 'Københavns Hovedbanegård (Tietgensgade)',
-    subheader: 'Metro M3, entrance on Tietgensgade',
+    subheader: 'Metro M3 and S-tog, entrance on Tietgensgade',
     action: showOnMap,
   },
   decorators: [
@@ -111,6 +111,7 @@ export const LongTitle: Story = {
     const canvas = within(canvasElement)
     const root = canvasElement.querySelector('.pn-DetailHeader')!
     const title = canvas.getByRole('heading', { level: 2 })
+    const subheader = canvasElement.querySelector('.pn-DetailHeader-subheader')!
     const button = canvas.getByRole('button', { name: 'Show on map' })
     const container = root.parentElement!.getBoundingClientRect()
     const box = root.getBoundingClientRect()
@@ -122,6 +123,15 @@ export const LongTitle: Story = {
     await expect(title.getBoundingClientRect().right).toBeLessThanOrEqual(
       button.getBoundingClientRect().left,
     )
+    // the subheader wraps onto two lines, inside the middle column and the container
+    const subheaderBox = subheader.getBoundingClientRect()
+    const subheaderLineHeight = parseFloat(getComputedStyle(subheader).lineHeight)
+    await expect(subheaderBox.height).toBeGreaterThan(subheaderLineHeight)
+    await expect(subheaderBox.height).toBeLessThan(subheaderLineHeight * 3)
+    await expect(subheader.scrollWidth).toBeLessThanOrEqual(subheader.clientWidth)
+    await expect(subheaderBox.left).toBeGreaterThanOrEqual(container.left)
+    await expect(subheaderBox.right).toBeLessThanOrEqual(button.getBoundingClientRect().left)
+    await expect(subheaderBox.bottom).toBeLessThanOrEqual(container.bottom)
     // the button stays whole: its label fits on one line, inside the root
     await expect(button.scrollWidth).toBeLessThanOrEqual(button.clientWidth)
     await expect(button.getBoundingClientRect().right).toBeLessThanOrEqual(box.right)

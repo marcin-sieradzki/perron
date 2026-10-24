@@ -16,6 +16,7 @@ export interface DetailHeaderProps extends Omit<
   /**
    * What the panel shows: `line` heads a vehicle or a line with its line badge and destination;
    * `stop` heads a stop or station with its marker and name. Set on the root as `data-variant`.
+   * @default 'line'
    */
   variant?: 'line' | 'stop'
   /**
@@ -90,8 +91,8 @@ export function DetailHeader({
 
   // CR-3: in line, a badge needs both its line and its name; in stop, the marker always shows,
   // neutral without a line
-  const badge = variant === 'line' && line !== undefined && given(lineName)
-  const mark = badge ? (
+  const showsBadge = variant === 'line' && line !== undefined && given(lineName)
+  const mark = showsBadge ? (
     <LineBadge line={line} size="large">
       {lineName}
     </LineBadge>
@@ -123,7 +124,7 @@ export function DetailHeader({
         className={classes('pn-DetailHeader-title', titleProps?.className)}
       >
         {/* CR-4: the line's name and a space, so the heading reads "5C Husum Torv" */}
-        {badge && <VisuallyHidden>{lineName} </VisuallyHidden>}
+        {showsBadge && <VisuallyHidden>{lineName} </VisuallyHidden>}
         {title}
       </h2>
       {given(subheader) && (

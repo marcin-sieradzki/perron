@@ -63,21 +63,22 @@ In MUI's layout. Every prop here gets this description as its JSDoc. Slots come 
 
 One row per part, state and property. DetailHeader has no interactive state of its own, so every row is rest; the controls in `action` keep their own states, and the marks their own tokens through their props.
 
-| Part        | State                | Property             | Token                                                                                |
-| ----------- | -------------------- | -------------------- | ------------------------------------------------------------------------------------ |
-| `root`      | rest                 | `column-gap`         | `space.300`, the 12 px between parts of a detail panel                               |
-| `mark`      | rest, `variant` line | `height`             | `size.badge-lg`, through LineBadge's `size='large'`, "the badge in a panel's header" |
-| `mark`      | rest, `variant` stop | `--perron-icon-size` | `icon.size.450`, through StationIcon's `size='large'`, "beside a panel title"        |
-| `title`     | rest                 | `font`               | `typography.heading-md`, the role for panel titles: a stop or a destination          |
-| `title`     | rest                 | `letter-spacing`     | `typography.heading-md-tracking`, the role's twin                                    |
-| `title`     | rest                 | `color`              | `color.text.primary`                                                                 |
-| `subheader` | rest                 | `font`               | `typography.body-sm`, the role for the line under a title                            |
-| `subheader` | rest                 | `letter-spacing`     | `typography.body-sm-tracking`, the role's twin                                       |
-| `subheader` | rest                 | `color`              | `color.text.secondary`                                                               |
-| `subheader` | rest                 | `margin-block-start` | `space.100`                                                                          |
-| `action`    | rest                 | `column-gap`         | `space.200`, between two controls                                                    |
+| Part        | State                | Property              | Token                                                                                |
+| ----------- | -------------------- | --------------------- | ------------------------------------------------------------------------------------ |
+| `mark`      | rest, `variant` line | `height`              | `size.badge-lg`, through LineBadge's `size='large'`, "the badge in a panel's header" |
+| `mark`      | rest, `variant` stop | `--perron-icon-size`  | `icon.size.450`, through StationIcon's `size='large'`, "beside a panel title"        |
+| `mark`      | rest                 | `margin-inline-end`   | `space.300`, the 12 px between parts of a detail panel                               |
+| `title`     | rest                 | `font`                | `typography.heading-md`, the role for panel titles: a stop or a destination          |
+| `title`     | rest                 | `letter-spacing`      | `typography.heading-md-tracking`, the role's twin                                    |
+| `title`     | rest                 | `color`               | `color.text.primary`                                                                 |
+| `subheader` | rest                 | `font`                | `typography.body-sm`, the role for the line under a title                            |
+| `subheader` | rest                 | `letter-spacing`      | `typography.body-sm-tracking`, the role's twin                                       |
+| `subheader` | rest                 | `color`               | `color.text.secondary`                                                               |
+| `subheader` | rest                 | `margin-block-start`  | `space.100`                                                                          |
+| `action`    | rest                 | `margin-inline-start` | `space.300`, the 12 px between parts of a detail panel                               |
+| `action`    | rest                 | `column-gap`          | `space.200`, between two controls                                                    |
 
-The root is a grid of three columns, `auto`, `minmax(0, 1fr)` and `auto`: the mark in the first and the action in the last, each spanning the title's and the subheader's rows and centred in them, and the title over the subheader in the middle. With no mark or no action, the middle column takes their room. Every part resets the margins an `h2` brings, but for the subheader's own.
+The root is a grid of three columns, `auto`, `minmax(0, 1fr)` and `auto`, with no gap between them: the mark in the first and the action in the last, and the title over the subheader in the middle. The mark's `margin-inline-end` and the action's `margin-inline-start` hold the `space.300` beside the text, so with no mark or no action its column is zero wide and the middle column takes their room. Its rows are `1fr`, `auto`, `auto` and `1fr`: the title and the subheader in the two `auto` rows, and the mark and the action spanning all four and centred in them, so the title and the subheader sit together in the middle of the mark's and the action's height, and with no subheader its row is zero high. Every part resets the margins an `h2` brings, but for the mark's, the subheader's and the action's own.
 
 - DetailHeader draws no fill, border, padding or shadow of its own, taking the detail panel's surface and padding from DetailPanel: it is the top of a panel, not a card. `space.300` between mark, text and action is what Semantic spacing gives between parts of a detail panel, `space.100` from title to subheader matches EmptyState's title-to-sentence gap, and `space.200` sits between controls in the action.
 - In the `stop` variant the marker is StationIcon's `outlined` variant, since the header names one stop and has no list to single it out from; `filled` is kept for the one stop that matters most in a list.
@@ -123,7 +124,7 @@ No owned strings: every word DetailHeader shows or announces comes from the call
 Rules for this pattern alone, numbered so the build and the review can cite them.
 
 - **CR-1.** The pattern imports only `LineBadge`, `StationIcon`, the `VisuallyHidden` part, `PerronProvider` if it needs it, and React, as the contract's Patterns section says; never `@base-ui/react`. A type-only import is fine.
-- **CR-2.** The root always carries `data-variant`, the default `line` included, and the CSS selects on it: `.pn-DetailHeader[data-variant='stop']`.
+- **CR-2.** The root always carries `data-variant`, the default `line` included.
 - **CR-3.** The `mark` part renders only when it has a mark to hold: in `line`, when both `line` and `lineName` are given, holding `<LineBadge line={line} size="large">{lineName}</LineBadge>`; in `stop`, always, holding `<StationIcon variant="outlined" size="large" line={line} />`, neutral when `line` is left out. `subheader` renders only when `subheader` is given and `action` only when `action` is; a value that renders nothing (`null`, `undefined`, a boolean, `''`, or an array of only such values) counts as not given, so no empty cell takes up a gap.
 - **CR-4.** In `line`, when the mark renders, the title starts with `lineName` and a space inside a `VisuallyHidden` span, and the mark carries `aria-hidden="true"` after the caller's `slotProps.mark` props, so the line is read once, in the heading. In `stop`, the mark is `aria-hidden` too, and StationIcon hides itself as well.
 - **CR-5.** The title is always an `h2`. Its `id` is `slotProps.title.id` when given, else one from React's `useId`, so DetailPanel can point its Sheet's `aria-labelledby` at it.
@@ -135,12 +136,12 @@ Rules for this pattern alone, numbered so the build and the review can cite them
 
 Stories are titled `Patterns/DetailHeader`. No Penpot design yet, so the variant stories are named by the variant names the design will have, the `variant` values in PascalCase (the Conventions of `penpot/README.md`). `Line` comes first and gives the contract story its args: every word in them is a string arg, and bus 5C is a line pair that meets 4.5:1, so axe's `color-contrast` rule stays on. Two more stories prove the action and the wrapping.
 
-| Story        | Shows                                                                                                                                                       | `play` test                                                                                                  |
-| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `Line`       | `variant` line, `line` bus, `lineName` "5C", `title` "Husum Torv", `subheader` "Next stop: Nørreport St.", no action                                        | The heading level 2 is named "5C Husum Torv"; the mark is `aria-hidden`; nothing in the header takes focus   |
-| `Stop`       | `variant` stop, no `line`, `title` "Nørreport St.", `subheader` "Metro, S-tog and buses", no action                                                         | The heading level 2 is named "Nørreport St."; the marker is neutral, with no `data-line`                     |
-| `WithAction` | `Line`'s args, with an outlined neutral Button "Show on map" in `action`                                                                                    | Tab reaches the button after the title, and Shift+Tab leaves it, so focus ends where it started              |
-| `LongTitle`  | `variant` stop, `line` m3, `title` "Københavns Hovedbanegård (Tietgensgade)", a two-line `subheader`, and `WithAction`'s button, in a 320 px wide container | The title wraps inside the middle column and the button stays whole: the root is no wider than its container |
+| Story        | Shows                                                                                                                                                       | `play` test                                                                                                                            |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `Line`       | `variant` line, `line` bus, `lineName` "5C", `title` "Husum Torv", `subheader` "Next stop: Nørreport St.", no action                                        | The heading level 2 is named "5C Husum Torv"; the mark is `aria-hidden`; nothing in the header takes focus                             |
+| `Stop`       | `variant` stop, no `line`, `title` "Nørreport St.", `subheader` "Metro, S-tog and buses", no action                                                         | The heading level 2 is named "Nørreport St."; the marker is neutral, with no `data-line`                                               |
+| `WithAction` | `Line`'s args, with an outlined neutral Button "Show on map" in `action`                                                                                    | Tab reaches the button after the title, and Shift+Tab leaves it, so focus ends where it started                                        |
+| `LongTitle`  | `variant` stop, `line` m3, `title` "Københavns Hovedbanegård (Tietgensgade)", a two-line `subheader`, and `WithAction`'s button, in a 320 px wide container | The title and the two-line subheader wrap inside the middle column and the button stays whole: the root is no wider than its container |
 
 ## Do and don't
 
