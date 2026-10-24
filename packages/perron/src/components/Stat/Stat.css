@@ -1,10 +1,12 @@
 /* Stat: the label over the figure in a start-aligned column, on its container's surface, with no
    fill, border, radius, padding or shadow of its own. Every row of docs/components/stat.md's
-   Tokens table is at rest; the unknown figure is rest with data-unknown on the root. */
+   Tokens table is at rest; the unknown figure is rest with data-unknown on the root. CR-10: the
+   root sizes to its content, so a Stat made a link through render is no wider than its words. */
 .pn-Stat {
   display: flex;
   flex-direction: column;
   align-items: start;
+  width: fit-content;
   gap: var(--perron-space-100);
   margin: 0;
 }

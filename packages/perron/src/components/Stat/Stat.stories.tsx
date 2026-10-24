@@ -46,6 +46,10 @@ export const Default: Story = {
     await expect(root).not.toHaveAttribute('data-unknown')
     const value = root.querySelector('.pn-Stat-value')!
     await expect(getComputedStyle(value).fontVariantNumeric).toBe('tabular-nums')
+    // CR-10: the root is as wide as its widest part, not its container
+    await document.fonts.ready
+    const widest = Math.max(...[...root.children].map((part) => part.getBoundingClientRect().width))
+    await expect(root.getBoundingClientRect().width).toBeCloseTo(widest, 0)
     await expectNoFocus(root)
   },
 }
