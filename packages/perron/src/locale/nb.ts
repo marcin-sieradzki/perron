@@ -19,6 +19,7 @@ export const nb: OwnedStrings = {
   diversions: 'Omkjøringer',
   plannedWorks: 'Planlagt arbeid',
   dataFeedProblems: 'Problemer med sanntidsdata',
+  affectedLines: 'Berørte linjer',
   runningNormally: 'Går som normalt',
   showOnMap: 'Vis på kartet',
   minutesUnit: 'min',

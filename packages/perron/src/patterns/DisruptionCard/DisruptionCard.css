@@ -1,0 +1,47 @@
+/* DisruptionCard: lays its parts out on Surface's raised card (docs/patterns/disruption-card.md,
+   Tokens). The fill, edge, radius and padding are Surface's, the kind's colour SeverityLabel's, the
+   line colours LineBadge's and the type Text's, so nothing here is coloured by the kind (CR-3). */
+.pn-DisruptionCard {
+  display: grid;
+  row-gap: var(--perron-space-100);
+  /* CR-9: a long word wraps rather than widening the card past its container */
+  min-inline-size: 0;
+}
+
+/* CR-8: the whole card made a link loses the underline, and keeps perron.css's focus ring. */
+.pn-DisruptionCard[href] {
+  text-decoration: none;
+}
+
+/* CR-8: the hover layer laid over the raised fill, as the Fields do; no pressed look. */
+@media (hover: hover) {
+  .pn-DisruptionCard[href]:hover {
+    background-image: linear-gradient(
+      var(--perron-color-surface-hover),
+      var(--perron-color-surface-hover)
+    );
+  }
+}
+
+/* The kind at the start and the lines at the end, the lines wrapping under it when both don't fit
+   on one row (CR-9); 8 px between the header and the title with the root's row gap. One badge
+   high at least, so the title sits at one height with lines or without. */
+.pn-DisruptionCard-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  column-gap: var(--perron-space-200);
+  row-gap: var(--perron-space-100);
+  margin-block-end: var(--perron-space-100);
+  min-block-size: var(--perron-size-badge);
+}
+
+.pn-DisruptionCard-lines {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--perron-space-100);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
