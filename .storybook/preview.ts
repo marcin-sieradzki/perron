@@ -2,6 +2,8 @@ import type { Preview } from '@storybook/react-vite'
 
 const preview: Preview = {
   parameters: {
+    // axe in error mode: a violation fails the story's test, and so CI (docs/components/README.md)
+    a11y: { test: 'error' },
     options: {
       storySort: {
         // the order of the Contents page
