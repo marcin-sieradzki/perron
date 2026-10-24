@@ -13,6 +13,7 @@ describe('the gates', () => {
       'docs',
       'paths',
       'patterns',
+      'penpot',
       'props',
       'shared-parts',
     ])

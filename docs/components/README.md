@@ -260,7 +260,7 @@ Each rule is one script, `scripts/checks/<rule>.ts`. `npm run gates` runs them a
 /* perron-allow(component-css): the map canvas reads this length in script */
 ```
 
-In Markdown it is an HTML comment holding `perron-allow(paths): reason`, at the end of the line it excuses: prettier sets a comment on its own line apart from the text below it. A rule whose breach has no line, `docs` and `api-compatibility`, takes no allowance. Every run of the gates also fails an allowance that names no rule or gives no reason, wherever it is.
+In Markdown it is an HTML comment holding `perron-allow(paths): reason`, at the end of the line it excuses: prettier sets a comment on its own line apart from the text below it. A rule whose breach has no line, `docs` and `api-compatibility`, takes no allowance, and nor does `penpot`, whose files are JSON. Every run of the gates also fails an allowance that names no rule or gives no reason, wherever it is.
 
 | Rule                | Fails on                                                                                                                                                                                                                            |
 | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -271,3 +271,4 @@ In Markdown it is an HTML comment holding `perron-allow(paths): reason`, at the 
 | `docs`              | A registered entry without its spec from `building` on, or its `<Name>.mdx` from `stable` on (see [Files](#files))                                                                                                                  |
 | `api-compatibility` | A `stable` or `deprecated` entry's props API shrinking against the last release tag (see [Change](#change))                                                                                                                         |
 | `paths`             | A path a doc or skill names, in a link or a code span, that does not exist                                                                                                                                                          |
+| `penpot`            | A design read back with an unknown token, an unbound value, or an unmapped variant or layer                                                                                                                                         |

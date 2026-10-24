@@ -1,0 +1,16 @@
+{
+  "component": "Button",
+  "properties": {
+    "variant": {
+      "prop": "variant",
+      "values": {
+        "solid": "solid",
+        "outline": "outline"
+      }
+    }
+  },
+  "layers": {
+    "root": "root",
+    "label": "label"
+  }
+}

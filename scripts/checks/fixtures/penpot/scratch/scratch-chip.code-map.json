@@ -1,0 +1,8 @@
+{
+  "component": "ScratchChip",
+  "properties": {
+    "selected": { "prop": "selected", "values": { "false": false, "true": true } },
+    "State": { "state": { "default": null, "hover": ":hover" } }
+  },
+  "layers": { "root": "root", "label": "label" }
+}
