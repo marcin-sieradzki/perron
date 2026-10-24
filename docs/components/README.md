@@ -2,27 +2,35 @@
 
 The rules every Perron component follows: its files, props, events, styling, words, stories and checks. Components are built on Base UI (`@base-ui/react`), take props shaped like MUI's, and are styled in plain CSS with Perron's tokens. The reasons are in `docs/adr/0001-base-ui-with-mui-shaped-apis.md`, `docs/adr/0006-component-strings-from-locale-dictionaries.md` and `docs/adr/0007-patterns-layer.md`.
 
-Every component starts as a spec, `docs/components/<name>.md`, copied from the [Spec template](TEMPLATE.md). Read the [brand](../foundations/README.md) and [content design](../content-design.md) before writing one.
+Every component starts as a spec, `docs/components/<name>.md`, and every pattern as one in `docs/patterns/<name>.md`, copied from the [Spec template](TEMPLATE.md). Read the [brand](../foundations/README.md) and [content design](../content-design.md) before writing one.
 
-A rule marked **Checked by `<rule>`** fails `npm run check` when broken; the [Checks](#checks) table lists them. A rule with no mark is checked by the self-gate of the build and by the reviewer.
+The rules the [Checks](#checks) table names fail `npm run check` when broken. The rest are held by the build's self-gate (the `component-build` skill's own pass over the stories, looped until clean before review) and by the reviewer.
 
 ## Files
 
 `<Name>` is the component's name in PascalCase, `<name>` the same in kebab-case.
 
-| File                                                       | Holds                                                                       |
-| ---------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `packages/perron/src/components/<Name>/<Name>.tsx`         | The component, and its props type `<Name>Props`, both exported              |
-| `packages/perron/src/components/<Name>/<Name>.css`         | Its styles, which the TSX imports: `import './<Name>.css'`                  |
-| `packages/perron/src/components/<Name>/<Name>.stories.tsx` | Its stories and `play` tests                                                |
-| `packages/perron/src/components/<Name>/<Name>.mdx`         | Its Storybook docs page, written by the `component-docs` skill after review |
-| `docs/components/<name>.md`                                | Its spec                                                                    |
+| File                                                       | Holds                                                                                                 |
+| ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `packages/perron/src/components/<Name>/<Name>.tsx`         | The component, and its props type `<Name>Props`, both exported                                        |
+| `packages/perron/src/components/<Name>/<Name>.css`         | Its styles, which the TSX imports: `import './<Name>.css'`                                            |
+| `packages/perron/src/components/<Name>/<Name>.stories.tsx` | Its stories and `play` tests                                                                          |
+| `packages/perron/src/components/<Name>/<Name>.mdx`         | Its Storybook docs page, written by the `component-docs` skill after review                           |
+| `docs/components/<name>.md`                                | Its spec; a pattern's is `docs/patterns/<name>.md`                                                    |
+| `storybook/pages/<name>.mdx`                               | Its spec's Storybook page: `storybook/pages/contract.mdx` with the spec's path, titled `Specs/<Name>` |
 
 - One component per folder. A child the caller writes many times, such as a menu's item, is a component of its own, in its own folder.
 - A component joins `packages/perron/components.json`, and `npm run registry` writes the barrel and the package exports from it.
 - A component composes shared parts from `packages/perron/src/parts/<Part>/<Part>.tsx`, and other components from their own folders.
 
-**Checked by `docs`:** every registered component past `designing` has its `<Name>.mdx` and its spec.
+An entry's `status` in `packages/perron/components.json` says how far it has come, and what it has by then:
+
+| Status       | Set when                                          | It has                                                                        |
+| ------------ | ------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `designing`  | It joins the registry                             | Nothing yet: it is not exported, listed or checked                            |
+| `building`   | The build stage starts                            | Its code and its spec; it joins the barrels and the sidebar                   |
+| `stable`     | Its docs stage is done, in the component's own PR | Its `<Name>.mdx` too, and a props API that only grows (see [Change](#change)) |
+| `deprecated` | Its replacement is `stable`                       | Everything a stable entry has; it keeps working                               |
 
 ## Props
 
@@ -30,25 +38,37 @@ Base UI underneath, MUI's shape on top. Base UI comes from its public entry poin
 
 These names mean one thing in every component. A prop outside the list is the component's own: its spec names it, and the reviewer holds it to its siblings.
 
-| Prop                                       | Type                                                                               | Rule                                                                                                                 |
-| ------------------------------------------ | ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `variant`                                  | A union of string literals                                                         | The Penpot `variant` property, its values spelled as Penpot spells them. The default is the first.                   |
-| `color`                                    | A subset of `'neutral' \| 'brand' \| 'success' \| 'warning' \| 'danger' \| 'info'` | An [intent](#intents). Default `'neutral'`.                                                                          |
-| `size`                                     | A subset of `'small' \| 'medium' \| 'large'`                                       | Default `'medium'`.                                                                                                  |
-| `disabled`, `fullWidth`, other booleans    | `boolean`                                                                          | An adjective, default `false`: `disabled`, `fullWidth`, `required`, `readOnly`. No `is`, `has` or `should` in front. |
-| `startIcon`, `endIcon`                     | `ReactNode`                                                                        | An icon before or after the label, in reading order, so they swap sides in right-to-left text.                       |
-| `value`, `defaultValue`, `onChange`        | See [State and events](#state-and-events)                                          |                                                                                                                      |
-| `open`, `defaultOpen`, `onOpen`, `onClose` | See [State and events](#state-and-events)                                          |                                                                                                                      |
-| `name`                                     | `string`                                                                           | On every control whose value a form submits.                                                                         |
-| `render`                                   | Base UI's `render`                                                                 | Swaps the root element. See [Customising](#customising).                                                             |
-| `slotProps`                                | One key per inner Base UI part                                                     | The only way inside. See [Customising](#customising).                                                                |
-| `<key>Label`                               | `string`                                                                           | Overrides one owned string on one instance: `closeLabel`, `previousPageLabel`. See [Words](#words).                  |
-| `children`, `className`, `style`, `ref`    | React's                                                                            | Reach the root. See [Root](#root).                                                                                   |
+| Prop                                       | Type                                         | Rule                                                                                                                 |
+| ------------------------------------------ | -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `variant`                                  | A union of string literals                   | The Penpot `variant` property, its values spelled as Penpot spells them. The default is the first.                   |
+| `color`                                    | A subset of the [intents](#intents)          | Default `'neutral'`.                                                                                                 |
+| `size`                                     | A subset of `'small' \| 'medium' \| 'large'` | Default `'medium'`.                                                                                                  |
+| `disabled`, `fullWidth`, other booleans    | `boolean`                                    | An adjective, default `false`: `disabled`, `fullWidth`, `required`, `readOnly`. No `is`, `has` or `should` in front. |
+| `startIcon`, `endIcon`                     | `ReactNode`                                  | An icon before or after the label, in reading order, so they swap sides in right-to-left text.                       |
+| `value`, `defaultValue`, `onChange`        | See [State and events](#state-and-events)    |                                                                                                                      |
+| `open`, `defaultOpen`, `onOpen`, `onClose` | See [State and events](#state-and-events)    |                                                                                                                      |
+| `name`                                     | `string`                                     | On every control whose value a form submits.                                                                         |
+| `render`                                   | Base UI's `render`                           | Swaps the root element. See [Customising](#customising).                                                             |
+| `slotProps`                                | One key per inner Base UI part               | The only way inside. See [Customising](#customising).                                                                |
+| `<key>Label`                               | `string`                                     | Overrides one owned string on one instance: `closeLabel`, `previousPageLabel`. See [Words](#words).                  |
+| `children`, `className`, `style`, `ref`    | React's                                      | Reach the root. See [Root](#root).                                                                                   |
 
-- `sx`, `classes`, `component`, `as`, `styled`, `theme`, `state`, `onValueChange`, `onOpenChange`, `leftIcon` and `rightIcon` are not props of any component.
-- Every member the props type declares itself has a JSDoc comment. Members it inherits from Base UI or the HTML element keep theirs.
+Every member the props type declares itself has a JSDoc comment. Members it inherits from Base UI or the HTML element keep theirs.
 
-**Checked by `props`**, which reads each `<Name>Props` with the TypeScript compiler: the types above, the names that are not props, the boolean prefixes, and a JSDoc comment on every member.
+### Names from other libraries
+
+Where another library takes a prop on the right, a Perron component takes what is on the left:
+
+| Use                                                            | In place of               |
+| -------------------------------------------------------------- | ------------------------- |
+| `className`, the data attributes and the tokens                | `sx`, `classes`, `styled` |
+| `render`                                                       | `component`, `as`         |
+| The tokens, which carry both themes                            | `theme`                   |
+| CSS states: pseudo-classes and Base UI's data attributes       | `state`                   |
+| `onChange(event, value, details)`                              | `onValueChange`           |
+| `onOpen(event, details)` and `onClose(event, reason, details)` | `onOpenChange`            |
+| `startIcon`                                                    | `leftIcon`                |
+| `endIcon`                                                      | `rightIcon`               |
 
 ### Intents
 
@@ -88,7 +108,7 @@ The contract story, `storybook/contract/Contract.stories.tsx`, renders every reg
 
 - **`render`** is Base UI's: it swaps the root element and keeps the behaviour, class and data attributes. `<Button render={<a href="/map" />}>`.
 - **`slotProps`** is keyed by the Base UI part, its name in camelCase: `Select.Positioner` is `positioner`, `Select.Popup` is `popup`. Each value is that part's props, merged with Base UI's `mergeProps` (`@base-ui/react/merge-props`), the component's own props last. The root has no key; it takes the component's own props.
-- A caller restyles through `className`, on the root or in `slotProps`. Styling comes from the tokens, so there is no `sx`, `classes`, `component`, `styled` or theme object.
+- A caller restyles through `className`, on the root or in `slotProps`, with the tokens.
 
 ## Change
 
@@ -96,7 +116,7 @@ Deprecate, never remove. An old prop or value keeps working: the component maps 
 
 `packages/perron/api.json` is the props API of every `stable` or `deprecated` component: each member its props type declares, whether it is optional, its type, and what the type extends. `npm run api` writes it from the code, and `npm run check` fails while it is stale.
 
-**Checked by `api-compatibility`:** against `api.json` at the last release tag, `@mylder/perron@<version>`, the API only grows: a new optional prop, a prop made optional, a wider union, a new base. A prop removed, narrowed or made required, a new required prop, a base dropped or a component removed is a break.
+Against `api.json` at the last release tag, `@mylder/perron@<version>`, the API only grows: a new optional prop, a prop made optional, a wider union, a new base. A prop removed, narrowed or made required, a new required prop, a base dropped or a component removed is a break.
 
 ### Breaking changes
 
@@ -131,18 +151,35 @@ A component that draws its own focus ring uses `focus.width`, `focus.offset` and
 
 ## CSS
 
-Tokens only. **Checked by `component-css`.**
+Tokens only.
 
 - Every colour, length, duration, shadow and font is `var(--perron-…)` or a `calc()` over them. The literals allowed are `0`, percentages, unitless numbers and keywords such as `auto`, `none`, `inherit`, `transparent` and `currentColor`.
 - `var()` has no fallback: `var(--perron-space-200)`.
 - Every `--perron-*` name read is a token in `packages/perron/tokens/`. A typography role brings its `-tracking` twin: `font: var(--perron-typography-label)` with `letter-spacing: var(--perron-typography-label-tracking)`.
-- Component CSS reads these families: `color.text.*`, `color.surface.*`, `color.border.*`, `color.status.*`, `color.scrim`, `typography.*`, `font.*`, `space.*`, `size.*`, `radius.*`, `border.width.*`, `focus.*`, `icon.size.*`, `shadow.*`, `effect.*`, `duration.*`, `easing.*` and `z-index.*`. `palette.*` stays behind the semantic tokens. The map, transit, data-state and chart tokens are for [patterns](#patterns).
+- Each layer reads the tokens of its row in [Token families](#token-families).
 - **Icons** are sized by setting `--perron-icon-size` to an `icon.size.*` token on the element that holds them. See [Icons](../foundations/icons.md#sizes).
-- **Motion** takes `duration.*` and `easing.*`. A state with no fitting duration changes at once; a new one goes through the `design-tokens` skill. A loop stops inside `@media (prefers-reduced-motion: reduce)`. See [Motion](../foundations/motion.md).
+- **Motion** takes `duration.*` and `easing.*`. A state with no fitting duration changes at once; a new one goes through the `design-tokens` skill. A loop (`infinite`) stops inside `@media (prefers-reduced-motion: reduce)`, in a rule with the loop's own selector that sets its `animation`. See [Motion](../foundations/motion.md).
 - **Stacking:** everything that renders in a portal (popups, tooltips, dialogs) takes `z-index.dialog`, so the one opened last paints on top. The other `z-index.*` tokens order the map screen's panels, for patterns.
 - **Themes:** the semantic tokens carry both, so component CSS has no `[data-theme]` selector and no `prefers-color-scheme` query.
-- **Media queries:** `(hover: hover)`, `(prefers-reduced-motion: reduce)` and `(forced-colors: active)` only. A component sizes to its container. Inside `(forced-colors: active)`, CSS system colours (`Canvas`, `CanvasText`, `Highlight`, `HighlightText`, `ButtonText`, `GrayText`) are allowed.
+- **Media queries:** the three in [Media queries](#media-queries). A component sizes to its container.
 - Disabled is a colour, `color.text.tertiary`, never an opacity.
+
+### Token families
+
+The tokens each layer's CSS reads. `palette.*` stays behind the semantic tokens.
+
+| Layer                     | Reads                                                                                                                                                                                                                                                              |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Component and shared part | `color.text.*`, `color.surface.*`, `color.border.*`, `color.status.*`, `color.scrim`, `typography.*`, `font.*`, `space.*`, `size.*`, `radius.*`, `border.width.*`, `focus.*`, `icon.size.*`, `shadow.*`, `effect.*`, `duration.*`, `easing.*` and `z-index.dialog` |
+| Pattern                   | A component's, and `color.map.*`, `map.*`, `color.transit.*`, `color.data-state.*`, `color.chart.*`, `opacity.*`, `prik.*` and every `z-index.*`                                                                                                                   |
+
+### Media queries
+
+| Query                              | For                                                                                                                                          |
+| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `(hover: hover)`                   | Hover, as [Design states](#design-states) says                                                                                               |
+| `(prefers-reduced-motion: reduce)` | Stopping a loop                                                                                                                              |
+| `(forced-colors: active)`          | Forced colours, the one place CSS system colours are allowed: `Canvas`, `CanvasText`, `Highlight`, `HighlightText`, `ButtonText`, `GrayText` |
 
 ### Families
 
@@ -173,8 +210,6 @@ Each of these is drawn once, in its own folder, `packages/perron/src/parts/<Part
 - `CloseButton`'s label is the owned string for "Close", overridden by the component's `closeLabel`.
 - The tick is not in `packages/perron/icons/` yet. The first part that needs it adds it, following [Icons](../foundations/icons.md).
 
-**Checked by `shared-parts`:** a part's class, its icon and, for `VisuallyHidden`, the hiding declarations appear only in that part's folder.
-
 ## What axe won't catch
 
 Every spec copies this checklist, and the build's self-gate and the reviewer tick it against the accessibility tree of every story.
@@ -197,6 +232,7 @@ The rest of the WCAG 2.2 AA target is on [Accessibility](../foundations/accessib
 - A string the component owns, such as a pagination button's "Previous page" or a dialog's "Close", comes from the locale dictionaries in `packages/perron/src/locale/` (`en.ts`, `da.ts`, `sv.ts`, `nb.ts`), in the locale `PerronProvider` sets. A new one is a key in `en.ts` and in each of the others.
 - Each owned string has a `<key>Label` prop that overrides it on one instance: `close` is `closeLabel`. The component reads its strings with the overrides laid over them: `const strings = useOwnedStrings({ close: closeLabel })`, from `packages/perron/src/PerronProvider.tsx`.
 - Owned strings follow [content design](../content-design.md): sentence case, the fixed data-state words, no exclamation marks. The spec gives the English; agents write the Danish, Swedish and Norwegian.
+- `expectOwnedStrings(markup, locale, callerStrings)`, from `packages/perron/src/testing/owned-strings.ts`, fails a render that shows or announces a word neither the locale's dictionary nor the caller gave. The contract story runs it over every component (see [Stories](#stories)); a component with more words in another state, such as an open dialog's close label, calls it in its own test on that render: `expectOwnedStrings(renderToStaticMarkup(<PerronProvider locale="da">…</PerronProvider>), 'da', ['Departures'])`.
 
 ## Stories
 
@@ -204,33 +240,34 @@ The rest of the WCAG 2.2 AA target is on [Accessibility](../foundations/accessib
 - One story per variant and state the Penpot design shows, named as Penpot names it, so the visual check pairs each story with its export.
 - A `play` test for every behaviour the component promises (dismissal, focus, keyboard), ending in the resting state: popups closed and focus back where it started.
 - Stories run in Chromium with axe in `error` mode (`npm run test:stories`, part of `npm run check`), so an axe violation fails CI. The contract story's `Keyboard` story is the `play` pattern to copy: Tab to the element, expect focus, Shift+Tab back.
+- The contract story's `OwnedStrings` story renders every component and pattern with the args its `Root` story takes (see [Root](#root)), in `en`, `da`, `sv` and `nb`, and runs `expectOwnedStrings` on each render, with the strings in those args as the caller's words. So those args hold every word the caller gives.
 
 ## Patterns
 
 A pattern is a piece of a Mylder screen, such as a departure row. It follows this contract, with three differences:
 
-- Its files are in `packages/perron/src/patterns/<Name>/`, in the same four shapes, and its stories are titled `Patterns/<Name>`.
-- Its code imports only Perron's components and parts, `PerronProvider`, React and the files of its own folder, never `@base-ui/react`. A type-only import from another package is fine, and its stories and tests are not its code. **Checked by `patterns`.**
-- It takes Mylder's domain props, such as a departure or a line, and its CSS may also read `color.map.*`, `map.*`, `color.transit.*`, `color.data-state.*`, `color.chart.*`, `opacity.*`, `prik.*` and every `z-index.*` token.
+- Its files are in `packages/perron/src/patterns/<Name>/`, in the same four shapes, its stories are titled `Patterns/<Name>`, and its spec is `docs/patterns/<name>.md`.
+- Its code imports only Perron's components and parts, `PerronProvider`, React and the files of its own folder, never `@base-ui/react`. A type-only import from another package is fine, and its stories and tests are not its code.
+- It takes Mylder's domain props, such as a departure or a line, and its CSS reads the pattern row of [Token families](#token-families).
 
 It is exported from `@mylder/perron/patterns`.
 
 ## Checks
 
-Each rule is one script, `scripts/checks/<rule>.ts`, run by `npm run check`. A deliberate exception is written in place, on the line it excuses or the line above it, with one rule and a reason:
+Each rule is one script, `scripts/checks/<rule>.ts`. `npm run gates` runs them all, as part of `npm run check`, and `npm run gates -- <rule>` runs one. A deliberate exception is written in place, on the line it excuses or the line above it, with one rule and a reason:
 
 ```css
 /* perron-allow(component-css): the map canvas reads this length in script */
 ```
 
-In Markdown it is an HTML comment holding `perron-allow(paths): reason`, at the end of the line it excuses: prettier sets a comment on its own line apart from the text below it. A rule whose breach has no line, `docs` and `api-compatibility`, takes no allowance.
+In Markdown it is an HTML comment holding `perron-allow(paths): reason`, at the end of the line it excuses: prettier sets a comment on its own line apart from the text below it. A rule whose breach has no line, `docs` and `api-compatibility`, takes no allowance. Every run of the gates also fails an allowance that names no rule or gives no reason, wherever it is.
 
-| Rule                | Fails on                                                                                      |
-| ------------------- | --------------------------------------------------------------------------------------------- |
-| `component-css`     | Any [CSS](#css) rule: a raw value, a `var()` fallback, any `--perron-*` name no token defines |
-| `props`             | A prop outside the vocabulary's types, a name that is not a prop, or a prop without JSDoc     |
-| `patterns`          | A pattern importing anything but Perron components and parts                                  |
-| `shared-parts`      | A shared part's class, icon or declarations outside its folder                                |
-| `docs`              | A registered component past `designing` without its `<Name>.mdx` docs page or its spec        |
-| `api-compatibility` | A `stable` or `deprecated` component's props API shrinking against the last release tag       |
-| `paths`             | A path a doc or skill names, in a link or a code span, that does not exist                    |
+| Rule                | Fails on                                                                                                                                                                                                                            |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `component-css`     | A [CSS](#css) rule broken: a raw value, a `var()` fallback, a `--perron-*` name no token defines, a token outside its layer's [families](#token-families), a query outside [Media queries](#media-queries), a loop that never stops |
+| `props`             | A `<Name>Props`, read with the TypeScript compiler, outside the [Props](#props) table's types, with a [name from other libraries](#names-from-other-libraries), an `is`, `has` or `should` boolean, or a member without JSDoc       |
+| `patterns`          | A [pattern](#patterns) importing anything but Perron components and parts                                                                                                                                                           |
+| `shared-parts`      | A [shared part](#shared-parts)'s class, icon or declarations outside its folder                                                                                                                                                     |
+| `docs`              | A registered entry without its spec from `building` on, or its `<Name>.mdx` from `stable` on (see [Files](#files))                                                                                                                  |
+| `api-compatibility` | A `stable` or `deprecated` entry's props API shrinking against the last release tag (see [Change](#change))                                                                                                                         |
+| `paths`             | A path a doc or skill names, in a link or a code span, that does not exist                                                                                                                                                          |

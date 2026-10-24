@@ -185,14 +185,14 @@ describe('api-compatibility', () => {
       '| `Button` | `variant` |  |',
     ])
     expect(check.run(dir)).toEqual([
-      since(
-        'Button narrows variant from "contained" | "outlined" | "text" to "contained" | "outlined"',
-      ),
       {
         file: 'docs/components/README.md',
         line: 8,
         message: 'the breaking change Button variant needs a reason',
       },
+      since(
+        'Button narrows variant from "contained" | "outlined" | "text" to "contained" | "outlined"',
+      ),
     ])
   })
 

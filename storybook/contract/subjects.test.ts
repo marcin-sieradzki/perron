@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { Entry, Layer, Status } from '../../scripts/lib/entry.ts'
-import { subjects } from './subjects.ts'
+import { createElement } from 'react'
+import { callerStrings, subjects } from './subjects.ts'
 
 const entry = (name: string, status: Status = 'building', layer: Layer = 'component'): Entry => ({
   name,
@@ -52,6 +53,24 @@ describe('subjects', () => {
   it('names a built entry the barrels do not export', () => {
     expect(() => subjects([entry('Button')], {}, {})).toThrow(
       'Button is built in packages/perron/components.json but not exported; run npm run registry',
+    )
+  })
+})
+
+describe('callerStrings', () => {
+  it('takes every string in the args, through lists, objects and elements', () => {
+    const icon = createElement('svg', { 'aria-label': 'Bus' })
+    const args = {
+      children: ['Departures', createElement('strong', null, ' Line 5A ')],
+      closeLabel: 'Shut',
+      startIcon: icon,
+      slotProps: { popup: { title: 'Upcoming' } },
+      size: 'small',
+      count: 3,
+      onClose: () => 'not a word',
+    }
+    expect(callerStrings(args).sort()).toEqual(
+      ['Bus', 'Departures', 'Line 5A', 'Shut', 'Upcoming', 'small'].sort(),
     )
   })
 })

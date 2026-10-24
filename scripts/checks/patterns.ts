@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs'
 import { join, posix } from 'node:path'
 import ts from 'typescript'
 import { PACKAGE } from '../lib/paths.ts'
-import { excuse, walk, type Check, type Problem } from './lib.ts'
+import { byFileLine, excuse, walk, type Check, type Problem } from './lib.ts'
 
 const RULE = 'patterns'
 const SRC = `${PACKAGE}/src`
@@ -92,8 +92,8 @@ const shipped = (name: string) =>
 export default {
   rule: RULE,
   run(root) {
-    return walk(root, `${SRC}/patterns`, shipped).flatMap((file) =>
-      importProblems(file, readFileSync(join(root, file), 'utf8')),
-    )
+    return walk(root, `${SRC}/patterns`, shipped)
+      .flatMap((file) => importProblems(file, readFileSync(join(root, file), 'utf8')))
+      .sort(byFileLine)
   },
 } satisfies Check

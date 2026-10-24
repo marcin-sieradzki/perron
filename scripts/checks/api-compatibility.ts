@@ -11,10 +11,9 @@ import { join } from 'node:path'
 import { API, readApi, type Api } from '../lib/api.ts'
 import { codeFile } from '../lib/props.ts'
 import { REGISTRY, readRegistry } from '../lib/registry.ts'
-import type { Check, Problem } from './lib.ts'
+import { byFileLine, CONTRACT, type Check, type Problem } from './lib.ts'
 
-/** The contract, which holds the "Breaking changes" table. */
-export const CONTRACT = 'docs/components/README.md'
+const RULE = 'api-compatibility'
 
 /** One break: the component, the prop (`extends` for a base, `*` for the whole component). */
 export interface Break {
@@ -102,8 +101,8 @@ const git = (root: string, args: string[]) => {
   }
 }
 
-const check: Check = {
-  rule: 'api-compatibility',
+export default {
+  rule: RULE,
   run(root) {
     const tag = latestRelease((git(root, ['tag', '--list', '@mylder/perron@*']) ?? '').split('\n'))
     if (!tag) {
@@ -137,8 +136,6 @@ const check: Check = {
         message: `${b.message} since ${tag}. A deliberate break is a row in ${CONTRACT}, "Breaking changes"`,
       })),
       ...table.problems,
-    ]
+    ].sort(byFileLine)
   },
-}
-
-export default check
+} satisfies Check

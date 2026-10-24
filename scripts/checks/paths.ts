@@ -10,11 +10,11 @@
 // skills, writing-for-agents and software-factory, are copied from upstream unchanged (prettier
 // skips them too) and name upstream's paths, so they are not read. A deliberate exception is an
 // HTML comment, `<!-- perron-allow(paths): reason -->`, on the line or the line above.
-import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { dirname, join, normalize } from 'node:path'
-import { excuse, walk, type Check, type Problem } from './lib.ts'
+import { byFileLine, excuse, VENDORED, walk, type Check, type Problem } from './lib.ts'
 
-const VENDORED = ['.claude/skills/writing-for-agents/', '.claude/skills/software-factory/']
+const RULE = 'paths'
 /** Top-level folders that are build output or tooling, never named as repo paths. */
 const NOT_SOURCE = new Set(['.git', 'node_modules', 'dist', 'dist-ssr', 'coverage'])
 const PLACEHOLDER = /[<>*…{}]/
@@ -24,9 +24,10 @@ const isMarkdown = (name: string) => name.endsWith('.md')
 /** The files this rule reads, by path from `root`. */
 function sources(root: string) {
   const top = ['CLAUDE.md', 'README.md', 'ROADMAP.md'].filter((f) => existsSync(join(root, f)))
-  const packages = readdirOr(join(root, 'packages'))
-    .map((p) => `packages/${p}/README.md`)
-    .filter((f) => existsSync(join(root, f)))
+  // each package's own README, packages/<name>/README.md, not the READMEs inside it
+  const packages = walk(root, 'packages', (n) => n === 'README.md').filter(
+    (f) => f.split('/').length === 3,
+  )
   const claude = [
     ...walk(root, '.claude/skills', isMarkdown),
     ...walk(root, '.claude/agents', isMarkdown),
@@ -39,18 +40,12 @@ function sources(root: string) {
   ]
 }
 
-function readdirOr(dir: string) {
-  try {
-    return readdirSync(dir)
-  } catch {
-    return []
-  }
-}
-
 /** The folders at the top of the repo, the first segment a code span must start with. */
 function topFolders(root: string) {
   return new Set(
-    readdirOr(root).filter((n) => !NOT_SOURCE.has(n) && statSync(join(root, n)).isDirectory()),
+    readdirSync(root, { withFileTypes: true })
+      .filter((d) => d.isDirectory() && !NOT_SOURCE.has(d.name))
+      .map((d) => d.name),
   )
 }
 
@@ -86,8 +81,8 @@ function namedPaths(text: string, file: string, tops: Set<string>, spans: boolea
   return out
 }
 
-const check: Check = {
-  rule: 'paths',
+export default {
+  rule: RULE,
   run(root) {
     const tops = topFolders(root)
     const read = (file: string) => readFileSync(join(root, file), 'utf8')
@@ -96,10 +91,6 @@ const check: Check = {
       for (const { line, path } of namedPaths(read(file), file, tops, file !== 'ROADMAP.md'))
         if (!existsSync(join(root, path)))
           problems.push({ file, line, message: `names ${path}, which does not exist` })
-    return excuse(problems, 'paths', read).sort((a, b) =>
-      a.file < b.file ? -1 : a.file > b.file ? 1 : (a.line ?? 0) - (b.line ?? 0),
-    )
+    return excuse(problems, RULE, read).sort(byFileLine)
   },
-}
-
-export default check
+} satisfies Check

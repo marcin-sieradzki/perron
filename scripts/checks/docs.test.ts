@@ -7,19 +7,20 @@ const here = dirname(fileURLToPath(import.meta.url))
 const fixture = (name: string) => join(here, 'fixtures/docs', name)
 
 describe('docs', () => {
-  it('passes when every entry past designing has its docs page and spec page', () => {
+  it('passes a spec page from building on and a docs page from stable on', () => {
+    // a stable Button with both, a building DepartureRow with its spec alone, a designing Dialog
     expect(docs.run(fixture('complete'))).toEqual([])
   })
 
-  it('names each missing docs page and spec page', () => {
+  it('names a building entry without its spec page, and a stable one without its docs page', () => {
     expect(docs.run(fixture('missing'))).toEqual([
-      {
-        file: 'packages/perron/src/components/Button/Button.mdx',
-        message: 'Button is stable and has no docs page; the component-docs skill writes it',
-      },
       {
         file: 'docs/components/date-picker.md',
         message: 'DatePicker is building and has no spec page; copy docs/components/TEMPLATE.md',
+      },
+      {
+        file: 'packages/perron/src/components/Button/Button.mdx',
+        message: 'Button is stable and has no docs page; the component-docs skill writes it',
       },
     ])
   })

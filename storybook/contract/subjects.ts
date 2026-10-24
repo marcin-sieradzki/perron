@@ -36,3 +36,23 @@ export function subjects(
     }
   })
 }
+
+/**
+ * Every string in a story's args, through lists, objects and the props of React elements: the
+ * words the caller gave, which `expectOwnedStrings` takes as its own.
+ */
+export function callerStrings(args: unknown): string[] {
+  const words = new Set<string>()
+  const seen = new Set<object>()
+  const visit = (value: unknown) => {
+    if (typeof value === 'string') {
+      if (value.trim()) words.add(value.replace(/\s+/g, ' ').trim())
+    } else if (value && typeof value === 'object' && !seen.has(value)) {
+      seen.add(value)
+      const element = '$$typeof' in value ? (value as { props?: unknown }).props : undefined
+      for (const v of Object.values(element ?? value)) visit(v)
+    }
+  }
+  visit(args)
+  return [...words]
+}

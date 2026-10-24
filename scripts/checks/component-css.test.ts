@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
-import check, { cssProblems } from './component-css.ts'
+import check, { cssProblems, readCssRules } from './component-css.ts'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const root = join(here, '../..')
@@ -10,6 +10,58 @@ const lint = (fixture: string, layer: 'component' | 'pattern' | 'part' = 'compon
   cssProblems(fixture, readFileSync(join(here, 'fixtures/component-css', fixture), 'utf8'), layer)
 
 describe('component-css', () => {
+  it("reads the families, queries and system colours from the contract's tables", () => {
+    const rules = readCssRules(readFileSync(join(root, 'docs/components/README.md'), 'utf8'))
+    const component = [
+      'color.text.*',
+      'color.surface.*',
+      'color.border.*',
+      'color.status.*',
+      'color.scrim',
+      'typography.*',
+      'font.*',
+      'space.*',
+      'size.*',
+      'radius.*',
+      'border.width.*',
+      'focus.*',
+      'icon.size.*',
+      'shadow.*',
+      'effect.*',
+      'duration.*',
+      'easing.*',
+      'z-index.dialog',
+    ]
+    expect(rules.families).toEqual({
+      component,
+      part: component,
+      pattern: [
+        ...component,
+        'color.map.*',
+        'map.*',
+        'color.transit.*',
+        'color.data-state.*',
+        'color.chart.*',
+        'opacity.*',
+        'prik.*',
+        'z-index.*',
+      ],
+    })
+    expect(rules.media).toEqual([
+      '(hover: hover)',
+      '(prefers-reduced-motion: reduce)',
+      '(forced-colors: active)',
+    ])
+    expect([...rules.forcedColours]).toEqual([
+      'canvas',
+      'canvastext',
+      'highlight',
+      'highlighttext',
+      'buttontext',
+      'graytext',
+    ])
+  })
+
   it.each([
     ['raw-hex.css', /raw colour #12181b/, 1],
     ['raw-colour-function.css', /raw colour (rgb|oklch)\(/, 2],
@@ -25,10 +77,11 @@ describe('component-css', () => {
     ['system-colour.css', /system colour (ButtonText|LinkText)/, 2],
     ['palette.css', /palette\.neutral\.500 is outside the families component CSS reads/, 1],
     ['pattern-token.css', /color\.transit\.line\.m1 is outside the families/, 1],
-    ['z-index.css', /z-index\.dialog/, 1],
+    ['z-index.css', /z-index\.sheet is outside the families component CSS reads/, 1],
     ['raw-font.css', /raw font/, 1],
     ['tracking.css', /letter-spacing: var\(--perron-typography-label-tracking\)/, 1],
     ['loop.css', /prefers-reduced-motion/, 1],
+    ['loop-elsewhere.css', /in a rule for \.pn-Fixture that sets its animation/, 1],
     ['disabled-opacity.css', /never an opacity/, 1],
   ])('fails %s', (fixture, message, count) => {
     const problems = lint(fixture)

@@ -1,57 +1,73 @@
 // The component-css rule: the CSS of components, patterns and shared parts reads tokens only, as
-// the contract's "CSS" section says (docs/components/README.md).
+// the contract's "CSS" section says (docs/components/README.md). The token families of each layer,
+// the media queries and the forced-colours system colours come from the contract's tables.
 import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import postcss, { type AtRule, type Declaration, type Node, type Rule } from 'postcss'
-import { readSources } from '../build-tokens.ts'
 import { PACKAGE } from '../lib/paths.ts'
+import { readSources } from '../lib/token-sources.ts'
 import { cssVarName, loadTokens } from '../lib/tokens.ts'
-import { excuse, walk, type Check, type Problem } from './lib.ts'
+import {
+  byFileLine,
+  codeSpans,
+  CONTRACT,
+  excuse,
+  section,
+  tableRows,
+  walk,
+  type Check,
+  type Problem,
+} from './lib.ts'
 
 export type CssLayer = 'component' | 'pattern' | 'part'
 
 const RULE = 'component-css'
 
-const COMPONENT_FAMILIES = [
-  'color.text',
-  'color.surface',
-  'color.border',
-  'color.status',
-  'color.scrim',
-  'typography',
-  'font',
-  'space',
-  'size',
-  'radius',
-  'border.width',
-  'focus',
-  'icon.size',
-  'shadow',
-  'effect',
-  'duration',
-  'easing',
-  'z-index',
-]
-const PATTERN_FAMILIES = [
-  ...COMPONENT_FAMILIES,
-  'color.map',
-  'map',
-  'color.transit',
-  'color.data-state',
-  'color.chart',
-  'opacity',
-  'prik',
-]
-
 /** The one `--perron-*` property a component sets, and reads back. */
 const ICON_SIZE = '--perron-icon-size'
 
-const MEDIA = ['(hover: hover)', '(prefers-reduced-motion: reduce)', '(forced-colors: active)']
-const FORCED_COLOURS = new Set(
-  ['Canvas', 'CanvasText', 'Highlight', 'HighlightText', 'ButtonText', 'GrayText'].map((c) =>
-    c.toLowerCase(),
-  ),
-)
+/** The query a loop stops in, and the one system colours are allowed in. */
+const REDUCED_MOTION = '(prefers-reduced-motion: reduce)'
+const FORCED_COLORS = '(forced-colors: active)'
+
+/** What the contract lets CSS read and query. */
+export interface CssRules {
+  /** Per layer, the tokens it reads: `color.text.*` is a family, `z-index.dialog` one token */
+  families: Record<CssLayer, string[]>
+  /** The media queries CSS may use */
+  media: string[]
+  /** The CSS system colours allowed inside `(forced-colors: active)`, lowercased */
+  forcedColours: Set<string>
+}
+
+/** The rules of the contract's "Token families" and "Media queries" tables. */
+export function readCssRules(contract: string): CssRules {
+  const layers = tableRows(section(contract, 'Token families'))
+  const reads = (label: RegExp) => {
+    const row = layers.find(([layer]) => label.test(layer))
+    if (!row) throw new Error(`${CONTRACT}, "Token families", has no row ${label.source}`)
+    return codeSpans(row[1])
+  }
+  const component = reads(/^Component/)
+  const queries = tableRows(section(contract, 'Media queries'))
+  const media = queries.map(([query]) => codeSpans(query)[0])
+  for (const needed of [REDUCED_MOTION, FORCED_COLORS])
+    if (!media.includes(needed)) throw new Error(`${CONTRACT}, "Media queries", has no ${needed}`)
+  const forced = queries.find(([query]) => query.includes(FORCED_COLORS))!
+  return {
+    families: { component, part: component, pattern: [...component, ...reads(/^Pattern/)] },
+    media,
+    forcedColours: new Set(codeSpans(forced[1]).map((c) => c.toLowerCase())),
+  }
+}
+
+/** Whether `token` is one `family` names: `color.text.*`, or a token and its own members. */
+const inFamily = (token: string, family: string) => {
+  const name = family.replace(/\.\*$/, '')
+  return token === name || token.startsWith(`${name}.`)
+}
+
 const SYSTEM_COLOURS = new Set(
   `Canvas CanvasText LinkText VisitedText ActiveText ButtonFace ButtonText ButtonBorder Field
   FieldText Highlight HighlightText SelectedItem SelectedItemText Mark MarkText GrayText AccentColor
@@ -105,9 +121,9 @@ export interface DefinedTokens {
   typography: Set<string>
 }
 
-/** The names `packages/perron/tokens/` defines, read through the token build. */
-export function definedTokens(): DefinedTokens {
-  const tokens = loadTokens(readSources())
+/** The names `packages/perron/tokens/` defines in the repo at `root`, read through the token build. */
+export function definedTokens(root: string): DefinedTokens {
+  const tokens = loadTokens(readSources(root))
   const all = [...tokens.base, ...Object.values(tokens.themes).flat()]
   const names = new Map<string, string>()
   const typography = new Set<string>()
@@ -121,8 +137,20 @@ export function definedTokens(): DefinedTokens {
   return { names, typography }
 }
 
-let cached: DefinedTokens | undefined
-const defaults = () => (cached ??= definedTokens())
+/** What a run checks CSS against: the tokens and the contract's rules. */
+export interface CssContext {
+  tokens: DefinedTokens
+  rules: CssRules
+}
+
+/** The context of the repo at `root`. */
+export function cssContext(root: string): CssContext {
+  const contract = readFileSync(join(root, CONTRACT), 'utf8')
+  return { tokens: definedTokens(root), rules: readCssRules(contract) }
+}
+
+let cached: CssContext | undefined
+const repo = () => (cached ??= cssContext(join(dirname(fileURLToPath(import.meta.url)), '../..')))
 
 const media = (params: string) =>
   params
@@ -132,6 +160,9 @@ const media = (params: string) =>
     .replace(/\s*\)/g, ')')
     .replace(/\s*:\s*/g, ': ')
     .trim()
+
+/** A selector with its whitespace collapsed, so two spellings of one selector compare equal. */
+const selector = (text: string) => text.replace(/\s+/g, ' ').trim()
 
 const inMedia = (node: Node, query: string) => {
   for (let p = node.parent; p; p = p.parent)
@@ -179,35 +210,39 @@ export function cssProblems(
   file: string,
   css: string,
   layer: CssLayer,
-  tokens: DefinedTokens = defaults(),
+  { tokens, rules }: CssContext = repo(),
 ): Problem[] {
   const problems: Problem[] = []
-  const at = (node: Node, message: string) =>
+  const report = (node: Node, message: string) =>
     problems.push({ file, line: node.source?.start?.line, message })
-  const families = layer === 'pattern' ? PATTERN_FAMILIES : COMPONENT_FAMILIES
+  const families = rules.families[layer]
   const root = postcss.parse(css, { from: file })
-  let stopsMotion = false
+  // the selectors whose animation a reduced-motion block sets, so their loops stop
+  const stopped = new Set<string>()
   root.walkAtRules('media', (rule) => {
     const query = media(rule.params)
-    if (!MEDIA.includes(query))
-      at(
+    if (!rules.media.includes(query))
+      report(
         rule,
-        `@media ${rule.params} is not one of the queries components use: ${MEDIA.join(', ')}`,
+        `@media ${rule.params} is not one of the queries components use: ${rules.media.join(', ')}`,
       )
-    if (query === MEDIA[1]) stopsMotion ||= (rule.nodes?.length ?? 0) > 0
+    if (query === REDUCED_MOTION)
+      rule.walkDecls(/^animation(-name|-iteration-count)?$/i, (d) => {
+        if (d.parent?.type === 'rule') stopped.add(selector((d.parent as Rule).selector))
+      })
   })
   root.walkRules((rule: Rule) => {
     if (/data-theme/.test(rule.selector))
-      at(rule, `${rule.selector} selects a data-theme; the semantic tokens carry both themes`)
+      report(rule, `${rule.selector} selects a data-theme; the semantic tokens carry both themes`)
     const decls = rule.nodes.filter((n): n is Declaration => n.type === 'decl')
     if (/\[data-disabled\]|:disabled/.test(rule.selector))
       for (const d of decls.filter((s) => s.prop.toLowerCase() === 'opacity'))
-        at(d, 'disabled is a colour, color.text.tertiary, never an opacity')
+        report(d, 'disabled is a colour, color.text.tertiary, never an opacity')
     for (const d of decls.filter((s) => s.prop.toLowerCase() === 'font'))
       for (const v of vars(d.value).filter((r) => tokens.typography.has(r.name))) {
         const twin = `var(${v.name}-tracking)`
         if (!decls.some((s) => s.prop === 'letter-spacing' && s.value.includes(twin)))
-          at(d, `${v.name} comes with letter-spacing: ${twin}`)
+          report(d, `${v.name} comes with letter-spacing: ${twin}`)
       }
   })
   root.walkDecls((d) => {
@@ -215,32 +250,33 @@ export function cssProblems(
     const value = d.value
     if (d.prop.startsWith('--perron-')) {
       if (d.prop !== ICON_SIZE)
-        at(d, `sets ${d.prop}; component CSS never redefines a token, and sets only ${ICON_SIZE}`)
+        report(
+          d,
+          `sets ${d.prop}; component CSS never redefines a token, and sets only ${ICON_SIZE}`,
+        )
       else if (!/^var\(--perron-icon-size-[\w-]+\)$/.test(value.trim()))
-        at(d, `${ICON_SIZE} takes an icon.size.* token, as var(--perron-icon-size-…)`)
+        report(d, `${ICON_SIZE} takes an icon.size.* token, as var(--perron-icon-size-…)`)
     }
     for (const v of vars(value)) {
-      if (v.fallback) at(d, `var(${v.name}) has a fallback; read the token alone`)
+      if (v.fallback) report(d, `var(${v.name}) has a fallback; read the token alone`)
       if (!v.name.startsWith('--perron-') || v.name === ICON_SIZE) continue
       const token = tokens.names.get(v.name)
-      if (!token) at(d, `${v.name} is not a token in ${PACKAGE}/tokens/`)
-      else if (!families.some((f) => token === f || token.startsWith(`${f}.`)))
-        at(d, `${v.name}: ${token} is outside the families ${layer} CSS reads`)
-      else if (layer !== 'pattern' && token.startsWith('z-index.') && token !== 'z-index.dialog')
-        at(
+      if (!token) report(d, `${v.name} is not a token in ${PACKAGE}/tokens/`)
+      else if (!families.some((f) => inFamily(token, f)))
+        report(
           d,
-          `${v.name}: a component takes z-index.dialog; the other z-index tokens are for patterns`,
+          `${v.name}: ${token} is outside the families ${layer} CSS reads (${CONTRACT}, "Token families")`,
         )
     }
     const bare = literals(value)
-    for (const m of bare.matchAll(/#[\w-]+/g)) at(d, `raw colour ${m[0]}; read a color token`)
+    for (const m of bare.matchAll(/#[\w-]+/g)) report(d, `raw colour ${m[0]}; read a color token`)
     for (const m of bare.matchAll(COLOUR_FUNCTIONS))
-      at(d, `raw colour ${m[0]}…); read a color token`)
+      report(d, `raw colour ${m[0]}…); read a color token`)
     for (const m of bare.matchAll(NUMBER)) {
       const unit = m[3]?.toLowerCase()
       if (!unit || Number(m[1]) === 0) continue
-      if (LENGTH_UNITS.has(unit)) at(d, `raw length ${m[0]}; read a space, size or other token`)
-      else if (DURATION_UNITS.has(unit)) at(d, `raw duration ${m[0]}; read a duration token`)
+      if (LENGTH_UNITS.has(unit)) report(d, `raw length ${m[0]}; read a space, size or other token`)
+      else if (DURATION_UNITS.has(unit)) report(d, `raw duration ${m[0]}; read a duration token`)
     }
     if (prop === 'font-family' || prop === 'font') {
       const raw = [
@@ -248,27 +284,34 @@ export function cssProblems(
         ...literals(value).matchAll(IDENT),
       ].filter((m) => !FONT_KEYWORDS.has(m[0].toLowerCase()) && m[0].toLowerCase() !== 'var')
       if (raw.length)
-        at(d, `raw font ${raw.map((m) => m[0]).join(', ')}; read a typography or font token`)
+        report(d, `raw font ${raw.map((m) => m[0]).join(', ')}; read a typography or font token`)
     } else if (!NAME_PROPERTIES.test(prop)) {
       for (const m of bare.matchAll(IDENT)) {
         const word = m[0].toLowerCase()
-        if (NAMED_COLOURS.has(word)) at(d, `raw colour ${m[0]}; read a color token`)
-        else if (SYSTEM_COLOURS.has(word) && !(FORCED_COLOURS.has(word) && inMedia(d, MEDIA[2])))
-          at(
+        if (NAMED_COLOURS.has(word)) report(d, `raw colour ${m[0]}; read a color token`)
+        else if (
+          SYSTEM_COLOURS.has(word) &&
+          !(rules.forcedColours.has(word) && inMedia(d, FORCED_COLORS))
+        )
+          report(
             d,
-            `system colour ${m[0]}: only ${[...FORCED_COLOURS].join(', ')}, inside @media ${MEDIA[2]}`,
+            `system colour ${m[0]}: only ${[...rules.forcedColours].join(', ')}, inside @media ${FORCED_COLORS}`,
           )
       }
     }
-    if (/^animation(-iteration-count)?$/.test(prop) && /\binfinite\b/i.test(value))
-      if (!inMedia(d, MEDIA[1]) && !stopsMotion)
-        at(d, `an infinite animation stops inside @media ${MEDIA[1]}`)
+    if (/^animation(-iteration-count)?$/.test(prop) && /\binfinite\b/i.test(value)) {
+      const owner = d.parent?.type === 'rule' ? selector((d.parent as Rule).selector) : ''
+      if (!inMedia(d, REDUCED_MOTION) && !stopped.has(owner))
+        report(
+          d,
+          `an infinite animation stops inside @media ${REDUCED_MOTION}, in a rule for ${owner || 'its selector'} that sets its animation`,
+        )
+    }
   })
-  problems.sort((a, b) => (a.line ?? 0) - (b.line ?? 0))
-  return excuse(problems, RULE, () => css)
+  return excuse(problems.sort(byFileLine), RULE, () => css)
 }
 
-const LAYERS: [string, CssLayer][] = [
+const LAYER_DIRS: [string, CssLayer][] = [
   [`${PACKAGE}/src/components`, 'component'],
   [`${PACKAGE}/src/patterns`, 'pattern'],
   [`${PACKAGE}/src/parts`, 'part'],
@@ -277,10 +320,11 @@ const LAYERS: [string, CssLayer][] = [
 export default {
   rule: RULE,
   run(root) {
-    return LAYERS.flatMap(([dir, layer]) =>
+    const context = cssContext(root)
+    return LAYER_DIRS.flatMap(([dir, layer]) =>
       walk(root, dir, (n) => n.endsWith('.css')).flatMap((file) =>
-        cssProblems(file, readFileSync(join(root, file), 'utf8'), layer),
+        cssProblems(file, readFileSync(join(root, file), 'utf8'), layer, context),
       ),
-    )
+    ).sort(byFileLine)
   },
 } satisfies Check

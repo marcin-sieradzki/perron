@@ -2,12 +2,12 @@ import { readdirSync, readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
-import { readSources } from '../build-tokens.ts'
+import { readSources } from './token-sources.ts'
 import { headingOf, PAGES, readPages } from './pages.ts'
 import { loadTokens } from './tokens.ts'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '../..')
-const pages = readPages(root, loadTokens(readSources()))
+const pages = readPages(root, loadTokens(readSources(root)))
 const mdx = readdirSync(join(root, 'storybook/pages')).map((f) =>
   readFileSync(join(root, 'storybook/pages', f), 'utf8'),
 )
