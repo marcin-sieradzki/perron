@@ -3,4 +3,9 @@ component: Prik
 layer: component
 deferred:
   at: 2026-10-24T20:43:50.400Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-24T20:43:53.334Z
+    ended: 2026-10-24T20:47:59.107Z
+    pending: 7
