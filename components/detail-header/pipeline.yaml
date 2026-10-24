@@ -3,4 +3,8 @@ component: DetailHeader
 layer: pattern
 deferred:
   at: 2026-10-24T22:15:53.156Z
-stages: {}
+stages:
+  brief:
+    status: done
+    started: 2026-10-24T22:15:55.850Z
+    ended: 2026-10-24T22:21:17.072Z
