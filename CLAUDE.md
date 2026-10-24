@@ -8,5 +8,6 @@ The tokens follow the W3C Design Tokens Community Group's [Design Tokens specifi
 - Designing or writing for any screen: read the brand in `docs/foundations/README.md` and the voice in `docs/content-design.md` first, then the foundation page for each choice (colour, type, space, icons).
 - Icons and logos: a new or changed file follows `docs/foundations/icons.md` or `logos.md` and joins its folder's manifest, `icons.json` or `logos.json`.
 - Tables in `docs/foundations/` sit between `<!-- tokens -->`, `<!-- contrast -->` and `<!-- files -->` markers and are rebuilt by `npm run tokens`; edit the prose around them.
+- A new page in `docs/`: add it to `PAGES` in `scripts/lib/pages.ts`, give it an MDX file in `storybook/pages/` and a place in `.storybook/preview.ts`'s sort order; a test checks all three.
 - Skills and this file: write them with the `writing-for-agents` skill.
 - Work is done when `npm run check` passes.

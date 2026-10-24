@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
     "target": "es2023",
-    "lib": ["ES2023"],
-    "types": ["node"],
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+    "types": ["node", "vite/client"],
     "skipLibCheck": true,
     "module": "nodenext",
     "allowImportingTsExtensions": true,
@@ -15,5 +16,5 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["scripts", "tokens/generated", "vitest.config.ts"]
+  "include": ["scripts", "tokens/generated", "vitest.config.ts", ".storybook", "storybook"]
 }

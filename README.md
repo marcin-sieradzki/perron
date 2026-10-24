@@ -22,6 +22,7 @@ The build checks every file against the format rule by rule (`scripts/lib/spec.t
 | `logos/`                      | The Mylder mark, one file per theme, and `logos.json`                                                                                                 |
 | `scripts/`                    | The token and docs build and its tests: the format, contrast, icon style and logo colours                                                             |
 | `docs/foundations/`           | One page per foundation, with tables the build fills in                                                                                               |
+| `storybook/`, `.storybook/`   | The same pages in Storybook, with every table drawn live from the tokens: swatches, type specimens, contrast grids, the icons and the mark            |
 | `docs/content-design.md`      | How every word in Mylder reads                                                                                                                        |
 | `docs/renames.md`             | Token names that changed or went away, for code written against an older name                                                                         |
 | `.claude/skills/`             | Agent skills: `design-tokens`, and `writing-for-agents` from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT)                          |
@@ -47,4 +48,7 @@ Node 22 or later.
 npm install
 npm run tokens        # rebuild tokens/generated and the tables in docs/foundations
 npm run check         # generated files and tables up to date, typecheck, lint, format, tests
+npm run storybook     # the guideline pages in Storybook, at localhost:6006
 ```
+
+Storybook reads `docs/` itself (`scripts/lib/pages.ts`), so its pages change with the markdown and the tokens. Each page has a two-line MDX file in `storybook/pages/`; a Light and Dark switch on every page sets the theme.

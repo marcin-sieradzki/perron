@@ -1,0 +1,323 @@
+/* The guideline pages in Storybook, set in Perron's own tokens so they follow the theme switch. */
+
+/* Storybook's docs frame takes the page's surface, so a dark page has no light margins. */
+html,
+body,
+.sbdocs.sbdocs-wrapper {
+  background: var(--perron-color-surface-default);
+  color: var(--perron-color-text-primary);
+}
+
+.pd-page {
+  position: relative;
+  max-inline-size: 72rem;
+  margin-inline: auto;
+  font: var(--perron-typography-body);
+  font-size: var(--perron-font-size-400);
+  color: var(--perron-color-text-primary);
+}
+
+.pd-page h1 {
+  font: var(--perron-typography-display);
+  letter-spacing: var(--perron-typography-display-tracking);
+  margin: 0 0 var(--perron-space-400);
+  padding-inline-end: 10rem;
+}
+
+.pd-page h2 {
+  font: var(--perron-typography-heading-lg);
+  letter-spacing: var(--perron-typography-heading-lg-tracking);
+  margin: var(--perron-space-800) 0 var(--perron-space-300);
+}
+
+.pd-page h3 {
+  font: var(--perron-typography-heading-md);
+  letter-spacing: var(--perron-typography-heading-md-tracking);
+  margin: var(--perron-space-600) 0 var(--perron-space-300);
+}
+
+.pd-page p,
+.pd-page li {
+  line-height: 1.6;
+  max-inline-size: 46rem;
+}
+
+.pd-page a {
+  color: var(--perron-color-text-info);
+}
+
+.pd-page code {
+  font: var(--perron-typography-data-sm);
+  background: var(--perron-color-surface-inset);
+  border-radius: var(--perron-radius-xs);
+  padding: 0 var(--perron-space-100);
+}
+
+.pd-theme {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: 0;
+  display: flex;
+  padding: var(--perron-space-050);
+  border-radius: var(--perron-radius-full);
+  background: var(--perron-color-surface-inset);
+}
+
+.pd-theme button {
+  font: var(--perron-typography-label);
+  border: 0;
+  border-radius: var(--perron-radius-full);
+  padding: var(--perron-space-150) var(--perron-space-400);
+  background: none;
+  color: var(--perron-color-text-secondary);
+  cursor: pointer;
+}
+
+.pd-theme button[aria-pressed='true'] {
+  background: var(--perron-color-surface-raised);
+  color: var(--perron-color-text-primary);
+  box-shadow: var(--perron-shadow-thumb);
+}
+
+/* Tables, the prose's and the token blocks' */
+.pd-table,
+.pd-page > table {
+  overflow-x: auto;
+  margin-block: var(--perron-space-400);
+}
+
+.pd-page table {
+  border-collapse: collapse;
+  inline-size: 100%;
+}
+
+.pd-page th,
+.pd-page td {
+  text-align: start;
+  vertical-align: top;
+  padding: var(--perron-space-200) var(--perron-space-300);
+  border-block-end: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+}
+
+.pd-page th {
+  font: var(--perron-typography-label-sm);
+  color: var(--perron-color-text-secondary);
+  white-space: nowrap;
+}
+
+.pd-page td code {
+  white-space: nowrap;
+}
+
+.pd-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--perron-space-300);
+  padding: var(--perron-space-200);
+  border-radius: var(--perron-radius-md);
+  color: var(--perron-color-text-primary);
+}
+
+.pd-cell[data-theme] {
+  background: var(--perron-color-surface-default);
+  outline: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+}
+
+.pd-value {
+  display: grid;
+  gap: var(--perron-space-050);
+}
+
+.pd-value small {
+  font: var(--perron-typography-caption);
+  color: var(--perron-color-text-secondary);
+}
+
+/* Previews */
+.pd-swatch {
+  flex: none;
+  inline-size: var(--perron-space-800);
+  block-size: var(--perron-space-800);
+  border-radius: var(--perron-radius-sm);
+  outline: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+  /* a checkerboard under the fill shows translucency */
+  background:
+    linear-gradient(var(--pd-fill), var(--pd-fill)),
+    repeating-conic-gradient(#0000 0 25%, #8884 0 50%) 0 0 / 8px 8px;
+}
+
+.pd-solid {
+  background: var(--perron-color-text-primary);
+}
+
+.pd-shadow {
+  flex: none;
+  inline-size: 4rem;
+  block-size: 2.5rem;
+  border-radius: var(--perron-radius-md);
+  background: var(--perron-color-surface-raised);
+}
+
+.pd-radius,
+.pd-square {
+  flex: none;
+  inline-size: var(--perron-space-800);
+  block-size: var(--perron-space-800);
+  background: var(--perron-color-surface-selected);
+  border: var(--perron-border-width-025) solid var(--perron-color-border-control);
+}
+
+.pd-bar {
+  flex: none;
+  block-size: var(--perron-space-200);
+  max-inline-size: 12rem;
+  border-radius: var(--perron-radius-xs);
+  background: var(--perron-color-status-info);
+}
+
+.pd-stroke {
+  flex: none;
+  inline-size: var(--perron-space-800);
+  border-block-start: var(--perron-border-width-050) solid var(--perron-color-text-primary);
+}
+
+.pd-leading {
+  font: var(--perron-typography-body);
+  max-inline-size: 7rem;
+}
+
+/* A dot that crosses its track over the duration, with the easing: a loop, so it can be watched.
+   Under reduced motion the transition durations are 0.01ms and the dot holds still at the end. */
+.pd-motion {
+  flex: none;
+  position: relative;
+  inline-size: 6rem;
+  block-size: var(--perron-space-300);
+  border-radius: var(--perron-radius-full);
+  background: var(--perron-color-surface-inset);
+}
+
+.pd-motion::after {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inline-size: var(--perron-space-300);
+  border-radius: var(--perron-radius-full);
+  background: var(--perron-color-status-info);
+  animation: pd-cross var(--pd-duration, 1200ms) var(--pd-easing, linear) infinite alternate;
+}
+
+@keyframes pd-cross {
+  from {
+    inset-inline-start: 0;
+  }
+  to {
+    inset-inline-start: calc(100% - var(--perron-space-300));
+  }
+}
+
+/* Typography roles */
+.pd-types {
+  display: grid;
+  gap: var(--perron-space-200);
+  margin-block: var(--perron-space-400);
+}
+
+.pd-type {
+  padding: var(--perron-space-400);
+  border-radius: var(--perron-radius-lg);
+  background: var(--perron-color-surface-raised);
+  outline: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+}
+
+.pd-type p {
+  margin: var(--perron-space-200) 0 0;
+  font: var(--perron-typography-caption);
+  color: var(--perron-color-text-secondary);
+}
+
+/* Contrast */
+.pd-contrast {
+  display: flex;
+  align-items: baseline;
+  gap: var(--perron-space-200);
+  padding: var(--perron-space-200) var(--perron-space-300);
+  border-radius: var(--perron-radius-sm);
+  outline: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+}
+
+.pd-contrast > span:first-child {
+  font: var(--perron-typography-heading-md);
+}
+
+.pd-ratio {
+  font: var(--perron-typography-data-sm);
+  white-space: nowrap;
+}
+
+.pd-contrast[data-miss] .pd-ratio {
+  text-decoration: underline wavy;
+}
+
+/* Icons and logos */
+.pd-gallery {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: var(--perron-space-300);
+}
+
+.pd-gallery li {
+  display: grid;
+  gap: var(--perron-space-100);
+  align-content: start;
+  padding: var(--perron-space-400);
+  border-radius: var(--perron-radius-lg);
+  background: var(--perron-color-surface-raised);
+  outline: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+}
+
+.pd-gallery code,
+.pd-value code {
+  justify-self: start;
+}
+
+.pd-gallery small,
+.pd-gallery span:last-child {
+  font: var(--perron-typography-caption);
+  color: var(--perron-color-text-secondary);
+}
+
+.pd-icon {
+  display: flex;
+  gap: var(--perron-space-400);
+  align-items: center;
+  block-size: 4rem;
+  color: var(--perron-color-text-primary);
+}
+
+.pd-icon svg {
+  inline-size: var(--perron-icon-size);
+  block-size: var(--perron-icon-size);
+}
+
+/* the same drawing at three times its size, to read the strokes */
+.pd-icon svg + svg {
+  inline-size: calc(var(--perron-icon-size) * 3);
+  block-size: calc(var(--perron-icon-size) * 3);
+}
+
+.pd-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  block-size: 6rem;
+  border-radius: var(--perron-radius-md);
+  background: var(--perron-color-surface-default);
+}
+
+.pd-logo svg {
+  inline-size: auto;
+  block-size: 3rem;
+}

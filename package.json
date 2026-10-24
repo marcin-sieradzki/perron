@@ -22,7 +22,9 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "check": "npm run tokens:check && npm run typecheck && npm run lint && npm run format:check && npm run test"
+    "check": "npm run tokens:check && npm run typecheck && npm run lint && npm run format:check && npm run test",
+    "storybook": "storybook dev -p 6006",
+    "storybook:build": "storybook build -o dist/storybook"
   },
   "dependencies": {
     "@fontsource/familjen-grotesk": "^5.3.0",
@@ -30,10 +32,20 @@
     "@fontsource/schibsted-grotesk": "^5.3.0"
   },
   "devDependencies": {
+    "@storybook/addon-docs": "^10.6.3",
+    "@storybook/react-vite": "^10.6.3",
     "@types/node": "^24.19.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "markdown-to-jsx": "^9.10.3",
     "oxlint": "^1.88.0",
     "prettier": "^3.9.10",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "storybook": "^10.6.3",
     "typescript": "~6.0.3",
+    "vite": "^8.3.5",
     "vitest": "^5.0.5"
   },
   "engines": {
