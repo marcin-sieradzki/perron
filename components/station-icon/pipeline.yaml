@@ -1,0 +1,11 @@
+# Written by npm run factory; never by hand.
+component: StationIcon
+layer: component
+deferred:
+  at: 2026-10-24T20:44:19.210Z
+stages:
+  brief:
+    status: failed
+    started: 2026-10-24T20:44:21.537Z
+    ended: 2026-10-24T20:47:54.046Z
+    failing: the spec still has the placeholder <key>
