@@ -10,7 +10,7 @@ const render = (figure: ReactNode, label: ReactNode = 'Reporting live') =>
   renderToStaticMarkup(<Stat label={label}>{figure}</Stat>)
 
 const UNKNOWN_VALUE =
-  '<div class="pn-Stat-value"><span aria-hidden="true">—</span><span class="pn-VisuallyHidden">Unknown</span></div>'
+  '<div class="pn-Stat-value" data-unknown=""><span aria-hidden="true">—</span><span class="pn-VisuallyHidden">Unknown</span></div>'
 
 describe('Stat', () => {
   it.each([

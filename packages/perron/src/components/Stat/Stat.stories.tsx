@@ -45,6 +45,7 @@ export const Default: Story = {
     await expect(root.firstElementChild).toHaveClass('pn-Stat-label')
     await expect(root).not.toHaveAttribute('data-unknown')
     const value = root.querySelector('.pn-Stat-value')!
+    await expect(value).not.toHaveAttribute('data-unknown')
     await expect(getComputedStyle(value).fontVariantNumeric).toBe('tabular-nums')
     // CR-10: the root is as wide as its widest part, not its container
     await document.fonts.ready
@@ -60,6 +61,7 @@ export const Unknown: Story = {
   play: async ({ canvasElement }) => {
     const root = rootIn(canvasElement)
     await expect(root).toHaveAttribute('data-unknown', '')
+    await expect(root.querySelector('.pn-Stat-value')).toHaveAttribute('data-unknown', '')
     const dash = root.querySelector('.pn-Stat-value [aria-hidden="true"]')
     await expect(dash).toHaveTextContent('—')
     await expect(heardInOrder(root)).toEqual(['Reporting live', 'Unknown'])

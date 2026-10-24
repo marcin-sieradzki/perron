@@ -52,7 +52,7 @@ const known = (node: ReactNode): boolean =>
  */
 function usePart(
   slot: useRender.ComponentProps<'div'> | undefined,
-  own: useRender.ElementProps<'div'>,
+  own: useRender.ElementProps<'div'> & { 'data-unknown'?: string },
 ) {
   const { render, ...props } = slot ?? {}
   return useRender({
@@ -79,8 +79,12 @@ export function Stat({
   const unknown = !known(children)
 
   const labelPart = usePart(slotProps?.label, { className: 'pn-Stat-label', children: label })
+  // The bare data-unknown marks an unknown figure: on the value for the CSS, so one class and one
+  // attribute select the "—" colour, and on the root for the caller (CR-3)
+  const dataUnknown = unknown ? '' : undefined
   const valuePart = usePart(slotProps?.value, {
     className: 'pn-Stat-value',
+    'data-unknown': dataUnknown,
     // The "—" for the eye, and the words for the ear in their own text run (CR-4, CR-5)
     children: unknown ? (
       <>
@@ -92,11 +96,10 @@ export function Stat({
     ),
   })
 
-  // Stat's own props last, so they win over the caller's; className joins as "pn-Stat <caller's>".
-  // The bare data-unknown marks an unknown figure for the CSS (CR-3).
+  // Stat's own props last, so they win over the caller's; className joins as "pn-Stat <caller's>"
   const own = {
     className: 'pn-Stat',
-    'data-unknown': unknown ? '' : undefined,
+    'data-unknown': dataUnknown,
     children: (
       <>
         {labelPart}

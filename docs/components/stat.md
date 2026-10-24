@@ -26,11 +26,11 @@ The root and both parts are plain `div`s, with no `dl`, `dt` and `dd` and no `ro
 
 No Base UI component: `baseUiParts` stays empty in `packages/perron/components.json`. Each part renders through the `useRender` hook from `@base-ui/react/use-render` and merges its props with `mergeProps` from `@base-ui/react/merge-props`, at the version pinned in `packages/perron/package.json` (1.9.0).
 
-| Base UI part          | Renders | Perron sets                                                                                                                            | Passed through                                                        |
-| --------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| `useRender` for root  | `div`   | `defaultTagName: 'div'`, `ref`, the class `pn-Stat`, `data-unknown` when the figure is unknown (CR-3), and the parts below as children | `render`, `className`, `style`, `ref` and the rest of the `div` props |
-| `useRender` for label | `div`   | `defaultTagName: 'div'`, the class `pn-Stat-label`, `label` as children                                                                | `slotProps.label`                                                     |
-| `useRender` for value | `div`   | `defaultTagName: 'div'`, the class `pn-Stat-value`, `children` as children, or the "—" and its words when the figure is unknown (CR-4) | `slotProps.value`                                                     |
+| Base UI part          | Renders | Perron sets                                                                                                                                                                              | Passed through                                                        |
+| --------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `useRender` for root  | `div`   | `defaultTagName: 'div'`, `ref`, the class `pn-Stat`, `data-unknown` when the figure is unknown (CR-3), and the parts below as children                                                   | `render`, `className`, `style`, `ref` and the rest of the `div` props |
+| `useRender` for label | `div`   | `defaultTagName: 'div'`, the class `pn-Stat-label`, `label` as children                                                                                                                  | `slotProps.label`                                                     |
+| `useRender` for value | `div`   | `defaultTagName: 'div'`, the class `pn-Stat-value`, `data-unknown` when the figure is unknown (CR-3), `children` as children, or the "—" and its words when the figure is unknown (CR-4) | `slotProps.value`                                                     |
 
 Base UI already does: swapping each part's element through `render` while keeping its class and props, joining `className` strings and `style` objects and chaining event handlers in `mergeProps`, and setting `ref` on the rendered element.
 
@@ -60,7 +60,7 @@ Stat leaves number formatting to the caller, taking the figure as already-writte
 
 ## Tokens
 
-One row per part, state and property. Stat has no interactive state, so every row is rest; the unknown figure is rest with `data-unknown` on the root.
+One row per part, state and property. Stat has no interactive state, so every row is rest; the unknown figure is rest with `data-unknown` on the value.
 
 | Part    | State                | Property               | Token                                                                  |
 | ------- | -------------------- | ---------------------- | ---------------------------------------------------------------------- |
@@ -75,7 +75,7 @@ One row per part, state and property. Stat has no interactive state, so every ro
 | `value` | rest                 | `white-space`          | none: the keyword `nowrap`, so "4 min" never breaks from its unit      |
 | `value` | rest, `data-unknown` | `color`                | `color.text.tertiary`                                                  |
 
-The root is a flex column with `align-items: start`, and every part and the root reset the margins their element may bring. `typography.label-sm`'s own use is "field and stat labels", and `typography.stat`'s is "key figures".
+The root is a flex column with `align-items: start` and the keyword `width: fit-content`, not a token, so it sizes to its content and a Stat made a link through `render` is no wider than its words (CR-10); every part and the root reset the margins their element may bring. `typography.label-sm`'s own use is "field and stat labels", and `typography.stat`'s is "key figures".
 
 The root is a start-aligned flex column with `space.100` (4 px) between the label and the figure, and no fill, border, radius, padding or shadow of its own: Stat is content that takes the surface of the report, panel or kiosk bar it sits in, like EmptyState, and a box of its own would join no family. 4 px sets the small label close to the figure it names, as EmptyState spaces its title and sentence.
 
@@ -129,7 +129,7 @@ Rules for this component alone, numbered so the build and the review can cite th
 
 - **CR-1.** Stat has one look: no `color`, `variant` or `size` prop and no `data-variant`, `data-color` or `data-size` attribute, as [Props](#props) sets out.
 - **CR-2.** Stat doesn't format the figure: `children` renders as given, a number as React writes it, as [Props](#props) sets out.
-- **CR-3.** The figure is unknown when `children` renders nothing (`null`, `undefined`, a boolean, `''`, or an array of only such values) or is a number that is not finite (`NaN`, `Infinity`). `0` and `'0'` are figures. When unknown, the root carries the bare attribute `data-unknown`, and the CSS reads the "—" colour from it.
+- **CR-3.** The figure is unknown when `children` renders nothing (`null`, `undefined`, a boolean, `''`, or an array of only such values) or is a number that is not finite (`NaN`, `Infinity`). `0` and `'0'` are figures. When unknown, the root and the value part both carry the bare attribute `data-unknown`: the CSS reads the "—" colour from the value's, as `.pn-Stat-value[data-unknown]`, one class then an attribute, so a caller's `slotProps.value.className` can restyle it; the root's tells the caller the figure is unknown.
 - **CR-4.** Stat shows an unknown figure itself, as "—" in `color.text.tertiary` with `aria-hidden="true"`, followed by the owned string "Unknown" in the VisuallyHidden shared part: content design writes "—" for unknown and the brand never shows a guess, while a screen reader skips or spells a bare "—", so the ear would get less than the eye; Delay does the same for an unknown delay. Tertiary is allowed because the "—" always sits under the stronger label.
 - **CR-5.** The "—" is the character U+2014 in its own `span`, and the words are their own text run, so `expectOwnedStrings` reads them as a dictionary value.
 - **CR-6.** Stat composes the VisuallyHidden shared part from `packages/perron/src/parts/VisuallyHidden/` and never draws its own hiding styles.
@@ -142,10 +142,10 @@ Rules for this component alone, numbered so the build and the review can cite th
 
 One per variant the deferred design will draw. It has no variant property, so its one variant is `Default`; `Unknown` is the same variant with no figure, and proves CR-3 and CR-4. The contract story renders `Default`.
 
-| Story     | Shows                                                                                                             | `play` test                                                                                                                                                                         |
-| --------- | ----------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Default` | `label` "Reporting live" over the figure "412"; the contract story renders it, and its args pass every rule alone | The label comes before the figure in the accessible text; the root has no `data-unknown`; the figure's computed `font-variant-numeric` is `tabular-nums`; nothing in it takes focus |
-| `Unknown` | `label` "Reporting live" with no `children`: "—" under it                                                         | The root carries `data-unknown`; "—" is `aria-hidden`; the accessible text is "Reporting live" then "Unknown"                                                                       |
+| Story     | Shows                                                                                                             | `play` test                                                                                                                                                                                            |
+| --------- | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Default` | `label` "Reporting live" over the figure "412"; the contract story renders it, and its args pass every rule alone | The label comes before the figure in the accessible text; neither the root nor the value has `data-unknown`; the figure's computed `font-variant-numeric` is `tabular-nums`; nothing in it takes focus |
+| `Unknown` | `label` "Reporting live" with no `children`: "—" under it                                                         | The root and the value carry `data-unknown`; "—" is `aria-hidden`; the accessible text is "Reporting live" then "Unknown"                                                                              |
 
 ## Do and don't
 
