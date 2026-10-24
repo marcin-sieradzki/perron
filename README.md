@@ -27,7 +27,7 @@ The build checks every file against the format rule by rule (`scripts/lib/spec.t
 | `docs/glossary.md`, `docs/adr/` | The words used to talk about Perron, and the decisions behind it                                                                                      |
 | `ROADMAP.md`                    | What comes next: components on Base UI, patterns, the agent loop, the MCP server, step by step                                                        |
 | `docs/renames.md`               | Token names that changed or went away, for code written against an older name                                                                         |
-| `.claude/skills/`               | Agent skills: `design-tokens`, and `writing-for-agents` from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT)                          |
+| `.claude/skills/`               | Agent skills: `design-tokens`, and the others from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT)                                    |
 
 ## Token names
 
