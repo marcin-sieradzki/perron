@@ -144,7 +144,7 @@ Nothing here builds a component. It builds what every component is checked again
 
 Penpot owns each component's anatomy and variants. The repo owns the token values, and the token build already feeds Penpot.
 
-- [ ] **3.1 Smoke test.** Local. On a scratch page of the library file, check with `execute_code` that the plugin API on today's Penpot can:
+- [x] **3.1 Smoke test.** Local. On a scratch page of the library file, check with `execute_code` that the plugin API on today's Penpot can:
   1. bind a colour, a padding and a radius token to a shape, and read them back from `shape.tokens`;
   2. build a variant container with `penpotUtils.createVariantContainer`;
   3. export a board as PNG bytes (base64) and as SVG;
@@ -152,7 +152,7 @@ Penpot owns each component's anatomy and variants. The repo owns the token value
 
   Recent Penpot releases fixed bugs in exactly these. Write what works, and the workarounds, to `penpot/README.md`. **Done** when each of the four has a yes, or a no with a workaround.
 
-- [ ] **3.2 Helpers and conventions.** Local, after 3.1. Write `penpot/helpers.js`, loaded into the MCP's `storage` at the start of every Penpot session:
+- [x] **3.2 Helpers and conventions.** Local, after 3.1. Write `penpot/helpers.js`, loaded into the MCP's `storage` at the start of every Penpot session:
   - `bind(shape, property, tokenName)`, which throws on a token that doesn't exist;
   - `readBack(container)`.
 
@@ -165,7 +165,7 @@ Penpot owns each component's anatomy and variants. The repo owns the token value
 
   **Done** when a scratch component drawn with the helpers passes the checks of 3.3.
 
-- [ ] **3.3 Read-back and checks.** Any.
+- [x] **3.3 Read-back and checks.** Any.
   - `penpot/<name>.json` holds the file and component ids, the variant properties, a layer tree with the layout, size and bound tokens of each layer, and a hash of each export.
   - `penpot/<name>.code-map.json` maps each Penpot property and layer to a React prop or a CSS state.
 
