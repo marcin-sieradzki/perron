@@ -1,4 +1,42 @@
 {
+  "Brand": {
+    "extends": [
+      "Omit<useRender.ComponentProps<'span'>, 'children' | 'ref'>"
+    ],
+    "props": {
+      "brandNameLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLSpanElement>"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "variant": {
+        "optional": true,
+        "type": [
+          "\"full\"",
+          "\"mark\""
+        ]
+      }
+    }
+  },
   "Button": {
     "extends": [
       "Omit< BaseButton.Props, 'className' | 'style' | 'color' | 'children' | 'disabled' | 'ref' >"
@@ -131,7 +169,7 @@
       "slotProps": {
         "optional": true,
         "type": [
-          "{ message?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; emptyState?: Omit<EmptyStateProps, \"children\" | \"title\" | \"action\"> | undefined; }"
+          "{ message?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; emptyState?: Omit<EmptyStateProps, \"title\" | \"children\" | \"action\"> | undefined; }"
         ]
       },
       "status": {
@@ -672,6 +710,37 @@
           "\"delay\"",
           "\"diversion\"",
           "\"planned\""
+        ]
+      }
+    }
+  },
+  "Stat": {
+    "extends": [
+      "Omit<useRender.ComponentProps<'div'>, 'children'>"
+    ],
+    "props": {
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "label": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ label?: ComponentProps<\"div\", {}, HTMLProps> | undefined; value?: ComponentProps<\"div\", {}, HTMLProps> | undefined; }"
+        ]
+      },
+      "unknownLabel": {
+        "optional": true,
+        "type": [
+          "string"
         ]
       }
     }

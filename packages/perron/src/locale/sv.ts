@@ -27,6 +27,8 @@ export const sv: OwnedStrings = {
   minutesEarly: 'min före',
   onTime: 'I tid',
   delayUnknown: 'Försening okänd',
+  unknown: 'Okänd',
+  brandName: 'Mylder',
   nextStop: 'Nästa hållplats',
   passed: 'Passerad',
   mapControls: 'Kartknappar',
