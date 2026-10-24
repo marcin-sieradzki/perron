@@ -1,0 +1,132 @@
+/* Toolbar: the bar on the Popups' glass, its group, its separator and its button
+   (docs/components/toolbar.md, Tokens). Every state changes colours only (CR-5), at once (CR-12). */
+
+/* The bar sizes to its content (CR-13); the pattern that uses it places it. It wraps rather than
+   overflow a narrow container, so it reflows at 320 px. */
+.pn-Toolbar {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  max-inline-size: 100%;
+  gap: var(--perron-space-100);
+  padding: var(--perron-space-100);
+  border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+  border-radius: var(--perron-radius-lg);
+  background-color: var(--perron-color-surface-overlay);
+  backdrop-filter: blur(var(--perron-effect-glass-blur))
+    saturate(var(--perron-effect-glass-saturate));
+  box-shadow: var(--perron-shadow-panel);
+}
+
+.pn-Toolbar[data-orientation='vertical'] {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.pn-ToolbarGroup {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--perron-space-100);
+}
+
+.pn-ToolbarGroup[data-orientation='vertical'] {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* A border on a box of no size, so forced colours keep it (CR-11). Its data-orientation is its
+   own, across the toolbar's. */
+.pn-ToolbarSeparator {
+  flex: none;
+  align-self: stretch;
+}
+
+.pn-ToolbarSeparator[data-orientation='vertical'] {
+  margin-block: var(--perron-space-100);
+  border-inline-start: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+}
+
+.pn-ToolbarSeparator[data-orientation='horizontal'] {
+  margin-inline: var(--perron-space-100);
+  border-block-start: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+}
+
+/* Every button draws a border, transparent where it shows none, so both colours share one size
+   and forced colours draw an edge round each (CR-5). */
+.pn-ToolbarButton {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  gap: var(--perron-space-150);
+  block-size: var(--perron-size-control);
+  min-inline-size: var(--perron-size-control);
+  margin: 0;
+  padding-block: 0;
+  padding-inline: var(--perron-space-300);
+  border: var(--perron-border-width-025) solid transparent;
+  border-radius: var(--perron-radius-md);
+  background-color: transparent;
+  color: var(--perron-color-text-primary);
+  white-space: nowrap;
+}
+
+.pn-ToolbarButton[data-icon-only] {
+  padding-inline: 0;
+}
+
+.pn-ToolbarButton-label {
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+}
+
+/* The icons draw in the button's colour, through currentColor (CR-8). */
+.pn-ToolbarButton-startIcon,
+.pn-ToolbarButton-endIcon {
+  --perron-icon-size: var(--perron-icon-size-400);
+  display: inline-flex;
+  flex: none;
+}
+
+.pn-ToolbarButton[data-color='brand'] {
+  border-color: var(--perron-color-border-brand);
+  background-color: var(--perron-color-surface-brand);
+  color: var(--perron-color-text-on-color-dark);
+}
+
+/* Hover and pressed skip a disabled button, which stays focusable with no native disabled (CR-6). */
+@media (hover: hover) {
+  .pn-ToolbarButton[data-color='neutral']:hover:not([data-disabled]) {
+    background-color: var(--perron-color-surface-hover);
+  }
+
+  .pn-ToolbarButton[data-color='brand']:hover:not([data-disabled]) {
+    background-color: var(--perron-color-surface-brand-hover);
+  }
+}
+
+.pn-ToolbarButton[data-color='neutral']:active:not([data-disabled]) {
+  background-color: var(--perron-color-surface-hover);
+}
+
+.pn-ToolbarButton[data-color='brand']:active:not([data-disabled]) {
+  background-color: var(--perron-color-surface-brand-hover);
+}
+
+.pn-ToolbarButton[data-disabled] {
+  color: var(--perron-color-text-tertiary);
+}
+
+/* A yellow that can't be pressed doesn't mark the main action: disabled is a fill and a colour. */
+.pn-ToolbarButton[data-color='brand'][data-disabled] {
+  border-color: transparent;
+  background-color: var(--perron-color-surface-inset);
+}
+
+@media (forced-colors: active) {
+  .pn-ToolbarButton[data-disabled] {
+    border-color: GrayText;
+    color: GrayText;
+  }
+}

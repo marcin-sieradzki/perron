@@ -31,6 +31,7 @@ export const PAGES = [
   'docs/components/button.md',
   'docs/components/delay.md',
   'docs/components/station-icon.md',
+  'docs/components/toolbar.md',
   // registry:specs end
 ]
 
