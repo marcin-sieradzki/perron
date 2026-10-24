@@ -25,7 +25,7 @@ Write every agent-facing file a step creates (a skill, an agent, `CLAUDE.md`, a 
 
   **Done** when `@mylder/perron@0.1.0` (foundations only) is on npm and Mylder can install it.
 
-- [ ] **1.4 Docs site.** Any. Deploy Storybook to GitHub Pages from CI. From the same sources, the build also writes:
+- [x] **1.4 Docs site.** Any. Deploy Storybook to GitHub Pages from CI. From the same sources, the build also writes:
   - `llms.txt`, one line per page;
   - a `.md` twin of every page;
   - a consumer `AGENTS.md`: install, rules, where to look.
