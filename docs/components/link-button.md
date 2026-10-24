@@ -18,7 +18,7 @@ LinkButton has no Base UI part: the registry gives it none, and Base UI's only c
 | `endIcon`           | A `<span>`, `aria-hidden`, that holds the caller's `endIcon` after the label; only rendered when `endIcon` is given                       | none: a plain `<span>`                            | `pn-LinkButton-endIcon`   | none            |
 | `focusRing`         | The keyboard focus ring: the `:focus-visible` outline `perron.css` draws on the root, not an element; the code map will land it on `root` | none: the browser's `:focus-visible` on the `<a>` | none                      | none            |
 
-[PENDING] LinkButton has its own CSS, `pn-LinkButton`, that sets Button's tokens row for row (see Tokens), rather than reusing Button's classes or composing Perron's `Button`: the contract names each component's classes after it, composing `Button` would bring Base UI's `role="button"`, and ToolbarButton already set the precedent of its own CSS over Button's tokens. A story holds the two to each other (`MatchesButton`). Recommended: yes.
+LinkButton has its own CSS, `pn-LinkButton`, that sets Button's tokens row for row (see Tokens), rather than reusing Button's classes or composing Perron's `Button`: the contract names each component's classes after it, composing `Button` would bring Base UI's `role="button"`, and ToolbarButton already set the precedent of its own CSS over Button's tokens. A story holds the two to each other (`MatchesButton`).
 
 ## Base UI parts
 
@@ -34,13 +34,13 @@ Base UI already does: swapping the root element for the one `render` gives (a ro
 
 In MUI's layout. Every prop here gets this description as its JSDoc. LinkButton has no `slotProps`, because the contract keys `slotProps` by inner Base UI part and LinkButton has none; a caller restyles it through `className` on the root. It owns no strings, so it has no label-override props. The `<a>` element's other attributes (`target`, `rel`, `download`, `aria-current`) reach the root and get no row, as the contract's [Props](README.md#props) says.
 
-[PENDING] LinkButton offers Button's `variant` (`'solid' | 'outline'`, default `'solid'`), `size` (`'small' | 'medium'`, default `'medium'`), `fullWidth`, `startIcon` and `endIcon`, with Button's meanings and tokens, so a link and a button side by side look alike. Recommended: yes.
+LinkButton offers Button's `variant` (`'solid' | 'outline'`, default `'solid'`), `size` (`'small' | 'medium'`, default `'medium'`), `fullWidth`, `startIcon` and `endIcon`, with Button's meanings and tokens, so a link and a button side by side look alike.
 
-[PENDING] LinkButton has no `color` prop and is always ink (Button's `neutral`): the contract's [Intents](README.md#intents) say `brand` "is never a link" and offer it to Button, IconButton and a Toolbar's buttons only, and [Semantic colours](../foundations/semantic-colours.md#brand) say links have their own colours. A `color` prop can join later, as a wider union, without a break. Recommended: yes.
+LinkButton has no `color` prop and is always ink (Button's `neutral`): the contract's [Intents](README.md#intents) say `brand` "is never a link" and offer it to Button, IconButton and a Toolbar's buttons only, and [Semantic colours](../foundations/semantic-colours.md#brand) say links have their own colours. A `color` prop can join later, as a wider union, without a break.
 
-[PENDING] LinkButton has no `disabled` prop: an `<a>` has no `disabled` attribute, an `<a>` without `href` has no role for `aria-disabled` to sit on, and a link that goes nowhere shouldn't be shown; a caller who needs a disabled look renders a disabled Button. Recommended: yes.
+LinkButton has no `disabled` prop: an `<a>` has no `disabled` attribute, an `<a>` without `href` has no role for `aria-disabled` to sit on, and a link that goes nowhere shouldn't be shown; a caller who needs a disabled look renders a disabled Button.
 
-[PENDING] LinkButton declares `href` itself, optional, with its own JSDoc, so the docs page shows it, though the contract leaves the element's attributes without a row: it is the one attribute every LinkButton needs, and it is optional only because a `render` such as a router's link can bring its own (`to`). Recommended: yes.
+LinkButton declares `href` itself, optional, with its own JSDoc, so the docs page shows it, though the contract leaves the element's attributes without a row: it is the one attribute every LinkButton needs, and it is optional only because a `render` such as a router's link can bring its own (`to`).
 
 | Name                 | Type                     | Default    | Base UI prop           | Description                                                                                                                                                        |
 | -------------------- | ------------------------ | ---------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -130,7 +130,7 @@ What axe won't catch, from the contract, each with how this component meets it:
 
 No owned strings: every word comes from the caller, as `children`.
 
-[PENDING] LinkButton announces nothing of its own when `target="_blank"` opens a new tab, and owns no "Opens in a new tab" string: a link that leaves Mylder names its destination in its label ("Open in Rejseplanen"), and Mylder's own links open in the same tab. Recommended: yes.
+LinkButton announces nothing of its own when `target="_blank"` opens a new tab, and owns no "Opens in a new tab" string: a link that leaves Mylder names its destination in its label ("Open in Rejseplanen"), and Mylder's own links open in the same tab.
 
 ## Component rules
 
