@@ -225,13 +225,13 @@ Each rule is one script, `scripts/checks/<rule>.ts`, run by `npm run check`. A d
 
 In Markdown it is an HTML comment holding `perron-allow(paths): reason`, at the end of the line it excuses: prettier sets a comment on its own line apart from the text below it. A rule whose breach has no line, `docs` and `api-compatibility`, takes no allowance.
 
-| Rule                | Fails on                                                                                          |
-| ------------------- | ------------------------------------------------------------------------------------------------- |
-| `component-css`     | Any [CSS](#css) rule: a raw value, a `var()` fallback, any `--perron-*` name no token defines     |
-| `props`             | A prop outside the vocabulary's types, a name that is not a prop, or a prop without JSDoc         |
-| `patterns`          | A pattern importing anything but Perron components and parts                                      |
-| `shared-parts`      | A shared part's class, icon or declarations outside its folder                                    |
-| `docs`              | A registered component past `designing` without its `<Name>.mdx` docs page or its spec            |
-| `api-compatibility` | A `stable` or `deprecated` component's props API shrinking against the last release tag           |
-| `paths`             | A path a doc or skill names, in a link or a code span, that does not exist                        |
-| `penpot`            | A design in `penpot/` binding an unknown token, leaving a value unbound, or not fully code-mapped |
+| Rule                | Fails on                                                                                      |
+| ------------------- | --------------------------------------------------------------------------------------------- |
+| `component-css`     | Any [CSS](#css) rule: a raw value, a `var()` fallback, any `--perron-*` name no token defines |
+| `props`             | A prop outside the vocabulary's types, a name that is not a prop, or a prop without JSDoc     |
+| `patterns`          | A pattern importing anything but Perron components and parts                                  |
+| `shared-parts`      | A shared part's class, icon or declarations outside its folder                                |
+| `docs`              | A registered component past `designing` without its `<Name>.mdx` docs page or its spec        |
+| `api-compatibility` | A `stable` or `deprecated` component's props API shrinking against the last release tag       |
+| `paths`             | A path a doc or skill names, in a link or a code span, that does not exist                    |
+| `penpot`            | A design read back with an unknown token, an unbound value, or an unmapped variant or layer   |
