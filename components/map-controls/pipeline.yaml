@@ -3,4 +3,8 @@ component: MapControls
 layer: component
 deferred:
   at: 2026-10-24T22:38:36.571Z
-stages: {}
+stages:
+  brief:
+    status: done
+    started: 2026-10-24T22:38:40.447Z
+    ended: 2026-10-24T22:44:56.764Z
