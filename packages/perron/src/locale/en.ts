@@ -45,6 +45,8 @@ export const en = {
   onTime: 'On time',
   /** Delay: no real-time data says how late a vehicle runs; heard in place of "—". */
   delayUnknown: 'Delay unknown',
+  /** Stat: no data gives the figure; heard in place of "—". */
+  unknown: 'Unknown',
 }
 
 /** The name of one owned string. */
