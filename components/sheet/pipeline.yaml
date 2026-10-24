@@ -9,16 +9,15 @@ stages:
     started: 2026-10-24T21:11:36.821Z
     ended: 2026-10-24T21:12:38.653Z
   build:
-    runs: 2
-    failing: review round 1 found 1 P1 (components/sheet/review.md)
+    runs: 3
+    status: pending
+    started: 2026-10-24T21:37:44.727Z
+    ended: 2026-10-24T21:44:11.591Z
+    failing: '1. Focusable scroll region in spec (tabIndex 0 only while overflowing)? Rec: yes. 2. Bottom sheet set height + snap padding row + CR-8 line? Rec: yes. 3. Rewrite checklist line 143? Rec: yes. 4. Move onSnapPointChange sentence in spec Props? Rec: yes.'
   review:
-    status: failed
-    started: 2026-10-24T21:30:19.172Z
     rounds: 1
+    p1Rounds: 1
     findings:
       p1: 1
       p2: 3
       p3: 5
-    p1Rounds: 1
-    ended: 2026-10-24T21:37:42.604Z
-    failing: review round 1 found 1 P1 (components/sheet/review.md)

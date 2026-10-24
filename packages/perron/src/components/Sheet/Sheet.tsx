@@ -93,8 +93,7 @@ export interface SheetProps extends Omit<Drawer.Popup.Props, 'children' | 'title
    * a `px` or `rem` string. Ignored on a side sheet. A bottom sheet with no `snapPoints` snaps to
    * `size.sheet-peek` (read once, when a bottom sheet first renders, from its custom property
    * `--perron-size-sheet-peek` with `getComputedStyle`) and to full height, `1`, starting at the
-   * peek; `onSnapPointChange` takes MUI's shape, `(event, snapPoint, details)`, with `event` being
-   * `details.event`.
+   * peek.
    * @default With `anchor` `'bottom'`: `size.sheet-peek` and `1`
    */
   snapPoints?: Drawer.Root.SnapPoint[]
@@ -105,7 +104,10 @@ export interface SheetProps extends Omit<Drawer.Popup.Props, 'children' | 'title
    * @default The first snap point
    */
   defaultSnapPoint?: Drawer.Root.SnapPoint | null
-  /** Called when a bottom sheet asks to move to another snap point, by a swipe. */
+  /**
+   * Called when a bottom sheet asks to move to another snap point, by a swipe. It takes MUI's
+   * shape, `(event, snapPoint, details)`, with `event` being `details.event`.
+   */
   onSnapPointChange?: (
     event: SnapPointDetails['event'],
     snapPoint: Drawer.Root.SnapPoint | null,

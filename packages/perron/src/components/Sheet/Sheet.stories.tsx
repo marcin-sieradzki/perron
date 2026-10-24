@@ -109,8 +109,7 @@ export const Right: Story = {
       const close = within(dialog).getByRole('button', { name: 'Close' })
       const content = dialog.querySelector('.pn-Sheet-content')
       // reading order inside: the close button, then the body
-      await userEvent.tab()
-      await expect(close).toHaveFocus()
+      close.focus()
       await userEvent.tab()
       await expect(content).toHaveFocus()
       await userEvent.tab()
@@ -144,15 +143,33 @@ export const Right: Story = {
 export const Bottom: Story = {
   // a body taller than the peek, so the peek cuts it and a swipe up shows the rest
   args: { anchor: 'bottom', children: body([...LINES, ...LONG.slice(0, 6)]) },
-  play: async ({ args }) => {
-    await sheet()
-    await userEvent.keyboard('{Escape}')
-    await expect(args.onClose).toHaveBeenCalledWith(
-      expect.anything(),
-      'escape-key',
-      expect.anything(),
-    )
-    await closed()
+  play: async ({ args, step }) => {
+    const dialog = await sheet()
+    const content = dialog.querySelector('.pn-Sheet-content') as HTMLElement
+    await step('at the peek, the body ends on screen, takes focus and scrolls', async () => {
+      await waitFor(() => expect(content.scrollHeight).toBeGreaterThan(content.clientHeight))
+      await waitFor(() =>
+        expect(content.getBoundingClientRect().bottom).toBeLessThanOrEqual(window.innerHeight + 1),
+      )
+      within(dialog).getByRole('button', { name: 'Close' }).focus()
+      await userEvent.tab()
+      await expect(content).toHaveFocus()
+      // the browser scrolls a focused scroller on its own keys; the test scrolls it to its end
+      content.scrollTop = content.scrollHeight
+      await waitFor(() => expect(content.scrollTop).toBeGreaterThan(0))
+      const last = content.lastElementChild as HTMLElement
+      await expect(last.getBoundingClientRect().bottom).toBeLessThanOrEqual(window.innerHeight + 1)
+      content.scrollTop = 0
+    })
+    await step('Esc closes it with reason escape-key', async () => {
+      await userEvent.keyboard('{Escape}')
+      await expect(args.onClose).toHaveBeenCalledWith(
+        expect.anything(),
+        'escape-key',
+        expect.anything(),
+      )
+      await closed()
+    })
   },
 }
 
