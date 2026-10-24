@@ -57,12 +57,6 @@
   transition-timing-function: var(--perron-easing-sheet);
 }
 
-/* Base UI focuses the panel itself when nothing inside takes focus first; the panel is no control,
-   so it shows no ring, and the controls inside keep theirs. */
-.pn-Sheet:focus-visible {
-  outline: none;
-}
-
 .pn-Sheet[data-anchor='left'],
 .pn-Sheet[data-anchor='right'] {
   inline-size: var(--perron-size-sheet-width);

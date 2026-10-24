@@ -40,8 +40,8 @@ function defaultSnapPoints(): Drawer.Root.SnapPoint[] {
 export interface SheetProps extends Omit<Drawer.Popup.Props, 'children' | 'title'> {
   /**
    * The edge the sheet slides from and is swiped back to: `left` for the overview sheet, `right`
-   * for the detail panel, `bottom` for either on a phone. Named `anchor`, MUI Drawer's name; `top`
-   * is left out until a screen needs it; it sets `data-anchor` on the root and the viewport.
+   * for the detail panel, `bottom` for either on a phone. It sets `data-anchor` on the root and the
+   * viewport.
    * @default 'left'
    */
   anchor?: 'left' | 'right' | 'bottom'
@@ -57,10 +57,7 @@ export interface SheetProps extends Omit<Drawer.Popup.Props, 'children' | 'title
   children?: ReactNode
   /**
    * The button that opens the sheet, such as a Perron `Button`; it gets the trigger's ARIA and gets
-   * focus back on close. Without one, the sheet opens through `open`. Rendered through
-   * `Drawer.Trigger`'s `render`; Base UI's detached triggers (`handle`, `triggerId`,
-   * `defaultTriggerId`), `actionsRef`, `onOpenChangeComplete` and `snapToSequentialPoints` stay out
-   * until a screen needs them.
+   * focus back on close. Without one, the sheet opens through `open`.
    */
   trigger?: ReactElement
   /** Whether the sheet is open, for a controlled sheet. */
@@ -93,9 +90,7 @@ export interface SheetProps extends Omit<Drawer.Popup.Props, 'children' | 'title
   /**
    * The heights a bottom sheet snaps to: a fraction of the viewport from 0 to 1, pixels above 1, or
    * a `px` or `rem` string. Ignored on a side sheet. A bottom sheet with no `snapPoints` snaps to
-   * `size.sheet-peek` (read once, when a bottom sheet first renders, from its custom property
-   * `--perron-size-sheet-peek` with `getComputedStyle`) and to full height, `1`, starting at the
-   * peek.
+   * `size.sheet-peek` and to full height, `1`, starting at the peek.
    * @default With anchor 'bottom': size.sheet-peek and 1
    */
   snapPoints?: Drawer.Root.SnapPoint[]

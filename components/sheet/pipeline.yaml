@@ -9,18 +9,16 @@ stages:
     started: 2026-10-24T21:11:36.821Z
     ended: 2026-10-24T21:12:38.653Z
   build:
-    runs: 4
-    failing: "docs failed: Sheet.stories.tsx (build): with docs.story inline:false each story's play test runs in its docs iframe, so Left/Right/BottomExpanded close their sheets and Bottom/Modal fail on focus competition. Overlay stories need a library-wide way to skip play on the docs page (e.g. a shared helper or docs tooling)."
+    runs: 5
+    status: done
+    started: 2026-10-24T23:17:23.793Z
+    ended: 2026-10-24T23:23:26.437Z
   review:
     rounds: 2
-    p1Rounds: 1
+    sentBack: 1
     findings:
       p1: 0
       p2: 2
       p3: 5
   docs:
     failures: 1
-    status: failed
-    started: 2026-10-24T22:46:45.239Z
-    ended: 2026-10-24T22:50:26.761Z
-    failing: "Sheet.stories.tsx (build): with docs.story inline:false each story's play test runs in its docs iframe, so Left/Right/BottomExpanded close their sheets and Bottom/Modal fail on focus competition. Overlay stories need a library-wide way to skip play on the docs page (e.g. a shared helper or docs tooling)."
