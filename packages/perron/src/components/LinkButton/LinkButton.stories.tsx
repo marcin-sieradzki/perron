@@ -187,7 +187,7 @@ export const WithIcons: Story = {
   },
 }
 
-/** `fullWidth` in a narrow container, as a bottom sheet's way on, on a phone. */
+/** `fullWidth` in a narrow container, as a bottom sheet's main link, on a phone. */
 export const FullWidth: Story = {
   args: { variant: 'outline', size: 'medium', fullWidth: true },
   decorators: [

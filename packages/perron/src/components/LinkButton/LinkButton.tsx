@@ -12,11 +12,12 @@ import './LinkButton.css'
 const rendersSomething = (node: ReactNode) =>
   node != null && typeof node !== 'boolean' && node !== ''
 
-// The <a> element's props, without React's non-standard `color` attribute, so `color="brand"` is a
-// type error (CR-14); the <a> element's type already has no `disabled`.
+// The <a> element's props and Base UI's `render`, inherited as it is, without React's non-standard
+// `color` attribute, so `color="brand"` is a type error (CR-14); the <a> element's type already has
+// no `disabled`.
 export interface LinkButtonProps extends Omit<
   useRender.ComponentProps<'a'>,
-  'children' | 'render' | 'ref' | 'color' | 'href' | 'className' | 'style'
+  'children' | 'ref' | 'color' | 'href' | 'className' | 'style'
 > {
   /**
    * Where the link goes: a URL or a path. Give it on every LinkButton, unless `render` gives a
@@ -24,7 +25,7 @@ export interface LinkButtonProps extends Omit<
    */
   href?: string
   /**
-   * How much the link stands out: `solid` is filled, for the one way on that a panel offers;
+   * How much the link stands out: `solid` is filled, for the main place a panel leads to;
    * `outline` is an edge only, for the links and actions beside it.
    * @default 'solid'
    */
@@ -36,7 +37,7 @@ export interface LinkButtonProps extends Omit<
    */
   size?: 'small' | 'medium'
   /**
-   * Whether the link fills the width of its container, such as a bottom sheet's way on. Sets
+   * Whether the link fills the width of its container, such as a bottom sheet's main link. Sets
    * `data-full-width`.
    * @default false
    */
@@ -51,12 +52,6 @@ export interface LinkButtonProps extends Omit<
    * link.
    */
   endIcon?: ReactNode
-  /**
-   * Swaps the root element, such as for a router's link component, keeping the class, the data
-   * attributes and the children. The element it gives must render an `<a>`.
-   * @default <a />
-   */
-  render?: useRender.ComponentProps<'a'>['render']
   /**
    * The label: the words that name where the link goes, in sentence case. Required in practice: a
    * link with no words has no name.
