@@ -1,0 +1,5 @@
+.pn-Fixture {
+  /* perron-allow(component-css): the map canvas reads this length in script */
+  inline-size: 320px;
+  block-size: 240px; /* perron-allow(component-css): the canvas's own height */
+}

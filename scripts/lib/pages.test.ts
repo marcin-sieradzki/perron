@@ -3,7 +3,7 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import { readSources } from '../build-tokens.ts'
-import { PAGES, readPages } from './pages.ts'
+import { headingOf, PAGES, readPages } from './pages.ts'
 import { loadTokens } from './tokens.ts'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '../..')
@@ -28,10 +28,27 @@ describe('Storybook pages', () => {
       )
   })
 
-  it('sort in the order the Contents page lists them', () => {
+  it('group pages by folder: foundations, components, and the guidelines beside them', () => {
+    const group = (path: string) => headingOf(path, '# Title\n').group
+    expect(group('docs/foundations/motion.md')).toBe('Foundations')
+    expect(group('docs/components/README.md')).toBe('Components')
+    expect(group('docs/content-design.md')).toBe('Guidelines')
+  })
+
+  it('sort in the order the Contents page lists them, group by group', () => {
+    // the sidebar order: each group at 10 spaces, its pages at 12, the PAGES order in both
     const preview = readFileSync(join(root, '.storybook/preview.ts'), 'utf8')
-    const order = [...preview.matchAll(/^ {12}'([^']+)',$/gm)].map((m) => m[1])
-    expect(order).toEqual(pages.filter((p) => p.group === 'Foundations').map((p) => p.title))
+    const order: { group: string; titles: string[] }[] = []
+    for (const [, indent, name] of preview.matchAll(/^( {10}| {12})'([^']+)',$/gm))
+      if (indent.length === 10) order.push({ group: name, titles: [] })
+      else order.at(-1)!.titles.push(name)
+    const groups = [...new Set(pages.map((p) => p.group))]
+    expect(order.map((o) => o.group)).toEqual(groups)
+    for (const { group, titles } of order) {
+      const listed = pages.filter((p) => p.group === group).map((p) => p.title)
+      // its pages first; under Components, the registered components follow
+      expect(titles.slice(0, listed.length)).toEqual(listed)
+    }
     const contents = readFileSync(join(root, 'docs/foundations/README.md'), 'utf8')
     const linked = [...contents.matchAll(/^\| \[[^\]]+\]\(([\w-]+\.md)\)/gm)].map(
       (m) => `docs/foundations/${m[1]}`,

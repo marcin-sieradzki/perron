@@ -1,0 +1,2 @@
+# Lint fixtures: files meant to fail, linted one at a time by their tests with --no-ignore.
+**/fixtures

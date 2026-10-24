@@ -1,0 +1,9 @@
+.pn-Fixture {
+  border-color: ButtonText;
+}
+
+@media (forced-colors: active) {
+  .pn-Fixture {
+    color: LinkText;
+  }
+}

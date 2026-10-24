@@ -28,3 +28,6 @@ coverage
 playwright-report
 test-results
 blob-report
+
+# Claude Code agent worktrees
+.claude/worktrees

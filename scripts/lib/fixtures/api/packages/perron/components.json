@@ -1,0 +1,29 @@
+[
+  {
+    "name": "Button",
+    "layer": "component",
+    "category": "Actions",
+    "status": "stable",
+    "baseUiParts": ["Button"],
+    "penpotPath": "Components/Button",
+    "dependsOn": []
+  },
+  {
+    "name": "Chip",
+    "layer": "component",
+    "category": "Display",
+    "status": "deprecated",
+    "baseUiParts": [],
+    "penpotPath": "Components/Chip",
+    "dependsOn": []
+  },
+  {
+    "name": "Alert",
+    "layer": "component",
+    "category": "Feedback",
+    "status": "building",
+    "baseUiParts": [],
+    "penpotPath": "Components/Alert",
+    "dependsOn": []
+  }
+]

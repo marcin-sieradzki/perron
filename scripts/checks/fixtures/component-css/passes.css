@@ -1,0 +1,67 @@
+/* Everything the contract allows a component to write. */
+.pn-Fixture {
+  --perron-icon-size: var(--perron-icon-size-400);
+  display: inline-flex;
+  gap: var(--perron-space-200);
+  padding: 0 calc(var(--perron-space-300) - var(--perron-border-width-025));
+  min-block-size: var(--perron-size-input);
+  inline-size: 100%;
+  flex: 1 1 0;
+  border: var(--perron-border-width-025) solid var(--perron-color-border-control);
+  border-radius: var(--perron-radius-md);
+  background-color: var(--perron-color-surface-raised);
+  background-image: linear-gradient(
+    var(--perron-color-surface-hover),
+    var(--perron-color-surface-hover)
+  );
+  color: var(--perron-color-text-primary);
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+  box-shadow: var(--perron-shadow-panel);
+  backdrop-filter: blur(var(--perron-effect-glass-blur))
+    saturate(var(--perron-effect-glass-saturate));
+  transition: background-color var(--perron-duration-sheet) var(--perron-easing-standard);
+  transition-delay: 0s;
+  transform: rotate(45deg);
+  z-index: var(--perron-z-index-dialog);
+  outline-color: transparent;
+  fill: currentColor;
+  content: 'red 4px';
+}
+
+.pn-Fixture-icon {
+  inline-size: var(--perron-icon-size);
+}
+
+.pn-Fixture[data-disabled] {
+  color: var(--perron-color-text-tertiary);
+}
+
+.pn-Fixture[data-variant='outlined'][data-size='small'] {
+  animation: pn-Fixture-spin var(--perron-duration-blink) infinite;
+}
+
+@media (hover: hover) {
+  .pn-Fixture:hover {
+    background-color: var(--perron-color-surface-hover);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pn-Fixture[data-variant='outlined'][data-size='small'] {
+    animation: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .pn-Fixture {
+    border-color: ButtonText;
+    background-color: Canvas;
+  }
+}
+
+@keyframes pn-Fixture-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

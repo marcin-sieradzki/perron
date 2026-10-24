@@ -53,7 +53,7 @@ export function buildSite(root: string) {
 
   out['llms.txt'] = `# Perron
 
-> Perron is the design system of Mylder, published on npm as \`@mylder/perron\`: design tokens, fonts, icons and the Mylder mark, with one page of rules per foundation. Each link is the Markdown twin of a page in the Storybook at ${SITE}.
+> Perron is the design system of Mylder, published on npm as \`@mylder/perron\`: design tokens, fonts, icons and the Mylder mark, with one page of rules per foundation and the contract its components follow. Each link is the Markdown twin of a page in the Storybook at ${SITE}.
 
 ${list('##')}
 

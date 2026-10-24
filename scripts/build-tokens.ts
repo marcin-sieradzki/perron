@@ -1,11 +1,12 @@
 // Builds CSS, TypeScript and Penpot files from the DTCG token files in packages/perron/tokens/,
 // rebuilds the token tables in docs/foundations/, and writes the MCP server's data files. Usage: node scripts/build-tokens.ts [--check]
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
+import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { buildData } from './lib/data.ts'
 import { buildDocs } from './lib/docs.ts'
 import { PACKAGE } from './lib/paths.ts'
+import { syncCli } from './lib/sync.ts'
 import { buildAll, loadTokens, type TokenSources } from './lib/tokens.ts'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
@@ -19,29 +20,9 @@ export function readSources(): TokenSources {
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const check = process.argv.includes('--check')
   const sources = readSources()
   const tokens = loadTokens(sources)
   const docs = await buildDocs(root, tokens)
   const out = { ...buildAll(sources), ...docs, ...buildData(root, tokens, docs) }
-  let stale = 0
-  for (const [rel, text] of Object.entries(out)) {
-    const file = join(root, rel)
-    let current = ''
-    try {
-      current = readFileSync(file, 'utf8')
-    } catch {
-      // first build
-    }
-    if (current === text) continue
-    if (check) {
-      console.error(`${rel} is out of date. Run npm run tokens.`)
-      stale++
-    } else {
-      mkdirSync(dirname(file), { recursive: true })
-      writeFileSync(file, text)
-      console.log(`wrote ${rel}`)
-    }
-  }
-  if (stale) process.exit(1)
+  syncCli(root, out, 'npm run tokens')
 }

@@ -1,0 +1,3 @@
+.pn-Fixture {
+  gap: var(--perron-space-200, var(--perron-space-100));
+}

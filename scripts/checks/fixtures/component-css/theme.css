@@ -1,0 +1,9 @@
+[data-theme='dark'] .pn-Fixture {
+  color: var(--perron-color-text-primary);
+}
+
+@media (prefers-color-scheme: dark) {
+  .pn-Fixture {
+    color: var(--perron-color-text-primary);
+  }
+}

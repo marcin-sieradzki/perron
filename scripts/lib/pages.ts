@@ -25,6 +25,10 @@ export const PAGES = [
   'docs/foundations/map.md',
   'docs/content-design.md',
   'docs/glossary.md',
+  'docs/components/README.md',
+  'docs/components/TEMPLATE.md',
+  // registry:specs start: each spec page, written by npm run registry
+  // registry:specs end
 ]
 
 export interface TokenValue {
@@ -81,7 +85,7 @@ export interface Page {
   path: string
   /** The page's `#` heading */
   title: string
-  /** The sidebar group: Foundations, or Guidelines for pages outside docs/foundations */
+  /** The sidebar group: Foundations or Components by folder, else Guidelines */
   group: string
   segments: Segment[]
 }
@@ -209,13 +213,20 @@ function filesSegment(tokens: ResolvedTokens, root: string, dir: string): Segmen
   return { kind: 'icons', categories: byCategory(icons) }
 }
 
+/** The sidebar group of each folder under docs/; a page anywhere else is a guideline. */
+const GROUPS: Record<string, string> = {
+  'docs/foundations/': 'Foundations',
+  'docs/components/': 'Components',
+  'docs/patterns/': 'Patterns',
+}
+
 /** A page's title and sidebar group, from its path and its `#` heading. */
 export function headingOf(path: string, markdown: string): Pick<Page, 'title' | 'group'> {
   const heading = /^# (.+)$/m.exec(markdown)
   if (!heading) throw new Error(`${path} has no # heading`)
   return {
     title: heading[1],
-    group: path.startsWith('docs/foundations/') ? 'Foundations' : 'Guidelines',
+    group: Object.entries(GROUPS).find(([dir]) => path.startsWith(dir))?.[1] ?? 'Guidelines',
   }
 }
 
