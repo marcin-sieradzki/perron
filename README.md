@@ -1,6 +1,6 @@
 # Perron
 
-Perron is the design system of [Mylder](https://github.com/marcin-sieradzki/Mylder), a live map of Copenhagen's buses, S-tog, metro and regional trains. This repository holds its foundations: the design tokens, the build that turns them into CSS, TypeScript and a Penpot file, the fonts, the icons and the Mylder mark, and the guidelines in [docs/foundations/](docs/foundations/README.md).
+Perron is the design system of [Mylder](https://github.com/marcin-sieradzki/mylder), a live map of Copenhagen's buses, S-tog, metro and regional trains. This repository holds its foundations: the design tokens, the build that turns them into CSS, TypeScript and a Penpot file, the fonts, the icons and the Mylder mark, and the guidelines in [docs/foundations/](docs/foundations/README.md).
 
 Components and patterns are built here too, one at a time, to the [component contract](docs/components/README.md) and through the factory loop of the [roadmap](ROADMAP.md). The ones already extracted from the Mylder prototype are a reference for behaviour only.
 
