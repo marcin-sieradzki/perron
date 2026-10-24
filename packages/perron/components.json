@@ -12,10 +12,10 @@
     "name": "IconButton",
     "layer": "component",
     "category": "Actions",
-    "status": "designing",
+    "status": "building",
     "baseUiParts": ["Button"],
     "penpotPath": "Components/IconButton",
-    "dependsOn": ["Button"]
+    "dependsOn": []
   },
   {
     "name": "LinkButton",
