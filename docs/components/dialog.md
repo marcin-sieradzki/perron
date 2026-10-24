@@ -2,7 +2,7 @@
 
 A modal panel over the map and a `color.scrim` backdrop, such as the help with the keys or a question before clearing every filter, which holds focus until it closes and then gives it back to the button that opened it.
 
-The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the contract, the foundations, the tokens and the Base UI reference. The extracted prototype component is not in any branch this run can reach. The [IconButton](icon-button.md) spec gives the close button its look, and the [Button](button.md) spec the trigger and the actions in the stories.
+The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the contract, the foundations, the tokens and the Base UI reference. The extracted prototype component is not in any branch this run can reach. The `CloseButton` shared part gives the close button its look, as the Sheet build (branch `component/sheet`) draws it, and the [Button](button.md) spec the trigger and the actions in the stories.
 
 ## Anatomy
 
@@ -10,7 +10,7 @@ Penpot page `Components/Dialog`. Family: Panels (the contract's [Families](READM
 
 Dialog is one component that takes its words and controls as props, `title`, `description`, `children`, `actions` and `trigger`, and renders every Base UI part itself, with the popup as its root, the element `ref`, `className`, `style` and the rest props reach: the registry gives Dialog one entry for all eight parts, `Dialog.Root` renders no element of its own, and the popup is the one element a caller would style or measure, while a compound would need the Toolbar spec's exception to "one component per folder" with no part a caller needs to place.
 
-The close button is the `CloseButton` shared part, rendered through `Dialog.Close`'s `render`, its `label` the dialog's owned "Close" or `closeLabel`. When its folder, `packages/perron/src/parts/CloseButton/` (`CloseButton.tsx` and `CloseButton.css`), does not exist on `main` yet, the Dialog build adds it exactly as the Sheet build (branch `component/sheet`) draws it, file for file: a `<button>` in a `size.control` square with `radius.md`, the `close` icon at `icon.size.400` in `color.text.secondary`, `color.text.primary` on `color.surface.hover`, `color.surface.selected` while pressed, its label in the `VisuallyHidden` part. Dialog takes no dependency on IconButton: one part, drawn once, serves Dialog, Sheet, Popover and Toast, and whichever of Dialog and Sheet merges second finds the same files.
+The close button is the `CloseButton` shared part, rendered through `Dialog.Close`'s `render`, its `label` the dialog's owned "Close" or `closeLabel`. When its folder, `CloseButton/` under `packages/perron/src/parts/` (`CloseButton.tsx` and `CloseButton.css`), does not exist on `main` yet, the Dialog build adds it exactly as the Sheet build (branch `component/sheet`) draws it, file for file: a `<button>` in a `size.control` square with `radius.md`, the `close` icon at `icon.size.400` in `color.text.secondary`, `color.text.primary` on `color.surface.hover`, `color.surface.selected` while pressed, its label in the `VisuallyHidden` part. Dialog takes no dependency on IconButton: one part, drawn once, serves Dialog, Sheet, Popover and Toast, and whichever of Dialog and Sheet merges second finds the same files.
 
 | Part (Penpot layer) | What it is                                                                                                                                                                           | Base UI part                                  | Class                   | `slotProps` key |
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------- | ----------------------- | --------------- |
@@ -41,7 +41,7 @@ Imported from `@base-ui/react/dialog`, at the version pinned in `package.json` (
 | `Dialog.Popup`       | `<div role="dialog" tabindex="-1">`, `aria-labelledby` the title and `aria-describedby` the description, with `data-open`, `data-closed`, `data-nested` and `data-nested-dialog-open` | `className` (`pn-Dialog`, then the caller's), `style`, `ref`, and the children: the header, the description, the content and the actions                                                                                                | `initialFocus`, `finalFocus`, `render` and every other prop of a `<div>`, such as `data-testid`, through `{...rest}` |
 | `Dialog.Title`       | `<h2>`, with an id the popup's `aria-labelledby` reads                                                                                                                                | `className` (`pn-Dialog-title`), the `title` prop as children                                                                                                                                                                           | `slotProps.title`: `render` (another heading level), `id` and every other prop of an `<h2>`                          |
 | `Dialog.Description` | `<p>`, with an id the popup's `aria-describedby` reads                                                                                                                                | `className` (`pn-Dialog-description`), the `description` prop as children; rendered only when `description` is given                                                                                                                    | `slotProps.description`: `render`, `id` and every other prop of a `<p>`                                              |
-| `Dialog.Close`       | `<button type="button">` through `render`: the `CloseButton`, with `data-disabled` when disabled                                                                                      | `render` (`<CloseButton label={strings.close} />`), `className` (`pn-Dialog-close`, beside `pn-CloseButton` and `pn-IconButton`)                                                                                                        | `slotProps.close`: `disabled`, `nativeButton` and every other prop of a `<button>`                                   |
+| `Dialog.Close`       | `<button type="button">` through `render`: the `CloseButton`, with `data-disabled` when disabled                                                                                      | `render` (`<CloseButton label={strings.close} />`), `className` (`pn-Dialog-close`, beside the part's `pn-CloseButton`)                                                                                                                 | `slotProps.close`: `disabled`, `nativeButton` and every other prop of a `<button>`                                   |
 
 Base UI already does: it opens the dialog on a press of `Dialog.Trigger` and gives the trigger `aria-haspopup="dialog"`, `aria-expanded` and `aria-controls`; it portals the backdrop and the popup to `<body>`, and renders nothing there, on the server or the client, while the dialog is closed, unless the portal's `keepMounted` is set; it names the popup from `Dialog.Title` and describes it from `Dialog.Description` through ids it generates; when the dialog opens it moves focus to the first tabbable element in the popup, or to the popup itself when opened by touch, so no virtual keyboard opens, unless `initialFocus` says otherwise; while a modal dialog is open it traps focus in the popup, so Tab and Shift+Tab wrap inside it, hides everything outside it from assistive technology with `aria-hidden`, blocks the pointer outside it and locks the page's scroll; Esc closes the topmost dialog only; a press outside the popup, on the backdrop, closes it; `Dialog.Close` closes it; on close it returns focus to the trigger, or to the element focused before it opened, unless `finalFocus` says otherwise; it reports each change with its reason (`trigger-press`, `outside-press`, `escape-key`, `close-press`, `focus-out`, `imperative-action`, `none`) and a `cancel()` that keeps the dialog as it is; a dialog opened inside another's popup is nested: Base UI marks both with `data-nested` and `data-nested-dialog-open` and renders no second backdrop unless its `forceRender` is set.
 
@@ -88,45 +88,50 @@ The popup is at most 440 px wide, written in `Dialog.css` as a raw length with a
 
 The popup is padded `space.600`, its parts `space.300` apart, with the actions a further `space.300` from the content (`space.600` in all, the distance between blocks), end-aligned and `space.200` apart, wrapping; the title is in `typography.heading-lg`, the description in `typography.body-sm` in `color.text.secondary`, the content in `typography.body`; the close button is pulled `space.100` up and `space.200` towards the end, so its icon lines up with the title's first line and the padding's edge; and the popup is at most the viewport's height less `size.panel-gap` at each end, scrolling as a whole, header included: [Semantic spacing](../foundations/semantic-spacing.md) sets a panel's parts 12 px apart and its blocks 24 px, [Typography](../foundations/typography.md) gives `heading-lg` to dialog titles and `body-sm` to "the line under a title", and a popup that scrolls as one keeps its close button, the first tabbable element, inside the scrolling region, which axe's `scrollable-region-focusable` rule asks for.
 
-| Part                  | State   | Property                           | Token                                                                         |
-| --------------------- | ------- | ---------------------------------- | ----------------------------------------------------------------------------- |
-| `backdrop`            | rest    | `background-color`                 | `color.scrim`                                                                 |
-| `backdrop`            | rest    | `z-index`                          | `z-index.dialog`                                                              |
-| `backdrop`            | open    | every property                     | As rest: the open backdrop has no look of its own                             |
-| `root`                | rest    | `background-color`                 | `color.surface.overlay`                                                       |
-| `root`                | rest    | `backdrop-filter`                  | `effect.glass-blur` (blur) and `effect.glass-saturate`                        |
-| `root`                | rest    | `box-shadow`                       | `shadow.panel`                                                                |
-| `root`                | rest    | `border-width`                     | `border.width.025`                                                            |
-| `root`                | rest    | `border-color`                     | `color.border.subtle`                                                         |
-| `root`                | rest    | `border-radius`                    | `radius.xl`                                                                   |
-| `root`                | rest    | `padding`                          | `space.600`                                                                   |
-| `root`                | rest    | `gap`                              | `space.300`                                                                   |
-| `root`                | rest    | `inline-size`                      | `min(440px, calc(100% - 2 * size.panel-gap))`, the 440 px under its allowance |
-| `root`                | rest    | `max-block-size`                   | `calc(100% - 2 * size.panel-gap)`                                             |
-| `root`                | rest    | `color`                            | `color.text.primary`                                                          |
-| `root`                | rest    | `z-index`                          | `z-index.dialog`                                                              |
-| `root`                | open    | every property                     | As rest: the open popup has no look of its own                                |
-| `header`              | rest    | `gap`                              | `space.300`                                                                   |
-| `title`               | rest    | `font`, `letter-spacing`           | `typography.heading-lg`, with its tracking twin                               |
-| `title`               | rest    | `color`                            | `color.text.primary`                                                          |
-| `close`               | rest    | `margin-block`                     | `calc(-1 * space.100)`                                                        |
-| `close`               | rest    | `margin-inline-end`                | `calc(-1 * space.200)`                                                        |
-| `close`               | rest    | `inline-size`, `block-size`        | `size.control`, from IconButton                                               |
-| `close`               | rest    | `--perron-icon-size`               | `icon.size.400`, from IconButton's `medium`                                   |
-| `close`               | rest    | `background-color`, `border-color` | `transparent`, from IconButton's `neutral`                                    |
-| `close`               | rest    | `color`                            | `color.text.primary`, from IconButton's `neutral`                             |
-| `close`               | rest    | `border-radius`                    | `radius.md`, from IconButton                                                  |
-| `close`               | hover   | `background-color`                 | `color.surface.hover`, from IconButton's `neutral`                            |
-| `close`               | pressed | `background-color`                 | `color.surface.hover`, from IconButton's `neutral`                            |
-| `close` (`focusRing`) | focus   | `outline`, `outline-offset`        | `focus.width` in `color.border.focus`, `focus.offset` (drawn by `perron.css`) |
-| `description`         | rest    | `font`, `letter-spacing`           | `typography.body-sm`, with its tracking twin                                  |
-| `description`         | rest    | `color`                            | `color.text.secondary`                                                        |
-| `content`             | rest    | `font`, `letter-spacing`           | `typography.body`, with its tracking twin                                     |
-| `content`             | rest    | `color`                            | `color.text.primary`                                                          |
-| `actions`             | rest    | `gap`                              | `space.200`                                                                   |
-| `actions`             | rest    | `margin-block-start`               | `space.300`                                                                   |
+| Part                  | State   | Property                    | Token                                                                         |
+| --------------------- | ------- | --------------------------- | ----------------------------------------------------------------------------- |
+| `backdrop`            | rest    | `background-color`          | `color.scrim`                                                                 |
+| `backdrop`            | rest    | `z-index`                   | `z-index.dialog`                                                              |
+| `backdrop`            | open    | every property              | As rest: the open backdrop has no look of its own                             |
+| `root`                | rest    | `background-color`          | `color.surface.overlay`                                                       |
+| `root`                | rest    | `backdrop-filter`           | `effect.glass-blur` (blur) and `effect.glass-saturate`                        |
+| `root`                | rest    | `box-shadow`                | `shadow.panel`                                                                |
+| `root`                | rest    | `border-width`              | `border.width.025`                                                            |
+| `root`                | rest    | `border-color`              | `color.border.subtle`                                                         |
+| `root`                | rest    | `border-radius`             | `radius.xl`                                                                   |
+| `root`                | rest    | `padding`                   | `space.600`                                                                   |
+| `root`                | rest    | `gap`                       | `space.300`                                                                   |
+| `root`                | rest    | `inline-size`               | `min(440px, calc(100% - 2 * size.panel-gap))`, the 440 px under its allowance |
+| `root`                | rest    | `max-block-size`            | `calc(100% - 2 * size.panel-gap)`                                             |
+| `root`                | rest    | `color`                     | `color.text.primary`                                                          |
+| `root`                | rest    | `z-index`                   | `z-index.dialog`                                                              |
+| `root`                | open    | every property              | As rest: the open popup has no look of its own                                |
+| `header`              | rest    | `gap`                       | `space.300`                                                                   |
+| `title`               | rest    | `font`, `letter-spacing`    | `typography.heading-lg`, with its tracking twin                               |
+| `title`               | rest    | `color`                     | `color.text.primary`                                                          |
+| `close`               | rest    | `margin-block`              | `calc(-1 * space.100)`                                                        |
+| `close`               | rest    | `margin-inline-end`         | `calc(-1 * space.200)`                                                        |
+| `close`               | rest    | `inline-size`, `block-size` | `size.control`, from the `CloseButton` part                                   |
+| `close`               | rest    | `--perron-icon-size`        | `icon.size.400`, from the `CloseButton` part                                  |
+| `close`               | rest    | `background-color`          | `transparent`, from the `CloseButton` part                                    |
+| `close`               | rest    | `color`                     | `color.text.secondary`, from the `CloseButton` part                           |
+| `close`               | rest    | `border-radius`             | `radius.md`, from the `CloseButton` part                                      |
+| `close`               | hover   | `background-color`          | `color.surface.hover`, from the `CloseButton` part                            |
+| `close`               | hover   | `color`                     | `color.text.primary`, from the `CloseButton` part                             |
+| `close`               | pressed | `background-color`          | `color.surface.selected`, from the `CloseButton` part                         |
+| `close` (`focusRing`) | focus   | `outline`, `outline-offset` | `focus.width` in `color.border.focus`, `focus.offset` (drawn by `perron.css`) |
+| `description`         | rest    | `font`, `letter-spacing`    | `typography.body-sm`, with its tracking twin                                  |
+| `description`         | rest    | `color`                     | `color.text.secondary`                                                        |
+| `content`             | rest    | `font`, `letter-spacing`    | `typography.body`, with its tracking twin                                     |
+| `content`             | rest    | `color`                     | `color.text.primary`                                                          |
+| `actions`             | rest    | `gap`                       | `space.200`                                                                   |
+| `actions`             | rest    | `margin-block-start`        | `space.300`                                                                   |
 
-Highlighted, selected, invalid and disabled don't apply to the dialog: it holds no rows, no choice and no value, and Base UI gives `Dialog.Popup` no disabled state. A disabled close button (`slotProps.close.disabled`) takes IconButton's disabled `neutral` look, `color.text.tertiary`.
+The `close` rows other than its two margins are the `CloseButton` part's, which draws them in its own folder, as the Sheet build does (CR-12); the focus row is `perron.css`'s.
+
+Highlighted, selected, invalid and disabled don't apply to the dialog: it holds no rows, no choice and no value, and Base UI gives `Dialog.Popup` no disabled state.
+
+Base UI's `Dialog.Close` takes `disabled`, a state the `CloseButton` part, drawn file for file as the Sheet build draws it, gives no look. Dialog leaves `disabled` out of `slotProps.close` (typed `Omit<Dialog.Close.Props, 'disabled'>`), so its close button is never disabled: the close button is always rendered so touch screen readers can leave the modal dialog (CR-6), a disabled one would shut them in while Esc and the backdrop still close it, and the shared part then needs no disabled look; a dialog that must stay open cancels the close in `onClose` with `details.cancel()`.
 
 Base UI marks a dialog opened from inside another's popup `data-nested`, and the one beneath it `data-nested-dialog-open`, which the deferred design doesn't show. Both keep the rest look, the nested popup painting over the first at the same `z-index.dialog` with no second scrim, Base UI's default: no Mylder screen opens a dialog from a dialog, and a stacked look, such as the one beneath shrinking, needs motion no `duration.*` token gives.
 
@@ -187,7 +192,7 @@ Rules for this component alone, numbered so the build and the review can cite th
 - **CR-9.** The header is a flex row aligned to the start of the block axis, the title growing (`flex: 1`, `min-inline-size: 0`) and the close button keeping its square (`flex: none`). The title and the description have no margin of their own (the browser's `<h2>` and `<p>` margins are reset), the popup's `gap` spacing the parts, and long words wrap (`overflow-wrap: anywhere`), so a long Danish word fits a 320 px screen.
 - **CR-10.** The dialog opens and closes at once: no `duration.*` token fits a dialog's entrance, so the CSS has no transition and styles neither `data-starting-style` nor `data-ending-style`.
 - **CR-11.** The popup draws its `border.width.025` edge as a border, so Windows' forced colours keep an edge round the dialog when they drop its glass and its shadow.
-- **CR-12.** The close button keeps IconButton's look and states; Dialog's CSS sets only its margins (Tokens) and never its colours or its size.
+- **CR-12.** The close button keeps the `CloseButton` part's look and states; Dialog's CSS sets only its margins (Tokens) and never its colours or its size.
 - **CR-13.** The portal renders nothing on the server, so the contract story's owned-strings check, which renders to static markup, sees only the trigger. Dialog's own stories check the open popup's words in the live DOM instead: `expectOwnedStrings(popup.outerHTML, locale, callerWords)` in English, and in Danish with no override.
 - **CR-14.** The stories' meta sets `parameters: { docs: { story: { inline: false, height: '480px' } } }`, as the contract's [Stories](README.md#stories) asks of an overlay, and each story opens its dialog at first render with `defaultOpen` or `open`, beside the trigger that opens it again.
 
@@ -195,7 +200,7 @@ Dialog's root, the popup, portals to `<body>`, and only after the portal mounts,
 
 ## Stories
 
-Dialog has no variant property, so its deferred drawing has one variant, `Default`, the open dialog, and no `State` (`penpot/README.md`, "Conventions"): the close button's hover, pressed and focus looks are IconButton's, drawn and storied on its page. The other stories show the content's shapes and the behaviour beside it, which their `play` tests check.
+Dialog has no variant property, so its deferred drawing has one variant, `Default`, the open dialog, and no `State` (`penpot/README.md`, "Conventions"): the close button's hover, pressed and focus looks are the `CloseButton` part's, the same in every component that composes it. The other stories show the content's shapes and the behaviour beside it, which their `play` tests check.
 
 Each story renders the dialog open at first render beside its trigger, a [Button](button.md), in a `PerronProvider` in English unless the story says otherwise, with `fn()` handlers for `onOpen` and `onClose`. The `Default` story's args, which the contract story renders, hold every word the caller gives: the trigger "Show keys", the title "Keys", the description "Move around the map without a mouse." and the content "Keys: + and − zoom, arrows pan, Esc closes panels." ([Content design](../content-design.md)).
 
