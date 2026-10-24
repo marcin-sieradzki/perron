@@ -3,6 +3,9 @@ component: EmptyState
 layer: component
 deferred:
   at: 2026-10-24T21:15:16.730Z
+needsHuman:
+  stage: docs
+  reason: "docs failed: pre-flight: docs/components/empty-state.md Props table has no row for render, which EmptyStateProps inherits from Base UI (useRender.ComponentProps<'div'>); the spec only mentions it in prose. Add a render row (Base UI's render, no default, Base UI prop render, Base UI's JSDoc)."
 stages:
   brief:
     status: done
@@ -23,3 +26,8 @@ stages:
     status: done
     started: 2026-10-24T21:37:18.510Z
     ended: 2026-10-24T21:41:09.648Z
+  docs:
+    status: failed
+    started: 2026-10-24T21:48:45.873Z
+    ended: 2026-10-24T21:50:06.656Z
+    failing: "pre-flight: docs/components/empty-state.md Props table has no row for render, which EmptyStateProps inherits from Base UI (useRender.ComponentProps<'div'>); the spec only mentions it in prose. Add a render row (Base UI's render, no default, Base UI prop render, Base UI's JSDoc)."
