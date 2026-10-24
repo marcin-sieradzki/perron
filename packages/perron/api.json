@@ -75,6 +75,64 @@
       }
     }
   },
+  "DataStatePanel": {
+    "extends": [
+      "Omit<ComponentPropsWithRef<'div'>, 'children'>"
+    ],
+    "props": {
+      "action": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "description": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "loadFailedLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "loadingLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "noDataLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ message?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; emptyState?: Omit<EmptyStateProps, \"children\" | \"title\" | \"action\"> | undefined; }"
+        ]
+      },
+      "status": {
+        "optional": true,
+        "type": [
+          "\"empty\"",
+          "\"error\"",
+          "\"loading\"",
+          "\"ready\""
+        ]
+      }
+    }
+  },
   "Delay": {
     "extends": [
       "Omit<useRender.ComponentProps<'span'>, 'children' | 'ref'>"
