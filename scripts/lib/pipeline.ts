@@ -150,6 +150,22 @@ function variantsOf(env: Env, name: string, deferred = false) {
 }
 
 const PENDING_MENTION = /`\[PENDING\][^`]*`/g
+const CODE_SPAN = /`[^`\n]+`/g
+
+/**
+ * Where a template placeholder left in `spec` would show: its text outside the `[PENDING]`
+ * questions, whose words are the maintainer's to answer, and outside its code spans, which can hold
+ * angle brackets as code (`[data-delay='<value>']`), but for a code span the template has as is.
+ */
+function unfilledText(spec: string, template: string) {
+  const templateSpans = new Set(template.match(CODE_SPAN))
+  return spec
+    .replace(PENDING_MENTION, '')
+    .split('\n')
+    .filter((line) => !line.includes('[PENDING]'))
+    .join('\n')
+    .replace(CODE_SPAN, (span) => (templateSpans.has(span) ? span : ''))
+}
 
 /**
  * What keeps a spec from being complete: a template section missing or out of order, a template
@@ -171,13 +187,13 @@ export function specProblems(spec: string, template: string, name: string) {
     )
   const title = /^# (.+)$/m.exec(spec)?.[1]
   if (title !== name) problems.push(`starts with "# ${title ?? ''}", not "# ${name}"`)
-  const text = spec.replace(PENDING_MENTION, '')
   const placeholders = new Set(
     [...template.replace(PENDING_MENTION, '').matchAll(/<[^<>\n]+>/g)].map((m) => m[0]),
   )
+  const unfilled = unfilledText(spec, template)
   for (const p of placeholders)
-    if (text.includes(p)) problems.push(`still has the placeholder ${p}`)
-  const pending = text.match(/\[PENDING\]/g)?.length ?? 0
+    if (unfilled.includes(p)) problems.push(`still has the placeholder ${p}`)
+  const pending = spec.replace(PENDING_MENTION, '').match(/\[PENDING\]/g)?.length ?? 0
   return { pending, problems }
 }
 

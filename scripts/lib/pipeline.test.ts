@@ -60,6 +60,26 @@ describe('specProblems', () => {
     ])
   })
 
+  it('names a placeholder outside a code span, or in a code span kept from the template', () => {
+    const spec = filled('Swatch', 'Penpot page `Components/<Name>`, `pn-<Name>`. Holds <what>.')
+    expect(specProblems(spec, template, 'Swatch').problems).toEqual([
+      'still has the placeholder <Name>',
+      'still has the placeholder <what>',
+    ])
+  })
+
+  it('takes angle brackets in a [PENDING] question or in code as text, not a placeholder', () => {
+    const spec = filled(
+      'Swatch',
+      [
+        "[PENDING] Does `[data-delay='<value>']` need a token for <what> it shows?",
+        '',
+        "| `root` | rest | `color` | `[data-tone='<value>']` |",
+      ].join('\n'),
+    )
+    expect(specProblems(spec, template, 'Swatch')).toEqual({ pending: 1, problems: [] })
+  })
+
   it("names a spec still headed with the template's title", () => {
     expect(specProblems(filled('Spec template'), template, 'Swatch').problems).toEqual([
       'starts with "# Spec template", not "# Swatch"',
