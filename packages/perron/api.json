@@ -75,6 +75,76 @@
       }
     }
   },
+  "Delay": {
+    "extends": [
+      "Omit< useRender.ComponentProps<'span'>, 'children' | 'render' | 'ref' >"
+    ],
+    "props": {
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "delayUnknownLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "minutes": {
+        "optional": false,
+        "type": [
+          "null",
+          "number"
+        ]
+      },
+      "minutesEarlyLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "minutesLateLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "minutesUnitLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "onTimeLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLSpanElement>"
+        ]
+      },
+      "render": {
+        "optional": true,
+        "type": [
+          "ComponentRenderFn<HTMLProps, {}>",
+          "ReactElement<unknown, string | JSXElementConstructor<any>>",
+          "undefined"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      }
+    }
+  },
   "StationIcon": {
     "extends": [
       "Omit<ComponentPropsWithRef<'span'>, 'children'>"
