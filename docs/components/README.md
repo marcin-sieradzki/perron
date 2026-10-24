@@ -10,14 +10,15 @@ The rules the [Checks](#checks) table names fail `npm run check` when broken. Th
 
 `<Name>` is the component's name in PascalCase, `<name>` the same in kebab-case.
 
-| File                                                       | Holds                                                                                                 |
-| ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `packages/perron/src/components/<Name>/<Name>.tsx`         | The component, and its props type `<Name>Props`, both exported                                        |
-| `packages/perron/src/components/<Name>/<Name>.css`         | Its styles, which the TSX imports: `import './<Name>.css'`                                            |
-| `packages/perron/src/components/<Name>/<Name>.stories.tsx` | Its stories and `play` tests                                                                          |
-| `packages/perron/src/components/<Name>/<Name>.mdx`         | Its Storybook docs page, written by the `component-docs` skill after review                           |
-| `docs/components/<name>.md`                                | Its spec; a pattern's is `docs/patterns/<name>.md`                                                    |
-| `storybook/pages/<name>.mdx`                               | Its spec's Storybook page: `storybook/pages/contract.mdx` with the spec's path, titled `Specs/<Name>` |
+| File                                                       | Holds                                                                                                                        |
+| ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `packages/perron/src/components/<Name>/<Name>.tsx`         | The component, and its props type `<Name>Props`, both exported                                                               |
+| `packages/perron/src/components/<Name>/<Name>.css`         | Its styles, which the TSX imports: `import './<Name>.css'`                                                                   |
+| `packages/perron/src/components/<Name>/<Name>.stories.tsx` | Its stories and `play` tests                                                                                                 |
+| `packages/perron/src/components/<Name>/<Name>.mdx`         | Its Storybook docs page, written by the `component-docs` skill after review                                                  |
+| `docs/components/<name>.md`                                | Its spec; a pattern's is `docs/patterns/<name>.md`                                                                           |
+| `storybook/pages/<name>.mdx`                               | Its spec's Storybook page: `storybook/pages/contract.mdx` with the spec's path, titled `Specs/<Name>`                        |
+| `components/<name>/`                                       | Its place in the loop: `pipeline.yaml`, which `npm run factory` alone writes, `review.md` and the visual report in `visual/` |
 
 - One component per folder. A child the caller writes many times, such as a menu's item, is a component of its own, in its own folder.
 - A component joins `packages/perron/components.json`, and `npm run registry` writes the barrel and the package exports from it.

@@ -1,4 +1,6 @@
 import type { Preview } from '@storybook/react-vite'
+// the tokens, fonts and page defaults every story renders with, as an app loads them at its root
+import '@mylder/perron/perron.css'
 
 const preview: Preview = {
   parameters: {

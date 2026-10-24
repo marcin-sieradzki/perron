@@ -321,3 +321,13 @@ body,
   inline-size: auto;
   block-size: 3rem;
 }
+
+/* A component's docs page: the props table's required mark and its note */
+.pd-required {
+  color: var(--perron-color-text-danger);
+}
+
+.pd-note {
+  font: var(--perron-typography-caption);
+  color: var(--perron-color-text-secondary);
+}

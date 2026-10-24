@@ -12,7 +12,7 @@ The tokens follow the W3C Design Tokens Community Group's [Design Tokens specifi
 - Icons and logos: a new or changed file follows `docs/foundations/icons.md` or `logos.md` and joins its folder's manifest, `packages/perron/icons/icons.json` or `packages/perron/logos/logos.json`.
 - Tables in `docs/foundations/` sit between `<!-- tokens -->`, `<!-- contrast -->` and `<!-- files -->` markers and are rebuilt by `npm run tokens`; edit the prose around them.
 - A new page in `docs/`: give it an MDX file in `storybook/pages/` (a spec page's is titled `Specs/<Name>`) and, unless it is a spec page, add it to `PAGES` in `scripts/lib/pages.ts` and to `.storybook/preview.ts`'s sort order; a test checks all three.
-- Building or changing a component or pattern: start from the contract, `docs/components/README.md`, and its spec template, `docs/components/TEMPLATE.md`.
+- Building or changing a component or pattern: start from the contract, `docs/components/README.md`, and its spec template, `docs/components/TEMPLATE.md`. A new one goes through the loop with `/factory <Name>`.
 - Components and patterns: each is an entry in `packages/perron/components.json`; after changing one, run `npm run registry`, which rewrites the barrels, the package exports, and the spec pages and sort order between `// registry:` markers.
 - Skills and this file: write them with the `writing-for-agents` skill.
 - A change to what `@mylder/perron` or `@mylder/perron-mcp` ships adds a changeset (`npx changeset`), which the release workflow turns into a version and a changelog line.

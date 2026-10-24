@@ -11,7 +11,7 @@ Before anything else in a Penpot session, pass the whole of [`helpers.js`](helpe
 - `storage.bind(shape, property, tokenName)` binds a token to a Penpot token property (`fill`, `strokeColor`, `strokeWidth`, `paddingLeft`, …), or to every side at once with `padding`, `radius` or `gap`. It throws on a token that doesn't exist.
 - `await storage.readBack(container)` reads a component, from its variant container or the main instance of a component without variants, into the format below. It hashes exports with `storage.sha256`.
 
-`storage` lasts until the tab reloads or reconnects; if `storage.bind` is missing, load the file again.
+`storage` lasts until the tab reloads or reconnects; if `storage.bind` is missing, load the file again. The [`component-design`](../.claude/skills/component-design/SKILL.md) skill does this as its first Penpot step.
 
 ## Conventions
 
@@ -19,6 +19,7 @@ Before anything else in a Penpot session, pass the whole of [`helpers.js`](helpe
 - **Variant properties are React props.** Each property's name and values are the prop's name and values, such as `variant` with `solid` and `outline`.
 - **Layers are parts.** Each layer is named for the part it becomes: `root`, `label`, `startIcon`. Penpot names a main instance after its component; the read-back writes it as `root`.
 - **Interaction states are a `State` property**, with values such as `default`, `hover`, `focus` and `disabled`, mapped to CSS states in the code map.
+- **A variant's name** is its property values, in the read-back's property order, each in PascalCase, joined: `{ variant: 'solid', State: 'hover' }` is `SolidHover`, and a hyphenated value joins the same way, `brand-subtle` as `BrandSubtle`. A component without variants has one variant, `Default`. Its stories and exports carry this name, so the visual check pairs them without a lookup.
 - **Every value is a token.** Bind each fill, stroke, radius, padding and gap with `storage.bind`; a literal value fails the check. A zero radius, padding or gap needs no token.
 
 ## Read-back
@@ -39,6 +40,8 @@ Each design is read back into two files, so the build and review agents compare 
   "layers": { "root": "root", "label": "label", "startIcon": "startIcon" }
 }
 ```
+
+Each variant is also exported in both themes, as `penpot/<name>/<Variant>.light.png` and `penpot/<name>/<Variant>.dark.png`, PNG at scale 1, for the visual check. The light file holds the bytes the read-back's `png` hash is taken from.
 
 The `penpot` rule of `npm run check` fails when a design binds a token name that isn't in `packages/perron/tokens/`, leaves a fill, stroke, radius, padding or gap unbound, or has a variant value or layer name its code map doesn't map. It also fails a code map for another component, and a `State` mapped to a prop.
 

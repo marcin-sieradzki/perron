@@ -1,0 +1,24 @@
+{
+  "component": "Swatch",
+  "properties": {
+    "tone": {
+      "prop": "tone",
+      "values": {
+        "plain": "plain",
+        "brand": "brand"
+      }
+    },
+    "State": {
+      "state": {
+        "default": null,
+        "hover": ":hover",
+        "focus": ":focus-visible",
+        "pressed": ":active"
+      }
+    }
+  },
+  "layers": {
+    "root": "root",
+    "dot": "dot"
+  }
+}

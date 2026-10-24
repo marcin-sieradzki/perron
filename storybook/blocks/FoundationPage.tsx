@@ -29,7 +29,7 @@ function initialTheme(): Theme {
 }
 
 /** A link to another page's markdown file opens that page in Storybook. */
-function Link({ href = '', ...props }: AnchorHTMLAttributes<HTMLAnchorElement>) {
+export function Link({ href = '', ...props }: AnchorHTMLAttributes<HTMLAnchorElement>) {
   const m = /^(?:\.\.\/)?([\w/-]+\.md)(#[\w-]+)?$/.exec(href)
   if (!m) {
     const external = /^https?:/.test(href)

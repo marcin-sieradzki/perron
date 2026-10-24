@@ -189,8 +189,8 @@ After the design step, three agent contexts run in sequence, rather than as an a
 | Docs   | Any                         | The spec, the stories, the props API                                  | The component's docs page                                        | The docs check of 2.5                                            |
 | Visual | Any, with the local exports | Storybook and the read-back                                           | A geometry and colour report, and pixel-diff images              | Parts within 1 px and on their tokens; the report goes on the PR |
 
-- [ ] **4.1 `component-design` skill.** Local. Draws a component or pattern in Penpot from the contract with the 3.2 helpers, checks it, exports PNGs in light and dark, and writes the read-back and the code map. Penpot's own prompting guides apply: read before writing, make small reversible changes, and never assume a missing value.
-- [ ] **4.2 `component-brief` skill.** Local. Turns the read-back into the spec:
+- [x] **4.1 `component-design` skill.** Local. Draws a component or pattern in Penpot from the contract with the 3.2 helpers, checks it, exports PNGs in light and dark, and writes the read-back and the code map. Penpot's own prompting guides apply: read before writing, make small reversible changes, and never assume a missing value.
+- [x] **4.2 `component-brief` skill.** Local. Turns the read-back into the spec:
   - the anatomy, mapped to Base UI parts;
   - the props table in MUI's layout: name, type, default, and the Base UI prop it maps to;
   - the tokens per part and state;
@@ -199,7 +199,7 @@ After the design step, three agent contexts run in sequence, rather than as an a
 
   A question the sources can't answer goes in as `[PENDING]` and is put to the maintainer: as a comment on the component's issue once 5.4 is in, and with the `grilling` skill before that.
 
-- [ ] **4.3 `component-build` skill.** Any. Steps:
+- [x] **4.3 `component-build` skill.** Any. Steps:
   1. **Pre-flight:** the contract, the spec, the read-back, and the reference component. That is Button once 5.1 has built it: its `.tsx`, `.css` and stories show the contract applied.
   2. **Write** the three files to the contract, and register the component in `components.json`.
   3. **Self-gate**, looped until clean before the reviewer sees anything:
@@ -207,20 +207,20 @@ After the design step, three agent contexts run in sequence, rather than as an a
      - the accessibility tree of the rendered stories listed (each landmark and control with its name and state, and any text inside `aria-hidden` or `inert`) and checked against the 2.2 checklist;
      - `api-consistency` scoped to the component's family.
   4. **Gates:** `npm run check` and the story tests. Three attempts at a red gate, then it stops and says what is failing.
-- [ ] **4.4 `component-docs` skill.** Any. Runs after Review passes, so the page shows the final API. It writes the component's Storybook docs page:
+- [x] **4.4 `component-docs` skill.** Any. Runs after Review passes, so the page shows the final API. It writes the component's Storybook docs page:
   - the spec's prose;
   - the stories as live examples;
   - an autodocs props table in MUI's layout (name, type, default, description), with slots after it.
 
   Button's page is the reference. In phase 9 the same skill writes the website page.
 
-- [ ] **4.5 `component-reviewer` agent.** Any. `.claude/agents/component-reviewer.md`, with read-only tools plus the test commands. Its rubric covers:
+- [x] **4.5 `component-reviewer` agent.** Any. `.claude/agents/component-reviewer.md`, with read-only tools plus the test commands. Its rubric covers:
   - a design-quality pass on the rendered stories in both themes (alignment, spacing, contrast, states that don't move geometry), with findings sorted into Defect, Polish or Direction;
   - the 2.2 checklist of what axe won't catch, plus focus order, reduced motion and target size;
   - API consistency with sibling components;
   - misuse of Base UI: rebuilt behaviour, a lost `render` or ref;
   - the owned strings and docs, against `docs/content-design.md`.
-- [ ] **4.6 `factory` orchestrator skill.** Local. `/factory <Name>` runs one component through the loop:
+- [x] **4.6 `factory` orchestrator skill.** Local. `/factory <Name>` runs one component through the loop:
   - It owns `components/<name>/pipeline.yaml` (stage, approvals, attempts, open P1s, and the scorecard of 5.5) and is the only one that writes it.
   - It starts each stage (design, brief, build, review, docs, visual) in order, and refuses one whose input is missing or unapproved.
   - It drives the component through every stage it can, and stops only at a gate, a `[PENDING]` question or a cap.
@@ -230,7 +230,7 @@ After the design step, three agent contexts run in sequence, rather than as an a
 
   **Done**, for the whole phase, when a dry run on a made-up component reaches each gate and stops there.
 
-- [ ] **4.7 Library audits.** Any. Skills that run across the whole library:
+- [x] **4.7 Library audits.** Any. Skills that run across the whole library:
   - `design-qa`, the design-quality pass of 4.3 and 4.5 on its own, for any component or screen;
   - `api-consistency`;
   - `component-consistency-audit`, which finds a shared part drawn twice, or a family member with a surface of its own;
