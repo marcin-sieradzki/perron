@@ -336,3 +336,38 @@ body,
   font: var(--perron-typography-caption);
   color: var(--perron-color-text-secondary);
 }
+
+/* Storybook's own blocks on a component's docs page, its title, its stories' headings,
+   descriptions and canvases, set in the same tokens, so they follow the theme too. Its theme draws
+   them in fixed light colours, dark on a dark page. Perron's blocks and the stories themselves
+   keep their own styles. */
+.sbdocs-content :is(h1, h2, h3, h4, p, li):not(.pd-page *, .docs-story *) {
+  color: var(--perron-color-text-primary);
+}
+
+/* the "Examples" heading over the stories, which Storybook sets small and quiet */
+.sbdocs-content h2:not(.pd-page *, .docs-story *) {
+  color: var(--perron-color-text-secondary);
+}
+
+.sbdocs-content :is(p, li) a:not(.pd-page *, .docs-story *) {
+  color: var(--perron-color-text-info);
+}
+
+.sbdocs-content :is(h1, h2, h3, h4, p, li) code:not(.pd-page *, .docs-story *) {
+  color: var(--perron-color-text-primary);
+  background: var(--perron-color-surface-inset);
+  border-color: var(--perron-color-border-subtle);
+}
+
+/* a story's canvas is the page's surface, as a story drawn alone sits on it, edged by a hairline */
+.sbdocs.sbdocs-preview {
+  background: var(--perron-color-surface-default);
+  border-color: var(--perron-color-border-subtle);
+  box-shadow: none;
+}
+
+.sbdocs.sbdocs-preview-actions,
+.sbdocs-preview-actions button {
+  color: var(--perron-color-text-secondary);
+}
