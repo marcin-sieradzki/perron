@@ -1,0 +1,19 @@
+import { Meta, Stories, Title } from '@storybook/addon-docs/blocks'
+import { PropsTable } from '../../../../../storybook/blocks/PropsTable.tsx'
+import { SpecProse } from '../../../../../storybook/blocks/SpecProse.tsx'
+import * as LineBadgeStories from './LineBadge.stories.tsx'
+
+<Meta of={LineBadgeStories} />
+
+<Title />
+
+<SpecProse path="docs/components/line-badge.md" intro />
+
+<Stories title="Examples" />
+
+<PropsTable of={LineBadgeStories} />
+
+<SpecProse
+  path="docs/components/line-badge.md"
+  sections={['Keyboard and ARIA', 'Owned strings', "Do and don't"]}
+/>

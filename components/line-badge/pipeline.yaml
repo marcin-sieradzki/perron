@@ -3,9 +3,6 @@ component: LineBadge
 layer: component
 deferred:
   at: 2026-10-24T20:43:59.772Z
-needsHuman:
-  stage: docs
-  reason: 'docs failed: Props table on the docs page is empty: LineBadge.tsx returns useRender(...) directly, so react-docgen finds no component (No suitable component definition found) and attaches no __docgenInfo. Build must restructure the component so docgen sees it (e.g. return JSX wrapping the useRender result).'
 stages:
   brief:
     status: done
@@ -26,7 +23,6 @@ stages:
       p3: 3
     ended: 2026-10-24T21:00:09.695Z
   docs:
-    status: failed
-    started: 2026-10-24T21:00:12.634Z
-    ended: 2026-10-24T21:01:45.080Z
-    failing: 'Props table on the docs page is empty: LineBadge.tsx returns useRender(...) directly, so react-docgen finds no component (No suitable component definition found) and attaches no __docgenInfo. Build must restructure the component so docgen sees it (e.g. return JSX wrapping the useRender result).'
+    status: done
+    started: 2026-10-24T22:00:24.931Z
+    ended: 2026-10-24T22:02:13.725Z
