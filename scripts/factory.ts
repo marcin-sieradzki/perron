@@ -45,7 +45,7 @@ export interface Printed {
 
 const nextLines = (n: Next) =>
   'run' in n
-    ? `run: ${n.run}${n.round ? `\nround: ${n.round}` : ''}\nwhy: ${n.why}`
+    ? `run: ${n.run}${n.round ? `\nround: ${n.round}` : ''}\nwhy: ${n.why}${n.fix && n.fix !== n.why.replace(/^[^:]+: /, '') ? `\nfix: ${n.fix}` : ''}`
     : `wait: ${n.wait}${n.stage ? `\nstage: ${n.stage}` : ''}\nwhy: ${n.why}`
 
 /** Runs one factory command over the repo at `env.root`. */
