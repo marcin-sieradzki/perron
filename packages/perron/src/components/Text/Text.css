@@ -3,6 +3,8 @@
    (CR-4), and keeps its size at every width (CR-10). */
 .pn-Text {
   margin: 0;
+  /* a word longer than its line breaks inside itself, never runs past a 320 px screen (CR-11) */
+  overflow-wrap: anywhere;
 }
 
 .pn-Text[data-variant='body'] {

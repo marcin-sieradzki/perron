@@ -7,7 +7,8 @@ const meta = {
   title: 'Components/Text',
   component: Text,
   args: {
-    children: 'Signal fault at Danshøj. Trains between Flintholm and Ny Ellebjerg run slower.',
+    children:
+      'Signal fault at Danshøj. Trains between Flintholm and Ny Ellebjerg run slower than planned.',
   },
   // the page surface Text sits on in both themes, which the page itself leaves to the app
   decorators: [
@@ -42,8 +43,6 @@ export const BodyNeutralPrimary: Story = {
     variant: 'body',
     color: 'neutral',
     emphasis: 'primary',
-    children:
-      'Signal fault at Danshøj. Trains between Flintholm and Ny Ellebjerg run slower than planned.',
   },
   render: (args) => <Text {...args} ref={bodyRef} />,
   play: async ({ canvasElement }) => {
@@ -149,7 +148,7 @@ export const DataSmNeutralPrimary: Story = {
 }
 
 export const BodyBrandPrimary: Story = {
-  args: { color: 'brand', children: 'Every bus, train and ferry in Copenhagen, as it moves.' },
+  args: { color: 'brand', children: 'Every bus and train in Copenhagen, as it moves.' },
 }
 
 export const BodySuccessPrimary: Story = {
