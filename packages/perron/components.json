@@ -30,7 +30,7 @@
     "name": "Text",
     "layer": "component",
     "category": "Display",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/Text",
     "dependsOn": []
@@ -120,7 +120,7 @@
     "name": "LineBadge",
     "layer": "component",
     "category": "Transit",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/LineBadge",
     "dependsOn": []
@@ -147,7 +147,7 @@
     "name": "SeverityLabel",
     "layer": "component",
     "category": "Transit",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/SeverityLabel",
     "dependsOn": []

@@ -1,0 +1,48 @@
+/* SeverityLabel: the kind's icon and name in one inline run, coloured once on the root (CR-2). */
+.pn-SeverityLabel {
+  /* CR-8: the name wraps inside the label, and the icon stays beside its first line. The first
+     row is one line of typography.label-sm tall, held by the strut below; the name spans it and
+     the row the rest of its lines take. */
+  display: inline-grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto 1fr;
+  align-items: center;
+  column-gap: var(--perron-space-100);
+  font: var(--perron-typography-label-sm);
+  letter-spacing: var(--perron-typography-label-sm-tracking);
+  --perron-icon-size: var(--perron-icon-size-325);
+}
+
+/* CR-8: a strut, a zero-width space hidden from screen readers, so the first row is exactly one
+   line of the root's own typography and the icon centres on the name's first line. */
+.pn-SeverityLabel::before {
+  content: '\200b' / '';
+  grid-row: 1;
+  grid-column: 1;
+}
+
+.pn-SeverityLabel-icon {
+  grid-row: 1;
+  grid-column: 1;
+}
+
+.pn-SeverityLabel-label {
+  grid-row: 1 / span 2;
+  grid-column: 2;
+}
+
+.pn-SeverityLabel[data-severity='delay'] {
+  color: var(--perron-color-transit-severity-delay);
+}
+
+.pn-SeverityLabel[data-severity='data'] {
+  color: var(--perron-color-transit-severity-data);
+}
+
+.pn-SeverityLabel[data-severity='diversion'] {
+  color: var(--perron-color-transit-severity-diversion);
+}
+
+.pn-SeverityLabel[data-severity='planned'] {
+  color: var(--perron-color-transit-severity-planned);
+}

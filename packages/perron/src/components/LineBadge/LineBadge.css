@@ -1,0 +1,93 @@
+/* LineBadge: the line's fill with its partner label colour (CR-4), one line of text centred in a
+   fixed-height box that grows wider for a longer label (CR-3), and no interactive state (CR-2). */
+.pn-LineBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  white-space: nowrap;
+  vertical-align: middle;
+  font: var(--perron-typography-badge);
+  letter-spacing: var(--perron-typography-badge-tracking);
+  border-radius: var(--perron-radius-sm);
+}
+
+.pn-LineBadge[data-size='medium'] {
+  height: var(--perron-size-badge);
+  min-width: var(--perron-size-badge);
+  padding-inline: var(--perron-space-150);
+}
+
+.pn-LineBadge[data-size='large'] {
+  height: var(--perron-size-badge-lg);
+  min-width: var(--perron-size-badge-lg);
+  padding-inline: var(--perron-space-200);
+}
+
+.pn-LineBadge[data-line='m1'] {
+  background: var(--perron-color-transit-line-m1);
+  color: var(--perron-color-transit-line-on-m1);
+}
+
+.pn-LineBadge[data-line='m2'] {
+  background: var(--perron-color-transit-line-m2);
+  color: var(--perron-color-transit-line-on-m2);
+}
+
+.pn-LineBadge[data-line='m3'] {
+  background: var(--perron-color-transit-line-m3);
+  color: var(--perron-color-transit-line-on-m3);
+}
+
+.pn-LineBadge[data-line='m4'] {
+  background: var(--perron-color-transit-line-m4);
+  color: var(--perron-color-transit-line-on-m4);
+}
+
+.pn-LineBadge[data-line='a'] {
+  background: var(--perron-color-transit-line-a);
+  color: var(--perron-color-transit-line-on-a);
+}
+
+.pn-LineBadge[data-line='b'] {
+  background: var(--perron-color-transit-line-b);
+  color: var(--perron-color-transit-line-on-b);
+}
+
+.pn-LineBadge[data-line='c'] {
+  background: var(--perron-color-transit-line-c);
+  color: var(--perron-color-transit-line-on-c);
+}
+
+.pn-LineBadge[data-line='e'] {
+  background: var(--perron-color-transit-line-e);
+  color: var(--perron-color-transit-line-on-e);
+}
+
+.pn-LineBadge[data-line='f'] {
+  background: var(--perron-color-transit-line-f);
+  color: var(--perron-color-transit-line-on-f);
+}
+
+.pn-LineBadge[data-line='h'] {
+  background: var(--perron-color-transit-line-h);
+  color: var(--perron-color-transit-line-on-h);
+}
+
+.pn-LineBadge[data-line='bus'] {
+  background: var(--perron-color-transit-mode-bus);
+  color: var(--perron-color-transit-mode-on-bus);
+}
+
+.pn-LineBadge[data-line='regional'] {
+  background: var(--perron-color-transit-mode-regional);
+  color: var(--perron-color-transit-mode-on-regional);
+}
+
+/* Windows' contrast themes drop the fill and paint this border in the text colour, so the badge
+   keeps its shape */
+@media (forced-colors: active) {
+  .pn-LineBadge {
+    border: var(--perron-border-width-025) solid transparent;
+  }
+}

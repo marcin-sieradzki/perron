@@ -174,6 +174,89 @@
       }
     }
   },
+  "LineBadge": {
+    "extends": [
+      "Omit<useRender.ComponentProps<'span'>, 'children'>"
+    ],
+    "props": {
+      "children": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "line": {
+        "optional": false,
+        "type": [
+          "\"a\"",
+          "\"b\"",
+          "\"bus\"",
+          "\"c\"",
+          "\"e\"",
+          "\"f\"",
+          "\"h\"",
+          "\"m1\"",
+          "\"m2\"",
+          "\"m3\"",
+          "\"m4\"",
+          "\"regional\""
+        ]
+      },
+      "size": {
+        "optional": true,
+        "type": [
+          "\"large\"",
+          "\"medium\""
+        ]
+      }
+    }
+  },
+  "SeverityLabel": {
+    "extends": [
+      "Omit< useRender.ComponentProps<'span', SeverityLabelState>, 'children' | 'ref' >"
+    ],
+    "props": {
+      "dataFeedProblemsLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "delaysLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "diversionsLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "plannedWorksLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLSpanElement>"
+        ]
+      },
+      "severity": {
+        "optional": false,
+        "type": [
+          "\"data\"",
+          "\"delay\"",
+          "\"diversion\"",
+          "\"planned\""
+        ]
+      }
+    }
+  },
   "StationIcon": {
     "extends": [
       "Omit<useRender.ComponentProps<'span'>, 'children'>"
@@ -227,6 +310,83 @@
         "type": [
           "\"filled\"",
           "\"outlined\""
+        ]
+      }
+    }
+  },
+  "Text": {
+    "extends": [
+      "Omit< HTMLAttributes<HTMLElement>, 'color' | 'children' | 'className' | 'style' >"
+    ],
+    "props": {
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "color": {
+        "optional": true,
+        "type": [
+          "\"brand\"",
+          "\"danger\"",
+          "\"info\"",
+          "\"neutral\"",
+          "\"success\"",
+          "\"warning\""
+        ]
+      },
+      "emphasis": {
+        "optional": true,
+        "type": [
+          "\"primary\"",
+          "\"secondary\"",
+          "\"tertiary\""
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLElement>"
+        ]
+      },
+      "render": {
+        "optional": true,
+        "type": [
+          "RenderProp<Record<string, unknown>>"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "variant": {
+        "optional": true,
+        "type": [
+          "\"badge\"",
+          "\"body\"",
+          "\"body-sm\"",
+          "\"caption\"",
+          "\"data\"",
+          "\"data-lg\"",
+          "\"data-sm\"",
+          "\"data-xl\"",
+          "\"display\"",
+          "\"heading-lg\"",
+          "\"heading-md\"",
+          "\"heading-sm\"",
+          "\"label\"",
+          "\"label-sm\"",
+          "\"overline\"",
+          "\"stat\""
         ]
       }
     }
