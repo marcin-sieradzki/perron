@@ -56,6 +56,9 @@ function Stop({
   )
 }
 
+/** What the filled marker means, said in words beside it, as the spec's Do and don't asks. */
+const NOTE = 'Next stop'
+
 const meta = {
   title: 'Components/StationIcon',
   component: StationIcon,
@@ -76,7 +79,7 @@ const meta = {
   render: (args) => (
     <Stop
       name="Nørreport"
-      note={args.variant === 'filled' ? 'Next stop' : undefined}
+      note={args.variant === 'filled' ? NOTE : undefined}
       size={args.size ?? 'medium'}
     >
       <StationIcon {...args} />
@@ -146,6 +149,7 @@ export const OutlinedMedium: Story = {
     await expect(stop).toContainElement(marker)
     // the marker sits between the two stops in reading order, and Tab goes from one to the next
     await expect(marker).not.toHaveAttribute('tabindex')
+    const start = document.activeElement
     await userEvent.tab()
     await expect(stop).toHaveFocus()
     await userEvent.tab()
@@ -155,8 +159,7 @@ export const OutlinedMedium: Story = {
     await expect(stop).toHaveFocus()
     // back to the resting state: focus where it started, before the first stop
     await userEvent.tab({ shift: true })
-    await expect(stop).not.toHaveFocus()
-    await expect(next).not.toHaveFocus()
+    await expect(document.activeElement).toBe(start)
   },
 }
 
@@ -184,9 +187,6 @@ const LINES: { line: StationIconProps['line']; name: string }[] = [
   { line: 'regional', name: 'Roskilde, regional train' },
   { line: undefined, name: 'Nørreport, several lines' },
 ]
-
-/** What the filled marker means, said in words beside it, as the spec's Do and don't asks. */
-const NOTE = 'Next stop'
 
 /**
  * Each line is its own two-stop list, so each list fills one stop and says why in words beside it:
