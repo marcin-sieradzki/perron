@@ -32,7 +32,7 @@ Commands you run: `git diff`, `git status`, `git log`, `npm run check`, `npm run
 
 ### 1. Design quality
 
-Read the `design-qa` skill (its `SKILL.md` under `.claude/skills/`) and run its pass on the two screenshots of every story. Its essentials, so the pass stands without it:
+Read the [`design-qa`](../skills/design-qa/SKILL.md) skill and run its pass on the two screenshots of every story. Its essentials, so the pass stands without it:
 
 - **Alignment and spacing**: every gap, padding and size is a token the spec's Tokens table names; parts line up on a shared edge or centre.
 - **Contrast**: text and marks keep the contrast `docs/foundations/accessibility.md` measures, in both themes; disabled is `color.text.tertiary`, never an opacity.
@@ -43,7 +43,7 @@ Sort each finding: **Defect** (wrong: off-token, misaligned, contrast below the 
 
 ### 2. What axe won't catch
 
-Read the `accessibility-audit` skill (its `SKILL.md` under `.claude/skills/`). Tick the contract's [What axe won't catch](../../docs/components/README.md#what-axe-wont-catch) checklist against the accessibility tree of every story, and the spec's own copy of it against the code. Each line that fails is P1:
+Read the [`accessibility-audit`](../skills/accessibility-audit/SKILL.md) skill. Tick the contract's [What axe won't catch](../../docs/components/README.md#what-axe-wont-catch) checklist against the accessibility tree of every story, and the spec's own copy of it against the code. Each line that fails is P1:
 
 - everything the eye is told, the ear is told: each `aria-hidden` mark has a text equivalent, for every shape the prop accepts;
 - every landmark and named region has an accessible name;
@@ -57,7 +57,7 @@ Read the `accessibility-audit` skill (its `SKILL.md` under `.claude/skills/`). T
 
 ### 3. API consistency with siblings
 
-Read the `api-consistency` skill (its `SKILL.md` under `.claude/skills/`). Hold `<Name>Props` against the contract's [Props](../../docs/components/README.md#props) and [State and events](../../docs/components/README.md#state-and-events) sections and against its siblings: the members of its family and every entry in `packages/perron/api.json`.
+Read the [`api-consistency`](../skills/api-consistency/SKILL.md) skill. Hold `<Name>Props` against the contract's [Props](../../docs/components/README.md#props) and [State and events](../../docs/components/README.md#state-and-events) sections and against its siblings: the members of its family and every entry in `packages/perron/api.json`.
 
 - A shared name means one thing everywhere: `variant`, `color`, `size`, `disabled`, `startIcon`, `value` and `onChange(event, value, details)`, `open` and `onOpen`/`onClose`, `name`, `render`, `slotProps`, `<key>Label`. A different type, default or argument order for one of them is P1.
 - A prop of the component's own that a sibling already spells another way, or a boolean that reads unlike its siblings' adjectives, is P2.
@@ -75,7 +75,7 @@ Hold the code against the spec's Base UI parts table and `get_reference` for eac
 
 ### 5. Owned strings and docs
 
-Read the `content-audit` skill (its `SKILL.md` under `.claude/skills/`), and hold every word against `docs/content-design.md` and the contract's [Words](../../docs/components/README.md#words) section:
+Read the [`content-audit`](../skills/content-audit/SKILL.md) skill, and hold every word against `docs/content-design.md` and the contract's [Words](../../docs/components/README.md#words) section:
 
 - each owned string is a key in all four locale files in `packages/perron/src/locale/`, read through `useOwnedStrings` with its `<key>Label` override, and its English matches the spec's Owned strings table: a miss is P1;
 - every word shown or announced is the caller's or the locale's; a hard-coded string in the component is P1;
