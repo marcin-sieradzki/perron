@@ -3,4 +3,9 @@ component: Brand
 layer: component
 deferred:
   at: 2026-10-24T22:52:10.345Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-24T22:52:13.723Z
+    ended: 2026-10-24T22:56:12.237Z
+    pending: 6
