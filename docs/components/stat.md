@@ -8,7 +8,7 @@ The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-def
 
 Penpot page `Components/Stat`. Family: none, since it is static content that sits on its container's surface and joins no family's treatment. Shared parts: VisuallyHidden, which says an unknown figure in words (CR-4).
 
-The drawing will have a `root` board holding two layers, `label` and `value`, and no variant property, so its one variant is `Default` ([CR-1](#component-rules) and the answers in [Props](#props)). There is no `State` property: Stat is not interactive and has only its rest state.
+The drawing will have a `root` board holding two layers, `label` and `value`, and no variant property, so its one variant is `Default` ([CR-1](#component-rules) and [Props](#props)). There is no `State` property: Stat is not interactive and has only its rest state.
 
 | Part (Penpot layer) | What it is                                                                                                                                                                     | Base UI part                          | Class           | `slotProps` key |
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------- | --------------- | --------------- |
@@ -127,8 +127,8 @@ The new key is `unknown`, English "Unknown", with Danish "Ukendt", Swedish "Okä
 
 Rules for this component alone, numbered so the build and the review can cite them.
 
-- **CR-1.** Stat has one look: no `color`, `variant` or `size` prop and no `data-variant`, `data-color` or `data-size` attribute, per the answer in [Props](#props).
-- **CR-2.** Stat doesn't format the figure: `children` renders as given, a number as React writes it, per the answer in [Props](#props).
+- **CR-1.** Stat has one look: no `color`, `variant` or `size` prop and no `data-variant`, `data-color` or `data-size` attribute, as [Props](#props) sets out.
+- **CR-2.** Stat doesn't format the figure: `children` renders as given, a number as React writes it, as [Props](#props) sets out.
 - **CR-3.** The figure is unknown when `children` renders nothing (`null`, `undefined`, a boolean, `''`, or an array of only such values) or is a number that is not finite (`NaN`, `Infinity`). `0` and `'0'` are figures. When unknown, the root carries the bare attribute `data-unknown`, and the CSS reads the "—" colour from it.
 - **CR-4.** Stat shows an unknown figure itself, as "—" in `color.text.tertiary` with `aria-hidden="true"`, followed by the owned string "Unknown" in the VisuallyHidden shared part: content design writes "—" for unknown and the brand never shows a guess, while a screen reader skips or spells a bare "—", so the ear would get less than the eye; Delay does the same for an unknown delay. Tertiary is allowed because the "—" always sits under the stronger label.
 - **CR-5.** The "—" is the character U+2014 in its own `span`, and the words are their own text run, so `expectOwnedStrings` reads them as a dictionary value.
