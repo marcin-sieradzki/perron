@@ -1,5 +1,6 @@
 // The contract's story tests: every registered component and pattern against the Root rule and
-// the Words rule, and the keyboard play pattern each component's stories copy. Hidden from the
+// the Words rule, the keyboard play pattern each component's stories copy, and the fonts every
+// story measures in. Hidden from the
 // sidebar; they run in npm run test:stories.
 import type { ComponentProps } from 'react'
 import { createPortal } from 'react-dom'
@@ -90,5 +91,21 @@ export const Keyboard: StoryObj = {
     await expect(button).toHaveFocus()
     await userEvent.tab({ shift: true })
     await expect(button).not.toHaveFocus()
+  },
+}
+
+/**
+ * Every face of the library's fonts is loaded before a story renders (`.storybook/preview.ts`), so
+ * a play that measures text measures it in them, on CI as on a Mac, never in a fallback.
+ */
+export const Fonts: StoryObj = {
+  render: () => <></>,
+  play: async () => {
+    const faces = [...document.fonts]
+    const key = (f: FontFace) => `${f.family.replace(/^["']|["']$/g, '')} ${f.weight}`
+    const families = new Set(faces.map(key))
+    const loaded = new Set(faces.filter((f) => f.status === 'loaded').map(key))
+    await expect(families.size).toBeGreaterThan(0)
+    await expect([...loaded].sort()).toEqual([...families].sort())
   },
 }
