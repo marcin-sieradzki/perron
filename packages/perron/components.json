@@ -259,7 +259,7 @@
     "name": "Dialog",
     "layer": "component",
     "category": "Overlays",
-    "status": "designing",
+    "status": "building",
     "baseUiParts": [
       "Dialog.Root",
       "Dialog.Trigger",

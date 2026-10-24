@@ -1,0 +1,90 @@
+/* Dialog, from docs/components/dialog.md: the Panels family's glass panel in the middle of the
+   viewport, over the scrim. It opens and closes at once, with no transition (CR-10), and never
+   redefines a token: it portals to <body> (CR-7). */
+
+.pn-Dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--perron-z-index-dialog);
+  background-color: var(--perron-color-scrim);
+}
+
+/* The popup: after the backdrop in the portal, so it paints on top at the same z-index (CR-7);
+   centred, and scrolling as a whole when its content is taller than the viewport (CR-8). */
+.pn-Dialog {
+  position: fixed;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  z-index: var(--perron-z-index-dialog);
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-300);
+  /* perron-allow(component-css): the dialog's measure, about 60 characters of body a line, which only this CSS reads (spec, Tokens) */
+  inline-size: min(440px, calc(100% - 2 * var(--perron-size-panel-gap)));
+  max-block-size: calc(100% - 2 * var(--perron-size-panel-gap));
+  margin: 0;
+  padding: var(--perron-space-600);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  translate: -50% -50%;
+  /* an edge as a border, kept by forced colours when they drop the glass and the shadow (CR-11) */
+  border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+  border-radius: var(--perron-radius-xl);
+  background-color: var(--perron-color-surface-overlay);
+  backdrop-filter: blur(var(--perron-effect-glass-blur))
+    saturate(var(--perron-effect-glass-saturate));
+  box-shadow: var(--perron-shadow-panel);
+  color: var(--perron-color-text-primary);
+}
+
+/* In right-to-left text the inline start is the right edge, so the popup moves back the other way. */
+.pn-Dialog:dir(rtl) {
+  translate: 50% -50%;
+}
+
+/* The title grows and the close button keeps its square, both at the start of the block axis (CR-9). */
+.pn-Dialog-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--perron-space-300);
+}
+
+.pn-Dialog-title {
+  flex: 1;
+  min-inline-size: 0;
+  margin: 0;
+  font: var(--perron-typography-heading-lg);
+  letter-spacing: var(--perron-typography-heading-lg-tracking);
+  color: var(--perron-color-text-primary);
+  overflow-wrap: anywhere;
+}
+
+/* Only the margins: the look and the states are the CloseButton part's (CR-12). Pulled up and
+   towards the end, so the icon lines up with the title's first line and the padding's edge. */
+.pn-Dialog-close {
+  margin-block: calc(-1 * var(--perron-space-100));
+  margin-inline-end: calc(-1 * var(--perron-space-200));
+}
+
+.pn-Dialog-description {
+  margin: 0;
+  font: var(--perron-typography-body-sm);
+  letter-spacing: var(--perron-typography-body-sm-tracking);
+  color: var(--perron-color-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.pn-Dialog-content {
+  font: var(--perron-typography-body);
+  letter-spacing: var(--perron-typography-body-tracking);
+  color: var(--perron-color-text-primary);
+}
+
+/* A further space.300 from the content, the space between blocks; the main action last, at the end. */
+.pn-Dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--perron-space-200);
+  margin-block-start: var(--perron-space-300);
+}
