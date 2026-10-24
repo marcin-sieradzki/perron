@@ -84,7 +84,7 @@
     "name": "EmptyState",
     "layer": "component",
     "category": "Feedback",
-    "status": "designing",
+    "status": "building",
     "baseUiParts": [],
     "penpotPath": "Components/EmptyState",
     "dependsOn": []

@@ -2,7 +2,7 @@
 
 Stands in for a list or panel that has nothing to show, and says in plain words what is empty, why, and what to try next.
 
-The design is deferred ([ADR 0010](../adr/0010-unattended-runs-with-design-deferred.md)): this spec decides what the drawing would, from the [contract](README.md), the [foundations](../foundations/README.md), [content design](../content-design.md) and the tokens. EmptyState has no Base UI component and nothing in `dependsOn`.
+The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): this spec decides what the drawing would, from the [contract](README.md), the [foundations](../foundations/README.md), [content design](../content-design.md) and the tokens. EmptyState has no Base UI component and nothing in `dependsOn`.
 
 ## Anatomy
 
