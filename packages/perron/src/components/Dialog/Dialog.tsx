@@ -12,9 +12,14 @@ import './Dialog.css'
 
 type ChangeDetails = BaseDialog.Root.ChangeEventDetails
 
-/** Whether a node renders anything: `false`, `true`, `null`, `undefined` and `''` leave no part. */
-const rendersSomething = (node: ReactNode) =>
-  node != null && typeof node !== 'boolean' && node !== ''
+/**
+ * Whether a node renders anything: `null`, `undefined`, a boolean, `''` and an array of only such
+ * values render nothing, so their part is left out, as in EmptyState.
+ */
+const rendersSomething = (node: ReactNode): boolean =>
+  Array.isArray(node)
+    ? node.some(rendersSomething)
+    : node != null && typeof node !== 'boolean' && node !== ''
 
 export interface DialogProps extends Omit<
   BaseDialog.Popup.Props,
@@ -71,13 +76,13 @@ export interface DialogProps extends Omit<
    * @default The locale's
    */
   closeLabel?: string
-  /** Classes for the root, the popup, merged after `pn-Dialog`. */
+  /** Reaches the root, the popup. Merged after `pn-Dialog`. */
   className?: string
-  /** Inline styles for the root, the popup. */
+  /** Reaches the root, the popup. */
   style?: CSSProperties
-  /** The root element, the popup. */
+  /** Reaches the root, the popup. */
   ref?: Ref<HTMLDivElement>
-  /** Props for the inner parts, each merged with what the dialog sets on that part. */
+  /** Props for each inner part, merged with the part's own, which win. */
   slotProps?: {
     /** Props for the `trigger` part, such as `nativeButton={false}` when `trigger` is not a `<button>`. */
     trigger?: BaseDialog.Trigger.Props

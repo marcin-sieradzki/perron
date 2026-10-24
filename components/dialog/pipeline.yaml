@@ -3,17 +3,13 @@ component: Dialog
 layer: component
 deferred:
   at: 2026-10-24T23:23:29.736Z
-needsHuman:
-  stage: build
-  reason: "build failed: storybook/contract/root.tsx looks up the root only inside the canvas; Dialog's popup portals to body. Waiting for the portal-aware fix (retro 3) on main."
 stages:
   brief:
     status: done
     started: 2026-10-24T23:38:46.869Z
     ended: 2026-10-24T23:40:14.414Z
   build:
-    status: failed
-    started: 2026-10-24T23:40:20.467Z
-    runs: 1
-    ended: 2026-10-24T23:46:38.613Z
-    failing: storybook/contract/root.tsx looks up the root only inside the canvas; Dialog's popup portals to body. Waiting for the portal-aware fix (retro 3) on main.
+    runs: 2
+    status: done
+    started: 2026-10-24T23:46:58.686Z
+    ended: 2026-10-24T23:52:41.494Z
