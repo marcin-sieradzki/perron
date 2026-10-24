@@ -156,7 +156,7 @@
     "name": "Stat",
     "layer": "component",
     "category": "Display",
-    "status": "building",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/Stat",
     "dependsOn": []
