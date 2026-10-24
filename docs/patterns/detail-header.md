@@ -18,7 +18,7 @@ The drawing will have a `root` board holding four layers: `mark`, `title`, `subh
 | `subheader`         | A `div` holding the caller's `subheader`: one supporting line, such as the next stop or the lines a stop has; rendered only when given                                                  | None: a plain `div`                                  | `pn-DetailHeader-subheader` | `subheader`     |
 | `action`            | A `div` holding the caller's `action`, such as the panel's close button, at the end of the row; rendered only when given                                                                | None: a plain `div`                                  | `pn-DetailHeader-action`    | `action`        |
 
-- Answered with the recommended answer. Should DetailHeader have two variants, the Penpot `variant` property with `line` (a LineBadge and a destination, for a vehicle or a line) and `stop` (a StationIcon and a stop's name), rather than one look whose mark is picked from which props are given? Answer: yes, `variant` with `line` first and so the default, then `stop`, so the drawing has one variant per kind of panel and the stories pair with them.
+- DetailHeader has two variants, the Penpot `variant` property: `line` (a LineBadge and a destination, for a vehicle or a line), first and so the default, and `stop` (a StationIcon and a stop's name), so the drawing has one variant per kind of panel and the stories pair with them.
 
 ## Base UI parts
 
@@ -34,7 +34,7 @@ No Base UI part: `baseUiParts` is empty in `packages/perron/components.json`, an
 
 Base UI already does: nothing here. The behaviour the parts need comes from the browser (a heading, reading order) and from the composed components, which bring their own: LineBadge sets its line's fill and label colours, and StationIcon hides itself and sets its line's colour.
 
-- Answered with the recommended answer. The contract lists `render` among every component's props, but a pattern can't import `useRender`, so should DetailHeader leave `render` out, with a `div` root that never swaps and `slotProps` values that take the parts' HTML props only? Answer: yes; no `render` on the root or in `slotProps`, and ROADMAP 7.1's pattern contract says so for every pattern.
+- DetailHeader has no `render`, on the root or in `slotProps`: a pattern can't import `useRender`, so the root is a `div` that never swaps and each `slotProps` value takes its part's HTML props only. ROADMAP 7.1's pattern contract is to say so for every pattern.
 
 ## Props
 
@@ -55,9 +55,9 @@ In MUI's layout. Every prop here gets this description as its JSDoc. Slots come 
 
 `className`, `style`, `ref` and the other `div` props reach the root, as the contract's [Root](../components/README.md#root) says. `title`, `children`, `variant`, `line`, `lineName`, `subheader`, `action` and `slotProps` are taken out of the rest props first, so the HTML `title` attribute never reaches the element. The props type leaves out `children`: the header's words come through the named props. No `render` (see [Base UI parts](#base-ui-parts)), and no `*Label` prop, since DetailHeader owns no string.
 
-- Answered with the recommended answer. How should a pattern take a line: the flat `line` (the id, typed exactly as LineBadge's and StationIcon's `line`) and `lineName` (the short name, the badge's children), rather than one `line` object such as `{ id, name }`? Answer: flat `line` and `lineName`, so the id passes straight to LineBadge and StationIcon, and the patterns after this one (DepartureRow, DisruptionCard, VehicleTable) take the same two.
-- Answered with the recommended answer. Should the text props take MUI `CardHeader`'s names, `title`, `subheader` and `action`, as EmptyState took `title` and `action`? Answer: yes, `title`, `subheader` and `action`, with no `children`.
-- Answered with the recommended answer. Should the panel's close button come in through `action`, from DetailPanel, which gets it from Sheet's `Drawer.Close`, rather than DetailHeader drawing its own close button with an `onClose` prop and a "Close" owned string? Answer: yes, through `action`: DetailHeader then needs no IconButton or CloseButton (neither is built yet), owns no string, and Esc and focus return stay with the Sheet that owns the panel.
+- A pattern takes a line as two flat props: `line`, the id, typed exactly as LineBadge's and StationIcon's `line`, and `lineName`, the short name, the badge's children; not one `line` object such as `{ id, name }`. The id passes straight to LineBadge and StationIcon, and the patterns after this one (DepartureRow, DisruptionCard, VehicleTable) take the same two.
+- The text props take MUI `CardHeader`'s names, `title`, `subheader` and `action`, as EmptyState took `title` and `action`, with no `children`.
+- The panel's close button comes in through `action`, from DetailPanel, which gets it from Sheet's `Drawer.Close`; DetailHeader has no `onClose` prop and no "Close" owned string. It then needs no IconButton or CloseButton (neither is built yet), owns no string, and Esc and focus return stay with the Sheet that owns the panel.
 
 ## Tokens
 
@@ -79,8 +79,8 @@ One row per part, state and property. DetailHeader has no interactive state of i
 
 The root is a grid of three columns, `auto`, `minmax(0, 1fr)` and `auto`: the mark in the first and the action in the last, each spanning the title's and the subheader's rows and centred in them, and the title over the subheader in the middle. With no mark or no action, the middle column takes their room. Every part resets the margins an `h2` brings, but for the subheader's own.
 
-- Answered with the recommended answer. Should DetailHeader draw no fill, border, padding or shadow of its own, taking the detail panel's surface and padding from DetailPanel, with the spacing above: `space.300` between mark, text and action, `space.100` from title to subheader, `space.200` between controls in the action? Answer: yes; it is the top of a panel, not a card, `space.300` is what Semantic spacing gives between parts of a detail panel, and `space.100` matches EmptyState's title-to-sentence gap.
-- Answered with the recommended answer. In the `stop` variant, should the marker be StationIcon's `outlined` variant, with `filled` kept for the one stop that matters most in a list? Answer: yes, `outlined`, since the header names one stop and has no list to single it out from.
+- DetailHeader draws no fill, border, padding or shadow of its own, taking the detail panel's surface and padding from DetailPanel: it is the top of a panel, not a card. `space.300` between mark, text and action is what Semantic spacing gives between parts of a detail panel, `space.100` from title to subheader matches EmptyState's title-to-sentence gap, and `space.200` sits between controls in the action.
+- In the `stop` variant the marker is StationIcon's `outlined` variant, since the header names one stop and has no list to single it out from; `filled` is kept for the one stop that matters most in a list.
 
 ## Keyboard and ARIA
 
@@ -99,8 +99,8 @@ DetailHeader has no keys of its own and is never focusable. The controls in `act
 | `subheader` | None (generic `div`)                                              | None                                                                                            | None             |
 | `action`    | None (generic `div`); the caller's controls carry their own roles | The caller's controls' own names                                                                | Theirs           |
 
-- Answered with the recommended answer. Should the title always be an `h2`, with an `id` the caller can set through `slotProps.title` (React's `useId` otherwise), so DetailPanel can name its Sheet with `aria-labelledby` pointing at it? Answer: yes, a fixed `h2`: the header heads one panel over a page whose own heading is the `h1`, and with no `render` a pattern can't swap the level.
-- Answered with the recommended answer. In the `line` variant, should the mark be `aria-hidden` and the title start with `lineName` in a `VisuallyHidden` span and a space, so the heading, and the panel name taken from it, reads "5C Husum Torv" rather than "Husum Torv" with the badge read apart before it? Answer: yes; a screen reader moving by headings, and the panel's name, then carry the line, and the badge is read once.
+- The title is always an `h2`, with an `id` the caller can set through `slotProps.title` (React's `useId` otherwise), so DetailPanel can name its Sheet with `aria-labelledby` pointing at it: the header heads one panel over a page whose own heading is the `h1`, and with no `render` a pattern can't swap the level.
+- In the `line` variant the mark is `aria-hidden` and the title starts with `lineName` in a `VisuallyHidden` span and a space, so the heading, and the panel name taken from it, reads "5C Husum Torv" rather than "Husum Torv" with the badge read apart before it: a screen reader moving by headings, and the panel's name, then carry the line, and the badge is read once.
 
 What axe won't catch, from the contract, each with how this component meets it:
 
