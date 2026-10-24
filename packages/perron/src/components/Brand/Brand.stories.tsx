@@ -35,6 +35,23 @@ const rootOf = (canvasElement: HTMLElement) => {
   return root
 }
 
+/**
+ * Tab focuses the link, a box at least size.target-min tall (and, with `wide`, wide), and
+ * Shift+Tab moves focus back to where it started.
+ */
+async function expectLinkTarget(link: HTMLElement, { wide = false } = {}) {
+  const start = document.activeElement
+  await userEvent.tab()
+  await expect(link).toHaveFocus()
+  const box = link.getBoundingClientRect()
+  const targetMin = resolveBlockSize('var(--perron-size-target-min)')
+  await expect(box.height).toBeGreaterThanOrEqual(targetMin)
+  if (wide) await expect(box.width).toBeGreaterThanOrEqual(targetMin)
+  await userEvent.tab({ shift: true })
+  await expect(link).not.toHaveFocus()
+  await expect(document.activeElement).toBe(start)
+}
+
 /** A value as it renders, through a probe that reads it as a block size. */
 function resolveBlockSize(value: string) {
   const probe = document.createElement('span')
@@ -106,14 +123,39 @@ export const Link: Story = {
     const link = within(canvasElement).getByRole('link', { name: /^mylder$/i })
     await expect(link).toHaveClass('pn-Brand')
     await expect(link).toHaveAttribute('href', '/')
-    const start = document.activeElement
-    await userEvent.tab()
-    await expect(link).toHaveFocus()
-    await expect(link.getBoundingClientRect().height).toBeGreaterThanOrEqual(
-      resolveBlockSize('var(--perron-size-target-min)'),
-    )
-    await userEvent.tab({ shift: true })
-    await expect(link).not.toHaveFocus()
-    await expect(document.activeElement).toBe(start)
+    await expectLinkTarget(link)
+  },
+}
+
+/** The mark alone as a link: the hidden brand name is the link's only name. */
+export const MarkLink: Story = {
+  args: { variant: 'mark', render: <a href="/" /> },
+  play: async ({ canvasElement }) => {
+    const link = within(canvasElement).getByRole('link', { name: /^mylder$/i })
+    await expect(link).toHaveClass('pn-Brand')
+    await expect(link).toHaveAttribute('data-variant', 'mark')
+    await expect(link.querySelector('.pn-Brand-wordmark')).toBeNull()
+    await expectLinkTarget(link, { wide: true })
+  },
+}
+
+/** `brandNameLabel` in both variants: seen lowercase in the wordmark, heard alone with the mark. */
+export const BrandNameLabel: Story = {
+  args: { brandNameLabel: 'Perron', render: <a href="/" /> },
+  render: (args) => (
+    <div style={{ display: 'flex', gap: 'var(--perron-space-300)' }}>
+      <Brand {...args} variant="full" />
+      <Brand {...args} variant="mark" />
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const [full, mark] = canvas.getAllByRole('link', { name: /^perron$/i })
+    await expect(canvas.queryByRole('link', { name: /mylder/i })).toBeNull()
+    const wordmark = full.querySelector<HTMLElement>('.pn-Brand-wordmark')
+    await expect(wordmark).toHaveTextContent(/^Perron$/)
+    await expect(getComputedStyle(wordmark!).textTransform).toBe('lowercase')
+    await expect(mark).toHaveAttribute('data-variant', 'mark')
+    await expect(mark).toHaveTextContent(/^Perron$/)
   },
 }

@@ -40,7 +40,7 @@ In MUI's layout. Every prop here gets this description as its JSDoc. Brand takes
 | ---------------- | ---------------------- | ------------ | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `variant`        | `'full' \| 'mark'`     | `'full'`     | none         | `full` sets the mark beside the wordmark, as the brand appears by default; `mark` shows the mark alone, for where space is tight, with the brand name read to screen readers.             |
 | `render`         | Base UI's `render`     |              | inherited    | Allows you to replace the component's HTML element with a different tag, or compose it with another component. Accepts a `ReactElement` or a function that returns the element to render. |
-| `brandNameLabel` | `string`               | The locale's | none         | Overrides "Mylder"                                                                                                                                                                        |
+| `brandNameLabel` | `string`               | The locale's | none         | Overrides "Mylder", the brand name seen in the wordmark, shown lowercase, with `variant='full'`, and heard alone with `variant='mark'`                                                    |
 | `className`      | `string`               |              | none         | Merged after `pn-Brand` on the root                                                                                                                                                       |
 | `style`          | `CSSProperties`        |              | none         | Reaches the root                                                                                                                                                                          |
 | `ref`            | `Ref<HTMLSpanElement>` |              | none         | Reaches the root                                                                                                                                                                          |
@@ -51,22 +51,27 @@ Brand comes in one size, with no `size` prop: the mark at its drawn size, 27 × 
 
 One row per part, variant and property. Brand is not interactive, so its only design state is rest; rendered as a link through `render`, its focus ring is the one `perron.css` already draws on `:focus-visible`.
 
-| Part                         | State | Property                    | Token                                                         |
-| ---------------------------- | ----- | --------------------------- | ------------------------------------------------------------- |
-| `root`                       | rest  | `display`                   | none: `inline-flex`, `align-items: center`                    |
-| `root`                       | rest  | `gap`                       | `space.200`                                                   |
-| `root`                       | rest  | `min-block-size`            | `size.target-min`                                             |
-| `mark`                       | rest  | `inline-size`, `block-size` | none: the `<svg>`'s own `width="27"` and `height="19"` (CR-3) |
-| `bus`                        | rest  | `fill`                      | `color.transit.mode.bus`                                      |
-| `sTog`                       | rest  | `fill`                      | `color.transit.line.a`                                        |
-| `ring`                       | rest  | `fill`                      | none: `none`                                                  |
-| `ring`                       | rest  | `stroke`                    | `color.text.primary`                                          |
-| `wordmark`, `variant='full'` | rest  | `font`                      | `typography.heading-md`                                       |
-| `wordmark`, `variant='full'` | rest  | `font-weight`               | `font.weight.bold`                                            |
-| `wordmark`, `variant='full'` | rest  | `letter-spacing`            | `typography.heading-md-tracking`                              |
-| `wordmark`, `variant='full'` | rest  | `color`                     | `color.text.primary`                                          |
-| `wordmark`, `variant='full'` | rest  | `text-transform`            | none: `lowercase`                                             |
-| `label`, `variant='mark'`    | rest  | none                        | none: the `VisuallyHidden` part's own styles, never seen      |
+| Part                         | State | Property                    | Token                                                            |
+| ---------------------------- | ----- | --------------------------- | ---------------------------------------------------------------- |
+| `root`                       | rest  | `display`                   | none: `inline-flex`, `align-items: center`                       |
+| `root`                       | rest  | `gap`                       | `space.200`                                                      |
+| `root`                       | rest  | `min-block-size`            | `size.target-min`                                                |
+| `root`                       | rest  | `vertical-align`            | none: `middle`, so the lockup sits centred on a line of text     |
+| `root`                       | rest  | `text-decoration`           | none: `none`, so a link through `render` keeps the lockup's look |
+| `mark`                       | rest  | `display`                   | none: `block`                                                    |
+| `mark`                       | rest  | `flex`                      | none: `none`, so it never shrinks in the row (CR-5)              |
+| `mark`                       | rest  | `inline-size`, `block-size` | none: the `<svg>`'s own `width="27"` and `height="19"` (CR-3)    |
+| `bus`                        | rest  | `fill`                      | `color.transit.mode.bus`                                         |
+| `sTog`                       | rest  | `fill`                      | `color.transit.line.a`                                           |
+| `ring`                       | rest  | `fill`                      | none: `none`                                                     |
+| `ring`                       | rest  | `stroke`                    | `color.text.primary`                                             |
+| `wordmark`, `variant='full'` | rest  | `font`                      | `typography.heading-md`                                          |
+| `wordmark`, `variant='full'` | rest  | `font-weight`               | `font.weight.bold`                                               |
+| `wordmark`, `variant='full'` | rest  | `letter-spacing`            | `typography.heading-md-tracking`                                 |
+| `wordmark`, `variant='full'` | rest  | `color`                     | `color.text.primary`                                             |
+| `wordmark`, `variant='full'` | rest  | `text-transform`            | none: `lowercase`                                                |
+| `wordmark`, `variant='full'` | rest  | `white-space`               | none: `nowrap`, so a longer `brandNameLabel` stays on one line   |
+| `label`, `variant='mark'`    | rest  | none                        | none: the `VisuallyHidden` part's own styles, never seen         |
 
 The gap between the mark and the wordmark is `space.200`, and the wordmark's colour is `color.text.primary`, the ring's ink. [Logos](../foundations/logos.md) names neither; `space.200` (8 px) is close to the ring's width (8.9 px), the clear space the mark keeps from everything else, and the mark's one neutral colour is `color.text.primary`.
 
@@ -95,7 +100,7 @@ What axe won't catch, from the contract, each with how this component meets it:
 - [ ] Everything the eye is told, the ear is told, for every shape each prop accepts: the eye reads the brand from the mark and the wordmark; the ear hears the brand name, from the wordmark with `variant='full'` and from the `VisuallyHidden` label with `variant='mark'`, so neither variant is silent
 - [ ] Every landmark and named region has an accessible name: none here, the lockup is not a region; the top bar or kiosk bar that holds it names its own
 - [ ] Every default label can be overridden: `brandNameLabel` overrides "Mylder", in the wordmark and in the hidden label alike
-- [ ] Every shape the type accepts renders, in every variant: both `variant` values, each with and without `brandNameLabel`, and each as a `<span>` and as a link through `render`, shown by the `Full`, `Mark` and `Link` stories
+- [ ] Every shape the type accepts renders, in every variant: both `variant` values, each with and without `brandNameLabel`, and each as a `<span>` and as a link through `render`: the `Full` and `Mark` stories as a `<span>`, `Link` and `MarkLink` as a link, and `BrandNameLabel` with `brandNameLabel` in both, its link named by the override
 - [ ] A hidden copy kept for animation is `aria-hidden`, and a collapsed region is `inert`: none here, nothing animates or collapses; the `aria-hidden` mark is a picture, not a copy
 - [ ] Native semantics first: a plain `<span>` with no role; the caller's `<a href>` through `render` for a link, never `role="link"` or `role="img"`
 - [ ] Focus moves in reading order and returns on close: nothing takes focus but a caller's link, which sits in the tab order where it sits in the page
@@ -124,14 +129,16 @@ The brand name is a new owned-string key, `brandName`, with "Mylder" in all four
 
 ## Stories
 
-No Penpot design yet, so the stories are named by the variant names the design will have: `variant`, each value in PascalCase (the Conventions of `penpot/README.md`). Each renders on a `color.surface.raised` ground, as in a top bar's glass group; the build's light and dark Storybook themes show both marks.
+No Penpot design yet, so the stories are named by the variant names the design will have: `variant`, each value in PascalCase (the Conventions of `penpot/README.md`); `Link`, `MarkLink` and `BrandNameLabel` show how a caller uses it, not a variant of the drawing. Each renders on a `color.surface.raised` ground, as in a top bar's glass group; the build's light and dark Storybook themes show both marks.
 
-| Story     | Shows                                                                                                                                                      | `play` test                                                                                                                                       |
-| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Default` | The default props, `variant='full'`, as the docs page and the contract story show Brand; the contract story renders it, and its args pass every rule alone | The root has `data-variant="full"`, the text "Mylder" and a `ref` on the root `<span>`                                                            |
-| `Full`    | `variant='full'`: the mark beside the wordmark "mylder"                                                                                                    | The root has `data-variant="full"` and the text "Mylder"; the mark is `aria-hidden`; Tab passes the lockup by                                     |
-| `Mark`    | `variant='mark'`: the mark alone                                                                                                                           | No wordmark is shown; the `VisuallyHidden` label holds "Mylder", so the root's text is still the brand name                                       |
-| `Link`    | `variant='full'` rendered as a link to the start screen, `render={<a href="/" />}`                                                                         | The page has a link named "Mylder" (case-insensitive); Tab focuses it, its box is at least `size.target-min` tall, and Shift+Tab moves focus back |
+| Story            | Shows                                                                                                                                                      | `play` test                                                                                                                                       |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Default`        | The default props, `variant='full'`, as the docs page and the contract story show Brand; the contract story renders it, and its args pass every rule alone | The root has `data-variant="full"`, the text "Mylder" and a `ref` on the root `<span>`                                                            |
+| `Full`           | `variant='full'`: the mark beside the wordmark "mylder"                                                                                                    | The root has `data-variant="full"` and the text "Mylder"; the mark is `aria-hidden`; Tab passes the lockup by                                     |
+| `Mark`           | `variant='mark'`: the mark alone                                                                                                                           | No wordmark is shown; the `VisuallyHidden` label holds "Mylder", so the root's text is still the brand name                                       |
+| `Link`           | `variant='full'` rendered as a link to the start screen, `render={<a href="/" />}`                                                                         | The page has a link named "Mylder" (case-insensitive); Tab focuses it, its box is at least `size.target-min` tall, and Shift+Tab moves focus back |
+| `MarkLink`       | `variant='mark'` rendered as a link to the start screen, `render={<a href="/" />}`: a link named only by the `VisuallyHidden` label                        | The page has a link named "Mylder"; Tab focuses it, its box is at least `size.target-min` tall and wide, and Shift+Tab moves focus back           |
+| `BrandNameLabel` | `brandNameLabel='Perron'` in both variants, each rendered as a link: the wordmark "perron" beside its mark, and the mark alone                             | The wordmark holds "Perron", shown lowercase; the page has two links named "Perron" and none named "Mylder"                                       |
 
 ## Do and don't
 
