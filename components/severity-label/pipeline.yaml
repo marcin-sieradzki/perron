@@ -1,0 +1,6 @@
+# Written by npm run factory; never by hand.
+component: SeverityLabel
+layer: component
+deferred:
+  at: 2026-10-24T21:12:36.133Z
+stages: {}
