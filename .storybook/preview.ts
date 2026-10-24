@@ -39,6 +39,7 @@ const preview: Preview = {
             'Spec template',
             // registry:components start: written by npm run registry, by category then name
             'Button',
+            'IconButton',
             'Toolbar',
             'Text',
             'EmptyState',
@@ -56,6 +57,7 @@ const preview: Preview = {
           [
             // each spec page, as PAGES lists them
             'Button',
+            'IconButton',
             'Toolbar',
             'Text',
             'EmptyState',
