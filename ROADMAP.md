@@ -242,7 +242,7 @@ After the design step, three agent contexts run in sequence, rather than as an a
 ## Phase 5: Tracer bullet, Button
 
 - [ ] **5.1 Button through the whole loop.** Local. Run `/factory Button` from Penpot to a released `@mylder/perron@0.2.0`, and switch Mylder's own buttons to it. Log every place where the loop stalled or an agent guessed, and keep every stage's transcript: the log and the transcripts are what 5.2 checks the scorers against.
-- [ ] **5.2 Retro.** Local, where the transcripts are. Fix the skills, checks and templates the log points at, before the next component starts. Write the three scorers of 5.5 and run them on Button's transcripts: a scorer that misses a log entry it should catch, or fails a run the log is happy with, gets its rubric rewritten. **Done** when every log entry is fixed, or written down as a known gap in the contract, and the scorers agree with the log.
+- [ ] **5.2 Retro.** Local, where the transcripts are. Fix the skills, checks and templates the log points at, before the next component starts, running the `retro` skill on each stage's transcript to find where each fix goes. Write the three scorers of 5.5 and run them on Button's transcripts: a scorer that misses a log entry it should catch, or fails a run the log is happy with, gets its rubric rewritten. **Done** when every log entry is fixed, or written down as a known gap in the contract, and the scorers agree with the log.
 - [ ] **5.3 Perron MCP, components.** Any.
   - Add `list_components`, `get_component` (spec, props, code map) and `get_design` (read-back and exports) to the server.
   - Generate a `.md` prop contract per component for the docs site and `llms.txt`.
@@ -287,7 +287,7 @@ After the design step, three agent contexts run in sequence, rather than as an a
 
   - **Memory.** Each stage's summary comment ends with a **Learned** line when the run found something a later run will need, such as a Base UI quirk, a Penpot workaround or a token the spec forgot. Nothing else carries a fact from one run to the next: the repo's `.claude/settings.json` sets `autoMemoryEnabled` to `false`, so Claude Code keeps no memory of its own on the maintainer's machine, where a fact would skip review and the cloud fallback could never read it.
 
-  - **Retro run.** When five components have merged since the last retro, `/factory` runs the `factory-retro` skill before it takes the next component:
+  - **Retro run.** When five components have merged since the last retro, `/factory` runs the `factory-retro` skill before it takes the next component. It reads the `retro` skill, which reviews one session, for the categories of fix:
     1. **Pre-flight:** the last retro PR, and the five components' scorecards, issues and PRs.
     2. **Check the last retro.** For each prediction in its PR, did the failure come back? A change that didn't hold is revised or reverted in this PR.
     3. **Score.** Each scorer runs over the whole batch in a fresh context of its own, on a smaller model than the stages use.
