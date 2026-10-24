@@ -3,6 +3,9 @@ component: Delay
 layer: component
 deferred:
   at: 2026-10-24T20:44:09.625Z
+needsHuman:
+  stage: docs
+  reason: "docs failed: Props table empty: react-docgen finds no component in packages/perron/src/components/Delay/Delay.tsx because it ends with return useRender({...}) rather than JSX ('No suitable component definition found'). Fix in build: e.g. const element = useRender({...}); return <>{element}</> (verified react-docgen then reads all 8 props), or fix the docgen setup. Also noted: on the dark docs page Storybook's own text is dark on dark and canvases stay white (likely shared docs setup)."
 stages:
   brief:
     status: done
@@ -22,3 +25,8 @@ stages:
       p2: 0
       p3: 3
     ended: 2026-10-24T20:59:43.338Z
+  docs:
+    status: failed
+    started: 2026-10-24T20:59:45.220Z
+    ended: 2026-10-24T21:01:36.676Z
+    failing: "Props table empty: react-docgen finds no component in packages/perron/src/components/Delay/Delay.tsx because it ends with return useRender({...}) rather than JSX ('No suitable component definition found'). Fix in build: e.g. const element = useRender({...}); return <>{element}</> (verified react-docgen then reads all 8 props), or fix the docgen setup. Also noted: on the dark docs page Storybook's own text is dark on dark and canvases stay white (likely shared docs setup)."
