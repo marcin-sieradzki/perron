@@ -6,8 +6,8 @@ import { LineBadge } from './LineBadge.tsx'
 const meta = {
   title: 'Components/LineBadge',
   component: LineBadge,
-  // every required prop and caller word, so any story renders alone
-  args: { line: 'm1', size: 'medium', children: 'M1' },
+  // every required prop and caller word, so any story renders alone, on a pair that meets 4.5:1
+  args: { line: 'm2', size: 'medium', children: 'M2' },
 } satisfies Meta<typeof LineBadge>
 
 export default meta
@@ -23,10 +23,7 @@ const officialPairBelowContrast = {
   a11y: { config: { rules: [{ id: 'color-contrast', enabled: false }] } },
 }
 
-/**
- * The contract story's args: storybook/contract/subjects.ts takes `Default`, else the first export
- * in alphabetical order (`ALarge`). M2's pair meets 4.5:1, so axe's color-contrast rule stays on.
- */
+/** The contract story's args. M2's pair meets 4.5:1, so axe's color-contrast rule stays on. */
 export const Default: Story = {
   args: { line: 'm2', size: 'medium', children: 'M2' },
 }
