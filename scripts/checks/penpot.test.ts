@@ -79,7 +79,7 @@ describe('penpot', () => {
   })
 
   it('knows base and theme tokens', () => {
-    const names = tokenNames()
+    const names = tokenNames(root)
     expect(names.has('space.200')).toBe(true)
     expect(names.has('color.text.primary')).toBe(true)
   })

@@ -4,8 +4,8 @@
 // "Read-back"). The files are JSON, which has no comments, so this rule takes no perron-allow.
 import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { readSources } from '../build-tokens.ts'
 import { PACKAGE } from '../lib/paths.ts'
+import { readSources } from '../lib/token-sources.ts'
 import { loadTokens } from '../lib/tokens.ts'
 import type { Check, Problem } from './lib.ts'
 
@@ -174,8 +174,8 @@ export function codeMapProblems(file: string, design: ReadBack, map: CodeMap): P
 }
 
 /** Every token name the build defines, base or themed. A modifier only overrides base tokens. */
-export function tokenNames(): Set<string> {
-  const tokens = loadTokens(readSources())
+export function tokenNames(root: string): Set<string> {
+  const tokens = loadTokens(readSources(root))
   return new Set([...tokens.base, ...Object.values(tokens.themes).flat()].map((t) => t.name))
 }
 
@@ -186,7 +186,7 @@ export function designProblems(root: string, dir: string): Problem[] {
     (f) => f.endsWith('.json') && !f.endsWith('.code-map.json'),
   )
   if (!files.length) return []
-  const tokens = tokenNames()
+  const tokens = tokenNames(root)
   const read = (rel: string) => JSON.parse(readFileSync(join(root, rel), 'utf8'))
   return files.sort().flatMap((f) => {
     const file = `${dir}/${f}`

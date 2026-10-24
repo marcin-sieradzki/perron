@@ -11,7 +11,7 @@ import {
 } from '../scripts/checks/penpot.ts'
 
 const here = dirname(fileURLToPath(import.meta.url))
-const tokens = tokenNames()
+const tokens = tokenNames(join(here, '..'))
 
 type Fake = Record<string, unknown>
 interface Helpers {
