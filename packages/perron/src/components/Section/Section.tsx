@@ -50,7 +50,8 @@ const given = (node: ReactNode): boolean =>
 /**
  * One inner part: its `slotProps` value merged with the part's own props, its own last, so its
  * class, `id` and children stay while the caller's `className` joins and its `render` swaps the
- * element (CR-4). With `enabled` false it renders nothing (CR-1).
+ * element (CR-4). An element given as `render` has its own props merged over all of these by
+ * Base UI, so an `id` on it replaces the title's. With `enabled` false it renders nothing (CR-1).
  */
 function usePart(
   defaultTagName: 'div' | 'h3',

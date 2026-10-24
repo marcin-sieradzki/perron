@@ -1,7 +1,7 @@
 /* Section: a heading above the caller's content, on its container's surface, with no fill, border,
-   padding, margin or shadow of its own and no width of its own (CR-5). Every row of
-   docs/components/section.md's Tokens table is at rest. No overflow, so a focused child's ring is
-   never cut (CR-8). */
+   padding or shadow of its own and no width of its own; every part resets the browser's margins to
+   0 and adds none (CR-5). Every row of docs/components/section.md's Tokens table is at rest. No
+   overflow, so a focused child's ring is never cut (CR-8). */
 .pn-Section {
   display: flex;
   flex-direction: column;
@@ -19,7 +19,8 @@
   margin: 0;
 }
 
-/* CR-6: the title grows and can shrink below its longest word, breaking a long word inside itself.
+/* CR-6: the title grows and can shrink below its longest word, breaking a word longer than its
+   line.
    CR-7: the capitals are style over sentence-case text, as the overline role's class sets them. */
 .pn-Section-title {
   flex: 1 1 auto;

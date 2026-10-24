@@ -40,6 +40,28 @@ describe('Section', () => {
     expect(markup).toMatch(/<h3 class="pn-Section-title" id="[^"]+">(<span>)?Depar(<!-- -->)?tures/)
   })
 
+  it.each([
+    ['a string', 'All departures'],
+    ['an element', <a href="#all">All departures</a>],
+    ['an array', ['All ', 'departures']],
+  ])('renders an action given as %s inside the action part', (_, action) => {
+    const markup = renderToStaticMarkup(<Section title="Departures" action={action} />)
+    expect(markup).toMatch(
+      /<div class="pn-Section-action">(<a href="#all">)?All (<!-- -->)?departures/,
+    )
+  })
+
+  it.each([
+    ['a string', 'Nothing leaves this stop in the next hour.'],
+    ['an element', <p key="content">Nothing leaves this stop in the next hour.</p>],
+    ['an array', ['Nothing leaves this stop ', 'in the next hour.']],
+  ])('renders children given as %s inside the content part', (_, children) => {
+    const markup = renderToStaticMarkup(<Section title="Departures">{children}</Section>)
+    expect(markup).toMatch(
+      /<div class="pn-Section-content">(<p>)?Nothing leaves this stop (<!-- -->)?in the next hour\./,
+    )
+  })
+
   it('names the region by its title, with the caller’s id when given (CR-2)', () => {
     const own = renderToStaticMarkup(<Section title="Departures" aria-labelledby="other" />)
     const id = /<h3 class="pn-Section-title" id="([^"]+)"/.exec(own)?.[1]
