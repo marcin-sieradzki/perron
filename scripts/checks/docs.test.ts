@@ -64,6 +64,22 @@ describe('docs', () => {
     ])
   })
 
+  it("names a story the spec's Stories table has no row for, and a row no story is", () => {
+    expect(docs.run(fixture('stories'))).toEqual([
+      {
+        file: 'docs/components/pin.md',
+        message:
+          "packages/perron/src/components/Pin/Pin.stories.tsx exports the story Small, which docs/components/pin.md's Stories table has no row for: give it a row, or take the story out",
+      },
+      {
+        file: 'docs/components/pin.md',
+        line: 11,
+        message:
+          "Large is a row of docs/components/pin.md's Stories table but no story packages/perron/src/components/Pin/Pin.stories.tsx exports: export it under that name, or take the row out",
+      },
+    ])
+  })
+
   it('passes on the repo', () => {
     expect(docs.run(join(here, '../..'))).toEqual([])
   })

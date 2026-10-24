@@ -105,7 +105,7 @@ MUI's names, with Base UI's details passed through as the last argument.
 - `className` is merged, not replaced: `pn-<Name>` first, then the caller's.
 - Every prop the props type declares is taken out of `rest` before the spread, so a prop that is invalid on the element never reaches the DOM.
 
-The contract story, `storybook/contract/Contract.stories.tsx`, renders every registered component and pattern past designing with a `ref` and a `data-testid`, and fails unless both land on one element. It renders each with the args of its `Default` story over its meta's, or, with no `Default`, of its alphabetically first story (a module namespace lists exports alphabetically, not in the file's order), so those args must render it alone, and a new component needs no edit to the contract story.
+The contract story, `storybook/contract/Contract.stories.tsx`, renders every registered component and pattern past designing with a `ref` and a `data-testid`, and fails unless both land on one element, wherever it is in the document, so an overlay whose root portals to `<body>` passes as any other. It renders each with the args of its **subject story**: its `Default` story over its meta's args, or, with no `Default`, its alphabetically first story (a module namespace lists exports alphabetically, not in the file's order). No story has to be named `Default`. The subject story's args must render the component alone, and a new component needs no edit to the contract story.
 
 ## Customising
 
@@ -242,9 +242,10 @@ The rest of the WCAG 2.2 AA target is on [Accessibility](../foundations/accessib
 - The default export is `satisfies Meta<typeof <Name>>`, with `component` set and `title: 'Components/<Name>'`.
 - One story per variant and state the Penpot design shows, named as Penpot names it, so the visual check pairs each story with its export.
 - A `play` test for every behaviour the component promises (dismissal, focus, keyboard), ending in the resting state: popups closed and focus back where it started.
-- The docs page, the visual stage and the audits show each story's first render, as its args leave it; its `play` runs as a test (`npm run test:stories`) and in the story's canvas. `.storybook/preview.ts` sets this for every story. So an overlay's story opens it with `defaultOpen`, beside the trigger that opens it again, and the docs page shows it open. An overlay portals to `<body>` and may lock the page, so its meta sets `parameters: { docs: { story: { inline: false, height: '480px' } } }`, a height that fits the open overlay, and each story renders in its own frame. A story whose `play` the docs page should run renders inline with `parameters.docs.story.autoplay: true`.
+- The docs page, the visual stage and the audits show each story's first render, as its args leave it; its `play` runs as a test (`npm run test:stories`) and in the story's canvas. `.storybook/preview.ts` sets this for every story. So an overlay's story opens it with `defaultOpen`, beside the trigger that opens it again, and the docs page shows it open. An overlay portals to `<body>` and may lock the page, so its meta sets `parameters: { docs: { story: { inline: false, height: '480px' } } }`, a height that fits the open overlay, and each story renders in its own frame. Its `play` finds the popup through `screen`, the whole document, since the popup is outside `canvasElement`, and closes it at the end. A story whose `play` the docs page should run renders inline with `parameters.docs.story.autoplay: true`.
+- A `play` that measures text asserts relations: it wraps onto more than one line, it stays inside its column, nothing overflows. An exact line count or a text height in pixels is never one, since CI's Linux renders the same fonts a little wider or narrower than a Mac. `.storybook/preview.ts` loads the library's fonts before every story renders, so a story never waits for them itself.
 - Stories run in Chromium with axe in `error` mode (`npm run test:stories`, part of `npm run check`), so an axe violation fails CI. The contract story's `Keyboard` story is the `play` pattern to copy: Tab to the element, expect focus, Shift+Tab back.
-- The contract story's `OwnedStrings` story renders every component and pattern with the args its `Root` story takes (see [Root](#root)), in `en`, `da`, `sv` and `nb`, and runs `expectOwnedStrings` on each render, with the strings in those args as the caller's words. So those args hold every word the caller gives.
+- The contract story's `OwnedStrings` story renders every component and pattern with its subject story's args (see [Root](#root)), in `en`, `da`, `sv` and `nb`, and runs `expectOwnedStrings` on each render, with the strings in those args as the caller's words. So those args hold every word the caller gives.
 
 ## Patterns
 
@@ -258,7 +259,7 @@ It is exported from `@mylder/perron/patterns`.
 
 ## Checks
 
-Each rule is one script, `scripts/checks/<rule>.ts`. `npm run gates` runs them all, as part of `npm run check`, and `npm run gates -- <rule>` runs one. A deliberate exception is written in place, on the line it excuses or the line above it, with one rule and a reason:
+Each rule is one script, `scripts/checks/<rule>.ts`. `npm run gates` runs them all, as part of `npm run check`, `npm run gates -- <rule>` runs one, and a PascalCase name after it, `npm run gates -- docs <Name>`, keeps only that component's or pattern's problems. A deliberate exception is written in place, on the line it excuses or the line above it, with one rule and a reason:
 
 ```css
 /* perron-allow(component-css): the map canvas reads this length in script */
