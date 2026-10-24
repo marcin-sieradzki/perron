@@ -47,6 +47,14 @@ export const en = {
   delayUnknown: 'Delay unknown',
   /** Stat: no data gives the figure; heard in place of "—". */
   unknown: 'Unknown',
+  /** The map's bar of zoom and centre buttons: the toolbar's name. */
+  mapControls: 'Map controls',
+  /** The map's button that zooms in by one step. */
+  zoomIn: 'Zoom in',
+  /** The map's button that zooms out by one step. */
+  zoomOut: 'Zoom out',
+  /** The map's button that moves and zooms the map to show the whole network. */
+  centerMap: 'Centre the map',
 }
 
 /** The name of one owned string. */

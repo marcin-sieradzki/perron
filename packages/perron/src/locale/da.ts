@@ -25,4 +25,8 @@ export const da: OwnedStrings = {
   onTime: 'Til tiden',
   delayUnknown: 'Forsinkelse ukendt',
   unknown: 'Ukendt',
+  mapControls: 'Kortknapper',
+  zoomIn: 'Zoom ind',
+  zoomOut: 'Zoom ud',
+  centerMap: 'Centrér kortet',
 }

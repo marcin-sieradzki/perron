@@ -1,0 +1,28 @@
+# Written by npm run factory; never by hand.
+component: MapControls
+layer: component
+deferred:
+  at: 2026-10-24T22:38:36.571Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-24T22:38:40.447Z
+    ended: 2026-10-24T22:44:56.764Z
+  build:
+    status: done
+    started: 2026-10-24T22:45:03.722Z
+    runs: 1
+    ended: 2026-10-24T22:51:28.347Z
+  review:
+    status: done
+    started: 2026-10-24T22:52:01.227Z
+    rounds: 1
+    findings:
+      p1: 0
+      p2: 0
+      p3: 3
+    ended: 2026-10-24T22:56:56.050Z
+  docs:
+    status: done
+    started: 2026-10-24T22:57:31.313Z
+    ended: 2026-10-24T22:59:18.548Z
