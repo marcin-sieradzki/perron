@@ -10,4 +10,4 @@ The component loop of [ADR 0003](0003-three-agent-component-loop.md) runs as a s
 
 ## Consequences
 
-The factory starts slow: one component in flight, every PR merged by a person, caps of 3 build attempts and 2 review rounds before `needs-human`, and a retro after every fifth merged component. The visual check is an automated gate whose report goes on the PR, no longer a separate sign-off.
+The factory starts slow: one component in flight, every PR merged by a person, caps of 3 build attempts and 2 review rounds before `needs-human`, and a retro after every fifth merged component, which improves the factory itself ([ADR 0009](0009-factory-improves-through-scored-retros.md)). The visual check is an automated gate whose report goes on the PR, no longer a separate sign-off.

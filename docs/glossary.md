@@ -55,3 +55,23 @@ _Avoid_: Pipeline, bot
 **Run**:
 One start of the factory on one component, from the moment it claims the issue to the next gate, cap or ready PR. It remembers only what the issue, the PR and `pipeline.yaml` hold.
 _Avoid_: Session, job
+
+**Scorecard**:
+What one stage run records about itself in `pipeline.yaml`: its attempts, the checks that failed, its pre-flight reads, its review findings, its questions and its cost.
+_Avoid_: Metrics, report
+
+**Scorer**:
+A rubric that a fresh-context agent applies to the transcripts of runs, giving each a pass, a fail or insufficient evidence, with a reason.
+_Avoid_: Judge, eval, grader
+
+**Touch**:
+Anything the maintainer does for a component beyond the two gates: answering a `[PENDING]` question, clearing `needs-human`, sending a design back, asking for changes on the PR or pushing a commit to it.
+_Avoid_: Steer, intervention
+
+**Retro**:
+The run that improves the factory itself. After every fifth merged component, it scores those runs and opens one PR to the instructions behind their failures.
+_Avoid_: Self-improvement agent, outer loop
+
+**Replay**:
+One stage run again on a merged component's frozen inputs, to compare a proposed change with what it replaces.
+_Avoid_: Shadow run, benchmark
