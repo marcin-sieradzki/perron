@@ -247,7 +247,7 @@ After the design step, three agent contexts run in sequence, rather than as an a
   - Add `list_components`, `get_component` (spec, props, code map) and `get_design` (read-back and exports) to the server.
   - Generate a `.md` prop contract per component for the docs site and `llms.txt`.
 - [ ] **5.4 The factory.** Local, after 5.2. Puts `/factory` behind GitHub Issues, as [ADR 0008](docs/adr/0008-local-component-factory.md) describes, so a component goes from a filed issue to a ready PR with the maintainer acting only at the two gates.
-  - **Identity.** Maintainer, then Any. A GitHub App, `perron-factory`, installed on this repository only, with write access to contents, issues and pull requests. Its private key lives in the macOS Keychain. `scripts/factory-token.ts` mints a one-hour installation token, and the factory passes it as `GH_TOKEN` to its own `gh` and `git push` calls only, so the maintainer's own login stays as it is.
+  - **Identity.** At first the factory acts as the maintainer's own `gh` login, and the board shows which component waits at a gate. Its `gh` and `git push` calls all read the token from `GH_TOKEN`, so changing identity later means changing that token only.
   - **Labels.** One per stage (`design`, `brief`, `build`, `review`, `docs`, `visual`), plus `design-approved`, `needs-human`, and `factory:running`, the claim.
   - **Dependencies.** `dependsOn` in `components.json` is the source. A dependency is done when its PR is merged to main.
   - **Decompose run.** Files one issue per registry entry, with its category, Base UI parts, dependencies as "Blocked by #n", and the matching component from the extracted prototype as a behaviour reference. A second run syncs the issues to the registry and files nothing twice.
@@ -259,8 +259,11 @@ After the design step, three agent contexts run in sequence, rather than as an a
   - **The PR.** The build stage opens one draft PR per component, holding the spec, code, stories, docs page, read-back and visual report. It is marked ready once review and the visual check pass.
   - **Penpot.** When the tab isn't connected, the design run opens the file and presses File → MCP Server → Connect through Claude in Chrome. If that fails, it adds `needs-human` and stops.
   - **Throttle.** One component in flight at first. Raise it once components pass through without `needs-human`.
+  - **More than one in flight.** Raising the throttle brings in two things:
+    - **The App.** Maintainer, then Any. The factory gets its own GitHub App, `perron-factory`, installed on this repository only, with write access to contents, issues and pull requests, so its comments notify the maintainer and its PRs can be approved. Its private key lives in the macOS Keychain. `scripts/factory-token.ts` mints a one-hour installation token into `GH_TOKEN`, so the maintainer's own login stays as it is.
+    - **Tracing.** Claude Code's runs go to a self-hosted Langfuse on the maintainer's machine through its Claude Code hook.
   - **Retro run.** After every fifth merged component, it reads those five issues, PRs, reviews and transcripts, and opens one PR to the skills, checks and templates.
-  - **Visibility.** A GitHub Project board over the issues, by stage label. With more than one component in flight, Claude Code's OpenTelemetry export goes to a self-hosted Langfuse on the maintainer's machine.
+  - **Visibility.** A GitHub Project board in this repository's Projects, with one column per stage, which adds every new issue through its built-in workflow.
 
   **Done** when `/factory` takes a made-up component from a filed issue to a ready PR in a fresh session, stopping at the design gate and resuming from the label alone.
 
