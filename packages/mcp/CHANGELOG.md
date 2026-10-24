@@ -1,5 +1,16 @@
 # @mylder/perron-mcp
 
+## 0.1.1
+
+### Patch Changes
+
+- 84fa566: The docs data now holds the component contract, with the rules its checks and story tests hold every component and pattern to, and the spec template, and `search_docs` finds both.
+- Updated dependencies [5d5f868]
+- Updated dependencies [84fa566]
+- Updated dependencies [a1df949]
+- Updated dependencies [d618c3c]
+  - @mylder/perron@0.2.0
+
 ## 0.1.0
 
 ### Minor Changes
