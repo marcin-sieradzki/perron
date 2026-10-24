@@ -95,7 +95,7 @@ Rules for this component alone, numbered so the build and the review can cite th
 
 ## Stories
 
-One per variant and state the Penpot design shows, named as Penpot names it. The contract story renders one of them with axe on: the `Default` story when there is one, or else the first export in alphabetical order (`ALarge` before `M1Medium`), never the table's first row. Its Shows cell says so, and its args pass every rule alone.
+One per variant and state the Penpot design shows, named as Penpot names it, and one row per story the stories file exports, under its export name (the `docs` gate holds the two to each other). The contract story renders the [subject story](README.md#root) with axe on, so its Shows cell says it is the subject and its args pass every rule alone.
 
 | Story           | Shows                       | `play` test                          |
 | --------------- | --------------------------- | ------------------------------------ |

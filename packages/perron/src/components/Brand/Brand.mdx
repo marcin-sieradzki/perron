@@ -1,0 +1,19 @@
+import { Meta, Stories, Title } from '@storybook/addon-docs/blocks'
+import { PropsTable } from '../../../../../storybook/blocks/PropsTable.tsx'
+import { SpecProse } from '../../../../../storybook/blocks/SpecProse.tsx'
+import * as BrandStories from './Brand.stories.tsx'
+
+<Meta of={BrandStories} />
+
+<Title />
+
+<SpecProse path="docs/components/brand.md" intro />
+
+<Stories title="Examples" />
+
+<PropsTable of={BrandStories} />
+
+<SpecProse
+  path="docs/components/brand.md"
+  sections={['Keyboard and ARIA', 'Owned strings', "Do and don't"]}
+/>

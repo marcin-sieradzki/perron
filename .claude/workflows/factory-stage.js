@@ -1,6 +1,7 @@
 // One stage of the component loop, run in a fresh context. The `factory` skill starts it with
-// `{ stage, name }`, plus `round` for review and `answers` for a rerun after the stage's questions,
-// then records the outcome with `npm run factory -- end`, the only writer of the pipeline file.
+// `{ stage, name }`, plus `round` for review, `answers` for a rerun after the stage's questions, and
+// `fix` for a rerun after a send-back or a failed run (the `fix` that `npm run factory -- next`
+// gives: the reason, with a review's P1 and P2 findings word for word), then records the outcome with `npm run factory -- end`, the only writer of the pipeline file.
 // Each stage reads its own skill, or for review runs as the component-reviewer agent, so it never
 // sees another stage's reasoning. The visual stage is one command, which the factory skill runs
 // itself. A batch that runs components side by side passes `dir`, the component's worktree, and
@@ -49,8 +50,11 @@ const REVIEW = {
   required: ['review'],
 }
 
-const { stage, name, round, answers, dir, port } = args ?? {}
+const { stage, name, round, answers, fix, dir, port } = args ?? {}
 const answered = answers ? ` The maintainer answered your last run's questions: ${answers}` : ''
+const rerun = fix
+  ? ` This run is a rerun, and its first work is what the factory names here, each at the file and line it gives, before the skill's other steps:\n${fix}\n`
+  : ''
 if (dir && !port) throw new Error(`factory-stage needs a port with dir ${dir}`)
 const worktreeNote = dir
   ? `Work only in the worktree ${dir}: run every command from it, with STORYBOOK_PORT=${port} exported in each shell, and read and write files only under it. Every repo path below is relative to it. `
@@ -83,6 +87,7 @@ return await agent(
   `${worktreeNote}Read .claude/skills/${SKILLS[stage]}/SKILL.md and follow it for ${name}, to its Returns section. ` +
     'You run in a fresh context that the factory started: nobody answers questions mid-run, so return them. ' +
     `Your outcome is recorded by the factory in components/${kebab}/pipeline.yaml, which it alone writes.` +
+    rerun +
     answered,
   { label, phase: 'Stage', schema: OUTCOME },
 )

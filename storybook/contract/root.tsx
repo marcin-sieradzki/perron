@@ -1,5 +1,7 @@
 // The Root rule of the contract (docs/components/README.md) as a story: it renders each subject
-// with a ref and a data-testid, and its play fails unless both land on one element.
+// with a ref and a data-testid, and its play fails unless both land on one element. It looks for
+// the root in the whole document, so a root a portal moves out of the canvas to the end of <body>,
+// such as an overlay's popup, is found as any other.
 import { createRef } from 'react'
 import type { ComponentType, RefObject } from 'react'
 import type { StoryObj } from '@storybook/react-vite'
@@ -28,7 +30,7 @@ export function rootStory(subjects: Subject[]): StoryObj {
       </>
     ),
     play: async ({ canvasElement, step }) => {
-      const canvas = within(canvasElement)
+      const canvas = within(canvasElement.ownerDocument.body)
       for (const { name } of subjects)
         await step(`${name}: ref and data-testid land on one element`, async () => {
           const root = canvas.getByTestId(testId(name))
