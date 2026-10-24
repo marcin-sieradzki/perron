@@ -1,0 +1,159 @@
+/* StopTimeline: an ordered list of a trip's stops on a grid whose columns every stop shares, so the
+   times and delays line up, with a rail through the markers (docs/patterns/stop-timeline.md).
+   Columns: the marker, the name (and "Next stop" under it), the time, the delay. */
+.pn-StopTimeline {
+  display: grid;
+  grid-template-columns: var(--perron-icon-size-325) minmax(0, 1fr) auto auto;
+  column-gap: var(--perron-space-300);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* With no time or delay in any stop, their empty columns and gaps go, and the names take the room. */
+.pn-StopTimeline:not(:has(.pn-StopTimeline-time, .pn-StopTimeline-delay)) {
+  grid-template-columns: var(--perron-icon-size-325) minmax(0, 1fr);
+}
+
+/* Each stop lays its parts on the root's columns (CR-7); it holds its piece of rail. Its type is the
+   name's, so `1lh` in the marker and the rail, which inherit it, is one line of the name. */
+.pn-StopTimeline-stop {
+  position: relative;
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  align-items: baseline;
+  padding-block: var(--perron-space-150);
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+}
+
+/* The marker sits beside the name's first line: its centre on the centre of that line, one `1lh`
+   of the name's type, and above the rail, whose piece it hides behind its fill (CR-5, CR-7). */
+.pn-StopTimeline-marker {
+  position: relative;
+  grid-row: 1;
+  grid-column: 1;
+  align-self: start;
+  margin-block-start: calc((1lh - var(--perron-icon-size-325)) / 2);
+}
+
+/* The piece of rail from this stop's marker centre to the next stop's, on the markers' centre line:
+   the next stop's marker centre sits as far below this stop's end as this stop's marker centre
+   sits below its start, its padding and half a line of the name (CR-6). */
+.pn-StopTimeline-rail {
+  position: absolute;
+  inset-block: calc(var(--perron-space-150) + 1lh / 2)
+    calc(-1 * (var(--perron-space-150) + 1lh / 2));
+  inset-inline-start: calc((var(--perron-icon-size-325) - var(--perron-border-width-050)) / 2);
+  inline-size: var(--perron-border-width-050);
+  background: var(--perron-color-text-primary);
+}
+
+.pn-StopTimeline-rail[data-line='m1'] {
+  background: var(--perron-color-transit-line-m1);
+}
+
+.pn-StopTimeline-rail[data-line='m2'] {
+  background: var(--perron-color-transit-line-m2);
+}
+
+.pn-StopTimeline-rail[data-line='m3'] {
+  background: var(--perron-color-transit-line-m3);
+}
+
+.pn-StopTimeline-rail[data-line='m4'] {
+  background: var(--perron-color-transit-line-m4);
+}
+
+.pn-StopTimeline-rail[data-line='a'] {
+  background: var(--perron-color-transit-line-a);
+}
+
+.pn-StopTimeline-rail[data-line='b'] {
+  background: var(--perron-color-transit-line-b);
+}
+
+.pn-StopTimeline-rail[data-line='c'] {
+  background: var(--perron-color-transit-line-c);
+}
+
+.pn-StopTimeline-rail[data-line='e'] {
+  background: var(--perron-color-transit-line-e);
+}
+
+.pn-StopTimeline-rail[data-line='f'] {
+  background: var(--perron-color-transit-line-f);
+}
+
+.pn-StopTimeline-rail[data-line='h'] {
+  background: var(--perron-color-transit-line-h);
+}
+
+.pn-StopTimeline-rail[data-line='bus'] {
+  background: var(--perron-color-transit-mode-bus);
+}
+
+.pn-StopTimeline-rail[data-line='regional'] {
+  background: var(--perron-color-transit-mode-regional);
+}
+
+/* The piece leaving a passed stop is set back, whatever the line; after the line rules, which it
+   matches in specificity. */
+.pn-StopTimeline-rail[data-stop='passed'] {
+  background: var(--perron-color-border-strong);
+}
+
+.pn-StopTimeline-name {
+  grid-row: 1;
+  grid-column: 2;
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+  color: var(--perron-color-text-primary);
+  overflow-wrap: break-word;
+}
+
+/* "Next stop", the name's second line. */
+.pn-StopTimeline-next {
+  grid-row: 2;
+  grid-column: 2;
+  font: var(--perron-typography-caption);
+  letter-spacing: var(--perron-typography-caption-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.pn-StopTimeline-time {
+  grid-row: 1;
+  grid-column: 3;
+  font: var(--perron-typography-data);
+  letter-spacing: var(--perron-typography-data-tracking);
+  font-variant-numeric: tabular-nums;
+  color: var(--perron-color-text-primary);
+  white-space: nowrap;
+}
+
+/* Delay keeps its own type and colour, passed or not; only its place is set here. */
+.pn-StopTimeline-delay {
+  grid-row: 1;
+  grid-column: 4;
+}
+
+.pn-StopTimeline-name[data-stop='passed'],
+.pn-StopTimeline-time[data-stop='passed'] {
+  color: var(--perron-color-text-secondary);
+}
+
+/* The system would reset the rail's fill, so it sets its own system colours and the trip's
+   progress still shows (CR-12); StationIcon keeps its own rule. */
+@media (forced-colors: active) {
+  /* every rail carries `data-stop`, so this matches the line rules' specificity and, after them,
+     wins; the passed rule after it wins in turn */
+  .pn-StopTimeline-rail[data-stop] {
+    forced-color-adjust: none;
+    background: CanvasText;
+  }
+
+  .pn-StopTimeline-rail[data-stop='passed'] {
+    background: GrayText;
+  }
+}

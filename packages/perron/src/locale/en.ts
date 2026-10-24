@@ -51,6 +51,10 @@ export const en = {
   delayUnknown: 'Delay unknown',
   /** Brand: the brand name, a name and never translated; the wordmark shows it lowercase. */
   brandName: 'Mylder',
+  /** A stop timeline: under the stop the vehicle reaches next. */
+  nextStop: 'Next stop',
+  /** A stop timeline: heard after the name of a stop the vehicle has passed. */
+  passed: 'Passed',
   /** The map's bar of zoom and centre buttons: the toolbar's name. */
   mapControls: 'Map controls',
   /** The map's button that zooms in by one step. */

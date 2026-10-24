@@ -27,6 +27,8 @@ export const da: OwnedStrings = {
   onTime: 'Til tiden',
   delayUnknown: 'Forsinkelse ukendt',
   brandName: 'Mylder',
+  nextStop: 'Næste stop',
+  passed: 'Passeret',
   mapControls: 'Kortknapper',
   zoomIn: 'Zoom ind',
   zoomOut: 'Zoom ud',
