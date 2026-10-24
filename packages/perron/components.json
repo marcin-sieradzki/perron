@@ -39,7 +39,7 @@
     "name": "Surface",
     "layer": "component",
     "category": "Layout",
-    "status": "building",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/Surface",
     "dependsOn": []
