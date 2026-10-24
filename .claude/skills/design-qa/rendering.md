@@ -4,7 +4,7 @@ How the audit skills render what they judge: every story of a component or patte
 
 ## Serve it
 
-- **Stories:** start `npm run storybook` in the background, on the port `STORYBOOK_PORT` names (6006 when it is unset; a factory batch gives each worktree its own), and wait until `http://localhost:<port>/index.json` answers. Its `entries` of `type: "story"` give each story's `id` and `title`: `Components/<Name>` or `Patterns/<Name>`. A story renders alone at `http://localhost:<port>/iframe.html?id=<story-id>&viewMode=story`.
+- **Stories:** start `npm run storybook` in the background, on the port `STORYBOOK_PORT` names (6006 when it is unset; a factory batch gives each worktree its own), and wait until `http://localhost:<port>/index.json` answers. Its `entries` of `type: "story"` give each story's `id` and `title`: `Components/<Name>` or `Patterns/<Name>`. A story renders alone, as its args leave it and without its `play`, at `http://localhost:<port>/iframe.html?id=<story-id>&viewMode=story&embed=true`; `embed=true` keeps a `play` that closes an overlay from closing it before you look.
 - **A screen:** the URL its app's dev server gives, such as a Mylder screen. Render it at each breakpoint in `docs/foundations/layout.md` and at 320 px wide.
 
 Stop the server when the audit is done.
@@ -34,7 +34,7 @@ const browser = await chromium.launch()
 const page = await browser.newPage({ viewport: { width: 800, height: 600 } })
 for (const story of stories)
   for (const theme of ['light', 'dark']) {
-    await page.goto(`${base}/iframe.html?id=${story.id}&viewMode=story`)
+    await page.goto(`${base}/iframe.html?id=${story.id}&viewMode=story&embed=true`)
     await page.waitForLoadState('networkidle')
     await page.evaluate((t) => (document.documentElement.dataset.theme = t), theme)
     const tokens = await page.evaluate(() =>

@@ -26,4 +26,8 @@ export const nb: OwnedStrings = {
   delayUnknown: 'Forsinkelse ukjent',
   nextStop: 'Neste stopp',
   passed: 'Passert',
+  mapControls: 'Kartknapper',
+  zoomIn: 'Zoom inn',
+  zoomOut: 'Zoom ut',
+  centerMap: 'Sentrer kartet',
 }

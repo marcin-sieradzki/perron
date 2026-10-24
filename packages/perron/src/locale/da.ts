@@ -26,4 +26,8 @@ export const da: OwnedStrings = {
   delayUnknown: 'Forsinkelse ukendt',
   nextStop: 'Næste stop',
   passed: 'Passeret',
+  mapControls: 'Kortknapper',
+  zoomIn: 'Zoom ind',
+  zoomOut: 'Zoom ud',
+  centerMap: 'Centrér kortet',
 }
