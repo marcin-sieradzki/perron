@@ -17,7 +17,7 @@ export interface SeverityLabelState extends Record<string, unknown> {
 
 export interface SeverityLabelProps extends Omit<
   useRender.ComponentProps<'span', SeverityLabelState>,
-  'children' | 'render' | 'ref'
+  'children' | 'ref'
 > {
   /**
    * The kind of disruption: `delay` for vehicles running late, `diversion` for a changed route,
@@ -25,19 +25,28 @@ export interface SeverityLabelProps extends Omit<
    */
   severity: SeverityLabelSeverity
   /**
-   * Swaps the root element, keeping the class, the `data-severity` attribute, the icon and the
-   * words.
+   * Overrides "Delays", the name shown for `severity='delay'`.
    *
-   * @default <span />
+   * @default The locale's
    */
-  render?: useRender.ComponentProps<'span', SeverityLabelState>['render']
-  /** Overrides "Delays", the name shown for `severity='delay'`. */
   delaysLabel?: string
-  /** Overrides "Diversions", the name shown for `severity='diversion'`. */
+  /**
+   * Overrides "Diversions", the name shown for `severity='diversion'`.
+   *
+   * @default The locale's
+   */
   diversionsLabel?: string
-  /** Overrides "Planned works", the name shown for `severity='planned'`. */
+  /**
+   * Overrides "Planned works", the name shown for `severity='planned'`.
+   *
+   * @default The locale's
+   */
   plannedWorksLabel?: string
-  /** Overrides "Data feed problems", the name shown for `severity='data'`. */
+  /**
+   * Overrides "Data feed problems", the name shown for `severity='data'`.
+   *
+   * @default The locale's
+   */
   dataFeedProblemsLabel?: string
   /** Reaches the root element. */
   ref?: Ref<HTMLSpanElement>
