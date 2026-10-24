@@ -2,10 +2,10 @@
 name: factory
 description: 'Run one component or pattern through the loop, design to visual check, stopping only at a gate, a question or a cap.'
 disable-model-invocation: true
-argument-hint: '<Name>'
+argument-hint: '<Name> | batch'
 ---
 
-`/factory <Name>` drives one component or pattern through the six stages of the loop: design, brief, build, review, docs and visual ([ROADMAP](../../../ROADMAP.md), "Phase 4: The agent loop"; [ADR 0003](../../../docs/adr/0003-three-agent-component-loop.md)). You are the **orchestrator**: each stage but visual runs in a fresh context of its own, and you start it, record what it returned, and talk to the maintainer. `<Name>` is the argument, in PascalCase; `<name>` is the same in kebab-case.
+`/factory <Name>` drives one component or pattern through the six stages of the loop: design, brief, build, review, docs and visual ([ROADMAP](../../../ROADMAP.md), "Phase 4: The agent loop"; [ADR 0003](../../../docs/adr/0003-three-agent-component-loop.md)). You are the **orchestrator**: each stage but visual runs in a fresh context of its own, and you start it, record what it returned, and talk to the maintainer. `<Name>` is the argument, in PascalCase; `<name>` is the same in kebab-case. `/factory batch` is an unattended batch over the whole registry: see [Unattended runs](#unattended-runs).
 
 The loop's state is `components/<name>/pipeline.yaml`, and `npm run factory`, which only you run, is its only writer. The command also holds every rule: which stage comes next, what a stage needs before it may begin, each stage's gate, the caps. You follow what it prints; when it refuses, its reason is the next thing to fix or to tell the maintainer.
 
