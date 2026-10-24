@@ -3,4 +3,9 @@ component: Stat
 layer: component
 deferred:
   at: 2026-10-24T23:03:47.889Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-24T23:03:51.331Z
+    ended: 2026-10-24T23:08:06.246Z
+    pending: 9
