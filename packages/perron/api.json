@@ -137,6 +137,67 @@
       }
     }
   },
+  "DetailHeader": {
+    "extends": [
+      "Omit< ComponentPropsWithRef<'div'>, 'title' | 'children' >"
+    ],
+    "props": {
+      "action": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "line": {
+        "optional": true,
+        "type": [
+          "\"a\"",
+          "\"b\"",
+          "\"bus\"",
+          "\"c\"",
+          "\"e\"",
+          "\"f\"",
+          "\"h\"",
+          "\"m1\"",
+          "\"m2\"",
+          "\"m3\"",
+          "\"m4\"",
+          "\"regional\""
+        ]
+      },
+      "lineName": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ mark?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; title?: DetailedHTMLProps<HTMLAttributes<HTMLHeadingElement>, HTMLHeadingElement> | undefined; subheader?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; action?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; }"
+        ]
+      },
+      "subheader": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "title": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "variant": {
+        "optional": true,
+        "type": [
+          "\"line\"",
+          "\"stop\""
+        ]
+      }
+    }
+  },
   "EmptyState": {
     "extends": [
       "Omit< useRender.ComponentProps<'div'>, 'title' | 'children' >"
@@ -264,6 +325,75 @@
         "type": [
           "\"large\"",
           "\"medium\""
+        ]
+      }
+    }
+  },
+  "LinkButton": {
+    "extends": [
+      "Omit< useRender.ComponentProps<'a'>, 'children' | 'ref' | 'color' | 'href' | 'className' | 'style' >"
+    ],
+    "props": {
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "endIcon": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "fullWidth": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "href": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLAnchorElement>"
+        ]
+      },
+      "size": {
+        "optional": true,
+        "type": [
+          "\"medium\"",
+          "\"small\""
+        ]
+      },
+      "startIcon": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "variant": {
+        "optional": true,
+        "type": [
+          "\"outline\"",
+          "\"solid\""
         ]
       }
     }
