@@ -27,7 +27,7 @@ type Story = StoryObj<typeof meta>
 type Play = NonNullable<Story['play']>
 
 /** A `large` button's words and icon: `info`, drawn on the 18 px grid. */
-const about = { label: 'About', children: icon(info) }
+const help = { label: 'Show help', children: icon(info) }
 
 /** A value as it renders, through a probe that reads it as `property`. */
 function resolve(
@@ -70,10 +70,11 @@ function hoverRules(element: Element) {
 
 /**
  * The button is named by its label and its icon span is `aria-hidden`; Tab focuses it, Enter and
- * Space each fire `onClick` once, Shift+Tab returns focus.
+ * Space each fire `onClick` once, Shift+Tab returns focus to the element before it.
  */
 const activates: Play = async ({ args, canvasElement }) => {
   const button = within(canvasElement).getByRole('button', { name: 'Zoom in' })
+  const before = document.activeElement
   await expect(button).toHaveAccessibleName('Zoom in')
   await expect(button.querySelector('.pn-IconButton-icon')).toHaveAttribute('aria-hidden', 'true')
   await userEvent.tab()
@@ -84,6 +85,7 @@ const activates: Play = async ({ args, canvasElement }) => {
   await expect(args.onClick).toHaveBeenCalledTimes(2)
   await userEvent.tab({ shift: true })
   await expect(button).not.toHaveFocus()
+  await expect(document.activeElement).toBe(before)
 }
 
 /** Hovering sets the `fill` token's background, and keeps the `edge` token's border when given. */
@@ -167,17 +169,17 @@ export const NeutralMediumDisabled: Story = {
   play: disabledSkipped,
 }
 export const NeutralLargeDefault: Story = {
-  args: { ...about, color: 'neutral', size: 'large' },
+  args: { ...help, color: 'neutral', size: 'large' },
   play: largeSquare,
 }
 export const NeutralLargeHover: Story = {
-  args: { ...about, color: 'neutral', size: 'large' },
+  args: { ...help, color: 'neutral', size: 'large' },
 }
 export const NeutralLargeFocus: Story = {
-  args: { ...about, color: 'neutral', size: 'large' },
+  args: { ...help, color: 'neutral', size: 'large' },
 }
 export const NeutralLargeDisabled: Story = {
-  args: { ...about, color: 'neutral', size: 'large', disabled: true },
+  args: { ...help, color: 'neutral', size: 'large', disabled: true },
 }
 export const BrandMediumDefault: Story = {
   args: { color: 'brand', size: 'medium' },
@@ -194,14 +196,14 @@ export const BrandMediumDisabled: Story = {
   play: brandDisabled,
 }
 export const BrandLargeDefault: Story = {
-  args: { ...about, color: 'brand', size: 'large' },
+  args: { ...help, color: 'brand', size: 'large' },
 }
 export const BrandLargeHover: Story = {
-  args: { ...about, color: 'brand', size: 'large' },
+  args: { ...help, color: 'brand', size: 'large' },
 }
 export const BrandLargeFocus: Story = {
-  args: { ...about, color: 'brand', size: 'large' },
+  args: { ...help, color: 'brand', size: 'large' },
 }
 export const BrandLargeDisabled: Story = {
-  args: { ...about, color: 'brand', size: 'large', disabled: true },
+  args: { ...help, color: 'brand', size: 'large', disabled: true },
 }

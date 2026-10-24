@@ -39,11 +39,11 @@ export interface IconButtonProps extends Omit<
    * from screen readers: `label` names the button.
    */
   children?: ReactNode
-  /** Classes for the root, merged after `pn-IconButton`. */
+  /** Reaches the root. `className` is merged after `pn-IconButton`. */
   className?: string
-  /** Inline styles for the root. */
+  /** Reaches the root. */
   style?: CSSProperties
-  /** The root element. */
+  /** Reaches the root. */
   ref?: Ref<HTMLButtonElement>
 }
 

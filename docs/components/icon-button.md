@@ -2,7 +2,7 @@
 
 A button that runs one action and shows it as an icon alone, such as zoom in or about, named for screen readers by its required `label`.
 
-The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the contract, the foundations, the tokens, the Base UI reference and the [Button](button.md) spec it depends on. The [Toolbar](toolbar.md) spec gives its icon-only buttons the look and size answered below, and this spec follows it so the two match side by side.
+The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the contract, the foundations, the tokens, the Base UI reference and the spec of its sibling [Button](button.md), a source it follows rather than a dependency: IconButton builds on Base UI's `Button` and the `VisuallyHidden` part, not on Perron's Button. The [Toolbar](toolbar.md) spec gives its icon-only buttons the look and size answered below, and this spec follows it so the two match side by side.
 
 ## Anatomy
 
@@ -65,7 +65,7 @@ Every colour and size:
 | `root`      | rest  | `padding`                   | 0                                                                                                                                         |
 | `root`      | rest  | `border-radius`             | `radius.md`                                                                                                                               |
 | `root`      | rest  | `border-width`              | `border.width.025`                                                                                                                        |
-| `icon`      | rest  | `--perron-icon-size`        | `icon.size.400` when `size` is `medium`, `icon.size.450` when `large`                                                                     |
+| `root`      | rest  | `--perron-icon-size`        | `icon.size.400` when `size` is `medium`, `icon.size.450` when `large`, inherited by the icon                                              |
 | `root`      | focus | `outline`, `outline-offset` | `focus.width` in `color.border.focus`, `focus.offset` (drawn by `perron.css`)                                                             |
 | `focusRing` | focus | ring corner radius          | `radius.lg`, as Button's: the outline follows the root's `radius.md` out by `focus.offset` plus `focus.width`, and the CSS sets no radius |
 
@@ -121,7 +121,7 @@ What axe won't catch, from the contract, each with how this component meets it:
 - [ ] Everything the eye is told, the ear is told, for every shape each prop accepts: the icon is `aria-hidden` and `label` says in words what it shows, as [Icons](../foundations/icons.md#style) asks of an icon alone; `color` carries emphasis, not meaning; disabled is announced by the native attribute or `aria-disabled`.
 - [ ] Every landmark and named region has an accessible name: none here; a button is neither.
 - [ ] Every default label can be overridden: none here; IconButton owns no strings, and `label` is the caller's.
-- [ ] Every shape the type accepts renders, in every variant: `children` renders a string, an element and a list alike, centred in the square, in both colours and both sizes; `label` is a `string`.
+- [ ] Every shape the type accepts renders, in every variant: `children` renders a string, an element and a list alike, centred in the square, in both colours and both sizes, and the icon span clips a string wider than the square so it stays inside; `label` is a `string`.
 - [ ] A hidden copy kept for animation is `aria-hidden`, and a collapsed region is `inert`: none here; IconButton keeps no hidden copy and collapses nothing. The `VisuallyHidden` label is the name, not a copy.
 - [ ] Native semantics first: a native `<button>` from Base UI's `Button`, named by its own text; with `render` and `nativeButton={false}`, Base UI's `role="button"`. No ARIA of its own.
 - [ ] Focus moves in reading order and returns on close: the button is one tab stop in document order, and opens nothing of its own to return from.
@@ -138,12 +138,12 @@ Rules for this component alone, numbered so the build and the review can cite th
 
 - **CR-1.** Base UI's `Button` already renders the native `<button type="button">`, activates on Enter and Space, sets `disabled` and `data-disabled`, and blocks the click of a disabled button, so the component rebuilds none of it and passes `disabled` straight to it.
 - **CR-2.** The root always carries `data-color` and `data-size`, defaults included; the CSS selects on them, one class then attributes: `.pn-IconButton[data-color='brand']`, `.pn-IconButton[data-size='large']`.
-- **CR-3.** The root is a `size.control` square in both sizes, with no padding, and centres the icon (`display: inline-flex`, `align-items` and `justify-content` `center`, `flex: none` so a flex row never squeezes it). `size` changes only the icon's step.
+- **CR-3.** The root is a `size.control` square in both sizes, with no padding, and centres the icon (`display: inline-flex`, `align-items` and `justify-content` `center`, `flex: none` so a flex row never squeezes it). The icon span is at most the square and clips what overflows it, so a long string stays inside the square and the root's ring and label are untouched. `size` changes only the icon's step.
 - **CR-4.** The states keep the geometry: hover, pressed, focus and disabled change colours only, never the size, border width or radius. Both colours draw a `border.width.025` border, `transparent` on `neutral` and on a disabled `brand`, so the two share one box and Windows' forced colours draw an edge round every icon button.
 - **CR-5.** Hover is read inside `@media (hover: hover)`; pressed (`:active`) takes the hover tokens in a rule outside it, so a touch press shows. Neither applies to a disabled button: both rules exclude `[data-disabled]`, since a native disabled button still matches `:hover`, and one with `focusableWhenDisabled` still matches `:active`.
 - **CR-6.** Focus uses the ring `perron.css` draws on `:focus-visible`; the component draws no ring of its own and never removes the outline. The focus state otherwise looks like rest.
 - **CR-7.** The colour is set on the root's `color`; the icon takes it through `currentColor`. No rule sets a colour on the icon.
-- **CR-8.** The icon span is `aria-hidden="true"` and sets `--perron-icon-size`: `icon.size.400` for `medium`, `icon.size.450` for `large`, so an icon from `packages/perron/icons/` renders at the step its grid was drawn for.
+- **CR-8.** The icon span is `aria-hidden="true"`, and the root sets `--perron-icon-size`, which the icon inherits: `icon.size.400` for `medium`, `icon.size.450` for `large`, on `.pn-IconButton` and `.pn-IconButton[data-size='large']` with no descendant selector, so an icon from `packages/perron/icons/` renders at the step its grid was drawn for.
 - **CR-9.** The label is the caller's `label` inside the `VisuallyHidden` shared part, after the icon span, rendered on every button: the button is named by its own text, the component sets no `aria-label` and no `title`, and `label` is required in `IconButtonProps`.
 - **CR-10.** A `brand` icon button keeps its `color.border.brand` edge at rest, on hover and pressed: the light-theme yellow fill reaches only 2.1:1 on the surfaces, and the edge carries the 3:1 ([Semantic colours](../foundations/semantic-colours.md#brand)).
 - **CR-11.** Changes of state are immediate: no `duration.*` token fits a button's state change, so the CSS has no transition.
@@ -153,7 +153,7 @@ Rules for this component alone, numbered so the build and the review can cite th
 
 ## Stories
 
-The deferred design's variant properties, in this order: `color` (`neutral`, `brand`), `size` (`medium`, `large`) and `State` (`default`, `hover`, `focus`, `disabled`). Each story is named by its variant name (`penpot/README.md`, "Conventions"). A `medium` story renders `packages/perron/icons/`'s `plus` with the label "Zoom in"; a `large` one renders `info`, drawn on the 18 px grid, with the label "About". A `Disabled` story sets `disabled`. The hover and focus stories render at rest: the visual check drives the state itself, and their `play` tests check it.
+The deferred design's variant properties, in this order: `color` (`neutral`, `brand`), `size` (`medium`, `large`) and `State` (`default`, `hover`, `focus`, `disabled`). Each story is named by its variant name (`penpot/README.md`, "Conventions"). A `medium` story renders `packages/perron/icons/`'s `plus` with the label "Zoom in"; a `large` one renders `info`, drawn on the 18 px grid, with the label "Show help". A `Disabled` story sets `disabled`. The hover and focus stories render at rest: the visual check drives the state itself, and their `play` tests check it.
 
 | Story                   | Shows                     | `play` test                                                                                                                                                     |
 | ----------------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |

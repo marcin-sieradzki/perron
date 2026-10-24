@@ -3,8 +3,10 @@
 
 /* A size.control square in both sizes, with no padding, centring the icon (CR-3). Every colour
    draws the edge, transparent where it shows none, so both share one box (CR-4). Positioned, so
-   the VisuallyHidden label stays inside the button. */
+   the VisuallyHidden label stays inside the button. The icon's step is set here, on the root, and
+   the icon inherits it: `size` changes nothing else (CR-3, CR-8). */
 .pn-IconButton {
+  --perron-icon-size: var(--perron-icon-size-400);
   position: relative;
   display: inline-flex;
   flex: none;
@@ -19,15 +21,18 @@
   vertical-align: middle;
 }
 
-/* The icon's step: size changes nothing else (CR-3, CR-8). */
-.pn-IconButton-icon {
-  --perron-icon-size: var(--perron-icon-size-400);
-  display: inline-flex;
-  flex: none;
+.pn-IconButton[data-size='large'] {
+  --perron-icon-size: var(--perron-icon-size-450);
 }
 
-.pn-IconButton[data-size='large'] .pn-IconButton-icon {
-  --perron-icon-size: var(--perron-icon-size-450);
+/* The icon, kept inside the square: a string wider than it is clipped here, on the span, so the
+   root's focus ring and its VisuallyHidden label are untouched (CR-3). */
+.pn-IconButton-icon {
+  display: inline-flex;
+  flex: none;
+  max-inline-size: 100%;
+  max-block-size: 100%;
+  overflow: hidden;
 }
 
 /* neutral: quiet ink, transparent at rest */
