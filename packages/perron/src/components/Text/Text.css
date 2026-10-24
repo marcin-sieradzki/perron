@@ -1,0 +1,127 @@
+/* Text: one typography role and one text colour on its root (docs/components/text.md). Each role
+   is set here, not through the perron-typography-* classes, so the component-css gate reads it
+   (CR-4), and keeps its size at every width (CR-10). */
+.pn-Text {
+  margin: 0;
+  /* a word longer than its line breaks inside itself, never runs past a 320 px screen (CR-11) */
+  overflow-wrap: anywhere;
+}
+
+.pn-Text[data-variant='body'] {
+  font: var(--perron-typography-body);
+  letter-spacing: var(--perron-typography-body-tracking);
+}
+
+.pn-Text[data-variant='display'] {
+  font: var(--perron-typography-display);
+  letter-spacing: var(--perron-typography-display-tracking);
+}
+
+.pn-Text[data-variant='heading-lg'] {
+  font: var(--perron-typography-heading-lg);
+  letter-spacing: var(--perron-typography-heading-lg-tracking);
+}
+
+.pn-Text[data-variant='heading-md'] {
+  font: var(--perron-typography-heading-md);
+  letter-spacing: var(--perron-typography-heading-md-tracking);
+}
+
+.pn-Text[data-variant='heading-sm'] {
+  font: var(--perron-typography-heading-sm);
+  letter-spacing: var(--perron-typography-heading-sm-tracking);
+}
+
+.pn-Text[data-variant='body-sm'] {
+  font: var(--perron-typography-body-sm);
+  letter-spacing: var(--perron-typography-body-sm-tracking);
+}
+
+.pn-Text[data-variant='caption'] {
+  font: var(--perron-typography-caption);
+  letter-spacing: var(--perron-typography-caption-tracking);
+}
+
+.pn-Text[data-variant='label'] {
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+}
+
+.pn-Text[data-variant='label-sm'] {
+  font: var(--perron-typography-label-sm);
+  letter-spacing: var(--perron-typography-label-sm-tracking);
+}
+
+.pn-Text[data-variant='overline'] {
+  font: var(--perron-typography-overline);
+  letter-spacing: var(--perron-typography-overline-tracking);
+  text-transform: uppercase;
+}
+
+.pn-Text[data-variant='badge'] {
+  font: var(--perron-typography-badge);
+  letter-spacing: var(--perron-typography-badge-tracking);
+}
+
+.pn-Text[data-variant='stat'] {
+  font: var(--perron-typography-stat);
+  letter-spacing: var(--perron-typography-stat-tracking);
+}
+
+.pn-Text[data-variant='data-xl'] {
+  font: var(--perron-typography-data-xl);
+  letter-spacing: var(--perron-typography-data-xl-tracking);
+  font-variant-numeric: tabular-nums;
+}
+
+.pn-Text[data-variant='data-lg'] {
+  font: var(--perron-typography-data-lg);
+  letter-spacing: var(--perron-typography-data-lg-tracking);
+  font-variant-numeric: tabular-nums;
+}
+
+.pn-Text[data-variant='data'] {
+  font: var(--perron-typography-data);
+  letter-spacing: var(--perron-typography-data-tracking);
+  font-variant-numeric: tabular-nums;
+}
+
+.pn-Text[data-variant='data-sm'] {
+  font: var(--perron-typography-data-sm);
+  letter-spacing: var(--perron-typography-data-sm-tracking);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The intents (CR-7) */
+.pn-Text[data-color='neutral'] {
+  color: var(--perron-color-text-primary);
+}
+
+.pn-Text[data-color='brand'] {
+  color: var(--perron-color-text-brand);
+}
+
+.pn-Text[data-color='success'] {
+  color: var(--perron-color-text-success);
+}
+
+.pn-Text[data-color='warning'] {
+  color: var(--perron-color-text-warning);
+}
+
+.pn-Text[data-color='danger'] {
+  color: var(--perron-color-text-danger);
+}
+
+.pn-Text[data-color='info'] {
+  color: var(--perron-color-text-info);
+}
+
+/* Emphasis reads only with neutral; with any other intent it changes nothing (CR-7). */
+.pn-Text[data-color='neutral'][data-emphasis='secondary'] {
+  color: var(--perron-color-text-secondary);
+}
+
+.pn-Text[data-color='neutral'][data-emphasis='tertiary'] {
+  color: var(--perron-color-text-tertiary);
+}
