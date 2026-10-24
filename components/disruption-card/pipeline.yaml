@@ -25,5 +25,6 @@ stages:
     ended: 2026-10-24T23:24:18.820Z
   docs:
     failures: 1
-    status: running
+    status: done
     started: 2026-10-24T23:24:56.593Z
+    ended: 2026-10-24T23:27:44.234Z

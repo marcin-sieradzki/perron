@@ -366,7 +366,7 @@
     "name": "DisruptionCard",
     "layer": "pattern",
     "category": "Disruptions",
-    "status": "building",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Patterns/DisruptionCard",
     "dependsOn": ["SeverityLabel", "LineBadge", "Surface", "Text"]

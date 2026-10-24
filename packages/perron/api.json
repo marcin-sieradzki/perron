@@ -274,6 +274,70 @@
       }
     }
   },
+  "DisruptionCard": {
+    "extends": [
+      "Omit<SurfaceProps, 'variant' | 'children' | 'title'>"
+    ],
+    "props": {
+      "affectedLinesLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "lines": {
+        "optional": true,
+        "type": [
+          "readonly DisruptionCardLine[]"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLElement>"
+        ]
+      },
+      "severity": {
+        "optional": false,
+        "type": [
+          "\"data\"",
+          "\"delay\"",
+          "\"diversion\"",
+          "\"planned\""
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ header?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; severity?: Omit<SeverityLabelProps, \"severity\"> | undefined; lines?: DetailedHTMLProps<HTMLAttributes<HTMLUListElement>, HTMLUListElement> | undefined; title?: Omit<TextProps, \"children\" | \"variant\"> | undefined; description?: Omit<TextProps, \"children\" | \"variant\"> | undefined; }"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "title": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      }
+    }
+  },
   "EmptyState": {
     "extends": [
       "Omit< useRender.ComponentProps<'div'>, 'title' | 'children' >"
