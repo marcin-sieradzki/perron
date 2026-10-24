@@ -1,0 +1,6 @@
+# Written by npm run factory; never by hand.
+component: MapControls
+layer: component
+deferred:
+  at: 2026-10-24T22:38:36.571Z
+stages: {}
