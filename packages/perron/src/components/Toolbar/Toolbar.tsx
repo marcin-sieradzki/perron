@@ -50,7 +50,6 @@ export interface ToolbarProps extends Inherited<
 export function Toolbar({
   orientation = 'horizontal',
   disabled = false,
-  loopFocus = true,
   className,
   ref,
   ...rest
@@ -61,7 +60,6 @@ export function Toolbar({
       ref={ref}
       orientation={orientation}
       disabled={disabled}
-      loopFocus={loopFocus}
       className={classes('pn-Toolbar', className)}
     />
   )
