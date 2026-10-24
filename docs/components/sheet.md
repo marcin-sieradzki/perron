@@ -38,7 +38,7 @@ Imported from `@base-ui/react/drawer`, at the version pinned in `package.json`.
 | `Drawer.Title`    | `<h2>`                       | `className` `pn-Sheet-title`, `title` as its children                                                                                                                                                                      | `slotProps.title`                                                                                                                                                      |
 | `Drawer.Close`    | `<button>`, as `CloseButton` | `className` `pn-Sheet-close`, rendered through the `CloseButton` part with the owned `close` string as its label                                                                                                           | `slotProps.close`                                                                                                                                                      |
 
-Base UI already does: the `dialog` role and its name from the title through `aria-labelledby`; `aria-haspopup="dialog"`, `aria-expanded` and `aria-controls` on the trigger; moving focus into the sheet on open (the first tabbable element, or the popup) and back to the trigger or the element focused before on close; trapping focus, locking the page's scroll and hiding everything outside from assistive technology with `aria-hidden` while modal; closing the topmost sheet on Esc; closing a modal sheet on a press outside it; swipe to dismiss in `swipeDirection`, with `data-swiping`, `--drawer-swipe-movement-x`, `--drawer-swipe-movement-y` and `--drawer-swipe-strength`; snapping a bottom sheet to its snap points, with `--drawer-snap-point-offset`; `data-starting-style` and `data-ending-style` for the open and close transitions; letting a mouse select text inside `Drawer.Content` without starting a swipe; and the `hidden` attribute on a closed popup kept mounted.
+Base UI already does: the `dialog` role and its name from the title through `aria-labelledby`; `aria-haspopup="dialog"`, `aria-expanded` and `aria-controls` on the trigger; moving focus to the popup on open (Drawer's `initialFocus` defaults to the popup, unlike Dialog's) and back to the trigger or the element focused before on close; trapping focus, locking the page's scroll and hiding everything outside from assistive technology with `aria-hidden` while modal; closing the topmost sheet on Esc; closing a modal sheet on a press outside it; swipe to dismiss in `swipeDirection`, with `data-swiping`, `--drawer-swipe-movement-x`, `--drawer-swipe-movement-y` and `--drawer-swipe-strength`; snapping a bottom sheet to its snap points, with `--drawer-snap-point-offset`; `data-starting-style` and `data-ending-style` for the open and close transitions; letting a mouse select text inside `Drawer.Content` without starting a swipe; and the `hidden` attribute on a closed popup kept mounted.
 
 ## Props
 
@@ -132,20 +132,21 @@ From the Base UI reference for each part. "From" says who does it: Base UI, or P
 
 | Key                | Does                                                                                                                               | From                                                  |
 | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| `Enter`, `Space`   | On the trigger, opens the sheet and moves focus into it: the first tabbable element, the close button, or the popup                | Base UI                                               |
+| `Enter`, `Space`   | On the trigger, opens the sheet and moves focus to the popup; Tab then reaches the close button                                    | Base UI                                               |
 | `Enter`, `Space`   | On the close button, closes the sheet with reason `close-press`, and focus returns to the trigger or to the element focused before | Base UI                                               |
 | `Esc`              | Closes the topmost open sheet with reason `escape-key`, and focus returns as above                                                 | Base UI                                               |
 | `Tab`, `Shift+Tab` | In a modal sheet, moves through the sheet's tabbable elements and wraps inside it                                                  | Base UI                                               |
 | `Tab`, `Shift+Tab` | In a sheet that is not modal, moves on into the page; the sheet stays open                                                         | Base UI, with `disablePointerDismissal` set by Perron |
 | `Tab`, `Shift+Tab` | Stops on the body while it scrolls, and the arrow keys, `PageUp`, `PageDown`, `Home` and `End` scroll it                           | Perron, with `tabIndex` 0 while the body overflows    |
 
-| Element    | Role                 | Accessible name from                      | States announced                                                                 |
-| ---------- | -------------------- | ----------------------------------------- | -------------------------------------------------------------------------------- |
-| `trigger`  | `button`             | The caller's element                      | `aria-expanded`, `aria-haspopup="dialog"`, with `aria-controls` naming the popup |
-| `root`     | `dialog`             | `title`, through `aria-labelledby`        | While modal, everything outside it is `aria-hidden`                              |
-| `title`    | `heading`, level 2   | `title`                                   | None                                                                             |
-| `close`    | `button`             | The owned `close` string, or `closeLabel` | None                                                                             |
-| `backdrop` | None: presentational | None                                      | None                                                                             |
+| Element    | Role                 | Accessible name from                      | States announced                                                                        |
+| ---------- | -------------------- | ----------------------------------------- | --------------------------------------------------------------------------------------- |
+| `trigger`  | `button`             | The caller's element                      | `aria-expanded`, `aria-haspopup="dialog"`, with `aria-controls` naming the popup        |
+| `root`     | `dialog`             | `title`, through `aria-labelledby`        | While modal, everything outside it is `aria-hidden`                                     |
+| `root`     | focus                | `outline`                                 | `focus.width` solid `color.border.focus`, `focus.offset` away, as `perron.css` draws it |
+| `title`    | `heading`, level 2   | `title`                                   | None                                                                                    |
+| `close`    | `button`             | The owned `close` string, or `closeLabel` | None                                                                                    |
+| `backdrop` | None: presentational | None                                      | None                                                                                    |
 
 What axe won't catch, from the contract, each with how this component meets it:
 
