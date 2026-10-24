@@ -16,7 +16,7 @@ Write every agent-facing file a step creates (a skill, an agent, `CLAUDE.md`, a 
 
 ## Phase 1: Repo and release rails
 
-- [ ] **1.1 Workspace.** Any. Move to npm workspaces: `packages/perron`, published as `@mylder/perron` (tokens, styles, icons, logos and their build), and an empty `packages/mcp`, published as `@mylder/perron-mcp`. Storybook, the docs and the repo skills stay at the root. Move the folders with `git mv`, keep the `exports` paths the same under the new package, and update the paths in `scripts/`, the tests, `.storybook/` and `CLAUDE.md`. **Done** when `npm run check` and `npm run storybook:build` pass, and `npm pack -w @mylder/perron --dry-run` lists `tokens.css`, `perron.css` and the icons.
+- [x] **1.1 Workspace.** Any. Move to npm workspaces: `packages/perron`, published as `@mylder/perron` (tokens, styles, icons, logos and their build), and an empty `packages/mcp`, published as `@mylder/perron-mcp`. Storybook, the docs and the repo skills stay at the root. Move the folders with `git mv`, keep the `exports` paths the same under the new package, and update the paths in `scripts/`, the tests, `.storybook/` and `CLAUDE.md`. **Done** when `npm run check` and `npm run storybook:build` pass, and `npm pack -w @mylder/perron --dry-run` lists `tokens.css`, `perron.css` and the icons.
 - [ ] **1.2 npm org.** Maintainer. Create the free npm organisation `mylder`, and add the repository as a trusted publisher for both packages. **Done** when both names show as yours on npmjs.com.
 - [ ] **1.3 Releases.** Any, after 1.1 and 1.2.
   - Add Changesets (`@changesets/cli`) for versions and changelogs.

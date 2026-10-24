@@ -11,6 +11,7 @@ import { fileURLToPath } from 'node:url'
 import * as prettier from 'prettier'
 import { iconGrid, readIcons, readLogos, type Asset } from './assets.ts'
 import { composite, contrastRatio } from './color.ts'
+import { PACKAGE } from './paths.ts'
 import { resolveValue, tokenMap, toCss, type ResolvedTokens, type Token } from './tokens.ts'
 
 export const TOKENS = /(<!-- tokens: ([^>]*?) -->)[\s\S]*?(<!-- \/tokens -->)/g
@@ -155,7 +156,7 @@ function fileTables<T extends Asset>(
     .map((category) => {
       const rows = list
         .filter((a) => a.category === category)
-        .map((a) => cells(a, `<img src="../../${dir}/${a.name}.svg" alt="">`))
+        .map((a) => cells(a, `<img src="../../${PACKAGE}/${dir}/${a.name}.svg" alt="">`))
       return `### ${category}\n\n${grid(head, rows)}`
     })
     .join('\n\n')
@@ -163,24 +164,29 @@ function fileTables<T extends Asset>(
 
 function filesBlock(tokens: ResolvedTokens, root: string, dir: string) {
   if (dir === 'logos')
-    return fileTables(dir, readLogos(root), ['Logo', 'File', 'Theme', 'Use'], (l, preview) => [
-      preview,
-      `\`${dir}/${l.name}.svg\``,
-      title(l.theme),
-      l.use,
-    ])
+    return fileTables(
+      dir,
+      readLogos(join(root, PACKAGE)),
+      ['Logo', 'File', 'Theme', 'Use'],
+      (l, preview) => [preview, `\`${dir}/${l.name}.svg\``, title(l.theme), l.use],
+    )
   const map = tokenMap(tokens, tokens.defaultTheme)
-  return fileTables(dir, readIcons(root), ['Icon', 'Name', 'Grid', 'Size', 'Use'], (i, preview) => {
-    const size = map.get(i.size)
-    if (size?.type !== 'dimension') throw new Error(`${i.name}: ${i.size} is not a size token`)
-    return [
-      preview,
-      `\`${i.name}\``,
-      `${iconGrid(i.svg)} px`,
-      `\`${i.size}\`, ${literal(tokens, 'dimension', size.value, tokens.defaultTheme).replace('px', ' px')}`,
-      i.use,
-    ]
-  })
+  return fileTables(
+    dir,
+    readIcons(join(root, PACKAGE)),
+    ['Icon', 'Name', 'Grid', 'Size', 'Use'],
+    (i, preview) => {
+      const size = map.get(i.size)
+      if (size?.type !== 'dimension') throw new Error(`${i.name}: ${i.size} is not a size token`)
+      return [
+        preview,
+        `\`${i.name}\``,
+        `${iconGrid(i.svg)} px`,
+        `\`${i.size}\`, ${literal(tokens, 'dimension', size.value, tokens.defaultTheme).replace('px', ' px')}`,
+        i.use,
+      ]
+    },
+  )
 }
 
 /** `markdown` with every table rebuilt from `tokens` and the files in `root`. */

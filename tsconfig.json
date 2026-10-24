@@ -16,5 +16,5 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["scripts", "tokens/generated", "vitest.config.ts", ".storybook", "storybook"]
+  "include": ["scripts", "packages", "vitest.config.ts", ".storybook", "storybook"]
 }

@@ -1,5 +1,5 @@
 // Perron's icon and logo files with their manifests, icons/icons.json and logos/logos.json, which
-// group the files into categories and say what each one is for.
+// group the files into categories and say what each one is for. `root` is the package's folder.
 import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 

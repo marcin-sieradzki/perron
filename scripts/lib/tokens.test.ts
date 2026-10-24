@@ -4,7 +4,8 @@ import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import { composite, contrastRatio } from './color.ts'
 import { buildDocs, documentedTokens } from './docs.ts'
-import { base, theme } from '../../tokens/generated/tokens.ts'
+import { PACKAGE } from './paths.ts'
+import { base, theme } from '../../packages/perron/tokens/generated/tokens.ts'
 import { readSources } from '../build-tokens.ts'
 import { buildAll, loadTokens, resolveValue, tokenMap, type TokenSources } from './tokens.ts'
 
@@ -227,7 +228,7 @@ describe('typography', () => {
           return `${v.fontFamily[0].toLowerCase().replaceAll(' ', '-')}/${v.fontWeight}`
         }),
     )
-    const css = readFileSync(join(root, 'styles/fonts.css'), 'utf8')
+    const css = readFileSync(join(root, PACKAGE, 'styles/fonts.css'), 'utf8')
     const loaded = new Set([...css.matchAll(/@fontsource\/([\w-]+\/\d+)\.css/g)].map((m) => m[1]))
     expect([...loaded].sort()).toEqual([...used].sort())
   })

@@ -41,7 +41,7 @@ When the system asks for less motion, the transition tokens take 0.01 ms: their 
 - **Loops** keep their durations in the tokens, because a loop at 0.01 ms would flicker. Each component that runs a loop stops it under reduced motion.
 - Vehicles move to each new report without gliding.
 
-The values come from the resolver's `motion` modifier. Its default context, `full`, is empty, because base already holds the full-motion values; its `reduced` context points at `tokens/motion-reduced.tokens.json`. The build writes the overrides into each output:
+The values come from the resolver's `motion` modifier. Its default context, `full`, is empty, because base already holds the full-motion values; its `reduced` context points at `packages/perron/tokens/motion-reduced.tokens.json`. The build writes the overrides into each output:
 
 | Output               | Reduced motion                                                             |
 | -------------------- | -------------------------------------------------------------------------- |

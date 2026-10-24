@@ -3,10 +3,11 @@ import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
-import { base, theme } from '../../tokens/generated/tokens.ts'
+import { base, theme } from '../../packages/perron/tokens/generated/tokens.ts'
 import { iconGrid, readIcons, readLogos } from './assets.ts'
+import { PACKAGE } from './paths.ts'
 
-const root = join(dirname(fileURLToPath(import.meta.url)), '../..')
+const root = join(dirname(fileURLToPath(import.meta.url)), '../..', PACKAGE)
 const attr = (svg: string, name: string) => new RegExp(`<svg[^>]* ${name}="([^"]*)"`).exec(svg)?.[1]
 
 describe('icons', () => {

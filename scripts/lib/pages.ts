@@ -6,6 +6,7 @@ import { join } from 'node:path'
 import { readIcons, readLogos, type Icon, type Logo } from './assets.ts'
 import { composite, contrastRatio } from './color.ts'
 import { CONTRAST, FILES, literal, select, TOKENS, words } from './docs.ts'
+import { PACKAGE } from './paths.ts'
 import { cssVarName, resolveValue, tokenMap, type ResolvedTokens, type Token } from './tokens.ts'
 
 /** The pages in the order the Contents page lists them, by path from the repo root. */
@@ -196,9 +197,10 @@ function byCategory<T extends { category: string }>(list: T[]) {
 }
 
 function filesSegment(tokens: ResolvedTokens, root: string, dir: string): Segment {
-  if (dir === 'logos') return { kind: 'logos', categories: byCategory(readLogos(root)) }
+  if (dir === 'logos')
+    return { kind: 'logos', categories: byCategory(readLogos(join(root, PACKAGE))) }
   const map = tokenMap(tokens, tokens.defaultTheme)
-  const icons = readIcons(root).map((i) => ({
+  const icons = readIcons(join(root, PACKAGE)).map((i) => ({
     ...i,
     px: literal(tokens, 'dimension', map.get(i.size)!.value, tokens.defaultTheme),
   }))

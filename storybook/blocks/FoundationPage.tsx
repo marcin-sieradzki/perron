@@ -9,7 +9,7 @@ import { ContrastTable } from './ContrastTable.tsx'
 import { IconGallery, LogoGallery } from './Gallery.tsx'
 import { TokenTable } from './TokenTable.tsx'
 import './perron-docs.css'
-import '../../styles/perron.css'
+import '@mylder/perron/perron.css'
 
 type Theme = 'light' | 'dark'
 const STORE = 'perron-docs-theme'
