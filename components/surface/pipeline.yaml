@@ -1,0 +1,6 @@
+# Written by npm run factory; never by hand.
+component: Surface
+layer: component
+deferred:
+  at: 2026-10-24T22:10:41.444Z
+stages: {}
