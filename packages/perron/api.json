@@ -145,6 +145,67 @@
       }
     }
   },
+  "DetailHeader": {
+    "extends": [
+      "Omit< ComponentPropsWithRef<'div'>, 'title' | 'children' >"
+    ],
+    "props": {
+      "action": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "line": {
+        "optional": true,
+        "type": [
+          "\"a\"",
+          "\"b\"",
+          "\"bus\"",
+          "\"c\"",
+          "\"e\"",
+          "\"f\"",
+          "\"h\"",
+          "\"m1\"",
+          "\"m2\"",
+          "\"m3\"",
+          "\"m4\"",
+          "\"regional\""
+        ]
+      },
+      "lineName": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ mark?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; title?: DetailedHTMLProps<HTMLAttributes<HTMLHeadingElement>, HTMLHeadingElement> | undefined; subheader?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; action?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; }"
+        ]
+      },
+      "subheader": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "title": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "variant": {
+        "optional": true,
+        "type": [
+          "\"line\"",
+          "\"stop\""
+        ]
+      }
+    }
+  },
   "EmptyState": {
     "extends": [
       "Omit< useRender.ComponentProps<'div'>, 'title' | 'children' >"
