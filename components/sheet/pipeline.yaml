@@ -3,6 +3,9 @@ component: Sheet
 layer: component
 deferred:
   at: 2026-10-24T21:03:51.759Z
+needsHuman:
+  stage: docs
+  reason: 'docs failed: Sheet.stories.tsx (build): every story renders inline on the docs page with defaultOpen, so all five sheets portal over the page and Modal locks scroll and aria-hides the docs. Fix: meta parameters.docs.story { inline: false, height }. Also snapPoints @default shows markdown backticks.'
 stages:
   brief:
     status: done
@@ -23,3 +26,8 @@ stages:
     status: done
     started: 2026-10-24T21:51:33.124Z
     ended: 2026-10-24T21:59:10.190Z
+  docs:
+    status: failed
+    started: 2026-10-24T22:01:56.668Z
+    ended: 2026-10-24T22:04:59.972Z
+    failing: 'Sheet.stories.tsx (build): every story renders inline on the docs page with defaultOpen, so all five sheets portal over the page and Modal locks scroll and aria-hides the docs. Fix: meta parameters.docs.story { inline: false, height }. Also snapPoints @default shows markdown backticks.'
