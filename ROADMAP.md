@@ -1,6 +1,6 @@
 # Roadmap
 
-How Perron grows from foundations into Mylder's full design system. It has three layers: foundations, components on [Base UI](https://base-ui.com) with APIs shaped like [MUI](https://mui.com/material-ui/)'s, and patterns built from those components for Mylder's own screens. Each component and pattern is designed in Penpot before it is built, by a small loop of agents, with Marcin holding two gates. It keeps what Perron already has: DTCG tokens as the source, one brand, and Mylder's colours and voice.
+How Perron grows from foundations into Mylder's full design system. It has three layers: foundations, components on [Base UI](https://base-ui.com) with APIs shaped like [MUI](https://mui.com/material-ui/)'s, and patterns built from those components for Mylder's own screens. Each component and pattern is designed in Penpot before it is built, by a small loop of agents, with the maintainer holding two gates. It keeps what Perron already has: DTCG tokens as the source, one brand, and Mylder's colours and voice.
 
 The decisions behind the plan are in [docs/adr/](docs/adr/), and the words it uses are in [docs/glossary.md](docs/glossary.md).
 
@@ -8,16 +8,16 @@ The decisions behind the plan are in [docs/adr/](docs/adr/), and the words it us
 
 Work the phases in order. Steps inside a phase can run in parallel unless one names another. Each step says what to make, how, where it runs, and when it is **done**. Tick its box in the PR that finishes it.
 
-- **Mac** steps run in a Claude Code session on Marcin's Mac, local or through Remote Control. That is where the Penpot MCP is. The "Perron Design System" file must be open in Chrome and connected (File → MCP Server → Connect), with the tab kept active. The whole component loop runs here by default.
-- **Any** steps run on the Mac or in a cloud session on the repo. The cloud is the fallback when the Mac is offline. base-ui.com and mui.com are on the cloud environment's allowed domains, so the hosted docs work there too.
-- **Marcin** steps need a person: an account, a setting or an approval.
+- **Local** steps run in a Claude Code session on the maintainer's machine, directly or through Remote Control. That is where the Penpot MCP is. The "Perron Design System" file must be open in Chrome and connected (File → MCP Server → Connect), with the tab kept active. The whole component loop runs here by default.
+- **Any** steps run locally or in a cloud session on the repo. The cloud is the fallback when the maintainer's machine is offline. base-ui.com and mui.com are on the cloud environment's allowed domains, so the hosted docs work there too.
+- **Maintainer** steps need a person: an account, a setting or an approval.
 
 Write every agent-facing file a step creates (a skill, an agent, `CLAUDE.md`, a spec template) with the `writing-for-agents` skill. Every step ends with `npm run check` passing.
 
 ## Phase 1: Repo and release rails
 
 - [ ] **1.1 Workspace.** Any. Move to npm workspaces: `packages/perron`, published as `@mylder/perron` (tokens, styles, icons, logos and their build), and an empty `packages/mcp`, published as `@mylder/perron-mcp`. Storybook, the docs and the repo skills stay at the root. Move the folders with `git mv`, keep the `exports` paths the same under the new package, and update the paths in `scripts/`, the tests, `.storybook/` and `CLAUDE.md`. **Done** when `npm run check` and `npm run storybook:build` pass, and `npm pack -w @mylder/perron --dry-run` lists `tokens.css`, `perron.css` and the icons.
-- [ ] **1.2 npm org.** Marcin. Create the free npm organisation `mylder`, and add the repository as a trusted publisher for both packages. **Done** when both names show as yours on npmjs.com.
+- [ ] **1.2 npm org.** Maintainer. Create the free npm organisation `mylder`, and add the repository as a trusted publisher for both packages. **Done** when both names show as yours on npmjs.com.
 - [ ] **1.3 Releases.** Any, after 1.1 and 1.2.
   - Add Changesets (`@changesets/cli`) for versions and changelogs.
   - Add a `release.yml` workflow that publishes from CI with npm trusted publishing and `--provenance`.
@@ -128,7 +128,7 @@ Nothing here builds a component. It builds what every component is checked again
 
 Penpot owns each component's anatomy and variants. The repo owns the token values, and the token build already feeds Penpot.
 
-- [ ] **3.1 Smoke test.** Mac. On a scratch page of the library file, check with `execute_code` that the plugin API on today's Penpot can:
+- [ ] **3.1 Smoke test.** Local. On a scratch page of the library file, check with `execute_code` that the plugin API on today's Penpot can:
   1. bind a colour, a padding and a radius token to a shape, and read them back from `shape.tokens`;
   2. build a variant container with `penpotUtils.createVariantContainer`;
   3. export a board as PNG bytes (base64) and as SVG;
@@ -136,7 +136,7 @@ Penpot owns each component's anatomy and variants. The repo owns the token value
 
   Recent Penpot releases fixed bugs in exactly these. Write what works, and the workarounds, to `penpot/README.md`. **Done** when each of the four has a yes, or a no with a workaround.
 
-- [ ] **3.2 Helpers and conventions.** Mac, after 3.1. Write `penpot/helpers.js`, loaded into the MCP's `storage` at the start of every Penpot session:
+- [ ] **3.2 Helpers and conventions.** Local, after 3.1. Write `penpot/helpers.js`, loaded into the MCP's `storage` at the start of every Penpot session:
   - `bind(shape, property, tokenName)`, which throws on a token that doesn't exist;
   - `readBack(container)`.
 
@@ -162,25 +162,25 @@ Penpot owns each component's anatomy and variants. The repo owns the token value
 
 ## Phase 4: The agent loop
 
-After the design step, three agent contexts run in sequence, rather than as an agent team. Marcin holds two gates, and code checks everything between them. Every skill starts with a **pre-flight**: the files it must read before it may write, named so that no agent can skip them.
+After the design step, three agent contexts run in sequence, rather than as an agent team. The maintainer holds two gates, and code checks everything between them. Every skill starts with a **pre-flight**: the files it must read before it may write, named so that no agent can skip them.
 
-| Stage  | Runs                        | Reads                                                                 | Writes                                                                   | Gate                                                        |
-| ------ | --------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------- |
-| Design | Mac                         | The contract, the foundations, tokens through the MCP                 | The Penpot page, `penpot/<name>.json`, the code map, the exports         | 3.3 checks; **Marcin approves the design in Penpot**        |
-| Brief  | Mac                         | The read-back, `get_reference` for the Base UI parts, the contract    | `docs/components/<name>.md`, with `[PENDING]` questions                  | Template complete; Marcin answers the `[PENDING]` questions |
-| Build  | Any                         | The approved spec and the read-back only                              | Component, CSS, stories (one per variant, named as in Penpot), docs page | `npm run check` and story tests; 3 attempts, then stop      |
-| Review | Any, fresh-context subagent | The spec, the diff and the gate output, never the builder's reasoning | `review.md`, with P1, P2 and P3 findings                                 | No P1; 2 rounds, then Marcin                                |
-| Visual | Any, with the Mac's exports | Storybook and the read-back                                           | A geometry and colour report, and pixel-diff images                      | Parts within 1 px and on their tokens; **Marcin signs off** |
+| Stage  | Runs                        | Reads                                                                 | Writes                                                                   | Gate                                                                |
+| ------ | --------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------- |
+| Design | Local                       | The contract, the foundations, tokens through the MCP                 | The Penpot page, `penpot/<name>.json`, the code map, the exports         | 3.3 checks; **the maintainer approves the design in Penpot**        |
+| Brief  | Local                       | The read-back, `get_reference` for the Base UI parts, the contract    | `docs/components/<name>.md`, with `[PENDING]` questions                  | Template complete; the maintainer answers the `[PENDING]` questions |
+| Build  | Any                         | The approved spec and the read-back only                              | Component, CSS, stories (one per variant, named as in Penpot), docs page | `npm run check` and story tests; 3 attempts, then stop              |
+| Review | Any, fresh-context subagent | The spec, the diff and the gate output, never the builder's reasoning | `review.md`, with P1, P2 and P3 findings                                 | No P1; 2 rounds, then the maintainer                                |
+| Visual | Any, with the local exports | Storybook and the read-back                                           | A geometry and colour report, and pixel-diff images                      | Parts within 1 px and on their tokens; **the maintainer signs off** |
 
-- [ ] **4.1 `component-design` skill.** Mac. Draws a component or pattern in Penpot from the contract with the 3.2 helpers, checks it, exports PNGs in light and dark, and writes the read-back and the code map. Penpot's own prompting guides apply: read before writing, make small reversible changes, and never assume a missing value.
-- [ ] **4.2 `component-brief` skill.** Mac. Turns the read-back into the spec:
+- [ ] **4.1 `component-design` skill.** Local. Draws a component or pattern in Penpot from the contract with the 3.2 helpers, checks it, exports PNGs in light and dark, and writes the read-back and the code map. Penpot's own prompting guides apply: read before writing, make small reversible changes, and never assume a missing value.
+- [ ] **4.2 `component-brief` skill.** Local. Turns the read-back into the spec:
   - the anatomy, mapped to Base UI parts;
   - the props table in MUI's layout: name, type, default, and the Base UI prop it maps to;
   - the tokens per part and state;
   - the keyboard and ARIA contract, from the Base UI reference;
   - the component rules, such as `CR-1`: Base UI's Select already handles typeahead, so don't rebuild it.
 
-  A question the sources can't answer goes in as `[PENDING]`, and the `grilling` skill puts it to Marcin.
+  A question the sources can't answer goes in as `[PENDING]`, and the `grilling` skill puts it to the maintainer.
 
 - [ ] **4.3 `component-build` skill.** Any. Its pre-flight reads the spec and the read-back. It builds to the contract and runs the gates. It gets three attempts at a red gate, then stops and says what is failing.
 - [ ] **4.4 `component-reviewer` agent.** Any. `.claude/agents/component-reviewer.md`, with read-only tools plus the test commands. Its rubric covers:
@@ -192,7 +192,7 @@ After the design step, three agent contexts run in sequence, rather than as an a
 - [ ] **4.5 `build-component` orchestrator skill.**
   - It owns `components/<name>/pipeline.yaml` (stage, approvals, attempts, open P1s) and is the only one that writes it.
   - It starts each stage and refuses one whose input is missing or unapproved.
-  - It runs every stage in one session on the Mac. In the cloud it runs Build, Review and Visual, and stops at a Mac stage to tell Marcin what to start.
+  - It runs every stage in one local session. In the cloud it runs Build, Review and Visual, and stops at a local stage to tell the maintainer what to start.
 
   **Done**, for the whole phase, when a dry run on a made-up component reaches each gate and stops there.
 
@@ -205,7 +205,7 @@ After the design step, three agent contexts run in sequence, rather than as an a
 
 ## Phase 5: Tracer bullet, Button
 
-- [ ] **5.1 Button through the whole loop.** Mac. Run `build-component Button` from Penpot to a released `@mylder/perron@0.2.0`, and switch Mylder's own buttons to it. Log every place where the loop stalled or an agent guessed.
+- [ ] **5.1 Button through the whole loop.** Local. Run `build-component Button` from Penpot to a released `@mylder/perron@0.2.0`, and switch Mylder's own buttons to it. Log every place where the loop stalled or an agent guessed.
 - [ ] **5.2 Retro.** Any. Fix the skills, checks and templates the log points at, before the next component starts. **Done** when every log entry is fixed, or written down as a known gap in the contract.
 - [ ] **5.3 Perron MCP, components.** Any.
   - Add `list_components`, `get_component` (spec, props, code map) and `get_design` (read-back and exports) to the server.
