@@ -348,7 +348,7 @@
     "name": "DetailHeader",
     "layer": "pattern",
     "category": "Detail",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Patterns/DetailHeader",
     "dependsOn": ["LineBadge", "StationIcon"]

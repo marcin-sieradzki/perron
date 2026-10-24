@@ -75,6 +75,17 @@ export type ComponentDoc = Documentation & { actualName?: string }
 
 type PropDoc = NonNullable<Documentation['props']>[string]
 
+/**
+ * React's props the contract's Props table shares with every component, which reach the root, and
+ * their descriptions, since React's types give none. They join every table, as Base UI's own
+ * `className` and `style` do on a Base UI part, so a `useRender` component's table has them too.
+ */
+const ROOT_PROPS: Record<string, string> = {
+  className: "Joined after the component's own class on the root element.",
+  style: 'Reaches the root element.',
+  ref: 'Reaches the root element.',
+}
+
 /** Whether a declaration is Base UI's. */
 const inBaseUi = (d: ts.Declaration) =>
   /[\\/]node_modules[\\/]@base-ui[\\/]/.test(d.getSourceFile().fileName)
@@ -129,7 +140,8 @@ function firstParamType(checker: ts.TypeChecker, source: ts.SourceFile, name: st
 /**
  * Adds to each doc the members of the `<Name>Props` its component takes that react-docgen did not
  * read: those it inherits from Base UI, and the package's own declared in another file. React's
- * own, the HTML attributes, stay out of the table, as MUI's tables leave them out. An inherited
+ * own, the HTML attributes, stay out of the table, as MUI's tables leave them out, but for the
+ * root's `className`, `style` and `ref`. An inherited
  * member the component destructures with a default gets a row from react-docgen with that default
  * and nothing else: it takes the inherited type and JSDoc, and keeps the destructuring default.
  */
@@ -147,9 +159,18 @@ function addInherited(docs: ComponentDoc[], src: string, filename: string) {
     for (const member of checker.getPropertiesOfType(type)) {
       const read = doc.props?.[member.name]
       if (read?.tsType) continue
-      const at = member.declarations?.find((d) => inPackage(d) || inBaseUi(d))
+      const own = member.declarations?.find((d) => inPackage(d) || inBaseUi(d))
+      const at = own ?? (ROOT_PROPS[member.name] ? member.declarations?.[0] : undefined)
       if (!at) continue
       const inherited = propDoc(checker, member, at)
+      if (!own) {
+        inherited.description = ROOT_PROPS[member.name]
+        // React's `Ref<T>` alias, as written, rather than the union it stands for
+        const written = checker.typeToString(checker.getTypeOfSymbolAtLocation(member, at))
+        inherited.tsType = {
+          name: written.replace(/ \| undefined$/, ''),
+        } as typeof inherited.tsType
+      }
       if (read?.defaultValue) inherited.defaultValue = read.defaultValue
       doc.props = { ...doc.props, [member.name]: inherited }
     }

@@ -55,6 +55,7 @@ const preview: Preview = {
           'Patterns',
           [
             // each registered pattern
+            'DetailHeader',
             'DisruptionCard',
           ],
           // registry:patterns end
@@ -73,6 +74,7 @@ const preview: Preview = {
             'LineBadge',
             'SeverityLabel',
             'StationIcon',
+            'DetailHeader',
             'DisruptionCard',
           ],
           // registry:specs end

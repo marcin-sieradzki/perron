@@ -106,15 +106,16 @@ function build(status = 'building') {
   )
 }
 
-/** The reviewer's text, written by the orchestrator, with `p1` P1 findings. */
-function review(round: number, p1 = 0) {
-  const findings = Array.from(
-    { length: p1 },
-    (_, i) => `- **P1-${i + 1}.** \`Tally.tsx:${i + 1}\` Breaks the contract.`,
-  )
+/** The reviewer's text, written by the orchestrator, with `p1` P1 and `p2` P2 findings. */
+function review(round: number, p1 = 0, p2 = 0) {
+  const findings = (level: string, n: number) =>
+    Array.from(
+      { length: n },
+      (_, i) => `- **${level}-${i + 1}.** \`Tally.tsx:${i + 1}\` Breaks the contract.`,
+    ).join('\n') || 'None.'
   write(
     'components/tally/review.md',
-    `# Review: Tally, round ${round}\n\n## P1\n\n${findings.join('\n') || 'None.'}\n\n## P2\n\nNone.\n\n## P3\n\nNone.\n`,
+    `# Review: Tally, round ${round}\n\n## P1\n\n${findings('P1', p1)}\n\n## P2\n\n${findings('P2', p2)}\n\n## P3\n\nNone.\n`,
   )
 }
 
@@ -244,7 +245,7 @@ describe('the factory dry run', () => {
     expect(run('next Tally').out).toMatch(/^run: review\nround: 3\n/)
     stage('review', () => review(3))
     expect(stage('docs', () => build('stable')).out).toContain('ended docs: done\nrun: visual')
-    expect(ran).toContain('npm run gates -- docs')
+    expect(ran.at(-1)).toBe('npm run check')
 
     // visual: a failed report sends it back to build once, and the loop runs again from there
     expect(stage('visual', () => report(false)).out).toContain(
@@ -258,7 +259,7 @@ describe('the factory dry run', () => {
       "ended visual: done\nwait: done\nwhy: every stage passed; Tally's PR is ready for the maintainer\n",
     )
     expect(pipeline().stages).toMatchObject({
-      review: { status: 'done', rounds: 4, p1Rounds: 1 },
+      review: { status: 'done', rounds: 4, sentBack: 1 },
       docs: { status: 'done', failures: 1 },
       visual: { status: 'done', failures: 1 },
     })
@@ -287,7 +288,50 @@ describe('the factory dry run', () => {
     stage('review', () => review(1, 1))
     stage('build', () => build())
     expect(stage('review', () => review(2, 1)).out).toMatch(
-      /\nwait: needs-human\nstage: review\nwhy: 2 review rounds found a P1/,
+      /\nwait: needs-human\nstage: review\nwhy: 2 review rounds found a P1 or a P2/,
+    )
+  })
+
+  it('sends a P2 back to build as a P1, within the same cap of review rounds', () => {
+    throughBrief()
+    stage('build', () => build())
+    expect(stage('review', () => review(1, 0, 2)).out).toBe(
+      'ended review: failed, round 1: 0 P1, 2 P2, 0 P3: review round 1 found 2 P2 (components/tally/review.md)\nrun: build\nwhy: sent back: review round 1 found 2 P2 (components/tally/review.md)\n',
+    )
+    stage('build', () => build())
+    expect(stage('review', () => review(2, 1, 1)).out).toMatch(
+      /\nwait: needs-human\nstage: review\nwhy: 2 review rounds found a P1 or a P2; the last: review round 2 found 1 P1 and 1 P2/,
+    )
+    expect(run('unblock Tally').out).toContain('unblocked review')
+    expect(pipeline().stages.review?.sentBack).toBe(0)
+  })
+
+  it('reads the P1 rounds of a pipeline written before P2s sent a component back', () => {
+    throughBrief()
+    stage('build', () => build())
+    write(
+      'components/tally/pipeline.yaml',
+      read('components/tally/pipeline.yaml').replace(
+        'stages:\n',
+        'stages:\n  review:\n    p1Rounds: 1\n',
+      ),
+    )
+    expect(pipeline().stages.review).toEqual({ sentBack: 1 })
+    expect(stage('review', () => review(1, 0, 1)).out).toMatch(/wait: needs-human/)
+  })
+
+  it('reruns a brief that returned pending once its answers are written, to carry them through', () => {
+    stage('design', () => design())
+    run('approve Tally')
+    expect(stage('brief', () => brief()).out).toContain('run: build')
+    run('begin Tally brief')
+    brief('[PENDING] Which tone is the default? Recommended: plain.\n')
+    expect(run('end Tally brief pending').out).toContain('wait: pending-questions')
+    // the answer written in place of its line before the run that asked has ended
+    expect(run('begin Tally brief').code).toBe(0)
+    brief('The default tone is plain.\n')
+    expect(run('end Tally brief pending').out).toMatch(
+      /ended brief: failed: the brief returned pending, but docs\/components\/tally\.md has no \[PENDING\] question left.*\nrun: brief\n/,
     )
   })
 
@@ -308,6 +352,16 @@ describe('the factory dry run', () => {
     )
     expect(run('unblock Tally').out).toContain('unblocked docs\nrun: docs')
     expect(pipeline().stages.docs?.failures).toBe(0)
+  })
+
+  it('sends a docs run back to build when npm run check is red, as after main changed a gate', () => {
+    throughBrief()
+    stage('build', () => build())
+    stage('review', () => review(1))
+    checks = [false]
+    expect(stage('docs', () => build('stable')).out).toBe(
+      'ended docs: failed: npm run check failed: lint: Tally.tsx:3 no-unused-vars\nrun: build\nwhy: sent back: docs failed: npm run check failed: lint: Tally.tsx:3 no-unused-vars\n',
+    )
   })
 
   it('stops at needs-human after a second failed visual report', () => {

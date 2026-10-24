@@ -12,3 +12,5 @@ A short flag.
 | `closedLabel` | `string`               | The locale's | none         | Overrides "Closed"     |
 | `openLabel`   | `string`               | The locale's | none         | Overrides "Open"       |
 | `ref`         | `Ref<HTMLSpanElement>` |              | `ref`        | Reaches the root       |
+| `className`   | `string`               |              | none         | Joined on the root     |
+| `style`       | `CSSProperties`        |              | none         | Reaches the root       |
