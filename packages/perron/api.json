@@ -316,7 +316,8 @@
   },
   "Text": {
     "extends": [
-      "Omit< HTMLAttributes<HTMLElement>, 'color' | 'children' | 'className' | 'style' >"
+      "Omit<HTMLAttributes<HTMLElement>, 'color' | 'children' | 'className' | 'style'>",
+      "Pick<useRender.ComponentProps<'span'>, 'render'>"
     ],
     "props": {
       "children": {
@@ -354,12 +355,6 @@
         "optional": true,
         "type": [
           "Ref<HTMLElement>"
-        ]
-      },
-      "render": {
-        "optional": true,
-        "type": [
-          "RenderProp<Record<string, unknown>>"
         ]
       },
       "style": {
