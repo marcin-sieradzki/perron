@@ -25,7 +25,10 @@ export interface StopTimelineStop {
   delay?: number | null
 }
 
-/** A stop's place in the trip, carried on its `<li>` as `data-stop`. */
+/**
+ * A stop's place in the trip, carried as `data-stop` on its `<li>` and on the parts it styles: the
+ * rail, the name and the time.
+ */
 type StopPlace = 'passed' | 'next' | 'upcoming'
 
 /**
@@ -151,15 +154,25 @@ export function StopTimeline({
             data-stop={place}
             aria-current={place === 'next' ? 'step' : undefined}
           >
-            {/* the piece of rail to the next stop's marker; the last stop has none (CR-6) */}
-            {index < last && <span className="pn-StopTimeline-rail" aria-hidden="true" />}
+            {/* the piece of rail to the next stop's marker; the last stop has none (CR-6). It
+                carries the line and its stop's place, which its colour reads (CR-1, CR-2) */}
+            {index < last && (
+              <span
+                className="pn-StopTimeline-rail"
+                data-line={line}
+                data-stop={place}
+                aria-hidden="true"
+              />
+            )}
             <StationIcon
               className="pn-StopTimeline-marker"
               line={line}
               size="small"
               variant={place === 'next' ? 'filled' : 'outlined'}
             />
-            <span className="pn-StopTimeline-name">{stop.name}</span>
+            <span className="pn-StopTimeline-name" data-stop={place}>
+              {stop.name}
+            </span>
             {/* heard straight after the name, before the time (CR-4) */}
             {place === 'passed' && (
               <>
@@ -169,7 +182,7 @@ export function StopTimeline({
             )}
             {place === 'next' && <span className="pn-StopTimeline-next">{strings.nextStop}</span>}
             {stop.time !== undefined && (
-              <time className="pn-StopTimeline-time" dateTime={stop.time}>
+              <time className="pn-StopTimeline-time" data-stop={place} dateTime={stop.time}>
                 {stop.time}
               </time>
             )}

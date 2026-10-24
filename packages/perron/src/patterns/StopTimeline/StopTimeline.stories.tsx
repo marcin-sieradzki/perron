@@ -326,6 +326,12 @@ const NAMES_ONLY: StopTimelineStop[] = [
   { name: 'Kongens Lyngby Station, bus terminal on Lyngby Hovedgade' },
 ]
 
+/** One stop with a time and no delay, one with a delay and no time. */
+const PART_TIMED: StopTimelineStop[] = [
+  { name: 'Holte', time: '08:21' },
+  { name: 'Virum', delay: 2 },
+]
+
 const label = {
   font: 'var(--perron-typography-label-sm)',
   letterSpacing: 'var(--perron-typography-label-sm-tracking)',
@@ -335,7 +341,8 @@ const label = {
 
 /**
  * Stops with only names: no time and no delay renders, a long name wraps under itself, and a
- * timeline of one stop has no rail.
+ * timeline of one stop has no rail. Below them, a stop with only a time and one with only a delay
+ * each render only their own part.
  */
 export const WithoutTimes: Story = {
   args: { stops: NAMES_ONLY, nextStopIndex: 1 },
@@ -359,22 +366,48 @@ export const WithoutTimes: Story = {
           data-testid="one"
         />
       </div>
+      <div>
+        <p id="without-times-part" style={label}>
+          A time or a delay
+        </p>
+        <StopTimeline
+          {...args}
+          stops={PART_TIMED}
+          nextStopIndex={0}
+          aria-labelledby="without-times-part"
+        />
+      </div>
     </div>
   ),
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement)
-    await expect(canvasElement.querySelector('time')).toBeNull()
-    await expect(canvasElement.querySelector('.pn-Delay')).toBeNull()
     await expect(canvas.getByRole('list', { name: 'Hillerød to Kongens Lyngby' })).toBe(
       canvas.getByTestId('trip'),
     )
     const one = canvas.getByRole('list', { name: 'One stop' })
+    for (const names of [canvas.getByTestId('trip'), one]) {
+      await expect(names.querySelector('time')).toBeNull()
+      await expect(names.querySelector('.pn-Delay')).toBeNull()
+    }
     await expect(itemsOf(one)).toHaveLength(1)
     await expect(one.querySelector('.pn-StopTimeline-rail')).toBeNull()
     // the long name wraps within its column: its box is more than one line tall
     const long = within(canvas.getByTestId('trip')).getByText(NAMES_ONLY[3].name)
     const lineHeight = parseFloat(getComputedStyle(long).lineHeight)
     await expect(long.getBoundingClientRect().height).toBeGreaterThan(lineHeight * 1.5)
+
+    await step('a stop with only a time, or only a delay, renders only that part', async () => {
+      const [timeOnly, delayOnly] = itemsOf(canvas.getByRole('list', { name: 'A time or a delay' }))
+      const time = timeOnly.querySelector('time')
+      await expect(time).toHaveTextContent(PART_TIMED[0].time!)
+      await expect(time).toHaveAttribute('datetime', PART_TIMED[0].time)
+      await expect(timeOnly.querySelector('.pn-Delay')).toBeNull()
+      await expect(delayOnly.querySelector('time')).toBeNull()
+      const delay = delayOnly.querySelector('.pn-StopTimeline-delay')
+      await expect(delay).not.toBeNull()
+      await expect(delay).toHaveClass('pn-Delay')
+      await expect(delay).toHaveTextContent('min')
+    })
 
     await step('an empty trip renders an empty list', async () => {
       const { host, items } = renderOff(<StopTimeline stops={[]} nextStopIndex={0} />)

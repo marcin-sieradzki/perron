@@ -50,57 +50,57 @@
   background: var(--perron-color-text-primary);
 }
 
-.pn-StopTimeline[data-line='m1'] .pn-StopTimeline-rail {
+.pn-StopTimeline-rail[data-line='m1'] {
   background: var(--perron-color-transit-line-m1);
 }
 
-.pn-StopTimeline[data-line='m2'] .pn-StopTimeline-rail {
+.pn-StopTimeline-rail[data-line='m2'] {
   background: var(--perron-color-transit-line-m2);
 }
 
-.pn-StopTimeline[data-line='m3'] .pn-StopTimeline-rail {
+.pn-StopTimeline-rail[data-line='m3'] {
   background: var(--perron-color-transit-line-m3);
 }
 
-.pn-StopTimeline[data-line='m4'] .pn-StopTimeline-rail {
+.pn-StopTimeline-rail[data-line='m4'] {
   background: var(--perron-color-transit-line-m4);
 }
 
-.pn-StopTimeline[data-line='a'] .pn-StopTimeline-rail {
+.pn-StopTimeline-rail[data-line='a'] {
   background: var(--perron-color-transit-line-a);
 }
 
-.pn-StopTimeline[data-line='b'] .pn-StopTimeline-rail {
+.pn-StopTimeline-rail[data-line='b'] {
   background: var(--perron-color-transit-line-b);
 }
 
-.pn-StopTimeline[data-line='c'] .pn-StopTimeline-rail {
+.pn-StopTimeline-rail[data-line='c'] {
   background: var(--perron-color-transit-line-c);
 }
 
-.pn-StopTimeline[data-line='e'] .pn-StopTimeline-rail {
+.pn-StopTimeline-rail[data-line='e'] {
   background: var(--perron-color-transit-line-e);
 }
 
-.pn-StopTimeline[data-line='f'] .pn-StopTimeline-rail {
+.pn-StopTimeline-rail[data-line='f'] {
   background: var(--perron-color-transit-line-f);
 }
 
-.pn-StopTimeline[data-line='h'] .pn-StopTimeline-rail {
+.pn-StopTimeline-rail[data-line='h'] {
   background: var(--perron-color-transit-line-h);
 }
 
-.pn-StopTimeline[data-line='bus'] .pn-StopTimeline-rail {
+.pn-StopTimeline-rail[data-line='bus'] {
   background: var(--perron-color-transit-mode-bus);
 }
 
-.pn-StopTimeline[data-line='regional'] .pn-StopTimeline-rail {
+.pn-StopTimeline-rail[data-line='regional'] {
   background: var(--perron-color-transit-mode-regional);
 }
 
 /* The piece leaving a passed stop is set back, whatever the line; after the line rules, which it
    matches in specificity. */
-.pn-StopTimeline-stop[data-stop='passed'] .pn-StopTimeline-rail {
+.pn-StopTimeline-rail[data-stop='passed'] {
   background: var(--perron-color-border-strong);
 }
 
@@ -138,21 +138,22 @@
   grid-column: 4;
 }
 
-.pn-StopTimeline-stop[data-stop='passed'] .pn-StopTimeline-name,
-.pn-StopTimeline-stop[data-stop='passed'] .pn-StopTimeline-time {
+.pn-StopTimeline-name[data-stop='passed'],
+.pn-StopTimeline-time[data-stop='passed'] {
   color: var(--perron-color-text-secondary);
 }
 
 /* The system would reset the rail's fill, so it sets its own system colours and the trip's
    progress still shows (CR-12); StationIcon keeps its own rule. */
 @media (forced-colors: active) {
-  /* as specific as the line and passed rules or more, and after them, so these win */
-  .pn-StopTimeline .pn-StopTimeline-stop .pn-StopTimeline-rail {
+  /* every rail carries `data-stop`, so this matches the line rules' specificity and, after them,
+     wins; the passed rule after it wins in turn */
+  .pn-StopTimeline-rail[data-stop] {
     forced-color-adjust: none;
     background: CanvasText;
   }
 
-  .pn-StopTimeline .pn-StopTimeline-stop[data-stop='passed'] .pn-StopTimeline-rail {
+  .pn-StopTimeline-rail[data-stop='passed'] {
     background: GrayText;
   }
 }
