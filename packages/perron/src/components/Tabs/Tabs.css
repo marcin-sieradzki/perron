@@ -1,0 +1,122 @@
+/* Tabs: underline tabs, ink on whatever surface holds them (docs/components/tabs.md, Tokens).
+   Every state changes colours only (CR-7), at once, with no transition (CR-10). */
+
+/* As wide as its container; the pattern that uses it pads and places it (CR-14). */
+.pn-Tabs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-300);
+}
+
+/* The hairline runs the list's full width; the tabs wrap rather than scroll sideways (CR-11), and
+   the list is the indicator's positioning box (CR-5). */
+.pn-TabsList {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: flex-start;
+  border-block-end: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+}
+
+/* A border, never a background, so forced colours keep it (CR-5). No display: Base UI hides it
+   with the hidden attribute until the selected tab is measured (CR-6). Under the selected tab on
+   whichever row that tab is, its block end on the hairline's, so on the last row it covers the
+   hairline and ends at the list's block end rather than hanging below it. */
+.pn-TabsList-indicator {
+  position: absolute;
+  inset-block-start: calc(
+    var(--active-tab-top) + var(--active-tab-height) + var(--perron-border-width-025) -
+      var(--perron-border-width-050)
+  );
+  left: var(--active-tab-left);
+  width: var(--active-tab-width);
+  border-block-end: var(--perron-border-width-050) solid var(--perron-color-text-primary);
+  pointer-events: none;
+}
+
+.pn-Tab {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  gap: var(--perron-space-150);
+  min-block-size: var(--perron-size-button);
+  margin: 0;
+  padding-block: 0;
+  padding-inline: var(--perron-space-300);
+  border: 0;
+  background-color: transparent;
+  color: var(--perron-color-text-secondary);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.pn-Tab-label {
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+}
+
+.pn-Tab-count {
+  padding-inline: var(--perron-space-150);
+  border-radius: var(--perron-radius-full);
+  background-color: var(--perron-color-surface-inset);
+  color: var(--perron-color-text-secondary);
+  font: var(--perron-typography-data-sm);
+  letter-spacing: var(--perron-typography-data-sm-tracking);
+}
+
+/* Hover and pressed skip a disabled tab, which keeps aria-disabled, not the native disabled, and
+   still matches :hover and :active (CR-8). */
+@media (hover: hover) {
+  .pn-Tab:hover:not([data-disabled]) {
+    color: var(--perron-color-text-primary);
+  }
+}
+
+.pn-Tab:active:not([data-disabled]) {
+  color: var(--perron-color-text-primary);
+}
+
+.pn-Tab[data-active] {
+  color: var(--perron-color-text-primary);
+}
+
+/* Disabled is a colour, never an opacity, and the tab still takes focus. */
+.pn-Tab[data-disabled] {
+  color: var(--perron-color-text-tertiary);
+  cursor: default;
+}
+
+.pn-Tab[data-disabled] .pn-Tab-count {
+  color: var(--perron-color-text-tertiary);
+}
+
+/* No fill, border or padding: it sits on the surface that holds the tabs. No display either: a
+   hidden panel keeps Base UI's hidden attribute (CR-6). */
+.pn-TabsPanel {
+  margin: 0;
+}
+
+/* Base UI keeps the panel being left mounted, without hidden, until its exit animations end, a
+   frame at least with none (CR-10): out of the flow and unseen meanwhile, so the new panel never
+   paints below it. */
+.pn-TabsPanel[data-ending-style] {
+  position: absolute;
+  visibility: hidden;
+}
+
+@media (forced-colors: active) {
+  .pn-TabsList {
+    border-block-end-color: CanvasText;
+  }
+
+  .pn-TabsList-indicator {
+    border-block-end-color: Highlight;
+  }
+
+  .pn-Tab[data-disabled],
+  .pn-Tab[data-disabled] .pn-Tab-count {
+    color: GrayText;
+  }
+}
