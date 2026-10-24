@@ -59,6 +59,7 @@ export interface TextProps extends Omit<
    * `render={<time dateTime="08:14" />}` for a time. Text renders a `<p>` for `body` and `body-sm`
    * and a `<span>` for every other role, headings included; a heading's level is the caller's,
    * through `render`, and a `<span>` is safe inside a button, a label or another paragraph.
+   * @default <p /> for body and body-sm, <span /> otherwise
    */
   render?: useRender.RenderProp
   /** The text: a string, an element such as `<strong>` or `<time>`, or a list of both. */
