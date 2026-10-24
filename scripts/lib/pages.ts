@@ -29,6 +29,7 @@ export const PAGES = [
   'docs/components/TEMPLATE.md',
   // registry:specs start: each spec page, written by npm run registry
   'docs/components/button.md',
+  'docs/components/link-button.md',
   'docs/components/toolbar.md',
   'docs/components/delay.md',
   'docs/components/station-icon.md',
