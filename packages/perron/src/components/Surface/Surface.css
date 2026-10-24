@@ -1,0 +1,47 @@
+/* Surface: one step of the surface ladder (docs/components/surface.md, Tokens). Every variant has
+   the same edge width, so swapping variants never shifts the content, and in forced colours every
+   surface keeps a visible edge with no rule of its own (CR-5). No display, size, margin, gap,
+   typography or overflow: the box sizes to its container and never clips a focus ring (CR-3, CR-4). */
+.pn-Surface {
+  border-width: var(--perron-border-width-025);
+  border-style: solid;
+  color: var(--perron-color-text-primary);
+}
+
+/* A card inside a panel: no shadow, since only floating panels cast one (CR-7). */
+.pn-Surface[data-variant='raised'] {
+  padding: var(--perron-space-300);
+  border-color: var(--perron-color-border-subtle);
+  border-radius: var(--perron-radius-lg);
+  background-color: var(--perron-color-surface-raised);
+  box-shadow: none;
+}
+
+/* A box set into a panel reads without a border; its transparent edge shows in forced colours. */
+.pn-Surface[data-variant='inset'] {
+  padding: var(--perron-space-300);
+  border-color: transparent;
+  border-radius: var(--perron-radius-lg);
+  background-color: var(--perron-color-surface-inset);
+  box-shadow: none;
+}
+
+/* A panel floating over the map, on the Panels' glass. */
+.pn-Surface[data-variant='glass'] {
+  padding: var(--perron-space-400);
+  border-color: var(--perron-color-border-subtle);
+  border-radius: var(--perron-radius-xl);
+  background-color: var(--perron-color-surface-overlay);
+  backdrop-filter: blur(var(--perron-effect-glass-blur))
+    saturate(var(--perron-effect-glass-saturate));
+  box-shadow: var(--perron-shadow-panel);
+}
+
+/* The same floating panel, opaque, for one full of text on a phone (CR-6). */
+.pn-Surface[data-variant='opaque'] {
+  padding: var(--perron-space-400);
+  border-color: var(--perron-color-border-subtle);
+  border-radius: var(--perron-radius-xl);
+  background-color: var(--perron-color-surface-default);
+  box-shadow: var(--perron-shadow-panel);
+}

@@ -40,9 +40,11 @@ const preview: Preview = {
             // registry:components start: written by npm run registry, by category then name
             'Button',
             'IconButton',
+            'LinkButton',
             'Toolbar',
             'Text',
             'EmptyState',
+            'Surface',
             'Delay',
             'LineBadge',
             'SeverityLabel',
@@ -54,6 +56,7 @@ const preview: Preview = {
           [
             // each registered pattern
             'DataStatePanel',
+            'DetailHeader',
           ],
           // registry:patterns end
           // registry:specs start: written by npm run registry, each built entry's spec page
@@ -62,14 +65,17 @@ const preview: Preview = {
             // each spec page, as PAGES lists them
             'Button',
             'IconButton',
+            'LinkButton',
             'Toolbar',
             'Text',
             'EmptyState',
+            'Surface',
             'Delay',
             'LineBadge',
             'SeverityLabel',
             'StationIcon',
             'DataStatePanel',
+            'DetailHeader',
           ],
           // registry:specs end
         ],

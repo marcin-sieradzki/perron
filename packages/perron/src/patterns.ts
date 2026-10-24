@@ -2,3 +2,4 @@
 // Generated from packages/perron/components.json: change the registry, then run
 // npm run registry. Its fixed lines live in scripts/lib/registry.ts.
 export * from './patterns/DataStatePanel/DataStatePanel.tsx'
+export * from './patterns/DetailHeader/DetailHeader.tsx'
