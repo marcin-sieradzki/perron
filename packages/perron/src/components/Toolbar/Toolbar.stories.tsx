@@ -259,14 +259,24 @@ export const ButtonBrandDisabled: Story = {
   },
 }
 
-/** Three icon-only neutral buttons, each named by its aria-label. */
+/** Labels turned off, as a caller's condition gives them: `false` and `''` render no label. */
+const showLabels = false as boolean
+
+/**
+ * Three icon-only neutral buttons, each named by its aria-label; two get a label that renders
+ * nothing, `false` and `''`, and stay icon-only.
+ */
 export const IconOnly: Story = {
   args: {
     children: (
       <>
         <ToolbarButton aria-label="Zoom in" startIcon={<Plus />} />
-        <ToolbarButton aria-label="Zoom out" startIcon={<Minus />} />
-        <ToolbarButton aria-label="Centre the map" startIcon={<Locate />} />
+        <ToolbarButton aria-label="Zoom out" startIcon={<Minus />}>
+          {showLabels && 'Zoom out'}
+        </ToolbarButton>
+        <ToolbarButton aria-label="Centre the map" startIcon={<Locate />}>
+          {showLabels ? 'Centre the map' : ''}
+        </ToolbarButton>
       </>
     ),
   },
@@ -276,6 +286,7 @@ export const IconOnly: Story = {
     for (const name of ['Zoom in', 'Zoom out', 'Centre the map']) {
       const button = canvas.getByRole('button', { name })
       await expect(button).toHaveAttribute('data-icon-only')
+      await expect(button.querySelector('.pn-ToolbarButton-label')).toBeNull()
       await expect(button.querySelector('.pn-ToolbarButton-startIcon')).toHaveAttribute(
         'aria-hidden',
         'true',

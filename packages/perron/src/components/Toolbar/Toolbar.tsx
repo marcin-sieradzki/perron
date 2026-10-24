@@ -8,6 +8,10 @@ import './Toolbar.css'
 /** `pn-<Name>` first, then the caller's class. */
 const classes = (own: string, given: string | undefined) => (given ? `${own} ${given}` : own)
 
+/** Whether `node` renders anything: React draws nothing for null, undefined, a boolean or ''. */
+const renders = (node: ReactNode) =>
+  node !== undefined && node !== null && typeof node !== 'boolean' && node !== ''
+
 /**
  * What each of the four inherits from its Base UI part: every prop but `own`, the ones it declares
  * itself, and React's `className`, `style`, `children` and `ref`, which it declares as React's.
@@ -112,8 +116,8 @@ export function ToolbarButton({
   ref,
   ...rest
 }: ToolbarButtonProps) {
-  const labelled = children !== undefined && children !== null
-  const iconOnly = !labelled && startIcon !== undefined && startIcon !== null
+  const labelled = renders(children)
+  const iconOnly = !labelled && renders(startIcon)
   return (
     <BaseToolbar.Button
       {...rest}
@@ -123,13 +127,13 @@ export function ToolbarButton({
       data-icon-only={iconOnly ? '' : undefined}
       className={classes('pn-ToolbarButton', className)}
     >
-      {startIcon !== undefined && startIcon !== null ? (
+      {renders(startIcon) ? (
         <span className="pn-ToolbarButton-startIcon" aria-hidden="true">
           {startIcon}
         </span>
       ) : null}
       {labelled ? <span className="pn-ToolbarButton-label">{children}</span> : null}
-      {endIcon !== undefined && endIcon !== null ? (
+      {renders(endIcon) ? (
         <span className="pn-ToolbarButton-endIcon" aria-hidden="true">
           {endIcon}
         </span>

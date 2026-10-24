@@ -72,7 +72,9 @@
   white-space: nowrap;
 }
 
+/* Square both ways, so a vertical toolbar's stretch can't widen it beside a labelled button. */
 .pn-ToolbarButton[data-icon-only] {
+  inline-size: var(--perron-size-control);
   padding-inline: 0;
 }
 
@@ -124,8 +126,9 @@
   background-color: var(--perron-color-surface-inset);
 }
 
+/* As specific as the brand rule above, and after it, so every disabled button draws GrayText. */
 @media (forced-colors: active) {
-  .pn-ToolbarButton[data-disabled] {
+  .pn-ToolbarButton[data-color][data-disabled] {
     border-color: GrayText;
     color: GrayText;
   }
