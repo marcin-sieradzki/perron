@@ -384,7 +384,7 @@
     "name": "StopTimeline",
     "layer": "pattern",
     "category": "Detail",
-    "status": "designing",
+    "status": "building",
     "baseUiParts": [],
     "penpotPath": "Patterns/StopTimeline",
     "dependsOn": ["StationIcon", "Delay"]

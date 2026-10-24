@@ -24,4 +24,6 @@ export const nb: OwnedStrings = {
   minutesEarly: 'min før tiden',
   onTime: 'I rute',
   delayUnknown: 'Forsinkelse ukjent',
+  nextStop: 'Neste stopp',
+  passed: 'Passert',
 }

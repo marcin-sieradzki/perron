@@ -24,4 +24,6 @@ export const sv: OwnedStrings = {
   minutesEarly: 'min före',
   onTime: 'I tid',
   delayUnknown: 'Försening okänd',
+  nextStop: 'Nästa hållplats',
+  passed: 'Passerad',
 }

@@ -45,6 +45,10 @@ export const en = {
   onTime: 'On time',
   /** Delay: no real-time data says how late a vehicle runs; heard in place of "—". */
   delayUnknown: 'Delay unknown',
+  /** A stop timeline: under the stop the vehicle reaches next. */
+  nextStop: 'Next stop',
+  /** A stop timeline: heard after the name of a stop the vehicle has passed. */
+  passed: 'Passed',
 }
 
 /** The name of one owned string. */
