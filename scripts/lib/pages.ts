@@ -36,6 +36,7 @@ export const PAGES = [
   'docs/components/line-badge.md',
   'docs/components/severity-label.md',
   'docs/components/station-icon.md',
+  'docs/patterns/detail-header.md',
   // registry:specs end
 ]
 

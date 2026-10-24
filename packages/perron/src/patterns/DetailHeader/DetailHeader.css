@@ -1,0 +1,73 @@
+/* DetailHeader, from docs/patterns/detail-header.md: a grid on the detail panel's surface, with no
+   fill, border, radius, padding or shadow of its own (CR-8). Every Tokens row is at rest. */
+
+/* The text column is minmax(0, 1fr), so it takes the room left and wraps; the mark's and the
+   action's columns exist only when their part does, so a missing one leaves no gap (CR-7). */
+.pn-DetailHeader {
+  display: grid;
+  grid-template-columns: [text-start] minmax(0, 1fr) [text-end];
+  grid-template-rows: auto;
+  align-items: center;
+  column-gap: var(--perron-space-300);
+  margin: 0;
+}
+
+.pn-DetailHeader:has(> .pn-DetailHeader-mark) {
+  grid-template-columns: auto [text-start] minmax(0, 1fr) [text-end];
+}
+
+.pn-DetailHeader:has(> .pn-DetailHeader-action) {
+  grid-template-columns: [text-start] minmax(0, 1fr) [text-end] auto;
+}
+
+.pn-DetailHeader:has(> .pn-DetailHeader-mark):has(> .pn-DetailHeader-action) {
+  grid-template-columns: auto [text-start] minmax(0, 1fr) [text-end] auto;
+}
+
+/* With a subheader, the title and it sit together in the middle of the mark's and action's height. */
+.pn-DetailHeader:has(> .pn-DetailHeader-subheader) {
+  grid-template-rows: auto auto;
+}
+
+.pn-DetailHeader-mark {
+  display: flex;
+  grid-column: 1;
+  grid-row: 1 / -1;
+  align-items: center;
+  margin: 0;
+}
+
+.pn-DetailHeader-title {
+  grid-column: text;
+  grid-row: 1;
+  margin: 0;
+  font: var(--perron-typography-heading-md);
+  letter-spacing: var(--perron-typography-heading-md-tracking);
+  color: var(--perron-color-text-primary);
+  overflow-wrap: anywhere;
+}
+
+.pn-DetailHeader-subheader {
+  grid-column: text;
+  grid-row: 2;
+  align-self: start;
+  margin: 0;
+  margin-block-start: var(--perron-space-100);
+  font: var(--perron-typography-body-sm);
+  letter-spacing: var(--perron-typography-body-sm-tracking);
+  color: var(--perron-color-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.pn-DetailHeader:has(> .pn-DetailHeader-subheader) > .pn-DetailHeader-title {
+  align-self: end;
+}
+
+.pn-DetailHeader-action {
+  display: flex;
+  grid-column: -2;
+  grid-row: 1 / -1;
+  align-items: center;
+  column-gap: var(--perron-space-200);
+  margin: 0;
+}
