@@ -205,6 +205,16 @@ function filesSegment(tokens: ResolvedTokens, root: string, dir: string): Segmen
   return { kind: 'icons', categories: byCategory(icons) }
 }
 
+/** A page's title and sidebar group, from its path and its `#` heading. */
+export function headingOf(path: string, markdown: string): Pick<Page, 'title' | 'group'> {
+  const heading = /^# (.+)$/m.exec(markdown)
+  if (!heading) throw new Error(`${path} has no # heading`)
+  return {
+    title: heading[1],
+    group: path.startsWith('docs/foundations/') ? 'Foundations' : 'Guidelines',
+  }
+}
+
 /** One page: its prose between the blocks, and each block as rows. */
 export function pageOf(path: string, markdown: string, tokens: ResolvedTokens, root: string): Page {
   const segments: Segment[] = []
@@ -222,14 +232,7 @@ export function pageOf(path: string, markdown: string, tokens: ResolvedTokens, r
     else segments.push(filesSegment(tokens, root, m[10]))
   }
   prose(markdown.slice(at))
-  const heading = /^# (.+)$/m.exec(markdown)
-  if (!heading) throw new Error(`${path} has no # heading`)
-  return {
-    path,
-    title: heading[1],
-    group: path.startsWith('docs/foundations/') ? 'Foundations' : 'Guidelines',
-    segments,
-  }
+  return { path, ...headingOf(path, markdown), segments }
 }
 
 export function readPages(root: string, tokens: ResolvedTokens) {

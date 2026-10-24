@@ -43,4 +43,4 @@ Two more pages hold what only a live map needs:
 - In script, `@mylder/perron/tokens.ts` has every value per theme, typed by name, and the reduced motion values under `modifiers`.
 - Light is the default theme. Set `data-theme="dark"` on any element for dark; without it, the system's dark mode applies. Reduced motion follows the system setting on its own.
 - Icons and logos are SVG files in `@mylder/perron/icons/` and `@mylder/perron/logos/`, listed with their use in `icons.json` and `logos.json`.
-- Change a token in `packages/perron/tokens/*.tokens.json`, then run `npm run tokens`. The generated files and the tables on these pages are never edited by hand.
+- A token changes only in Perron's own repository, in `packages/perron/tokens/*.tokens.json`, followed by `npm run tokens`. Never edit a generated file, or a table on these pages, by hand.

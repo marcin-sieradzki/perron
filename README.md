@@ -54,6 +54,9 @@ npm install
 npm run tokens        # rebuild packages/perron/tokens/generated and the tables in docs/foundations
 npm run check         # generated files and tables up to date, typecheck, lint, format, tests
 npm run storybook     # the guideline pages in Storybook, at localhost:6006
+npm run storybook:build  # the docs site in dist/storybook
 ```
 
 Storybook reads `docs/` itself (`scripts/lib/pages.ts`), so its pages change with the markdown and the tokens. Each page has a two-line MDX file in `storybook/pages/`; a Light and Dark switch on every page sets the theme.
+
+The docs site is that Storybook, deployed to [GitHub Pages](https://marcin-sieradzki.github.io/perron/) from `main` by the CI workflow, once the check passes. Beside it, `scripts/build-site.ts` writes what agents read: [`llms.txt`](https://marcin-sieradzki.github.io/perron/llms.txt) with one line per page, a Markdown twin of every page at its path in this repository, and an [`AGENTS.md`](https://marcin-sieradzki.github.io/perron/AGENTS.md) for apps that install Perron.
