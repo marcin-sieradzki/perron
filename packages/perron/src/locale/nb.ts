@@ -6,6 +6,8 @@ export const nb: OwnedStrings = {
   close: 'Lukk',
   clear: 'Tøm',
   loading: 'Laster',
+  noData: 'Ingen data å vise',
+  loadFailed: 'Kunne ikke laste inn data',
   previousPage: 'Forrige side',
   nextPage: 'Neste side',
   live: 'Live',

@@ -64,6 +64,7 @@ const preview: Preview = {
           'Patterns',
           [
             // each registered pattern
+            'DataStatePanel',
             'DetailHeader',
           ],
           // registry:patterns end
@@ -83,6 +84,7 @@ const preview: Preview = {
             'LineBadge',
             'SeverityLabel',
             'StationIcon',
+            'DataStatePanel',
             'DetailHeader',
           ],
           // registry:specs end
