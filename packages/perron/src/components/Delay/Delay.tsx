@@ -37,17 +37,35 @@ export interface DelayProps extends Omit<
    * real-time data says (timetable only, no signal). Rounded to the nearest whole minute.
    */
   minutes: number | null
-  /** Swaps the root element, keeping the class, data attribute and words. */
+  /**
+   * Swaps the root element, keeping the class, data attribute and words.
+   * @default <span />
+   */
   render?: useRender.ComponentProps<'span'>['render']
-  /** Overrides "min", the unit after the figure. */
+  /**
+   * Overrides "min", the unit after the figure.
+   * @default The locale's
+   */
   minutesUnitLabel?: string
-  /** Overrides "min late", heard after the number when late. */
+  /**
+   * Overrides "min late", heard after the number when late.
+   * @default The locale's
+   */
   minutesLateLabel?: string
-  /** Overrides "min early", heard after the number when early. */
+  /**
+   * Overrides "min early", heard after the number when early.
+   * @default The locale's
+   */
   minutesEarlyLabel?: string
-  /** Overrides "On time". */
+  /**
+   * Overrides "On time".
+   * @default The locale's
+   */
   onTimeLabel?: string
-  /** Overrides "Delay unknown", heard in place of "—". */
+  /**
+   * Overrides "Delay unknown", heard in place of "—".
+   * @default The locale's
+   */
   delayUnknownLabel?: string
   /** Reaches the root element. */
   ref?: Ref<HTMLSpanElement>
