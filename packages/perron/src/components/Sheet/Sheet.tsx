@@ -50,6 +50,7 @@ export interface SheetProps extends Omit<Drawer.Popup.Props, 'children' | 'title
    * Required, so every sheet draws its header with the title and the close button and is always
    * named; a pattern with a header of its own (DetailPanel) passes its name as `title` and the rest
    * of its header in `children`.
+   * @default Required
    */
   title: ReactNode
   /** The sheet's body, below the header. It scrolls when it is taller than the sheet. */
@@ -114,10 +115,11 @@ export interface SheetProps extends Omit<Drawer.Popup.Props, 'children' | 'title
     snapPoint: Drawer.Root.SnapPoint | null,
     details: SnapPointDetails,
   ) => void
-  /** Overrides "Close", the close button's label. */
+  /**
+   * Overrides "Close", the close button's label.
+   * @default The locale's
+   */
   closeLabel?: string
-  /** The root element, the popup, for a ref to it. */
-  ref?: Ref<HTMLDivElement>
   /** Props for the inner parts, each merged with what the sheet sets on that part. */
   slotProps?: {
     /** Props for the `trigger` part */
