@@ -34,6 +34,7 @@ export const PAGES = [
   'docs/components/empty-state.md',
   'docs/components/delay.md',
   'docs/components/line-badge.md',
+  'docs/components/severity-label.md',
   'docs/components/station-icon.md',
   // registry:specs end
 ]

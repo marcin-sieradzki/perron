@@ -219,6 +219,52 @@
       }
     }
   },
+  "SeverityLabel": {
+    "extends": [
+      "Omit< useRender.ComponentProps<'span', SeverityLabelState>, 'children' | 'ref' >"
+    ],
+    "props": {
+      "dataFeedProblemsLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "delaysLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "diversionsLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "plannedWorksLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLSpanElement>"
+        ]
+      },
+      "severity": {
+        "optional": false,
+        "type": [
+          "\"data\"",
+          "\"delay\"",
+          "\"diversion\"",
+          "\"planned\""
+        ]
+      }
+    }
+  },
   "StationIcon": {
     "extends": [
       "Omit<ComponentPropsWithRef<'span'>, 'children'>"
