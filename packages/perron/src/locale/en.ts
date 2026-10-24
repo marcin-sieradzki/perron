@@ -51,6 +51,8 @@ export const en = {
   delayUnknown: 'Delay unknown',
   /** Stat: no data gives the figure; heard in place of "—". */
   unknown: 'Unknown',
+  /** Brand: the brand name, a name and never translated; the wordmark shows it lowercase. */
+  brandName: 'Mylder',
   /** A stop timeline: under the stop the vehicle reaches next. */
   nextStop: 'Next stop',
   /** A stop timeline: heard after the name of a stop the vehicle has passed. */
