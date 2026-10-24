@@ -40,8 +40,12 @@ const preview: Preview = {
             // registry:components start: written by npm run registry, by category then name
             'Button',
             'Toolbar',
+            'Text',
+            'EmptyState',
             'Surface',
             'Delay',
+            'LineBadge',
+            'SeverityLabel',
             'StationIcon',
             // registry:components end
           ],
@@ -53,8 +57,12 @@ const preview: Preview = {
             // each spec page, as PAGES lists them
             'Button',
             'Toolbar',
+            'Text',
+            'EmptyState',
             'Surface',
             'Delay',
+            'LineBadge',
+            'SeverityLabel',
             'StationIcon',
           ],
           // registry:specs end

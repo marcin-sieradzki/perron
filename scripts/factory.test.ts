@@ -235,14 +235,14 @@ describe('the factory dry run', () => {
       'ended review: done, round 2: 0 P1, 0 P2, 0 P3\nrun: docs',
     )
 
-    // docs: the entry must be stable, and the docs check pass; a failed docs run stops the loop
-    expect(stage('docs', () => {}).out).toMatch(
-      /ended docs: failed: Tally's entry is building, not stable\nwait: needs-human\nstage: docs\nwhy: docs failed: Tally's entry is building, not stable/,
+    // docs: the entry must be stable, and the docs check pass; a failed docs run goes back to build
+    expect(stage('docs', () => {}).out).toBe(
+      "ended docs: failed: Tally's entry is building, not stable\nrun: build\nwhy: sent back: docs failed: Tally's entry is building, not stable\n",
     )
-    expect(run('begin Tally docs').err).toMatch(
-      /docs cannot begin: Tally waits at needs-human \(docs\)/,
-    )
-    expect(run('unblock Tally').out).toContain('unblocked docs\nrun: docs')
+    expect(run('begin Tally docs').err).toBe('refused: docs cannot begin: build is not done\n')
+    stage('build', () => build())
+    expect(run('next Tally').out).toMatch(/^run: review\nround: 3\n/)
+    stage('review', () => review(3))
     expect(stage('docs', () => build('stable')).out).toContain('ended docs: done\nrun: visual')
     expect(ran).toContain('npm run gates -- docs')
 
@@ -252,13 +252,14 @@ describe('the factory dry run', () => {
     )
     expect(run('begin Tally visual').err).toBe('refused: visual cannot begin: build is not done\n')
     stage('build', () => build('stable'))
-    stage('review', () => review(3))
+    stage('review', () => review(4))
     stage('docs', () => {})
     expect(stage('visual', () => report(true)).out).toBe(
       "ended visual: done\nwait: done\nwhy: every stage passed; Tally's PR is ready for the maintainer\n",
     )
     expect(pipeline().stages).toMatchObject({
-      review: { status: 'done', rounds: 3, p1Rounds: 1 },
+      review: { status: 'done', rounds: 4, p1Rounds: 1 },
+      docs: { status: 'done', failures: 1 },
       visual: { status: 'done', failures: 1 },
     })
   })
@@ -288,6 +289,25 @@ describe('the factory dry run', () => {
     expect(stage('review', () => review(2, 1)).out).toMatch(
       /\nwait: needs-human\nstage: review\nwhy: 2 review rounds found a P1/,
     )
+  })
+
+  it('stops at needs-human after a second failed docs run, and unblock resets the count', () => {
+    throughBrief()
+    const toDocs = () => {
+      stage('build', () => build())
+      stage('review', () => review((pipeline().stages.review?.rounds ?? 0) + 1))
+    }
+    toDocs()
+    const fault = 'Tally.tsx:4 `tone` has no @default; the spec gives plain (build)'
+    expect(stage('docs', () => {}, 'failed', fault).out).toContain(
+      `run: build\nwhy: sent back: docs failed: ${fault}`,
+    )
+    toDocs()
+    expect(stage('docs', () => {}, 'failed', fault).out).toMatch(
+      /\nwait: needs-human\nstage: docs\nwhy: docs failed 2 times; the last: docs failed: Tally.tsx:4/,
+    )
+    expect(run('unblock Tally').out).toContain('unblocked docs\nrun: docs')
+    expect(pipeline().stages.docs?.failures).toBe(0)
   })
 
   it('stops at needs-human after a second failed visual report', () => {

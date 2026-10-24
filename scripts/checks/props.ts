@@ -108,6 +108,10 @@ function typeBreach(
   }
 }
 
+/** `render` is always Base UI's, and the docs page shows Base UI's JSDoc for it (contract, Props). */
+const REDECLARED_RENDER =
+  "render is Base UI's: inherit it from the Base UI props type (useRender.ComponentProps<'<element>'> with no Base UI part) instead of declaring it, and give its spec row inherited under Base UI prop"
+
 const prefix = (name: string) =>
   `${name} is a boolean with is, has or should in front; name it as an adjective, such as ${name.replace(/^(is|has|should)(\w)/, (_, __, c: string) => c.toLowerCase())}`
 
@@ -122,53 +126,73 @@ const hasDoc = (d: ts.Declaration) =>
 
 /**
  * The problems of the props types in `files` (paths from `root`): each file `<Name>.tsx` exports
- * `<Name>Props`, whose members keep to the contract's vocabulary and carry JSDoc.
+ * `<Name>Props`, whose members, and those of every other `*Props` it exports for a compound
+ * component's parts, keep to the contract's vocabulary and carry JSDoc.
  */
 export function propsProblems(root: string, files: string[]): Problem[] {
   if (!files.length) return []
   const rules = readPropRules(readFileSync(join(root, CONTRACT), 'utf8'))
-  const { checker, propsOf } = propsProgram(root, files)
+  const { program, checker, propsOf } = propsProgram(root, files)
   const problems: Problem[] = []
   const lineOf = (node: ts.Node) => {
     const sf = node.getSourceFile()
     return sf.getLineAndCharacterOfPosition(node.getStart(sf)).line + 1
   }
   const fileOf = (node: ts.Node) => relative(root, node.getSourceFile().fileName)
+  /** Every other `*Props` the file exports: the props of a compound component's parts. */
+  const partsOf = (file: string, own: string) => {
+    const source = program.getSourceFile(join(root, file))
+    const module = source && checker.getSymbolAtLocation(source)
+    return (module ? checker.getExportsOfModule(module) : [])
+      .map((s) => s.name)
+      .filter((n) => n.endsWith('Props') && n !== own)
+  }
   for (const file of files) {
-    const { name, symbol, type } = propsOf(file)
-    if (!symbol?.declarations?.length || !type) {
+    const main = propsOf(file)
+    if (!main.symbol?.declarations?.length || !main.type) {
       problems.push({
         file,
         line: 1,
-        message: `exports no ${name}; a component exports its props type`,
+        message: `exports no ${main.name}; a component exports its props type`,
       })
       continue
     }
-    const propsDecl = symbol.declarations[0]
-    const members = type.isUnion()
-      ? [...new Map(type.types.flatMap((t) => t.getProperties()).map((p) => [p.name, p])).values()]
-      : checker.getPropertiesOfType(type)
-    for (const member of members) {
-      const decls = member.declarations ?? []
-      const own = decls.find(inPackage)
-      const where = own ?? propsDecl
-      const report = (message: string) =>
-        problems.push({ file: fileOf(where), line: lineOf(where), message })
-      const instead = rules.banned[member.name]
-      if (instead) report(`${member.name} is not a prop of any component; use ${instead}`)
-      const t = checker.getTypeOfSymbol(member)
-      if (!own) {
-        const ps = unionMembers(checker, t)
-        if (
-          ps.every((p) => p.flags & ts.TypeFlags.BooleanLike) &&
-          /^(is|has|should)[A-Z]/.test(member.name)
-        )
-          report(prefix(member.name))
-        continue
+    for (const { symbol, type } of [
+      main,
+      ...partsOf(file, main.name).map((n) => propsOf(file, n)),
+    ]) {
+      if (!symbol?.declarations?.length || !type) continue
+      const propsDecl = symbol.declarations[0]
+      const members = type.isUnion()
+        ? [
+            ...new Map(
+              type.types.flatMap((t) => t.getProperties()).map((p) => [p.name, p]),
+            ).values(),
+          ]
+        : checker.getPropertiesOfType(type)
+      for (const member of members) {
+        const decls = member.declarations ?? []
+        const own = decls.find(inPackage)
+        const where = own ?? propsDecl
+        const report = (message: string) =>
+          problems.push({ file: fileOf(where), line: lineOf(where), message })
+        const instead = rules.banned[member.name]
+        if (instead) report(`${member.name} is not a prop of any component; use ${instead}`)
+        const t = checker.getTypeOfSymbol(member)
+        if (!own) {
+          const ps = unionMembers(checker, t)
+          if (
+            ps.every((p) => p.flags & ts.TypeFlags.BooleanLike) &&
+            /^(is|has|should)[A-Z]/.test(member.name)
+          )
+            report(prefix(member.name))
+          continue
+        }
+        if (member.name === 'render') report(REDECLARED_RENDER)
+        const breach = typeBreach(checker, rules, member.name, own, t)
+        if (breach) report(breach)
+        if (!decls.filter(inPackage).some(hasDoc)) report(`${member.name} has no JSDoc comment`)
       }
-      const breach = typeBreach(checker, rules, member.name, own, t)
-      if (breach) report(breach)
-      if (!decls.filter(inPackage).some(hasDoc)) report(`${member.name} has no JSDoc comment`)
     }
   }
   const unique = [...new Map(problems.map((p) => [`${p.file}:${p.line}:${p.message}`, p])).values()]
