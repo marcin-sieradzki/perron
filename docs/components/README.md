@@ -22,7 +22,7 @@ A rule marked **Checked by `<rule>`** fails `npm run check` when broken; the [Ch
 - A component joins `packages/perron/components.json`, and `npm run registry` writes the barrel and the package exports from it.
 - A component composes shared parts from `packages/perron/src/parts/<Part>/<Part>.tsx`, and other components from their own folders.
 
-**Checked by `docs`:** every registered component has its `<Name>.mdx`.
+**Checked by `docs`:** every registered component past `designing` has its `<Name>.mdx` and its spec.
 
 ## Props
 
@@ -94,7 +94,16 @@ The contract story of 2.6 renders every component with a `ref` and a `data-testi
 
 Deprecate, never remove. An old prop or value keeps working: the component maps it to its replacement, and its JSDoc says `@deprecated Use <replacement> instead.`
 
-**Checked by `api-compatibility`:** the generated props API of every `stable` component may only grow against the last release tag. A deliberate break is listed in the table the check reads.
+`packages/perron/api.json` is the props API of every `stable` or `deprecated` component: each member its props type declares, whether it is optional, its type, and what the type extends. `npm run api` writes it from the code, and `npm run check` fails while it is stale.
+
+**Checked by `api-compatibility`:** against `api.json` at the last release tag, `@mylder/perron@<version>`, the API only grows: a new optional prop, a prop made optional, a wider union, a new base. A prop removed, narrowed or made required, a new required prop, a base dropped or a component removed is a break.
+
+### Breaking changes
+
+A deliberate break is a row of this table, which the check reads: the component, the prop (`extends` for a base the props type dropped, `*` for the whole component) and the reason. Take the row out once the release that ships the break is out.
+
+| Component | Prop | Reason |
+| --------- | ---- | ------ |
 
 ## Styling
 
@@ -214,12 +223,14 @@ Each rule is one script, `scripts/checks/<rule>.ts`, run by `npm run check`. A d
 /* perron-allow(component-css): the map canvas reads this length in script */
 ```
 
+In Markdown it is an HTML comment holding `perron-allow(paths): reason`, at the end of the line it excuses: prettier sets a comment on its own line apart from the text below it. A rule whose breach has no line, `docs` and `api-compatibility`, takes no allowance.
+
 | Rule                | Fails on                                                                                      |
 | ------------------- | --------------------------------------------------------------------------------------------- |
 | `component-css`     | A raw colour, length or duration, a `var()` fallback, or a `--perron-*` name no token defines |
 | `props`             | A prop outside the vocabulary's types, a name that is not a prop, or a prop without JSDoc     |
 | `patterns`          | A pattern importing anything but Perron components and parts                                  |
 | `shared-parts`      | A shared part's class, icon or declarations outside its folder                                |
-| `docs`              | A registered component without its `<Name>.mdx` docs page                                     |
-| `api-compatibility` | A `stable` component's props API shrinking against the last release tag                       |
-| `paths`             | A path named in a doc or skill that does not exist                                            |
+| `docs`              | A registered component past `designing` without its `<Name>.mdx` docs page or its spec        |
+| `api-compatibility` | A `stable` or `deprecated` component's props API shrinking against the last release tag       |
+| `paths`             | A path a doc or skill names, in a link or a code span, that does not exist                    |

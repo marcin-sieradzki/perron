@@ -1,0 +1,29 @@
+[
+  {
+    "name": "Button",
+    "layer": "component",
+    "category": "Actions",
+    "status": "stable",
+    "baseUiParts": ["Button"],
+    "penpotPath": "Components/Button",
+    "dependsOn": []
+  },
+  {
+    "name": "DepartureRow",
+    "layer": "pattern",
+    "category": "Departures",
+    "status": "building",
+    "baseUiParts": [],
+    "penpotPath": "Patterns/DepartureRow",
+    "dependsOn": ["Button"]
+  },
+  {
+    "name": "Dialog",
+    "layer": "component",
+    "category": "Overlays",
+    "status": "designing",
+    "baseUiParts": ["Dialog.Root"],
+    "penpotPath": "Components/Dialog",
+    "dependsOn": []
+  }
+]
