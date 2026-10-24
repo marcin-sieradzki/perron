@@ -23,7 +23,11 @@ export interface StationIconProps extends Omit<ComponentPropsWithRef<'span'>, 'c
    * sizes, so the marker matches an icon beside the same text.
    */
   size?: 'small' | 'medium' | 'large'
-  /** Swaps the root `<span>` for another element, keeping its class, data attributes and `aria-hidden` */
+  /**
+   * Swaps the root `<span>` for another element, which takes its class, data attributes and
+   * `aria-hidden`; the element's own props are the caller's and merge last, as in Base UI, so leave
+   * `aria-hidden` and `data-*` off it
+   */
   render?: useRender.RenderProp
   /** Merged after `pn-StationIcon` on the root */
   className?: string
@@ -54,7 +58,8 @@ export function StationIcon({
     defaultTagName: 'span',
     render,
     ref,
-    // the caller's props first, so the class, data attributes and aria-hidden are Perron's (CR-3)
+    // the rest props first, so the class, data attributes and aria-hidden win over them (CR-3);
+    // useRender merges a render element's own props after these, as Base UI does
     props: mergeProps<'span'>(rest, own),
   })
 }

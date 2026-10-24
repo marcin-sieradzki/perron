@@ -1,6 +1,6 @@
 import type { CSSProperties, ReactNode } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { expect, userEvent, within } from 'storybook/test'
+import { expect, getRoles, isInaccessible, userEvent, within } from 'storybook/test'
 import { StationIcon } from './StationIcon.tsx'
 import type { StationIconProps } from './StationIcon.tsx'
 
@@ -89,10 +89,9 @@ type Story = StoryObj<typeof meta>
 
 export const OutlinedSmall: Story = { args: { variant: 'outlined', size: 'small' } }
 
-/** A pressable stop makes its whole row the target; the marker inside is hidden and Tab passes it by. */
-export const OutlinedMedium: Story = {
-  args: { variant: 'outlined', size: 'medium' },
-  render: (args) => (
+/** A pressable stop: its whole row is the target, with the marker inside it. */
+function PressableStop({ name, children }: { name: string; children: ReactNode }) {
+  return (
     <button
       type="button"
       style={{
@@ -107,23 +106,53 @@ export const OutlinedMedium: Story = {
         cursor: 'pointer',
       }}
     >
-      <StationIcon {...args} data-testid="marker" />
-      <span>Nørreport</span>
+      {children}
+      <span>{name}</span>
     </button>
+  )
+}
+
+/**
+ * Two pressable stops, each row the target; the marker inside the first is hidden, and Tab passes
+ * it by from the first stop straight to the next.
+ */
+export const OutlinedMedium: Story = {
+  args: { variant: 'outlined', size: 'medium' },
+  render: (args) => (
+    <div style={{ display: 'grid', justifyItems: 'start' }}>
+      <PressableStop name="Nørreport">
+        <StationIcon {...args} data-testid="marker" />
+      </PressableStop>
+      <PressableStop name="Kongens Nytorv">
+        <StationIcon {...args} />
+      </PressableStop>
+    </div>
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     const marker = canvas.getByTestId('marker')
+    // hidden, with no role and no name: out of the accessibility tree, so no role query finds it
     await expect(marker).toHaveAttribute('aria-hidden', 'true')
     await expect(marker).not.toHaveAttribute('role')
     await expect(marker).not.toHaveAttribute('aria-label')
-    await expect(marker).not.toHaveAttribute('tabindex')
+    await expect(marker).not.toHaveAttribute('aria-labelledby')
+    await expect(marker).not.toHaveAttribute('title')
+    await expect(marker).not.toHaveAccessibleName()
+    await expect(isInaccessible(marker)).toBe(true)
+    await expect(Object.values(getRoles(canvasElement)).flat()).not.toContain(marker)
+    // the stop's name is only its words: the marker adds nothing to it
     const stop = canvas.getByRole('button', { name: 'Nørreport' })
+    const next = canvas.getByRole('button', { name: 'Kongens Nytorv' })
+    await expect(stop).toContainElement(marker)
+    // the marker sits between the two stops in reading order, and Tab goes from one to the next
+    await expect(marker).not.toHaveAttribute('tabindex')
     await userEvent.tab()
     await expect(stop).toHaveFocus()
+    await userEvent.tab()
+    await expect(next).toHaveFocus()
     await expect(marker).not.toHaveFocus()
     await userEvent.tab({ shift: true })
-    await expect(stop).not.toHaveFocus()
+    await expect(stop).toHaveFocus()
   },
 }
 
