@@ -9,16 +9,15 @@ stages:
     started: 2026-10-24T22:50:12.196Z
     ended: 2026-10-24T22:51:37.650Z
   build:
-    runs: 1
-    failing: review round 1 found 2 P1 and 3 P2 (components/disruption-card/review.md)
+    runs: 2
+    status: pending
+    started: 2026-10-24T23:05:19.716Z
+    ended: 2026-10-24T23:08:30.511Z
+    failing: "1. (P1-1) How should 'Affected lines' be said, given the list aria-label drops the badges from a link's name? Recommended: VisuallyHidden text before an unnamed ul. 2. (P1-2) Planned story never wraps at 320 px. Recommended: 200 px container, reword the Stories row."
   review:
-    status: failed
-    started: 2026-10-24T22:59:47.588Z
     rounds: 1
+    sentBack: 1
     findings:
       p1: 2
       p2: 3
       p3: 3
-    sentBack: 1
-    ended: 2026-10-24T23:05:14.986Z
-    failing: review round 1 found 2 P1 and 3 P2 (components/disruption-card/review.md)

@@ -2,4 +2,4 @@
 '@mylder/perron': minor
 ---
 
-Adds `DisruptionCard`.
+Adds `DisruptionCard`, and the owned string `affectedLines` in all four locales.

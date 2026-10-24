@@ -53,7 +53,10 @@ export interface DisruptionCardProps extends Omit<SurfaceProps, 'variant' | 'chi
    * @default The locale's
    */
   affectedLinesLabel?: string
-  /** Props for each inner part, merged with the part's own, which win */
+  /**
+   * Props for each inner part, merged with the part's own, which win: the caller's class follows
+   * the part's own
+   */
   slotProps?: {
     /** Props for the `header` part */
     header?: ComponentPropsWithRef<'div'>

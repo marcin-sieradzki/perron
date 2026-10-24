@@ -24,7 +24,8 @@
 }
 
 /* The kind at the start and the lines at the end, the lines wrapping under it when both don't fit
-   on one row (CR-9); 8 px between the header and the title with the root's row gap. */
+   on one row (CR-9); 8 px between the header and the title with the root's row gap. One badge
+   high at least, so the title sits at one height with lines or without. */
 .pn-DisruptionCard-header {
   display: flex;
   flex-wrap: wrap;
@@ -33,6 +34,7 @@
   column-gap: var(--perron-space-200);
   row-gap: var(--perron-space-100);
   margin-block-end: var(--perron-space-100);
+  min-block-size: var(--perron-size-badge);
 }
 
 .pn-DisruptionCard-lines {
