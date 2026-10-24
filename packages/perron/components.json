@@ -147,7 +147,7 @@
     "name": "SeverityLabel",
     "layer": "component",
     "category": "Transit",
-    "status": "building",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/SeverityLabel",
     "dependsOn": []

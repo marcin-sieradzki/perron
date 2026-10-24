@@ -3,6 +3,9 @@ component: SeverityLabel
 layer: component
 deferred:
   at: 2026-10-24T21:12:36.133Z
+needsHuman:
+  stage: docs
+  reason: "docs failed: Props table Default column empty: render (@default <span /> in JSDoc) and the four *Label props (spec: The locale's). scripts/lib/docgen.ts turns @default into a defaultValue only for members inherited from Base UI; for the component's own props react-docgen reads defaults only from destructuring and Storybook strips the tag. Tooling gap, not the component. Also: in dark colour scheme Storybook's docs title, story headings and descriptions draw dark on dark, and story canvases stay white while labels draw in dark-theme colours (docs styling in .storybook / perron-docs.css)."
 stages:
   brief:
     status: done
@@ -22,3 +25,8 @@ stages:
       p2: 2
       p3: 4
     ended: 2026-10-24T21:28:05.010Z
+  docs:
+    status: failed
+    started: 2026-10-24T21:28:07.599Z
+    ended: 2026-10-24T21:30:53.603Z
+    failing: "Props table Default column empty: render (@default <span /> in JSDoc) and the four *Label props (spec: The locale's). scripts/lib/docgen.ts turns @default into a defaultValue only for members inherited from Base UI; for the component's own props react-docgen reads defaults only from destructuring and Storybook strips the tag. Tooling gap, not the component. Also: in dark colour scheme Storybook's docs title, story headings and descriptions draw dark on dark, and story canvases stay white while labels draw in dark-theme colours (docs styling in .storybook / perron-docs.css)."
