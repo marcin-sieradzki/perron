@@ -1,4 +1,5 @@
 import type { StorybookConfig } from '@storybook/react-vite'
+import { perronDocgen } from './perron-docgen.ts'
 import { perronPages } from './perron-pages.ts'
 
 const config: StorybookConfig = {
@@ -11,7 +12,12 @@ const config: StorybookConfig = {
   ],
   addons: ['@storybook/addon-docs', '@storybook/addon-a11y', '@storybook/addon-vitest'],
   core: { disableTelemetry: true },
-  viteFinal: (vite) => ({ ...vite, plugins: [...(vite.plugins ?? []), perronPages()] }),
+  // Storybook's react-docgen finds no component that returns `useRender(...)`; perronDocgen does
+  typescript: { reactDocgen: false },
+  viteFinal: (vite) => ({
+    ...vite,
+    plugins: [perronDocgen(), ...(vite.plugins ?? []), perronPages()],
+  }),
 }
 
 export default config
