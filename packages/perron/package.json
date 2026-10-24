@@ -17,6 +17,10 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
+    "./patterns": {
+      "types": "./dist/patterns.d.ts",
+      "default": "./dist/patterns.js"
+    },
     "./perron.css": "./styles/perron.css",
     "./tokens.css": "./tokens/generated/tokens.css",
     "./typography.css": "./tokens/generated/typography.css",

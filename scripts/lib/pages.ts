@@ -27,6 +27,8 @@ export const PAGES = [
   'docs/glossary.md',
   'docs/components/README.md',
   'docs/components/TEMPLATE.md',
+  // registry:specs start: each spec page, written by npm run registry
+  // registry:specs end
 ]
 
 export interface TokenValue {
@@ -215,6 +217,7 @@ function filesSegment(tokens: ResolvedTokens, root: string, dir: string): Segmen
 const GROUPS: Record<string, string> = {
   'docs/foundations/': 'Foundations',
   'docs/components/': 'Components',
+  'docs/patterns/': 'Patterns',
 }
 
 /** A page's title and sidebar group, from its path and its `#` heading. */

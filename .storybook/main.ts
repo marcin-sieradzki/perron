@@ -3,7 +3,11 @@ import { perronPages } from './perron-pages.ts'
 
 const config: StorybookConfig = {
   framework: '@storybook/react-vite',
-  stories: ['../storybook/pages/*.mdx'],
+  stories: [
+    '../storybook/pages/*.mdx',
+    '../packages/perron/src/**/*.mdx',
+    '../packages/perron/src/**/*.stories.tsx',
+  ],
   addons: ['@storybook/addon-docs'],
   core: { disableTelemetry: true },
   viteFinal: (vite) => ({ ...vite, plugins: [...(vite.plugins ?? []), perronPages()] }),

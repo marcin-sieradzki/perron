@@ -1,0 +1,47 @@
+[
+  {
+    "name": "IconButton",
+    "layer": "component",
+    "category": "Actions",
+    "status": "stable",
+    "baseUiParts": ["Button"],
+    "penpotPath": "Components/IconButton",
+    "dependsOn": ["Button"]
+  },
+  {
+    "name": "Alert",
+    "layer": "component",
+    "category": "Feedback",
+    "status": "building",
+    "baseUiParts": [],
+    "penpotPath": "Components/Alert",
+    "dependsOn": []
+  },
+  {
+    "name": "Select",
+    "layer": "component",
+    "category": "Inputs",
+    "status": "designing",
+    "baseUiParts": ["Select.Root", "Select.Trigger"],
+    "penpotPath": "Components/Select",
+    "dependsOn": []
+  },
+  {
+    "name": "Button",
+    "layer": "component",
+    "category": "Actions",
+    "status": "deprecated",
+    "baseUiParts": ["Button"],
+    "penpotPath": "Components/Button",
+    "dependsOn": []
+  },
+  {
+    "name": "DepartureRow",
+    "layer": "pattern",
+    "category": "Departures",
+    "status": "building",
+    "baseUiParts": [],
+    "penpotPath": "Patterns/DepartureRow",
+    "dependsOn": ["Button"]
+  }
+]

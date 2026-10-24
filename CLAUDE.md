@@ -10,7 +10,8 @@ The tokens follow the W3C Design Tokens Community Group's [Design Tokens specifi
 - Library APIs (Base UI, MUI): ask the Perron MCP's `get_reference` first; it reads the docs of the versions pinned here, where hosted docs describe the latest release.
 - Icons and logos: a new or changed file follows `docs/foundations/icons.md` or `logos.md` and joins its folder's manifest, `packages/perron/icons/icons.json` or `packages/perron/logos/logos.json`.
 - Tables in `docs/foundations/` sit between `<!-- tokens -->`, `<!-- contrast -->` and `<!-- files -->` markers and are rebuilt by `npm run tokens`; edit the prose around them.
-- A new page in `docs/`: add it to `PAGES` in `scripts/lib/pages.ts`, give it an MDX file in `storybook/pages/` and a place in `.storybook/preview.ts`'s sort order; a test checks all three.
+- A new page in `docs/`: give it an MDX file in `storybook/pages/` and, unless it is a spec page, add it to `PAGES` in `scripts/lib/pages.ts` and to `.storybook/preview.ts`'s sort order; a test checks all three.
+- Components and patterns: each is an entry in `packages/perron/components.json`; after changing one, run `npm run registry`, which rewrites the barrels, the package exports, and the spec pages and sort order between `// registry:` markers.
 - Skills and this file: write them with the `writing-for-agents` skill.
 - A change to what `@mylder/perron` or `@mylder/perron-mcp` ships adds a changeset (`npx changeset`), which the release workflow turns into a version and a changelog line.
 - Work is done when `npm run check` passes.

@@ -33,7 +33,11 @@ const preview: Preview = {
             // the contract and its template first, then each registered component
             'Contract',
             'Spec template',
+            // registry:components start: written by npm run registry, by category then name
+            // registry:components end
           ],
+          // registry:patterns start: written by npm run registry, by category then name
+          // registry:patterns end
         ],
       },
     },
