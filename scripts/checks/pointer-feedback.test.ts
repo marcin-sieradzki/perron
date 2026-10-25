@@ -115,6 +115,34 @@ describe('pointer-feedback', () => {
     ).toEqual([expect.stringMatching(/comes before a hover rule/)])
   })
 
+  it('pairs guards written either side of the state, and reads the last of a split press', () => {
+    expect(
+      lint(`${BASE}
+@media (hover: hover) { .pn-X:not([data-a]):hover { background-color: var(--a); } }
+.pn-X:active:not([data-a]) { background-color: var(--b); }`),
+    ).toEqual([])
+    expect(
+      lint(`${BASE}
+@media (hover: hover) { .pn-X:hover { background-color: var(--a); } }
+.pn-X:active { background-color: var(--b); }
+@media (hover: hover) { .pn-X:hover { background-color: var(--a); } }
+.pn-X:active { background-color: var(--b); }`),
+    ).toEqual([])
+  })
+
+  it('reads an edge side, an outline and a query list as the rule means them', () => {
+    expect(
+      lint(`${BASE}
+@media (hover: hover), not print { .pn-X:hover { border-block-end-color: var(--a); } }
+.pn-X:active { outline: 2px solid var(--b); }`),
+    ).toEqual([])
+    expect(
+      lint(`${BASE}
+@media (hover: hover) { .pn-X:hover { background-color: var(--a); } }
+.pn-X:active { background: var(--a); }`),
+    ).toEqual([expect.stringMatching(/paints only what its hover rule already paints/)])
+  })
+
   it('fails a hover outside (hover: hover)', () => {
     expect(
       lint(`${BASE}
@@ -196,6 +224,13 @@ ${pair}`),
       expect.stringMatching(/styles a disabled state that keeps the pointer/),
       expect.stringMatching(/no cursor: pointer/),
     ])
+    // a cursor rule with a bracket or a formula in it, and an attribute that only starts like a state
+    expect(
+      lint(`.pn-X[data-k~='a b'] { cursor: pointer; }
+.pn-X:nth-child(2n + 1)[data-disabled] { cursor: default; }
+.pn-X[data-readonly-reason] { color: var(--t); }
+${pair}`),
+    ).toEqual([])
     // the row that holds a part sets its cursor in its own file
     expect(
       lint(`@media (hover: hover) { [role]:hover > .pn-X { color: var(--a); } }

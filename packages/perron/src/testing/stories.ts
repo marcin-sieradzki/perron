@@ -2,7 +2,7 @@
 import { createElement, type CSSProperties, type ReactNode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { expect, screen, waitFor } from 'storybook/test'
-import { holds, PAINTS } from './pointer.ts'
+import { holds, isPaint } from './pointer.ts'
 
 /** An icon file from packages/perron/icons, as its `?raw` text, inline, sized by `.perron-icon`. */
 export const icon = (svg: string) =>
@@ -108,7 +108,7 @@ export function stateRules(element: Element, pseudo: ':hover' | ':active' | ':vi
  */
 export function pressedAfterHover(element: Element) {
   let [index, hover, active] = [0, -1, -1]
-  const paints = (style: CSSStyleDeclaration) => PAINTS.some((p) => style.getPropertyValue(p))
+  const paints = (style: CSSStyleDeclaration) => Array.from(style).some(isPaint)
   const visit = (rules: CSSRuleList, inQuery: boolean) => {
     for (const rule of Array.from(rules))
       if (rule instanceof CSSMediaRule) {

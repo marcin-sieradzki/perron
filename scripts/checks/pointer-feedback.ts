@@ -9,7 +9,7 @@
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import postcss, { type Declaration, type Rule } from 'postcss'
-import { PAINTS } from '../../packages/perron/src/testing/pointer.ts'
+import { isPaint } from '../../packages/perron/src/testing/pointer.ts'
 import {
   allowances,
   byFileLine,
@@ -29,22 +29,21 @@ const HOVER = '(hover: hover)'
 const FORCED = '(forced-colors: active)'
 
 /**
- * What a rule paints: each property of `PAINTS` by the longhand it sets, so `background` is a fill
- * and a layer, and `border` an edge.
+ * What a rule paints: each painting property by the longhand it sets, so `background` is a fill and
+ * a layer, `border` an edge and `outline` an outline's ink.
  */
 const paintsOf = (rule: Rule) => {
   const out = new Map<string, string>()
   for (const n of rule.nodes)
-    if (n.type === 'decl' && (PAINTS as readonly string[]).includes(n.prop.toLowerCase())) {
+    if (n.type === 'decl' && isPaint(n.prop)) {
       const prop = n.prop.toLowerCase()
       const value = selector(n.value)
-      const sets =
-        prop === 'background'
-          ? ['background-color', 'background-image']
-          : prop === 'border'
-            ? ['border-color']
-            : [prop]
-      for (const p of sets) out.set(p, value)
+      if (prop === 'background') {
+        const layer = /gradient\(|url\(/.test(value)
+        out.set('background-color', layer ? 'transparent' : value)
+        out.set('background-image', layer ? value : 'none')
+      } else if (prop === 'border' || prop === 'outline') out.set(`${prop}-color`, value)
+      else out.set(prop, value)
     }
   return out
 }
@@ -66,33 +65,50 @@ const unguarded = (sel: string) => {
 /** Whether a selector, outside its `:not()` and `:has()`, is in the state `state`. */
 const isIn = (sel: string, state: ':hover' | ':active') => unguarded(sel).includes(state)
 
-/**
- * The selector a hover's or a press's pair is found by: its `:hover` as `:active`, outside
- * parentheses, with a `:not(:hover)` or `:not(:active)` guard dropped, in one spacing.
- */
-const pairKey = (sel: string) => {
-  let depth = 0
-  let out = ''
-  for (let i = 0; i < sel.length; i++) {
-    if (sel[i] === '(') depth++
-    if (sel[i] === ')') depth--
-    if (depth === 0 && sel.startsWith(':hover', i)) {
-      out += ':active'
-      i += ':hover'.length - 1
-    } else out += sel[i]
-  }
-  return selector(out.replace(/:not\(\s*:(hover|active)\s*\)/g, ''))
+/** A selector with what its strings, brackets and parentheses hold masked, at the same length. */
+const masked = (sel: string) => {
+  let out = sel
+    .replace(/"[^"]*"|'[^']*'/g, (m) => '"'.repeat(m.length))
+    .replace(/\[[^\]]*\]/g, (m) => `[${'_'.repeat(m.length - 2)}]`)
+  while (/\([^()]*\)/.test(out)) out = out.replace(/\([^()]*\)/g, (m) => '_'.repeat(m.length))
+  return out
 }
 
+/** Where each compound of a selector starts and ends, combinators left out. */
+const spans = (sel: string) =>
+  [...masked(sel).matchAll(/[^\s>+~]+/g)].map((m) => [m.index, m.index + m[0].length] as const)
+
 /**
- * A selector's compounds, with what its strings, brackets and parentheses hold emptied, so their
- * spaces, commas and `~=` split nothing.
+ * The selector a hover's or a press's pair is found by, in one spacing: its compound's `:hover` or
+ * `:active`, outside parentheses, moved to the compound's end as `:active`, so `.pn-X:hover:not(…)`
+ * pairs with `.pn-X:not(…):active`, and a `:not(:hover)` or `:not(:active)` guard dropped.
  */
-const compounds = (sel: string) => {
-  let out = sel.replace(/"[^"]*"|'[^']*'/g, '""').replace(/\[[^\]]*\]/g, '[]')
-  while (/\([^()]*\)/.test(out)) out = out.replace(/\([^()]*\)/g, '_')
-  return out.trim().split(/\s*[>+~]\s*|\s+/)
+const pairKey = (sel: string) => {
+  const mask = masked(sel)
+  return selector(
+    spans(sel)
+      .map(([from, to], i, all) => {
+        let text = sel.slice(from, to)
+        const states = /:(hover|active)(?![\w-])/g
+        if (/:(hover|active)(?![\w-])/.test(mask.slice(from, to))) {
+          let kept = ''
+          let last = 0
+          for (const m of mask.slice(from, to).matchAll(states)) {
+            kept += text.slice(last, m.index)
+            last = m.index + m[0].length
+          }
+          text = `${kept}${text.slice(last)}:active`
+        }
+        const gap = i + 1 < all.length ? sel.slice(to, all[i + 1][0]) : ''
+        return text + gap
+      })
+      .join('')
+      .replace(/:not\(\s*:(hover|active)\s*\)/g, ''),
+  )
 }
+
+/** A selector's compounds, masked, so a space, a comma or a `~=` inside one splits nothing. */
+const compounds = (sel: string) => spans(sel).map((span) => masked(sel).slice(...span))
 
 /**
  * What the hovered compound names, its first `.pn-` class or else its element type, so its cursor
@@ -106,8 +122,8 @@ const hoveredName = (sel: string) => {
 
 /** A selector's last compound, the element it styles, less its guards. */
 const subject = (sel: string) => {
-  const parts = sel.trim().split(/\s*[>+~]\s*|\s+(?![^(]*\))(?![^[]*\])/)
-  return unguarded(parts.at(-1) ?? '')
+  const last = spans(sel).at(-1)
+  return unguarded(last ? sel.slice(...last) : '')
 }
 
 /** Whether a selector styles the element `name` names, itself, not a pseudo-element of it. */
@@ -123,8 +139,8 @@ const styles = (sel: string, name: string) => {
 
 /** The states that keep the default cursor, each needing it in a rule of its own. */
 const STILL = [
-  { name: 'disabled', test: /\[(data|aria)-disabled\b|:disabled/ },
-  { name: 'read-only', test: /\[(data|aria)-readonly\b|:read-only/ },
+  { name: 'disabled', test: /\[(data|aria)-disabled(?=[\]=~|^$*\s])|:disabled/ },
+  { name: 'read-only', test: /\[(data|aria)-readonly(?=[\]=~|^$*\s])|:read-only/ },
 ]
 
 /** A state a rule's cursor doesn't speak for: the pointer's or the focus's own. */
@@ -180,10 +196,10 @@ export function pointerProblems(file: string, css: string): Problem[] {
     const press = presses.get(want) ?? []
     const hover = new Map(inside.flatMap((h) => [...h.paints]))
     const pressPaints = new Map(press.flatMap((p) => [...p.paints]))
-    // a press rule that a later hover rule overrides, for a property both paint
-    const early = press.some((p) =>
-      inside.some((h) => h.index > p.index && [...h.paints.keys()].some((k) => p.paints.has(k))),
-    )
+    // a property whose last press rule a later hover rule overrides
+    const lastOf = (reads: Read[], prop: string) =>
+      Math.max(-1, ...reads.filter((r) => r.paints.has(prop)).map((r) => r.index))
+    const early = [...pressPaints.keys()].some((prop) => lastOf(inside, prop) > lastOf(press, prop))
     if (!press.length)
       problems.push({
         file,
@@ -199,7 +215,11 @@ export function pointerProblems(file: string, css: string): Problem[] {
     else if (
       // a pinned edge, such as an invalid field's, leaves the fill's step to the rules above it
       !PINNED.test(unguarded(sel)) &&
-      [...pressPaints].every(([prop, value]) => hover.get(prop) === value)
+      [...pressPaints].every(
+        // a shorthand's reset, such as `background`'s `none` layer, adds nothing to a hover
+        ([prop, value]) =>
+          hover.get(prop) === value || (!hover.has(prop) && /^(none|transparent)$/.test(value)),
+      )
     )
       problems.push({
         file,
