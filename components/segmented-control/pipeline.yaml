@@ -8,3 +8,18 @@ stages:
     status: done
     started: 2026-10-25T01:07:45.537Z
     ended: 2026-10-25T01:09:12.378Z
+  build:
+    status: done
+    started: 2026-10-25T01:09:16.511Z
+    runs: 1
+    ended: 2026-10-25T01:17:28.805Z
+notes:
+  - stage: build
+    at: 2026-10-25T01:17:28.805Z
+    direction: "A wrapped two-line label (LongLabels) sits flush with the top and bottom of its segment: padding-block is 0 and the spec's Tokens table gives none; a space.050 would need a Tokens row."
+  - stage: build
+    at: 2026-10-25T01:17:28.805Z
+    direction: The spec does not settle a selected and disabled segment in forced colours; the build draws it as a GrayText fill with Canvas text, so both states still show.
+  - stage: build
+    at: 2026-10-25T01:17:28.805Z
+    direction: Tab enters the control on the first enabled segment, not the selected one (Base UI's behaviour, accepted in CR-11), so a screen-reader user lands on the first segment even when another is selected.

@@ -1,0 +1,94 @@
+/* SegmentedControl: an inset track of segments, the selected one raised
+   (docs/components/segmented-control.md, Tokens). Every state changes the fill, the shadow and the
+   colour only (CR-5), at once, with no transition (CR-8). */
+
+/* As wide as its segments, never wider than its container (CR-9). The padding is focus.offset plus
+   focus.width, so a focused segment's ring reaches the track's edge and is never clipped (CR-7);
+   the segments stretch to the tallest, so a wrapped label keeps every segment one height. */
+.pn-SegmentedControl {
+  display: inline-flex;
+  align-items: stretch;
+  max-inline-size: 100%;
+  gap: var(--perron-space-100);
+  padding: var(--perron-space-100);
+  border-radius: var(--perron-radius-lg);
+  background-color: var(--perron-color-surface-inset);
+  vertical-align: middle;
+}
+
+/* A label wraps inside its segment, centred, rather than being cut off (CR-9). Each segment grows
+   from nothing to at most its label's width, the track's room shared out evenly, so in a narrow
+   track a short label keeps its whole width and the long ones wrap at their spaces, where shrinking
+   each in proportion to its label would break a short word mid-word. */
+.pn-Segment {
+  display: inline-flex;
+  flex: 1 1 0;
+  max-inline-size: max-content;
+  align-items: center;
+  justify-content: center;
+  gap: var(--perron-space-150);
+  min-block-size: var(--perron-size-segment);
+  margin: 0;
+  padding-block: 0;
+  padding-inline: var(--perron-space-300);
+  border: 0;
+  border-radius: var(--perron-radius-md);
+  background-color: transparent;
+  color: var(--perron-color-text-secondary);
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+  text-align: center;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+/* Hover and pressed skip the selected segment, which pressing again leaves as it is (CR-4), and a
+   disabled one (CR-6). */
+@media (hover: hover) {
+  .pn-Segment:hover:not([data-pressed]):not([data-disabled]) {
+    background-color: var(--perron-color-surface-hover);
+    color: var(--perron-color-text-primary);
+  }
+}
+
+.pn-Segment:active:not([data-pressed]):not([data-disabled]) {
+  background-color: var(--perron-color-surface-hover);
+  color: var(--perron-color-text-primary);
+}
+
+.pn-Segment[data-pressed] {
+  background-color: var(--perron-color-surface-raised);
+  box-shadow: var(--perron-shadow-thumb);
+  color: var(--perron-color-text-primary);
+}
+
+/* Disabled is a colour, never an opacity; a selected one keeps its fill and shadow. After the
+   selected rule, which it ties. */
+.pn-Segment[data-disabled] {
+  color: var(--perron-color-text-tertiary);
+  cursor: default;
+}
+
+/* The fill and the shadow are dropped: the selected segment is a system highlight, and a disabled
+   one grey (CR-10). The selected segment opts out of the forced adjustment, whose Canvas backplate
+   behind its label would hide HighlightText; so it sets its focus ring's system colour itself. */
+@media (forced-colors: active) {
+  .pn-Segment[data-pressed] {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    color: HighlightText;
+  }
+
+  .pn-Segment[data-pressed]:focus-visible {
+    outline-color: CanvasText;
+  }
+
+  .pn-Segment[data-disabled] {
+    color: GrayText;
+  }
+
+  .pn-Segment[data-pressed][data-disabled] {
+    background-color: GrayText;
+    color: Canvas;
+  }
+}
