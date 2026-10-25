@@ -3,6 +3,9 @@ component: HighlightChip
 layer: component
 deferred:
   at: 2026-10-25T01:16:43.640Z
+needsHuman:
+  stage: review
+  reason: '2 review rounds found a P1 or a P2, the last a P1: review round 2 found 1 P1 (components/highlight-chip/review.md)'
 stages:
   brief:
     status: done
@@ -15,12 +18,16 @@ stages:
     spec: 1179e6419e68a5c957329229ebcac9c47d721c8e48aad0f4874a3d2d48e76876
     ended: 2026-10-25T02:23:34.407Z
   review:
-    rounds: 1
-    sentBack: 1
+    rounds: 2
+    sentBack: 2
     findings:
       p1: 1
-      p2: 5
-      p3: 3
+      p2: 0
+      p3: 5
+    status: failed
+    started: 2026-10-25T02:23:39.348Z
+    ended: 2026-10-25T02:29:54.956Z
+    failing: review round 2 found 1 P1 (components/highlight-chip/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T01:23:29.991Z
