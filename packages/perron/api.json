@@ -2405,6 +2405,79 @@
       }
     }
   },
+  "ReportStrip": {
+    "extends": [
+      "Omit<ComponentPropsWithRef<'ul'>, 'children'>"
+    ],
+    "props": {
+      "ageingLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "counts": {
+        "optional": false,
+        "type": [
+          "ReportStripCounts"
+        ]
+      },
+      "estimatedLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "liveLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "noSignalLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLUListElement>"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ item?: DetailedHTMLProps<LiHTMLAttributes<HTMLLIElement>, HTMLLIElement> | undefined; label?: Omit<VehicleDotLabelProps, \"ageingLabel\" | \"estimatedLabel\" | \"line\" | \"liveLabel\" | \"noSignalLabel\" | \"render\" | \"timetableOnlyLabel\" | \"variant\"> | undefined; count?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; }"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "timetableOnlyLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "unknownLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      }
+    }
+  },
   "ScaleBar": {
     "extends": [
       "Omit<ComponentPropsWithRef<'div'>, 'children'>"
