@@ -1,0 +1,6 @@
+# Written by npm run factory; never by hand.
+component: Tag
+layer: component
+deferred:
+  at: 2026-10-25T00:21:26.584Z
+stages: {}
