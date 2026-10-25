@@ -25,6 +25,9 @@ stages:
     ended: 2026-10-25T05:20:17.082Z
   docs:
     failures: 1
+    status: done
+    started: 2026-10-25T05:20:36.370Z
+    ended: 2026-10-25T05:27:14.539Z
 notes:
   - stage: brief
     at: 2026-10-25T04:46:00.238Z
@@ -65,3 +68,12 @@ notes:
   - stage: docs
     at: 2026-10-25T05:11:41.352Z
     direction: PropsTable prints onClose's multi-line type with its source line breaks and trailing comma, and the internal import name BaseTooltip appears in the type and in the slots table (BaseTooltip.Trigger.Props). This is shared tooling, the maintainer's to change.
+  - stage: docs
+    at: 2026-10-25T05:27:14.540Z
+    direction: onOpen and onClose show the file-local alias ChangeDetails in the docs props table, a name the reader can't look up, while api.json resolves it to TooltipRootChangeEventDetails. Dialog's page does the same, so the JSDoc could name Tooltip.Root.ChangeEventDetails, or PropsTable could resolve aliases.
+  - stage: docs
+    at: 2026-10-25T05:27:14.540Z
+    direction: PropsTable prints onClose's multi-line type with its source line breaks and trailing comma. It also shows the internal import name BaseTooltip in that type and in the slots table (BaseTooltip.Trigger.Props). PropsTable is shared tooling, so the maintainer changes it.
+  - stage: docs
+    at: 2026-10-25T05:27:14.540Z
+    direction: "P3-1, carried from review: when the trigger has keyboard focus, the shared sideOffset of space.200 leaves only about 4 px between the popup and the focus ring. Should the Tooltips family's offset clear the focus ring, or keep MapTooltip's value?"

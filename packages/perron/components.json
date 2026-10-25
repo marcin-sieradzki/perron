@@ -571,7 +571,7 @@
     "name": "Tooltip",
     "layer": "component",
     "category": "Overlays",
-    "status": "building",
+    "status": "stable",
     "baseUiParts": [
       "Tooltip.Provider",
       "Tooltip.Root",
