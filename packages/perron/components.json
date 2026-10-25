@@ -395,7 +395,7 @@
     "name": "DataStateKey",
     "layer": "pattern",
     "category": "Data",
-    "status": "building",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Patterns/DataStateKey",
     "dependsOn": ["VehicleDotLabel", "Text"]
