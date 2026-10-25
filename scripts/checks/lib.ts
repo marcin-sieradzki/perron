@@ -4,6 +4,7 @@
 import { readdirSync, statSync } from 'node:fs'
 import { join, relative } from 'node:path'
 import type { AtRule, Node } from 'postcss'
+import { holds } from '../../packages/perron/src/testing/pointer.ts'
 import { PACKAGE } from '../lib/paths.ts'
 
 /** One breach of a rule, at a file and line. */
@@ -173,8 +174,7 @@ export const media = (params: string) =>
 export const inMedia = (node: Node, query: string) => {
   for (let p = node.parent; p; p = p.parent)
     if (p.type === 'atrule' && (p as AtRule).name.toLowerCase() === 'media') {
-      const q = media((p as AtRule).params)
-      if (q.includes(query) && !/(^|[\s,])not\s/.test(q)) return true
+      if (holds(media((p as AtRule).params), query)) return true
     }
   return false
 }

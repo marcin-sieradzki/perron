@@ -155,7 +155,7 @@
 }
 
 @media (hover: hover) {
-  /* perron-allow(pointer-feedback): a press chooses the row and closes the list, so no pressed look would show */
+  /* perron-allow(pointer-feedback): a popup row is a menu row, whose highlight answers the pointer and the keys alike, with the default cursor; a press chooses it on release */
   .pn-SearchField-item:hover {
     background-color: var(--perron-color-surface-hover);
   }

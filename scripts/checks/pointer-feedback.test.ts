@@ -91,6 +91,30 @@ describe('pointer-feedback', () => {
     ).toEqual([expect.stringMatching(/paints only what its hover rule already paints/)])
   })
 
+  it('reads a state outside its guards: a hover that leaves out the press, and a rest rule', () => {
+    expect(
+      lint(`${BASE}
+@media (hover: hover) { .pn-X:hover:not(:active) { background-color: var(--a); } }`),
+    ).toEqual([expect.stringMatching(/has a hover look and no pressed one/)])
+    expect(
+      lint(`${BASE}
+@media (hover: hover) { .pn-X:hover:not(:active) { background-color: var(--a); } }
+.pn-X:active { background-color: var(--b); }
+.pn-X:not(:hover) { color: var(--c); }
+@media (hover: hover) and (not (pointer: coarse)) { .pn-X[data-y]:hover { color: var(--a); } }
+.pn-X[data-y]:active { color: var(--b); }`),
+    ).toEqual([])
+  })
+
+  it('reads a background shorthand as the fill and the layer it resets', () => {
+    expect(
+      lint(`${BASE}
+@media (hover: hover) { .pn-X:hover { color: var(--a); } }
+.pn-X:active { background: var(--b); }
+@media (hover: hover) { .pn-X:hover { background-image: linear-gradient(var(--c), var(--c)); } }`),
+    ).toEqual([expect.stringMatching(/comes before a hover rule/)])
+  })
+
   it('fails a hover outside (hover: hover)', () => {
     expect(
       lint(`${BASE}
@@ -161,10 +185,31 @@ ${hovered}:active { color: var(--b); }`),
 .pn-X[data-readonly] { color: var(--t); }
 ${pair}`),
     ).toEqual([expect.stringMatching(/styles a read-only state that keeps the pointer/)])
+    // an ARIA or valued state is a state, and a pseudo-element's or a focus rule's cursor is not the part's
+    expect(
+      lint(`.pn-X::before { cursor: pointer; }
+.pn-X:focus-visible { cursor: pointer; }
+.pn-X[aria-disabled='true'] { cursor: not-allowed; }
+.pn-X[aria-disabled='true']:focus { cursor: default; }
+${pair}`),
+    ).toEqual([
+      expect.stringMatching(/styles a disabled state that keeps the pointer/),
+      expect.stringMatching(/no cursor: pointer/),
+    ])
     // the row that holds a part sets its cursor in its own file
     expect(
       lint(`@media (hover: hover) { [role]:hover > .pn-X { color: var(--a); } }
 [role]:active > .pn-X { color: var(--b); }`),
+    ).toEqual([])
+  })
+
+  it("takes an allowance on any of a split hover's rules", () => {
+    expect(
+      lint(`@media (hover: hover) { .pn-X:hover { color: var(--a); } }
+@media (hover: hover) {
+  /* perron-allow(pointer-feedback): a text box takes the focus ring on press */
+  .pn-X:hover { background-color: var(--b); }
+}`),
     ).toEqual([])
   })
 

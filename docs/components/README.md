@@ -165,7 +165,7 @@ Neither hover nor pressed applies to a disabled or read-only part: the rules exc
 The `pointer-feedback` check ([Checks](#checks)) holds the CSS to this: every hover rule sits inside `(hover: hover)` and needs `:active` rules for its selector, outside the query, after it and painting something otherwise, and the part it hovers sets `cursor: pointer` in a rule of its own, and `cursor: default` in its disabled or read-only rule when the file styles one. A part a press doesn't change says why in a `perron-allow(pointer-feedback)` on its hover rule:
 
 - a text box (the Fields family), which a press focuses: the focus ring and the text cursor answer it;
-- a row in a popup, which a press chooses and closes, so no pressed look would show;
+- a row in a popup, a menu's row: its highlight answers the pointer and the keys alike, it keeps the default cursor, and a press chooses it on release;
 - a link inside running text, which keeps the browser's pointer and, as text links do, takes no pressed look.
 
 ## CSS

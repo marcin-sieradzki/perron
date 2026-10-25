@@ -67,15 +67,15 @@
 }
 
 /* Hover inks the label; pressed lays the hover layer behind it too, a step past hover. Both skip
-   a disabled tab, which keeps aria-disabled, not the native disabled, and
-   still matches :hover and :active (CR-8). */
+   the selected tab, which a press doesn't change, and a disabled tab, which keeps aria-disabled,
+   not the native disabled, and still matches :hover and :active (CR-8). */
 @media (hover: hover) {
-  .pn-Tab:hover:not([data-disabled]) {
+  .pn-Tab:hover:not([data-disabled], [data-active]) {
     color: var(--perron-color-text-primary);
   }
 }
 
-.pn-Tab:active:not([data-disabled]) {
+.pn-Tab:active:not([data-disabled], [data-active]) {
   background-color: var(--perron-color-surface-hover);
   color: var(--perron-color-text-primary);
 }
