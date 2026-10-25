@@ -99,7 +99,7 @@
 }
 
 /* Base UI keeps the panel being left mounted, without hidden, until its exit animations end, a
-   frame at least with none (CR-10): out of the flow and unseen meanwhile, so the new panel never
+   frame at least with none (CR-6): out of the flow and unseen meanwhile, so the new panel never
    paints below it. */
 .pn-TabsPanel[data-ending-style] {
   position: absolute;

@@ -103,30 +103,31 @@ A tab is `size.button` tall, as its least height, with no new `size.tab` token. 
 
 The tabs are underline tabs: no fill in any state, the label `color.text.secondary` at rest and `color.text.primary` on hover, pressed and selected, the selected tab marked by a `border.width.050` underline in `color.text.primary`, on a `border.width.025` hairline in `color.border.subtle` under the whole list. [Semantic spacing](../foundations/semantic-spacing.md#border-widths) gives `border.width.050` to "the selected state of a control"; `color.text.primary` is the neutral intent's mark and reaches 17:1, past the 3:1 a state mark needs, where the hairline only decorates; a fill would read as the segmented control's selected segment; and the selected tab is told by its underline, not by its colour alone.
 
-| Part                  | State    | Property                    | Token                                                                         |
-| --------------------- | -------- | --------------------------- | ----------------------------------------------------------------------------- |
-| `root`                | rest     | `gap`                       | `space.300`                                                                   |
-| `list`                | rest     | `border-block-end`          | `border.width.025` in `color.border.subtle`                                   |
-| `indicator`           | rest     | `border-block-end`          | `border.width.050` in `color.text.primary`                                    |
-| `indicator`           | rest     | `left`, `width`             | Base UI's `--active-tab-left` and `--active-tab-width`                        |
-| `tab`                 | rest     | `min-height`                | `size.button`                                                                 |
-| `tab`                 | rest     | `padding-inline`            | `space.300`                                                                   |
-| `tab`                 | rest     | `gap`                       | `space.150`                                                                   |
-| `tab`                 | rest     | `background-color`          | `transparent`                                                                 |
-| `tab`                 | rest     | `color`                     | `color.text.secondary`                                                        |
-| `tab`                 | hover    | `color`                     | `color.text.primary`                                                          |
-| `tab`                 | pressed  | `color`                     | `color.text.primary`                                                          |
-| `tab`                 | selected | `color`                     | `color.text.primary`                                                          |
-| `tab`                 | disabled | `color`                     | `color.text.tertiary`                                                         |
-| `tab` (`focusRing`)   | focus    | `outline`, `outline-offset` | `focus.width` in `color.border.focus`, `focus.offset` (drawn by `perron.css`) |
-| `label`               | rest     | `font`, `letter-spacing`    | `typography.label`, with its tracking twin                                    |
-| `count`               | rest     | `font`, `letter-spacing`    | `typography.data-sm`, with its tracking twin                                  |
-| `count`               | rest     | `background-color`          | `color.surface.inset`                                                         |
-| `count`               | rest     | `color`                     | `color.text.secondary`                                                        |
-| `count`               | rest     | `border-radius`             | `radius.full`                                                                 |
-| `count`               | rest     | `padding-inline`            | `space.150`                                                                   |
-| `count`               | disabled | `color`                     | `color.text.tertiary`                                                         |
-| `panel` (`focusRing`) | focus    | `outline`, `outline-offset` | `focus.width` in `color.border.focus`, `focus.offset` (drawn by `perron.css`) |
+| Part                  | State    | Property                    | Token                                                                                                    |
+| --------------------- | -------- | --------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `root`                | rest     | `gap`                       | `space.300`                                                                                              |
+| `list`                | rest     | `border-block-end`          | `border.width.025` in `color.border.subtle`                                                              |
+| `indicator`           | rest     | `border-block-end`          | `border.width.050` in `color.text.primary`                                                               |
+| `indicator`           | rest     | `left`, `width`             | Base UI's `--active-tab-left` and `--active-tab-width`                                                   |
+| `indicator`           | rest     | `inset-block-start`         | Base UI's `--active-tab-top` plus `--active-tab-height`, plus `border.width.025` less `border.width.050` |
+| `tab`                 | rest     | `min-height`                | `size.button`                                                                                            |
+| `tab`                 | rest     | `padding-inline`            | `space.300`                                                                                              |
+| `tab`                 | rest     | `gap`                       | `space.150`                                                                                              |
+| `tab`                 | rest     | `background-color`          | `transparent`                                                                                            |
+| `tab`                 | rest     | `color`                     | `color.text.secondary`                                                                                   |
+| `tab`                 | hover    | `color`                     | `color.text.primary`                                                                                     |
+| `tab`                 | pressed  | `color`                     | `color.text.primary`                                                                                     |
+| `tab`                 | selected | `color`                     | `color.text.primary`                                                                                     |
+| `tab`                 | disabled | `color`                     | `color.text.tertiary`                                                                                    |
+| `tab` (`focusRing`)   | focus    | `outline`, `outline-offset` | `focus.width` in `color.border.focus`, `focus.offset` (drawn by `perron.css`)                            |
+| `label`               | rest     | `font`, `letter-spacing`    | `typography.label`, with its tracking twin                                                               |
+| `count`               | rest     | `font`, `letter-spacing`    | `typography.data-sm`, with its tracking twin                                                             |
+| `count`               | rest     | `background-color`          | `color.surface.inset`                                                                                    |
+| `count`               | rest     | `color`                     | `color.text.secondary`                                                                                   |
+| `count`               | rest     | `border-radius`             | `radius.full`                                                                                            |
+| `count`               | rest     | `padding-inline`            | `space.150`                                                                                              |
+| `count`               | disabled | `color`                     | `color.text.tertiary`                                                                                    |
+| `panel` (`focusRing`) | focus    | `outline`, `outline-offset` | `focus.width` in `color.border.focus`, `focus.offset` (drawn by `perron.css`)                            |
 
 The panel has no fill, border or padding of its own: it sits on the surface that holds the tabs, and its content keeps its own spacing. Highlighted, open and invalid don't apply: a tab takes focus rather than `data-highlighted`, and Tabs opens nothing and holds no form value.
 
@@ -179,7 +180,7 @@ Rules for this component alone, numbered so the build and the review can cite th
 - **CR-3.** Each of the four takes `{...rest}` before its own attributes and its own props out of `rest` first (`value`, `defaultValue`, `onChange`, `disabled`, `count`, `slotProps`; an inherited Base UI prop such as `activateOnFocus` or `keepMounted` stays in `rest`, keeping Base UI's default), and merges `className` after its own `pn-` class; `ref` reaches its one element.
 - **CR-4.** `Tabs` adapts Base UI's `onValueChange(value, details)` into `onChange(details.event, value, details)` inside itself and exposes neither `onValueChange` nor `orientation`. It passes `defaultValue` on only when the caller gives one, so Base UI's first-enabled fallback runs when it is left out, and with no destructuring default its JSDoc says `@default The first enabled tab`, as the Props table gives it.
 - **CR-5.** `TabsList` renders one `Tabs.Indicator` after its `children`, with `slotProps.indicator` merged by `mergeProps`, the component's own props last. The list is `position: relative` and the indicator `position: absolute` at the block end of the selected tab's row, so it covers the list's hairline only when that tab is on the last row (CR-11), its `left` and `width` read from Base UI's `--active-tab-left` and `--active-tab-width`, its underline drawn as a `border-block-end`, never a background, so Windows' forced colours keep it.
-- **CR-6.** No rule sets `display` on the indicator or on a panel: Base UI hides both with the `hidden` attribute (the indicator until the selected tab is measured, a panel while its tab isn't selected), and a `display` would show them.
+- **CR-6.** No rule sets `display` on the indicator or on a panel: Base UI hides both with the `hidden` attribute (the indicator until the selected tab is measured, a panel while its tab isn't selected), and a `display` would show them. The panel being left is the one exception to `hidden`: Base UI keeps it mounted, without `hidden` and with `data-ending-style`, until its exit animations end, a frame at least with none, so `.pn-TabsPanel[data-ending-style]` sets `position: absolute` and `visibility: hidden`, taking it out of the flow and out of sight meanwhile, and the new panel never paints below it.
 - **CR-7.** The states keep the tab's geometry: hover, pressed, focus, selected and disabled change colours only, never the height, padding, gap, typography or weight, so selecting a tab never moves its neighbours or the underline.
 - **CR-8.** Hover is read inside `@media (hover: hover)`; pressed (`:active`) takes the hover colour in a rule outside it, so a touch press shows. Neither applies to a disabled tab: both rules exclude `[data-disabled]`, since a disabled tab has `aria-disabled`, not the native `disabled`, and still matches `:hover` and `:active`. Selected is `.pn-Tab[data-active]`, one class then attributes.
 - **CR-9.** Focus uses the ring `perron.css` draws on `:focus-visible`, on the tab and on the open panel; the component draws no ring of its own and never removes the outline.

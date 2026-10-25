@@ -298,10 +298,13 @@ export const Controlled: Story = {
     await expect(canvas.getByRole('tabpanel')).toHaveTextContent(
       'The lines that call at this stop.',
     )
-    await userEvent.click(canvas.getByRole('button', { name: 'Show disruptions' }))
+    const show = canvas.getByRole('button', { name: 'Show disruptions' })
+    await userEvent.click(show)
     const disruptions = canvas.getByRole('tab', { name: 'Disruptions 2' })
     await expect(disruptions).toHaveAttribute('aria-selected', 'true')
     await waitFor(async () => expectUnder(await measuredIndicator(canvasElement), disruptions))
+    show.blur()
+    await expect(canvasElement).not.toContainElement(document.activeElement as HTMLElement)
   },
 }
 
