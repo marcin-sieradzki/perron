@@ -5,10 +5,9 @@ deferred:
   at: 2026-10-25T01:28:01.472Z
 stages:
   brief:
-    status: pending
-    started: 2026-10-25T01:28:05.705Z
-    ended: 2026-10-25T01:40:53.602Z
-    pending: 16
+    status: done
+    started: 2026-10-25T01:41:44.227Z
+    ended: 2026-10-25T01:43:26.113Z
 notes:
   - stage: brief
     at: 2026-10-25T01:40:53.602Z
@@ -47,3 +46,21 @@ notes:
       14. (Component rules) The input gets enterKeyHint="search", keeping type="text". Recommended: yes.
       15. (Component rules) The list opens and closes at once, with no transition. Recommended: yes.
       16. (Stories) No variant property; State property default, hover, focus, open, disabled; stories Default, Hover, Focus, Open, Disabled plus content and behaviour stories. Recommended: yes.
+  - stage: brief
+    at: 2026-10-25T01:43:26.115Z
+    direction: withClass (setting a part's class after mergeProps) would now be declared in a fourth component (Dialog, Sheet, MapTooltip, SearchField); a candidate for the contract's Shared helpers table.
+  - stage: brief
+    at: 2026-10-25T01:43:26.115Z
+    direction: A popup gap from a token needs either MapTooltip's script reader of --perron-* pixel lengths or a CSS workaround; the spec uses positioner padding. If sideOffset is preferred, the reader must first become a shared helper.
+  - stage: brief
+    at: 2026-10-25T01:43:26.115Z
+    direction: "CloseButton would now also clear a field, not only close its container: the contract's Shared parts row and its line that CloseButton's label is the owned 'Close' overridden by closeLabel (SearchField gives 'Clear' through clearLabel), the part's own comment and the close icon's use in icons.json would need to say so."
+  - stage: brief
+    at: 2026-10-25T01:43:26.115Z
+    direction: The contract's 'Native text' rule doesn't mention a text input with suggestions whose value Base UI also changes; the contract could say whether Autocomplete-style fields follow the composite rule.
+  - stage: brief
+    at: 2026-10-25T01:43:26.115Z
+    direction: PerronProvider exposes only owned strings, not its locale, so no component can use the app's locale for collation or formatting.
+  - stage: brief
+    at: 2026-10-25T01:43:26.115Z
+    direction: The registry gives SearchField no Field.Error or Field.Description, so the Fields family's invalid edge still has no component that draws it.
