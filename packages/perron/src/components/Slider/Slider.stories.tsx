@@ -434,6 +434,11 @@ export const Pressed: Story = {
       await expect(slider.matches(':focus-visible')).toBe(false)
       await expect(getComputedStyle(thumb).outlineStyle).toBe('none')
     })
+    await step('the thumb the press drags shows the pressed layer (CR-12)', async () => {
+      await expect(getComputedStyle(thumb).backgroundImage).toContain(
+        fill('color-surface-selected'),
+      )
+    })
     await step('moving the pointer, still pressed, to 30% drags the value to 3', async () => {
       pointer('pointermove', control, track, 0.3)
       await waitFor(() => expect(slider).toHaveAttribute('aria-valuenow', '3'))
