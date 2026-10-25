@@ -108,6 +108,7 @@ const preview: Preview = {
           [
             // each registered pattern
             'DataStatePanel',
+            'DayProfileChart',
             'DetailHeader',
             'DetailPanel',
             'StopTimeline',
@@ -151,6 +152,7 @@ const preview: Preview = {
             'SeverityLabel',
             'StationIcon',
             'DataStatePanel',
+            'DayProfileChart',
             'DetailHeader',
             'DetailPanel',
             'StopTimeline',

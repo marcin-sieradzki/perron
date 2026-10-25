@@ -249,6 +249,55 @@
       }
     }
   },
+  "DayProfileChart": {
+    "extends": [
+      "Omit<ComponentPropsWithRef<'figure'>, 'children'>"
+    ],
+    "props": {
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "label": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "points": {
+        "optional": false,
+        "type": [
+          "readonly DayProfileChartPoint[]"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLElement>"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ caption?: DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> | undefined; plot?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; graph?: SVGProps<SVGSVGElement> | undefined; scale?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; points?: DetailedHTMLProps<OlHTMLAttributes<HTMLOListElement>, HTMLOListElement> | undefined; point?: DetailedHTMLProps<LiHTMLAttributes<HTMLLIElement>, HTMLLIElement> | undefined; tip?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; axis?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; }"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "unknownLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      }
+    }
+  },
   "Delay": {
     "extends": [
       "Omit<useRender.ComponentProps<'span'>, 'children' | 'ref'>"

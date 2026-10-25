@@ -44,14 +44,14 @@ Radius grows with the size of the thing it rounds.
 
 ## Border widths
 
-Two widths, numbered like the spacing scale: `border.width.025` is a quarter of 4 px, `border.width.050` half. Hairlines and the edges of inputs, cards and panels take the thin one. The focus ring and the selected state of a control take the thick one.
+Two widths, numbered like the spacing scale: `border.width.025` is a quarter of 4 px, `border.width.050` half. Hairlines and the edges of inputs, cards and panels take the thin one. The focus ring, the selected state of a control and the line of a chart take the thick one.
 
 <!-- tokens: border.width.* -->
 
-| Token              | Value | Use                                             |
-| ------------------ | ----- | ----------------------------------------------- |
-| `border.width.025` | `1px` | Hairlines, borders of inputs, cards and panels  |
-| `border.width.050` | `2px` | The focus ring, the selected state of a control |
+| Token              | Value | Use                                                                  |
+| ------------------ | ----- | -------------------------------------------------------------------- |
+| `border.width.025` | `1px` | Hairlines, borders of inputs, cards and panels                       |
+| `border.width.050` | `2px` | The focus ring, the selected state of a control, the line of a chart |
 
 <!-- /tokens -->
 
