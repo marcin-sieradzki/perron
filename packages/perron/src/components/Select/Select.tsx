@@ -8,6 +8,7 @@ import { mergeProps } from '@base-ui/react/merge-props'
 import { Select as BaseSelect } from '@base-ui/react/select'
 import { useId, useMemo } from 'react'
 import { withClass } from '../../internal/nodes.ts'
+import { Chevron } from '../../parts/Chevron/Chevron.tsx'
 import { SelectedMark } from '../../parts/SelectedMark/SelectedMark.tsx'
 import { Field } from '../Field/Field.tsx'
 import type { FieldProps } from '../Field/Field.tsx'
@@ -145,23 +146,6 @@ const isGroups = (
   items: ReadonlyArray<SelectItem> | ReadonlyArray<SelectGroup>,
 ): items is ReadonlyArray<SelectGroup> => items.length > 0 && 'items' in items[0]
 
-/** `chevron-down` from packages/perron/icons/, hidden from screen readers by `Select.Icon` (CR-7). */
-const CHEVRON = (
-  <svg
-    className="perron-icon"
-    aria-hidden="true"
-    focusable="false"
-    viewBox="0 0 16 16"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.8"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="m4 6 4 4 4-4" />
-  </svg>
-)
-
 /** The field that picks one value from a short, fixed list, such as a transport mode. */
 export function Select({
   items,
@@ -274,7 +258,7 @@ export function Select({
             className={withClass('pn-Select-value', slotProps?.value?.className)}
           />
           <BaseSelect.Icon
-            {...mergeProps<typeof BaseSelect.Icon>(slotProps?.icon, { children: CHEVRON })}
+            {...mergeProps<typeof BaseSelect.Icon>(slotProps?.icon, { children: <Chevron /> })}
             className={withClass('pn-Select-icon', slotProps?.icon?.className)}
           />
         </BaseSelect.Trigger>
