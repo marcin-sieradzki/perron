@@ -78,7 +78,7 @@ A measure lives here when two places must agree on it, such as a component and t
 | `size.segment`      | `32px`  | Segmented control item                                                   |
 | `size.badge`        | `22px`  | Line badge height                                                        |
 | `size.badge-lg`     | `34px`  | Large line badge height                                                  |
-| `size.meter-track`  | `6px`   | Height of a meter's and a progress bar's track                           |
+| `size.meter-track`  | `6px`   | Height of a meter's, a progress bar's or a slider's track                |
 | `size.checkbox`     | `16px`  | The box of a checkbox, and of a menu's checkbox item                     |
 | `size.dialog-width` | `440px` | Widest a dialog or alert dialog gets: about 60 characters of body a line |
 | `size.vehicle-row`  | `52px`  | Vehicle table row height (virtualised list relies on it)                 |

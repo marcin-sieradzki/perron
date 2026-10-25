@@ -43,5 +43,7 @@ export const da: OwnedStrings = {
   increase: 'Forøg',
   decrease: 'Formindsk',
   numberField: 'Talfelt',
+  minimum: 'Minimum',
+  maximum: 'Maksimum',
   inProgress: 'I gang',
 }

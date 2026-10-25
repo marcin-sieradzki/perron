@@ -86,6 +86,10 @@ export const en = {
   decrease: 'Decrease',
   /** A number field's input: heard in place of its role, after its name, never seen. */
   numberField: 'Number field',
+  /** A range slider: the name of its lower thumb, heard as "Minimum, slider, 4". */
+  minimum: 'Minimum',
+  /** A range slider: the name of its upper thumb, heard as "Maximum, slider, 12". */
+  maximum: 'Maximum',
   /**
    * Progress: heard after the task's name, in place of the figure, while how far the task has got
    * is not known.

@@ -554,15 +554,18 @@
     "name": "Slider",
     "layer": "component",
     "category": "Inputs",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [
       "Slider.Root",
-      "Slider.Label",
-      "Slider.Value",
       "Slider.Control",
       "Slider.Track",
       "Slider.Indicator",
-      "Slider.Thumb"
+      "Slider.Thumb",
+      "Slider.Value",
+      "Field.Root",
+      "Field.Label",
+      "Field.Description",
+      "Field.Error"
     ],
     "penpotPath": "Components/Slider",
     "dependsOn": ["Field"]
@@ -716,7 +719,7 @@
     "name": "Link",
     "layer": "component",
     "category": "Navigation",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/Link",
     "dependsOn": []

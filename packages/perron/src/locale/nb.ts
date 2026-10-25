@@ -43,5 +43,7 @@ export const nb: OwnedStrings = {
   increase: 'Øk',
   decrease: 'Reduser',
   numberField: 'Tallfelt',
+  minimum: 'Minimum',
+  maximum: 'Maksimum',
   inProgress: 'Pågår',
 }
