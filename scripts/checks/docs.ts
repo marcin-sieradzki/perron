@@ -28,7 +28,7 @@ import {
 import { PACKAGE } from '../lib/paths.ts'
 import { codeFile } from '../lib/props.ts'
 import { folderOf, isBuilt, readRegistry, specPage, type Entry } from '../lib/registry.ts'
-import { byFileLine, codeSpans, type Check, type Problem } from './lib.ts'
+import { byFileLine, codeSpans, CONTRACT, type Check, type Problem } from './lib.ts'
 
 const RULE = 'docs'
 
@@ -191,9 +191,16 @@ export function pressed(stories: string, key: string): boolean {
 }
 
 /**
+ * A row that says why no `play` test can press its keys, such as Tab after a press on the
+ * backdrop, which user-event cannot reproduce: `Untested: <reason>` in its cell. The reviewer
+ * checks the reason holds.
+ */
+const UNTESTED = /\bUntested: \S/
+
+/**
  * Each key of the spec's Keyboard table, a code span starting a row of its first table, such as
  * `Enter` or `Shift+Tab`, with its line: the keys a `play` test presses. A row of words, such as
- * "Typing" or "A press on the label", names no key.
+ * "Typing" or "A press on the label", names no key, and an `Untested: <reason>` row is left out.
  */
 function keyboardRows(spec: string) {
   const lines = spec.split('\n')
@@ -207,6 +214,7 @@ function keyboardRows(spec: string) {
       continue
     }
     seen = true
+    if (UNTESTED.test(lines[i])) continue
     const first = lines[i].split('|')[1] ?? ''
     // the keys a row starts with, `Enter`, `Space`, before the words after them
     const keyList = /^\s*((?:`[^`]+`(?:,\s*)?)+)/.exec(first)?.[1] ?? ''
@@ -232,7 +240,7 @@ function keyboardProblems(root: string, e: Entry): Problem[] {
     .map(({ key, line }) => ({
       file: specPage(e),
       line,
-      message: `${specPage(e)}'s Keyboard table names \`${key}\`, which no play test in ${storiesFile(e)} presses: give the story that shows it a step that presses it, as {Enter}, [Space], {Shift>}{ArrowUp}{/Shift}, {ArrowUp>3/} or userEvent.tab(), and checks what it does`,
+      message: `${specPage(e)}'s Keyboard table names \`${key}\`, which no play test in ${storiesFile(e)} presses: give the story that shows it a step that presses it, as {Enter}, [Space], {Shift>}{ArrowUp}{/Shift}, {ArrowUp>3/} or userEvent.tab(), and checks what it does; a row no play test can reproduce says why in its own row, \`Untested: <reason>\` (${CONTRACT}, "Stories")`,
     }))
 }
 
@@ -243,6 +251,20 @@ function unknownTypes(e: Entry, doc: ComponentDoc): Problem[] {
     .map(([name]) => ({
       file: codeFile(e),
       message: `${e.name}'s docs page would show the type of ${name} as unknown: docgen cannot read the type as written; write it another way, such as ReadonlyArray<T> for readonly T[]`,
+    }))
+}
+
+/**
+ * Each member whose description carries `@ignore`, which the props table's JSDoc parser drops the
+ * row for, while this rule reads it as a row: docgen leaves Base UI's out, so it is the
+ * component's own.
+ */
+function hiddenProps(e: Entry, doc: ComponentDoc): Problem[] {
+  return Object.entries(doc.props ?? {})
+    .filter(([, p]) => /(^|\n)@ignore\b/.test(p.description ?? ''))
+    .map(([name]) => ({
+      file: codeFile(e),
+      message: `${e.name}'s docs page would leave out ${name}, whose JSDoc carries @ignore, though ${specPage(e)}'s Props table gives it a row: take @ignore out of its JSDoc`,
     }))
 }
 
@@ -340,6 +362,7 @@ export default {
         problems.push(
           ...tableProblems(root, e, doc),
           ...unknownTypes(e, doc),
+          ...hiddenProps(e, doc),
           ...overlayProblems(root, e, doc),
           ...privateTypes(root, e, doc),
         )

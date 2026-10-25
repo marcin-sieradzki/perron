@@ -103,10 +103,15 @@ function typeName(checker: ts.TypeChecker, type: ts.Type) {
   return `${shown.includes('=>') ? `(${shown})` : shown} | null`
 }
 
-/** A member as react-docgen writes one: its JSDoc with the tags as written, its `@default`. */
+/**
+ * A member as react-docgen writes one: its JSDoc with the tags as written, its `@default`. Base UI's
+ * `@ignore` is left out: it hides a member from Base UI's own API pages (`id` on most Menu parts),
+ * but the props table drops a row whose description carries it, where the contract's Props rule
+ * gives every member of `<Name>Props` a row.
+ */
 function propDoc(checker: ts.TypeChecker, member: ts.Symbol, at: ts.Declaration): PropDoc {
   const type = checker.getTypeOfSymbolAtLocation(member, at)
-  const tags = member.getJsDocTags(checker)
+  const tags = member.getJsDocTags(checker).filter((t) => t.name !== 'ignore')
   const text = ts.displayPartsToString(member.getDocumentationComment(checker))
   const description = [
     text,

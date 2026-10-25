@@ -33,10 +33,13 @@ export function heard(element: Element) {
 
 /**
  * The value a token renders as here, read from a probe that sets it on `property`. A colour read
- * as `color` is `colour`'s.
+ * as `color` is `colour`'s. The probe's border and outline are solid, so a width read as
+ * `border-width` or `outline-width` shows rather than computing to `0px`.
  */
 export function rendered(token: string, property: string) {
   const probe = document.createElement('div')
+  probe.style.borderStyle = 'solid'
+  probe.style.outlineStyle = 'solid'
   probe.style.setProperty(property, `var(--perron-${token})`)
   document.body.append(probe)
   const value = getComputedStyle(probe).getPropertyValue(property)

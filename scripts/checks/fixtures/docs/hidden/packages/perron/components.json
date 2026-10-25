@@ -1,0 +1,11 @@
+[
+  {
+    "name": "Flag",
+    "layer": "component",
+    "category": "Display",
+    "status": "building",
+    "baseUiParts": [],
+    "penpotPath": "Components/Flag",
+    "dependsOn": []
+  }
+]
