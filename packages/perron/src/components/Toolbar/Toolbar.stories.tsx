@@ -3,7 +3,7 @@
 // the visual check drives them, and their play tests check them.
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, userEvent, within } from 'storybook/test'
-import { colour, onHover, rendered } from '../../testing/stories.ts'
+import { colour, onHover, pressedAfterHover, rendered, stateFill } from '../../testing/stories.ts'
 import { Toolbar, ToolbarButton, ToolbarGroup, ToolbarSeparator } from './Toolbar.tsx'
 
 /** `plus` from packages/perron/icons/. */
@@ -154,6 +154,9 @@ export const ButtonNeutralHover: Story = {
     const button = within(canvasElement).getByRole('button', { name: 'Show whole line' })
     await expect(getComputedStyle(button).backgroundColor).toBe('rgba(0, 0, 0, 0)')
     await expect(onHover(button, 'background-color')).toBe('var(--perron-color-surface-hover)')
+    await expect(stateFill(button, ':active')).toBe('var(--perron-color-surface-selected)')
+    await expect(pressedAfterHover(button)).toBe(true)
+    await expect(getComputedStyle(button).cursor).toBe('pointer')
   },
 }
 
@@ -208,6 +211,8 @@ export const ButtonBrandHover: Story = {
       'var(--perron-color-surface-brand-hover)',
     )
     await expect(onHover(button, 'border-color')).toBe('')
+    await expect(stateFill(button, ':active')).toBe('var(--perron-color-surface-brand-pressed)')
+    await expect(pressedAfterHover(button)).toBe(true)
     await expect(getComputedStyle(button).borderTopColor).toBe(
       colour('--perron-color-border-brand'),
     )
