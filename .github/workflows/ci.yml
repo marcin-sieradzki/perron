@@ -12,6 +12,9 @@ permissions:
 jobs:
   check:
     runs-on: ubuntu-latest
+    env:
+      # npm run check builds the website with Next.js, which otherwise reports usage data
+      NEXT_TELEMETRY_DISABLED: 1
     steps:
       # The whole history, with the release tags that the api-compatibility check compares against
       - uses: actions/checkout@v4

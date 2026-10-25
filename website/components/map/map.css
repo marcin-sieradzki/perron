@@ -1,0 +1,141 @@
+/* The background map: MapBackground's drawing in the map and transit tokens. The frame covers the
+   page and clips the drawing, which stands at its own height from the top. */
+
+.map {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.map-canvas {
+  position: relative;
+  background: var(--perron-color-map-land);
+}
+
+/* Unscaled up to the drawing's width, so a dot is its token size on a phone; scaled up past it */
+.map-drawing {
+  display: block;
+}
+
+.map[data-view='full'] .map-drawing {
+  opacity: 0.85;
+}
+
+/* the quiet strip shows the city centre, where the lines meet, not the drawing's top edge */
+.map[data-view='quiet'] .map-drawing {
+  opacity: 0.7;
+  translate: 0 -24%;
+}
+
+/* The veil lays the page's surface over the map: a glow behind the home page's hero and a fade at
+   the bottom, or for the quiet view a fade that leaves only a strip at the top. In shares of the
+   drawing, so it scales with it. */
+.map-veil {
+  position: absolute;
+  inset: 0;
+}
+
+.map[data-view='full'] .map-veil {
+  background:
+    radial-gradient(
+      ellipse 45% 27% at 50% 29%,
+      color-mix(in srgb, var(--perron-color-surface-default) 88%, transparent) 30%,
+      transparent 100%
+    ),
+    linear-gradient(to bottom, transparent 58%, var(--perron-color-surface-default));
+}
+
+.map[data-view='quiet'] .map-veil {
+  background: linear-gradient(to bottom, transparent 4%, var(--perron-color-surface-default) 34%);
+}
+
+/* Ground */
+.map-water {
+  fill: var(--perron-color-map-water);
+}
+
+.map-harbour {
+  fill: none;
+  stroke: var(--perron-color-map-water);
+  stroke-linecap: round;
+}
+
+.map-parks {
+  fill: var(--perron-color-map-park);
+}
+
+.map-streets {
+  fill: none;
+  stroke: var(--perron-color-map-street);
+  stroke-linecap: round;
+}
+
+/* Lines at rest, slightly translucent */
+.map-lines {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.map-line {
+  stroke: var(--map-line);
+  opacity: var(--perron-opacity-map-line);
+}
+
+.map-line-metro {
+  stroke-width: var(--perron-map-line-width-metro);
+}
+
+.map-line-stog {
+  stroke-width: var(--perron-map-line-width-stog);
+}
+
+.map-line-regional {
+  stroke-width: var(--perron-map-line-width-regional);
+  opacity: var(--perron-opacity-map-line-regional);
+}
+
+.map-stations {
+  fill: var(--perron-color-surface-raised);
+  stroke: var(--perron-color-text-primary);
+  stroke-width: var(--perron-border-width-050);
+}
+
+/* Vehicle dots, one shape per data state (docs/foundations/data-states.md) */
+.map-dot-live {
+  fill: var(--map-line);
+  stroke: var(--perron-color-data-state-halo);
+  stroke-width: var(--perron-vehicle-dot-halo);
+}
+
+.map-dot-ageing {
+  fill: var(--map-line);
+  fill-opacity: var(--perron-vehicle-dot-ageing-fill-opacity);
+  stroke: var(--map-line);
+  stroke-width: var(--perron-vehicle-dot-ageing-stroke-width);
+}
+
+.map-dot-estimated {
+  fill: none;
+  stroke: var(--map-line);
+  stroke-width: var(--perron-vehicle-dot-estimated-stroke-width);
+}
+
+.map-dot-timetable {
+  fill: none;
+  stroke: var(--map-line);
+  stroke-width: var(--perron-vehicle-dot-timetable-stroke-width);
+  stroke-dasharray: var(--perron-vehicle-dot-timetable-dash);
+}
+
+.map-dot-no-signal {
+  fill: var(--perron-color-data-state-no-signal);
+  stroke: var(--perron-color-data-state-halo);
+  stroke-width: var(--perron-vehicle-dot-halo);
+}
+
+.map-pulse {
+  fill: none;
+  stroke: var(--map-line);
+}

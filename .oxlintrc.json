@@ -62,5 +62,12 @@
       "rules": { "no-restricted-imports": "off" }
     }
   ],
-  "ignorePatterns": ["coverage", "dist", "packages/perron/tokens/generated", "packages/perron/data"]
+  "ignorePatterns": [
+    "coverage",
+    "dist",
+    "packages/perron/tokens/generated",
+    "packages/perron/data",
+    "website/.next",
+    "website/next-env.d.ts"
+  ]
 }

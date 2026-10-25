@@ -5,7 +5,8 @@
   "description": "The Perron repository: the @mylder/perron and @mylder/perron-mcp packages, the token build, Storybook and the docs.",
   "type": "module",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "website"
   ],
   "scripts": {
     "tokens": "node scripts/build-tokens.ts",
@@ -22,7 +23,7 @@
     "test": "vitest run --project unit",
     "test:stories": "vitest run --project stories --project fixtures",
     "test:watch": "vitest --project unit",
-    "check": "npm run tokens:check && npm run registry:check && npm run api:check && npm run typecheck && npm run gates && npm run lint && npm run format:check && npm run test && npm run test:stories",
+    "check": "npm run tokens:check && npm run registry:check && npm run api:check && npm run typecheck && npm run gates && npm run lint && npm run format:check && npm run test && npm run build -w website && npm run test:stories",
     "storybook": "storybook dev -p ${STORYBOOK_PORT:-6006}",
     "storybook:build": "storybook build -o dist/storybook && node scripts/build-site.ts dist/storybook",
     "smoke": "node scripts/smoke-consumer.ts",
