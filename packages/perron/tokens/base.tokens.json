@@ -991,7 +991,7 @@
         "value": 800,
         "unit": "ms"
       },
-      "$description": "Meter fill change"
+      "$description": "Meter and progress bar fill change"
     },
     "camera": {
       "$type": "duration",
@@ -1040,6 +1040,14 @@
         "unit": "ms"
       },
       "$description": "Ring around the selected vehicle"
+    },
+    "progress-sweep": {
+      "$type": "duration",
+      "$value": {
+        "value": 1600,
+        "unit": "ms"
+      },
+      "$description": "Segment that sweeps along an indeterminate progress bar's track"
     }
   },
   "easing": {
@@ -1208,7 +1216,7 @@
         "value": 6,
         "unit": "px"
       },
-      "$description": "Height of a meter's track"
+      "$description": "Height of a meter's and a progress bar's track"
     },
     "checkbox": {
       "$type": "dimension",

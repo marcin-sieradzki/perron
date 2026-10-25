@@ -1,24 +1,25 @@
 # Motion
 
-Motion explains a change of place. The sheet slides, the camera eases to a selection, a switch's thumb slides to its other end, and meters ease to new values. Vehicles glide between reports instead of jumping.
+Motion explains a change of place. The sheet slides, the camera eases to a selection, a switch's thumb slides to its other end, and meters and progress bars ease to new values. Vehicles glide between reports instead of jumping.
 
 ## Durations
 
 - **Transitions** move something from one place or value to another, once: `duration.sheet`, `duration.meter`, `duration.camera`, `duration.follow` and `duration.switch`. A control pressed many times in a row, such as a switch, takes the short `duration.switch`, so the change keeps up with the hand.
-- **Loops** repeat while something is true. A new report pulses once around its vehicle (`duration.report-pulse`), a ring pulses around the selected vehicle (`duration.selection-pulse`), and the follow indicator blinks while the camera follows (`duration.blink`).
+- **Loops** repeat while something is true. A new report pulses once around its vehicle (`duration.report-pulse`), a ring pulses around the selected vehicle (`duration.selection-pulse`), the follow indicator blinks while the camera follows (`duration.blink`), and a segment sweeps along a progress bar's track while how far its task has got is not known (`duration.progress-sweep`).
 
 <!-- tokens: duration.* -->
 
-| Token                      | Value    | Reduced motion | Use                                                   |
-| -------------------------- | -------- | -------------- | ----------------------------------------------------- |
-| `duration.sheet`           | `320ms`  | `0.01ms`       | Bottom sheet open and close                           |
-| `duration.meter`           | `800ms`  | `0.01ms`       | Meter fill change                                     |
-| `duration.camera`          | `750ms`  | `0.01ms`       | Map camera fly-to                                     |
-| `duration.follow`          | `500ms`  | `0.01ms`       | Camera fly-to when following starts                   |
-| `duration.switch`          | `150ms`  | `0.01ms`       | Switch thumb slide and track fill                     |
-| `duration.blink`           | `1400ms` |                | Recording dot blink while following                   |
-| `duration.report-pulse`    | `1100ms` |                | Ring that expands when a vehicle reports its position |
-| `duration.selection-pulse` | `1600ms` |                | Ring around the selected vehicle                      |
+| Token                      | Value    | Reduced motion | Use                                                             |
+| -------------------------- | -------- | -------------- | --------------------------------------------------------------- |
+| `duration.sheet`           | `320ms`  | `0.01ms`       | Bottom sheet open and close                                     |
+| `duration.meter`           | `800ms`  | `0.01ms`       | Meter and progress bar fill change                              |
+| `duration.camera`          | `750ms`  | `0.01ms`       | Map camera fly-to                                               |
+| `duration.follow`          | `500ms`  | `0.01ms`       | Camera fly-to when following starts                             |
+| `duration.switch`          | `150ms`  | `0.01ms`       | Switch thumb slide and track fill                               |
+| `duration.blink`           | `1400ms` |                | Recording dot blink while following                             |
+| `duration.report-pulse`    | `1100ms` |                | Ring that expands when a vehicle reports its position           |
+| `duration.selection-pulse` | `1600ms` |                | Ring around the selected vehicle                                |
+| `duration.progress-sweep`  | `1600ms` |                | Segment that sweeps along an indeterminate progress bar's track |
 
 <!-- /tokens -->
 

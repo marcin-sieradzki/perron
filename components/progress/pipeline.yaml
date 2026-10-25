@@ -8,6 +8,13 @@ stages:
     status: done
     started: 2026-10-25T07:27:56.145Z
     ended: 2026-10-25T07:29:11.881Z
+  build:
+    status: done
+    started: 2026-10-25T07:29:15.317Z
+    runs: 1
+    begun: 9ab2ad724c6272adf64a70d4fe2822315190203e8f9270f08bf56fcda442a8ee
+    spec: 4c5c70fd44be70a6ca06a355f5647dde51496c2f37d564cf7a1241773b34481b
+    ended: 2026-10-25T07:35:35.659Z
 notes:
   - stage: brief
     at: 2026-10-25T07:27:51.488Z
@@ -33,3 +40,12 @@ notes:
   - stage: brief
     at: 2026-10-25T07:27:51.488Z
     questions: "1. (Anatomy) Does Progress take Meter's anatomy and layout unchanged? Recommended: yes. 2. (Anatomy) Does the deferred design draw Base UI's three statuses as one State property (progressing, complete, indeterminate)? Recommended: yes. 3. (Props) Does Progress take no color, size or variant, its fill always color.text.primary? Recommended: yes. 4. (Tokens) Does the track reuse size.meter-track, its description widened? Recommended: yes. 5. (Tokens) Does the fill change reuse duration.meter with easing.standard, its description widened? Recommended: yes. 6. (Tokens) Does the complete status keep the progressing look at 100%, with no token, tint or word of its own? Recommended: yes. 7. (Tokens) Is indeterminate a 40% segment sweeping inset-inline-start -40% to 100% over a new loop token duration.progress-sweep of 1600ms? Recommended: yes. 8. (Reduced motion) Does the sweep stop under reduced motion, the segment resting at inset-inline-start 30%? Recommended: yes. 9. (Owned strings) Is the word heard while indeterminate a new key inProgress, 'In progress', overridable by inProgressLabel? Recommended: yes."
+  - stage: build
+    at: 2026-10-25T07:35:35.660Z
+    direction: "The Indeterminate story's play reads the (prefers-reduced-motion: reduce) rules from document.styleSheets with its own reducedMotionRules function, since no shared helper reads @media rules; the next component with a loop would copy it, so it could join testing/stories.ts and the contract's Shared helpers table."
+  - stage: build
+    at: 2026-10-25T07:35:35.660Z
+    direction: "The zero-width strut (content: '\\200b' / ''), which keeps a row's line when its text is empty, now appears in NormalService and Progress; the contract's CSS section could name it as the way to keep a baseline."
+  - stage: build
+    at: 2026-10-25T07:35:35.660Z
+    direction: An agent wrote the Danish, Swedish and Norwegian for inProgress ('I gang', 'Pågår', 'Pågår'); the word is not in content design's fixed data-state table, so a native reader should confirm it.

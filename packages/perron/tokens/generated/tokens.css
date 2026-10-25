@@ -147,6 +147,7 @@
   --perron-duration-blink: 1400ms;
   --perron-duration-report-pulse: 1100ms;
   --perron-duration-selection-pulse: 1600ms;
+  --perron-duration-progress-sweep: 1600ms;
   --perron-easing-sheet: cubic-bezier(0.2, 0.8, 0.2, 1);
   --perron-easing-standard: cubic-bezier(0.25, 0.1, 0.25, 1);
   --perron-z-index-map-controls: 3;
