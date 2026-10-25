@@ -270,6 +270,7 @@
   --perron-color-transit-severity-data: var(--perron-color-text-secondary);
   --perron-color-transit-severity-diversion: var(--perron-color-text-info);
   --perron-color-transit-severity-planned: var(--perron-color-text-secondary);
+  --perron-color-transit-severity-notice: var(--perron-color-text-secondary);
   --perron-color-data-state-no-signal: #9AA4A9;
   --perron-color-data-state-halo: var(--perron-color-map-land);
   --perron-color-data-state-outline: rgba(18, 24, 27, 0.45);
@@ -339,6 +340,7 @@
     --perron-color-transit-severity-data: var(--perron-color-text-secondary);
     --perron-color-transit-severity-diversion: var(--perron-color-text-info);
     --perron-color-transit-severity-planned: var(--perron-color-text-secondary);
+    --perron-color-transit-severity-notice: var(--perron-color-text-secondary);
     --perron-color-data-state-no-signal: #5F6B71;
     --perron-color-data-state-halo: var(--perron-color-map-land);
     --perron-color-data-state-outline: rgba(0, 0, 0, 0);
@@ -408,6 +410,7 @@
   --perron-color-transit-severity-data: var(--perron-color-text-secondary);
   --perron-color-transit-severity-diversion: var(--perron-color-text-info);
   --perron-color-transit-severity-planned: var(--perron-color-text-secondary);
+  --perron-color-transit-severity-notice: var(--perron-color-text-secondary);
   --perron-color-data-state-no-signal: #5F6B71;
   --perron-color-data-state-halo: var(--perron-color-map-land);
   --perron-color-data-state-outline: rgba(0, 0, 0, 0);

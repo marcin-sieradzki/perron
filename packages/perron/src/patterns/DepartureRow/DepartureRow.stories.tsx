@@ -9,7 +9,7 @@ import { PerronProvider } from '../../PerronProvider.tsx'
 import { delayKnown, VEHICLE_STATES } from '../../internal/vehicle-states.ts'
 import { dictionaries, type Locale } from '../../locale/index.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
-import { expectNoFocus, heard, lines, mounted } from '../../testing/stories.ts'
+import { colour, expectNoFocus, heard, lines, mounted, struck } from '../../testing/stories.ts'
 import { DepartureRow } from './DepartureRow.tsx'
 import type { DepartureRowProps } from './DepartureRow.tsx'
 
@@ -49,6 +49,12 @@ type Story = StoryObj<typeof meta>
 /** The parts of a row, in reading order. */
 const PARTS = ['badge', 'destination', 'status', 'countdown', 'time', 'delay'] as const
 
+/**
+ * The parts a screen reader meets in turn, an interval's among them in the countdown's place. The
+ * platform is read as part of the status that holds it.
+ */
+const READ_PARTS = [...PARTS, 'interval'] as const
+
 /** One part of the row in `scope`, by its class, or null when it isn't rendered. */
 const part = (scope: Element, name: string) =>
   scope.querySelector<HTMLElement>(`.pn-DepartureRow-${name}`)
@@ -62,7 +68,9 @@ function rowIn(scope: Element) {
 
 /** The row's parts that are rendered, in DOM order, the order a screen reader meets them. */
 const partsInOrder = (row: Element) => [
-  ...row.querySelectorAll<HTMLElement>(PARTS.map((name) => `.pn-DepartureRow-${name}`).join(', ')),
+  ...row.querySelectorAll<HTMLElement>(
+    READ_PARTS.map((name) => `.pn-DepartureRow-${name}`).join(', '),
+  ),
 ]
 
 /** What a screen reader reads of a row: its parts in DOM order, each part's text apart. */
@@ -84,6 +92,19 @@ async function dotHiddenWordRead(row: HTMLElement, word: string) {
   await expect(heard(status)).toBe(word)
   await expect(isInaccessible(status)).toBe(false)
   await expect(within(row).getAllByText(word)).toHaveLength(1)
+}
+
+/** The attributes the root carries, sorted, for the check that no own prop reaches it (CR-2). */
+const rootAttributes = (element: ReactElement) => staticRow(element).getAttributeNames().sort()
+
+/** Each locale's render of `element`, held to its dictionary and the caller's `words`. */
+function ownedStringsInEveryLocale(element: ReactElement, words: string[]) {
+  for (const locale of LOCALES)
+    expectOwnedStrings(
+      renderToStaticMarkup(<PerronProvider locale={locale}>{element}</PerronProvider>),
+      locale,
+      words,
+    )
 }
 
 /** The countdown's "~", seen and never heard, straight before the figure. */
@@ -154,8 +175,12 @@ const EVERY_PROP = {
   countdown: 240,
   time: '08:14',
   delay: 0,
+  cancelled: false,
   nowLabel: 'Leaving',
   unknownLabel: 'Not known',
+  cancelledLabel: 'Not running',
+  everyLabel: 'Each {count} mins',
+  everyRangeLabel: 'Each {from} or {to} mins',
   liveLabel: 'Real-time',
   ageingLabel: 'Older',
   estimatedLabel: 'Guessed',
@@ -477,6 +502,246 @@ export const TimetableOnly: Story = {
     await step('"~" comes before the figure', () => tildeBeforeFigure(row))
     await step('"Timetable only" is read beside the dot', () =>
       dotHiddenWordRead(row, 'Timetable only'),
+    )
+  },
+}
+
+/** A cancelled bus: the row stays, marked "Cancelled", its countdown and time struck through. */
+export const Cancelled: Story = {
+  args: { variant: 'live', cancelled: true, delay: 2 },
+  play: async ({ canvasElement, args, step }) => {
+    const row = rowIn(canvasElement)
+    await step('the root carries data-cancelled (CR-13)', async () => {
+      await expect(row).toHaveAttribute('data-cancelled', '')
+      await expect(row).toHaveAttribute('data-variant', 'live')
+    })
+    await step('the status reads "Cancelled", in the danger colour, with no dot', async () => {
+      const status = part(row, 'status')!
+      await expect(heard(status)).toBe('Cancelled')
+      await expect(status.textContent).toBe('Cancelled')
+      await expect(part(row, 'dot')).toBeNull()
+      await expect(row.textContent).not.toContain('Live')
+      await expect(getComputedStyle(status).color).toBe(colour('--perron-color-text-danger'))
+    })
+    await step('the countdown and the time are struck through, their text kept', async () => {
+      await expect(struck(part(row, 'countdown')!)).toBe(true)
+      await expect(struck(part(row, 'time')!)).toBe(true)
+      await expect(part(row, 'countdown')!.textContent).toBe('4 min')
+      await expect(struck(part(row, 'destination')!)).toBe(false)
+    })
+    await step('no Delay renders, though delay is 2 (CR-5)', async () => {
+      await expect(part(row, 'delay')).toBeNull()
+      const timetabled = staticRow(<DepartureRow {...args} variant="timetable-only" />)
+      await expect(part(timetabled, 'delay')).toBeNull()
+    })
+    await step('the row reads "Cancelled" before the countdown', async () => {
+      await expect(readOf(row)).toBe('5C Husum Torv Cancelled 4 min 08:14')
+    })
+    await step('an estimated cancelled row keeps its "~"', async () => {
+      const estimated = staticRow(<DepartureRow {...args} variant="estimated" />)
+      await expect(part(estimated, 'countdown')!.textContent).toBe('~4 min')
+      await expect(heard(part(estimated, 'status')!)).toBe('Cancelled')
+    })
+    await step('cancelledLabel replaces the word', async () => {
+      const root = staticRow(<DepartureRow {...args} cancelledLabel="Not running" />)
+      await expect(heard(part(root, 'status')!)).toBe('Not running')
+    })
+    await step('cancelled={false} sets no data-cancelled and draws the dot', async () => {
+      const root = staticRow(<DepartureRow {...args} cancelled={false} />)
+      await expect(root).not.toHaveAttribute('data-cancelled')
+      await expect(part(root, 'dot')).not.toBeNull()
+      await expect(heard(part(root, 'status')!)).toBe('Live')
+      await expect(rootAttributes(<DepartureRow {...args} cancelled={false} />)).toEqual([
+        'class',
+        'data-variant',
+      ])
+    })
+    await step('with an interval, the interval is struck through', () =>
+      mounted(canvasElement, <DepartureRow {...args} interval={[3, 4]} />, async (host) => {
+        const interval = await waitFor(() => part(rowIn(host), 'interval')!)
+        await expect(struck(interval)).toBe(true)
+      }),
+    )
+    await step('with a platform, it is read after "Cancelled" and not struck', () =>
+      mounted(canvasElement, <DepartureRow {...args} platform="Track 4" />, async (host) => {
+        const found = await waitFor(() => rowIn(host))
+        await expect(heard(part(found, 'status')!)).toBe('Cancelled Track 4')
+        await expect(struck(part(found, 'platform')!)).toBe(false)
+        await expect(getComputedStyle(part(found, 'platform')!).color).toBe(
+          colour('--perron-color-text-primary'),
+        )
+      }),
+    )
+    await step("in every locale, every word is the dictionary's", () => {
+      ownedStringsInEveryLocale(<DepartureRow {...args} />, ['5C', 'Husum Torv', '08:14'])
+      ownedStringsInEveryLocale(<DepartureRow {...args} interval={[3, 4]} />, ['5C', 'Husum Torv'])
+    })
+  },
+}
+
+/** The Metro, which runs to an interval: "Every 3 to 4 min" in place of a countdown and a time. */
+export const Interval: Story = {
+  args: {
+    variant: 'live',
+    line: 'm2',
+    lineName: 'M2',
+    destination: 'Lufthavnen',
+    interval: [3, 4],
+  },
+  play: async ({ canvasElement, args, step }) => {
+    const row = rowIn(canvasElement)
+    const shows = (props: Partial<DepartureRowProps>) =>
+      part(staticRow(<DepartureRow {...args} {...props} />), 'interval')!
+    await step('the interval reads "Every 3 to 4 min" in the countdown\'s place', async () => {
+      const interval = part(row, 'interval')!
+      await expect(interval.textContent).toBe('Every 3 to 4 min')
+      await expect(heard(interval)).toBe('Every 3 to 4 min')
+      await expect(readOf(row)).toBe('M2 Lufthavnen Live Every 3 to 4 min')
+      const style = getComputedStyle(interval)
+      await expect(style.gridColumnStart).toBe('3')
+      await expect(style.whiteSpace).toBe('nowrap')
+      await expect(style.fontVariantNumeric).toBe('tabular-nums')
+    })
+    await step(
+      'no countdown, schedule, time or Delay, though countdown and time are given',
+      async () => {
+        await expect(args.countdown).toBe(240)
+        await expect(args.time).toBe('08:14')
+        for (const name of ['countdown', 'schedule', 'time', 'delay'])
+          await expect(part(row, name)).toBeNull()
+        const timetabled = staticRow(<DepartureRow {...args} variant="timetable-only" delay={3} />)
+        await expect(part(timetabled, 'delay')).toBeNull()
+        await expect(part(timetabled, 'schedule')).toBeNull()
+      },
+    )
+    await step('the dot and "Live" stay', () => dotHiddenWordRead(row, 'Live'))
+    await step('one number, a range high to low and ends that round alike (CR-14)', async () => {
+      await expect(shows({ interval: 3 }).textContent).toBe('Every 3 min')
+      await expect(shows({ interval: [4, 3] }).textContent).toBe('Every 3 to 4 min')
+      await expect(shows({ interval: [3.2, 2.8] }).textContent).toBe('Every 3 min')
+      await expect(shows({ interval: 2.6 }).textContent).toBe('Every 3 min')
+    })
+    await step('an interval that is not finite shows "—", read "Unknown"', async () => {
+      for (const interval of [Number.NaN, [3, Number.POSITIVE_INFINITY] as const]) {
+        const found = shows({ interval })
+        await expect(found.textContent).toBe('—Unknown')
+        await expect(heard(found)).toBe('Unknown')
+      }
+    })
+    await step('an estimated interval takes no "~"', async () => {
+      await expect(shows({ variant: 'estimated' }).textContent).toBe('Every 3 to 4 min')
+    })
+    await step('everyLabel and everyRangeLabel replace its words, filled alike', async () => {
+      const labels = {
+        everyLabel: 'Each {count} mins',
+        everyRangeLabel: 'Each {from} or {to} mins',
+      }
+      await expect(shows(labels).textContent).toBe('Each 3 or 4 mins')
+      await expect(shows({ ...labels, interval: 3 }).textContent).toBe('Each 3 mins')
+      // the template carries its own unit, so minutesUnitLabel leaves the interval alone
+      await expect(shows({ minutesUnitLabel: 'mins' }).textContent).toBe('Every 3 to 4 min')
+    })
+    await step("slotProps.interval's class joins after the part's own", async () => {
+      const found = shows({ slotProps: { interval: { className: 'caller-interval' } } })
+      await expect([...found.classList]).toEqual(['pn-DepartureRow-interval', 'caller-interval'])
+    })
+    await step('interval does not reach the root (CR-2)', async () => {
+      await expect(rootAttributes(<DepartureRow {...args} />)).toEqual(['class', 'data-variant'])
+    })
+    await step('in a 320 px container the interval stays on one line', () =>
+      mounted(
+        canvasElement,
+        <div style={{ inlineSize: 320 }}>
+          <DepartureRow {...args} destination="Københavns Lufthavn (Kastrup) Lufthavnsterminalen" />
+        </div>,
+        async (host) => {
+          const found = await waitFor(() => rowIn(host))
+          const interval = part(found, 'interval')!
+          await expect(lines(interval)).toBeLessThan(1.5)
+          await expect(
+            part(found, 'destination')!.getBoundingClientRect().right,
+          ).toBeLessThanOrEqual(interval.getBoundingClientRect().left)
+          await expect(found.scrollWidth).toBeLessThanOrEqual(found.clientWidth)
+        },
+      ),
+    )
+    await step("in every locale, every word is the dictionary's", () => {
+      for (const interval of [3, [3, 4] as const, Number.NaN])
+        ownedStringsInEveryLocale(<DepartureRow {...args} interval={interval} />, [
+          'M2',
+          'Lufthavnen',
+        ])
+    })
+  },
+}
+
+/** A regional train with its track: the platform after the state's word. */
+export const Platform: Story = {
+  args: {
+    variant: 'timetable-only',
+    line: 'regional',
+    lineName: 'RE',
+    destination: 'Helsingør',
+    countdown: 1080,
+    time: '08:26',
+    platform: 'Track 4',
+  },
+  play: async ({ canvasElement, args, step }) => {
+    const row = rowIn(canvasElement)
+    await step("the platform sits last in the status, after the state's word", async () => {
+      const status = part(row, 'status')!
+      const platform = part(row, 'platform')!
+      await expect(status.lastElementChild).toBe(platform)
+      await expect(heard(status)).toBe('Timetable only Track 4')
+      await expect(getComputedStyle(platform).color).toBe(colour('--perron-color-text-primary'))
+      await expect(readOf(row)).toBe(
+        'RE Helsingør Timetable only Track 4 18 min 08:26 Delay unknown',
+      )
+    })
+    await step('an element renders as given', async () => {
+      const root = staticRow(<DepartureRow {...args} platform={<b>Spor 4</b>} />)
+      await expect(part(root, 'platform')!.querySelector('b')).toHaveTextContent('Spor 4')
+    })
+    await step("left out, or '', no platform renders", async () => {
+      const { platform: _, ...rest } = args
+      await expect(part(staticRow(<DepartureRow {...rest} />), 'platform')).toBeNull()
+      await expect(part(staticRow(<DepartureRow {...rest} platform="" />), 'platform')).toBeNull()
+    })
+    await step("slotProps.platform's class joins after the part's own", async () => {
+      const root = staticRow(
+        <DepartureRow {...args} slotProps={{ platform: { className: 'caller-platform' } }} />,
+      )
+      await expect([...part(root, 'platform')!.classList]).toEqual([
+        'pn-DepartureRow-platform',
+        'caller-platform',
+      ])
+    })
+    await step('platform does not reach the root (CR-2)', async () => {
+      await expect(rootAttributes(<DepartureRow {...args} />)).toEqual(['class', 'data-variant'])
+    })
+    await step("beside a long state's word at 320 px, it stays inside the middle column", () =>
+      mounted(
+        canvasElement,
+        <div style={{ inlineSize: 320 }}>
+          <DepartureRow {...args} timetableOnlyLabel="Realtidspositionsopdateringstjenesten" />
+        </div>,
+        async (host) => {
+          const found = await waitFor(() => rowIn(host))
+          const platform = part(found, 'platform')!
+          await expect(platform.getBoundingClientRect().right).toBeLessThanOrEqual(
+            part(found, 'schedule')!.getBoundingClientRect().left,
+          )
+          await expect(found.scrollWidth).toBeLessThanOrEqual(found.clientWidth)
+        },
+      ),
+    )
+    await step("in every locale, every word is the dictionary's", () =>
+      ownedStringsInEveryLocale(<DepartureRow {...args} />, [
+        'RE',
+        'Helsingør',
+        '08:26',
+        'Track 4',
+      ]),
     )
   },
 }

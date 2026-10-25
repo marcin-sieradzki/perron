@@ -1,6 +1,7 @@
 'use client'
 // StopTimeline: the stops of one vehicle's trip, in order, on a rail in its line's colour, with each
-// stop's name, time and delay, the passed stops set back and the next stop marked.
+// stop's name, time, expected time and delay, the passed stops set back, the next stop marked and
+// a cancelled call kept, marked so.
 // Spec: docs/patterns/stop-timeline.md.
 import type { ComponentPropsWithoutRef, CSSProperties, Ref } from 'react'
 import { Delay } from '../../components/Delay/Delay.tsx'
@@ -8,6 +9,8 @@ import { StationIcon } from '../../components/StationIcon/StationIcon.tsx'
 import type { StationIconProps } from '../../components/StationIcon/StationIcon.tsx'
 import { VisuallyHidden } from '../../parts/VisuallyHidden/VisuallyHidden.tsx'
 import { useOwnedStrings } from '../../PerronProvider.tsx'
+import { known } from '../../internal/nodes.ts'
+import { interpolate } from '../../internal/strings.ts'
 import './StopTimeline.css'
 
 /** One stop of a trip, as StopTimeline's `stops` takes it. */
@@ -24,6 +27,18 @@ export interface StopTimelineStop {
    * late, negative early, `0` on time, `null` unknown. Left out, no Delay.
    */
   delay?: number | null
+  /**
+   * The time real-time data expects the vehicle at the stop, 24-hour `HH:MM`, such as `'08:16'`:
+   * shown after the timetabled time as an estimate, "~08:16". Left out, no expected time.
+   */
+  expected?: string
+  /**
+   * The vehicle won't call at the stop. The stop stays in the list, marked "Cancelled" under its
+   * name, its time and expected time struck through, and no Delay. Set on its `<li>` as
+   * `data-cancelled`.
+   * @default false
+   */
+  cancelled?: boolean
 }
 
 /**
@@ -49,8 +64,8 @@ export interface StopTimelineProps extends Omit<
   'children' | 'className' | 'style'
 > {
   /**
-   * The trip's stops, first to last: each one's name, and optionally its timetabled time and its
-   * delay in minutes.
+   * The trip's stops, first to last: each one's name, and optionally its timetabled time, its
+   * expected time, its delay in minutes and whether the call is cancelled.
    */
   stops: StopTimelineStop[]
   /**
@@ -74,6 +89,17 @@ export interface StopTimelineProps extends Omit<
    * @default The locale's
    */
   passedLabel?: string
+  /**
+   * Overrides "Cancelled", seen under a cancelled stop's name and heard after it.
+   * @default The locale's
+   */
+  cancelledLabel?: string
+  /**
+   * Overrides "Expected {time}", heard in place of a stop's "~" and expected time, "Expected
+   * 08:16"; `{time}` is the expected time
+   * @default The locale's
+   */
+  expectedTimeLabel?: string
   /**
    * Overrides "min", the unit after each delay's figure; given to every Delay.
    * @default The locale's
@@ -108,8 +134,9 @@ export interface StopTimelineProps extends Omit<
 }
 
 /**
- * The stops of one vehicle's trip, in order, on a rail in its line's colour: each stop's name, time
- * and delay, with the passed stops set back and the next stop marked.
+ * The stops of one vehicle's trip, in order, on a rail in its line's colour: each stop's name, time,
+ * expected time and delay, with the passed stops set back, the next stop marked and a cancelled
+ * call kept, marked so.
  */
 export function StopTimeline({
   stops,
@@ -117,6 +144,8 @@ export function StopTimeline({
   nextStopIndex,
   nextStopLabel,
   passedLabel,
+  cancelledLabel,
+  expectedTimeLabel,
   minutesUnitLabel,
   minutesLateLabel,
   minutesEarlyLabel,
@@ -126,7 +155,12 @@ export function StopTimeline({
   ref,
   ...rest
 }: StopTimelineProps) {
-  const strings = useOwnedStrings({ nextStop: nextStopLabel, passed: passedLabel })
+  const strings = useOwnedStrings({
+    nextStop: nextStopLabel,
+    passed: passedLabel,
+    cancelled: cancelledLabel,
+    expectedTime: expectedTimeLabel,
+  })
   // every Delay gets the five labels as StopTimeline was given them (CR-10)
   const delayLabels = {
     minutesUnitLabel,
@@ -147,6 +181,7 @@ export function StopTimeline({
     >
       {stops.map((stop, index) => {
         const place = placeOf(index, nextStopIndex)
+        const cancelled = stop.cancelled === true
         return (
           // a trip's stops never reorder, so the index is a stable key
           <li
@@ -154,6 +189,8 @@ export function StopTimeline({
             className="pn-StopTimeline-stop"
             data-stop={place}
             aria-current={place === 'next' ? 'step' : undefined}
+            // CR-14: a bare attribute, only when cancelled
+            data-cancelled={cancelled ? '' : undefined}
           >
             {/* the piece of rail to the next stop's marker; the last stop has none (CR-6). It
                 carries the line and its stop's place, which its colour reads (CR-1, CR-2) */}
@@ -182,12 +219,30 @@ export function StopTimeline({
               </>
             )}
             {place === 'next' && <span className="pn-StopTimeline-next">{strings.nextStop}</span>}
+            {/* CR-14: under the name, and under "Next stop" when the stop is next too; heard
+                before the time, which the strike-through can't say to the ear */}
+            {cancelled && <span className="pn-StopTimeline-cancelled">{strings.cancelled}</span>}
             {stop.time !== undefined && (
               <time className="pn-StopTimeline-time" data-stop={place} dateTime={stop.time}>
                 {stop.time}
               </time>
             )}
-            {stop.delay !== undefined && (
+            {/* CR-15: the ear hears the locale's template filled with the time, which says what
+                the "~" tells the eye; the eye sees the "~" and the time, a `<time>` of its own, its
+                text the HH:MM given, both hidden from the ear, so the time is heard once */}
+            {known(stop.expected) && (
+              <span className="pn-StopTimeline-expected" data-stop={place}>
+                <VisuallyHidden>
+                  {interpolate(strings.expectedTime, { time: stop.expected })}
+                </VisuallyHidden>
+                <span aria-hidden="true">~</span>
+                <time dateTime={stop.expected} aria-hidden="true">
+                  {stop.expected}
+                </time>
+              </span>
+            )}
+            {/* CR-14: a cancelled call runs no delay */}
+            {!cancelled && stop.delay !== undefined && (
               <Delay className="pn-StopTimeline-delay" minutes={stop.delay} {...delayLabels} />
             )}
           </li>

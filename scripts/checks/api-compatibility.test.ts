@@ -29,6 +29,29 @@ describe('compareApi', () => {
     ).toEqual([])
   })
 
+  it('lets an object type such as slotProps gain optional members, and names one that shrinks', () => {
+    const api = (type: string) => ({
+      Card: { extends: [], props: { slotProps: { optional: true, type: [type] } } },
+    })
+    const release =
+      '{ header?: HeaderProps | undefined; title?: { id?: string | undefined } | undefined; }'
+    expect(
+      compareApi(
+        api(release),
+        api(
+          '{ header?: HeaderProps | undefined; title?: { id?: string | undefined; lang?: string | undefined } | undefined; action?: ActionProps | undefined; }',
+        ),
+      ),
+    ).toEqual([])
+    for (const shrunk of [
+      '{ title?: { id?: string | undefined } | undefined; }',
+      '{ header: HeaderProps; title?: { id?: string | undefined } | undefined; }',
+      '{ header?: HeaderProps | undefined; title?: { id?: string | undefined } | undefined; action: ActionProps; }',
+      '{ header?: OtherProps | undefined; title?: { id?: string | undefined } | undefined; }',
+    ])
+      expect(compareApi(api(release), api(shrunk))).toHaveLength(1)
+  })
+
   it('names each prop removed, made required, narrowed, or added as required', () => {
     expect(compareApi(button('release'), button('shrinks'))).toEqual([
       { component: 'Button', prop: 'color', message: 'Button makes color required' },

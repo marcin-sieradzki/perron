@@ -2,7 +2,9 @@
 // each vehicle's dot in the shape of its data state. Vehicles glide along their lines with SVG
 // animateMotion, metros wait at stations, and each report of a pulsing vehicle grows a ring for
 // duration.report-pulse. Under prefers-reduced-motion the moving group hides and the still group
-// shows each vehicle jumping from report to report; a vehicle with no signal never moves.
+// shows each vehicle jumping from report to report. A vehicle with no signal keeps moving on the
+// timetable, as Data states asks; only an ageing one, its report too old to move it on, stands
+// still.
 // A server component: the drawing is static markup, built once, with no script.
 import type { CSSProperties } from 'react'
 import { tokenNumber } from '../../lib/tokens.ts'

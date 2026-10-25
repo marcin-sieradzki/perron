@@ -29,7 +29,7 @@ The pages are a design canvas's source files. The live canvas is https://claude.
 
 The build keeps each of these. Each comes from the foundation page named.
 
-- **Vehicles glide.** The background maps' vehicles follow their lines, metros wait at stations, and a new report pulses once (`duration.report-pulse`). Under reduced motion they jump from report to report instead, and a vehicle with no signal stays where it was last seen ([Motion](../docs/foundations/motion.md), [Data states](../docs/foundations/data-states.md)). The mockups draw this with SVG `animateMotion` and two groups, `.pn-moving` and `.pn-still`, switched by `prefers-reduced-motion`.
+- **Vehicles glide.** The background maps' vehicles follow their lines, metros wait at stations, and a new report pulses once (`duration.report-pulse`). Under reduced motion they jump from report to report instead, and a vehicle with no signal keeps moving on the timetable from where it was last seen ([Motion](../docs/foundations/motion.md), [Data states](../docs/foundations/data-states.md)). The mockups draw this with SVG `animateMotion` and two groups, `.pn-moving` and `.pn-still`, switched by `prefers-reduced-motion`.
 - **Motion explains a change of place.** Nothing moves for decoration, and the blink loop is kept for following.
 - **Shadows** are for floating panels (`shadow.panel`) and the selected segment (`shadow.thumb`). Cards show hover with `color.surface.hover` laid over them ([Elevation](../docs/foundations/elevation.md)).
 - **Glass** is for panels over the map. On phones, a panel full of text is opaque, so text never sits on the moving map.

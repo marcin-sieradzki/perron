@@ -64,13 +64,13 @@ In MUI's layout. Every prop here gets this description as its JSDoc. Slots come 
 
 `counts` is a `ReportStripCounts`, a type the pattern exports beside `ReportStripProps`, one optional field per data state, named as the owned strings and the `*Label` props name the states:
 
-| Field           | Type             | Description                                                                      |
-| --------------- | ---------------- | -------------------------------------------------------------------------------- |
-| `live`          | `number \| null` | Optional. How many vehicles are live: a report under a minute old                |
-| `ageing`        | `number \| null` | Optional. How many are ageing: a report 1 to 5 minutes old                       |
-| `estimated`     | `number \| null` | Optional. How many are estimated: placed from the timetable and the latest delay |
-| `timetableOnly` | `number \| null` | Optional. How many are timetable only: no real-time data at all                  |
-| `noSignal`      | `number \| null` | Optional. How many have no signal: silent for over 5 minutes                     |
+| Field           | Type             | Description                                                                           |
+| --------------- | ---------------- | ------------------------------------------------------------------------------------- |
+| `live`          | `number \| null` | Optional. How many vehicles are live: a report younger than the live threshold        |
+| `ageing`        | `number \| null` | Optional. How many are ageing: a report past the live threshold, under the ageing one |
+| `estimated`     | `number \| null` | Optional. How many are estimated: placed from the timetable and the latest delay      |
+| `timetableOnly` | `number \| null` | Optional. How many are timetable only: no real-time data at all                       |
+| `noSignal`      | `number \| null` | Optional. How many have no signal: silent past the ageing threshold                   |
 
 The strip takes its counts as data, one required `counts` object with an optional `number | null` field per state, a state left out, `null` or not finite being unknown, and writes each count itself in digits grouped in threes by a no-break space, "1 046", the same in every locale, as DayProfileChart writes its counts: a pattern takes Mylder's data and lays it out, as DayProfileChart takes `points` and StopTimeline `stops`, so every strip writes its counts alike; an object keyed by state can't list a state twice or out of order, where an array could, and the pattern sets the order itself (CR-1); a number is what a count is, where KioskBar's `figure` is a ReactNode it only shows; an unknown count shows "—" and says "Unknown", as Stat, FactList and DayProfileChart do, since the brand never shows a guess and `0` is a count, not unknown; and the grouping is the one KioskBar's figures and DayProfileChart's counts show, so "1 046" reads the same in a strip, a kiosk and a chart in all four locales.
 
@@ -197,12 +197,12 @@ Stories are titled `Patterns/ReportStrip`. No Penpot design yet, and ReportStrip
 
 For a caller using the pattern, with the reason.
 
-| Do                                                                                                                                   | Don't                                                                                                             |
-| ------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| Work out each vehicle's state from its report's age with `vehicle-dot.live-threshold` and `vehicle-dot.ageing-threshold`, then count | Count a vehicle as live because it is on the map: the strip would claim more than the data knows                  |
-| Leave a state's count out, or pass `null`, when the data doesn't say it, so the strip shows "—" and says "Unknown"                   | Pass `0` for a count the data doesn't know: `0` says no vehicle is in that state                                  |
-| Name the strip with a heading beside it and `aria-labelledby`, such as one per operator under "Reporting live, by operator"          | Pass `aria-hidden` to the strip: the eye reads its words and counts, so the ear gets them too                     |
-| Show a total or a share beside the strip in a [Stat](../components/stat.md)                                                          | Add a sixth item or a total inside the list through `slotProps`: the strip holds the five states and nothing else |
-| Use [VehicleDotLegend](../components/vehicle-dot-legend.md) where the dots need explaining and nothing is counted                    | Use the strip as a legend with made-up counts: a count is a claim about the vehicles                              |
-| Put the strip in a [DataStatePanel](data-state-panel.md) while its counts load                                                       | Show five unknown counts while the data loads: the panel says it is loading, the strip says the data doesn't know |
-| Announce a change of state, such as a feed going silent, in the screen's own polite live region                                      | Make the strip a live region: its counts change every few seconds and would flood a screen reader                 |
+| Do                                                                                                                                                                                                                | Don't                                                                                                             |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Work out each vehicle's state from its report's age with the app's [thresholds](../foundations/data-states.md#thresholds), by default `vehicle-dot.live-threshold` and `vehicle-dot.ageing-threshold`, then count | Count a vehicle as live because it is on the map: the strip would claim more than the data knows                  |
+| Leave a state's count out, or pass `null`, when the data doesn't say it, so the strip shows "—" and says "Unknown"                                                                                                | Pass `0` for a count the data doesn't know: `0` says no vehicle is in that state                                  |
+| Name the strip with a heading beside it and `aria-labelledby`, such as one per operator under "Reporting live, by operator"                                                                                       | Pass `aria-hidden` to the strip: the eye reads its words and counts, so the ear gets them too                     |
+| Show a total or a share beside the strip in a [Stat](../components/stat.md)                                                                                                                                       | Add a sixth item or a total inside the list through `slotProps`: the strip holds the five states and nothing else |
+| Use [VehicleDotLegend](../components/vehicle-dot-legend.md) where the dots need explaining and nothing is counted                                                                                                 | Use the strip as a legend with made-up counts: a count is a claim about the vehicles                              |
+| Put the strip in a [DataStatePanel](data-state-panel.md) while its counts load                                                                                                                                    | Show five unknown counts while the data loads: the panel says it is loading, the strip says the data doesn't know |
+| Announce a change of state, such as a feed going silent, in the screen's own polite live region                                                                                                                   | Make the strip a live region: its counts change every few seconds and would flood a screen reader                 |

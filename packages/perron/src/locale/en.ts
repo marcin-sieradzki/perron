@@ -17,15 +17,15 @@ export const en = {
   previousPage: 'Previous page',
   /** Pagination: the button to the page after. */
   nextPage: 'Next page',
-  /** Data state: a GPS report under a minute old. */
+  /** Data state: a GPS report younger than the app's live threshold. */
   live: 'Live',
-  /** Data state: a report 1 to 5 minutes old. */
+  /** Data state: a report past the live threshold, under the ageing one. */
   ageing: 'Ageing',
   /** Data state: placed from the timetable and the latest delay. */
   estimated: 'Estimated',
   /** Data state: no real-time data at all. */
   timetableOnly: 'Timetable only',
-  /** Data state: silent for over 5 minutes. */
+  /** Data state: silent past the ageing threshold, moved on by the timetable. */
   noSignal: 'No signal',
   /** A line's delays: a heading, and the name of the delay kind of disruption. */
   delays: 'Delays',
@@ -35,8 +35,36 @@ export const en = {
   plannedWorks: 'Planned works',
   /** The name of the data kind of disruption: a problem with the real-time data feed. */
   dataFeedProblems: 'Data feed problems',
+  /**
+   * The name of the neutral kind of disruption: a service notice whose message does not say which of
+   * the other kinds it is.
+   */
+  serviceNotice: 'Service notice',
   /** A disruption: said just before the list of lines it affects, heard by screen readers only. */
   affectedLines: 'Affected lines',
+  /**
+   * A disruption: the stops it affects, as in "Affects Nørreport and Kongens Nytorv". `{stops}` is
+   * the stop names, joined by `stopListEnd` or `moreStops`.
+   */
+  affectsStops: 'Affects {stops}',
+  /**
+   * A list of stops: joins the last stop to those before it, as in "Nørreport, Kongens Nytorv and
+   * Christianshavn". `{stops}` is the names before the last, comma-separated; `{stop}` the last.
+   */
+  stopListEnd: '{stops} and {stop}',
+  /**
+   * A list of stops cut short: the names shown, then how many more, as in "Nørreport, Kongens
+   * Nytorv and 3 more". `{count}` is always 2 or more.
+   */
+  moreStops: '{stops} and {count} more',
+  /** A disruption on a stretch of line: its two ends, as in "Between Hellerup and Klampenborg". */
+  betweenStops: 'Between {from} and {to}',
+  /** A disruption's time: when it starts, with no end given, as in "From 08:03". */
+  fromTime: 'From {time}',
+  /** A disruption's time: when it ends, with no start given, as in "Until 22:00". */
+  untilTime: 'Until {time}',
+  /** A disruption's time: its start and its end, as in "24 to 25 October" or "06:00 to 22:00". */
+  timeRange: '{from} to {to}',
   /** A line with no delays or disruptions. */
   runningNormally: 'Running normally',
   /** A link that shows a vehicle, stop or line on the map. */
@@ -52,8 +80,9 @@ export const en = {
   /** Delay: no real-time data says how late a vehicle runs; heard in place of "—". */
   delayUnknown: 'Delay unknown',
   /**
-   * Stat, FactList, Count, Meter, ScaleBar: no data gives the figure, value, count or distance; heard
-   * in place of "—", as a meter's value text, or after "Scale" on the map's scale.
+   * Stat, FactList, Count, Meter, ScaleBar, VehicleTable: no data gives the figure, value, count,
+   * distance or last-seen time; heard in place of "—", as a meter's value text, or after "Scale" on
+   * the map's scale.
    */
   unknown: 'Unknown',
   /** Brand: the brand name, a name and never translated; the wordmark shows it lowercase. */
@@ -63,10 +92,31 @@ export const en = {
    * seconds.
    */
   now: 'Now',
+  /**
+   * A departure, or a trip's stop, that won't be served: shown and announced in place of its data
+   * state, its times struck through.
+   */
+  cancelled: 'Cancelled',
+  /**
+   * A line that runs to an interval: the minutes between departures, as in "Every 3 min". `{count}`
+   * is the whole minutes.
+   */
+  every: 'Every {count} min',
+  /**
+   * A line that runs to an interval that varies: the fewest and the most minutes between
+   * departures, as in "Every 3 to 4 min". `{from}` and `{to}` are the whole minutes, `{from}` the
+   * smaller.
+   */
+  everyRange: 'Every {from} to {to} min',
   /** A stop timeline: under the stop the vehicle reaches next. */
   nextStop: 'Next stop',
   /** A stop timeline: heard after the name of a stop the vehicle has passed. */
   passed: 'Passed',
+  /**
+   * A stop timeline: a stop's expected time, heard in place of the "~" and the time the eye reads,
+   * as in "08:13, Expected 08:16". `{time}` is the expected time.
+   */
+  expectedTime: 'Expected {time}',
   /** A vehicle table: the header of the column of each vehicle's line. */
   lineColumn: 'Line',
   /** A vehicle table: the header of the column of where each vehicle is going. */
@@ -75,6 +125,8 @@ export const en = {
   positionColumn: 'Position',
   /** A vehicle table: the header of the column of how late each vehicle runs. */
   delayColumn: 'Delay',
+  /** A vehicle table: the header of the column of the time each vehicle last reported its position. */
+  lastSeenColumn: 'Last seen',
   /** The map's bar of zoom and centre buttons: the toolbar's name. */
   mapControls: 'Map controls',
   /** The map's button that zooms in by one step. */

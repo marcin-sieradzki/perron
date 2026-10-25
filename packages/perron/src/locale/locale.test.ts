@@ -60,10 +60,12 @@ describe("content design's data-state, delay and disruption words", () => {
       'Diversions',
       'Planned works',
       'Data feed problems',
+      'Service notice',
       'Running normally',
       'Show on map',
       'On time',
       'Delay unknown',
+      'Cancelled',
     ])
   })
 

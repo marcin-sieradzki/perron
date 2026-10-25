@@ -39,7 +39,7 @@ const questions = (freshness: { disabled?: boolean } = {}) => [
     A circle is a bus, a square is a tram and a diamond is a train.
   </AccordionItem>,
   <AccordionItem key="freshness" value="freshness" title={FRESHNESS} {...freshness}>
-    Positions update every few seconds. A pale dot hasn't reported for over a minute.
+    Positions update every few seconds. A pale dot's last report is getting old.
   </AccordionItem>,
   <AccordionItem key="missing" value="missing" title={MISSING}>
     Some vehicles don't send their position. Their departures still show on the stop's list.
@@ -441,7 +441,7 @@ export const FocusInPanel: Story = {
         </div>
       </AccordionItem>,
       <AccordionItem key="freshness" value="freshness" title={FRESHNESS}>
-        Positions update every few seconds. A pale dot hasn't reported for over a minute.
+        Positions update every few seconds. A pale dot's last report is getting old.
       </AccordionItem>,
     ],
   },
@@ -495,7 +495,7 @@ export const HeadingLevel: Story = {
         title={FRESHNESS}
         slotProps={{ header: { render: <h2 /> } }}
       >
-        Positions update every few seconds. A pale dot hasn't reported for over a minute.
+        Positions update every few seconds. A pale dot's last report is getting old.
       </AccordionItem>,
     ],
   },
@@ -536,7 +536,7 @@ export const SlotProps: Story = {
         A circle is a bus, a square is a tram and a diamond is a train.
       </AccordionItem>,
       <AccordionItem key="freshness" value="freshness" title={FRESHNESS} slotProps={slots}>
-        Positions update every few seconds. A pale dot hasn't reported for over a minute.
+        Positions update every few seconds. A pale dot's last report is getting old.
       </AccordionItem>,
     ],
   },
@@ -581,7 +581,7 @@ export const LongTitle: Story = {
         Hvor ofte et køretøjs position opdateres på kortet.
       </AccordionItem>,
       <AccordionItem key="freshness" value="freshness" title={FRESHNESS}>
-        Positions update every few seconds. A pale dot hasn't reported for over a minute.
+        Positions update every few seconds. A pale dot's last report is getting old.
       </AccordionItem>,
     ],
   },

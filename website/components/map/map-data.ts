@@ -130,7 +130,7 @@ export type Run =
 
 export interface MovingVehicle {
   route: string
-  state: Extract<DataState, 'live' | 'estimated' | 'timetable'>
+  state: Extract<DataState, 'live' | 'estimated' | 'timetable' | 'no-signal'>
   run: Run
   /** Runs the route from its end to its start */
   reverse?: boolean
@@ -142,10 +142,10 @@ export interface MovingVehicle {
   pulses?: boolean
 }
 
-/** A vehicle that does not move: silent, or with a report too old to move it on. */
+/** A vehicle that does not move: one whose report is too old to move it on. */
 export interface StillVehicle {
   route: string
-  state: Extract<DataState, 'ageing' | 'no-signal'>
+  state: Extract<DataState, 'ageing'>
   /** Where it was last seen, as a share of its route's length from the start */
   at: number
 }
@@ -208,6 +208,14 @@ export const MOVING: MovingVehicle[] = [
     offset: -10,
   },
   { route: 'bus-southwest', state: 'live', run: { kind: 'through' }, duration: 76, offset: -40 },
+  // silent, it keeps moving on the timetable from where it was last seen (Data states)
+  {
+    route: 'bus-southwest',
+    state: 'no-signal',
+    run: { kind: 'through' },
+    duration: 76,
+    offset: -12,
+  },
   { route: 'bus-north', state: 'live', run: { kind: 'through' }, duration: 52, offset: -5 },
   {
     route: 'bus-northeast',
@@ -236,10 +244,7 @@ export const MOVING: MovingVehicle[] = [
   },
 ]
 
-export const STILL: StillVehicle[] = [
-  { route: 'bus-southwest', state: 'no-signal', at: 0.44 },
-  { route: 'c', state: 'ageing', at: 0.6 },
-]
+export const STILL: StillVehicle[] = [{ route: 'c', state: 'ageing', at: 0.6 }]
 
 /** Reports a vehicle sends per run: under reduced motion it jumps to each in turn. */
 export const REPORTS_PER_RUN = 10

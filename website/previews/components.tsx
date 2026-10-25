@@ -382,10 +382,11 @@ export const componentPreviews: Previews = {
         is ageing, a ring is estimated and a dashed ring is timetable only.
       </AccordionItem>,
       <AccordionItem key="freshness" value="freshness" title="How fresh the data is">
-        A live dot has a GPS report under a minute old. A report 1 to 5 minutes old makes it ageing.
+        A live dot has a recent GPS report. When the reports stop coming, it fades to ageing.
       </AccordionItem>,
       <AccordionItem key="silent" value="silent" title="When a vehicle goes silent">
-        After 5 minutes without a report, a vehicle turns grey and stays where it was last seen.
+        When a vehicle's reports stop for too long, it turns grey and is cut by a slash. It keeps
+        moving on the timetable from where it was last seen.
       </AccordionItem>,
     ],
   }),

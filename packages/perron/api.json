@@ -285,6 +285,12 @@
           "Ref<HTMLButtonElement>"
         ]
       },
+      "selected": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
       "size": {
         "optional": true,
         "type": [
@@ -681,8 +687,20 @@
           "string"
         ]
       },
+      "cancelled": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "cancelledLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
       "countdown": {
-        "optional": false,
+        "optional": true,
         "type": [
           "number"
         ]
@@ -710,6 +728,25 @@
         "optional": true,
         "type": [
           "string"
+        ]
+      },
+      "everyLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "everyRangeLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "interval": {
+        "optional": true,
+        "type": [
+          "number",
+          "readonly [ number, number ]"
         ]
       },
       "line": {
@@ -777,10 +814,16 @@
           "string"
         ]
       },
+      "platform": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
       "slotProps": {
         "optional": true,
         "type": [
-          "{ badge?: Omit<LineBadgeProps, \"children\" | \"line\" | \"size\"> | undefined; destination?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; status?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; dot?: Omit<VehicleDotProps, \"ageingLabel\" | \"estimatedLabel\" | \"line\" | \"liveLabel\" | \"noSignalLabel\" | \"size\" | \"timetableOnlyLabel\" | \"variant\"> | undefined; countdown?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; schedule?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; time?: DetailedHTMLProps<TimeHTMLAttributes<HTMLTimeElement>, HTMLTimeElement> | undefined; delay?: Omit<DelayProps, \"delayUnknownLabel\" | \"minutes\" | \"minutesEarlyLabel\" | \"minutesLateLabel\" | \"minutesUnitLabel\" | \"onTimeLabel\"> | undefined; }"
+          "{ badge?: Omit<LineBadgeProps, \"children\" | \"line\" | \"size\"> | undefined; destination?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; status?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; dot?: Omit<VehicleDotProps, \"ageingLabel\" | \"estimatedLabel\" | \"line\" | \"liveLabel\" | \"noSignalLabel\" | \"size\" | \"timetableOnlyLabel\" | \"variant\"> | undefined; platform?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; countdown?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; interval?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; schedule?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; time?: DetailedHTMLProps<TimeHTMLAttributes<HTMLTimeElement>, HTMLTimeElement> | undefined; delay?: Omit<DelayProps, \"delayUnknownLabel\" | \"minutes\" | \"minutesEarlyLabel\" | \"minutesLateLabel\" | \"minutesUnitLabel\" | \"onTimeLabel\"> | undefined; }"
         ]
       },
       "time": {
@@ -1132,7 +1175,25 @@
       "Omit<SurfaceProps, 'variant' | 'children' | 'title'>"
     ],
     "props": {
+      "action": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
       "affectedLinesLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "affectsStopsLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "betweenStopsLabel": {
         "optional": true,
         "type": [
           "string"
@@ -1150,10 +1211,22 @@
           "string"
         ]
       },
+      "fromTimeLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
       "lines": {
         "optional": true,
         "type": [
           "readonly DisruptionCardLine[]"
+        ]
+      },
+      "moreStopsLabel": {
+        "optional": true,
+        "type": [
+          "string"
         ]
       },
       "ref": {
@@ -1168,13 +1241,27 @@
           "\"data\"",
           "\"delay\"",
           "\"diversion\"",
+          "\"notice\"",
           "\"planned\""
         ]
       },
       "slotProps": {
         "optional": true,
         "type": [
-          "{ header?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; severity?: Omit<SeverityLabelProps, \"severity\"> | undefined; lines?: DetailedHTMLProps<HTMLAttributes<HTMLUListElement>, HTMLUListElement> | undefined; title?: Omit<TextProps, \"children\" | \"variant\"> | undefined; description?: Omit<TextProps, \"children\" | \"variant\"> | undefined; }"
+          "{ header?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; severity?: Omit<SeverityLabelProps, \"severity\"> | undefined; lines?: DetailedHTMLProps<HTMLAttributes<HTMLUListElement>, HTMLUListElement> | undefined; title?: Omit<TextProps, \"children\" | \"variant\"> | undefined; description?: Omit<TextProps, \"children\" | \"variant\"> | undefined; stops?: Omit<TextProps, \"children\" | \"variant\"> | undefined; time?: Omit<TextProps, \"children\" | \"variant\"> | undefined; action?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; }"
+        ]
+      },
+      "stopListEndLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "stops": {
+        "optional": true,
+        "type": [
+          "DisruptionCardStretch",
+          "readonly string[]"
         ]
       },
       "style": {
@@ -1183,10 +1270,28 @@
           "CSSProperties"
         ]
       },
+      "time": {
+        "optional": true,
+        "type": [
+          "DisruptionCardTime"
+        ]
+      },
+      "timeRangeLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
       "title": {
         "optional": false,
         "type": [
           "ReactNode"
+        ]
+      },
+      "untilTimeLabel": {
+        "optional": true,
+        "type": [
+          "string"
         ]
       }
     }
@@ -2923,12 +3028,19 @@
           "Ref<HTMLSpanElement>"
         ]
       },
+      "serviceNoticeLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
       "severity": {
         "optional": false,
         "type": [
           "\"data\"",
           "\"delay\"",
           "\"diversion\"",
+          "\"notice\"",
           "\"planned\""
         ]
       }
@@ -3223,6 +3335,12 @@
       "Omit< ComponentPropsWithoutRef<'ol'>, 'children' | 'className' | 'style' >"
     ],
     "props": {
+      "cancelledLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
       "className": {
         "optional": true,
         "type": [
@@ -3230,6 +3348,12 @@
         ]
       },
       "delayUnknownLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "expectedTimeLabel": {
         "optional": true,
         "type": [
           "string"
@@ -4237,6 +4361,12 @@
           "string"
         ]
       },
+      "delayColumnHidden": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
       "delayColumnLabel": {
         "optional": true,
         "type": [
@@ -4259,6 +4389,18 @@
         "optional": true,
         "type": [
           "string"
+        ]
+      },
+      "lastSeenColumnLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "lastSeenColumnVisible": {
+        "optional": true,
+        "type": [
+          "boolean"
         ]
       },
       "lineColumnLabel": {
@@ -4297,6 +4439,12 @@
           "string"
         ]
       },
+      "onSortChange": {
+        "optional": true,
+        "type": [
+          "(event: MouseEvent<HTMLButtonElement, MouseEvent>, sort: VehicleTableSort) => void"
+        ]
+      },
       "onTimeLabel": {
         "optional": true,
         "type": [
@@ -4315,6 +4463,13 @@
           "Ref<HTMLTableElement>"
         ]
       },
+      "sort": {
+        "optional": true,
+        "type": [
+          "VehicleTableSort",
+          "null"
+        ]
+      },
       "style": {
         "optional": true,
         "type": [
@@ -4322,6 +4477,12 @@
         ]
       },
       "timetableOnlyLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "unknownLabel": {
         "optional": true,
         "type": [
           "string"

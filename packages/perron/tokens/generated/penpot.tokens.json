@@ -1306,6 +1306,11 @@
             "$type": "color",
             "$value": "{color.text.secondary}",
             "$description": "Icon and label for planned works"
+          },
+          "notice": {
+            "$type": "color",
+            "$value": "{color.text.secondary}",
+            "$description": "Icon and label for service notices"
           }
         }
       },
@@ -1313,7 +1318,7 @@
         "no-signal": {
           "$type": "color",
           "$value": "#9AA4A9",
-          "$description": "Vehicle dot fill when a vehicle has been silent for 5+ min"
+          "$description": "Vehicle dot fill when a vehicle has been silent past the ageing threshold"
         },
         "halo": {
           "$type": "color",
@@ -1680,6 +1685,11 @@
             "$type": "color",
             "$value": "{color.text.secondary}",
             "$description": "Icon and label for planned works"
+          },
+          "notice": {
+            "$type": "color",
+            "$value": "{color.text.secondary}",
+            "$description": "Icon and label for service notices"
           }
         }
       },
@@ -1687,7 +1697,7 @@
         "no-signal": {
           "$type": "color",
           "$value": "#5F6B71",
-          "$description": "Vehicle dot fill when a vehicle has been silent for 5+ min"
+          "$description": "Vehicle dot fill when a vehicle has been silent past the ageing threshold"
         },
         "halo": {
           "$type": "color",

@@ -27,6 +27,12 @@ describe('IntentIcon', () => {
     expect(svg).not.toMatch(/^<svg [^>]*\s(width|height)=/)
   })
 
+  it("joins a component's class after its own", () => {
+    const svg = renderToStaticMarkup(<IntentIcon color="info" className="pn-SeverityLabel-icon" />)
+    expect(svg).toMatch(/^<svg [^>]*class="perron-icon pn-IntentIcon pn-SeverityLabel-icon"/)
+    expect(drawing(svg)).toEqual(drawing(iconFile('info-circle')))
+  })
+
   it('draws nothing for neutral', () => {
     expect(renderToStaticMarkup(<IntentIcon color="neutral" />)).toBe('')
   })
