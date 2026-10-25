@@ -4237,6 +4237,12 @@
           "string"
         ]
       },
+      "delayColumnHidden": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
       "delayColumnLabel": {
         "optional": true,
         "type": [
@@ -4259,6 +4265,18 @@
         "optional": true,
         "type": [
           "string"
+        ]
+      },
+      "lastSeenColumnLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "lastSeenColumnVisible": {
+        "optional": true,
+        "type": [
+          "boolean"
         ]
       },
       "lineColumnLabel": {
@@ -4297,6 +4315,12 @@
           "string"
         ]
       },
+      "onSortChange": {
+        "optional": true,
+        "type": [
+          "(event: MouseEvent<HTMLButtonElement, MouseEvent>, sort: VehicleTableSort) => void"
+        ]
+      },
       "onTimeLabel": {
         "optional": true,
         "type": [
@@ -4315,6 +4339,13 @@
           "Ref<HTMLTableElement>"
         ]
       },
+      "sort": {
+        "optional": true,
+        "type": [
+          "VehicleTableSort",
+          "null"
+        ]
+      },
       "style": {
         "optional": true,
         "type": [
@@ -4322,6 +4353,12 @@
         ]
       },
       "timetableOnlyLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "unknownLabel": {
         "optional": true,
         "type": [
           "string"

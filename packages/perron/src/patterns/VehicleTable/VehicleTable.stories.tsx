@@ -4,23 +4,34 @@ import { createRef } from 'react'
 import type { ReactNode } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { expect, isInaccessible, userEvent, waitFor, within } from 'storybook/test'
+import { expect, fn, isInaccessible, userEvent, waitFor, within } from 'storybook/test'
 import { Link } from '../../components/Link/Link.tsx'
 import { delayKnown, VEHICLE_STATES } from '../../internal/vehicle-states.ts'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
 import {
+  colour,
   edge,
+  expectFocusRing,
   expectNoFocus,
+  fill,
   heard,
   lines,
   mounted,
+  onHover,
+  pressedAfterHover,
   rendered,
+  stateFill,
   stateRules,
   typography,
 } from '../../testing/stories.ts'
 import { VehicleTable } from './VehicleTable.tsx'
-import type { VehicleTableProps, VehicleTableVehicle } from './VehicleTable.tsx'
+import type {
+  VehicleTableColumn,
+  VehicleTableProps,
+  VehicleTableSort,
+  VehicleTableVehicle,
+} from './VehicleTable.tsx'
 
 /**
  * Five vehicles, one in each data state, on lines whose badges reach 4.5:1 (CR-9): the
@@ -71,12 +82,25 @@ const VEHICLES: VehicleTableVehicle[] = [
 /** The column headers, in order. */
 const HEADERS = ['Line', 'Destination', 'Position', 'Delay']
 
-/** Every prop VehicleTable declares but `vehicles`, each with a word no locale has. */
+/** The column headers with Last seen shown, in order (CR-3, CR-11). */
+const HEADERS_LAST_SEEN = ['Line', 'Destination', 'Position', 'Last seen', 'Delay']
+
+/** Every other prop VehicleTable declares but `vehicles`, each given, for the root's check. */
+const OWN = {
+  sort: { column: 'line', direction: 'asc' },
+  onSortChange: () => {},
+  delayColumnHidden: false,
+  lastSeenColumnVisible: true,
+} satisfies Partial<VehicleTableProps>
+
+/** Every label prop VehicleTable declares, each with a word no locale has. */
 const OVERRIDES = {
   lineColumnLabel: 'Route',
   destinationColumnLabel: 'Heading to',
   positionColumnLabel: 'Freshness',
   delayColumnLabel: 'Lateness',
+  lastSeenColumnLabel: 'Last report',
+  unknownLabel: 'No report',
   liveLabel: 'Tracked now',
   ageingLabel: 'Going stale',
   estimatedLabel: 'Guessed',
@@ -376,6 +400,7 @@ export const Default: Story = {
           data-testid="root"
           ref={ref}
           {...OVERRIDES}
+          {...OWN}
         />,
         async (host) => {
           const root = await tableIn(host)
@@ -383,7 +408,9 @@ export const Default: Story = {
           await expect(root).toHaveAttribute('class', 'pn-VehicleTable caller')
           await expect(root).toHaveAttribute('data-testid', 'root')
           await expect(root.style.marginBlockStart).toBe('var(--perron-space-200)')
-          const own = ['vehicles', ...Object.keys(OVERRIDES)].map((name) => name.toLowerCase())
+          const own = ['vehicles', ...Object.keys(OVERRIDES), ...Object.keys(OWN)].map((name) =>
+            name.toLowerCase(),
+          )
           for (const attribute of root.getAttributeNames())
             await expect(own).not.toContain(attribute)
         },
@@ -398,15 +425,24 @@ export const Default: Story = {
       ]
       await mounted(
         canvasElement,
-        <VehicleTable vehicles={vehicles} aria-label="Overridden" {...OVERRIDES} />,
+        <VehicleTable
+          vehicles={vehicles}
+          aria-label="Overridden"
+          lastSeenColumnVisible
+          {...OVERRIDES}
+        />,
         async (host) => {
           const root = await tableIn(host)
           await expect(textsOf(root, 'headerCell')).toEqual([
             OVERRIDES.lineColumnLabel,
             OVERRIDES.destinationColumnLabel,
             OVERRIDES.positionColumnLabel,
+            OVERRIDES.lastSeenColumnLabel,
             OVERRIDES.delayColumnLabel,
           ])
+          // no vehicle here gives a last-seen time, so each says the override for unknown
+          for (const cell of root.querySelectorAll('.pn-VehicleTable-lastSeenCell'))
+            await expect(heard(cell)).toBe(OVERRIDES.unknownLabel)
           await expect(textsOf(root, 'status')).toEqual([
             OVERRIDES.liveLabel,
             OVERRIDES.estimatedLabel,
@@ -428,7 +464,8 @@ export const Default: Story = {
             await expect(unit).toHaveTextContent(OVERRIDES.minutesUnitLabel)
           const text = root.textContent!
           for (const word of [
-            ...HEADERS,
+            ...HEADERS_LAST_SEEN,
+            'Unknown',
             'Live',
             'Ageing',
             'Estimated',
@@ -662,6 +699,405 @@ export const LongDestination: Story = {
           )
         },
       )
+    })
+  },
+}
+
+/** The `Default` vehicles as a caller sorts them by delay, most late first, the unknown ones last. */
+const BY_DELAY: VehicleTableVehicle[] = [
+  VEHICLES[1],
+  VEHICLES[0],
+  VEHICLES[2],
+  ...VEHICLES.slice(3),
+]
+
+/** Every column and both directions, each a sort the table is given. */
+const SORTS: VehicleTableSort[] = (
+  ['line', 'destination', 'position', 'last-seen', 'delay'] as const
+).flatMap((column) => (['asc', 'desc'] as const).map((direction) => ({ column, direction })))
+
+/** The sort a header's press asks for last, from the spy `onSortChange`. */
+const lastAsked = (onSortChange: unknown) =>
+  (onSortChange as ReturnType<typeof fn>).mock.lastCall?.[1] as VehicleTableSort | undefined
+
+/**
+ * Sortable headers, sorted by delay, descending: every header is a button that says its sort state
+ * through `aria-sort`, and a press asks the caller for a sort, never reordering a row (CR-10).
+ */
+export const Sorted: Story = {
+  args: {
+    vehicles: BY_DELAY,
+    sort: { column: 'delay', direction: 'desc' },
+    onSortChange: fn(),
+  },
+  play: async ({ canvasElement, args, step }) => {
+    const canvas = within(canvasElement)
+    const table = canvas.getByRole('table', { name: 'Vehicles' }) as HTMLTableElement
+    const headers = within(table).getAllByRole('columnheader')
+
+    await step('every header is a button named by its words, inside its <th>', async () => {
+      await expect(headers.map((header) => header.textContent)).toEqual(HEADERS)
+      for (const [index, header] of headers.entries()) {
+        const button = within(header).getByRole('button', { name: HEADERS[index] })
+        await expect(button).toHaveAttribute('type', 'button')
+        await expect(button.parentElement).toBe(header)
+        await expect(header).toHaveAttribute('scope', 'col')
+      }
+    })
+
+    await step('aria-sort says the given sort on its header, and none on the others', async () => {
+      await expect(headers.map((header) => header.getAttribute('aria-sort'))).toEqual([
+        'none',
+        'none',
+        'none',
+        'descending',
+      ])
+      // the arrow only on the sorted column, hidden from the ear, which aria-sort tells
+      const icons = table.querySelectorAll('.pn-VehicleTable-sortIcon')
+      await expect(icons).toHaveLength(1)
+      await expect(headers[3]).toContainElement(icons[0] as HTMLElement)
+      await expect(icons[0]).toHaveAttribute('aria-hidden', 'true')
+      await expect(heard(headers[3])).toBe('Delay')
+      // pointing down when descending; the sorted header inked as the data is
+      await expect(getComputedStyle(icons[0]).scale).toBe('none')
+      await expect(getComputedStyle(headers[3]).color).toBe(colour('--perron-color-text-primary'))
+      await expect(getComputedStyle(headers[0]).color).toBe(colour('--perron-color-text-secondary'))
+    })
+
+    await step('a press calls onSortChange with its column, and reorders nothing', async () => {
+      const order = bodyRows(table).map((row) => row.cells[1].textContent)
+      const asked: [VehicleTableColumn, VehicleTableSort['direction']][] = [
+        ['line', 'asc'],
+        ['destination', 'asc'],
+        ['position', 'asc'],
+        // the sorted column, the other way
+        ['delay', 'asc'],
+      ]
+      for (const [index, header] of headers.entries()) {
+        await userEvent.click(within(header).getByRole('button'))
+        await expect(args.onSortChange).toHaveBeenCalledTimes(index + 1)
+        const [event, sort] = (args.onSortChange as ReturnType<typeof fn>).mock.lastCall!
+        await expect((event as { type: string }).type).toBe('click')
+        const [column, direction] = asked[index]
+        await expect(sort).toEqual({ column, direction })
+      }
+      // the sort is the caller's: the rows and the headers stay as given
+      await expect(bodyRows(table).map((row) => row.cells[1].textContent)).toEqual(order)
+      await expect(headers[3]).toHaveAttribute('aria-sort', 'descending')
+      ;(args.onSortChange as ReturnType<typeof fn>).mockClear()
+    })
+
+    await step(
+      'aria-sort follows each sort it is given, an ascending arrow turned up',
+      async () => {
+        for (const sort of SORTS) {
+          const onSortChange = fn()
+          await mounted(
+            canvasElement,
+            <VehicleTable
+              vehicles={VEHICLES}
+              aria-label="Sorts"
+              lastSeenColumnVisible
+              sort={sort}
+              onSortChange={onSortChange}
+            />,
+            async (host) => {
+              const root = await tableIn(host)
+              const cells = within(root).getAllByRole('columnheader')
+              for (const cell of cells) {
+                const sorted = cell.getAttribute('data-column') === sort.column
+                await expect(cell).toHaveAttribute(
+                  'aria-sort',
+                  sorted ? (sort.direction === 'asc' ? 'ascending' : 'descending') : 'none',
+                )
+              }
+              const icon = root.querySelector('.pn-VehicleTable-sortIcon')!
+              await expect(icon.closest('th')).toHaveAttribute('data-column', sort.column)
+              await expect(getComputedStyle(icon).scale).toBe(
+                sort.direction === 'asc' ? '1 -1' : 'none',
+              )
+              // a press on the sorted column asks for the other way, on another for ascending
+              const own = root.querySelector(`[data-column="${sort.column}"] button`)!
+              await userEvent.click(own)
+              await expect(lastAsked(onSortChange)).toEqual({
+                column: sort.column,
+                direction: sort.direction === 'asc' ? 'desc' : 'asc',
+              })
+            },
+          )
+        }
+      },
+    )
+
+    await step('with no sort given, every header says none and shows no arrow', async () => {
+      for (const sort of [undefined, null]) {
+        const onSortChange = fn()
+        await mounted(
+          canvasElement,
+          <VehicleTable
+            vehicles={VEHICLES}
+            aria-label="Unsorted"
+            sort={sort}
+            onSortChange={onSortChange}
+          />,
+          async (host) => {
+            const root = await tableIn(host)
+            for (const cell of within(root).getAllByRole('columnheader'))
+              await expect(cell).toHaveAttribute('aria-sort', 'none')
+            await expect(root.querySelector('.pn-VehicleTable-sortIcon')).toBeNull()
+            await userEvent.click(within(root).getByRole('button', { name: 'Delay' }))
+            await expect(lastAsked(onSortChange)).toEqual({ column: 'delay', direction: 'asc' })
+          },
+        )
+      }
+    })
+
+    await step(
+      'a sort given with no handler marks its column, and no header is a button',
+      async () => {
+        await mounted(
+          canvasElement,
+          <VehicleTable
+            vehicles={VEHICLES}
+            aria-label="Read only"
+            sort={{ column: 'line', direction: 'asc' }}
+          />,
+          async (host) => {
+            const root = await tableIn(host)
+            const cells = within(root).getAllByRole('columnheader')
+            await expect(cells.map((cell) => cell.getAttribute('aria-sort'))).toEqual([
+              'ascending',
+              null,
+              null,
+              null,
+            ])
+            await expect(within(root).queryByRole('button')).toBeNull()
+            await expect(cells[0].querySelector('.pn-VehicleTable-sortIcon')).not.toBeNull()
+            await expect(heard(cells[0])).toBe('Line')
+          },
+        )
+      },
+    )
+
+    await step('Tab reaches each header in order; Enter and Space press it', async () => {
+      const buttons = headers.map((header) => within(header).getByRole('button'))
+      await expectFocusRing(canvasElement, buttons[0])
+      buttons[0].focus()
+      for (const button of buttons.slice(1)) {
+        await userEvent.tab()
+        await expect(button).toHaveFocus()
+      }
+      // past the last header, the rows take no focus
+      await userEvent.tab()
+      await expect(table.contains(document.activeElement)).toBe(false)
+      buttons[1].focus()
+      await userEvent.keyboard('{Enter}')
+      await expect(args.onSortChange).toHaveBeenCalledTimes(1)
+      await expect(lastAsked(args.onSortChange)).toEqual({
+        column: 'destination',
+        direction: 'asc',
+      })
+      await userEvent.keyboard(' ')
+      await expect(args.onSortChange).toHaveBeenCalledTimes(2)
+      buttons[1].blur()
+      ;(args.onSortChange as ReturnType<typeof fn>).mockClear()
+    })
+
+    await step('the button fills its header, a target at least size.target-min', async () => {
+      const least = Number.parseFloat(rendered('size-target-min', 'block-size'))
+      for (const header of headers) {
+        const button = within(header).getByRole('button').getBoundingClientRect()
+        const cell = header.getBoundingClientRect()
+        await expect(button.height).toBeGreaterThanOrEqual(least - 0.5)
+        await expect(button.width).toBeGreaterThanOrEqual(least - 0.5)
+        await expect(Math.abs(button.width - cell.width)).toBeLessThan(1)
+      }
+      // the header row keeps the height it has without buttons
+      await mounted(
+        canvasElement,
+        <VehicleTable vehicles={VEHICLES} aria-label="Plain" />,
+        async (host) => {
+          const root = await tableIn(host)
+          await expect(
+            Math.abs(
+              root.tHead!.rows[0].getBoundingClientRect().height -
+                table.tHead!.rows[0].getBoundingClientRect().height,
+            ),
+          ).toBeLessThan(1)
+        },
+      )
+    })
+
+    await step('hover inks the words, a press lays the hover layer behind them too', async () => {
+      const button = within(headers[0]).getByRole('button')
+      await expect(getComputedStyle(button).cursor).toBe('pointer')
+      await expect(onHover(button, 'color')).toBe('var(--perron-color-text-primary)')
+      await expect(stateFill(button, ':hover')).toBe('')
+      await expect(stateFill(button, ':active')).toBe('var(--perron-color-surface-hover)')
+      await expect(fill('color-surface-hover')).not.toBe(getComputedStyle(button).backgroundColor)
+      await expect(pressedAfterHover(button)).toBe(true)
+      // the rows stay text: no row or cell answers the pointer (CR-7)
+      for (const part of [...bodyRows(table), ...table.tBodies[0].querySelectorAll('th, td')]) {
+        await expect(stateRules(part, ':hover')).toHaveLength(0)
+        await expect(stateRules(part, ':active')).toHaveLength(0)
+      }
+    })
+  },
+}
+
+/** The Delay column left out, for vehicles whose data carries no delay (CR-12). */
+export const DelayHidden: Story = {
+  args: { delayColumnHidden: true },
+  play: async ({ canvasElement, step }) => {
+    const table = within(canvasElement).getByRole('table', {
+      name: 'Vehicles',
+    }) as HTMLTableElement
+
+    await step('three column headers, and no delay in any row', async () => {
+      await expect(
+        within(table)
+          .getAllByRole('columnheader')
+          .map((header) => header.textContent),
+      ).toEqual(HEADERS.slice(0, 3))
+      await expect(table.querySelector('[data-column="delay"]')).toBeNull()
+      await expect(table.querySelector('.pn-VehicleTable-delayCell, .pn-Delay')).toBeNull()
+      for (const row of bodyRows(table)) await expect(row.cells).toHaveLength(3)
+      await expect(heardRow(bodyRows(table)[0])).toBe('5C Husum Torv Live')
+    })
+
+    await step('beside Last seen, and sortable, Delay stays out', async () => {
+      await mounted(
+        canvasElement,
+        <VehicleTable
+          vehicles={VEHICLES}
+          aria-label="No delay"
+          delayColumnHidden
+          lastSeenColumnVisible
+          onSortChange={fn()}
+        />,
+        async (host) => {
+          const root = await tableIn(host)
+          await expect(
+            within(root)
+              .getAllByRole('button')
+              .map((button) => button.textContent),
+          ).toEqual(HEADERS_LAST_SEEN.slice(0, 4))
+          for (const row of bodyRows(root)) await expect(row.cells).toHaveLength(4)
+        },
+      )
+    })
+  },
+}
+
+/** The `Default` vehicles with the time each last reported, but the timetable-only one. */
+const SEEN: VehicleTableVehicle[] = VEHICLES.map((vehicle, index) => ({
+  ...vehicle,
+  lastSeen: [`08:14`, `08:13`, `08:11`, undefined, `08:02`][index],
+}))
+
+/**
+ * The Last seen column, before Delay: the time each vehicle last reported, and "—", heard as
+ * "Unknown", for the timetable-only one, which never has (CR-11).
+ */
+export const LastSeen: Story = {
+  args: { vehicles: SEEN, lastSeenColumnVisible: true },
+  play: async ({ canvasElement, args, step }) => {
+    const table = within(canvasElement).getByRole('table', {
+      name: 'Vehicles',
+    }) as HTMLTableElement
+    const rows = bodyRows(table)
+
+    await step('five column headers, Last seen before Delay, at the column end', async () => {
+      const headers = within(table).getAllByRole('columnheader')
+      await expect(headers.map((header) => header.textContent)).toEqual(HEADERS_LAST_SEEN)
+      await expect(headers[3]).toHaveAttribute('data-column', 'last-seen')
+      await expect(getComputedStyle(headers[3]).textAlign).toBe('end')
+      for (const row of rows) await expect(row.cells).toHaveLength(5)
+    })
+
+    await step('each time as given, in a <time>, and "—" heard as "Unknown" for none', async () => {
+      for (const [index, row] of rows.entries()) {
+        const cell = row.querySelector('.pn-VehicleTable-lastSeenCell')!
+        await expect(row.cells[3]).toBe(cell)
+        const seen = SEEN[index].lastSeen
+        if (seen) {
+          const time = cell.querySelector('time.pn-VehicleTable-lastSeen')!
+          await expect(time).toHaveAttribute('dateTime', seen)
+          await expect(heard(cell)).toBe(seen)
+        } else {
+          await expect(cell.querySelector('time')).toBeNull()
+          await expect(cell.querySelector('[aria-hidden="true"]')).toHaveTextContent('—')
+          await expect(heard(cell)).toBe('Unknown')
+        }
+      }
+      await expect(heardRow(rows[0])).toBe('5C Husum Torv Live 08:14 On time')
+    })
+
+    await step('a time is data: tabular figures at the column end, on one line', async () => {
+      const cell = rows[0].querySelector('.pn-VehicleTable-lastSeenCell')!
+      const style = getComputedStyle(cell)
+      const data = typography('data')
+      const probe = document.createElement('span')
+      Object.assign(probe.style, data)
+      canvasElement.append(probe)
+      try {
+        await expect(style.fontFamily).toBe(getComputedStyle(probe).fontFamily)
+        await expect(style.fontSize).toBe(getComputedStyle(probe).fontSize)
+      } finally {
+        probe.remove()
+      }
+      await expect(style.fontVariantNumeric).toBe('tabular-nums')
+      await expect(style.textAlign).toBe('end')
+      await expect(style.color).toBe(colour('--perron-color-text-primary'))
+      // every box of each time starts on the same top
+      for (const time of table.querySelectorAll('.pn-VehicleTable-lastSeen'))
+        await expect(
+          new Set([...time.getClientRects()].map((box) => Math.round(box.top))).size,
+        ).toBe(1)
+    })
+
+    await step('left out by default, and its header sorts as the others do', async () => {
+      await mounted(
+        canvasElement,
+        <VehicleTable vehicles={SEEN} aria-label="Off" />,
+        async (host) => {
+          const root = await tableIn(host)
+          await expect(root.querySelector('.pn-VehicleTable-lastSeenCell, time')).toBeNull()
+          await expect(within(root).getAllByRole('columnheader')).toHaveLength(HEADERS.length)
+        },
+      )
+      const onSortChange = fn()
+      await mounted(
+        canvasElement,
+        <VehicleTable
+          vehicles={SEEN}
+          aria-label="Sorted by last seen"
+          lastSeenColumnVisible
+          sort={{ column: 'last-seen', direction: 'desc' }}
+          onSortChange={onSortChange}
+        />,
+        async (host) => {
+          const root = await tableIn(host)
+          const header = within(root).getByRole('columnheader', { name: 'Last seen' })
+          await expect(header).toHaveAttribute('aria-sort', 'descending')
+          await userEvent.click(within(header).getByRole('button'))
+          await expect(lastAsked(onSortChange)).toEqual({ column: 'last-seen', direction: 'asc' })
+        },
+      )
+    })
+
+    await step("in Danish, every word is the caller's or the dictionary's", () => {
+      const markup = renderToStaticMarkup(
+        <PerronProvider locale="da">
+          <VehicleTable {...(args as VehicleTableProps)} />
+        </PerronProvider>,
+      )
+      expectOwnedStrings(markup, 'da', [
+        'Vehicles',
+        ...SEEN.flatMap((vehicle) => [vehicle.lineName, vehicle.destination] as string[]),
+        ...SEEN.flatMap((vehicle) => (vehicle.lastSeen ? [vehicle.lastSeen] : [])),
+      ])
+      for (const word of ['Sidst set', 'Ukendt']) expect(markup).toContain(word)
     })
   },
 }

@@ -36,6 +36,7 @@ export const sv: OwnedStrings = {
   destinationColumn: 'Destination',
   positionColumn: 'Position',
   delayColumn: 'Försening',
+  lastSeenColumn: 'Senast sedd',
   mapControls: 'Kartknappar',
   zoomIn: 'Zooma in',
   zoomOut: 'Zooma ut',
