@@ -168,22 +168,39 @@ describe('shared-parts', () => {
     expect(problems[0].message).toContain('testing/markup.ts')
   })
 
-  it('fails a copy of a shared table in another shape, and a table two components declare', () => {
-    const src = 'scripts/checks/fixtures/shared-parts/tables'
-    const helpers = [{ name: 'STATE_KEY', aliases: [], file: 'internal/states.ts' }]
-    const copies = helperProblems(root, src, helpers)
+  const tables = 'scripts/checks/fixtures/shared-parts/tables'
+  const stateHelpers = [
+    { name: 'STATE_KEY', aliases: [], file: 'internal/states.ts' },
+    // `Object.keys(STATE_KEY)`: a list of its keys
+    { name: 'STATES', aliases: [], file: 'internal/states.ts' },
+  ]
+
+  it('fails a copy of a shared table in another shape, or read from one, in code and stories alike', () => {
+    const copies = helperProblems(root, tables, stateHelpers)
     expect(copies.map((p) => [p.file.split('/').at(-1), p.line, p.message.split(';')[0]])).toEqual([
+      ['Dot.stories.tsx', 1, 'declares VARIANTS, a copy of the shared helper STATES'],
       ['Dot.tsx', 3, 'declares LABELS, a copy of the shared helper STATE_KEY'],
     ])
-    // a story's table, one holding more than literals, and one under four strings are no table
-    const tables = copiedTables(root, src, helpers)
-    expect(tables.map((p) => [p.file.split('/').at(-1), p.line])).toEqual([
+  })
+
+  it("fails a table two files declare, a story or a unit test as much as code, but not a story file's exports", () => {
+    // a story file's exports (Planned), one holding more than literals, and one under four strings
+    // are no table, and a copy of a shared one is helperProblems'
+    const found = copiedTables(root, tables, stateHelpers)
+    expect(found.map((p) => [p.file.split('/').at(-1), p.line])).toEqual([
+      ['Row.test.tsx', 1],
       ['Row.tsx', 3],
+      ['Strip.stories.tsx', 1],
       ['Strip.tsx', 1],
     ])
-    expect(tables[0].message).toMatch(
-      /^declares KINDS, a table of the strings ORDER in .*Strip\.tsx holds too; write it once in packages\/perron\/src\/internal\//,
+    const home = (file: string) => found.find((p) => p.file.endsWith(file))!.message
+    expect(home('Row.tsx')).toMatch(
+      /^declares KINDS, a table of the strings EXPECTED in .*Row\.test\.tsx and KINDS in .*Strip\.stories\.tsx and ORDER in .*Strip\.tsx holds too; write it once in packages\/perron\/src\/internal\//,
     )
+    expect(home('Strip.stories.tsx')).toContain(
+      'write it once in packages/perron/src/testing/stories.ts',
+    )
+    expect(home('Row.test.tsx')).toContain('write it once in packages/perron/src/testing/markup.ts')
   })
 
   it('passes the real tree', async () => {

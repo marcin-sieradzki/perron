@@ -188,6 +188,34 @@ describe('withFix, for a stage the factory sent back', () => {
     expect(() => parseResult('no result')).toThrow('the reply holds no JSON object')
   })
 
+  it('reads the result past braces in the prose around it and in its strings', () => {
+    const result = { outcome: 'done', summary: 'Built `{ live }` and its `}` case.', failing: '' }
+    const json = JSON.stringify(result, null, 2)
+    // a brace in the prose before and after the JSON, which first-`{`-to-last-`}` would take in
+    expect(parseResult(`I set \`style={{ x }}\` here.\n${json}\nThe {} map is next.`)).toEqual(
+      result,
+    )
+    // a fenced json block is the result, though the prose holds another object
+    expect(
+      parseResult(`Before: {"outcome":"failed"}.\n\`\`\`json\n${json}\n\`\`\`\nAfter: { a }`),
+    ).toEqual(result)
+    // an object in the prose without the stage's outcome is passed over
+    expect(parseResult(`See {"line": 4}.\n${json}`)).toEqual(result)
+    // the reply ends with its result: an outcome the prose quotes before it is not the result, and
+    // an object inside the result that holds one is part of it
+    const nested = { ...result, last: { outcome: 'failed' } }
+    expect(
+      parseResult(`I won't return {"outcome": "failed"} this time.\n${JSON.stringify(nested)}`),
+    ).toEqual(nested)
+    // with the reviewer's \` escapes and a raw line break too
+    const loose = json.replaceAll('`', '\\`').replace('and its', 'and\nits')
+    expect(parseResult(`Note {x}.\n${loose}\n}`)).toEqual({
+      ...result,
+      summary: 'Built `{ live }` and\nits `}` case.',
+    })
+    expect(() => parseResult('only { prose } here')).toThrow(/in JSON at position/)
+  })
+
   it("writes a review round's text to review.md as Prettier formats it", async () => {
     const dir = mkdtempSync(join(tmpdir(), 'factory-stage-'))
     try {

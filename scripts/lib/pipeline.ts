@@ -521,6 +521,15 @@ function fixOf(p: Pipeline, failing: string, env: Env) {
 const actedOn = (stage: Stage, reason: string) =>
   `${stage} stopped at needs-human (${reason}), and the maintainer has acted on it, so that reason is not this run's to fix. Fix only what fails now: run npm run check first and fix each failure at the line it names, then do the skill's other steps.`
 
+/**
+ * The fix of a failed build's rerun from a revised spec: the revision is the answer to the failure,
+ * and may take another way than the one the failure recommends (VehicleTable's spec gave a `calc()`
+ * over tokens where its failed run asked for a new token), so the rerun builds what the spec says
+ * now and fixes only what fails now, never that failure or its recommendation again.
+ */
+const respecced = (reason: string, spec: string) =>
+  `The last build run stopped (${reason}), and ${spec} has been revised since that run began to answer it, so that failure and any fix it recommends are not this run's to make. Build what ${spec} says now: read its revision (git log -p -- ${spec}) and change the code to match, then run npm run check and fix each failure at the line it names, and do the skill's other steps.`
+
 /** The fix of a brief run that carries the answers written in `spec` through it. */
 const carryAnswers = (spec: string) =>
   `The maintainer's answers are written in ${spec} in place of their [PENDING] lines: rewrite any still worded as a question or labelled, then carry each one into every section it touches (component-brief, "Run again"), and run its steps 3 to 5 again.`
@@ -560,11 +569,10 @@ function respecRerun(p: Pipeline, env: Env) {
 export function next(p: Pipeline, env: Env): Next {
   if (p.needsHuman && respecRerun(p, env)) {
     const { spec } = filesOf(p.component, p.layer)
-    const failing = p.stages.build?.failing ?? p.needsHuman.reason
     return {
       run: 'build',
       why: `the last run failed, and ${spec} has changed since it began; run the build again from the revised spec`,
-      fix: `${failing}. ${spec} has been revised since that run began: build what it says now.`,
+      fix: respecced(p.needsHuman.reason, spec),
     }
   }
   if (p.needsHuman)

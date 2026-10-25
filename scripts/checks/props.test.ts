@@ -71,7 +71,8 @@ describe('props', () => {
     expect(of('Allowed')).toEqual([])
   })
 
+  // a CI runner's margin over vitest's 5 s, as shared-parts' and docs' have
   it('passes the real tree', async () => {
     expect(await check.run(root)).toEqual([])
-  })
+  }, 15_000)
 })

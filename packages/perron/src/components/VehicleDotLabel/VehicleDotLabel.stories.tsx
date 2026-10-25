@@ -14,20 +14,13 @@ import {
   lines,
   mounted,
   resolve,
+  STATE_LABELS,
+  STATE_WORDS,
   stateRules,
   typography,
 } from '../../testing/stories.ts'
 
 type Variant = NonNullable<VehicleDotLabelProps['variant']>
-
-/** The five data states, in the order Data states lists them, each with its word. */
-const STATES: { variant: Variant; word: string }[] = [
-  { variant: 'live', word: 'Live' },
-  { variant: 'ageing', word: 'Ageing' },
-  { variant: 'estimated', word: 'Estimated' },
-  { variant: 'timetable-only', word: 'Timetable only' },
-  { variant: 'no-signal', word: 'No signal' },
-]
 
 /** A Danish compound longer than a narrow column, for the long-word checks. */
 const COMPOUND = 'regionaltogsforbindelserne'
@@ -67,15 +60,6 @@ const WHOLE_WORD_HOLDERS: [string, (labels: ReactNode) => ReactNode][] = [
   ],
 ]
 
-/** The prop that overrides each state's word. */
-const LABELS = {
-  live: 'liveLabel',
-  ageing: 'ageingLabel',
-  estimated: 'estimatedLabel',
-  'timetable-only': 'timetableOnlyLabel',
-  'no-signal': 'noSignalLabel',
-} as const satisfies Record<Variant, keyof VehicleDotLabelProps>
-
 const meta = {
   title: 'Components/VehicleDotLabel',
   component: VehicleDotLabel,
@@ -114,7 +98,7 @@ const parts = (scope: Element) => partsOf(scope.querySelector<HTMLElement>('.pn-
  * VehicleDot of the same state, hidden from screen readers (CR-1, CR-2).
  */
 async function expectState(scope: HTMLElement, variant: Variant) {
-  const { word } = STATES.find((s) => s.variant === variant)!
+  const { word } = STATE_WORDS.find((s) => s.variant === variant)!
   const { root, dot, label } = parts(scope)
   await expect(root).toHaveAttribute('data-variant', variant)
   await expect(heard(root)).toBe(word)
@@ -230,36 +214,38 @@ export const Live: Story = {
         await expect(plain.dot).toHaveAttribute('data-line', 'm2')
       })
     })
-    for (const { variant: given } of STATES)
-      await step(`${LABELS[given]} replaces ${given}'s word and no other's (CR-2, CR-4)`, () =>
-        mounted(
-          canvasElement,
-          <>
-            {STATES.map(({ variant }) => (
-              <VehicleDotLabel
-                key={variant}
-                variant={variant}
-                line="m1"
-                {...{ [LABELS[given]]: 'Own word' }}
-              />
-            ))}
-          </>,
-          async (host) => {
-            const roots = await waitFor(() => {
-              const found = host.querySelectorAll<HTMLElement>('.pn-VehicleDotLabel')
-              expect(found).toHaveLength(STATES.length)
-              return [...found]
-            })
-            for (const [index, { variant, word }] of STATES.entries()) {
-              const shown = variant === given ? 'Own word' : word
-              const { root: one, dot: itsDot, label: itsWord } = partsOf(roots[index])
-              await expect(one).toHaveAttribute('data-variant', variant)
-              await expect(itsWord.textContent).toBe(shown)
-              await expect(heard(one)).toBe(shown)
-              await expect(itsDot).toHaveAttribute('aria-label', shown)
-            }
-          },
-        ),
+    for (const { variant: given } of STATE_WORDS)
+      await step(
+        `${STATE_LABELS[given]} replaces ${given}'s word and no other's (CR-2, CR-4)`,
+        () =>
+          mounted(
+            canvasElement,
+            <>
+              {STATE_WORDS.map(({ variant }) => (
+                <VehicleDotLabel
+                  key={variant}
+                  variant={variant}
+                  line="m1"
+                  {...{ [STATE_LABELS[given]]: 'Own word' }}
+                />
+              ))}
+            </>,
+            async (host) => {
+              const roots = await waitFor(() => {
+                const found = host.querySelectorAll<HTMLElement>('.pn-VehicleDotLabel')
+                expect(found).toHaveLength(STATE_WORDS.length)
+                return [...found]
+              })
+              for (const [index, { variant, word }] of STATE_WORDS.entries()) {
+                const shown = variant === given ? 'Own word' : word
+                const { root: one, dot: itsDot, label: itsWord } = partsOf(roots[index])
+                await expect(one).toHaveAttribute('data-variant', variant)
+                await expect(itsWord.textContent).toBe(shown)
+                await expect(heard(one)).toBe(shown)
+                await expect(itsDot).toHaveAttribute('aria-label', shown)
+              }
+            },
+          ),
       )
     await step('className follows pn-VehicleDotLabel on the root', async () => {
       await mounted(

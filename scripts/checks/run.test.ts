@@ -63,8 +63,9 @@ describe('the gates', () => {
     ).toEqual([])
   })
 
+  // a CI runner's margin over vitest's 5 s, as shared-parts' and docs' have
   it('find no allowance in the repo without a rule or a reason', async () => {
     const rules = (await loadChecks()).map((c) => c.rule)
     expect(allowanceCheck(root, rules)).toEqual([])
-  })
+  }, 15_000)
 })

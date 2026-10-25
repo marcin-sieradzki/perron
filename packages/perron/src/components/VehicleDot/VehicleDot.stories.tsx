@@ -15,21 +15,13 @@ import {
   mounted,
   rendered,
   resolve,
+  STATE_LABELS,
+  STATE_WORDS,
   typography,
 } from '../../testing/stories.ts'
 
-type Variant = NonNullable<VehicleDotProps['variant']>
 type Line = VehicleDotProps['line']
 type Size = NonNullable<VehicleDotProps['size']>
-
-/** The five data states, in the order Data states lists them, each with its word. */
-const STATES: { variant: Variant; word: string }[] = [
-  { variant: 'live', word: 'Live' },
-  { variant: 'ageing', word: 'Ageing' },
-  { variant: 'estimated', word: 'Estimated' },
-  { variant: 'timetable-only', word: 'Timetable only' },
-  { variant: 'no-signal', word: 'No signal' },
-]
 
 /** The twelve lines, each with the token that colours it and its name as riders write it. */
 const LINES: { line: Line; token: string; name: string }[] = [
@@ -69,15 +61,6 @@ const SIZES: { size: Size; token: string; text: string; role: string }[] = [
   },
 ]
 
-/** The prop that overrides each state's word. */
-const LABELS = {
-  live: 'liveLabel',
-  ageing: 'ageingLabel',
-  estimated: 'estimatedLabel',
-  'timetable-only': 'timetableOnlyLabel',
-  'no-signal': 'noSignalLabel',
-} as const satisfies Record<Variant, keyof VehicleDotProps>
-
 const NO_SIGNAL = '--perron-color-data-state-no-signal'
 
 const row: CSSProperties = {
@@ -102,7 +85,7 @@ function States({ line, size }: { line: Line; size: Size }) {
   const role = SIZES.find((s) => s.size === size)!.role
   return (
     <div style={{ ...row, ...typography(role) }}>
-      {STATES.map(({ variant, word }) => (
+      {STATE_WORDS.map(({ variant, word }) => (
         <span key={variant} style={pair}>
           <VehicleDot variant={variant} line={line} size={size} aria-hidden />
           {word}
@@ -249,23 +232,23 @@ export const Live: Story = {
       await mounted(
         canvasElement,
         <>
-          {STATES.map(({ variant }) => (
+          {STATE_WORDS.map(({ variant }) => (
             <VehicleDot
               key={variant}
               variant={variant}
               line="m1"
-              {...{ [LABELS[variant]]: `Own ${variant}` }}
+              {...{ [STATE_LABELS[variant]]: `Own ${variant}` }}
             />
           ))}
         </>,
         async (host) => {
-          for (const { variant } of STATES) {
+          for (const { variant } of STATE_WORDS) {
             const own = await waitFor(() =>
               within(host).getByRole('img', { name: `Own ${variant}` }),
             )
             await expect(own).toHaveAttribute('data-variant', variant)
           }
-          await expect(within(host).getAllByRole('img')).toHaveLength(STATES.length)
+          await expect(within(host).getAllByRole('img')).toHaveLength(STATE_WORDS.length)
         },
       )
     })
@@ -416,7 +399,7 @@ export const NoSignal: Story = {
       await mounted(
         canvasElement,
         <>
-          {STATES.filter((s) => s.variant !== 'no-signal').map(({ variant }) => (
+          {STATE_WORDS.filter((s) => s.variant !== 'no-signal').map(({ variant }) => (
             <VehicleDot key={variant} variant={variant} line="m1" />
           ))}
         </>,
@@ -478,7 +461,7 @@ export const Sizes: Story = {
       await step(`${size}: an ${token} square, every state one outer size (CR-1)`, async () => {
         const scope = canvasElement.querySelector(`[data-size-row='${size}']`)!
         const roots = [...scope.querySelectorAll<HTMLElement>('.pn-VehicleDot')]
-        await expect(roots).toHaveLength(STATES.length)
+        await expect(roots).toHaveLength(STATE_WORDS.length)
         const side = Number.parseFloat(rendered(token, 'width'))
         const live = outerEdge(dotOf(roots[0]))
         for (const root of roots) {
@@ -508,7 +491,7 @@ export const Lines: Story = {
           <th scope="col" style={cell}>
             Line
           </th>
-          {STATES.map(({ variant, word }) => (
+          {STATE_WORDS.map(({ variant, word }) => (
             <th key={variant} scope="col" style={cell}>
               {word}
             </th>
@@ -521,7 +504,7 @@ export const Lines: Story = {
             <th scope="row" style={cell}>
               {name}
             </th>
-            {STATES.map(({ variant }) => (
+            {STATE_WORDS.map(({ variant }) => (
               <td key={variant} style={cell}>
                 <VehicleDot variant={variant} line={line} />
               </td>
@@ -537,7 +520,7 @@ export const Lines: Story = {
         const roots = [
           ...canvasElement.querySelectorAll<HTMLElement>(`.pn-VehicleDot[data-line='${line}']`),
         ]
-        await expect(roots).toHaveLength(STATES.length)
+        await expect(roots).toHaveLength(STATE_WORDS.length)
         for (const root of roots) {
           await expect(getComputedStyle(root).color).toBe(lineColour(line))
           const style = getComputedStyle(dotOf(root))
@@ -563,10 +546,10 @@ export const NoLine: Story = {
   render: () => <States line={undefined} size="medium" />,
   play: async ({ canvasElement, step }) => {
     const roots = [...canvasElement.querySelectorAll<HTMLElement>('.pn-VehicleDot')]
-    await expect(roots).toHaveLength(STATES.length)
+    await expect(roots).toHaveLength(STATE_WORDS.length)
     const ink = colour('--perron-color-text-primary')
     await expect(ink).not.toBe(lineColour('m1'))
-    for (const [index, { variant, word }] of STATES.entries())
+    for (const [index, { variant, word }] of STATE_WORDS.entries())
       await step(`${word}: no data-line, drawn in the text's colour`, async () => {
         const root = roots[index]
         await expect(root).not.toHaveAttribute('data-line')
@@ -581,7 +564,7 @@ export const NoLine: Story = {
     document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet]
     try {
       await step('in forced colours, every dot with no line draws in CanvasText', async () => {
-        for (const [index, { variant }] of STATES.entries()) {
+        for (const [index, { variant }] of STATE_WORDS.entries()) {
           await expect(getComputedStyle(roots[index]).color).toBe(text)
           await expectVehicleDotShape(roots[index], variant, text)
         }
@@ -620,11 +603,11 @@ export const ForcedColours: Story = {
       'VehicleDot rules in (forced-colors: active)',
     ).toBeGreaterThan(0)
     const roots = [...canvasElement.querySelectorAll<HTMLElement>('.pn-VehicleDot')]
-    await expect(roots).toHaveLength(STATES.length)
+    await expect(roots).toHaveLength(STATE_WORDS.length)
     const text = resolve('color', 'CanvasText')
     document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet]
     try {
-      for (const [index, { variant, word }] of STATES.entries())
+      for (const [index, { variant, word }] of STATE_WORDS.entries())
         await step(`${word}: drawn in CanvasText, in its own shape`, async () => {
           const root = roots[index]
           await expect(root).toHaveAttribute('data-variant', variant)
@@ -634,7 +617,7 @@ export const ForcedColours: Story = {
         })
       await step('the five shapes differ; no signal is cut and live is not', async () => {
         const shapes = roots.map(shape)
-        await expect(new Set(shapes).size, shapes.join(' | ')).toBe(STATES.length)
+        await expect(new Set(shapes).size, shapes.join(' | ')).toBe(STATE_WORDS.length)
         await expect(shapes[4]).toContain('cut')
         await expect(shapes[0]).toContain('whole')
         await expect(shapes[0]).toContain('fill 1')
