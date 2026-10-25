@@ -100,7 +100,7 @@ export function stateRules(element: Element, pseudo: ':hover' | ':active' | ':vi
 
 /**
  * Whether `element` has a `(hover: hover)` rule and an `:active` rule that set its background, a
- * colour or a layer, and the last `:active` one comes after the last hover one in source order. The
+ * colour or a layer, and the last `:active` one, outside the query, comes after the last hover one in source order. The
  * contract's selectors make the two as specific, so the later one wins while a mouse presses, and a
  * press written first shows the hover fill.
  */
@@ -119,7 +119,8 @@ export function pressedAfterHover(element: Element) {
         const text = rule.selectorText
         if (inQuery && text.includes(':hover') && element.matches(withoutState(text, ':hover')))
           hover = index
-        if (text.includes(':active') && element.matches(withoutState(text, ':active')))
+        // outside the query, so a touch press shows too
+        if (!inQuery && text.includes(':active') && element.matches(withoutState(text, ':active')))
           active = index
       }
   }
