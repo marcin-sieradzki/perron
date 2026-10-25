@@ -264,7 +264,7 @@
           "components": [0.6039, 0.6431, 0.6627],
           "hex": "#9AA4A9"
         },
-        "$description": "Vehicle dot fill when a vehicle has been silent for 5+ min"
+        "$description": "Vehicle dot fill when a vehicle has been silent past the ageing threshold"
       },
       "halo": {
         "$value": "{color.map.land}",

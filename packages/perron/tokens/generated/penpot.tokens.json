@@ -1313,7 +1313,7 @@
         "no-signal": {
           "$type": "color",
           "$value": "#9AA4A9",
-          "$description": "Vehicle dot fill when a vehicle has been silent for 5+ min"
+          "$description": "Vehicle dot fill when a vehicle has been silent past the ageing threshold"
         },
         "halo": {
           "$type": "color",
@@ -1687,7 +1687,7 @@
         "no-signal": {
           "$type": "color",
           "$value": "#5F6B71",
-          "$description": "Vehicle dot fill when a vehicle has been silent for 5+ min"
+          "$description": "Vehicle dot fill when a vehicle has been silent past the ageing threshold"
         },
         "halo": {
           "$type": "color",

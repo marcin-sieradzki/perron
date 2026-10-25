@@ -1465,7 +1465,7 @@
         "value": 60000,
         "unit": "ms"
       },
-      "$description": "Reports younger than this are live"
+      "$description": "Default: reports younger than this are live. Each app sets its own from its feed's interval between reports"
     },
     "ageing-threshold": {
       "$type": "duration",
@@ -1473,7 +1473,7 @@
         "value": 300000,
         "unit": "ms"
       },
-      "$description": "Reports younger than this (and at least live-threshold old) are ageing; older is no signal"
+      "$description": "Default: reports younger than this (and at least the live threshold old) are ageing; older is no signal. Each app sets its own with its live threshold"
     }
   },
   "map": {

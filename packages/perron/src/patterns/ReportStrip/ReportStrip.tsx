@@ -14,15 +14,15 @@ import './ReportStrip.css'
 
 /** How many vehicles are in each data state, as ReportStrip's `counts` takes them. */
 export interface ReportStripCounts {
-  /** Optional. How many vehicles are live: a report under a minute old */
+  /** Optional. How many vehicles are live: a report younger than the live threshold */
   live?: number | null
-  /** Optional. How many are ageing: a report 1 to 5 minutes old */
+  /** Optional. How many are ageing: a report past the live threshold, under the ageing one */
   ageing?: number | null
   /** Optional. How many are estimated: placed from the timetable and the latest delay */
   estimated?: number | null
   /** Optional. How many are timetable only: no real-time data at all */
   timetableOnly?: number | null
-  /** Optional. How many have no signal: silent for over 5 minutes */
+  /** Optional. How many have no signal: silent past the ageing threshold */
   noSignal?: number | null
 }
 
