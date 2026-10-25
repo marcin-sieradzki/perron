@@ -1,0 +1,6 @@
+# Written by npm run factory; never by hand.
+component: Accordion
+layer: component
+deferred:
+  at: 2026-10-25T08:07:32.135Z
+stages: {}
