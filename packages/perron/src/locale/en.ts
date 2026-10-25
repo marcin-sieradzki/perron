@@ -76,6 +76,8 @@ export const en = {
   metersUnit: 'm',
   /** The map's scale: the unit after a distance of a kilometre or more, as in "2 km". */
   kilometersUnit: 'km',
+  /** A search field's list: shown and announced when no suggestion matches the words typed. */
+  noMatches: 'No matches',
 }
 
 /** The name of one owned string. */

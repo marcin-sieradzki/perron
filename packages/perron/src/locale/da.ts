@@ -38,4 +38,5 @@ export const da: OwnedStrings = {
   scale: 'Målestok',
   metersUnit: 'm',
   kilometersUnit: 'km',
+  noMatches: 'Ingen resultater',
 }

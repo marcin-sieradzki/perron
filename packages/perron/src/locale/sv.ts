@@ -38,4 +38,5 @@ export const sv: OwnedStrings = {
   scale: 'Skala',
   metersUnit: 'm',
   kilometersUnit: 'km',
+  noMatches: 'Inga träffar',
 }
