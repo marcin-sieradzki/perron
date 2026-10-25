@@ -554,15 +554,18 @@
     "name": "Slider",
     "layer": "component",
     "category": "Inputs",
-    "status": "designing",
+    "status": "building",
     "baseUiParts": [
       "Slider.Root",
-      "Slider.Label",
-      "Slider.Value",
       "Slider.Control",
       "Slider.Track",
       "Slider.Indicator",
-      "Slider.Thumb"
+      "Slider.Thumb",
+      "Slider.Value",
+      "Field.Root",
+      "Field.Label",
+      "Field.Description",
+      "Field.Error"
     ],
     "penpotPath": "Components/Slider",
     "dependsOn": ["Field"]

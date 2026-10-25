@@ -49,6 +49,7 @@ export const PAGES = [
   'docs/components/radio-group.md',
   'docs/components/search-field.md',
   'docs/components/segmented-control.md',
+  'docs/components/slider.md',
   'docs/components/switch.md',
   'docs/components/text-field.md',
   'docs/components/section.md',

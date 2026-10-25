@@ -8,6 +8,13 @@ stages:
     status: done
     started: 2026-10-25T07:13:13.551Z
     ended: 2026-10-25T07:14:59.750Z
+  build:
+    status: done
+    started: 2026-10-25T07:15:03.624Z
+    runs: 1
+    begun: ec5f1eed45114628ab161f4efd3059f75a37396360ddfdecc2f485cdefb5c762
+    spec: 590e0fa196fd29a58b265c640674eef5b3e36c3a751dae61449f757b16601f4a
+    ended: 2026-10-25T07:25:42.601Z
 notes:
   - stage: brief
     at: 2026-10-25T07:13:09.465Z
@@ -27,3 +34,9 @@ notes:
   - stage: brief
     at: 2026-10-25T07:13:09.465Z
     questions: "1. Does Slider compose Field as its frame (root Slider.Root, Field via slotProps.field, Slider.Label left out)? Recommended: yes. 2. Does the figure (Slider.Value) always show at the inline end of the track row, its column held as wide as the formatted min and max? Recommended: yes. 3. Is the value a number or readonly [number, number], one thumb per value, no generic? Recommended: yes. 4. Does Slider take onChange(event, value, details) and onChangeCommitted(event, value, details)? Recommended: yes. 5. Does Slider leave out variant, size, color, orientation, thumbAlignment, optional and required, inherit min/max/step/largeStep/minStepsBetweenValues/format/thumbCollisionBehavior/name/form, and declare locale defaulting to the PerronProvider's? Recommended: yes. 6. Geometry: control size.target-min tall with half-thumb inline padding, track size.meter-track (description widened), thumb 18 px as Switch's calc()? Recommended: yes. 7. Colours: track color.surface.inset, fill color.text.primary, thumb color.surface.raised with a border.width.050 color.surface.inverse edge, hover/pressed layers color.surface.hover/selected, figure typography.data, no transitions? Recommended: yes. 8. Disabled in color.text.tertiary with no hover/pressed; invalid thumb edge color.status.danger; disabled wins inside an invalid field? Recommended: yes. 9. Range thumbs named by new owned strings minimum/maximum via getAriaLabel, overridable by minimumLabel/maximumLabel, aria-valuetext the formatted value alone? Recommended: yes. 10. Deferred design draws one State property (default, hover, focus, pressed, disabled, invalid) with Range, Units, Controlled, HiddenLabel, InForm and LongWords as content stories? Recommended: yes."
+  - stage: build
+    at: 2026-10-25T07:25:42.601Z
+    direction: Base UI's Slider takes right-to-left from its own DirectionProvider, not from the page's dir, and PerronProvider sets none. On an RTL page the thumbs sit half a thumb away from the fill and the arrow keys don't swap. Mylder's four locales are all left-to-right; PerronProvider could carry a DirectionProvider if an RTL locale ever joins.
+  - stage: build
+    at: 2026-10-25T07:25:42.601Z
+    direction: Slider is the first component whose focus ring is drawn by a wrapper round a visually hidden input (.pn-Slider-thumb:has(:focus-visible), CR-9). The contract's Design states table names focus only as :focus-visible with perron.css's ring, so it could name this form for the next component built on a hidden input.

@@ -40,4 +40,6 @@ export const nb: OwnedStrings = {
   kilometersUnit: 'km',
   noMatches: 'Ingen treff',
   optional: '(valgfritt)',
+  minimum: 'Minimum',
+  maximum: 'Maksimum',
 }

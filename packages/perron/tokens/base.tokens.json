@@ -1208,7 +1208,7 @@
         "value": 6,
         "unit": "px"
       },
-      "$description": "Height of a meter's track"
+      "$description": "Height of a meter's or a slider's track"
     },
     "checkbox": {
       "$type": "dimension",
