@@ -1,0 +1,14 @@
+# Review: Tag, round 1
+
+## P1
+
+- **P1-1.** `docs/components/tag.md:141` The dashed stories have words that state what their dashed edge says is not yet confirmed. The worst is `DashedDanger`, the subject story, which shows "Cancelled" (`packages/perron/src/components/Tag/Tag.stories.tsx:198`). `DashedWarning` ("Replacement bus"), `DashedInfo` ("Extra departure") and `DashedSuccess` ("Step-free") do the same. So the eye is told "unconfirmed" and the ear is told a fact. This breaks CR-5 ("a `dashed` tag's words say it is not confirmed where that matters … the review holds the stories to it"), the checklist line "Everything the eye is told, the ear is told" (spec line 101 claims the dashed edge "only repeats" the words, which these stories do not bear out), and content design's "Never claim more certainty than the data has". CR-5 holds over the Stories table: rewrite rows 139–142 and the four stories' `children` in sentence case so they say the thing is unconfirmed, such as "Cancellation expected" or "Replacement bus planned".
+
+## P2
+
+- **P2-1.** `packages/perron/src/components/Tag/Tag.css:9` `overflow-wrap: anywhere` shrinks the tag's min-content width to a single glyph. In a flex row beside a departure's text, the usual place for a tag, a 320 px render squeezed "Night bus" to 49 px and broke it as "NIG / HT / BUS" in a circle, although the row had room for the whole tag. This goes against CR-6, which keeps the tag on one line wherever it fits and breaks only a word longer than the line. `overflow-wrap: break-word` still breaks a word longer than the container but keeps whole words at min-content (it measured "NIGHT / BUS" in the same row). CR-6 holds over the Tokens row at `docs/components/tag.md:68`, which prescribes `anywhere` and needs rewriting with the CSS.
+
+## P3
+
+- **P3-1.** `packages/perron/src/components/Tag/Tag.css:12` `radius.full` stays on a tag that wraps onto three or more lines, as CR-6 allows. A single long word ("Togbusforbindelse erstatter" in a 90 px box) then turns the pill into an oval whose curve crowds the first and last letters into the dashed edge. Two lines still read cleanly. Question for the maintainer: keep the pill at every height, or let a wrapped tag step down to a smaller radius (Tokens row at `docs/components/tag.md:63`)?
+- **P3-2.** `packages/perron/src/components/Tag/Tag.tsx:9` `TagProps` inherits `className`, `style` and `ref` from `useRender.ComponentProps<'span'>`, so they have no JSDoc, even though the Props rows at `docs/components/tag.md:48-50` give them descriptions and spec line 30 says each row's description becomes its JSDoc. The Display family is split on this: Text, Brand and FactList declare the three with JSDoc, while Stat and LineBadge inherit them as Tag does. The contract allows both (Props: "Members it inherits … keep theirs"). Question for the maintainer: which form should the family follow?
