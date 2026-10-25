@@ -8,7 +8,7 @@
 import { execFileSync } from 'node:child_process'
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { API, readApi, type Api } from '../lib/api.ts'
+import { API, canonical, readApi, type Api } from '../lib/api.ts'
 import { codeFile } from '../lib/props.ts'
 import { REGISTRY, readRegistry } from '../lib/registry.ts'
 import { byFileLine, CONTRACT, type Check, type Problem } from './lib.ts'
@@ -38,7 +38,8 @@ export function compareApi(before: Api, after: Api): Break[] {
       const is = now.props[prop]
       if (!is) add(prop, `${component} no longer has ${prop}; deprecate a prop, never remove it`)
       else if (was.optional && !is.optional) add(prop, `${component} makes ${prop} required`)
-      else if (!was.type.every((m) => is.type.includes(m)))
+      // a release's api.json may write a nested union in another order: compare them sorted
+      else if (!was.type.every((m) => is.type.map(canonical).includes(canonical(m))))
         add(
           prop,
           `${component} narrows ${prop} from ${was.type.join(' | ')} to ${is.type.join(' | ')}`,

@@ -17,6 +17,18 @@ describe('compareApi', () => {
     expect(compareApi(button('release'), button('grows'))).toEqual([])
   })
 
+  it('takes a nested union written in another order for the same type', () => {
+    const api = (type: string) => ({
+      Sheet: { extends: [], props: { onClose: { optional: true, type: [type] } } },
+    })
+    expect(
+      compareApi(
+        api('(event: MouseEvent | Event, details: D) => void'),
+        api('(event: Event | MouseEvent, details: D) => void'),
+      ),
+    ).toEqual([])
+  })
+
   it('names each prop removed, made required, narrowed, or added as required', () => {
     expect(compareApi(button('release'), button('shrinks'))).toEqual([
       { component: 'Button', prop: 'color', message: 'Button makes color required' },
