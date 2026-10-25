@@ -1,0 +1,6 @@
+# Written by npm run factory; never by hand.
+component: VehicleDotLegend
+layer: component
+deferred:
+  at: 2026-10-25T12:33:26.470Z
+stages: {}
