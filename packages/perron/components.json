@@ -332,7 +332,7 @@
     "name": "DepartureRow",
     "layer": "pattern",
     "category": "Departures",
-    "status": "designing",
+    "status": "building",
     "baseUiParts": [],
     "penpotPath": "Patterns/DepartureRow",
     "dependsOn": ["LineBadge", "Delay", "VehicleDot"]

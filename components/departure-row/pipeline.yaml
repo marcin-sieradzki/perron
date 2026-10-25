@@ -8,6 +8,13 @@ stages:
     status: done
     started: 2026-10-25T12:41:47.829Z
     ended: 2026-10-25T12:43:08.945Z
+  build:
+    status: done
+    started: 2026-10-25T12:43:13.655Z
+    runs: 1
+    begun: 30e83646b079f7e738041eb34a421578e4644add508f7fe11113797fa993f7ee
+    spec: 33e1ea2a8693be7a8d1c5dd2bfff855020139636b90b29d5e4bb555f6eedb2f0
+    ended: 2026-10-25T12:52:15.481Z
 notes:
   - stage: brief
     at: 2026-10-25T12:41:14.367Z
@@ -40,3 +47,9 @@ notes:
   - stage: brief
     at: 2026-10-25T12:43:08.945Z
     direction: VehicleDotLabel's spec on its branch sets the state's word in typography.label-sm and color.text.primary, but DepartureRow sets the same word as its second line in typography.caption and color.text.secondary. Composing VehicleDotLabel later would change how the row looks, so the design run should pick one treatment for a dot and its word inside a row.
+  - stage: build
+    at: 2026-10-25T12:52:15.481Z
+    direction: With a long destination wrapped over several lines (LongDestination), the badge centres on the whole row and sits below the destination's first line, which it names. The design run should decide whether the badge stays centred or aligns to the first line.
+  - stage: build
+    at: 2026-10-25T12:52:15.481Z
+    direction: In light theme, VehicleDot's ageing dot at size small in a yellow line colour (F, M2) shows faintly on color.surface.raised. The word beside it carries the state, so contrast isn't required, but the design run should check that the dot still reads in a list.
