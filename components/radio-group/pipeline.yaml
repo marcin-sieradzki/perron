@@ -6,9 +6,9 @@ deferred:
 stages:
   brief:
     status: pending
-    started: 2026-10-25T05:23:03.910Z
-    ended: 2026-10-25T05:33:10.547Z
-    pending: 10
+    started: 2026-10-25T05:34:26.774Z
+    ended: 2026-10-25T05:39:10.049Z
+    pending: 1
 notes:
   - stage: brief
     at: 2026-10-25T05:33:10.548Z
@@ -35,3 +35,18 @@ notes:
       8. Tokens: Base UI produces read-only and invalid states that no drawing shows. Does read-only look like rest (no hover, default cursor), and invalid turn the edge color.status.danger, checked or not, with disabled winning over invalid? Recommended: yes. This follows the Fields family and Base UI dropping aria-invalid while disabled.
       9. Tokens: Does the focus ring go round the radio's whole row, using perron.css's own outline and the row's radius.md, rather than round the circle alone? Recommended: yes. The row is the focusable element and the click target, and the component then draws no ring of its own.
       10. Stories: Does the deferred design's page draw the group as `Default`, plus the radio with one `State` property (default, hover, focus, checked, disabled), its stories prefixed Radio (RadioDefault, RadioHover, RadioFocus, RadioChecked, RadioDisabled) the way SegmentedControl's are prefixed Segment? Recommended: yes. Disabled, ReadOnly, Invalid, HiddenLabel, Controlled, LabelShapes, LongLabels and InForm are extra stories with no Penpot variant.
+  - stage: brief
+    at: 2026-10-25T05:39:10.050Z
+    direction: Perron's Field can't frame a radio or checkbox group. Its required label, rendered as a root Field.Label, takes over the group's aria-labelledby from the legend and each radio's name from its own words. Field needs a group mode, for example rendering no Field.Label when its child is a named group, before CheckboxGroup and RadioGroup can take a hint and an error through it.
+  - stage: brief
+    at: 2026-10-25T05:39:10.050Z
+    direction: Fieldset's spec ('CheckboxGroup and RadioGroup take them that way, through Field'; Do row 'Give the group's description and error through a Field round it') is now wrong for Perron's Field. Correct it when Field gains a group mode.
+  - stage: brief
+    at: 2026-10-25T05:39:10.050Z
+    direction: Checkbox and CheckboxGroup are still designing. RadioGroup sets the first round choice mark (icon.size.400, color.surface.raised and color.surface.inverse, the Switch-matching disabled, read-only and invalid looks), and its spec now says Checkbox is to match. Checkbox's brief should take the same size and fills, or add a shared size token for both.
+  - stage: brief
+    at: 2026-10-25T05:39:10.050Z
+    direction: "The earlier finding about merging main for Switch's spec and duration.switch is resolved: main is merged in, and the radio keeps no transition because nothing in it changes place."
+  - stage: brief
+    at: 2026-10-25T05:39:10.050Z
+    questions: "1. Anatomy: Perron's Field has shipped with a required label, which it always renders as Field.Label. Does RadioGroup still take no description and no error of its own? A caller who needs either would wrap the group in Base UI's Field.Root with Field.Description and Field.Error and no Field.Label, and never in Perron's Field, until Field can frame a group. Recommended: yes. A root Field.Label becomes the aria-labelledby of the group and of each Radio.Root, so inside Perron's Field every radio would be heard as the field's label; Base UI's forms guide frames a radio group with a Field.Root and no root label; own description and error props would rebuild Field; either can join later without a break."
