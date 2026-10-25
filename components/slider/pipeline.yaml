@@ -3,9 +3,6 @@ component: Slider
 layer: component
 deferred:
   at: 2026-10-25T06:59:37.033Z
-needsHuman:
-  stage: review
-  reason: '3 review rounds found a P1 or a P2; the last: review round 3 found 1 P2 (components/slider/review.md)'
 stages:
   brief:
     status: done
@@ -13,22 +10,14 @@ stages:
     ended: 2026-10-25T07:14:59.750Z
   build:
     runs: 3
-    status: done
-    started: 2026-10-25T07:47:14.412Z
-    begun: f0609eb530416ec30a65f1154e07006160dba2217cb2b4fdb9875cd1b62cc4fa
-    spec: be4c5b9bb88e6d66df6b8e7fd6201302be752e2e4f95a930943777328d0d26ba
-    ended: 2026-10-25T07:50:19.525Z
+    failing: review round 3 found 1 P2 (components/slider/review.md)
   review:
     rounds: 3
-    sentBack: 3
+    sentBack: 0
     findings:
       p1: 0
       p2: 1
       p3: 5
-    status: failed
-    started: 2026-10-25T07:50:23.563Z
-    ended: 2026-10-25T07:58:53.371Z
-    failing: review round 3 found 1 P2 (components/slider/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T07:13:09.465Z
@@ -57,3 +46,6 @@ notes:
   - stage: build
     at: 2026-10-25T07:37:43.677Z
     direction: Sheet's Do and don't row (docs/components/sheet.md:214) still tells callers to mark a horizontal carousel with a bare data-base-ui-swipe-ignore. In Base UI's Drawer a bare value drops every touch swipe that starts on the carousel, so a drag across it can't close or resize the sheet; the row could ask for ="x", as Slider's CR-11 does.
+  - stage: review
+    at: 2026-10-25T07:59:46.114Z
+    unblocked: '3 review rounds found a P1 or a P2; the last: review round 3 found 1 P2 (components/slider/review.md)'
