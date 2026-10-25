@@ -29,6 +29,7 @@ The map fills the screen, and the page shell floats over it.
 - A top bar of glass groups runs along the top: brand, clock, filters and settings.
 - The overview sheet sits on the left and the detail panel on the right.
 - Map controls and the scale sit at the bottom right, and the legend at the bottom centre.
+- Toasts stand in one column at the bottom centre, `size.toast-width` wide and `size.panel-gap` above the bottom edge, over the legend for the few seconds they show.
 - Panels keep `size.panel-gap` from the screen edge and from each other.
 
 <!-- tokens: size.top-bar size.top-bar-phone size.sheet-width size.detail-width size.toast-width size.sheet-peek size.panel-gap -->
