@@ -10,11 +10,7 @@ stages:
     ended: 2026-10-25T06:48:00.020Z
   build:
     runs: 2
-    status: done
-    started: 2026-10-25T07:08:26.797Z
-    begun: d68db8abded2b0e858f1df176c3a0b2e9197a1201d4ebd0ba8fd9a4ceb619ca2
-    spec: 0274832f7d1de38b584ff78f4260d4107e8c35c5ac0f82606cea81c44d8d86d5
-    ended: 2026-10-25T07:10:48.312Z
+    failing: "docs failed: Shared tooling: scripts/lib/docgen.ts:95, in propDoc, checker.getNonNullableType(checker.getTypeOfSymbolAtLocation(member, at)) strips null as well as the optional | undefined, so the docs page's PropsTable shows NumberField's inherited value as number where the spec (docs/components/number-field.md:82) and Base UI's NumberField.Root.Props give number | null. The build cannot fix it: the contract keeps inherited members as Base UI declares them. docgen should drop only undefined (filter the union's undefined member, or strip a trailing ' | undefined' from typeToString as the ROOT_PROPS branch at lines 176-179 does), with a docgen.test.ts case for an inherited T | null member. Otherwise the docs stage was green: page shape, stable entry, gates docs and npm run check."
   review:
     rounds: 2
     sentBack: 1
@@ -22,9 +18,12 @@ stages:
       p1: 0
       p2: 0
       p3: 7
-    status: done
-    started: 2026-10-25T07:11:21.494Z
-    ended: 2026-10-25T07:16:06.731Z
+  docs:
+    status: failed
+    started: 2026-10-25T07:16:22.131Z
+    failures: 1
+    ended: 2026-10-25T07:19:58.200Z
+    failing: "Shared tooling: scripts/lib/docgen.ts:95, in propDoc, checker.getNonNullableType(checker.getTypeOfSymbolAtLocation(member, at)) strips null as well as the optional | undefined, so the docs page's PropsTable shows NumberField's inherited value as number where the spec (docs/components/number-field.md:82) and Base UI's NumberField.Root.Props give number | null. The build cannot fix it: the contract keeps inherited members as Base UI declares them. docgen should drop only undefined (filter the union's undefined member, or strip a trailing ' | undefined' from typeToString as the ROOT_PROPS branch at lines 176-179 does), with a docgen.test.ts case for an inherited T | null member. Otherwise the docs stage was green: page shape, stable entry, gates docs and npm run check."
 notes:
   - stage: brief
     at: 2026-10-25T06:46:08.247Z
@@ -71,3 +70,6 @@ notes:
   - stage: build
     at: 2026-10-25T07:00:05.669Z
     direction: Inherited props keep Base UI's JSDoc per the contract, so NumberField's required, readOnly and name read differently from TextField's own JSDoc for the same props, against api-consistency's one-prop-one-description rule.
+  - stage: docs
+    at: 2026-10-25T07:19:58.201Z
+    direction: "The docs tooling has never shown an inherited nullable prop before: NumberField's value is the first inherited T | null row in any spec, so no stable component's page has tested this path of docgen.ts."
