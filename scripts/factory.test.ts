@@ -608,6 +608,25 @@ describe('the factory dry run', () => {
     expect(pipeline().stages.docs?.failures).toBe(0)
   })
 
+  it('stops a docs run that failed on shared tooling at needs-human, with no build rerun', () => {
+    throughBrief()
+    stage('build', () => build())
+    stage('review', () => review(1))
+    const fault = 'scripts/lib/docgen.ts:95 drops null from value'
+    run('begin Tally docs')
+    expect(run('end Tally docs failed --tooling', fault).out).toMatch(
+      /^ended docs: failed: .*\nwait: needs-human\nstage: docs\nwhy: docs failed on shared tooling: scripts\/lib\/docgen\.ts:95/s,
+    )
+    expect(pipeline().stages.build?.status).toBe('done')
+    expect(pipeline().stages.docs?.failures).toBeUndefined()
+    // once the maintainer has changed the tool, docs runs again
+    expect(run('unblock Tally').out).toContain('unblocked docs\nrun: docs')
+    run('begin Tally docs')
+    expect(run('end Tally review failed --tooling', fault).err).toMatch(
+      /--tooling is for a docs run/,
+    )
+  })
+
   it('sends a docs run back to build when npm run check is red, as after main changed a gate', () => {
     throughBrief()
     stage('build', () => build())

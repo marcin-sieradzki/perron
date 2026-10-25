@@ -869,7 +869,10 @@ export function end(
   failing: string | undefined,
   env: Env,
   direction: string[] = [],
+  tooling = false,
 ): Result {
+  if (tooling && !(stage === 'docs' && outcome === 'failed'))
+    return { ok: false, why: '--tooling is for a docs run that failed on shared tooling' }
   if (p.stages[stage]?.status !== 'running')
     return { ok: false, why: `${stage} is not running; begin it first` }
   const out = clone(p)
@@ -941,6 +944,11 @@ export function end(
     case 'docs': {
       if (outcome === 'done') verdict = docsGate(p, env)
       if (verdict.outcome !== 'failed') break
+      // shared tooling is the maintainer's to change: a build rerun could not fix it
+      if (tooling) {
+        out.needsHuman = { stage, reason: `docs failed on shared tooling: ${verdict.failing}` }
+        break
+      }
       s.failures = (s.failures ?? 0) + 1
       const reason = `docs failed: ${verdict.failing}`
       if (s.failures >= CAPS.docs)

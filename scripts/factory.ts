@@ -3,7 +3,7 @@
 // Usage: node scripts/factory.ts <command> <Name> … [--json] (npm run factory -- …)
 //   next <Name>                                   what comes next; never writes
 //   begin <Name> <stage>                          records the stage as running, or refuses (exit 1)
-//   end <Name> <stage> <done|failed|pending> [--failing "<check and why>"] [--direction "<finding>"]…
+//   end <Name> <stage> <done|failed|pending> [--failing "<check and why>"] [--direction "<finding>"]… [--tooling]
 //                                                 checks the stage's gate, records it, prints next;
 //                                                 each --direction the notes lack, and a pending run's --failing
 //                                                 (its numbered questions, kept though the gate fails it),
@@ -39,7 +39,7 @@ import {
 const USAGE = `usage: npm run factory -- next|approve|defer <Name> [--json]
        npm run factory -- unblock <Name> [--to build|review] [--json]
        npm run factory -- begin <Name> <stage> [--json]
-       npm run factory -- end <Name> <stage> <done|failed|pending> [--failing "<check and why>"] [--direction "<finding>"]… [--json]
+       npm run factory -- end <Name> <stage> <done|failed|pending> [--failing "<check and why>"] [--direction "<finding>"]… [--tooling] [--json]
 stages: ${STAGES.join(', ')}`
 
 /** What a command prints and its exit code. */
@@ -62,8 +62,9 @@ export function factory(argv: string[], env: Env): Printed {
   const args: string[] = []
   for (let i = 0; i < argv.length; i++) {
     if (Object.hasOwn(valued, argv[i])) valued[argv[i]].push(argv[++i] ?? '')
-    else if (argv[i] !== '--json') args.push(argv[i])
+    else if (argv[i] !== '--json' && argv[i] !== '--tooling') args.push(argv[i])
   }
+  const tooling = argv.includes('--tooling')
   const failing = valued['--failing'].at(-1)
   const direction = valued['--direction'].filter(Boolean)
   const [command, name, stage, outcome] = args
@@ -94,7 +95,7 @@ export function factory(argv: string[], env: Env): Printed {
       result = begin(p, stage as Stage, env)
       break
     case 'end':
-      result = end(p, stage as Stage, outcome as Outcome, failing, env, direction)
+      result = end(p, stage as Stage, outcome as Outcome, failing, env, direction, tooling)
       break
     case 'approve':
       result = approve(p, env)
