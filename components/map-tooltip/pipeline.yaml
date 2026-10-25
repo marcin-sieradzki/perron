@@ -1,0 +1,6 @@
+# Written by npm run factory; never by hand.
+component: MapTooltip
+layer: component
+deferred:
+  at: 2026-10-25T00:10:58.185Z
+stages: {}
