@@ -2,6 +2,7 @@
 // Base UI's Tabs. Its list, tab and panel live here too: Base UI's parts read the root's context,
 // so they can't be built or shown apart (docs/components/tabs.md, Anatomy). Base UI gives the
 // keys, the roving focus, the fallback and the ARIA; nothing here adds a key handler (CR-1).
+import { mergeProps } from '@base-ui/react/merge-props'
 import { Tabs as BaseTabs } from '@base-ui/react/tabs'
 import type { CSSProperties, ReactNode, Ref } from 'react'
 import './Tabs.css'
@@ -31,8 +32,10 @@ export interface TabsProps extends Inherited<
    */
   defaultValue?: string | null
   /**
-   * Called when the selected tab changes: by a click, Enter or Space (`details.reason` `'none'`),
-   * or by Tabs itself when the selected tab is disabled or removed. `event` is `details.event`.
+   * Called when the selected tab changes: by a click, Enter or Space, or an arrow key with
+   * `activateOnFocus` on (`details.reason` `'none'`); and by Tabs itself, at mount when
+   * `defaultValue` is left out (`'initial'`), or when the selected tab is disabled or removed
+   * (`'disabled'`, `'missing'`). `event` is `details.event`.
    */
   onChange?: (event: Event, value: string | null, details: BaseTabs.Root.ChangeEventDetails) => void
   /** One `TabsList` and a `TabsPanel` for each of its tabs. */
@@ -70,13 +73,13 @@ export function Tabs({ value, defaultValue, onChange, className, ref, ...rest }:
 export interface TabsListProps extends Inherited<BaseTabs.List.Props> {
   /** The list's `Tab`s, in reading order. */
   children?: ReactNode
-  /** Reaches the list. Merged after `pn-TabsList`. */
+  /** Reaches the root. Merged after `pn-TabsList`. */
   className?: string
-  /** Reaches the list. */
+  /** Reaches the root. */
   style?: CSSProperties
-  /** Reaches the list, the `role="tablist"` element. */
+  /** Reaches the root, the `role="tablist"` element. */
   ref?: Ref<HTMLDivElement>
-  /** Props for the inner parts, merged with the component's own, which win. */
+  /** Props for each inner part, merged with the part's own, which win. */
   slotProps?: {
     /** Props for the `indicator` part, the underline under the selected tab. */
     indicator?: BaseTabs.Indicator.Props
@@ -92,14 +95,15 @@ export function TabsList({ children, className, slotProps, ref, ...rest }: TabsL
   return (
     <BaseTabs.List {...rest} ref={ref} className={classes('pn-TabsList', className)}>
       {children}
-      {/* The caller's props, then the component's own, which win (CR-5). Its one own prop is the
-          class, merged here rather than by mergeProps, which joins only string classes: a
-          slotProps className may be Base UI's function of the indicator's state. */}
+      {/* The caller's props, then the component's own, which win, merged by mergeProps (CR-5).
+          The class is resolved first, out of the slot, since mergeProps joins only string classes
+          and a slotProps className may be Base UI's function of the indicator's state. Typed by
+          the Indicator part, not 'span', as its `style` may be such a function too. */}
       <BaseTabs.Indicator
-        {...indicator}
-        className={(state) =>
-          classes('pn-TabsList-indicator', typeof given === 'function' ? given(state) : given)
-        }
+        {...mergeProps<typeof BaseTabs.Indicator>(indicator, {
+          className: (state: BaseTabs.Indicator.State) =>
+            classes('pn-TabsList-indicator', typeof given === 'function' ? given(state) : given),
+        })}
       />
     </BaseTabs.List>
   )
@@ -121,11 +125,11 @@ export interface TabProps extends Inherited<BaseTabs.Tab.Props, 'value' | 'disab
   count?: number
   /** The label: the words that name the view, in sentence case, such as "Departures". */
   children?: ReactNode
-  /** Reaches the tab. Merged after `pn-Tab`. */
+  /** Reaches the root. Merged after `pn-Tab`. */
   className?: string
-  /** Reaches the tab. */
+  /** Reaches the root. */
   style?: CSSProperties
-  /** Reaches the tab, the `role="tab"` `<button>`. */
+  /** Reaches the root, the `role="tab"` `<button>`. */
   ref?: Ref<HTMLButtonElement>
 }
 
@@ -165,11 +169,11 @@ export interface TabsPanelProps extends Inherited<BaseTabs.Panel.Props, 'value'>
   value: string
   /** The view the tab names. */
   children?: ReactNode
-  /** Reaches the panel. Merged after `pn-TabsPanel`. */
+  /** Reaches the root. Merged after `pn-TabsPanel`. */
   className?: string
-  /** Reaches the panel. */
+  /** Reaches the root. */
   style?: CSSProperties
-  /** Reaches the panel, the `role="tabpanel"` element. */
+  /** Reaches the root, the `role="tabpanel"` element. */
   ref?: Ref<HTMLDivElement>
 }
 
