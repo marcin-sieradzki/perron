@@ -118,7 +118,7 @@ export interface DataStateKeyProps extends Omit<ComponentPropsWithRef<'ul'>, 'ch
    */
   minutesDurationLabel?: string
   /**
-   * Overrides "Unknown", heard in place of "—" for a count or a threshold no data gives
+   * Overrides "Unknown", heard in place of "—" for a count no data gives, and in place of a sentence whose threshold no data gives
    * @default The locale's
    */
   unknownLabel?: string
