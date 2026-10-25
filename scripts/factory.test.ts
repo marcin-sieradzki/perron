@@ -296,6 +296,53 @@ describe('the factory dry run', () => {
     expect(pipeline().notes).toEqual([{ stage: 'build', at: expect.any(String), questions: asked }])
   })
 
+  it('stops at needs-human at the third build run to end pending, and unblock resets the count', () => {
+    throughBrief()
+    const asked = (n: number) => `${n}. Which tone is the default? Recommended: plain.`
+    expect(stage('build', () => build(), 'pending', asked(1)).out).toContain(
+      'wait: pending-questions',
+    )
+    expect(stage('build', () => build(), 'pending', asked(2)).out).toContain(
+      'wait: pending-questions',
+    )
+    expect(stage('build', () => build(), 'pending', asked(3)).out).toBe(
+      `ended build: pending: ${asked(3)}\nwait: needs-human\nstage: build\nwhy: 3 build runs ended with questions; the last asked: ${asked(3)}\n`,
+    )
+    expect(run('begin Tally build').err).toMatch(/waits at needs-human \(build\)/)
+    expect(pipeline().stages.build).toMatchObject({ asked: 3, runs: 3 })
+    run('unblock Tally')
+    expect(pipeline().stages.build?.asked).toBeUndefined()
+    expect(stage('build', () => build()).out).toContain('ended build: done\nrun: review')
+  })
+
+  it('reruns a failed build once when the spec changed since it began, then stops', () => {
+    throughBrief()
+    // the spec is the same: a failed run stops the loop, as ever
+    stage('build', () => build(), 'failed', 'TS6059: tokens.ts is not under rootDir')
+    expect(run('next Tally').out).toMatch(/^wait: needs-human\n/)
+    run('unblock Tally')
+    stage('build', () => build(), 'failed', 'TS6059: tokens.ts is not under rootDir')
+    // the spec is revised after the failed run: one rerun, with the failure to fix
+    brief('Read the offset from its custom property.\n')
+    expect(run('next Tally').out).toBe(
+      'run: build\nwhy: the last run failed, and docs/components/tally.md has changed since it began; run the build again from the revised spec\nfix: TS6059: tokens.ts is not under rootDir. docs/components/tally.md has been revised since that run began: build what it says now.\n',
+    )
+    expect(run('begin Tally build').code).toBe(0)
+    expect(pipeline()).toMatchObject({ stages: { build: { status: 'running', respecs: 1 } } })
+    expect(pipeline().needsHuman).toBeUndefined()
+    expect(pipeline().notes?.at(-1)).toMatchObject({
+      stage: 'build',
+      unblocked: expect.stringMatching(
+        /; rerun once because the spec changed since that run began$/,
+      ),
+    })
+    expect(run('end Tally build failed', 'TS6059 again').out).toContain('wait: needs-human')
+    // a second revision gets no second rerun
+    brief('Read the offset from its custom property, in px.\n')
+    expect(run('next Tally').out).toMatch(/^wait: needs-human\nstage: build\n/)
+    expect(run('begin Tally build').err).toMatch(/waits at needs-human \(build\)/)
+  })
+
   it('keeps each Direction finding and each unblock in the notes, across reruns', () => {
     throughBrief()
     const finding = 'typography.data-sm does not list keys in help text'
@@ -482,6 +529,11 @@ describe('the factory dry run', () => {
       /ended visual: failed: no components\/tally\/visual\/report\.json written since visual began/,
     )
     expect(run('end Tally docs done').err).toBe('refused: docs is not running; begin it first\n')
+  })
+
+  it('takes a word such as constructor as an argument, not as a flag', () => {
+    expect(factory(['next', 'Tally', 'constructor'], env()).code).toBe(0)
+    expect(factory(['begin', 'Tally', 'toString'], env()).err).toMatch(/"toString" is not a stage/)
   })
 
   it('prints next as JSON for the skill, and never writes on next', () => {
