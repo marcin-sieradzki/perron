@@ -219,7 +219,7 @@
     "name": "FilterChip",
     "layer": "component",
     "category": "Inputs",
-    "status": "building",
+    "status": "stable",
     "baseUiParts": ["Toggle"],
     "penpotPath": "Components/FilterChip",
     "dependsOn": ["Count"]

@@ -23,6 +23,10 @@ stages:
     status: done
     started: 2026-10-25T01:50:15.337Z
     ended: 2026-10-25T01:56:04.524Z
+  docs:
+    status: done
+    started: 2026-10-25T01:56:28.764Z
+    ended: 2026-10-25T01:58:46.392Z
 notes:
   - stage: brief
     at: 2026-10-25T01:19:52.654Z
@@ -73,3 +77,9 @@ notes:
   - stage: build
     at: 2026-10-25T01:50:11.262Z
     direction: "Spec, Tokens (selected, disabled): outside forced colours, the disabled selected chip's color.surface.inset fill is still the same colour as the Count's pill, so the pill disappears and only the tertiary figure is left (review P3-5). This run did not change it."
+  - stage: docs
+    at: 2026-10-25T01:58:46.393Z
+    direction: "Selected Disabled on the docs page shows review P3-5 in both themes: the chip's color.surface.inset fill matches the Count's pill, so the count reads as a bare tertiary figure. The maintainer should pick a different pill or a different fill."
+  - stage: docs
+    at: 2026-10-25T01:58:46.393Z
+    direction: The Row story's docs description says 'the last with a count of 0'. The spec's Stories table gives the three chips' counts as 3, 2 and 0, so the two agree, but the description is shorter than the spec's text.
