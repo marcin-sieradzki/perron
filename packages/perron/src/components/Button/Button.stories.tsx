@@ -1,10 +1,11 @@
 // Button's stories: one per variant of the deferred design, named as the spec's Stories table names
-// them, and the play tests it asks for. Hover and focus render at rest; the visual stage drives them.
+// them, and the play tests it asks for. Hover, pressed and focus render at rest; the visual stage
+// drives them.
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, userEvent, within } from 'storybook/test'
 import plus from '../../../icons/plus.svg?raw'
 import search from '../../../icons/search.svg?raw'
-import { icon, resolve, stateRules } from '../../testing/stories.ts'
+import { icon, pressedAfterHover, resolve, stateFill, stateRules } from '../../testing/stories.ts'
 import { Button } from './Button.tsx'
 
 const meta = {
@@ -46,6 +47,28 @@ const hoverFill =
     if (edge) await expect(getComputedStyle(button).borderColor).toBe(resolve('borderColor', edge))
   }
 
+/**
+ * Pressing sets the `fill` token's background, written after the hover rules so it wins under the
+ * pointer, and it renders apart from both the rest and the hover fill. The cursor is `pointer`, and
+ * the `edge` token's border stays when given.
+ */
+const pressFill =
+  (fill: string, edge?: string): Play =>
+  async ({ canvasElement }) => {
+    const button = within(canvasElement).getByRole('button', { name: 'Show departures' })
+    await expect(stateFill(button, ':active')).toBe(fill)
+    await expect(pressedAfterHover(button)).toBe(true)
+    const pressed = resolve('backgroundColor', fill)
+    await expect(pressed).not.toBe(getComputedStyle(button).backgroundColor)
+    await expect(pressed).not.toBe(resolve('backgroundColor', stateFill(button)))
+    // pressed changes the fill alone, so nothing moves (CR-3) and the brand edge stays (CR-10)
+    for (const declarations of stateRules(button, ':active'))
+      for (const property of Array.from(declarations))
+        await expect(['background-color']).toContain(property)
+    await expect(getComputedStyle(button).cursor).toBe('pointer')
+    if (edge) await expect(getComputedStyle(button).borderColor).toBe(resolve('borderColor', edge))
+  }
+
 /** Tab gives the root `:focus-visible` and the ring perron.css draws; Shift+Tab leaves it. */
 const focusRing: Play = async ({ canvasElement }) => {
   const button = within(canvasElement).getByRole('button', { name: 'Show departures' })
@@ -61,7 +84,10 @@ const focusRing: Play = async ({ canvasElement }) => {
   await expect(button).not.toHaveFocus()
 }
 
-/** The button has `disabled` and `data-disabled`, Tab skips it, and a click fires no `onClick`. */
+/**
+ * The button has `disabled` and `data-disabled`, Tab skips it, a click fires no `onClick`, and the
+ * cursor is `default`.
+ */
 const disabledSkipped: Play = async ({ args, canvasElement }) => {
   const button = within(canvasElement).getByRole('button', { name: 'Show departures' })
   await expect(button).toBeDisabled()
@@ -70,6 +96,7 @@ const disabledSkipped: Play = async ({ args, canvasElement }) => {
   await expect(button).not.toHaveFocus()
   await userEvent.click(button, { pointerEventsCheck: 0 })
   await expect(args.onClick).not.toHaveBeenCalled()
+  await expect(getComputedStyle(button).cursor).toBe('default')
 }
 
 export const SolidNeutralMediumDefault: Story = {
@@ -79,6 +106,10 @@ export const SolidNeutralMediumDefault: Story = {
 export const SolidNeutralMediumHover: Story = {
   args: { variant: 'solid', color: 'neutral', size: 'medium' },
   play: hoverFill('var(--perron-color-surface-inverse-hover)'),
+}
+export const SolidNeutralMediumPressed: Story = {
+  args: { variant: 'solid', color: 'neutral', size: 'medium' },
+  play: pressFill('var(--perron-color-surface-inverse-pressed)'),
 }
 export const SolidNeutralMediumFocus: Story = {
   args: { variant: 'solid', color: 'neutral', size: 'medium' },
@@ -94,6 +125,9 @@ export const SolidNeutralSmallDefault: Story = {
 export const SolidNeutralSmallHover: Story = {
   args: { variant: 'solid', color: 'neutral', size: 'small' },
 }
+export const SolidNeutralSmallPressed: Story = {
+  args: { variant: 'solid', color: 'neutral', size: 'small' },
+}
 export const SolidNeutralSmallFocus: Story = {
   args: { variant: 'solid', color: 'neutral', size: 'small' },
 }
@@ -107,6 +141,10 @@ export const SolidBrandMediumHover: Story = {
   args: { variant: 'solid', color: 'brand', size: 'medium' },
   play: hoverFill('var(--perron-color-surface-brand-hover)', 'var(--perron-color-border-brand)'),
 }
+export const SolidBrandMediumPressed: Story = {
+  args: { variant: 'solid', color: 'brand', size: 'medium' },
+  play: pressFill('var(--perron-color-surface-brand-pressed)', 'var(--perron-color-border-brand)'),
+}
 export const SolidBrandMediumFocus: Story = {
   args: { variant: 'solid', color: 'brand', size: 'medium' },
 }
@@ -117,6 +155,9 @@ export const SolidBrandSmallDefault: Story = {
   args: { variant: 'solid', color: 'brand', size: 'small' },
 }
 export const SolidBrandSmallHover: Story = {
+  args: { variant: 'solid', color: 'brand', size: 'small' },
+}
+export const SolidBrandSmallPressed: Story = {
   args: { variant: 'solid', color: 'brand', size: 'small' },
 }
 export const SolidBrandSmallFocus: Story = {
@@ -132,6 +173,10 @@ export const OutlineNeutralMediumHover: Story = {
   args: { variant: 'outline', color: 'neutral', size: 'medium' },
   play: hoverFill('var(--perron-color-surface-hover)'),
 }
+export const OutlineNeutralMediumPressed: Story = {
+  args: { variant: 'outline', color: 'neutral', size: 'medium' },
+  play: pressFill('var(--perron-color-surface-selected)'),
+}
 export const OutlineNeutralMediumFocus: Story = {
   args: { variant: 'outline', color: 'neutral', size: 'medium' },
 }
@@ -142,6 +187,9 @@ export const OutlineNeutralSmallDefault: Story = {
   args: { variant: 'outline', color: 'neutral', size: 'small' },
 }
 export const OutlineNeutralSmallHover: Story = {
+  args: { variant: 'outline', color: 'neutral', size: 'small' },
+}
+export const OutlineNeutralSmallPressed: Story = {
   args: { variant: 'outline', color: 'neutral', size: 'small' },
 }
 export const OutlineNeutralSmallFocus: Story = {
@@ -155,6 +203,11 @@ export const OutlineBrandMediumDefault: Story = {
 }
 export const OutlineBrandMediumHover: Story = {
   args: { variant: 'outline', color: 'brand', size: 'medium' },
+  play: hoverFill('var(--perron-color-surface-hover)', 'var(--perron-color-border-brand)'),
+}
+export const OutlineBrandMediumPressed: Story = {
+  args: { variant: 'outline', color: 'brand', size: 'medium' },
+  play: pressFill('var(--perron-color-surface-selected)', 'var(--perron-color-border-brand)'),
 }
 export const OutlineBrandMediumFocus: Story = {
   args: { variant: 'outline', color: 'brand', size: 'medium' },
@@ -166,6 +219,9 @@ export const OutlineBrandSmallDefault: Story = {
   args: { variant: 'outline', color: 'brand', size: 'small' },
 }
 export const OutlineBrandSmallHover: Story = {
+  args: { variant: 'outline', color: 'brand', size: 'small' },
+}
+export const OutlineBrandSmallPressed: Story = {
   args: { variant: 'outline', color: 'brand', size: 'small' },
 }
 export const OutlineBrandSmallFocus: Story = {

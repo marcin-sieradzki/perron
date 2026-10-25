@@ -51,6 +51,7 @@ export const PAGES = [
   'docs/components/search-field.md',
   'docs/components/segmented-control.md',
   'docs/components/switch.md',
+  'docs/components/text-area.md',
   'docs/components/text-field.md',
   'docs/components/section.md',
   'docs/components/surface.md',
