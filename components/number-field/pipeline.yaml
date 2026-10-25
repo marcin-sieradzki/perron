@@ -23,6 +23,8 @@ stages:
       p1: 0
       p2: 3
       p3: 11
+    status: running
+    started: 2026-10-25T08:54:16.894Z
   docs:
     failures: 1
 notes:
