@@ -271,6 +271,7 @@ Each of these is written once, in its file, and a component, pattern or story im
 | `lines`                          | `packages/perron/src/testing/stories.ts`        | How many lines tall an element is, in its own line height, to show a long word wraps                                           |
 | `heardMarkup`                    | `packages/perron/src/testing/markup.ts`         | `heard` for a unit test: what a screen reader reads of server-rendered markup, with no DOM                                     |
 | `attribute`, `attr`              | `packages/perron/src/testing/markup.ts`         | One attribute's value in the first tag of server-rendered markup, its character references read back                           |
+| `openingTag`                     | `packages/perron/src/testing/markup.ts`         | The opening tag of the first element in server-rendered markup whose first class is the one given, for `attribute`             |
 | `drawing`                        | `packages/perron/src/testing/markup.ts`         | An svg's drawing, its attributes and its children's, less what an inlined icon adds or leaves out, to compare it with its file |
 
 ## What axe won't catch

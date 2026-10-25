@@ -1,0 +1,80 @@
+# Written by npm run factory; never by hand.
+component: Progress
+layer: component
+deferred:
+  at: 2026-10-25T07:21:09.585Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-25T07:27:56.145Z
+    ended: 2026-10-25T07:29:11.881Z
+  build:
+    runs: 3
+    status: done
+    started: 2026-10-25T07:48:12.389Z
+    begun: 4c5c70fd44be70a6ca06a355f5647dde51496c2f37d564cf7a1241773b34481b
+    spec: 8a465c0b8d78b2084987a6cfdd239eb95dd559b30f9d804636e0307cc3112906
+    ended: 2026-10-25T07:53:00.547Z
+  review:
+    rounds: 3
+    sentBack: 2
+    findings:
+      p1: 0
+      p2: 0
+      p3: 2
+    status: done
+    started: 2026-10-25T07:53:03.918Z
+    ended: 2026-10-25T07:56:50.027Z
+  docs:
+    status: done
+    started: 2026-10-25T07:56:58.791Z
+    ended: 2026-10-25T07:59:41.838Z
+notes:
+  - stage: brief
+    at: 2026-10-25T07:27:51.488Z
+    direction: The Perron MCP's list_tokens reads a token set that lacks size.meter-track, so the brief read the worktree's token files instead; agents in worktrees can get stale token answers from it.
+  - stage: brief
+    at: 2026-10-25T07:27:51.488Z
+    direction: "The Slider branch widens size.meter-track's description to name a slider's track, and Progress widens it too: whichever merges second should name all three bars, or the token should become a neutral size.track through the design-tokens skill."
+  - stage: brief
+    at: 2026-10-25T07:27:51.488Z
+    direction: Meter's Do and don't row says a task's progress is a progressbar 'which Perron does not have yet'; once Progress ships, that row should point to Progress.
+  - stage: brief
+    at: 2026-10-25T07:27:51.488Z
+    direction: No ROADMAP line names Progress, or most of the 21 components registered with it (Field to Link); Phase 6's waves list none of them.
+  - stage: brief
+    at: 2026-10-25T07:27:51.488Z
+    direction: "Progress runs the library's first infinite loop; scripts/visual.ts screenshots with Playwright's default animations setting, so the Indeterminate story's pixel diff will depend on the sweep's position. Passing animations: 'disabled', or emulating reduced motion, would fix it."
+  - stage: brief
+    at: 2026-10-25T07:27:51.488Z
+    direction: Base UI's Progress writes English in every locale ('indeterminate progress' as default aria-valuetext, 'indeterminate' as Progress.Value's formattedValue); any component on Base UI Progress must replace both.
+  - stage: brief
+    at: 2026-10-25T07:27:51.488Z
+    direction: DataStatePanel's spec left out a spinner partly because no duration.* token gave a loop; with duration.progress-sweep that reason no longer holds, though its other reasons for a calm message do.
+  - stage: brief
+    at: 2026-10-25T07:27:51.488Z
+    questions: "1. (Anatomy) Does Progress take Meter's anatomy and layout unchanged? Recommended: yes. 2. (Anatomy) Does the deferred design draw Base UI's three statuses as one State property (progressing, complete, indeterminate)? Recommended: yes. 3. (Props) Does Progress take no color, size or variant, its fill always color.text.primary? Recommended: yes. 4. (Tokens) Does the track reuse size.meter-track, its description widened? Recommended: yes. 5. (Tokens) Does the fill change reuse duration.meter with easing.standard, its description widened? Recommended: yes. 6. (Tokens) Does the complete status keep the progressing look at 100%, with no token, tint or word of its own? Recommended: yes. 7. (Tokens) Is indeterminate a 40% segment sweeping inset-inline-start -40% to 100% over a new loop token duration.progress-sweep of 1600ms? Recommended: yes. 8. (Reduced motion) Does the sweep stop under reduced motion, the segment resting at inset-inline-start 30%? Recommended: yes. 9. (Owned strings) Is the word heard while indeterminate a new key inProgress, 'In progress', overridable by inProgressLabel? Recommended: yes."
+  - stage: build
+    at: 2026-10-25T07:35:35.660Z
+    direction: "The Indeterminate story's play reads the (prefers-reduced-motion: reduce) rules from document.styleSheets with its own reducedMotionRules function, since no shared helper reads @media rules; the next component with a loop would copy it, so it could join testing/stories.ts and the contract's Shared helpers table."
+  - stage: build
+    at: 2026-10-25T07:35:35.660Z
+    direction: "The zero-width strut (content: '\\200b' / ''), which keeps a row's line when its text is empty, now appears in NormalService and Progress; the contract's CSS section could name it as the way to keep a baseline."
+  - stage: build
+    at: 2026-10-25T07:35:35.660Z
+    direction: An agent wrote the Danish, Swedish and Norwegian for inProgress ('I gang', 'Pågår', 'Pågår'); the word is not in content design's fixed data-state table, so a native reader should confirm it.
+  - stage: build
+    at: 2026-10-25T07:53:00.547Z
+    direction: 'The P2-1 fix (indeterminate segment sized by inset-inline, width auto) depends on width: auto not being animatable; a global interpolate-size: allow-keywords would make a first figure ease from the segment again. The Indeterminate play step checking getAnimations() would catch it.'
+  - stage: build
+    at: 2026-10-25T07:53:00.547Z
+    direction: "With the segment resting at 30% outside reduced motion too, scripts/visual.ts needs only Playwright's animations: 'disabled' for a stable Indeterminate screenshot."
+  - stage: build
+    at: 2026-10-25T07:53:00.547Z
+    direction: "Review P3-1 stands: on easing.standard the sweep slows as it leaves at the inline end, so the track looks empty for a moment; a linear sweep or a loop easing token is the maintainer's call."
+  - stage: docs
+    at: 2026-10-25T07:59:41.838Z
+    direction: label's JSDoc ends with 'Required' while value's starts with 'Required.', repeating the props table's marker two different ways; dropping the word from both, or placing it alike, would make them agree.
+  - stage: docs
+    at: 2026-10-25T07:59:41.838Z
+    direction: slotProps.value's JSDoc tip (its function children writes the figure from (formattedValue, value)) never reaches the docs page, whose slots table shows a fixed 'Props for the value part.'; it lives only in the spec and editor hover text.

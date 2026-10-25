@@ -27,6 +27,15 @@ export function attribute(markup: string, name: string) {
   return value === undefined ? undefined : decode(value)
 }
 
+/**
+ * The opening tag of the first element in server-rendered markup whose first class is
+ * `className`, for `attribute` to read, or "" when there is none.
+ *
+ * @example openingTag('<p><b class="pn-Meter x" id="a">1</b></p>', 'pn-Meter') // '<b class="pn-Meter x" id="a">'
+ */
+export const openingTag = (markup: string, className: string) =>
+  markup.match(new RegExp(`<[^>]*class="${className}[ "][^>]*>`))?.[0] ?? ''
+
 /** The elements React writes with no closing tag. */
 const VOID = /^(?:area|base|br|col|embed|hr|img|input|link|meta|source|track|wbr)$/i
 

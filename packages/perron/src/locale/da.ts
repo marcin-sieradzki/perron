@@ -40,4 +40,5 @@ export const da: OwnedStrings = {
   kilometersUnit: 'km',
   noMatches: 'Ingen resultater',
   optional: '(valgfrit)',
+  inProgress: 'I gang',
 }
