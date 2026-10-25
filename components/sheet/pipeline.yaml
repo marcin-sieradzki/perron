@@ -9,8 +9,10 @@ stages:
     started: 2026-10-24T21:11:36.821Z
     ended: 2026-10-24T21:12:38.653Z
   build:
-    runs: 5
-    failing: review round 4 found 1 P2 (components/sheet/review.md)
+    runs: 6
+    status: done
+    started: 2026-10-25T00:01:09.072Z
+    ended: 2026-10-25T00:02:56.875Z
   review:
     rounds: 4
     sentBack: 1
@@ -18,9 +20,5 @@ stages:
       p1: 0
       p2: 1
       p3: 5
-    status: failed
-    started: 2026-10-24T23:57:16.720Z
-    ended: 2026-10-25T00:01:03.507Z
-    failing: review round 4 found 1 P2 (components/sheet/review.md)
   docs:
     failures: 1
