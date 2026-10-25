@@ -5,9 +5,9 @@ deferred:
   at: 2026-10-25T07:20:14.474Z
 stages:
   brief:
-    status: pending
-    started: 2026-10-25T07:20:18.438Z
-    ended: 2026-10-25T07:28:35.814Z
+    status: done
+    started: 2026-10-25T07:28:39.007Z
+    ended: 2026-10-25T07:30:10.698Z
 notes:
   - stage: brief
     at: 2026-10-25T07:28:35.814Z
@@ -24,3 +24,9 @@ notes:
   - stage: brief
     at: 2026-10-25T07:28:35.814Z
     questions: "1. (Anatomy) Title renders as a p by default, a heading via slotProps.title.render? Recommended: yes, as EmptyState. 2. (Anatomy) Intent icons on the 14 px grid at icon.size.325: check-circle, warning, plus new info-circle and exclamation-circle under a Feedback category? Recommended: yes. 3. (Anatomy) Intent icon in a new shared part IntentIcon under src/parts/? Recommended: yes, Toast needs it next. 4. (Props) color 'neutral' | 'info' | 'success' | 'warning' | 'danger', default neutral on color.surface.inset with no icon? Recommended: yes (answered in the family's order neutral, success, warning, danger, info). 5. (Props) Close button only when onClose is given; onClose(event, 'close-press', { reason, event }); Alert never hides itself? Recommended: yes. 6. (Tokens) The look the Tokens table gives (tinted surface, transparent hairline, radius.lg, ink text, intent icon)? Recommended: yes. 7. (Keyboard and ARIA) role=status by default for every color, overridable to alert, never alert by default? Recommended: yes. 8. (Keyboard and ARIA) No hidden intent word? Recommended: yes, as Tag and EmptyState."
+  - stage: brief
+    at: 2026-10-25T07:30:10.698Z
+    direction: "The contract sets no order for a color-only component's stories: Tag lists them in the union's order and Meter and Alert alphabetically, so the docs pages put the same intents in different orders. The contract's Stories section could fix one order."
+  - stage: brief
+    at: 2026-10-25T07:30:10.698Z
+    direction: The contract's Shared parts table lists only Base UI parts in CloseButton's 'Composed in' column. A component that composes a shared part without a Base UI root, such as Alert, has no stated way to be listed there.
