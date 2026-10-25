@@ -5,11 +5,12 @@ import type { ReactElement, Ref } from 'react'
 import { mergeProps } from '@base-ui/react/merge-props'
 import { useRender } from '@base-ui/react/use-render'
 import { useOwnedStrings } from '../../PerronProvider.tsx'
+import { IntentIcon } from '../../parts/IntentIcon/IntentIcon.tsx'
 import type { OwnedStringKey } from '../../locale/index.ts'
 import './SeverityLabel.css'
 
 /** The kinds of disruption, named as the `color.transit.severity.*` tokens. */
-export type SeverityLabelSeverity = 'delay' | 'data' | 'diversion' | 'planned'
+export type SeverityLabelSeverity = 'delay' | 'data' | 'diversion' | 'planned' | 'notice'
 
 /** What SeverityLabel's root writes as data attributes: `data-severity`. */
 export interface SeverityLabelState extends Record<string, unknown> {
@@ -22,7 +23,8 @@ export interface SeverityLabelProps extends Omit<
 > {
   /**
    * The kind of disruption: `delay` for vehicles running late, `diversion` for a changed route,
-   * `planned` for planned works, `data` for a problem with the real-time data feed.
+   * `planned` for planned works, `data` for a problem with the real-time data feed, `notice` for a
+   * service notice whose message does not say which of the others it is.
    */
   severity: SeverityLabelSeverity
   /**
@@ -49,6 +51,12 @@ export interface SeverityLabelProps extends Omit<
    * @default The locale's
    */
   dataFeedProblemsLabel?: string
+  /**
+   * Overrides "Service notice", the name shown for `severity='notice'`.
+   *
+   * @default The locale's
+   */
+  serviceNoticeLabel?: string
   /** Reaches the root element. */
   ref?: Ref<HTMLSpanElement>
 }
@@ -65,8 +73,9 @@ const ICON = {
   focusable: 'false',
 } as const
 
-// CR-3: each icon is its file in packages/perron/icons/, inlined unchanged but for width and height.
-// CR-1: one icon, one word per kind.
+// CR-3: each icon is its file in packages/perron/icons/, inlined unchanged but for width and height,
+// but for the service notice's, which is the IntentIcon part's info drawing, since the contract
+// keeps that icon in the part's folder. CR-1: one icon, one word per kind.
 const KINDS: Record<SeverityLabelSeverity, { icon: ReactElement; word: OwnedStringKey }> = {
   // icons/warning.svg
   delay: {
@@ -110,6 +119,11 @@ const KINDS: Record<SeverityLabelSeverity, { icon: ReactElement; word: OwnedStri
       </svg>
     ),
   },
+  // the IntentIcon part's info icon
+  notice: {
+    word: 'serviceNotice',
+    icon: <IntentIcon color="info" className="pn-SeverityLabel-icon" />,
+  },
 }
 
 /**
@@ -124,6 +138,7 @@ export function SeverityLabel({
   diversionsLabel,
   plannedWorksLabel,
   dataFeedProblemsLabel,
+  serviceNoticeLabel,
   ...rest
 }: SeverityLabelProps) {
   // CR-5: the owned strings, with this instance's *Label props laid over them
@@ -132,6 +147,7 @@ export function SeverityLabel({
     diversions: diversionsLabel,
     plannedWorks: plannedWorksLabel,
     dataFeedProblems: dataFeedProblemsLabel,
+    serviceNotice: serviceNoticeLabel,
   })
   const { icon, word } = KINDS[severity]
   // CR-2: useRender writes data-severity from the state, and passes the state to a render function.

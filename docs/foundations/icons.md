@@ -72,9 +72,9 @@ Every icon renders at one of three steps, set with `--perron-icon-size` (one of 
 
 ### Feedback
 
-| Icon                                                                  | Name                 | Grid  | Size                   | Use              |
-| --------------------------------------------------------------------- | -------------------- | ----- | ---------------------- | ---------------- |
-| <img src="../../packages/perron/icons/exclamation-circle.svg" alt=""> | `exclamation-circle` | 14 px | `icon.size.325`, 13 px | A danger message |
-| <img src="../../packages/perron/icons/info-circle.svg" alt="">        | `info-circle`        | 14 px | `icon.size.325`, 13 px | An info message  |
+| Icon                                                                  | Name                 | Grid  | Size                   | Use                                   |
+| --------------------------------------------------------------------- | -------------------- | ----- | ---------------------- | ------------------------------------- |
+| <img src="../../packages/perron/icons/exclamation-circle.svg" alt=""> | `exclamation-circle` | 14 px | `icon.size.325`, 13 px | A danger message                      |
+| <img src="../../packages/perron/icons/info-circle.svg" alt="">        | `info-circle`        | 14 px | `icon.size.325`, 13 px | An info message, and a service notice |
 
 <!-- /files -->

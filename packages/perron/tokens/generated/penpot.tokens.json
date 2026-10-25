@@ -1306,6 +1306,11 @@
             "$type": "color",
             "$value": "{color.text.secondary}",
             "$description": "Icon and label for planned works"
+          },
+          "notice": {
+            "$type": "color",
+            "$value": "{color.text.secondary}",
+            "$description": "Icon and label for service notices"
           }
         }
       },
@@ -1680,6 +1685,11 @@
             "$type": "color",
             "$value": "{color.text.secondary}",
             "$description": "Icon and label for planned works"
+          },
+          "notice": {
+            "$type": "color",
+            "$value": "{color.text.secondary}",
+            "$description": "Icon and label for service notices"
           }
         }
       },

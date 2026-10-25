@@ -1175,7 +1175,25 @@
       "Omit<SurfaceProps, 'variant' | 'children' | 'title'>"
     ],
     "props": {
+      "action": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
       "affectedLinesLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "affectsStopsLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "betweenStopsLabel": {
         "optional": true,
         "type": [
           "string"
@@ -1193,10 +1211,22 @@
           "string"
         ]
       },
+      "fromTimeLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
       "lines": {
         "optional": true,
         "type": [
           "readonly DisruptionCardLine[]"
+        ]
+      },
+      "moreStopsLabel": {
+        "optional": true,
+        "type": [
+          "string"
         ]
       },
       "ref": {
@@ -1211,13 +1241,27 @@
           "\"data\"",
           "\"delay\"",
           "\"diversion\"",
+          "\"notice\"",
           "\"planned\""
         ]
       },
       "slotProps": {
         "optional": true,
         "type": [
-          "{ header?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; severity?: Omit<SeverityLabelProps, \"severity\"> | undefined; lines?: DetailedHTMLProps<HTMLAttributes<HTMLUListElement>, HTMLUListElement> | undefined; title?: Omit<TextProps, \"children\" | \"variant\"> | undefined; description?: Omit<TextProps, \"children\" | \"variant\"> | undefined; }"
+          "{ header?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; severity?: Omit<SeverityLabelProps, \"severity\"> | undefined; lines?: DetailedHTMLProps<HTMLAttributes<HTMLUListElement>, HTMLUListElement> | undefined; title?: Omit<TextProps, \"children\" | \"variant\"> | undefined; description?: Omit<TextProps, \"children\" | \"variant\"> | undefined; stops?: Omit<TextProps, \"children\" | \"variant\"> | undefined; time?: Omit<TextProps, \"children\" | \"variant\"> | undefined; action?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; }"
+        ]
+      },
+      "stopListEndLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "stops": {
+        "optional": true,
+        "type": [
+          "DisruptionCardStretch",
+          "readonly string[]"
         ]
       },
       "style": {
@@ -1226,10 +1270,28 @@
           "CSSProperties"
         ]
       },
+      "time": {
+        "optional": true,
+        "type": [
+          "DisruptionCardTime"
+        ]
+      },
+      "timeRangeLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
       "title": {
         "optional": false,
         "type": [
           "ReactNode"
+        ]
+      },
+      "untilTimeLabel": {
+        "optional": true,
+        "type": [
+          "string"
         ]
       }
     }
@@ -2966,12 +3028,19 @@
           "Ref<HTMLSpanElement>"
         ]
       },
+      "serviceNoticeLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
       "severity": {
         "optional": false,
         "type": [
           "\"data\"",
           "\"delay\"",
           "\"diversion\"",
+          "\"notice\"",
           "\"planned\""
         ]
       }

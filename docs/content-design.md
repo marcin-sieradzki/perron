@@ -25,6 +25,7 @@ Components take these from the locale dictionaries in `packages/perron/src/local
 | Diversions         | Omkørsler                  | Omledningar              | Omkjøringer                |
 | Planned works      | Planlagt arbejde           | Planerade arbeten        | Planlagt arbeid            |
 | Data feed problems | Problemer med realtidsdata | Problem med realtidsdata | Problemer med sanntidsdata |
+| Service notice     | Driftsmeddelelse           | Trafikmeddelande         | Driftsmelding              |
 | Running normally   | Kører normalt              | Går som vanligt          | Går som normalt            |
 | Show on map        | Vis på kort                | Visa på kartan           | Vis på kartet              |
 | On time            | Til tiden                  | I tid                    | I rute                     |

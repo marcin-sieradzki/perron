@@ -48,3 +48,7 @@
 .pn-SeverityLabel[data-severity='planned'] {
   color: var(--perron-color-transit-severity-planned);
 }
+
+.pn-SeverityLabel[data-severity='notice'] {
+  color: var(--perron-color-transit-severity-notice);
+}

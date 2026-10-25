@@ -34,6 +34,7 @@ Perron targets [WCAG 2.2](https://www.w3.org/TR/WCAG22/) level AA. Part of it th
 | `color.transit.severity.data`      | 7.63:1        | 7.92:1        | 6.77:1        | 7.80:1        | 6.85:1        | 5.71:1        |
 | `color.transit.severity.diversion` | 7.06:1        | 7.32:1        | 6.26:1        | 7.51:1        | 6.59:1        | 5.49:1        |
 | `color.transit.severity.planned`   | 7.63:1        | 7.92:1        | 6.77:1        | 7.80:1        | 6.85:1        | 5.71:1        |
+| `color.transit.severity.notice`    | 7.63:1        | 7.92:1        | 6.77:1        | 7.80:1        | 6.85:1        | 5.71:1        |
 
 <!-- /contrast -->
 
