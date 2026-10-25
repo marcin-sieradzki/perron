@@ -5,7 +5,7 @@ import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import { Button } from '../Button/Button.tsx'
-import { onHover, rendered } from '../../testing/stories.ts'
+import { colour, onHover, rendered } from '../../testing/stories.ts'
 import { Tab, Tabs, TabsList, TabsPanel, type TabsProps } from './Tabs.tsx'
 
 /** The underline of the list in `canvasElement`, once Base UI has measured the selected tab. */
@@ -131,7 +131,7 @@ export const TabHover: Story = {
   args: { defaultValue: 'departures', children: twoTabs() },
   play: async ({ canvasElement }) => {
     const lines = within(canvasElement).getByRole('tab', { name: 'Lines' })
-    await expect(getComputedStyle(lines).color).toBe(rendered('color-text-secondary'))
+    await expect(getComputedStyle(lines).color).toBe(colour('--perron-color-text-secondary'))
     await expect(onHover(lines, 'color')).toBe('var(--perron-color-text-primary)')
   },
 }
@@ -147,7 +147,7 @@ export const TabFocus: Story = {
     await expect(lines.matches(':focus-visible')).toBe(true)
     const ring = getComputedStyle(lines)
     await expect(ring.outlineStyle).toBe('solid')
-    await expect(ring.outlineColor).toBe(rendered('color-border-focus'))
+    await expect(ring.outlineColor).toBe(colour('--perron-color-border-focus'))
     await expect(ring.outlineWidth).toBe(rendered('focus-width', 'outline-width'))
     await userEvent.tab({ shift: true })
     await expect(canvasElement).not.toContainElement(document.activeElement as HTMLElement)
@@ -161,7 +161,7 @@ export const TabSelected: Story = {
     const lines = within(canvasElement).getByRole('tab', { name: 'Lines' })
     await expect(lines).toHaveAttribute('aria-selected', 'true')
     await expect(lines).toHaveAttribute('data-active')
-    await expect(getComputedStyle(lines).color).toBe(rendered('color-text-primary'))
+    await expect(getComputedStyle(lines).color).toBe(colour('--perron-color-text-primary'))
     await expectUnder(await measuredIndicator(canvasElement), lines)
   },
 }

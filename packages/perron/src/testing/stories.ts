@@ -1,6 +1,7 @@
 // Helpers the stories share, written once here (docs/components/README.md, "Shared helpers").
 import type { CSSProperties, ReactNode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { expect, screen, waitFor } from 'storybook/test'
 
 /**
  * The style of one typography role with its `-tracking` twin, for a story's own text, with no
@@ -23,8 +24,11 @@ export function heard(element: Element) {
   return copy.textContent!.replace(/\s+/g, ' ').trim()
 }
 
-/** The value a token renders as here, read from a probe that sets it on `property`. */
-export function rendered(token: string, property = 'color') {
+/**
+ * The value a token renders as here, read from a probe that sets it on `property`. A colour read
+ * as `color` is `colour`'s.
+ */
+export function rendered(token: string, property: string) {
   const probe = document.createElement('div')
   probe.style.setProperty(property, `var(--perron-${token})`)
   document.body.append(probe)
@@ -85,3 +89,14 @@ export async function mounted<T>(
     host.remove()
   }
 }
+
+/** Resolves once no dialog is open. */
+export const closed = () => waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+
+/** The element with `data-testid` `id`, once it has rendered. */
+export const byTestId = (id: string) =>
+  waitFor(() => {
+    const found = document.querySelector(`[data-testid="${id}"]`)
+    expect(found).not.toBeNull()
+    return found as HTMLElement
+  })

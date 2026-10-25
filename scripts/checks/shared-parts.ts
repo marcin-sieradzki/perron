@@ -1,6 +1,7 @@
 // The shared-parts rule: each part in the contract's "Shared parts" table is drawn once, in its
 // own folder, so its class, its icon and its declarations appear nowhere else in the source; and
-// each helper in its "Shared helpers" table is declared once, in its file. In
+// each helper in its "Shared helpers" table is declared once, in its file: not again by its name,
+// by an alias the table lists, or under a new name with the same body. In
 // CSS and MDX a declaration is matched as text; in TS and TSX only as a style object's key with a
 // string value, such as `clipPath: 'inset(50%)'`, so a variable named `clip` is no declaration.
 import { existsSync, readFileSync } from 'node:fs'
@@ -167,60 +168,145 @@ export function partProblems(
   return excuse(problems.sort(byFileLine), RULE, (f) => texts.get(f) ?? '')
 }
 
-/** One row of the contract's helpers table: the name, and its file from `packages/perron/src/`. */
+/**
+ * One row of the contract's helpers table: the name, the names a copy of it went by before
+ * (the cell's other code spans), and its file from `packages/perron/src/`.
+ */
 export interface Helper {
   name: string
+  aliases: string[]
   file: string
 }
 
 /** The helpers the contract lists, from the table under its "Shared helpers" heading. */
 export function readHelpers(contract: string): Helper[] {
-  return tableRows(section(contract, 'Shared helpers')).map((cells) => ({
-    name: codeSpans(cells[0])[0],
-    file: codeSpans(cells[1])[0].replace(`${PACKAGE}/src/`, ''),
-  }))
+  return tableRows(section(contract, 'Shared helpers')).map((cells) => {
+    const [name, ...aliases] = codeSpans(cells[0])
+    return { name, aliases, file: codeSpans(cells[1])[0].replace(`${PACKAGE}/src/`, '') }
+  })
 }
 
-/** The names a file declares at its top level, with the offset of each. */
+type Fn = ts.FunctionLikeDeclaration & { body: ts.ConciseBody }
+
+/** A function declared at the top level, or a `const` holding an arrow or a function expression. */
+function functionOf(node: ts.Node | undefined): Fn | undefined {
+  return node &&
+    (ts.isFunctionDeclaration(node) || ts.isArrowFunction(node) || ts.isFunctionExpression(node)) &&
+    node.body
+    ? (node as Fn)
+    : undefined
+}
+
+/** The names a file declares at its top level, with the offset of each and its function, if any. */
 function topLevelNames(file: string, text: string) {
   const source = ts.createSourceFile(file, text, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
-  const out: { name: string; offset: number }[] = []
+  const out: { name: string; offset: number; fn?: Fn }[] = []
   for (const statement of source.statements) {
     if (ts.isVariableStatement(statement))
       for (const d of statement.declarationList.declarations) {
-        if (ts.isIdentifier(d.name)) out.push({ name: d.name.text, offset: d.getStart(source) })
+        if (ts.isIdentifier(d.name))
+          out.push({ name: d.name.text, offset: d.getStart(source), fn: functionOf(d.initializer) })
       }
     else if (
       (ts.isFunctionDeclaration(statement) || ts.isClassDeclaration(statement)) &&
       statement.name
     )
-      out.push({ name: statement.name.text, offset: statement.name.getStart(source) })
+      out.push({
+        name: statement.name.text,
+        offset: statement.name.getStart(source),
+        fn: functionOf(statement),
+      })
+  }
+  return out
+}
+
+/** Below this many syntax nodes a body is too small to call a copy: `(node) => node != null`. */
+const SMALLEST_COPY = 8
+
+/**
+ * A function's body as a shape: its syntax tree with the names it declares (its parameters and
+ * locals, in order) and its own name numbered, comments, white space, types and redundant
+ * parentheses left out. Two functions with one shape are one function under two names. Nothing for
+ * a body under `SMALLEST_COPY` nodes.
+ */
+export function shapeOf(fn: Fn, own: string): string | undefined {
+  const names = new Map([[own, '$self']])
+  const bind = (node: ts.Node) => {
+    if ((ts.isParameter(node) || ts.isVariableDeclaration(node)) && ts.isIdentifier(node.name))
+      if (!names.has(node.name.text)) names.set(node.name.text, `$${names.size}`)
+    ts.forEachChild(node, bind)
+  }
+  bind(fn)
+  let count = 0
+  const shape = (node: ts.Node): string => {
+    if (ts.isParenthesizedExpression(node)) return shape(node.expression)
+    count++
+    if (ts.isIdentifier(node)) return names.get(node.text) ?? node.text
+    if (
+      node.kind >= ts.SyntaxKind.FirstLiteralToken &&
+      node.kind <= ts.SyntaxKind.LastTemplateToken
+    )
+      return `${node.kind}:${(node as ts.LiteralLikeNode).text}`
+    const kids: string[] = []
+    ts.forEachChild(node, (kid) => {
+      if (!ts.isTypeNode(kid)) kids.push(shape(kid))
+    })
+    const op =
+      ts.isPrefixUnaryExpression(node) || ts.isPostfixUnaryExpression(node)
+        ? `${node.operator}`
+        : ''
+    return `${node.kind}${op}(${kids.join(',')})`
+  }
+  const body = `${fn.parameters.length}:${shape(fn.body)}`
+  return count >= SMALLEST_COPY ? body : undefined
+}
+
+/** Each helper's shape, from its own declaration in its file under `src`, where it has one. */
+function helperShapes(root: string, src: string, helpers: Helper[]) {
+  const out = new Map<string, Helper>()
+  for (const helper of helpers) {
+    const file = `${src}/${helper.file}`
+    if (!existsSync(join(root, file))) continue
+    const own = topLevelNames(file, readFileSync(join(root, file), 'utf8')).find(
+      (d) => d.name === helper.name,
+    )
+    const shape = own?.fn && shapeOf(own.fn, own.name)
+    if (shape) out.set(shape, helper)
   }
   return out
 }
 
 /**
  * The problems of the code under `src` (a path from `root`): every shared helper declared at the
- * top level of a file other than its own, where an import of it belongs.
+ * top level of a file other than its own, by its name, by an alias, or as a function with its
+ * shape under another name, where an import of it belongs.
  */
 export function helperProblems(
   root: string,
   src: string,
   helpers = readHelpers(readFileSync(join(root, CONTRACT), 'utf8')),
 ): Problem[] {
-  const byName = new Map(helpers.map((h) => [h.name, h.file]))
+  const byName = new Map(helpers.flatMap((h) => [h.name, ...h.aliases].map((n) => [n, h])))
+  const byShape = helperShapes(root, src, helpers)
   const texts = new Map<string, string>()
   const problems: Problem[] = []
   for (const file of walk(root, src, (n) => /\.tsx?$/.test(n) && !/\.test\.tsx?$/.test(n))) {
     const text = readFileSync(join(root, file), 'utf8')
     texts.set(file, text)
-    for (const { name, offset } of topLevelNames(file, text)) {
-      const home = byName.get(name)
-      if (!home || file === `${src}/${home}`) continue
+    for (const { name, offset, fn } of topLevelNames(file, text)) {
+      const shape = fn && byName.get(name) === undefined ? shapeOf(fn, name) : undefined
+      const helper = byName.get(name) ?? (shape ? byShape.get(shape) : undefined)
+      if (!helper || file === `${src}/${helper.file}`) continue
+      const what =
+        name === helper.name
+          ? 'a shared helper'
+          : helper.aliases.includes(name)
+            ? `the shared helper ${helper.name} under another name`
+            : `a copy of the shared helper ${helper.name}`
       problems.push({
         file,
         line: text.slice(0, offset).split('\n').length,
-        message: `declares ${name}, a shared helper; import it from ${PACKAGE}/src/${home} (${CONTRACT}, "Shared helpers")`,
+        message: `declares ${name}, ${what}; import ${helper.name} from ${PACKAGE}/src/${helper.file} (${CONTRACT}, "Shared helpers")`,
       })
     }
   }

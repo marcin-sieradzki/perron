@@ -51,7 +51,7 @@ const card = () =>
   })
 
 /** Resolves once no card is in the document. */
-const closed = () => waitFor(() => expect(document.querySelector('.pn-MapTooltip')).toBeNull())
+const gone = () => waitFor(() => expect(document.querySelector('.pn-MapTooltip')).toBeNull())
 
 /** Resolves after the given number of frames, for a check that something has not changed. */
 const frames = async (count: number) => {
@@ -112,7 +112,7 @@ export const Default: Story = {
         'escape-key',
         expect.anything(),
       )
-      await closed()
+      await gone()
     })
   },
 }
@@ -162,7 +162,7 @@ export const Controlled: Story = {
         'escape-key',
         expect.anything(),
       )
-      await closed()
+      await gone()
       await expect(button).toHaveFocus()
     })
     await step('the button opens it again, and focus stays on the button', async () => {
@@ -184,7 +184,7 @@ export const Controlled: Story = {
           expect.anything(),
         ),
       )
-      await closed()
+      await gone()
       await expect(button).toHaveFocus()
       button.blur()
     })
@@ -215,7 +215,7 @@ export const Content: Story = {
     await expect(box.right).toBeLessThanOrEqual(window.innerWidth)
     await expect(box.bottom).toBeLessThanOrEqual(window.innerHeight)
     await userEvent.keyboard('{Escape}')
-    await closed()
+    await gone()
   },
 }
 
@@ -233,7 +233,7 @@ export const NearTopEdge: Story = {
     )
     await expect(screen.getByText(WORDS)).toBeVisible()
     await userEvent.keyboard('{Escape}')
-    await closed()
+    await gone()
   },
 }
 
@@ -298,7 +298,7 @@ export const MovingPoint: Story = {
       await above(popup, POINT)
     })
     await userEvent.keyboard('{Escape}')
-    await closed()
+    await gone()
     button.blur()
   },
 }
@@ -321,6 +321,6 @@ export const AnchorHidden: Story = {
       'escape-key',
       expect.anything(),
     )
-    await closed()
+    await gone()
   },
 }

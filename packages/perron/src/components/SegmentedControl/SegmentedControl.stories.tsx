@@ -6,7 +6,7 @@ import { useState } from 'react'
 import type { Decorator, Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, userEvent, within } from 'storybook/test'
 import { Button } from '../Button/Button.tsx'
-import { onHover, rendered } from '../../testing/stories.ts'
+import { colour, onHover, rendered } from '../../testing/stories.ts'
 import { Segment, SegmentedControl, type SegmentedControlProps } from './SegmentedControl.tsx'
 
 /** The spy every story's control reports to; a play that asserts on it clears it first. */
@@ -91,7 +91,7 @@ export const SegmentHover: Story = {
     const canvas = within(canvasElement)
     const bus = canvas.getByRole('button', { name: 'Bus' })
     const all = canvas.getByRole('button', { name: 'All' })
-    await expect(getComputedStyle(bus).color).toBe(rendered('color-text-secondary'))
+    await expect(getComputedStyle(bus).color).toBe(colour('--perron-color-text-secondary'))
     await expect(onHover(bus, 'background-color')).toBe('var(--perron-color-surface-hover)')
     await expect(onHover(bus, 'color')).toBe('var(--perron-color-text-primary)')
     // the selected segment takes no hover layer
@@ -113,7 +113,7 @@ export const SegmentFocus: Story = {
     await expect(bus.matches(':focus-visible')).toBe(true)
     const ring = getComputedStyle(bus)
     await expect(ring.outlineStyle).toBe('solid')
-    await expect(ring.outlineColor).toBe(rendered('color-border-focus'))
+    await expect(ring.outlineColor).toBe(colour('--perron-color-border-focus'))
     await expect(ring.outlineWidth).toBe(rendered('focus-width', 'outline-width'))
     await expect(ring.outlineOffset).toBe(rendered('focus-offset', 'outline-offset'))
     await userEvent.tab({ shift: true })
@@ -132,7 +132,7 @@ export const SegmentSelected: Story = {
     const style = getComputedStyle(bus)
     await expect(style.backgroundColor).toBe(rendered('color-surface-raised', 'background-color'))
     await expect(style.boxShadow).toBe(rendered('shadow-thumb', 'box-shadow'))
-    await expect(style.color).toBe(rendered('color-text-primary'))
+    await expect(style.color).toBe(colour('--perron-color-text-primary'))
     for (const name of ['All', 'Metro'])
       await expect(canvas.getByRole('button', { name })).toHaveAttribute('aria-pressed', 'false')
   },
@@ -147,7 +147,7 @@ export const SegmentDisabled: Story = {
     const bus = canvas.getByRole('button', { name: 'Bus' })
     await expect(bus).toBeDisabled()
     await expect(bus).toHaveAttribute('data-disabled')
-    await expect(getComputedStyle(bus).color).toBe(rendered('color-text-tertiary'))
+    await expect(getComputedStyle(bus).color).toBe(colour('--perron-color-text-tertiary'))
     await userEvent.tab()
     await expect(canvas.getByRole('button', { name: 'All' })).toHaveFocus()
     await userEvent.keyboard('{ArrowRight}')
@@ -168,7 +168,7 @@ export const Disabled: Story = {
     const segments = canvas.getAllByRole('button')
     for (const segment of segments) {
       await expect(segment).toBeDisabled()
-      await expect(getComputedStyle(segment).color).toBe(rendered('color-text-tertiary'))
+      await expect(getComputedStyle(segment).color).toBe(colour('--perron-color-text-tertiary'))
     }
     await userEvent.tab()
     await expect(canvasElement).not.toContainElement(document.activeElement as HTMLElement)

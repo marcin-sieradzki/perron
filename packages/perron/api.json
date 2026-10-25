@@ -372,6 +372,168 @@
       }
     }
   },
+  "DetailPanel": {
+    "extends": [
+      "Omit<ComponentPropsWithRef<'div'>, 'title' | 'children'>"
+    ],
+    "props": {
+      "action": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "anchor": {
+        "optional": true,
+        "type": [
+          "\"bottom\"",
+          "\"right\""
+        ]
+      },
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "closeLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "defaultOpen": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "defaultSnapPoint": {
+        "optional": true,
+        "type": [
+          "null",
+          "number",
+          "string",
+          "undefined"
+        ]
+      },
+      "line": {
+        "optional": true,
+        "type": [
+          "\"a\"",
+          "\"b\"",
+          "\"bus\"",
+          "\"c\"",
+          "\"e\"",
+          "\"f\"",
+          "\"h\"",
+          "\"m1\"",
+          "\"m2\"",
+          "\"m3\"",
+          "\"m4\"",
+          "\"regional\""
+        ]
+      },
+      "lineName": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "onClose": {
+        "optional": true,
+        "type": [
+          "(event: MouseEvent | Event | PointerEvent | TouchEvent | KeyboardEvent | FocusEvent, reason: DrawerRootChangeEventReason, details: DrawerRootChangeEventDetails) => void",
+          "undefined"
+        ]
+      },
+      "onOpen": {
+        "optional": true,
+        "type": [
+          "(event: MouseEvent | Event | PointerEvent | TouchEvent | KeyboardEvent | FocusEvent, details: DrawerRootChangeEventDetails) => void",
+          "undefined"
+        ]
+      },
+      "onSnapPointChange": {
+        "optional": true,
+        "type": [
+          "(event: MouseEvent | Event | PointerEvent | TouchEvent | KeyboardEvent | FocusEvent, snapPoint: DrawerSnapPoint | null, details: DrawerRootSnapPointChangeEventDetails) => void",
+          "undefined"
+        ]
+      },
+      "open": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ header?: Omit<DetailHeaderProps, \"title\" | \"line\" | \"action\" | \"variant\" | \"lineName\" | \"subheader\"> | undefined; trigger?: Props<unknown> | undefined; portal?: DrawerPortalProps | undefined; viewport?: DrawerViewportProps | undefined; close?: DrawerCloseProps | undefined; content?: DrawerContentProps | undefined; }"
+        ]
+      },
+      "snapPoint": {
+        "optional": true,
+        "type": [
+          "null",
+          "number",
+          "string",
+          "undefined"
+        ]
+      },
+      "snapPoints": {
+        "optional": true,
+        "type": [
+          "DrawerSnapPoint[]",
+          "undefined"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "subheader": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "title": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "trigger": {
+        "optional": true,
+        "type": [
+          "ReactElement<unknown, string | JSXElementConstructor<any>>"
+        ]
+      },
+      "variant": {
+        "optional": true,
+        "type": [
+          "\"line\"",
+          "\"stop\""
+        ]
+      }
+    }
+  },
   "Dialog": {
     "extends": [
       "Omit< BaseDialog.Popup.Props, 'children' | 'title' | 'className' | 'style' | 'ref' >"
@@ -960,7 +1122,7 @@
       "onClose": {
         "optional": true,
         "type": [
-          "(event: Event | MouseEvent | PointerEvent | TouchEvent | KeyboardEvent | FocusEvent, reason: TooltipRootChangeEventReason, details: TooltipRootChangeEventDetails) => void"
+          "(event: MouseEvent | Event | PointerEvent | TouchEvent | KeyboardEvent | FocusEvent, reason: TooltipRootChangeEventReason, details: TooltipRootChangeEventDetails) => void"
         ]
       },
       "open": {
@@ -1182,19 +1344,19 @@
       "onClose": {
         "optional": true,
         "type": [
-          "(event: Event | MouseEvent | PointerEvent | TouchEvent | KeyboardEvent | FocusEvent, reason: DrawerRootChangeEventReason, details: DrawerRootChangeEventDetails) => void"
+          "(event: MouseEvent | Event | PointerEvent | TouchEvent | KeyboardEvent | FocusEvent, reason: DrawerRootChangeEventReason, details: DrawerRootChangeEventDetails) => void"
         ]
       },
       "onOpen": {
         "optional": true,
         "type": [
-          "(event: Event | MouseEvent | PointerEvent | TouchEvent | KeyboardEvent | FocusEvent, details: DrawerRootChangeEventDetails) => void"
+          "(event: MouseEvent | Event | PointerEvent | TouchEvent | KeyboardEvent | FocusEvent, details: DrawerRootChangeEventDetails) => void"
         ]
       },
       "onSnapPointChange": {
         "optional": true,
         "type": [
-          "(event: Event | MouseEvent | PointerEvent | TouchEvent | KeyboardEvent | FocusEvent, snapPoint: DrawerSnapPoint | null, details: DrawerRootSnapPointChangeEventDetails) => void"
+          "(event: MouseEvent | Event | PointerEvent | TouchEvent | KeyboardEvent | FocusEvent, snapPoint: DrawerSnapPoint | null, details: DrawerRootSnapPointChangeEventDetails) => void"
         ]
       },
       "open": {

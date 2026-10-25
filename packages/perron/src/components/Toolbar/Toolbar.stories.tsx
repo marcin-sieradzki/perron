@@ -3,7 +3,7 @@
 // the visual check drives them, and their play tests check them.
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, userEvent, within } from 'storybook/test'
-import { onHover, rendered } from '../../testing/stories.ts'
+import { colour, onHover, rendered } from '../../testing/stories.ts'
 import { Toolbar, ToolbarButton, ToolbarGroup, ToolbarSeparator } from './Toolbar.tsx'
 
 /** `plus` from packages/perron/icons/. */
@@ -166,9 +166,7 @@ export const ButtonNeutralFocus: Story = {
     await expect(button).toHaveFocus()
     await expect(button.matches(':focus-visible')).toBe(true)
     await expect(getComputedStyle(button).outlineStyle).toBe('solid')
-    await expect(getComputedStyle(button).outlineColor).toBe(
-      rendered('color-border-focus', 'color'),
-    )
+    await expect(getComputedStyle(button).outlineColor).toBe(colour('--perron-color-border-focus'))
     await userEvent.tab({ shift: true })
     await expect(button).not.toHaveFocus()
   },
@@ -211,7 +209,7 @@ export const ButtonBrandHover: Story = {
     )
     await expect(onHover(button, 'border-color')).toBe('')
     await expect(getComputedStyle(button).borderTopColor).toBe(
-      rendered('color-border-brand', 'color'),
+      colour('--perron-color-border-brand'),
     )
   },
 }

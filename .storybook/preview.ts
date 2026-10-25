@@ -105,6 +105,7 @@ const preview: Preview = {
             // each registered pattern
             'DataStatePanel',
             'DetailHeader',
+            'DetailPanel',
             'StopTimeline',
             'DisruptionCard',
             'KioskBar',
@@ -142,6 +143,7 @@ const preview: Preview = {
             'StationIcon',
             'DataStatePanel',
             'DetailHeader',
+            'DetailPanel',
             'StopTimeline',
             'DisruptionCard',
             'KioskBar',
