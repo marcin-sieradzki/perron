@@ -1,0 +1,28 @@
+# Written by npm run factory; never by hand.
+component: NormalService
+layer: component
+deferred:
+  at: 2026-10-25T00:54:26.190Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-25T00:58:08.390Z
+    ended: 2026-10-25T00:59:44.706Z
+  build:
+    status: done
+    started: 2026-10-25T00:59:48.840Z
+    runs: 1
+    ended: 2026-10-25T01:04:10.664Z
+  review:
+    status: done
+    started: 2026-10-25T01:04:46.754Z
+    rounds: 1
+    findings:
+      p1: 0
+      p2: 0
+      p3: 2
+    ended: 2026-10-25T01:07:41.399Z
+  docs:
+    status: done
+    started: 2026-10-25T01:08:17.238Z
+    ended: 2026-10-25T01:10:18.186Z
