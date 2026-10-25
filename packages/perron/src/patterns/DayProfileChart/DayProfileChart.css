@@ -1,0 +1,163 @@
+/* DayProfileChart: the caption, the plot and the time axis in a column (docs/patterns/day-profile-chart.md,
+   Tokens). No surface of its own: it sits on the panel, sheet or card that holds it, sizes to its
+   container and places nothing beyond the plot's relative box. Nothing moves. */
+
+.pn-DayProfileChart {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-200);
+  margin: 0;
+}
+
+/* What the chart counts; as wide as the chart, so a long word breaks anywhere */
+.pn-DayProfileChart-caption {
+  font: var(--perron-typography-label-sm);
+  letter-spacing: var(--perron-typography-label-sm-tracking);
+  color: var(--perron-color-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+/* CR-1 and CR-11: the day from 00:00 at the left to 24:00 at the right in every locale, three
+   times as wide as it is tall; a vertical swipe still scrolls the page */
+.pn-DayProfileChart-plot {
+  position: relative;
+  aspect-ratio: 3;
+  direction: ltr;
+  touch-action: pan-y;
+}
+
+/* The drawing fills the plot; strokes at its edges are not cut */
+.pn-DayProfileChart-graph {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  overflow: visible;
+}
+
+.pn-DayProfileChart-gridline {
+  stroke: var(--perron-color-border-subtle);
+  stroke-width: var(--perron-border-width-025);
+}
+
+/* The axis line, at 0 */
+.pn-DayProfileChart-baseline {
+  stroke: var(--perron-color-border-strong);
+  stroke-width: var(--perron-border-width-025);
+}
+
+.pn-DayProfileChart-area {
+  fill: var(--perron-color-chart-series);
+  fill-opacity: var(--perron-opacity-series-fill);
+  stroke: none;
+}
+
+/* CR-4 and CR-11: the series, thicker than the hairlines beside it; a lone count is a dot */
+.pn-DayProfileChart-line {
+  stroke: var(--perron-color-chart-series);
+  stroke-width: var(--perron-border-width-050);
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* The stretched viewBox never thickens or thins a stroke */
+.pn-DayProfileChart-gridline,
+.pn-DayProfileChart-baseline,
+.pn-DayProfileChart-line {
+  vector-effect: non-scaling-stroke;
+}
+
+/* CR-3: the top count, under the gridline at the top left */
+.pn-DayProfileChart-scale {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding-block-start: var(--perron-space-050);
+  font: var(--perron-typography-data-sm);
+  letter-spacing: var(--perron-typography-data-sm-tracking);
+  color: var(--perron-color-text-tertiary);
+  white-space: nowrap;
+}
+
+/* The list lies over the plot and leaves the pointer to it */
+.pn-DayProfileChart-points {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  pointer-events: none;
+}
+
+/* CR-5: each point at its time, from the plot's top to its bottom, showing nothing at rest */
+.pn-DayProfileChart-point {
+  position: absolute;
+  inset-block: 0;
+  inline-size: 0;
+}
+
+/* The guide, while the point is highlighted */
+.pn-DayProfileChart-point[data-highlighted] {
+  border-inline-start: var(--perron-border-width-025) solid var(--perron-color-border-strong);
+}
+
+/* CR-8: the value tip along the plot's top edge, the Tooltips row's fill, text and radius, set in
+   the data role */
+.pn-DayProfileChart-tip {
+  position: absolute;
+  top: 0;
+  display: flex;
+  align-items: baseline;
+  gap: var(--perron-space-200);
+  padding-block: var(--perron-space-150);
+  padding-inline: var(--perron-space-200);
+  background-color: var(--perron-color-surface-inverse);
+  color: var(--perron-color-text-inverse);
+  font: var(--perron-typography-data);
+  letter-spacing: var(--perron-typography-data-tracking);
+  border-radius: var(--perron-radius-md);
+  white-space: nowrap;
+  box-shadow: none;
+  pointer-events: none;
+}
+
+/* The time axis under the plot, one line tall, in the plot's direction */
+.pn-DayProfileChart-axis {
+  position: relative;
+  block-size: 1lh;
+  direction: ltr;
+  font: var(--perron-typography-data-sm);
+  letter-spacing: var(--perron-typography-data-sm-tracking);
+  color: var(--perron-color-text-tertiary);
+  white-space: nowrap;
+}
+
+/* CR-8: each tick placed as the tip is */
+.pn-DayProfileChart-tick {
+  position: absolute;
+  top: 0;
+  white-space: nowrap;
+}
+
+@media (forced-colors: active) {
+  .pn-DayProfileChart-line {
+    stroke: CanvasText;
+  }
+
+  .pn-DayProfileChart-area {
+    fill: none;
+  }
+
+  .pn-DayProfileChart-baseline {
+    stroke: GrayText;
+  }
+
+  .pn-DayProfileChart-point[data-highlighted] {
+    border-inline-start-color: Highlight;
+  }
+
+  .pn-DayProfileChart-tip {
+    outline: var(--perron-border-width-025) solid CanvasText;
+  }
+}

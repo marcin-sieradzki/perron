@@ -8,6 +8,14 @@ stages:
     status: done
     started: 2026-10-25T01:59:06.340Z
     ended: 2026-10-25T02:00:24.926Z
+  build:
+    status: pending
+    started: 2026-10-25T02:00:29.346Z
+    runs: 1
+    ended: 2026-10-25T02:15:45.301Z
+    failing: |-
+      1. (Tokens: the scale and axis colour rows; Keyboard and ARIA, the contrast paragraph) The spec gives the scale's top count and the axis ticks color.text.tertiary, which is 4.00:1 on white. axe's color-contrast fails it in every DayProfileChart story and in the contract's Root story (storybook/contract/Contract.stories.tsx renders the Default args under axe). aria-hidden does not exempt visible text from WCAG 1.4.3. Which colour do the scale and the axis take? Recommended: color.text.secondary for both, which reaches 4.5:1 on every surface in both themes. That needs no axe rule turned off and no change to the contract story; tertiary stays for hints next to stronger text.
+      2. (Keyboard and ARIA: the ArrowRight and ArrowLeft rows; CR-6) What do ArrowRight and ArrowLeft do while the plot has focus but no point is highlighted, as after Escape? Recommended: highlight the last point, as focus does, and move one point from there on later presses; Home and End work as always. The code already does this.
 notes:
   - stage: brief
     at: 2026-10-25T01:58:32.189Z
@@ -38,3 +46,23 @@ notes:
   - stage: brief
     at: 2026-10-25T02:00:24.927Z
     direction: border.width.050's description names only the focus ring and a control's selected state. The chart's line now reads it too, so the build adds 'the line of a chart' to that description through the design-tokens skill (CR-11).
+  - stage: build
+    at: 2026-10-25T02:15:45.302Z
+    direction: 'Contract versus brief: the contract''s Patterns section and the patterns gate (scripts/checks/patterns.ts FILES) let a pattern import only the nodes.ts helpers, so the spec''s UnknownValue would fail the gate. The spec now has the point''s hidden words carry "Unknown" (unknownLabel) as plain text, and the tip writes its own "—". If patterns should share UnknownValue, the gate''s FILES and the Patterns section would add packages/perron/src/internal/UnknownValue.'
+  - stage: build
+    at: 2026-10-25T02:15:45.302Z
+    direction: "Spec corrections carried in the build: UnknownHours' play expects four subpaths (CR-4); Narrow's Danish label lengthened so it wraps at 320 px; the axis takes white-space: nowrap for the long-word rule; CR-3 leaves the gridline out with no known count; CR-7 keeps a touch's highlight on pointerleave and clears it on pointercancel."
+  - stage: build
+    at: 2026-10-25T02:15:45.302Z
+    direction: A lone known count between unknown ones draws a 2 px dot through the line's round cap (CR-4), which is barely visible. A marker-size token could make it read.
+  - stage: build
+    at: 2026-10-25T02:15:45.302Z
+    direction: The tip sits along the plot's top edge (CR-8), so it covers the rush-hour peaks it describes, and at 00:00 it covers the scale's top count. Placing it above the plot, or offsetting it from the line, would avoid this.
+  - stage: build
+    at: 2026-10-25T02:15:45.302Z
+    direction: The testing library does not compute a figure's name from its figcaption, so the Default play checks the caption's place under the figure instead of getByRole('figure', { name }). Chromium's accessibility tree does name it 'Vehicles in service', checked with ariaSnapshot.
+  - stage: build
+    at: 2026-10-25T02:15:45.302Z
+    questions: |-
+      1. (Tokens: the scale and axis colour rows; Keyboard and ARIA, the contrast paragraph) The spec gives the scale's top count and the axis ticks color.text.tertiary, which is 4.00:1 on white. axe's color-contrast fails it in every DayProfileChart story and in the contract's Root story (storybook/contract/Contract.stories.tsx renders the Default args under axe). aria-hidden does not exempt visible text from WCAG 1.4.3. Which colour do the scale and the axis take? Recommended: color.text.secondary for both, which reaches 4.5:1 on every surface in both themes. That needs no axe rule turned off and no change to the contract story; tertiary stays for hints next to stronger text.
+      2. (Keyboard and ARIA: the ArrowRight and ArrowLeft rows; CR-6) What do ArrowRight and ArrowLeft do while the plot has focus but no point is highlighted, as after Escape? Recommended: highlight the last point, as focus does, and move one point from there on later presses; Home and End work as always. The code already does this.

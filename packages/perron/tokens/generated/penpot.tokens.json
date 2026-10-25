@@ -649,7 +649,7 @@
         "050": {
           "$type": "dimension",
           "$value": "2px",
-          "$description": "The focus ring, the selected state of a control"
+          "$description": "The focus ring, the selected state of a control, the line of a chart"
         }
       }
     },
