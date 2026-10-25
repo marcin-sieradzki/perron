@@ -10,13 +10,15 @@ stages:
     ended: 2026-10-25T00:19:28.519Z
   build:
     runs: 3
-    status: done
-    started: 2026-10-25T00:34:12.137Z
-    ended: 2026-10-25T00:40:09.277Z
+    failing: review round 2 found 1 P2 (components/kbd/review.md)
   review:
-    rounds: 1
-    sentBack: 1
+    rounds: 2
+    sentBack: 2
     findings:
-      p1: 1
+      p1: 0
       p2: 1
-      p3: 3
+      p3: 2
+    status: failed
+    started: 2026-10-25T00:40:20.418Z
+    ended: 2026-10-25T00:42:52.364Z
+    failing: review round 2 found 1 P2 (components/kbd/review.md)
