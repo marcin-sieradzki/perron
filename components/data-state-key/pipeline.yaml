@@ -9,14 +9,11 @@ stages:
     started: 2026-10-25T17:56:21.302Z
     ended: 2026-10-25T17:56:40.084Z
   build:
-    status: pending
-    started: 2026-10-25T17:56:48.542Z
-    runs: 1
-    begun: 1826898a4544e929ae2901cb52f1555c9f3b28c0549ddf504aa05d2594c5ab89
-    spec: 16496e8a70d2ab3d16b2f336fff2d4ac3e06adfe11cc5a6b01160861daa8bbbb
-    asked: 1
-    ended: 2026-10-25T18:04:50.682Z
-    failing: '1. (Owned strings, noSignalDescription) The no-signal sentence "No report for over {ageingThreshold}, moved on by the timetable" fails expectOwnedStrings in every locale, since its comma follows the placeholder straight after a figure ending in a letter ("5 min,"), which packages/perron/src/testing/owned-strings.ts reads as a word glued to the figure. Reword it so no punctuation follows a placeholder, in all four locales: English "Moved on by the timetable, with no report for over {ageingThreshold}", Danish "Flyttet videre efter køreplanen, uden melding i over {ageingThreshold}", Swedish "Flyttad vidare enligt tidtabellen, utan rapport på över {ageingThreshold}", Norwegian "Flyttet videre etter rutetabellen, uten melding på over {ageingThreshold}"? Recommended: yes: it keeps the foundation''s two facts and adds no part, where wrapping each figure in an element of its own would add a part and a slotProps key to split the text runs, and the shared helper is the maintainer''s to change.'
+    runs: 2
+    status: done
+    started: 2026-10-25T18:04:59.592Z
+    spec: c3b329a36c42b1fcfaf7194cd62da77e27d4d9ef13deb0d7b1ee73682e95aa00
+    ended: 2026-10-25T18:18:48.842Z
 notes:
   - stage: brief
     at: 2026-10-25T17:55:46.713Z
@@ -34,3 +31,6 @@ notes:
   - stage: build
     at: 2026-10-25T18:04:50.682Z
     questions: '1. (Owned strings, noSignalDescription) The no-signal sentence "No report for over {ageingThreshold}, moved on by the timetable" fails expectOwnedStrings in every locale, since its comma follows the placeholder straight after a figure ending in a letter ("5 min,"), which packages/perron/src/testing/owned-strings.ts reads as a word glued to the figure. Reword it so no punctuation follows a placeholder, in all four locales: English "Moved on by the timetable, with no report for over {ageingThreshold}", Danish "Flyttet videre efter køreplanen, uden melding i over {ageingThreshold}", Swedish "Flyttad vidare enligt tidtabellen, utan rapport på över {ageingThreshold}", Norwegian "Flyttet videre etter rutetabellen, uten melding på over {ageingThreshold}"? Recommended: yes: it keeps the foundation''s two facts and adds no part, where wrapping each figure in an element of its own would add a part and a slotProps key to split the text runs, and the shared helper is the maintainer''s to change.'
+  - stage: build
+    at: 2026-10-25T18:18:48.842Z
+    direction: Text has no `color` that inherits, so a pattern composing it for a second line sets `color='neutral'` and `emphasis='secondary'` and leaves both out of its slot type; a caption-and-secondary Text recurs (DisruptionCard, DataStateKey) and may earn a named treatment in the contract's Families text.

@@ -49,7 +49,7 @@ const MYLDER_SENTENCES = [
   'Last reported 2.5 min to 5 min ago',
   'Placed from the timetable and the latest delay',
   'No real-time data, placed from the timetable alone',
-  'No report for over 5 min, moved on by the timetable',
+  'Moved on by the timetable, with no report for over 5 min',
 ]
 
 /** Each sentence's override prop, in the order of Data states, with a caller's own wording. */
@@ -150,7 +150,7 @@ export const Default: Story = {
         'Ageing 38 Last reported 2.5 min to 5 min ago',
         'Estimated 61 Placed from the timetable and the latest delay',
         'Timetable only 9 No real-time data, placed from the timetable alone',
-        'No signal 0 No report for over 5 min, moved on by the timetable',
+        'No signal 0 Moved on by the timetable, with no report for over 5 min',
       ])
       for (const [index, item] of items.entries()) {
         await expect(item.tagName).toBe('LI')
@@ -249,6 +249,8 @@ export const Default: Story = {
             style.lineHeight,
           ]).toEqual(caption)
           await expect(heard(description)).toBe(MYLDER_SENTENCES[index])
+          // a figure and its unit never part at a line's end
+          if (index < 2) await expect(description.textContent).toContain('2.5\u00A0min')
           // a line below its label, starting where the label's word starts
           const label = labels[index]
           const word = label.querySelector('.pn-VehicleDotLabel-label')!.getBoundingClientRect()
@@ -504,7 +506,7 @@ export const Thresholds: Story = {
         'Last reported 60 s to 5 min ago',
         MYLDER_SENTENCES[2],
         MYLDER_SENTENCES[3],
-        'No report for over 5 min, moved on by the timetable',
+        'Moved on by the timetable, with no report for over 5 min',
       ])
     })
     await step('whole seconds under 2 min, minutes to one place from it (CR-7)', async () => {
@@ -544,7 +546,7 @@ export const Thresholds: Story = {
             'Last reported Unknown to Unknown ago',
             MYLDER_SENTENCES[2],
             MYLDER_SENTENCES[3],
-            'No report for over Unknown, moved on by the timetable',
+            'Moved on by the timetable, with no report for over Unknown',
           ])
           for (const index of [0, 1, 4]) {
             const dashes = own.descriptions[index].querySelectorAll('[aria-hidden="true"]')
@@ -692,7 +694,7 @@ export const Labels: Story = {
       for (const { word } of STATE_WORDS) await expect(text).not.toContain(word)
       for (const sentence of MYLDER_SENTENCES) await expect(text).not.toContain(sentence)
       await expect(text).not.toContain('Unknown')
-      await expect(text).not.toMatch(/\d min\b|\d s\b/)
+      await expect(text).not.toMatch(/\d\s(?:min|s)\b/)
     })
     for (const [index, { variant, word }] of STATE_WORDS.entries())
       await step(`${STATE_LABELS[variant]} replaces only “${word}”`, async () => {

@@ -42,14 +42,17 @@ export const en = {
   /** Data state key: what a timetable-only vehicle means. */
   timetableOnlyDescription: 'No real-time data, placed from the timetable alone',
   /**
-   * Data state key: what a vehicle with no signal means, as in "No report for over 5 min, moved on
-   * by the timetable". `{ageingThreshold}` is the app's ageing threshold.
+   * Data state key: what a vehicle with no signal means, as in "Moved on by the timetable, with no
+   * report for over 5 min". `{ageingThreshold}` is the app's ageing threshold.
    */
-  noSignalDescription: 'No report for over {ageingThreshold}, moved on by the timetable',
-  /** A duration under 2 min, as in "60 s". `{count}` is its whole seconds. */
-  secondsDuration: '{count} s',
-  /** A duration of 2 min or more, as in "2.5 min". `{count}` is its minutes, to one decimal place. */
-  minutesDuration: '{count} min',
+  noSignalDescription: 'Moved on by the timetable, with no report for over {ageingThreshold}',
+  /** A duration under 2 min, as in "60 s", joined by a no-break space. `{count}` is its whole seconds. */
+  secondsDuration: '{count}\u00A0s',
+  /**
+   * A duration of 2 min or more, as in "2.5 min", joined by a no-break space. `{count}` is its
+   * minutes, to one decimal place.
+   */
+  minutesDuration: '{count}\u00A0min',
   /** A line's delays: a heading, and the name of the delay kind of disruption. */
   delays: 'Delays',
   /** The name of the diversion kind of disruption: a line running on a changed route. */

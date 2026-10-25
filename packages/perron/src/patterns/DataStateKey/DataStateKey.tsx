@@ -98,7 +98,7 @@ export interface DataStateKeyProps extends Omit<ComponentPropsWithRef<'ul'>, 'ch
    */
   timetableOnlyDescriptionLabel?: string
   /**
-   * Overrides "No report for over {ageingThreshold}, moved on by the timetable", the no-signal
+   * Overrides "Moved on by the timetable, with no report for over {ageingThreshold}", the no-signal
    * sentence; `{ageingThreshold}` is the ageing threshold
    * @default The locale's
    */
