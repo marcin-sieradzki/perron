@@ -8,6 +8,12 @@ stages:
     status: done
     started: 2026-10-25T04:46:25.148Z
     ended: 2026-10-25T04:47:34.087Z
+  build:
+    status: done
+    started: 2026-10-25T04:47:38.732Z
+    runs: 1
+    spec: 03d56f27ec907c3336aff2ac97c6b6a5515976d00f1548b836db49e9ccf087ff
+    ended: 2026-10-25T04:59:58.822Z
 notes:
   - stage: brief
     at: 2026-10-25T04:46:00.238Z
@@ -27,3 +33,18 @@ notes:
   - stage: brief
     at: 2026-10-25T04:46:00.238Z
     questions: "1. (Anatomy) Is Tooltip one component that takes its trigger as a required trigger ReactElement and its words as children, with the popup as its root, like Dialog's and Sheet's trigger and MapTooltip's children, rather than MUI's title for the words and children for the trigger? Recommended: yes. 2. (Anatomy) Does PerronProvider wrap its children in one Tooltip.Provider with Base UI's default delays, while Tooltip itself renders no provider? Recommended: yes. 3. (Props) Does Tooltip offer only open, defaultOpen, onOpen and onClose of Tooltip.Root's props, setting triggerId and defaultTriggerId itself, and leave out disabled, trackCursorAxis, disableHoverablePopup, actionsRef, handle and onOpenChangeComplete? Recommended: yes. 4. (Tokens) Does the trigger take no look of Tooltip's own on data-popup-open and data-trigger-disabled? Recommended: yes. 5. (Keyboard and ARIA) Does Tooltip add no ARIA of its own (no role=tooltip, no aria-describedby or aria-label on the trigger)? Recommended: yes."
+  - stage: build
+    at: 2026-10-25T04:59:58.823Z
+    direction: "Naming: Tooltip takes trigger plus children (the form of Dialog, Sheet and MapTooltip) rather than MUI's title plus a child element; Popover and Menu will copy this."
+  - stage: build
+    at: 2026-10-25T04:59:58.823Z
+    direction: PerronProvider now renders Tooltip.Provider, its first Base UI import, so Base UI's delay group covers the whole app; tooltips outside a PerronProvider each wait the full 600 ms.
+  - stage: build
+    at: 2026-10-25T04:59:58.823Z
+    direction: The shared positioner sideOffset (space.200) is measured from the trigger's box, so when the trigger has keyboard focus about 4 px is left between the popup and the focus ring (focus.offset plus focus.width). Should the family's offset clear the focus ring, or stay as it is in MapTooltip?
+  - stage: build
+    at: 2026-10-25T04:59:58.823Z
+    direction: Tooltip.Trigger.disabled is reachable only through slotProps.trigger.disabled; Tooltip has no top-level disabled prop, as the spec decides. A caller who wants to suppress the tooltip has to know to go through slotProps.
+  - stage: build
+    at: 2026-10-25T04:59:58.823Z
+    direction: MapTooltip's stories still declare a local pixels() probe, close to the shared rendered() helper; worth folding into rendered() in a later cleanup.

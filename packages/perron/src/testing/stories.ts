@@ -168,3 +168,8 @@ export const byTestId = (id: string) =>
     expect(found).not.toBeNull()
     return found as HTMLElement
   })
+
+/** Resolves after the given number of frames, for a check that something has not changed. */
+export const frames = async (count: number) => {
+  for (let i = 0; i < count; i++) await new Promise(requestAnimationFrame)
+}
