@@ -1,0 +1,93 @@
+# Written by npm run factory; never by hand.
+component: HighlightChip
+layer: component
+deferred:
+  at: 2026-10-25T01:16:43.640Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-25T01:23:35.517Z
+    ended: 2026-10-25T02:05:51.436Z
+  build:
+    runs: 3
+    status: done
+    started: 2026-10-25T02:30:35.421Z
+    spec: 8cf22cb24716b9a0a031706fddefdc0ab7295e2dee37cfb3d230509c615e434c
+    ended: 2026-10-25T02:35:13.823Z
+  review:
+    rounds: 3
+    sentBack: 0
+    findings:
+      p1: 0
+      p2: 0
+      p3: 5
+    status: done
+    started: 2026-10-25T02:35:24.229Z
+    ended: 2026-10-25T02:38:34.250Z
+  docs:
+    status: done
+    started: 2026-10-25T02:38:43.716Z
+    ended: 2026-10-25T02:40:53.334Z
+notes:
+  - stage: brief
+    at: 2026-10-25T01:23:29.991Z
+    direction: "FilterChip's brief runs in parallel on Base UI's Toggle: its pressed-state prop names (pressed/defaultPressed/onChange) and pressed fill should be held to HighlightChip's by api-consistency before either merges."
+  - stage: brief
+    at: 2026-10-25T01:23:29.991Z
+    direction: The chip's purpose (a single map-highlight toggle, not a filter) comes only from Layout's stacking table, Accessibility's Esc order and the close icon's use line; no prototype was reachable, so confirm it matches Mylder.
+  - stage: brief
+    at: 2026-10-25T01:23:29.991Z
+    direction: No close mark on a pressed chip, since the close icon belongs to CloseButton alone; if Mylder's chip showed one, it needs a new shared part through the contract.
+  - stage: brief
+    at: 2026-10-25T01:23:29.991Z
+    direction: size.control's description names only icon buttons and filter chips; it could also name highlight chips (a design-tokens change).
+  - stage: brief
+    at: 2026-10-25T01:23:29.991Z
+    direction: 'Forced colours: the pressed state relies on CR-5 (Highlight/HighlightText), since the inverse fill is dropped in Windows contrast themes.'
+  - stage: brief
+    at: 2026-10-25T01:23:29.991Z
+    questions: |-
+      1. Is HighlightChip the one toggle floating alone over the map that turns one map highlight on and off, while FilterChip changes what the map and lists show? Recommended: yes.
+      2. Does the chip show no close mark while pressed, its state told by the color.surface.inverse fill and aria-pressed? Recommended: yes.
+      3. Does the chip take pressed, defaultPressed and onChange(event, value, details), value the next pressed boolean? Recommended: yes.
+      4. Does the chip come in one look, with no variant, color, size or startIcon? Recommended: yes.
+      5. Is the chip glass at rest (color.surface.overlay, glass blur/saturate, shadow.panel, border.width.025 in color.border.subtle) and color.surface.inverse with color.text.inverse while pressed, keeping its shadow, edge transparent? Recommended: yes.
+      6. Is the chip at least size.control tall and wide, space.300 at the sides, space.150 gap, typography.label, icon.size.400? Recommended: yes.
+      7. Does a pressed disabled chip take color.surface.inset with color.text.tertiary, a disabled chip at rest keeping its glass with color.text.tertiary? Recommended: yes.
+      8. Does the chip tell its state through aria-pressed and the pressed fill, with no owned word, the caller free to change children with the state? Recommended: yes.
+  - stage: brief
+    at: 2026-10-25T02:05:51.437Z
+    direction: "Answer 3 was changed after the maintainer's all-recommended answer, to match FilterChip: the state is selected/defaultSelected/onChange(event, value, details), not pressed/defaultPressed; confirm the rename."
+  - stage: brief
+    at: 2026-10-25T02:05:51.437Z
+    direction: size.control's description names only icon buttons and filter chips; it could also name highlight chips (a design-tokens change).
+  - stage: brief
+    at: 2026-10-25T02:05:51.437Z
+    direction: The chip's purpose (one map-highlight toggle, not a filter) rests on the foundations, since no prototype was reachable; check it against Mylder when the design is drawn.
+  - stage: brief
+    at: 2026-10-25T02:05:51.437Z
+    direction: "CR-5 now sets forced-color-adjust: none on the selected chip, matching FilterChip's forced-colours rule."
+  - stage: build
+    at: 2026-10-25T02:14:06.366Z
+    direction: "Forced colours: a selected disabled chip shows GrayText on Highlight (CR-5), which is hard to read; SegmentedControl's selected disabled segment uses a GrayText fill with Canvas text. Pick one form for both toggles and FilterChip."
+  - stage: build
+    at: 2026-10-25T02:14:06.366Z
+    direction: The chip writes its glass fill, backdrop-filter and shadow in its own CSS, as Toolbar does, since Base UI's Toggle renders the element; the contract's Glass line could also name a control Base UI renders.
+  - stage: build
+    at: 2026-10-25T02:14:06.366Z
+    direction: A long label wraps inside the radius.full pill into a two-line stadium; check that shape when the design is drawn.
+  - stage: build
+    at: 2026-10-25T02:14:06.366Z
+    direction: CR-5 and the selected border-color row were rewritten at build to match the accessibility foundation's forced-colours rule; confirm the wording.
+  - stage: build
+    at: 2026-10-25T02:23:34.408Z
+    direction: A disabled chip at rest gets no forced-colours rule and relies on the browser greying a disabled button's words; FilterChip and SegmentedControl set GrayText explicitly, so the three toggles could share one form.
+  - stage: review
+    at: 2026-10-25T02:30:28.479Z
+    unblocked: '2 review rounds found a P1 or a P2, the last a P1: review round 2 found 1 P1 (components/highlight-chip/review.md)'
+  - stage: build
+    at: 2026-10-25T02:35:13.824Z
+    direction: The contract's CSS Long words rule sends a content-sized box to break-word, but an inline-flex root whose words form an anonymous flex item needs anywhere, since break-word doesn't lower that item's min-content; the rule could name this case.
+  - stage: build
+    at: 2026-10-25T02:35:13.824Z
+    direction: 'Forced colours: a selected disabled chip shows Canvas words on a GrayText fill, as FilterChip and SegmentedControl do; confirm this one form for all three toggles.'
