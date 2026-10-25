@@ -1,11 +1,15 @@
-// One foundation page, Content design among them. A placeholder until ticket T4 draws its prose
-// and its table blocks from the page's segments.
+// One foundation page, Content design among them: the sidebar, the page's prose from its markdown,
+// and each table block drawn from the page's rows as swatches, specimens, bars, galleries and
+// contrast cells, then the pages before and after it.
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { introOf, plain } from '@/components/foundations/data.ts'
+import { FoundationBody } from '@/components/foundations/FoundationBody.tsx'
+import { Crumbs, FoundationsNav, PageNav } from '@/components/foundations/Navigation.tsx'
+import '@/components/foundations/foundations.css'
 import { Markdown } from '@/components/site/Markdown.tsx'
 import { PageHeader } from '@/components/site/PageHeader.tsx'
 import { readFoundation, readFoundations } from '@/lib/foundations.ts'
-import { firstParagraph } from '@/lib/markdown.ts'
 
 type Props = { params: Promise<{ slug: string }> }
 
@@ -17,21 +21,29 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const page = readFoundation((await params).slug)
-  return page ? { title: page.title } : {}
+  if (!page) return {}
+  const intro = introOf(page)
+  return { title: page.title, ...(intro ? { description: plain(intro).replaceAll('`', '') } : {}) }
 }
 
 export default async function FoundationPage({ params }: Props) {
   const page = readFoundation((await params).slug)
   if (!page) notFound()
-  const first = page.segments[0]
-  const intro = first?.kind === 'prose' ? firstParagraph(first.markdown) : ''
+  const intro = introOf(page)
   return (
-    <div className="page">
-      <PageHeader
-        overline="Foundations"
-        title={page.title}
-        lead={intro ? <Markdown source={intro} path={page.path} inline /> : undefined}
-      />
+    <div className="page fd-layout">
+      <FoundationsNav current={page.slug} />
+      <article className="fd-main">
+        <div className="fd-head">
+          <Crumbs title={page.title} />
+          <PageHeader
+            title={page.title}
+            lead={intro ? <Markdown source={intro} path={page.path} inline /> : undefined}
+          />
+        </div>
+        <FoundationBody page={page} />
+        <PageNav slug={page.slug} />
+      </article>
     </div>
   )
 }
