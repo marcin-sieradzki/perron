@@ -112,6 +112,22 @@ describe('propRows', () => {
   })
 })
 
+describe('propRows types', () => {
+  it("shows a multi-line signature on one line, and Base UI's namespaces by their public names", () => {
+    const rows = propRows({
+      onClose: {
+        name: 'onClose',
+        type: {
+          name: 'function',
+          raw: '(\n  event: Event,\n  details: BaseTooltip.Root.ChangeEventDetails,\n) => void',
+        },
+        table: { type: { summary: 'function' } },
+      },
+    } as never)
+    expect(rows[0].type).toBe('(event: Event, details: Tooltip.Root.ChangeEventDetails) => void')
+  })
+})
+
 const SPEC = `# Gauge
 
 A gauge shows how full something is.

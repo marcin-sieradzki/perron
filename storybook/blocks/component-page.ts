@@ -14,7 +14,18 @@ export interface PropRow {
   description: string
 }
 
-const oneLine = (s: string) => s.replace(/\s+/g, ' ').trim()
+/**
+ * A type as the table shows it: on one line, with no trailing comma before a closing paren, and
+ * with a Base UI namespace by its public name, `BaseTooltip.Trigger.Props` as `Tooltip.Trigger.Props`,
+ * since a component imports Base UI's `Tooltip` as `BaseTooltip` when its own name is `Tooltip`.
+ */
+const oneLine = (s: string) =>
+  s
+    .replace(/\s+/g, ' ')
+    .replace(/\(\s+/g, '(')
+    .replace(/,?\s+\)/g, ')')
+    .replace(/\bBase([A-Z]\w*)\./g, '$1.')
+    .trim()
 
 /** A prop's type as written in the props type, where docgen kept the text. */
 function typeOf(arg: InputType) {

@@ -14,11 +14,17 @@
 // `defaultOpen`, opens by `defaultOpen` in its stories (the contract's Stories), since the docs page
 // shows each story's first render. The intro the docs page shows holds no run notes: what the spec
 // rests on, such as ADR 0010, sits below the intro's `<!-- run notes -->` line. A missing file or
-// table has no line to excuse, so this rule takes no perron-allow.
+// table has no line to excuse, so this rule takes no perron-allow. Nor does a prop's type name a
+// type the component's file keeps to itself, which the page would show and the reader can't find.
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { RUN_NOTES, specProse } from '../../storybook/blocks/component-page.ts'
-import { componentDocs, type ComponentDoc } from '../lib/docgen.ts'
+import {
+  componentDocs,
+  docgenProgram,
+  type ComponentDoc,
+  type DocgenProgram,
+} from '../lib/docgen.ts'
 import { PACKAGE } from '../lib/paths.ts'
 import { codeFile } from '../lib/props.ts'
 import { folderOf, isBuilt, readRegistry, specPage, type Entry } from '../lib/registry.ts'
@@ -36,10 +42,12 @@ const docsPage = (e: Entry) => `${PACKAGE}/src/${folderOf(e.layer)}/${e.name}/${
 /** The statuses that need the docs page: the entry's docs stage is done. */
 const DOCUMENTED = new Set(['stable', 'deprecated'])
 
-/** The docs page's docgen of `e`, read out of its code. */
-function docOf(root: string, e: Entry) {
+/** The docs page's docgen of `e`, read out of its code, through `shared` when given. */
+function docOf(root: string, e: Entry, shared?: DocgenProgram) {
   const file = join(root, codeFile(e))
-  return componentDocs(readFileSync(file, 'utf8'), file).find((d) => d.actualName === e.name)
+  return componentDocs(readFileSync(file, 'utf8'), file, shared).find(
+    (d) => d.actualName === e.name,
+  )
 }
 
 /** A Default cell as the props table would show it: a lone code span's text; nothing for none. */
@@ -171,6 +179,29 @@ function unknownTypes(e: Entry, doc: ComponentDoc): Problem[] {
     }))
 }
 
+/** The names of the types a component's file declares for itself, unexported: `type ChangeDetails = …`. */
+const localTypes = (code: string) =>
+  [...code.matchAll(/^(?:type|interface)\s+([A-Z]\w*)\b/gm)].map((m) => m[1])
+
+/**
+ * Each member whose type, as the docs page shows it, names a type the component's file keeps to
+ * itself, such as `ChangeDetails`, which a reader can't look up: the page shows the type as
+ * written, so it is written with the public name, `Tooltip.Root.ChangeEventDetails`.
+ */
+function privateTypes(root: string, e: Entry, doc: ComponentDoc): Problem[] {
+  const names = localTypes(readFileSync(join(root, codeFile(e)), 'utf8'))
+  return Object.entries(doc.props ?? {}).flatMap(([prop, p]) => {
+    const type = p.tsType as { raw?: string; name?: string } | undefined
+    const shown = type?.raw ?? type?.name ?? ''
+    const name = names.find((n) => new RegExp(`\\b${n}\\b`).test(shown))
+    if (!name) return []
+    return {
+      file: codeFile(e),
+      message: `${e.name}'s docs page would show the type of ${prop} with ${name}, a type its file keeps to itself, which the reader can't look up: write the type it stands for, by Base UI's or Perron's public name`,
+    }
+  })
+}
+
 /** A story that sets `defaultOpen`: `defaultOpen: true` in args, or the JSX attribute. */
 const OPENS = /\bdefaultOpen(\s*:\s*true\b|\s*=\s*\{\s*true\s*\}|(?=[\s/>]))/
 
@@ -221,13 +252,18 @@ export default {
   run(root) {
     const problems: Problem[] = []
     const missing = (rel: string) => !existsSync(join(root, rel))
-    for (const e of readRegistry(root).filter(isBuilt)) {
+    const built = readRegistry(root).filter(isBuilt)
+    // one compiler program for every component's code, not one each
+    const shared = docgenProgram(
+      built.map((e) => join(root, codeFile(e))).filter((f) => existsSync(f)),
+    )
+    for (const e of built) {
       if (missing(specPage(e)))
         problems.push({
           file: specPage(e),
           message: `${e.name} is ${e.status} and has no spec page; copy docs/components/TEMPLATE.md`,
         })
-      const doc = missing(codeFile(e)) ? undefined : docOf(root, e)
+      const doc = missing(codeFile(e)) ? undefined : docOf(root, e, shared)
       if (!missing(codeFile(e)) && !Object.keys(doc?.props ?? {}).length)
         problems.push({
           file: codeFile(e),
@@ -238,6 +274,7 @@ export default {
           ...tableProblems(root, e, doc),
           ...unknownTypes(e, doc),
           ...overlayProblems(root, e, doc),
+          ...privateTypes(root, e, doc),
         )
       problems.push(...storyProblems(root, e), ...introProblems(root, e))
       if (DOCUMENTED.has(e.status) && missing(docsPage(e)))
