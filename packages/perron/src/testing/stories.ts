@@ -24,6 +24,19 @@ export function heard(element: Element) {
 }
 
 /**
+ * A colour custom property, such as `--perron-color-text-secondary`, as it renders: the computed
+ * `color` of a probe that reads it, to compare with an element's computed colour.
+ */
+export function colour(property: string) {
+  const probe = document.createElement('span')
+  probe.style.color = `var(${property})`
+  document.body.append(probe)
+  const rendered = getComputedStyle(probe).color
+  probe.remove()
+  return rendered
+}
+
+/**
  * Renders `ui` apart from the story, into a host appended to `parent`, runs `test` on the host,
  * and unmounts and removes the host after, whether `test` passes or throws.
  */

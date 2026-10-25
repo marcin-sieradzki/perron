@@ -1,4 +1,17 @@
 {
+  "Attribution": {
+    "extends": [
+      "Omit<useRender.ComponentProps<'small'>, 'children'>"
+    ],
+    "props": {
+      "children": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      }
+    }
+  },
   "Brand": {
     "extends": [
       "Omit<useRender.ComponentProps<'span'>, 'children' | 'ref'>"
