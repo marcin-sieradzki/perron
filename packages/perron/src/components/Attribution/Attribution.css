@@ -28,7 +28,7 @@
 }
 
 @media (hover: hover) {
-  /* perron-allow(pointer-feedback): a link inside text keeps the browser's own press and pointer */
+  /* perron-allow(pointer-feedback): a link in running text keeps the browser's pointer and, as text links do, takes no pressed look */
   .pn-Attribution :any-link:hover {
     color: var(--perron-color-text-primary);
   }

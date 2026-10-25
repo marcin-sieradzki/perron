@@ -50,10 +50,34 @@ describe('pointer-feedback', () => {
     ).toEqual([])
   })
 
+  it('matches a wrapped selector, merges a split press and fails an edge-only press that repeats', () => {
+    expect(
+      lint(`${BASE}
+@media (hover: hover) {
+  .pn-X:not(
+      [data-disabled],
+      [data-readonly]
+    ):hover { background-color: var(--a-hover); }
+}
+.pn-X:not([data-disabled], [data-readonly]):active { background-color: var(--a-pressed); }
+.pn-X:not([data-disabled], [data-readonly]):active { transform: scale(0.98); }`),
+    ).toEqual([])
+    expect(
+      lint(`${BASE}
+@media (hover: hover) { .pn-X:hover { border-color: var(--a); } }
+.pn-X:active { border-color: var(--a); }`),
+    ).toEqual([expect.stringMatching(/paints only what its hover rule already paints/)])
+  })
+
   it('fails a hover outside (hover: hover)', () => {
     expect(
       lint(`${BASE}
 .pn-X:hover { background-color: var(--a-hover); }
+.pn-X:active { background-color: var(--a-pressed); }`),
+    ).toEqual([expect.stringMatching(/hovers outside @media \(hover: hover\)/)])
+    expect(
+      lint(`${BASE}
+@media not all and (hover: hover) { .pn-X:hover { background-color: var(--a-hover); } }
 .pn-X:active { background-color: var(--a-pressed); }`),
     ).toEqual([expect.stringMatching(/hovers outside @media \(hover: hover\)/)])
   })
@@ -93,6 +117,21 @@ ${pair}`),
     expect(lint(`.pn-X-label { cursor: pointer; }\n${pair}`)).toEqual([
       expect.stringMatching(/no cursor: pointer/),
     ])
+    // a child's pointer is not the part's, and a guarded disabled state still needs the default
+    expect(
+      lint(`.pn-X .pn-X-icon { cursor: pointer; }
+.pn-X[data-disabled]:not([data-pressed]) { color: var(--t); }
+${pair}`),
+    ).toEqual([
+      expect.stringMatching(/keeps the pointer/),
+      expect.stringMatching(/no cursor: pointer/),
+    ])
+    // an attribute with a space or ~= in it, and an element hovered inside a part
+    for (const hovered of [".pn-Y[data-x~='a b']", '.pn-Y button'])
+      expect(
+        lint(`@media (hover: hover) { ${hovered}:hover { color: var(--a); } }
+${hovered}:active { color: var(--b); }`),
+      ).toEqual([expect.stringMatching(/no cursor: pointer/)])
     // the row that holds a part sets its cursor in its own file
     expect(
       lint(`@media (hover: hover) { [role]:hover > .pn-X { color: var(--a); } }

@@ -162,11 +162,11 @@ Every part a pointer presses to act or to change a value, such as a button, a li
 
 Neither hover nor pressed applies to a disabled or read-only part: the rules exclude `[data-disabled]` and `[data-readonly]`, since a part with `focusableWhenDisabled` has no native `disabled` and still matches `:hover` and `:active`. The spec's Tokens table has a hover row, a pressed row and the two cursor rows for each such part, and a `play` test checks the pressed fill, as written, renders apart from the hover one and its rule comes after the hover rule (`stateFill`, `pressedAfterHover`, [Shared helpers](#shared-helpers)). The states change at once, as [Motion](#css) says; a transition on them takes a `duration.*` token, which reduced motion already shortens.
 
-The `pointer-feedback` check ([Checks](#checks)) holds the CSS to this: every hover rule needs its `:active` rule, outside the query, after it and painting otherwise, and a file that hovers a part of its own sets `cursor: pointer`, and `cursor: default` when it styles a disabled state. A part a press doesn't change says why in a `perron-allow(pointer-feedback)` on its hover rule:
+The `pointer-feedback` check ([Checks](#checks)) holds the CSS to this: every hover rule sits inside `(hover: hover)` and needs `:active` rules for its selector, outside the query, after it and painting something otherwise, and the part it hovers sets `cursor: pointer` in a rule of its own, and `cursor: default` in its disabled or read-only rule when the file styles one. A part a press doesn't change says why in a `perron-allow(pointer-feedback)` on its hover rule:
 
 - a text box (the Fields family), which a press focuses: the focus ring and the text cursor answer it;
 - a row in a popup, which a press chooses and closes, so no pressed look would show;
-- a link inside running text, which keeps the browser's own press and pointer.
+- a link inside running text, which keeps the browser's pointer and, as text links do, takes no pressed look.
 
 ## CSS
 

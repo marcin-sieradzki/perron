@@ -94,6 +94,7 @@ A selected segment that is disabled, alone or with its whole control, keeps its 
 | `label`                 | rest               | `font`, `letter-spacing`    | `typography.label`, with its tracking twin                                    |
 | `segment`               | rest               | `background-color`          | `transparent`                                                                 |
 | `segment`               | rest               | `color`                     | `color.text.secondary`                                                        |
+| `segment`               | rest               | `cursor`                    | none: the keyword `pointer`                                                   |
 | `segment`               | hover              | `background-color`          | `color.surface.hover`                                                         |
 | `segment`               | hover              | `color`                     | `color.text.primary`                                                          |
 | `segment`               | pressed            | `background-color`          | `color.surface.selected`                                                      |
@@ -102,6 +103,7 @@ A selected segment that is disabled, alone or with its whole control, keeps its 
 | `segment`               | selected           | `box-shadow`                | `shadow.thumb`                                                                |
 | `segment`               | selected           | `color`                     | `color.text.primary`                                                          |
 | `segment`               | disabled           | `color`                     | `color.text.tertiary`                                                         |
+| `segment`               | disabled           | `cursor`                    | none: the keyword `default`                                                   |
 | `segment`               | selected, disabled | `background-color`          | `color.surface.raised`                                                        |
 | `segment`               | selected, disabled | `box-shadow`                | `shadow.thumb`                                                                |
 | `segment`               | selected, disabled | `color`                     | `color.text.tertiary`                                                         |

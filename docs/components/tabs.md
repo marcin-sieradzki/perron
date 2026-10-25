@@ -117,11 +117,13 @@ The tabs are underline tabs: no fill but the `color.surface.hover` a press lays 
 | `tab`                 | rest     | `gap`                       | `space.150`                                                                                              |
 | `tab`                 | rest     | `background-color`          | `transparent`                                                                                            |
 | `tab`                 | rest     | `color`                     | `color.text.secondary`                                                                                   |
+| `tab`                 | rest     | `cursor`                    | none: the keyword `pointer`                                                                              |
 | `tab`                 | hover    | `color`                     | `color.text.primary`                                                                                     |
 | `tab`                 | pressed  | `color`                     | `color.text.primary`                                                                                     |
 | `tab`                 | pressed  | `background-color`          | `color.surface.hover`, the one fill a tab takes, while the pointer holds it                              |
 | `tab`                 | selected | `color`                     | `color.text.primary`                                                                                     |
 | `tab`                 | disabled | `color`                     | `color.text.tertiary`                                                                                    |
+| `tab`                 | disabled | `cursor`                    | none: the keyword `default`                                                                              |
 | `tab` (`focusRing`)   | focus    | `outline`, `outline-offset` | `focus.width` in `color.border.focus`, `focus.offset` (drawn by `perron.css`)                            |
 | `label`               | rest     | `font`, `letter-spacing`    | `typography.label`, with its tracking twin                                                               |
 | `count`               | rest     | `font`, `letter-spacing`    | `typography.data-sm`, with its tracking twin                                                             |

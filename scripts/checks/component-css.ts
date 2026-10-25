@@ -4,7 +4,7 @@
 import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import postcss, { type AtRule, type Declaration, type Node, type Rule } from 'postcss'
+import postcss, { type Declaration, type Node, type Rule } from 'postcss'
 import { PACKAGE } from '../lib/paths.ts'
 import { readSources } from '../lib/token-sources.ts'
 import { cssVarName, loadTokens } from '../lib/tokens.ts'
@@ -12,8 +12,12 @@ import {
   byFileLine,
   codeSpans,
   CONTRACT,
+  CSS_LAYERS,
   excuse,
+  inMedia,
+  media,
   section,
+  selector,
   tableRows,
   walk,
   type Check,
@@ -152,15 +156,6 @@ export function cssContext(root: string): CssContext {
 let cached: CssContext | undefined
 const repo = () => (cached ??= cssContext(join(dirname(fileURLToPath(import.meta.url)), '../..')))
 
-const media = (params: string) =>
-  params
-    .toLowerCase()
-    .replace(/\s+/g, ' ')
-    .replace(/\(\s*/g, '(')
-    .replace(/\s*\)/g, ')')
-    .replace(/\s*:\s*/g, ': ')
-    .trim()
-
 /**
  * A declaration that decides what a word longer than its line does: it breaks (`overflow-wrap` or
  * `word-break`), or the text stays on one line (`white-space: nowrap` or `pre`, a choice its spec
@@ -173,16 +168,6 @@ const LONG_WORD =
 const pnClass = (sel: string) => {
   const m = /\.(pn-[A-Za-z0-9]+)(-[A-Za-z0-9]+)?/.exec(sel)
   return m ? { own: `${m[1]}${m[2] ?? ''}`, root: m[1] } : undefined
-}
-
-/** A selector with its whitespace collapsed, so two spellings of one selector compare equal. */
-const selector = (text: string) => text.replace(/\s+/g, ' ').trim()
-
-const inMedia = (node: Node, query: string) => {
-  for (let p = node.parent; p; p = p.parent)
-    if (p.type === 'atrule' && (p as AtRule).name.toLowerCase() === 'media')
-      if (media((p as AtRule).params).includes(query)) return true
-  return false
 }
 
 /** Each `var()` in a value: its name and whether it has a fallback. */
@@ -354,17 +339,11 @@ export function cssProblems(
   return excuse(problems.sort(byFileLine), RULE, () => css)
 }
 
-const LAYER_DIRS: [string, CssLayer][] = [
-  [`${PACKAGE}/src/components`, 'component'],
-  [`${PACKAGE}/src/patterns`, 'pattern'],
-  [`${PACKAGE}/src/parts`, 'part'],
-]
-
 export default {
   rule: RULE,
   run(root) {
     const context = cssContext(root)
-    return LAYER_DIRS.flatMap(([dir, layer]) =>
+    return CSS_LAYERS.flatMap(([dir, layer]) =>
       walk(root, dir, (n) => n.endsWith('.css')).flatMap((file) =>
         cssProblems(file, readFileSync(join(root, file), 'utf8'), layer, context),
       ),
