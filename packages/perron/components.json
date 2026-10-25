@@ -588,7 +588,7 @@
     "name": "Popover",
     "layer": "component",
     "category": "Overlays",
-    "status": "designing",
+    "status": "building",
     "baseUiParts": [
       "Popover.Root",
       "Popover.Trigger",
@@ -597,8 +597,7 @@
       "Popover.Popup",
       "Popover.Title",
       "Popover.Description",
-      "Popover.Close",
-      "Popover.Arrow"
+      "Popover.Close"
     ],
     "penpotPath": "Components/Popover",
     "dependsOn": []

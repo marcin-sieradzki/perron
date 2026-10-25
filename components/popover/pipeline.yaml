@@ -8,6 +8,12 @@ stages:
     status: done
     started: 2026-10-25T05:21:42.336Z
     ended: 2026-10-25T05:22:49.000Z
+  build:
+    status: done
+    started: 2026-10-25T05:22:54.028Z
+    runs: 1
+    spec: 90cbe184f88b1214544ce573254dcce299f260a674118e8b3eac3793acb33946
+    ended: 2026-10-25T05:30:02.531Z
 notes:
   - stage: brief
     at: 2026-10-25T05:21:08.076Z
@@ -31,3 +37,12 @@ notes:
       8. (Tokens) Width follows content, capped at min(320px raw under perron-allow, --available-width); height capped at --available-height and scrolls? Recommended: yes.
       9. (Tokens) On data-anchor-hidden the popover keeps its rest look rather than hide? Recommended: yes.
       10. (CR-6) Close button always rendered, as in Dialog? Recommended: yes.
+  - stage: build
+    at: 2026-10-25T05:30:02.531Z
+    direction: "The positioner defaults are side 'bottom' and align 'center'. With a narrow trigger near the screen's edge, the centred popup is shifted to collisionPadding, so its start edge sits about 4 px off the trigger's start edge (components-popover--default, root). Options: keep 'center', or default align to 'start' so the popover lines up with its trigger."
+  - stage: build
+    at: 2026-10-25T05:30:02.531Z
+    direction: "In LongContent (content taller than the room below the trigger), Base UI's default collisionAvoidance falls back to the perpendicular axis: the popup opens to the right of the trigger at full viewport height instead of staying below it and scrolling. Options: keep Base UI's default, or make collisionAvoidance.fallbackAxisSide 'none' the default so a popover stays above or below its trigger."
+  - stage: build
+    at: 2026-10-25T05:30:02.531Z
+    direction: "The Overlays family types the first argument of onOpen and onClose two ways: Dialog and Popover use Event, Sheet uses ChangeDetails['event']. Choose one form for the family."
