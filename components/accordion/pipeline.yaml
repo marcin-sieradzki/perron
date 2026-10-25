@@ -26,6 +26,10 @@ stages:
     started: 2026-10-25T08:48:25.239Z
     reviewed: a29c9ffb35aea2f4e173c9e4ec261ae60eca14a0
     ended: 2026-10-25T08:52:02.670Z
+  docs:
+    status: done
+    started: 2026-10-25T08:52:12.109Z
+    ended: 2026-10-25T08:54:57.713Z
 notes:
   - stage: brief
     at: 2026-10-25T08:15:45.377Z
@@ -69,3 +73,9 @@ notes:
   - stage: build
     at: 2026-10-25T08:47:50.519Z
     direction: Accordion's stories declare a local geometry helper (a trigger's box, its title's offset, padding, gap and font) to prove its states keep their geometry (CR-12); most specs have a rule like this and could share one helper in testing/stories.ts.
+  - stage: docs
+    at: 2026-10-25T08:54:57.713Z
+    direction: "The slots table writes every slot row as 'Props for the <part> part', so slotProps.header's JSDoc hint (render: <h2 /> for another heading level) doesn't reach the props table; slot rows could keep the JSDoc text after that first phrase."
+  - stage: docs
+    at: 2026-10-25T08:54:57.713Z
+    direction: Inherited rows show Base UI's JSDoc, so the spec's notes on them don't reach the page (Accordion's disabled doesn't say every trigger becomes disabled; the root's keepMounted says 'the element' where the spec says 'each panel'). The spec's Description for an inherited prop could be limited to Base UI's JSDoc, or the table could add the spec's note.

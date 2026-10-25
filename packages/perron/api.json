@@ -1,4 +1,53 @@
 {
+  "Accordion": {
+    "extends": [
+      "Inherited< BaseAccordion.Root.Props<string>, 'value' | 'defaultValue' | 'onValueChange' | 'orientation' | 'loopFocus' | 'onChange' >"
+    ],
+    "props": {
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "defaultValue": {
+        "optional": true,
+        "type": [
+          "string[]"
+        ]
+      },
+      "onChange": {
+        "optional": true,
+        "type": [
+          "(event: Event, value: string[], details: AccordionRootChangeEventDetails) => void"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "value": {
+        "optional": true,
+        "type": [
+          "string[]"
+        ]
+      }
+    }
+  },
   "Alert": {
     "extends": [
       "Omit< useRender.ComponentProps<'div'>, 'title' | 'children' | 'color' | 'onClose' >"
