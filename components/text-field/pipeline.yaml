@@ -1,0 +1,55 @@
+# Written by npm run factory; never by hand.
+component: TextField
+layer: component
+deferred:
+  at: 2026-10-25T05:32:54.763Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-25T05:42:00.874Z
+    ended: 2026-10-25T05:43:28.416Z
+  build:
+    runs: 2
+    status: done
+    started: 2026-10-25T05:59:06.004Z
+    spec: 062d9ec0f6974b563b9f02c3f6a7924ff7d46f51fbd382a54b13b00932b86061
+    ended: 2026-10-25T06:01:20.985Z
+  review:
+    rounds: 2
+    sentBack: 1
+    findings:
+      p1: 0
+      p2: 0
+      p3: 5
+    status: done
+    started: 2026-10-25T06:01:24.673Z
+    ended: 2026-10-25T06:07:15.911Z
+  docs:
+    status: done
+    started: 2026-10-25T06:08:38.876Z
+    ended: 2026-10-25T06:11:38.344Z
+notes:
+  - stage: brief
+    at: 2026-10-25T05:41:55.568Z
+    direction: 'size.input''s description reads "Search field", but TextField now uses it as the height of every text box: update it through the design-tokens skill to name text inputs too.'
+  - stage: brief
+    at: 2026-10-25T05:41:55.568Z
+    direction: The contract's "Native text" rule makes the input the root, but it doesn't say which slotProps key a frame round that root takes; TextField uses 'field', and TextArea and NumberField will face the same choice, so the contract's Customising section could name the key.
+  - stage: brief
+    at: 2026-10-25T05:41:55.568Z
+    direction: Field's stories style Base UI's Input by hand with the Fields family's tokens "until TextField ships"; once TextField is stable, that inline box is a second copy of TextField's CSS that can drift from it.
+  - stage: brief
+    at: 2026-10-25T05:41:55.568Z
+    questions: "1. Is the root the <input> itself (Field.Control), with Field round it as the frame? Recommended: yes. 2. Is the frame's slotProps key 'field' (Omit<Field.Root.Props,'children'|'disabled'|'name'>, class pn-TextField-field), the way to reach invalid/validate/validationMode/validationDebounceTime/dirty/touched/actionsRef? Recommended: yes. 3. No startIcon/endIcon, prefix/suffix, clear or password reveal: the input is the whole box? Recommended: yes. 4. TextFieldProps declares name, type, placeholder, required, value, defaultValue (string), onChange (native ChangeEvent) with rows; readOnly, autoComplete etc. stay inherited? Recommended: yes. 5. type is 'text'|'email'|'password'|'tel'|'url', default 'text'? Recommended: yes. 6. optional and required independent, required defaults false? Recommended: yes. 7. No variant, size, color or fullWidth? Recommended: yes. 8. Box takes space.300 on both inline sides, no block padding? Recommended: yes. 9. Box keeps rest look when focused without focus-visible, filled, dirty, touched, valid or read-only; invalid edge only while not disabled? Recommended: yes."
+  - stage: build
+    at: 2026-10-25T05:51:14.906Z
+    direction: "The Fields family has no rule for iOS Safari's native input look (its inner shadow and dimmed disabled text): TextField sets no appearance or opacity override, and neither does SearchField. Should the Fields family name one, through the contract's Families row?"
+  - stage: build
+    at: 2026-10-25T05:51:14.906Z
+    direction: Under forced colours the invalid edge turns to the same system colour as the rest edge, so an invalid TextField shows only through its error words; a forced-colours rule for the invalid edge could be added to the Fields family.
+  - stage: build
+    at: 2026-10-25T05:51:14.906Z
+    direction: The TextField spec's root row says Chromium shows a password input as a protected textbox, while HTML's ARIA mapping gives it no role; check that this reading matches what the reviewer should hold.
+  - stage: docs
+    at: 2026-10-25T06:11:38.345Z
+    direction: On the docs page, the slots table replaces the JSDoc of slotProps.field and slotProps.error with the fixed line "Props for the <part> part", so readers lose that 'field' reaches Base UI's invalid, validate and validationMode and that 'error' takes match; the PropsTable block could show a slot's own JSDoc when it has one.
