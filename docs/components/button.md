@@ -45,7 +45,7 @@ In MUI's layout. Every prop here gets this description as its JSDoc. Slots come 
 | `nativeButton`              | `boolean`              | `true`      | `nativeButton`          | Inherited from Base UI with its JSDoc: set it to `false` when `render` gives an element that isn't a `<button>`.                                    |
 | `render`                    | Base UI's `render`     | none        | `render`                | Inherited from Base UI: swaps the root element and keeps the behaviour, the class and the data attributes.                                          |
 | `children`                  | `ReactNode`            | none        | none                    | The label: the words that name the action, in sentence case. Required in practice: a button with no words is an IconButton.                         |
-| `className`, `style`, `ref` | React's                | none        | `className`, `style`    | Reach the root. `className` is merged after `pn-Button`.                                                                                            |
+| `className`, `style`, `ref` | React's                | none        | `className`, `style`    | Reaches the root. `className` is merged after `pn-Button`.                                                                                          |
 
 No `slotProps`: Button has one Base UI part, `Button`, which is the root, and the root takes the component's own props. The label and icon spans are not Base UI parts. No label-override props: Button owns no strings.
 

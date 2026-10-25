@@ -5,11 +5,11 @@ import { flushSync } from 'react-dom'
 import { createRoot } from 'react-dom/client'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { expect, userEvent } from 'storybook/test'
+import { expect } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { dictionaries, type Locale } from '../../locale/index.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
-import { heard } from '../../testing/stories.ts'
+import { expectNoFocus, heard } from '../../testing/stories.ts'
 import { FactList, type FactListItem } from './FactList.tsx'
 
 /** Four facts about a bus, every one known. */
@@ -41,13 +41,6 @@ const rootIn = (canvas: HTMLElement) => canvas.querySelector<HTMLElement>('.pn-F
 /** What the ear hears of each fact, part by part, in reading order. */
 const heardInOrder = (root: HTMLElement) =>
   [...root.children].map((item) => [...item.children].map(heard))
-
-/** Tab once, and expect focus to land nowhere inside `root`. */
-async function expectNoFocus(root: HTMLElement) {
-  await userEvent.tab()
-  await expect(root.contains(document.activeElement)).toBe(false)
-  await userEvent.tab({ shift: true })
-}
 
 /**
  * Render an empty FactList with a `ref` into the DOM beside `canvas`, and expect the `ref` and
