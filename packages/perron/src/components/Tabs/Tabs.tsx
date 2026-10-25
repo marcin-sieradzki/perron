@@ -157,7 +157,9 @@ export function Tab({
       {typeof count === 'number' ? (
         <>
           {' '}
-          <span className="pn-Tab-count">{count}</span>
+          <span className="pn-Tab-count" data-disabled={disabled ? '' : undefined}>
+            {count}
+          </span>
         </>
       ) : null}
     </BaseTabs.Tab>

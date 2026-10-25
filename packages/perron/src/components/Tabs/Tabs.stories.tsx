@@ -74,7 +74,7 @@ const stopTabs = (
   </>
 )
 
-/** The spy every story's Tabs reports to; each play clears it first. */
+/** The spy every story's Tabs reports to; a play that asserts on it clears it first. */
 const onChange = fn()
 
 const meta = {

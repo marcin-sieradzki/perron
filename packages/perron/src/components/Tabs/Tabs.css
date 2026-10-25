@@ -88,7 +88,7 @@
   cursor: default;
 }
 
-.pn-Tab[data-disabled] .pn-Tab-count {
+.pn-Tab-count[data-disabled] {
   color: var(--perron-color-text-tertiary);
 }
 
@@ -116,7 +116,7 @@
   }
 
   .pn-Tab[data-disabled],
-  .pn-Tab[data-disabled] .pn-Tab-count {
+  .pn-Tab-count[data-disabled] {
     color: GrayText;
   }
 }
