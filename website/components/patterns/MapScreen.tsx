@@ -17,7 +17,7 @@ export function MapScreen() {
   return (
     <section aria-labelledby="in-place" className="patterns-section">
       <MapScreenView
-        map={<MapBackground view="quiet" idPrefix="patterns" />}
+        map={<MapBackground view="framed" idPrefix="patterns" />}
         overview={
           <>
             <span className="patterns-overline">Disruptions</span>

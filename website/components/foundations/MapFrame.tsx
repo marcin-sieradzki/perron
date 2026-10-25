@@ -13,7 +13,7 @@ export interface MapFrameProps {
 export function MapFrame({ id, children }: MapFrameProps) {
   return (
     <div className="fd-map" aria-hidden="true">
-      <MapBackground view="quiet" idPrefix={`fd-${id}`} />
+      <MapBackground view="framed" idPrefix={`fd-${id}`} />
       {children}
     </div>
   )

@@ -30,7 +30,7 @@ export function InContext({
   api: ComponentApi
   intro: string
 }) {
-  const map = <MapBackground view="full" idPrefix="spec-context" />
+  const map = <MapBackground view="framed" idPrefix="spec-context" />
   if (entry.layer === 'pattern')
     return (
       <section aria-label={`${entry.name} in context`} className="spec-context">

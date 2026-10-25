@@ -1,7 +1,7 @@
-// The phone menu: a menu button shown under breakpoint.phone, where the header's section links
-// hide, opening the sections, the theme and GitHub as a bottom sheet, Perron's Sheet. A server
-// component, so the repository's link comes from the loaders; the sheet and its state are the
-// client part beside it (SiteMenuSheet).
+// The menu: a menu button shown under breakpoint.tablet, where the header's section links and
+// GitHub hide, opening the sections, the theme and GitHub as a bottom sheet, Perron's Sheet. A
+// server component, so the repository's link comes from the loaders; the sheet and its state are
+// the client part beside it (SiteMenuSheet).
 import '../../app/phone.css'
 import { REPO_URL } from '../../lib/repo.ts'
 import type { SiteSection } from './sections.ts'

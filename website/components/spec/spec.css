@@ -217,15 +217,6 @@
   background: var(--perron-color-map-land);
 }
 
-/* the drawing at the city centre, with no veil: the frame is all map */
-.spec-context .map-drawing {
-  translate: 0 -36%;
-}
-
-.spec-context .map-veil {
-  display: none;
-}
-
 .spec-sheet {
   position: relative;
   align-self: stretch;
@@ -562,18 +553,11 @@
   letter-spacing: var(--perron-typography-label-tracking);
 }
 
-/* Under breakpoint.phone (760px; media queries can't read the token): the page is one opaque
-   sheet over the map's strip, with no list beside it; "On this page" is a select, the states a
-   picked row, the props a list, and every panel opaque, so no text sits on the moving map. */
+/* Under breakpoint.phone (760px; media queries can't read the token): the page sits on the
+   layout's one opaque sheet (phone.css), with no list beside it; "On this page" is a select, the
+   states a picked row, the props a list, and every panel opaque, so no text sits on the moving
+   map. */
 @media (max-width: 759.98px) {
-  .spec {
-    margin-block-start: var(--perron-space-800);
-    padding: var(--perron-space-400) var(--perron-space-400) var(--perron-space-800);
-    border-radius: var(--perron-radius-xl) var(--perron-radius-xl) 0 0;
-    background: var(--perron-color-surface-default);
-    box-shadow: var(--perron-shadow-panel);
-  }
-
   .spec-aside,
   .spec-toc,
   .spec-actions {

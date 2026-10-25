@@ -8,6 +8,7 @@ import { MapBackground } from '@/components/map/MapBackground.tsx'
 import { PerronProvider } from '@/components/perron'
 import { SiteFooter } from '@/components/site/SiteFooter.tsx'
 import { SiteHeader } from '@/components/site/SiteHeader.tsx'
+import { SiteShell } from '@/components/site/SiteShell.tsx'
 import { DEFAULT_THEME, THEME_SCRIPT } from '@/components/site/theme.ts'
 
 export const metadata: Metadata = {
@@ -25,7 +26,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       </head>
       <body>
         <PerronProvider locale="en">
-          <div className="site-shell">
+          <SiteShell>
             <MapBackground />
             <a className="site-skip" href="#main">
               Skip to the content
@@ -35,7 +36,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               {children}
             </main>
             <SiteFooter />
-          </div>
+          </SiteShell>
         </PerronProvider>
       </body>
     </html>

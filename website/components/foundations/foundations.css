@@ -575,11 +575,6 @@
   background: var(--perron-color-map-land);
 }
 
-/* the frame shows the map itself, with no fade into the page */
-.fd-map .map-veil {
-  display: none;
-}
-
 .fd-ground-label {
   position: absolute;
   inset-block-start: var(--perron-space-300);

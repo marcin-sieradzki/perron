@@ -18,6 +18,12 @@
   display: block;
 }
 
+/* The views. The page's own surface is laid over the background map, so its text reads: the
+   drawing fades as a whole, and the veil lays a glow behind the home page's hero and a fade at the
+   bottom, or for the quiet view a fade that leaves only a strip at the top. Mylder's map never
+   fades as a whole, so no opacity token does this; the fades, the quiet view's shift and the
+   veil's stops are the illustration's own geometry, in shares of the drawing so they scale with
+   it, and are kept here, in this one block, beside the views they shape. */
 .map[data-view='full'] .map-drawing {
   opacity: 0.85;
 }
@@ -28,9 +34,6 @@
   translate: 0 -24%;
 }
 
-/* The veil lays the page's surface over the map: a glow behind the home page's hero and a fade at
-   the bottom, or for the quiet view a fade that leaves only a strip at the top. In shares of the
-   drawing, so it scales with it. */
 .map-veil {
   position: absolute;
   inset: 0;
@@ -48,6 +51,17 @@
 
 .map[data-view='quiet'] .map-veil {
   background: linear-gradient(to bottom, transparent 4%, var(--perron-color-surface-default) 34%);
+}
+
+/* A framed map, in a page's own positioned frame: the whole map at full strength, its middle at
+   the frame's middle, zoomed about it by the frame's --map-zoom (a factor, 1 when unset). */
+.map[data-view='framed'] {
+  scale: var(--map-zoom, 1);
+}
+
+.map[data-view='framed'] .map-canvas {
+  inset-block-start: 50%;
+  translate: 0 -50%;
 }
 
 /* Ground */

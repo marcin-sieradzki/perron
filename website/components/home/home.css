@@ -386,17 +386,13 @@
   color: var(--perron-color-text-secondary);
 }
 
-/* Under breakpoint.phone (760px), written as the site writes it (site.css): the page becomes an
-   opaque sheet under a strip of the map, so no text sits on moving map. The counts follow the
-   actions in a grid of four, the columns and tiles give way to the sections and one panel. */
+/* Under breakpoint.phone (760px), written as the site writes it (site.css): the page sits on the
+   layout's one opaque sheet (phone.css), under a strip of the map, so no text sits on moving map.
+   The counts follow the actions in a grid of four, the columns and tiles give way to the sections
+   and one panel. */
 @media (max-width: 759.98px) {
   .home {
     gap: var(--perron-space-800);
-    margin-block-start: var(--perron-size-sheet-peek);
-    padding: var(--perron-space-600) var(--site-gutter) var(--perron-space-800);
-    border-radius: var(--perron-radius-xl) var(--perron-radius-xl) 0 0;
-    background: var(--perron-color-surface-default);
-    box-shadow: var(--perron-shadow-panel);
   }
 
   .home-hero {
