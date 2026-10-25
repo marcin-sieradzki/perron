@@ -4,7 +4,9 @@
 // it names one, and the prompt, ending with the JSON the agent returns, from the workflow's schema.
 // A rerun's `fix`, when the args leave it out, comes from `next` over the pipeline in `dir` (or the
 // current directory), before or after the stage's `begin`, so a send-back's build is told what to fix.
-// Usage: node scripts/factory-stage.ts '{"stage":"build","name":"Chip","dir":"…","port":6011}'
+// With --prompt it prints the prompt alone, as raw text, to hand to the agent as it is; the agent
+// type is review's alone, `component-reviewer`.
+// Usage: node scripts/factory-stage.ts [--prompt] '{"stage":"build","name":"Chip","dir":"…","port":6011}'
 import { readFileSync } from 'node:fs'
 import { loadPipeline, next, type Env } from './lib/pipeline.ts'
 
@@ -58,11 +60,17 @@ export function withFix(args: Record<string, unknown>, root: string): Record<str
   return 'run' in n && n.run === stage && n.fix ? { ...args, fix: n.fix } : args
 }
 
+/** What the command prints for `call`: the JSON of the call, or with `prompt` its prompt alone. */
+export const printed = (call: StageCall, prompt = false) =>
+  prompt ? `${call.prompt}\n` : `${JSON.stringify(call, null, 2)}\n`
+
 if (import.meta.url === `file://${process.argv[1]}`) {
   try {
-    const args = JSON.parse(process.argv[2] ?? '{}')
+    const argv = process.argv.slice(2)
+    const prompt = argv.includes('--prompt')
+    const args = JSON.parse(argv.find((a) => a !== '--prompt') ?? '{}')
     const call = await stageCall(withFix(args, typeof args.dir === 'string' ? args.dir : '.'))
-    process.stdout.write(`${JSON.stringify(call, null, 2)}\n`)
+    process.stdout.write(printed(call, prompt))
   } catch (e) {
     process.stderr.write(`${(e as Error).message}\n`)
     process.exit(1)

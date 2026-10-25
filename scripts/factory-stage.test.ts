@@ -5,7 +5,7 @@ import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'nod
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { stageCall, withFix } from './factory-stage.ts'
+import { printed, stageCall, withFix } from './factory-stage.ts'
 
 interface Call {
   prompt: string
@@ -96,6 +96,12 @@ describe('stageCall, for an orchestrator without the Workflow tool', () => {
     const review = await stageCall({ stage: 'review', name: 'Chip', round: 2 })
     expect(review.agentType).toBe('component-reviewer')
     expect(review.prompt).toMatch(/round 2[\s\S]*"review"/)
+  })
+
+  it('prints the call as JSON, or with --prompt the prompt alone as raw text', async () => {
+    const build = await stageCall({ stage: 'build', name: 'Chip' })
+    expect(JSON.parse(printed(build))).toEqual(build)
+    expect(printed(build, true)).toBe(`${build.prompt}\n`)
   })
 
   it('refuses what the workflow refuses', async () => {

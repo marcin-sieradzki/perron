@@ -306,7 +306,7 @@ describe('the factory dry run', () => {
       'wait: pending-questions',
     )
     expect(stage('build', () => build(), 'pending', asked(3)).out).toBe(
-      `ended build: pending: ${asked(3)}\nwait: needs-human\nstage: build\nwhy: 3 build runs ended with questions; the last asked: ${asked(3)}\n`,
+      `ended build: pending: ${asked(3)}\nwait: needs-human\nstage: build\nwhy: 3 build runs in a row ended with questions; the last asked: ${asked(3)}\n`,
     )
     expect(run('begin Tally build').err).toMatch(/waits at needs-human \(build\)/)
     expect(pipeline().stages.build).toMatchObject({ asked: 3, runs: 3 })
@@ -315,7 +315,7 @@ describe('the factory dry run', () => {
     expect(stage('build', () => build()).out).toContain('ended build: done\nrun: review')
   })
 
-  it('reruns a failed build once when the spec changed since it began, then stops', () => {
+  it('reruns a failed build once when the spec changed since it ended, then stops', () => {
     throughBrief()
     // the spec is the same: a failed run stops the loop, as ever
     stage('build', () => build(), 'failed', 'TS6059: tokens.ts is not under rootDir')
@@ -325,7 +325,7 @@ describe('the factory dry run', () => {
     // the spec is revised after the failed run: one rerun, with the failure to fix
     brief('Read the offset from its custom property.\n')
     expect(run('next Tally').out).toBe(
-      'run: build\nwhy: the last run failed, and docs/components/tally.md has changed since it began; run the build again from the revised spec\nfix: TS6059: tokens.ts is not under rootDir. docs/components/tally.md has been revised since that run began: build what it says now.\n',
+      'run: build\nwhy: the last run failed, and docs/components/tally.md has changed since it ended; run the build again from the revised spec\nfix: TS6059: tokens.ts is not under rootDir. docs/components/tally.md has been revised since that run ended: build what it says now.\n',
     )
     expect(run('begin Tally build').code).toBe(0)
     expect(pipeline()).toMatchObject({ stages: { build: { status: 'running', respecs: 1 } } })
@@ -333,7 +333,7 @@ describe('the factory dry run', () => {
     expect(pipeline().notes?.at(-1)).toMatchObject({
       stage: 'build',
       unblocked: expect.stringMatching(
-        /; rerun once because the spec changed since that run began$/,
+        /; rerun once because the spec changed since that run ended$/,
       ),
     })
     expect(run('end Tally build failed', 'TS6059 again').out).toContain('wait: needs-human')
@@ -341,6 +341,45 @@ describe('the factory dry run', () => {
     brief('Read the offset from its custom property, in px.\n')
     expect(run('next Tally').out).toMatch(/^wait: needs-human\nstage: build\n/)
     expect(run('begin Tally build').err).toMatch(/waits at needs-human \(build\)/)
+  })
+
+  it('takes no answer the build wrote into the spec for a revision, when that run fails', () => {
+    throughBrief()
+    stage('build', () => build(), 'pending', '1. Which tone is the default? Recommended: plain.')
+    // the rerun writes its answer into the spec, as component-build says, then fails
+    stage('build', () => brief('The default tone is plain.\n'), 'failed', 'TS6059 again')
+    expect(run('next Tally').out).toMatch(/^wait: needs-human\nstage: build\n/)
+    // a revision after it ended is one
+    brief('The default tone is plain, and brand is for the selected one.\n')
+    expect(run('next Tally').out).toMatch(/^run: build\nwhy: the last run failed, and/)
+  })
+
+  it('counts only build runs in a row that ask: one that passes starts the count again', () => {
+    throughBrief()
+    const asked = (n: number) => `${n}. Which tone is the default? Recommended: plain.`
+    for (const round of [1, 2, 3]) {
+      expect(stage('build', () => build(), 'pending', asked(round)).out).toContain(
+        'wait: pending-questions',
+      )
+      stage('build', () => build())
+      expect(pipeline().stages.build?.asked).toBeUndefined()
+      if (round < 3) stage('review', () => review(round, 0, 1))
+    }
+  })
+
+  it('refuses a stage that next does not name, so none begins without its fix', () => {
+    throughBrief()
+    stage('build', () => build())
+    stage('review', () => review(1, 1))
+    stage('build', () => build())
+    stage('review', () => review(2, 1))
+    run('unblock Tally')
+    // next says review, with the round's findings to fix; a build begun here would carry none
+    expect(run('next Tally').out).toMatch(/^run: review\nround: 3\n/)
+    expect(run('begin Tally build').err).toMatch(
+      /^refused: build cannot begin: next names review \(the last run failed: review round 2 found 1 P1/,
+    )
+    expect(run('begin Tally review').code).toBe(0)
   })
 
   it('keeps each Direction finding and each unblock in the notes, across reruns', () => {
@@ -402,8 +441,8 @@ describe('the factory dry run', () => {
     expect(stage('review', () => review(3, 0, 1)).out).toMatch(
       /\nwait: needs-human\nstage: review\nwhy: 3 review rounds found a P1 or a P2; the last: review round 3 found 1 P2/,
     )
+    // the maintainer fixes the code and unblocks: the next round reviews it
     run('unblock Tally')
-    stage('build', () => build())
     expect(stage('review', () => review(4)).out).toContain('ended review: done, round 4')
   })
 
