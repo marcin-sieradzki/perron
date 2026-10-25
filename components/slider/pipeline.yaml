@@ -26,6 +26,10 @@ stages:
     started: 2026-10-25T08:39:22.320Z
     reviewed: aa3bf41d6304f1f40103cc15b7b8272c84475743
     ended: 2026-10-25T08:42:24.743Z
+  docs:
+    status: done
+    started: 2026-10-25T08:43:08.788Z
+    ended: 2026-10-25T08:46:26.930Z
 notes:
   - stage: brief
     at: 2026-10-25T07:13:09.465Z
@@ -66,3 +70,6 @@ notes:
   - stage: review
     at: 2026-10-25T08:39:18.671Z
     unblocked: '3 review rounds found a P1 or a P2; the last: review round 6 found 1 P2 (components/slider/review.md)'
+  - stage: docs
+    at: 2026-10-25T08:46:26.930Z
+    direction: The docs page's slots table gives every key the fixed text 'Props for the <part> part', dropping guidance the JSDoc and spec give slotProps.field, slotProps.error (match) and slotProps.thumb (getAriaValueText); PropsTable could show a slot's own JSDoc when it says more.

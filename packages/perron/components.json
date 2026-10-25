@@ -554,7 +554,7 @@
     "name": "Slider",
     "layer": "component",
     "category": "Inputs",
-    "status": "building",
+    "status": "stable",
     "baseUiParts": [
       "Slider.Root",
       "Slider.Control",

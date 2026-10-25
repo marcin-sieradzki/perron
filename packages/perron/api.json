@@ -2632,6 +2632,99 @@
       }
     }
   },
+  "Slider": {
+    "extends": [
+      "Omit< BaseSlider.Root.Props, | 'value' | 'defaultValue' | 'onChange' | 'onValueChange' | 'onValueCommitted' | 'orientation' | 'thumbAlignment' | 'locale' | 'disabled' | 'children' | 'ref' >"
+    ],
+    "props": {
+      "defaultValue": {
+        "optional": true,
+        "type": [
+          "number",
+          "readonly [ number, number ]"
+        ]
+      },
+      "description": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "disabled": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "error": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "hiddenLabel": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "label": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "locale": {
+        "optional": true,
+        "type": [
+          "LocalesArgument"
+        ]
+      },
+      "maximumLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "minimumLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "onChange": {
+        "optional": true,
+        "type": [
+          "(event: Event, value: number | readonly [ number, number ], details: SliderRootChangeEventDetails) => void"
+        ]
+      },
+      "onChangeCommitted": {
+        "optional": true,
+        "type": [
+          "(event: Event, value: number | readonly [ number, number ], details: SliderRootCommitEventDetails) => void"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ field?: Omit<FieldRootProps, \"children\" | \"disabled\" | \"name\"> | undefined; label?: FieldLabelProps | undefined; description?: FieldDescriptionProps | undefined; error?: FieldErrorProps | undefined; control?: SliderControlProps | undefined; track?: SliderTrackProps | undefined; indicator?: SliderIndicatorProps | undefined; thumb?: Omit<SliderThumbProps, \"index\"> | undefined; value?: Omit<SliderValueProps, \"children\"> | undefined; }"
+        ]
+      },
+      "value": {
+        "optional": true,
+        "type": [
+          "number",
+          "readonly [ number, number ]"
+        ]
+      }
+    }
+  },
   "Stat": {
     "extends": [
       "Omit<useRender.ComponentProps<'div'>, 'children'>"
