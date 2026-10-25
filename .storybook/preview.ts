@@ -124,6 +124,7 @@ const preview: Preview = {
             'StationIcon',
             'VehicleDot',
             'VehicleDotLabel',
+            'VehicleDotLegend',
             // registry:components end
           ],
           // registry:patterns start: written by npm run registry, by category then name
@@ -197,6 +198,7 @@ const preview: Preview = {
             'StationIcon',
             'VehicleDot',
             'VehicleDotLabel',
+            'VehicleDotLegend',
             'DataStatePanel',
             'DayProfileChart',
             'DetailHeader',

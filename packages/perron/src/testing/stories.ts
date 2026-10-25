@@ -3,6 +3,7 @@ import { createElement, type ComponentProps, type CSSProperties, type ReactNode 
 import { createRoot } from 'react-dom/client'
 import { expect, screen, userEvent, waitFor, within } from 'storybook/test'
 import { holds, isPaint } from './pointer.ts'
+import type { VehicleDotProps } from '../components/VehicleDot/VehicleDot.tsx'
 
 /** An icon file from packages/perron/icons, as its `?raw` text, inline, sized by `.perron-icon`. */
 export const icon = (svg: string) =>
@@ -371,3 +372,103 @@ export const expectFocusRing = (canvas: HTMLElement, element: HTMLElement) =>
     await userEvent.tab({ shift: true })
     await expect(before).toHaveFocus()
   })
+
+/**
+ * Every `(forced-colors: active)` rule in the document's sheets whose selector names one of
+ * `classes`, such as `'pn-VehicleDot'`, or one of its parts' (`.pn-VehicleDot` and
+ * `.pn-VehicleDot-dot`, never `.pn-VehicleDotLegend`), unwrapped into a sheet of its own, in source
+ * order. A play test cannot turn forced colours on, so it adopts this sheet while it runs and takes
+ * it off after.
+ */
+export function forcedColourSheet(...classes: string[]) {
+  const names = classes.map((name) => new RegExp(`\\.${name}(?!\\w)`))
+  const found: string[] = []
+  const visit = (rules: CSSRuleList, forced: boolean) => {
+    for (const rule of Array.from(rules))
+      if (rule instanceof CSSMediaRule)
+        visit(rule.cssRules, forced || holds(rule.conditionText, FORCED_COLORS))
+      else if (
+        forced &&
+        rule instanceof CSSStyleRule &&
+        names.some((name) => name.test(rule.selectorText))
+      )
+        found.push(rule.cssText)
+  }
+  for (const sheet of Array.from(document.styleSheets)) visit(sheet.cssRules, false)
+  const sheet = new CSSStyleSheet()
+  sheet.replaceSync(found.join('\n'))
+  return sheet
+}
+
+/**
+ * A VehicleDot's root has exactly the no-signal cut, `vehicle-dot.no-signal.cut-width` wide unless
+ * `width` says otherwise: a gradient towards the bottom left, whose 50% line runs from the top left
+ * of the glyph box to the bottom right, opaque in the root's colour up to half a cut-width before
+ * it and from half a cut-width after it, transparent between. The other diagonal, a gap of another
+ * width or opaque stops in the gap all fail.
+ */
+export function expectVehicleDotCut(
+  root: Element,
+  width = rendered('vehicle-dot-no-signal-cut-width', 'stroke-width'),
+) {
+  const ink = getComputedStyle(root).color
+  const cut = `linear-gradient(to bottom left, ${ink} calc(50% - ${width} / 2), transparent calc(50% - ${width} / 2), transparent calc(50% + ${width} / 2), ${ink} calc(50% + ${width} / 2))`
+  return expect(getComputedStyle(root).maskImage).toBe(resolve('maskImage', cut))
+}
+
+/**
+ * A VehicleDot's root shows `variant` in its own shape, drawn in `ink`, the colour its
+ * `currentColor` takes: the fill and opacity, the rim, its width and its dash of its
+ * `.pn-VehicleDot-dot`, and the root's cut, which only no signal has. No signal's dot fills with
+ * `noSignalFill`, its grey outside forced colours and `ink` in them.
+ */
+export async function expectVehicleDotShape(
+  root: Element,
+  variant: NonNullable<VehicleDotProps['variant']>,
+  ink: string,
+  noSignalFill = ink,
+) {
+  await expect(root).toHaveAttribute('data-variant', variant)
+  const style = getComputedStyle(root.querySelector('.pn-VehicleDot-dot')!)
+  const width = (token: string) => rendered(`vehicle-dot-${token}-stroke-width`, 'stroke-width')
+  if (variant === 'no-signal') {
+    await expect(style.fill).toBe(noSignalFill)
+    await expect(style.fillOpacity).toBe('1')
+    await expect(style.stroke).toBe('none')
+    await expectVehicleDotCut(root)
+    return
+  }
+  await expect(getComputedStyle(root).maskImage).toBe('none')
+  switch (variant) {
+    case 'live':
+      await expect(style.fill).toBe(ink)
+      await expect(style.fillOpacity).toBe('1')
+      await expect(style.stroke).toBe('none')
+      break
+    case 'ageing':
+      await expect(style.fill).toBe(ink)
+      await expect(style.fillOpacity).toBe(
+        rendered('vehicle-dot-ageing-fill-opacity', 'fill-opacity'),
+      )
+      await expect(style.stroke).toBe(ink)
+      await expect(style.strokeWidth).toBe(width('ageing'))
+      await expect(style.strokeDasharray).toBe('none')
+      break
+    case 'estimated':
+      await expect(style.fill).toBe('none')
+      await expect(style.stroke).toBe(ink)
+      await expect(style.strokeWidth).toBe(width('estimated'))
+      await expect(style.strokeDasharray).toBe('none')
+      break
+    case 'timetable-only':
+      await expect(style.fill).toBe('none')
+      await expect(style.stroke).toBe(ink)
+      await expect(style.strokeWidth).toBe(width('timetable'))
+      await expect(style.strokeDasharray).toBe(
+        rendered('vehicle-dot-timetable-dash', 'stroke-dasharray'),
+      )
+      break
+    default:
+      variant satisfies never
+  }
+}
