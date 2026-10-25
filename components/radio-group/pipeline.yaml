@@ -3,6 +3,9 @@ component: RadioGroup
 layer: component
 deferred:
   at: 2026-10-25T05:22:58.444Z
+needsHuman:
+  stage: review
+  reason: '2 review rounds found a P1 or a P2, the last a P1: review round 2 found 1 P1 (components/radio-group/review.md)'
 stages:
   brief:
     status: done
@@ -15,12 +18,16 @@ stages:
     spec: a25dfabf6443e05fb79ef9783fba7a4a8c9e059178d156dee1bd56f1fbff7313
     ended: 2026-10-25T06:11:08.209Z
   review:
-    rounds: 1
-    sentBack: 1
+    rounds: 2
+    sentBack: 2
     findings:
-      p1: 0
-      p2: 8
+      p1: 1
+      p2: 0
       p3: 5
+    status: failed
+    started: 2026-10-25T06:12:02.711Z
+    ended: 2026-10-25T06:18:10.722Z
+    failing: review round 2 found 1 P1 (components/radio-group/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T05:33:10.548Z
