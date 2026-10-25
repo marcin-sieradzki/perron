@@ -3,4 +3,24 @@ component: AlertDialog
 layer: component
 deferred:
   at: 2026-10-25T07:07:47.613Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-25T07:07:51.851Z
+    ended: 2026-10-25T07:14:18.875Z
+notes:
+  - stage: brief
+    at: 2026-10-25T07:14:18.875Z
+    direction: No ROADMAP line names AlertDialog, or any of the 20 other components registered with it in commit eb95ff6, so a deferred brief has only the registry entry to show what Mylder wants it for.
+  - stage: brief
+    at: 2026-10-25T07:14:18.875Z
+    direction: Dialog's `Actions` story ("Clear all filters?" with Cancel and Clear filters) and its Do row "Use a dialog for a question that must be answered" describe an alert dialog's job. Once AlertDialog ships, the Dialog spec and its stories should send that case to AlertDialog.
+  - stage: brief
+    at: 2026-10-25T07:14:18.875Z
+    direction: With AlertDialog, the Panels popup treatment and the raw 440 px measure are written in two components' CSS under two allowances. A third member would justify a `size.dialog-width` token or a shared panel part.
+  - stage: brief
+    at: 2026-10-25T07:14:18.875Z
+    direction: The contract keys slotProps by Base UI part, and doesn't say how to key a Base UI part rendered twice (relevant if a future alert dialog renders Cancel and its action both through AlertDialog.Close).
+  - stage: brief
+    at: 2026-10-25T07:14:18.875Z
+    questions: "1. (Anatomy) Does the alert dialog leave out a close button beside the title, leaving Cancel and Esc as its ways out? Recommended: yes, no close button. 2. (Props) Does AlertDialog take its confirming button as `action`, one required ReactElement rendered through AlertDialog.Close, rather than Dialog's `actions`? Recommended: yes, `action`. Answered instead: no, Dialog's `actions` (the caller's Buttons, Cancel first, closed by `open`), for one shape across the family. 3. (Props) Is `description` required? Recommended: yes. 4. (Props) Does AlertDialog leave out `children`? Recommended: yes. 5. (Tokens) Is the popup as wide as Dialog's, at most 440 px under a perron-allow(component-css) comment? Recommended: yes. 6. (Tokens) Do nested and starting/ending states keep the rest look, as Dialog's? Recommended: yes. 7. (Owned strings) Does AlertDialog own a new key `cancel` with `cancelLabel`? Recommended: yes. Answered instead: no key, since Cancel is the caller's in `actions` (follows from 2)."
