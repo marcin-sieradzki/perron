@@ -48,6 +48,7 @@ export const PAGES = [
   'docs/patterns/detail-header.md',
   'docs/patterns/stop-timeline.md',
   'docs/patterns/disruption-card.md',
+  'docs/patterns/kiosk-bar.md',
   // registry:specs end
 ]
 
