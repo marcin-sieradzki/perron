@@ -56,4 +56,7 @@ export const nb: OwnedStrings = {
   maximum: 'Maksimum',
   inProgress: 'Pågår',
   notifications: 'Varsler',
+  updated: 'oppdatert',
+  paused: 'Satt på pause',
+  mayBeOutOfDate: 'kan være utdatert',
 }

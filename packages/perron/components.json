@@ -413,7 +413,7 @@
     "name": "SourceLine",
     "layer": "pattern",
     "category": "Data",
-    "status": "designing",
+    "status": "building",
     "baseUiParts": [],
     "penpotPath": "Patterns/SourceLine",
     "dependsOn": ["Text"]
