@@ -4,7 +4,7 @@
 // library's register(), reach it unchanged. Base UI names it, ties the help and the error to it,
 // runs the checks and keeps its state (CR-1). The spec is docs/components/text-area.md.
 import { Field as BaseField } from '@base-ui/react/field'
-import type { ChangeEvent, ComponentPropsWithoutRef, ReactNode, Ref } from 'react'
+import type { ChangeEvent, ComponentPropsWithoutRef, ComponentType, ReactNode, Ref } from 'react'
 import { withClass } from '../../internal/nodes.ts'
 import { Field } from '../Field/Field.tsx'
 import './TextArea.css'
@@ -117,6 +117,25 @@ export interface TextAreaProps
   }
 }
 
+// Base UI types Field.Control on an <input>: no rows, and every handler takes an input's event.
+// TextArea renders it as a <textarea> (CR-6), so this one cast types the control on the textarea's
+// own attributes, TextAreaProps less the frame's, plus Base UI's render, and every prop TextArea
+// passes it is still type-checked, the rest included.
+const TextareaControl = BaseField.Control as ComponentType<
+  Omit<
+    TextAreaProps,
+    | 'label'
+    | 'hiddenLabel'
+    | 'optional'
+    | 'optionalLabel'
+    | 'description'
+    | 'error'
+    | 'disabled'
+    | 'slotProps'
+  > &
+    Pick<BaseField.Control.Props, 'render'>
+>
+
 /** A box for several lines of words, with its label, its line of help and its error message. */
 export function TextArea({
   label,
@@ -138,20 +157,6 @@ export function TextArea({
   ref,
   ...rest
 }: TextAreaProps) {
-  // CR-3, CR-4: the textarea takes the rest as given, then its declared props, React's own onChange
-  // among them; CR-10: its rows in every render. Base UI types Field.Control on an <input>, and here
-  // it renders a <textarea> (CR-6), so the textarea's attributes are handed over as the control's.
-  const control = {
-    ...rest,
-    name,
-    rows,
-    placeholder,
-    required,
-    value,
-    defaultValue,
-    onChange,
-  } as BaseField.Control.Props
-
   return (
     // CR-2: Field draws the frame, its label, its help and its error; TextArea adds its classes
     <Field
@@ -180,9 +185,18 @@ export function TextArea({
         },
       }}
     >
-      {/* CR-6: the textarea is the box, rendered after the spread in every render */}
-      <BaseField.Control
-        {...control}
+      {/* CR-3, CR-4: the textarea takes the rest as given, then its declared props, React's own
+          onChange among them; CR-10: its rows in every render; CR-6: the textarea is the box,
+          rendered after the spread in every render */}
+      <TextareaControl
+        {...rest}
+        name={name}
+        rows={rows}
+        placeholder={placeholder}
+        required={required}
+        value={value}
+        defaultValue={defaultValue}
+        onChange={onChange}
         ref={ref}
         render={<textarea />}
         className={withClass('pn-TextArea', className)}

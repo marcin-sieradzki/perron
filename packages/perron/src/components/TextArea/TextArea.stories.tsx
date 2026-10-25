@@ -360,12 +360,25 @@ const FIVE_LINES = [
 /** Five lines of words in a three-row box. */
 export const Scrolling: Story = {
   args: { defaultValue: FIVE_LINES },
-  play: async ({ canvasElement }) => {
+  play: async ({ args, canvasElement }) => {
     const box = boxIn(canvasElement)
     const frame = part(canvasElement, 'field')!
-    // the box keeps its three rows, and the words scroll inside it
+    // the words scroll inside the box
     await expect(box.scrollHeight).toBeGreaterThan(box.clientHeight)
-    await expect(lines(box)).toBeLessThan(5)
+    // and the box stays a three-row box's height, that of one holding a single word
+    await mounted(
+      canvasElement,
+      <PerronProvider locale="en">
+        <TextArea {...args} label="A three-row note" defaultValue="Late" />
+      </PerronProvider>,
+      async (host) => {
+        const three = await waitFor(() => boxIn(host, 'A three-row note'))
+        await expect(three.scrollHeight).toBeLessThanOrEqual(three.clientHeight)
+        await expect(
+          Math.abs(box.getBoundingClientRect().height - three.getBoundingClientRect().height),
+        ).toBeLessThan(1)
+      },
+    )
     await expect(frame.scrollWidth).toBeLessThanOrEqual(frame.clientWidth)
     await expect(frame.getBoundingClientRect().width).toBeLessThanOrEqual(320)
     await expect(getComputedStyle(box).resize).toBe('vertical')
@@ -440,7 +453,7 @@ export const Validation: Story = {
         validationMode: 'onBlur',
         validate: (value) =>
           typeof value === 'string' && value.trim().length < 10
-            ? 'Write at least 10 letters'
+            ? 'Write at least 10 characters'
             : null,
       },
     },
@@ -464,7 +477,7 @@ export const Validation: Story = {
       await userEvent.type(box, 'Late')
       await userEvent.tab()
       await waitFor(() =>
-        expect(part(canvasElement, 'error')).toHaveTextContent(/^Write at least 10 letters$/),
+        expect(part(canvasElement, 'error')).toHaveTextContent(/^Write at least 10 characters$/),
       )
       await expect(box).toHaveAttribute('aria-invalid', 'true')
       await expect(getComputedStyle(box).borderColor).toBe(edge('status-danger'))
