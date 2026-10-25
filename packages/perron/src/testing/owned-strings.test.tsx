@@ -3,6 +3,7 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { ReactNode } from 'react'
 import { describe, expect, it } from 'vitest'
+import { Meter } from '@base-ui/react/meter'
 import { PerronProvider, useOwnedStrings } from '../PerronProvider.tsx'
 import type { Locale } from '../locale/index.ts'
 import { expectOwnedStrings } from './owned-strings.ts'
@@ -44,6 +45,7 @@ describe('expectOwnedStrings', () => {
     ['text', <p>Loading…</p>, 'Loading…'],
     ['title', <abbr title="Kilometres per hour">km/h</abbr>, 'Kilometres per hour'],
     ['alt', <img alt="Bus" src="bus.svg" />, 'Bus'],
+    ['aria-valuetext', <div role="meter" aria-valuenow={0} aria-valuetext="No data" />, 'No data'],
   ])('fails a hardcoded %s', (_, node, word) => {
     expect(() => expectOwnedStrings(render('en', node), 'en')).toThrow(`"${word}"`)
   })
@@ -57,5 +59,21 @@ describe('expectOwnedStrings', () => {
   it("fails another locale's word", () => {
     const english = renderToStaticMarkup(<Pager>Afgange</Pager>)
     expect(() => expectOwnedStrings(english, 'da', ['Afgange'])).toThrow(/"Previous page"/)
+  })
+
+  it('skips the "x" Base UI appends to a meter, and nothing that only looks like it', () => {
+    const meter = render(
+      'da',
+      <Meter.Root value={82}>
+        <Meter.Label>Rapporterer live</Meter.Label>
+      </Meter.Root>,
+    )
+    expect(meter).toContain('>x</span>')
+    expect(() => expectOwnedStrings(meter, 'da', ['Rapporterer live'])).not.toThrow()
+    // role="presentation" alone, or the clip alone, is a word like any other
+    const presentation = render('en', <span role="presentation">x</span>)
+    expect(() => expectOwnedStrings(presentation, 'en')).toThrow(/"x"/)
+    const clipped = render('en', <span style={{ clipPath: 'inset(50%)' }}>x</span>)
+    expect(() => expectOwnedStrings(clipped, 'en')).toThrow(/"x"/)
   })
 })
