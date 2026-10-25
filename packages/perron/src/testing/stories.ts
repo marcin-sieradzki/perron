@@ -221,6 +221,13 @@ export function onHover(element: Element, property: string) {
 }
 
 /**
+ * Whether `element` is struck through, as a cancelled departure's or stop's times are: its computed
+ * `text-decoration-line` holds `line-through`.
+ */
+export const struck = (element: Element) =>
+  getComputedStyle(element).textDecorationLine.includes('line-through')
+
+/**
  * A colour custom property, such as `--perron-color-text-secondary`, as it renders: the computed
  * `color` of a probe that reads it, to compare with an element's computed colour.
  */

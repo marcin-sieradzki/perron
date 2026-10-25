@@ -3266,6 +3266,12 @@
       "Omit< ComponentPropsWithoutRef<'ol'>, 'children' | 'className' | 'style' >"
     ],
     "props": {
+      "cancelledLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
       "className": {
         "optional": true,
         "type": [
@@ -3273,6 +3279,12 @@
         ]
       },
       "delayUnknownLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "expectedLabel": {
         "optional": true,
         "type": [
           "string"
