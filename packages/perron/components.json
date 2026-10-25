@@ -210,7 +210,7 @@
     "name": "Tabs",
     "layer": "component",
     "category": "Navigation",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": ["Tabs.Root", "Tabs.List", "Tabs.Tab", "Tabs.Indicator", "Tabs.Panel"],
     "penpotPath": "Components/Tabs",
     "dependsOn": []
@@ -277,7 +277,7 @@
     "name": "Sheet",
     "layer": "component",
     "category": "Overlays",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [
       "Drawer.Root",
       "Drawer.Trigger",
