@@ -3,4 +3,8 @@ component: SegmentedControl
 layer: component
 deferred:
   at: 2026-10-25T01:00:27.310Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-25T01:00:32.175Z
+    ended: 2026-10-25T01:07:40.998Z
