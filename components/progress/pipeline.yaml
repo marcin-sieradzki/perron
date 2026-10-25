@@ -3,4 +3,33 @@ component: Progress
 layer: component
 deferred:
   at: 2026-10-25T07:21:09.585Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-25T07:21:13.769Z
+    ended: 2026-10-25T07:27:51.487Z
+notes:
+  - stage: brief
+    at: 2026-10-25T07:27:51.488Z
+    direction: The Perron MCP's list_tokens reads a token set that lacks size.meter-track, so the brief read the worktree's token files instead; agents in worktrees can get stale token answers from it.
+  - stage: brief
+    at: 2026-10-25T07:27:51.488Z
+    direction: "The Slider branch widens size.meter-track's description to name a slider's track, and Progress widens it too: whichever merges second should name all three bars, or the token should become a neutral size.track through the design-tokens skill."
+  - stage: brief
+    at: 2026-10-25T07:27:51.488Z
+    direction: Meter's Do and don't row says a task's progress is a progressbar 'which Perron does not have yet'; once Progress ships, that row should point to Progress.
+  - stage: brief
+    at: 2026-10-25T07:27:51.488Z
+    direction: No ROADMAP line names Progress, or most of the 21 components registered with it (Field to Link); Phase 6's waves list none of them.
+  - stage: brief
+    at: 2026-10-25T07:27:51.488Z
+    direction: "Progress runs the library's first infinite loop; scripts/visual.ts screenshots with Playwright's default animations setting, so the Indeterminate story's pixel diff will depend on the sweep's position. Passing animations: 'disabled', or emulating reduced motion, would fix it."
+  - stage: brief
+    at: 2026-10-25T07:27:51.488Z
+    direction: Base UI's Progress writes English in every locale ('indeterminate progress' as default aria-valuetext, 'indeterminate' as Progress.Value's formattedValue); any component on Base UI Progress must replace both.
+  - stage: brief
+    at: 2026-10-25T07:27:51.488Z
+    direction: DataStatePanel's spec left out a spinner partly because no duration.* token gave a loop; with duration.progress-sweep that reason no longer holds, though its other reasons for a calm message do.
+  - stage: brief
+    at: 2026-10-25T07:27:51.488Z
+    questions: "1. (Anatomy) Does Progress take Meter's anatomy and layout unchanged? Recommended: yes. 2. (Anatomy) Does the deferred design draw Base UI's three statuses as one State property (progressing, complete, indeterminate)? Recommended: yes. 3. (Props) Does Progress take no color, size or variant, its fill always color.text.primary? Recommended: yes. 4. (Tokens) Does the track reuse size.meter-track, its description widened? Recommended: yes. 5. (Tokens) Does the fill change reuse duration.meter with easing.standard, its description widened? Recommended: yes. 6. (Tokens) Does the complete status keep the progressing look at 100%, with no token, tint or word of its own? Recommended: yes. 7. (Tokens) Is indeterminate a 40% segment sweeping inset-inline-start -40% to 100% over a new loop token duration.progress-sweep of 1600ms? Recommended: yes. 8. (Reduced motion) Does the sweep stop under reduced motion, the segment resting at inset-inline-start 30%? Recommended: yes. 9. (Owned strings) Is the word heard while indeterminate a new key inProgress, 'In progress', overridable by inProgressLabel? Recommended: yes."
