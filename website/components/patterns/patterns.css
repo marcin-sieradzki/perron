@@ -1,0 +1,497 @@
+/* Patterns: the index of Patterns.dc.html, in Perron's tokens only. The section list beside the
+   content, the map screen with the patterns in their places, the cards, the patterns in design and
+   "Use a pattern". Media queries can't read custom properties, so breakpoint.tablet and
+   breakpoint.phone are written as numbers in the last two blocks of this file. */
+
+.patterns {
+  /* the section list's width, and the overview sheet's on the framed map screen: two thirds of
+     the overview sheet's own, as the mockup draws them beside a detail panel at full width */
+  --patterns-side-width: calc(var(--perron-size-sheet-width) * 2 / 3);
+  /* a card's narrowest: room for a detail panel's header in its preview */
+  --patterns-card-min: calc(var(--perron-size-detail-width) * 4 / 5);
+
+  display: flex;
+  align-items: flex-start;
+  gap: var(--perron-space-800);
+}
+
+.patterns-main {
+  flex: 1 1 0;
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-800);
+}
+
+.patterns-intro {
+  margin: 0;
+  max-inline-size: var(--site-measure);
+  font: var(--perron-typography-body);
+  letter-spacing: var(--perron-typography-body-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.patterns-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-400);
+}
+
+.patterns-heading {
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  gap: var(--perron-space-200);
+  font: var(--perron-typography-heading-md);
+  letter-spacing: var(--perron-typography-heading-md-tracking);
+}
+
+.patterns-count {
+  font: var(--perron-typography-data);
+  letter-spacing: var(--perron-typography-data-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.patterns-action {
+  display: inline-flex;
+  align-items: center;
+  block-size: var(--perron-size-button-sm);
+  padding-inline: var(--perron-space-300);
+  border-radius: var(--perron-radius-md);
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+  color: var(--perron-color-text-primary);
+  text-decoration: none;
+}
+
+/* The section list: a glass panel over the map's strip, its links in-page */
+
+.patterns-nav {
+  flex: none;
+  box-sizing: border-box;
+  inline-size: var(--patterns-side-width);
+  padding: var(--perron-space-300);
+  border-radius: var(--perron-radius-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-100);
+}
+
+.patterns-nav-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-100);
+}
+
+.patterns-nav-category {
+  padding: var(--perron-space-300) var(--perron-space-300) var(--perron-space-100);
+  font: var(--perron-typography-overline);
+  letter-spacing: var(--perron-typography-overline-tracking);
+  text-transform: uppercase;
+  color: var(--perron-color-text-secondary);
+}
+
+.patterns-nav-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--perron-space-200);
+  min-block-size: var(--perron-size-segment);
+  padding-inline: var(--perron-space-300);
+  border-radius: var(--perron-radius-md);
+  font: var(--perron-typography-body-sm);
+  letter-spacing: var(--perron-typography-body-sm-tracking);
+  color: var(--perron-color-text-secondary);
+  text-decoration: none;
+}
+
+.patterns-nav-link[aria-current] {
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+  color: var(--perron-color-text-primary);
+  background-color: var(--perron-color-surface-selected);
+}
+
+.patterns-nav-link .patterns-count {
+  font: var(--perron-typography-data-sm);
+  letter-spacing: var(--perron-typography-data-sm-tracking);
+}
+
+.patterns-nav-rule {
+  inline-size: 100%;
+  margin: var(--perron-space-200) 0 var(--perron-space-100);
+  border: 0;
+  border-block-start: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+}
+
+/* The map screen: a framed map of its own, the overview sheet on the left, the detail panel on the
+   right, and the scale with the map controls at the bottom right of the map between them. A grid,
+   so the overview sheet gives way before the tools would run under it; the detail panel keeps its
+   own width on the right, where the frame's padding leaves it room. */
+
+.patterns-screen-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--perron-space-300);
+}
+
+.patterns-screen {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(0, var(--patterns-side-width)) minmax(min-content, 1fr);
+  column-gap: var(--perron-size-panel-gap);
+  min-block-size: var(--perron-size-dialog-width);
+  padding: var(--perron-size-panel-gap);
+  padding-inline-end: calc(var(--perron-size-detail-width) + 2 * var(--perron-size-panel-gap));
+  border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+  border-radius: var(--perron-radius-xl);
+  background: var(--perron-color-map-land);
+}
+
+.patterns-screen[data-mode='kiosk'] {
+  grid-template-rows: auto 1fr;
+  row-gap: var(--perron-size-panel-gap);
+  padding-inline-end: var(--perron-size-panel-gap);
+}
+
+.patterns-screen-map {
+  position: absolute;
+  inset: 0;
+}
+
+/* The zoom buttons zoom the drawing about the frame's centre, by the halving the scale reads */
+.patterns-screen[data-zoom='1'] .map {
+  scale: 2;
+}
+
+.patterns-screen[data-zoom='2'] .map {
+  scale: 4;
+}
+
+/* A map in a frame shows whole, with no fade into the page */
+.patterns-screen .map-veil,
+.patterns-stage .map-veil {
+  display: none;
+}
+
+.patterns-screen-overview {
+  position: relative;
+  grid-column: 1;
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-300);
+  padding: var(--perron-space-300);
+  border-radius: var(--perron-radius-xl);
+}
+
+.patterns-overline {
+  font: var(--perron-typography-overline);
+  letter-spacing: var(--perron-typography-overline-tracking);
+  text-transform: uppercase;
+  color: var(--perron-color-text-secondary);
+}
+
+.patterns-screen-kiosk {
+  position: relative;
+  grid-column: 1 / -1;
+  align-self: start;
+}
+
+/* The detail panel's frame covers the screen, so the panel opens size.panel-gap from its right
+   edge; closed, its trigger waits where the panel was */
+.patterns-screen .patterns-screen-detail {
+  position: absolute;
+  inset: 0;
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+
+.patterns-screen-detail-marker {
+  position: absolute;
+  inset-block-start: calc(var(--perron-size-panel-gap) - var(--perron-size-badge) / 2);
+  inset-inline-end: calc(
+    var(--perron-size-panel-gap) + var(--perron-size-detail-width) - var(--perron-size-badge) / 2
+  );
+}
+
+.patterns-screen-tools {
+  position: relative;
+  grid-column: 2;
+  align-self: end;
+  justify-self: end;
+  display: flex;
+  flex-wrap: wrap-reverse;
+  align-items: flex-end;
+  justify-content: flex-end;
+  gap: var(--perron-space-200);
+}
+
+.patterns-screen[data-mode='kiosk'] .patterns-screen-tools {
+  grid-row: 2;
+}
+
+.patterns-screen-scale {
+  position: relative;
+}
+
+/* A pattern's number on the screen */
+.patterns-marker {
+  position: absolute;
+  inset-block-start: calc(var(--perron-size-badge) / -2);
+  inset-inline-end: calc(var(--perron-size-badge) / -2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--perron-size-badge);
+  block-size: var(--perron-size-badge);
+  border-radius: var(--perron-radius-full);
+  background: var(--perron-color-surface-inverse);
+  color: var(--perron-color-text-inverse);
+  font: var(--perron-typography-badge);
+  letter-spacing: var(--perron-typography-badge-tracking);
+}
+
+.patterns-screen-scale .patterns-marker,
+.patterns-screen-detail-marker .patterns-marker {
+  position: static;
+}
+
+.patterns-screen-scale .patterns-marker {
+  position: absolute;
+  inset-inline: calc(var(--perron-size-badge) / -2) auto;
+}
+
+.patterns-places {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--perron-space-200) var(--perron-space-600);
+  font: var(--perron-typography-body-sm);
+  letter-spacing: var(--perron-typography-body-sm-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.patterns-places-number {
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+  color: var(--perron-color-text-primary);
+}
+
+/* The cards: each preview on its stage, then the link to the pattern's page */
+
+.patterns-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--patterns-card-min)), 1fr));
+  gap: var(--perron-space-400);
+}
+
+.patterns-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+  border-radius: var(--perron-radius-xl);
+  background: var(--perron-color-surface-raised);
+}
+
+.patterns-stage {
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  block-size: var(--perron-size-sheet-peek);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--perron-space-400);
+  background: var(--perron-color-surface-inset);
+}
+
+.patterns-stage[data-stage='map'] {
+  padding: 0;
+  background: var(--perron-color-map-land);
+}
+
+.patterns-stage-preview {
+  position: relative;
+  flex: 1;
+  min-inline-size: 0;
+}
+
+.patterns-stage[data-stage='map'] > .patterns-stage-preview {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  padding: var(--perron-size-panel-gap);
+}
+
+/* DetailPanel's frame opens the panel size.panel-gap from its own edges */
+.patterns-stage[data-stage='map'] > .patterns-stage-preview:has(> .preview-frame) {
+  padding: 0;
+}
+
+.patterns-stage .preview-frame {
+  justify-content: center;
+}
+
+.patterns-stage[data-stage='panel'] > .patterns-stage-preview {
+  padding: var(--perron-space-300);
+  border-radius: var(--perron-radius-lg);
+  background: var(--perron-color-surface-raised);
+}
+
+.patterns-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-200);
+  padding: var(--perron-space-400);
+  color: inherit;
+  text-decoration: none;
+}
+
+/* the card clips, so the ring is drawn inside the link */
+.patterns-card-body:focus-visible {
+  outline-offset: calc(-1 * (var(--perron-focus-width) + var(--perron-focus-offset)));
+}
+
+.patterns-card-name {
+  margin: 0;
+  font: var(--perron-typography-heading-sm);
+  letter-spacing: var(--perron-typography-heading-sm-tracking);
+}
+
+.patterns-card-description {
+  margin: 0;
+  font: var(--perron-typography-body-sm);
+  letter-spacing: var(--perron-typography-body-sm-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.patterns-card-parts,
+.patterns-designing-parts {
+  font: var(--perron-typography-data-sm);
+  letter-spacing: var(--perron-typography-data-sm-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+/* In design: listed, never drawn */
+
+.patterns-designing {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--patterns-side-width)), 1fr));
+  gap: var(--perron-space-300);
+}
+
+.patterns-designing-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-150);
+  padding: var(--perron-space-300) var(--perron-space-400);
+  border: var(--perron-border-width-025) dashed var(--perron-color-border-strong);
+  border-radius: var(--perron-radius-lg);
+}
+
+.patterns-designing-name {
+  font: var(--perron-typography-heading-sm);
+  letter-spacing: var(--perron-typography-heading-sm-tracking);
+}
+
+/* Use a pattern: on the page's surface, past the map's strip, so raised rather than glass */
+
+.patterns-use {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--perron-space-600);
+  padding: var(--perron-space-500);
+  border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+  border-radius: var(--perron-radius-xl);
+  background: var(--perron-color-surface-raised);
+}
+
+.patterns-use-text {
+  flex: 1 1 var(--patterns-side-width);
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-200);
+}
+
+.patterns-use-lead {
+  margin: 0;
+  font: var(--perron-typography-body);
+  letter-spacing: var(--perron-typography-body-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.patterns-code {
+  flex: 1 1 var(--perron-size-sheet-width);
+  min-inline-size: 0;
+  margin: 0;
+  padding: var(--perron-space-400);
+  overflow-x: auto;
+  border-radius: var(--perron-radius-lg);
+  background: var(--perron-color-surface-inset);
+  font: var(--perron-typography-data);
+  letter-spacing: var(--perron-typography-data-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.patterns-code-keyword {
+  color: var(--perron-color-text-primary);
+}
+
+/* Under breakpoint.tablet (1180px), where the content is too narrow for the section list beside
+   the map screen: the list goes, and the page's own headings remain. */
+@media (max-width: 1179.98px) {
+  .patterns-nav {
+    display: none;
+  }
+}
+
+/* Under breakpoint.phone (760px): the map screen stacks, the overview sheet on top and opaque, the
+   tools under it, and the detail panel as a bottom sheet at size.sheet-peek, so no text sits on
+   the moving map. */
+@media (max-width: 759.98px) {
+  .patterns-screen,
+  .patterns-screen[data-mode='kiosk'] {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    row-gap: var(--perron-size-panel-gap);
+    padding-inline-end: var(--perron-size-panel-gap);
+  }
+
+  .patterns-screen[data-mode='screen'] {
+    padding-block-end: calc(var(--perron-size-sheet-peek) + var(--perron-size-panel-gap));
+  }
+
+  .patterns-screen-overview,
+  .patterns-screen-kiosk .pn-KioskBar {
+    background: var(--perron-color-surface-default);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  /* a card's stage keeps the map's land and leaves out its moving vehicles, so the glass in a
+     preview never holds text over them */
+  .patterns-stage .map {
+    display: none;
+  }
+
+  .patterns-screen-tools {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .patterns-screen-detail-marker {
+    inset-block: auto calc(var(--perron-size-sheet-peek) - var(--perron-size-badge) / 2);
+    inset-inline: var(--perron-space-200) auto;
+  }
+}
