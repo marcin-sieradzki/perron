@@ -16,7 +16,7 @@ Judge from three inputs only, so the review is independent of how the build reas
 - **The diff**: `git diff $(git merge-base HEAD origin/main)` (a slot merges `origin/main`, which can be ahead of the local `main`), plus each untracked file `git status --short` lists. Read the code, the CSS, the stories and the registry entry it changes; leave commit messages and the build's `direction` notes in `pipeline.yaml` aside.
 - **The gate output**: what you see when you run the gates yourself.
 
-`components/<name>/pipeline.yaml` says whether the design is `deferred`. Its `unblocked` notes each mark a cap cleared after what stopped the loop was fixed: the round count starts again there by design, and the code is judged as it stands. Its `questions` notes are decisions a stage asked for, answered by the maintainer or, in an unattended run, by each one's recommended answer: where the spec is silent they bind the code as the spec does, and a P3 may question one. Its `direction` notes are the build's view of the design, not a requirement.
+`components/<name>/pipeline.yaml` says whether the design is `deferred`. Its `unblocked` notes each mark a cap cleared after what stopped the loop was fixed: the round count starts again there by design, and the code is judged as it stands. Its `questions` notes are decisions a stage asked for, answered by the maintainer or, in an unattended run, by each one's recommended answer: where the spec is silent and the contract leaves the choice open they bind the code as the spec does, and a P3 may question one. Its `direction` notes are the build's view of the design, not a requirement.
 
 The round is the one the prompt gives; without one, it is one more than the round in an existing `components/<name>/review.md`, or 1.
 
@@ -46,6 +46,8 @@ Each audit skill reports in [`format.md`](../skills/design-qa/format.md), whose 
 5. **Owned strings and docs**: the [`content-audit`](../skills/content-audit/SKILL.md) skill on `<Name>`: its owned strings in all four locales, the words in its code, spec and stories, and every JSDoc comment on `<Name>Props`.
 6. **The spec against the code**: every row of the spec's Props, Base UI parts, Tokens, Keyboard and ARIA and Stories tables, every `CR-n` and the prose beside them, read against the code, the CSS and the stories, and against Base UI's own source under `node_modules/@base-ui/react/` where the line says what Base UI does (where focus goes, which reasons an event gives). Every round reads the whole spec, not only the lines the last fix touched, and reports every disagreement it finds in that round: each one left for a later round costs a build run. A fix that landed in the wrong section, or that one line now says and another still denies, is a finding at that line.
 
+7. **Test coverage**, a checklist built whole in every round, the first included: one line per row of the spec's Keyboard table (each key, on each part it names), per behaviour a Stories row's `play` cell promises, per `CR-n` a person can see or hear (a dismissal and its `reason`, a pointer moving the highlight, focus returning), and per Base UI behaviour the spec says the component keeps; each line ticked by the `play` step that proves it, a key pressed or an event's `reason` checked. Every unticked line goes into one finding at the Stories table, listing them all, so no later round finds a gap this round could have listed.
+
 ## Levels
 
 An audit finding takes its level from [`format.md`](../skills/design-qa/format.md). A red gate and each misuse of Base UI are P1.
@@ -55,6 +57,10 @@ An audit finding takes its level from [`format.md`](../skills/design-qa/format.m
 - **P3** is a note: a question for the maintainer, or a choice they may want to revisit. It goes on the PR.
 
 Report each problem once, at the level of its worst effect, at the line that causes it. A spec that contradicts itself, the contract or its code is a finding at the spec's line that disagrees: name the line it contradicts and which side holds (the contract over the spec, a `CR-n` or a Props row over prose), so the build's rerun rewrites the spec line to agree. A contradiction no rule settles says so, and the build returns it to the maintainer.
+
+A spec line that allows what the contract forbids, such as a `CR-n` that keeps a declared prop in `rest` against the Root rule, is no excuse for the code that follows it: the finding takes the level the breach has without that line (P1 for a misuse of Base UI, P2 otherwise), at the spec's line, with the contract holding. Only a choice the contract leaves open is the spec's to make, and a P3 questions it. Read each `CR-n` against the contract's rule on the same subject (Root, Customising, Props, State and events, CSS, Words, Stories) in step 1.
+
+The contract's own wording is the reference for a description: React's props' JSDoc and the spec's row for them read "Reaches the root", as the library writes it.
 
 ## review.md
 

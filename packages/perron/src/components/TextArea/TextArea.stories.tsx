@@ -11,7 +11,15 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import type { Locale } from '../../locale/index.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
-import { colour, lines, mounted, onHover, rendered, resolve } from '../../testing/stories.ts'
+import {
+  colour,
+  edge,
+  fieldPart,
+  lines,
+  mounted,
+  onHover,
+  rendered,
+} from '../../testing/stories.ts'
 import { TextArea } from './TextArea.tsx'
 import type { TextAreaProps } from './TextArea.tsx'
 
@@ -44,13 +52,6 @@ type Story = StoryObj<typeof meta>
 const boxIn = (scope: HTMLElement, name: string | RegExp = LABEL) =>
   within(scope).getByRole<HTMLTextAreaElement>('textbox', { name })
 
-/** One of Field's parts in `scope`, by its class, or null when it isn't rendered. */
-const part = (scope: Element, name: 'field' | 'label' | 'description' | 'error') =>
-  scope.querySelector<HTMLElement>(name === 'field' ? '.pn-Field' : `.pn-Field-${name}`)
-
-/** A colour token as it renders on an edge, to compare with an element's `border-color`. */
-const edge = (token: string) => resolve('borderColor', `var(--perron-color-${token})`)
-
 /** `size.input` in pixels, as it renders on a block size. */
 const inputHeight = () => Number.parseFloat(rendered('size-input', 'block-size'))
 
@@ -67,11 +68,11 @@ export const Default: Story = {
         await expect(box).toHaveClass('pn-TextArea')
         const frame = box.closest('.pn-Field')
         await expect(frame).toHaveClass('pn-Field', 'pn-TextArea-field')
-        await expect(part(canvasElement, 'label')).toHaveClass(
+        await expect(fieldPart(canvasElement, 'label')).toHaveClass(
           'pn-Field-label',
           'pn-TextArea-label',
         )
-        await expect(part(canvasElement, 'description')).toHaveClass(
+        await expect(fieldPart(canvasElement, 'description')).toHaveClass(
           'pn-Field-description',
           'pn-TextArea-description',
         )
@@ -79,7 +80,7 @@ export const Default: Story = {
       },
     )
     await step('pressing the label focuses the textarea', async () => {
-      await userEvent.click(part(canvasElement, 'label')!)
+      await userEvent.click(fieldPart(canvasElement, 'label')!)
       await expect(box).toHaveFocus()
       box.blur()
     })
@@ -135,14 +136,14 @@ export const Disabled: Story = {
     const box = boxIn(canvasElement)
     await expect(box).toBeDisabled()
     await expect(box).toHaveAttribute('data-disabled')
-    await expect(part(canvasElement, 'label')).toHaveAttribute('data-disabled')
+    await expect(fieldPart(canvasElement, 'label')).toHaveAttribute('data-disabled')
     await userEvent.tab()
     await expect(box).not.toHaveFocus()
     const tertiary = colour('--perron-color-text-tertiary')
     await expect(getComputedStyle(box).color).toBe(tertiary)
-    await expect(getComputedStyle(part(canvasElement, 'label')!).color).toBe(tertiary)
-    await expect(getComputedStyle(part(canvasElement, 'description')!).color).toBe(tertiary)
-    await expect(getComputedStyle(box).borderColor).toBe(edge('border-control'))
+    await expect(getComputedStyle(fieldPart(canvasElement, 'label')!).color).toBe(tertiary)
+    await expect(getComputedStyle(fieldPart(canvasElement, 'description')!).color).toBe(tertiary)
+    await expect(getComputedStyle(box).borderColor).toBe(edge('color-border-control'))
     await expect(getComputedStyle(box).backgroundColor).toBe(
       colour('--perron-color-surface-raised'),
     )
@@ -159,12 +160,12 @@ export const Invalid: Story = {
   args: { error: 'Say what happened' },
   play: async ({ canvasElement }) => {
     const box = boxIn(canvasElement)
-    const description = part(canvasElement, 'description')!
-    const error = part(canvasElement, 'error')!
+    const description = fieldPart(canvasElement, 'description')!
+    const error = fieldPart(canvasElement, 'error')!
     await expect(error).toHaveClass('pn-Field-error', 'pn-TextArea-error')
     await expect(box).toHaveAttribute('aria-invalid', 'true')
     await expect(box).toHaveAttribute('data-invalid')
-    await expect(getComputedStyle(box).borderColor).toBe(edge('status-danger'))
+    await expect(getComputedStyle(box).borderColor).toBe(edge('color-status-danger'))
     // the help first, then the error
     await waitFor(() =>
       expect(box.getAttribute('aria-describedby')).toBe(`${description.id} ${error.id}`),
@@ -253,7 +254,7 @@ export const HiddenLabel: Story = {
     a11y: { options: { rules: { 'label-title-only': { enabled: false } } } },
   },
   play: async ({ canvasElement }) => {
-    const label = part(canvasElement, 'label')!
+    const label = fieldPart(canvasElement, 'label')!
     await expect(label.tagName).toBe('SPAN')
     await expect(label.getBoundingClientRect().width).toBeLessThanOrEqual(1)
     await expect(boxIn(canvasElement)).toHaveAccessibleName(LABEL)
@@ -309,7 +310,7 @@ export const ReadOnly: Story = {
     await userEvent.keyboard('x')
     await expect(box).toHaveValue(WORDS)
     await expect(args.onChange).not.toHaveBeenCalled()
-    await expect(getComputedStyle(box).borderColor).toBe(edge('border-control'))
+    await expect(getComputedStyle(box).borderColor).toBe(edge('color-border-control'))
     await expect(getComputedStyle(box).backgroundColor).toBe(
       colour('--perron-color-surface-raised'),
     )
@@ -362,7 +363,7 @@ export const Scrolling: Story = {
   args: { defaultValue: FIVE_LINES },
   play: async ({ args, canvasElement }) => {
     const box = boxIn(canvasElement)
-    const frame = part(canvasElement, 'field')!
+    const frame = fieldPart(canvasElement, 'field')!
     // the words scroll inside the box
     await expect(box.scrollHeight).toBeGreaterThan(box.clientHeight)
     // and the box stays a three-row box's height, that of one holding a single word
@@ -469,7 +470,7 @@ export const Validation: Story = {
     const box = boxIn(canvasElement)
     const start = document.activeElement
     await step('the field is valid at first, with no error', async () => {
-      await expect(part(canvasElement, 'error')).toBeNull()
+      await expect(fieldPart(canvasElement, 'error')).toBeNull()
       await expect(box).not.toHaveAttribute('aria-invalid')
     })
     await step('"Late", then Tab out, shows the message and the danger edge', async () => {
@@ -477,19 +478,21 @@ export const Validation: Story = {
       await userEvent.type(box, 'Late')
       await userEvent.tab()
       await waitFor(() =>
-        expect(part(canvasElement, 'error')).toHaveTextContent(/^Write at least 10 characters$/),
+        expect(fieldPart(canvasElement, 'error')).toHaveTextContent(
+          /^Write at least 10 characters$/,
+        ),
       )
       await expect(box).toHaveAttribute('aria-invalid', 'true')
-      await expect(getComputedStyle(box).borderColor).toBe(edge('status-danger'))
+      await expect(getComputedStyle(box).borderColor).toBe(edge('color-status-danger'))
     })
     await step('" at Nørreport", then Tab out, removes it', async () => {
       await userEvent.tab({ shift: true })
       await expect(box).toHaveFocus()
       await userEvent.type(box, ' at Nørreport')
       await userEvent.tab()
-      await waitFor(() => expect(part(canvasElement, 'error')).toBeNull())
+      await waitFor(() => expect(fieldPart(canvasElement, 'error')).toBeNull())
       await expect(box).not.toHaveAttribute('aria-invalid')
-      await expect(getComputedStyle(box).borderColor).toBe(edge('border-control'))
+      await expect(getComputedStyle(box).borderColor).toBe(edge('color-border-control'))
       await expect(document.activeElement).toBe(start)
     })
   },
@@ -507,10 +510,10 @@ export const LongWords: Story = {
     defaultValue: COMPOUND.repeat(3),
   },
   play: async ({ canvasElement }) => {
-    const frame = part(canvasElement, 'field')!
+    const frame = fieldPart(canvasElement, 'field')!
     const bounds = frame.getBoundingClientRect()
     for (const name of ['label', 'description', 'error'] as const) {
-      const element = part(canvasElement, name)!
+      const element = fieldPart(canvasElement, name)!
       await expect(lines(element)).toBeGreaterThan(1.5)
       await expect(element.getBoundingClientRect().right).toBeLessThanOrEqual(bounds.right + 0.5)
       await expect(element.scrollWidth).toBeLessThanOrEqual(element.clientWidth)

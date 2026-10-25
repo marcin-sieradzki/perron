@@ -401,13 +401,42 @@ describe('the factory dry run', () => {
     stage('review', () => review(1, 1))
     stage('build', () => build())
     stage('review', () => review(2, 1))
-    run('unblock Tally')
-    // next says review, with the round's findings to fix; a build begun here would carry none
+    run('unblock Tally --to review')
+    // reviewed again as it stands; a build begun here would carry none of the round's findings
     expect(run('next Tally').out).toMatch(/^run: review\nround: 3\n/)
     expect(run('begin Tally build').err).toMatch(
       /^refused: build cannot begin: next names review \(the last run failed: review round 2 found 1 P1/,
     )
     expect(run('begin Tally review').code).toBe(0)
+  })
+
+  it("sends a review cap back to build on unblock, with the cap round's findings as its fix", () => {
+    throughBrief()
+    stage('build', () => build())
+    stage('review', () => review(1, 1))
+    stage('build', () => build())
+    stage('review', () => review(2, 1))
+    expect(run('next Tally').out).toMatch(/^wait: needs-human/)
+    expect(run('unblock Tally').out).toMatch(/^unblocked review\nrun: build\n/)
+    const { fix } = JSON.parse(run('next Tally --json').out)
+    expect(fix).toMatch(/^review round 2 found 1 P1 .*Fix each of its P1 and P2 findings/s)
+    expect(fix).toContain('- **P1-1.** `Tally.tsx:1` Breaks the contract.')
+    // the build that fixes them runs in the factory, so its Direction findings reach the notes
+    run('begin Tally build')
+    build()
+    expect(factory(['end', 'Tally', 'build', 'done', '--direction', 'A note'], env()).out).toMatch(
+      /run: review\nround: 3\n/,
+    )
+    expect(pipeline().notes).toContainEqual(expect.objectContaining({ direction: 'A note' }))
+    expect(pipeline().stages.review?.sentBack).toBe(0)
+    expect(run('unblock Tally --to docs').err).toMatch(/is not at needs-human/)
+  })
+
+  it('refuses --to anywhere but build or review, and at any stop but a review cap', () => {
+    throughBrief()
+    stage('build', () => build(), 'failed', 'TS6059')
+    expect(run('unblock Tally --to review').err).toMatch(/--to review is for a review cap/)
+    expect(run('unblock Tally --to nowhere').err).toMatch(/"nowhere" is not a stage/)
   })
 
   it('keeps each Direction finding and each unblock in the notes, across reruns', () => {
@@ -487,8 +516,8 @@ describe('the factory dry run', () => {
     expect(stage('review', () => review(3, 0, 1)).out).toMatch(
       /\nwait: needs-human\nstage: review\nwhy: 3 review rounds found a P1 or a P2; the last: review round 3 found 1 P2/,
     )
-    // the maintainer fixes the code and unblocks: the next round reviews it
-    run('unblock Tally')
+    // the maintainer fixes the code and unblocks to review: the next round reviews it
+    run('unblock Tally --to review')
     expect(stage('review', () => review(4)).out).toContain('ended review: done, round 4')
   })
 
@@ -579,6 +608,25 @@ describe('the factory dry run', () => {
     expect(pipeline().stages.docs?.failures).toBe(0)
   })
 
+  it('stops a docs run that failed on shared tooling at needs-human, with no build rerun', () => {
+    throughBrief()
+    stage('build', () => build())
+    stage('review', () => review(1))
+    const fault = 'scripts/lib/docgen.ts:95 drops null from value'
+    run('begin Tally docs')
+    expect(run('end Tally docs failed --tooling', fault).out).toMatch(
+      /^ended docs: failed: .*\nwait: needs-human\nstage: docs\nwhy: docs failed on shared tooling: scripts\/lib\/docgen\.ts:95/s,
+    )
+    expect(pipeline().stages.build?.status).toBe('done')
+    expect(pipeline().stages.docs?.failures).toBeUndefined()
+    // once the maintainer has changed the tool, docs runs again
+    expect(run('unblock Tally').out).toContain('unblocked docs\nrun: docs')
+    run('begin Tally docs')
+    expect(run('end Tally review failed --tooling', fault).err).toMatch(
+      /--tooling is for a docs run/,
+    )
+  })
+
   it('sends a docs run back to build when npm run check is red, as after main changed a gate', () => {
     throughBrief()
     stage('build', () => build())
@@ -628,6 +676,45 @@ describe('the factory dry run', () => {
       why: 'Tally has no design yet',
     })
     expect(existsSync(join(root, 'components/tally/pipeline.yaml'))).toBe(false)
+  })
+
+  it("keeps a brief's questions when its gate fails it, and gives them to the rerun with the answers", () => {
+    stage('design', () => design())
+    run('approve Tally')
+    const questions = '1. Which tone is the default? Recommended: plain.'
+    run('begin Tally brief')
+    // a placeholder left fails the gate, though the run returned pending with its question
+    brief(
+      '[PENDING] Which tone is the default? Recommended: plain.\n\n| `<key>Label` | `string` |\n',
+    )
+    expect(run('end Tally brief pending', questions).out).toMatch(
+      /^ended brief: failed: the spec still has the placeholder <key>/,
+    )
+    expect(pipeline().notes).toContainEqual(expect.objectContaining({ stage: 'brief', questions }))
+    // the question still stands: the rerun keeps it
+    const kept = JSON.parse(run('next Tally --json').out).fix
+    expect(kept).toContain(`with these questions:\n${questions}`)
+    expect(kept).toMatch(/Keep each \[PENDING\] line/)
+    // answered meanwhile: the rerun carries the answer through too
+    brief('The default tone is plain.\n\n| `<key>Label` | `string` |\n')
+    const carried = JSON.parse(run('next Tally --json').out).fix
+    expect(carried).toMatch(/^the spec still has the placeholder <key>/)
+    expect(carried).toContain(questions)
+    expect(carried).toMatch(/component-brief, "Run again"/)
+  })
+
+  it('warns when a stage ends pending without its numbered questions', () => {
+    stage('design', () => design())
+    run('approve Tally')
+    run('begin Tally brief')
+    brief('[PENDING] Which tone is the default? Recommended: plain.\n')
+    expect(run('end Tally brief pending', 'see the spec').err).toMatch(
+      /^warning: brief ended pending without its numbered questions/,
+    )
+    brief('The default tone is plain.\n')
+    run('begin Tally brief')
+    brief('[PENDING] Is it ever negative? Recommended: no.\n')
+    expect(run('end Tally brief pending', '1. Is it ever negative? Recommended: no.').err).toBe('')
   })
 
   it('runs brief to docs without design and visual once the design is deferred', () => {
