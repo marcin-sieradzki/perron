@@ -14,6 +14,17 @@ export const decode = (s: string) =>
       : (ENTITIES[name] ?? entity),
   )
 
+/**
+ * The value of one attribute in the first tag of server-rendered markup, its character references
+ * read back, or undefined when the tag has no such attribute.
+ *
+ * @example attribute('<svg viewBox="0 0 24 24" width="24">', 'viewBox') // '0 0 24 24'
+ */
+export function attribute(markup: string, name: string) {
+  const value = markup.match(/<[^>]*>/)?.[0].match(new RegExp(`\\s${name}="([^"]*)"`))?.[1]
+  return value === undefined ? undefined : decode(value)
+}
+
 /** The elements React writes with no closing tag. */
 const VOID = /^(?:area|base|br|col|embed|hr|img|input|link|meta|source|track|wbr)$/i
 

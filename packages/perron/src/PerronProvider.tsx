@@ -9,7 +9,10 @@ import type { Locale, OwnedStrings } from './locale/index.ts'
 const LocaleContext = createContext<Locale>('en')
 
 export interface PerronProviderProps {
-  /** The language of every owned string inside, such as a dialog's close label. */
+  /**
+   * The language of every owned string inside, such as a dialog's close label. It also sets how
+   * numbers are written, such as a meter's "82 %" in Danish.
+   */
   locale?: Locale
   children?: ReactNode
 }

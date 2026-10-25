@@ -15,9 +15,8 @@ export interface MeterProps extends Omit<
   'value' | 'children' | 'locale' | 'color' | 'className' | 'style' | 'ref'
 > {
   /**
-   * Required. What the meter measures, in a few words, such as "Reporting live", shown above the
-   * track and the meter's accessible name; a `meter` with no name fails axe's `aria-meter-name`,
-   * and Stat's `label` is required for the same reason.
+   * What the meter measures, in a few words, such as "Reporting live": shown above the track, and
+   * the meter's accessible name. Required
    */
   label: ReactNode
   /**

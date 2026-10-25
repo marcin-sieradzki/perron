@@ -7,7 +7,7 @@ import { expect, userEvent, within } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { dictionaries, type Locale } from '../../locale/index.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
-import { colour } from '../../testing/stories.ts'
+import { colour, rendered } from '../../testing/stories.ts'
 import { Meter } from './Meter.tsx'
 
 const meta = {
@@ -38,9 +38,6 @@ function partsIn(canvas: HTMLElement) {
     indicator: root.querySelector<HTMLElement>('.pn-Meter-indicator')!,
   }
 }
-
-/** A CSS time, such as "800ms" or "0.8s", in milliseconds. */
-const ms = (time: string) => parseFloat(time) * (time.trim().endsWith('ms') ? 1 : 1000)
 
 /** The ref the Neutral story hands Meter, to prove it reaches the root. */
 const neutralRef = createRef<HTMLDivElement>()
@@ -87,10 +84,9 @@ export const Neutral: Story = {
     await expect(neutralRef.current).toBe(root)
     await expect(root).toHaveAttribute('aria-valuetext', '87%')
     // CR-6: the fill eases over duration.meter
-    const duration = getComputedStyle(document.documentElement).getPropertyValue(
-      '--perron-duration-meter',
+    await expect(getComputedStyle(indicator).transitionDuration).toBe(
+      rendered('duration-meter', 'transition-duration'),
     )
-    await expect(ms(getComputedStyle(indicator).transitionDuration)).toBeCloseTo(ms(duration), 3)
     // The name comes first in reading order, then the figure, then the track
     await expect(root.firstElementChild).toHaveClass('pn-Meter-label')
   },
