@@ -22,7 +22,8 @@ export const holds = (query: string, feature: string) =>
     .split(',')
     .some(
       (entry) =>
-        entry.includes(feature) &&
+        // `(hover)` is the boolean form of `(hover: hover)`
+        (entry.includes(feature) || entry.includes(feature.replace(/:.*\)/, ')'))) &&
         !/^\s*not\s/.test(entry) &&
         !entry.includes(`not ${feature}`) &&
         !entry.includes(`not${feature}`),

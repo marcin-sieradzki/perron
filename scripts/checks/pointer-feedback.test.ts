@@ -143,6 +143,26 @@ describe('pointer-feedback', () => {
     ).toEqual([expect.stringMatching(/paints only what its hover rule already paints/)])
   })
 
+  it('pairs across combinator spacing, reads (hover) and nested guards, and skips a hover that paints nothing', () => {
+    expect(
+      lint(`${BASE}
+@media (hover) { .pn-Y>.pn-X:hover { background-color: var(--a); } }
+.pn-Y > .pn-X:active { background-color: var(--b); }
+.pn-X:not(:is(:hover, :focus)) { color: var(--c); }
+@media (hover: hover) { .pn-X:hover .pn-X-tip { visibility: visible; } }
+.pn-X[aria-disabled='false'] { color: var(--c); }`),
+    ).toEqual([])
+    expect(
+      lint(`${BASE}
+@media (hover: hover) { .pn-X:is(:hover, :focus-visible) { background-color: var(--a); } }`),
+    ).toEqual([expect.stringMatching(/hovers inside :is\(\) or :where\(\)/)])
+    expect(
+      lint(`${BASE}
+@media (hover: hover) { .pn-X:hover { border-color: var(--a); } }
+.pn-X:active { border: 1px solid var(--a); }`),
+    ).toEqual([expect.stringMatching(/paints only what its hover rule already paints/)])
+  })
+
   it('fails a hover outside (hover: hover)', () => {
     expect(
       lint(`${BASE}

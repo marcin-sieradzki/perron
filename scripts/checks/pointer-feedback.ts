@@ -42,7 +42,14 @@ const paintsOf = (rule: Rule) => {
         const layer = /gradient\(|url\(/.test(value)
         out.set('background-color', layer ? 'transparent' : value)
         out.set('background-image', layer ? value : 'none')
-      } else if (prop === 'border' || prop === 'outline') out.set(`${prop}-color`, value)
+      } else if (
+        /^(border(-(block|inline|top|right|bottom|left)(-(start|end))?)?|outline)$/.test(prop)
+      )
+        // a shorthand's colour: its var(), hex or keyword, else the whole value
+        out.set(
+          `${prop}-color`,
+          /var\([^)]*\)|#[\da-f]+\b|\b(transparent|currentcolor)\b/i.exec(value)?.[0] ?? value,
+        )
       else out.set(prop, value)
     }
   return out
@@ -58,7 +65,14 @@ const cursor = (rule: Rule) =>
 /** A selector less what its `:not()` and `:has()` hold, so a guard or a child's state names no state. */
 const unguarded = (sel: string) => {
   let out = sel
-  while (/:(not|has)\([^()]*\)/.test(out)) out = out.replace(/:(not|has)\([^()]*\)/g, '')
+  for (let at = out.search(/:(not|has)\(/); at >= 0; at = out.search(/:(not|has)\(/)) {
+    let end = out.indexOf('(', at)
+    for (let depth = 0; end < out.length; end++) {
+      if (out[end] === '(') depth++
+      if (out[end] === ')' && --depth === 0) break
+    }
+    out = out.slice(0, at) + out.slice(end + 1)
+  }
   return out
 }
 
@@ -99,7 +113,9 @@ const pairKey = (sel: string) => {
           }
           text = `${kept}${text.slice(last)}:active`
         }
-        const gap = i + 1 < all.length ? sel.slice(to, all[i + 1][0]) : ''
+        // a combinator in one spacing, so `.a>.b` pairs with `.a > .b`
+        const gap =
+          i + 1 < all.length ? ` ${sel.slice(to, all[i + 1][0]).trim()} `.replace(/^\s+$/, ' ') : ''
         return text + gap
       })
       .join('')
@@ -139,8 +155,8 @@ const styles = (sel: string, name: string) => {
 
 /** The states that keep the default cursor, each needing it in a rule of its own. */
 const STILL = [
-  { name: 'disabled', test: /\[(data|aria)-disabled(?=[\]=~|^$*\s])|:disabled/ },
-  { name: 'read-only', test: /\[(data|aria)-readonly(?=[\]=~|^$*\s])|:read-only/ },
+  { name: 'disabled', test: /\[(data|aria)-disabled(?=[\]=~|^$*\s])(?!=['"]?false)|:disabled/ },
+  { name: 'read-only', test: /\[(data|aria)-readonly(?=[\]=~|^$*\s])(?!=['"]?false)|:read-only/ },
 ]
 
 /** A state a rule's cursor doesn't speak for: the pointer's or the focus's own. */
@@ -170,7 +186,13 @@ export function pointerProblems(file: string, css: string): Problem[] {
     for (const sel of r.rule.selectors) {
       const hover = isIn(sel, ':hover')
       const press = isIn(sel, ':active')
-      if (hover && !press && !inMedia(r.rule, HOVER))
+      if (hover && !press && !/:hover(?![\w-])/.test(masked(unguarded(sel))))
+        problems.push({
+          file,
+          line: r.rule.source?.start?.line,
+          message: `${selector(sel)} hovers inside :is() or :where(): write :hover on the compound itself, so its press can be written as its pair ${WHERE}`,
+        })
+      else if (hover && !press && !inMedia(r.rule, HOVER))
         problems.push({
           file,
           line: r.rule.source?.start?.line,
@@ -178,7 +200,8 @@ export function pointerProblems(file: string, css: string): Problem[] {
         })
       const into =
         hover && !press ? hovers : press && !hover && !inMedia(r.rule, HOVER) ? presses : undefined
-      if (into && (into === presses ? r.paints.size : true)) {
+      // a hover that paints nothing, such as one that shows a child, has no look to press past
+      if (into && r.paints.size && /:(hover|active)(?![\w-])/.test(masked(unguarded(sel)))) {
         const key = pairKey(sel)
         into.set(key, [...(into.get(key) ?? []), { ...r, sel }])
       }
