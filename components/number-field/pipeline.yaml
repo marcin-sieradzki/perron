@@ -3,9 +3,6 @@ component: NumberField
 layer: component
 deferred:
   at: 2026-10-25T06:34:21.822Z
-needsHuman:
-  stage: review
-  reason: '3 review rounds found a P1 or a P2; the last: review round 4 found 1 P2 (components/number-field/review.md)'
 stages:
   brief:
     status: done
@@ -13,22 +10,14 @@ stages:
     ended: 2026-10-25T06:48:00.020Z
   build:
     runs: 4
-    status: done
-    started: 2026-10-25T08:11:25.737Z
-    begun: 8bb8d69e1a69baf5550e583868fd8c61dbb607d4b51023fc9bfab2bd9595dde7
-    spec: 3fb16b516d4e94cd8aa9c23cd70eec97e2d096c09892f89b05f2ebcde067eb45
-    ended: 2026-10-25T08:17:55.675Z
+    failing: review round 4 found 1 P2 (components/number-field/review.md)
   review:
     rounds: 4
-    sentBack: 3
+    sentBack: 0
     findings:
       p1: 0
       p2: 1
       p3: 7
-    status: failed
-    started: 2026-10-25T08:18:40.329Z
-    ended: 2026-10-25T08:24:21.062Z
-    failing: review round 4 found 1 P2 (components/number-field/review.md)
   docs:
     failures: 1
 notes:
@@ -83,3 +72,6 @@ notes:
   - stage: build
     at: 2026-10-25T08:05:10.092Z
     direction: Base UI's hidden <input type="number"> counts as a second field for implicit form submission, so Enter submits a form holding a NumberField only when the form has a submit button; a form with a lone NumberField and no button is not submitted, unlike a lone TextField. The contract's Forms section could say so.
+  - stage: review
+    at: 2026-10-25T08:24:27.312Z
+    unblocked: '3 review rounds found a P1 or a P2; the last: review round 4 found 1 P2 (components/number-field/review.md)'
