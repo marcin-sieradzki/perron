@@ -3,4 +3,27 @@ component: Slider
 layer: component
 deferred:
   at: 2026-10-25T06:59:37.033Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-25T06:59:41.954Z
+    ended: 2026-10-25T07:13:09.464Z
+notes:
+  - stage: brief
+    at: 2026-10-25T07:13:09.465Z
+    direction: The Perron MCP's list_tokens reads the main checkout, which is behind this branch. It is missing size.meter-track, color.surface.inverse-pressed and color.surface.brand-pressed, so the brief read the worktree's packages/perron/tokens files instead. Agents in worktrees can get stale token answers from it.
+  - stage: brief
+    at: 2026-10-25T07:13:09.465Z
+    direction: "The registry entry for Slider lists Slider.Label in baseUiParts, which the spec leaves out: drop it and list Field.Root, Field.Label, Field.Description and Field.Error, as TextField's entry does."
+  - stage: brief
+    at: 2026-10-25T07:13:09.465Z
+    direction: Sheet's Do and don't row asks callers to mark a slider inside a bottom sheet with data-base-ui-swipe-ignore. If Slider marks its own control (CR-11), reword that row to say Slider does it.
+  - stage: brief
+    at: 2026-10-25T07:13:09.465Z
+    direction: Switch and Slider both read the thumb size from the same calc() over size.target-min, space.050 and border.width.025. If a third component needs a thumb, a size.thumb token through the design-tokens skill would hold the size in one place.
+  - stage: brief
+    at: 2026-10-25T07:13:09.465Z
+    direction: For a two-thumb slider, Base UI's default aria-valuetext adds the English words 'start range' and 'end range' in every locale. Any future component built on a Base UI range slider must replace it, or expectOwnedStrings fails outside English.
+  - stage: brief
+    at: 2026-10-25T07:13:09.465Z
+    questions: "1. Does Slider compose Field as its frame (root Slider.Root, Field via slotProps.field, Slider.Label left out)? Recommended: yes. 2. Does the figure (Slider.Value) always show at the inline end of the track row, its column held as wide as the formatted min and max? Recommended: yes. 3. Is the value a number or readonly [number, number], one thumb per value, no generic? Recommended: yes. 4. Does Slider take onChange(event, value, details) and onChangeCommitted(event, value, details)? Recommended: yes. 5. Does Slider leave out variant, size, color, orientation, thumbAlignment, optional and required, inherit min/max/step/largeStep/minStepsBetweenValues/format/thumbCollisionBehavior/name/form, and declare locale defaulting to the PerronProvider's? Recommended: yes. 6. Geometry: control size.target-min tall with half-thumb inline padding, track size.meter-track (description widened), thumb 18 px as Switch's calc()? Recommended: yes. 7. Colours: track color.surface.inset, fill color.text.primary, thumb color.surface.raised with a border.width.050 color.surface.inverse edge, hover/pressed layers color.surface.hover/selected, figure typography.data, no transitions? Recommended: yes. 8. Disabled in color.text.tertiary with no hover/pressed; invalid thumb edge color.status.danger; disabled wins inside an invalid field? Recommended: yes. 9. Range thumbs named by new owned strings minimum/maximum via getAriaLabel, overridable by minimumLabel/maximumLabel, aria-valuetext the formatted value alone? Recommended: yes. 10. Deferred design draws one State property (default, hover, focus, pressed, disabled, invalid) with Range, Units, Controlled, HiddenLabel, InForm and LongWords as content stories? Recommended: yes."
