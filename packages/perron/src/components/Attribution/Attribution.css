@@ -1,6 +1,7 @@
-/* Attribution: the map's credits on glass with no edge and no shadow, so they recede behind the map
-   controls beside them, in the semantic tokens, which carry both themes (CR-5). The strip sizes to
-   its credits and its container (CR-3), places nothing (CR-6) and has no state of its own (CR-2). */
+/* Attribution: the map's credits on glass with no edge and no shadow, so they recede behind the
+   map controls beside them, in the semantic tokens, which carry both themes (CR-5). The strip
+   sizes to its credits and its container (CR-3), places nothing (CR-6) and has no state of its
+   own (CR-2). */
 .pn-Attribution {
   display: inline-block;
   max-inline-size: 100%;
@@ -32,5 +33,6 @@
   }
 }
 
-/* Forced colours need no rule: Windows' contrast themes paint the strip Canvas, its text CanvasText
-   and its links LinkText, and the links keep their underline. */
+/* Forced colours need no rule: Windows' contrast themes paint the fill Canvas at the overlay's
+   alpha and keep the blur, so the strip stays frosted glass in the theme's colour; its text is
+   CanvasText and its links LinkText, with their underline. */

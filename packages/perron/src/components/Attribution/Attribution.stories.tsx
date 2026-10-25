@@ -1,9 +1,11 @@
-// Attribution's stories: one per row of the spec's Stories table (docs/components/attribution.md),
-// with the design deferred, each on a map-like backdrop of color.map.land, so the glass is seen over
-// what it sits on in Mylder. The play tests read the DOM and the accessibility tree, not the pixels.
+// Attribution's stories: one per row of the spec's Stories table
+// (docs/components/attribution.md), with the design deferred, each on a map-like backdrop of
+// color.map.land, so the glass is seen over what it sits on in Mylder. The play tests read the DOM
+// and the accessibility tree, not the pixels.
 import type { CSSProperties } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, userEvent, within } from 'storybook/test'
+import { colour, heard } from '../../testing/stories.ts'
 import { Attribution } from './Attribution.tsx'
 
 /** Land with streets and water across it, under the strip, so the blur has something to soften. */
@@ -45,23 +47,13 @@ type Story = StoryObj<typeof meta>
 /** The one Attribution rendered inside `canvas`. */
 const rootIn = (canvas: HTMLElement) => canvas.querySelector<HTMLElement>('.pn-Attribution')!
 
-/** `element`'s text content, its white space collapsed: the strip has no role and no hidden text, so this is what a screen reader reads. */
-const textOf = (element: Element) => element.textContent!.replace(/\s+/g, ' ').trim()
-
-/** A token's value as it renders, through a probe that reads it as `color`. */
-function rendered(token: string) {
-  const probe = document.createElement('div')
-  probe.style.color = `var(--perron-${token})`
-  document.body.append(probe)
-  const value = getComputedStyle(probe).color
-  probe.remove()
-  return value
-}
-
 /** Start from the top of the page, whatever a story before left focused. */
 const blur = () => (document.activeElement as HTMLElement | null)?.blur()
 
-/** "Map data © OpenStreetMap contributors", with the source's name a link to its terms; the contract story's subject. */
+/**
+ * "Map data © OpenStreetMap contributors", with the source's name a link to its terms; the
+ * contract story's subject.
+ */
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const root = rootIn(canvasElement)
@@ -71,7 +63,8 @@ export const Default: Story = {
     const names = root.getAttributeNames()
     await expect(names.filter((n) => n === 'role' || n.startsWith('aria-'))).toEqual([])
     await expect(names.filter((n) => n.startsWith('data-'))).toEqual([])
-    await expect(textOf(root)).toBe('Map data © OpenStreetMap contributors')
+    // the strip has no role and no name of its own, so what a screen reader hears is its text
+    await expect(heard(root)).toBe('Map data © OpenStreetMap contributors')
     // the caller's link, named by its text and underlined (CR-4)
     const link = within(root).getByRole('link', { name: 'OpenStreetMap contributors' })
     await expect(link).toHaveAttribute('href', OSM)
@@ -79,10 +72,12 @@ export const Default: Story = {
     // the link is the one tab stop; the strip never takes focus (CR-2)
     await expect(root).not.toHaveAttribute('tabindex')
     blur()
+    const start = document.activeElement
     await userEvent.tab()
     await expect(link).toHaveFocus()
     await userEvent.tab({ shift: true })
-    await expect(link).not.toHaveFocus()
+    // Shift+Tab takes focus back to where it started, never to the strip
+    await expect(document.activeElement).toBe(start)
     await expect(root).not.toHaveFocus()
   },
 }
@@ -92,14 +87,14 @@ export const PlainText: Story = {
   args: { children: 'Departures from Rejseplanen' },
   play: async ({ canvasElement }) => {
     const root = rootIn(canvasElement)
-    await expect(textOf(root)).toBe('Departures from Rejseplanen')
+    await expect(heard(root)).toBe('Departures from Rejseplanen')
     // nothing in it takes focus (CR-2)
     blur()
     await userEvent.tab()
     await expect(root.contains(document.activeElement)).toBe(false)
     await userEvent.tab({ shift: true })
     // the credits' ink is secondary text, not tertiary
-    await expect(getComputedStyle(root).color).toBe(rendered('color-text-secondary'))
+    await expect(getComputedStyle(root).color).toBe(colour('--perron-color-text-secondary'))
   },
 }
 
@@ -134,10 +129,10 @@ export const Wrapping: Story = {
     await expect(root.scrollWidth).toBeLessThanOrEqual(root.clientWidth)
     await expect(root.getBoundingClientRect().right).toBeLessThanOrEqual(column.right)
     // both credits, read in order, with both links
-    await expect(textOf(root)).toBe(
+    await expect(heard(root)).toBe(
       'Map data © OpenStreetMap contributors. Departures from Rejseplanen',
     )
     const links = within(root).getAllByRole('link')
-    await expect(links.map(textOf)).toEqual(['OpenStreetMap contributors', 'Rejseplanen'])
+    await expect(links.map(heard)).toEqual(['OpenStreetMap contributors', 'Rejseplanen'])
   },
 }
