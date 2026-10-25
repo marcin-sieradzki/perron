@@ -90,7 +90,7 @@ export function Meter({
   // merge, since mergeProps joins only strings and a Base UI className may be a function
   const indicator = (
     <BaseMeter.Indicator
-      {...mergeProps<typeof BaseMeter.Indicator>(slotProps?.indicator, undefined)}
+      {...slotProps?.indicator}
       className={withClass('pn-Meter-indicator', slotProps?.indicator?.className)}
     />
   )

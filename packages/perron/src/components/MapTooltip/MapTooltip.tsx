@@ -8,8 +8,6 @@ import { withClass } from '../../internal/nodes.ts'
 import { positionerOffsets } from '../../internal/tokens.ts'
 import './MapTooltip.css'
 
-type ChangeDetails = Tooltip.Root.ChangeEventDetails
-
 export interface MapTooltipProps extends Omit<Tooltip.Popup.Props, 'children' | 'ref'> {
   /**
    * The card's content: a few words on what is under the pointer, in sentence case, such as "Bus
@@ -37,9 +35,9 @@ export interface MapTooltipProps extends Omit<Tooltip.Popup.Props, 'children' | 
    * press outside it, and `details.cancel()` keeps it open.
    */
   onClose?: (
-    event: ChangeDetails['event'],
+    event: Tooltip.Root.ChangeEventDetails['event'],
     reason: Tooltip.Root.ChangeEventReason,
-    details: ChangeDetails,
+    details: Tooltip.Root.ChangeEventDetails,
   ) => void
   /** Reaches the root, the card. */
   ref?: Ref<HTMLDivElement>
@@ -71,14 +69,14 @@ export function MapTooltip({
   const defaults = positionerOffsets()
 
   // CR-4: Base UI's onOpenChange is adapted once, here, and only a closing reaches the caller
-  const handleOpenChange = (next: boolean, details: ChangeDetails) => {
+  const handleOpenChange = (next: boolean, details: Tooltip.Root.ChangeEventDetails) => {
     if (!next) onClose?.(details.event, details.reason, details)
   }
 
   return (
     <Tooltip.Root open={open} defaultOpen={defaultOpen} onOpenChange={handleOpenChange}>
       <Tooltip.Portal
-        {...mergeProps<typeof Tooltip.Portal>(slotProps?.portal, undefined)}
+        {...slotProps?.portal}
         className={withClass('pn-MapTooltip-portal', slotProps?.portal?.className)}
       >
         <Tooltip.Positioner

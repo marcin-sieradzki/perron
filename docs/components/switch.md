@@ -2,6 +2,8 @@
 
 A two-state control that turns one setting on or off at once, such as showing vehicle trails on the map.
 
+<!-- run notes -->
+
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the [contract](README.md), the [foundations](../foundations/README.md), [content design](../content-design.md), the tokens and the Base UI reference for `@base-ui/react` 1.9.0. No ROADMAP line names Switch; it joined the registry with the form components, with `baseUiParts` `Switch.Root` and `Switch.Thumb` and nothing in `dependsOn`. The extracted prototype component is not in any branch this run can reach, so nothing here rests on it. The foundations already name its look: [Elevation](../foundations/elevation.md#surfaces) puts tracks on `color.surface.inset` and pressed toggles on `color.surface.inverse`, [Accessibility](../foundations/accessibility.md#rules) asks every target to be `size.target-min` and every control's edge to reach 3:1, which `color.border.control` does, and [Semantic spacing](../foundations/semantic-spacing.md#radius) gives pills `radius.full`.
 
 ## Anatomy

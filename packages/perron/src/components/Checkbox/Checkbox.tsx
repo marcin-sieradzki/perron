@@ -9,8 +9,6 @@ import { classes, given, withClass } from '../../internal/nodes.ts'
 import { CheckboxIndicator } from '../../parts/CheckboxIndicator/CheckboxIndicator.tsx'
 import './Checkbox.css'
 
-type ChangeDetails = BaseCheckbox.Root.ChangeEventDetails
-
 export interface CheckboxProps extends Omit<
   BaseCheckbox.Root.Props,
   'onCheckedChange' | 'onChange' | 'parent' | 'children' | 'className' | 'style' | 'ref'
@@ -20,7 +18,7 @@ export interface CheckboxProps extends Omit<
    * `details.reason` is `'none'`, and `details.cancel()` keeps the state as it was. `event` is
    * `details.event`. Not called while disabled or read-only.
    */
-  onChange?: (event: Event, value: boolean, details: ChangeDetails) => void
+  onChange?: (event: Event, value: boolean, details: BaseCheckbox.Root.ChangeEventDetails) => void
   /**
    * The label: what ticking the box turns on or agrees to, in sentence case, such as "Show planned
    * works on the map". It names the checkbox and stays the same ticked or not. Left out, give the
@@ -72,7 +70,8 @@ export function Checkbox({
       // CR-2: Base UI's one handler, adapted to the contract's onChange(event, value, details)
       onCheckedChange={
         onChange &&
-        ((checked: boolean, details: ChangeDetails) => onChange(details.event, checked, details))
+        ((checked: boolean, details: BaseCheckbox.Root.ChangeEventDetails) =>
+          onChange(details.event, checked, details))
       }
       className={classes('pn-Checkbox', className)}
       style={style}
