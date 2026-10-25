@@ -16,13 +16,16 @@ stages:
     spec: b7a155aefb262b39ca1463f99b8fad9cef666678914b2c7e7568fb548d4122ec
     ended: 2026-10-25T09:29:43.772Z
   review:
-    rounds: 1
+    rounds: 2
     sentBack: 1
-    reviewed: ddba1205f663c47e6701a77b98b1d1d3f6204350
+    reviewed: 612a2435f8a7975edb7841bf31f6e7e78be9aba5
     findings:
       p1: 0
-      p2: 2
-      p3: 6
+      p2: 0
+      p3: 7
+    status: done
+    started: 2026-10-25T09:30:20.750Z
+    ended: 2026-10-25T09:35:23.143Z
 notes:
   - stage: brief
     at: 2026-10-25T08:49:45.449Z
