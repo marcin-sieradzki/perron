@@ -9,11 +9,19 @@ stages:
     started: 2026-10-25T01:23:35.517Z
     ended: 2026-10-25T02:05:51.436Z
   build:
-    status: done
-    started: 2026-10-25T02:06:04.908Z
     runs: 1
-    spec: 9c3b93051eae004880909a2c48789482bedd5e5a2927d3f61b39355e8a62b678
-    ended: 2026-10-25T02:14:06.366Z
+    failing: review round 1 found 1 P1 and 5 P2 (components/highlight-chip/review.md)
+  review:
+    status: failed
+    started: 2026-10-25T02:14:21.185Z
+    rounds: 1
+    findings:
+      p1: 1
+      p2: 5
+      p3: 3
+    sentBack: 1
+    ended: 2026-10-25T02:19:41.049Z
+    failing: review round 1 found 1 P1 and 5 P2 (components/highlight-chip/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T01:23:29.991Z
