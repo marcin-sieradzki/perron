@@ -1,0 +1,19 @@
+import { Meta, Stories, Title } from '@storybook/addon-docs/blocks'
+import { PropsTable } from '../../../../../storybook/blocks/PropsTable.tsx'
+import { SpecProse } from '../../../../../storybook/blocks/SpecProse.tsx'
+import * as DialogStories from './Dialog.stories.tsx'
+
+<Meta of={DialogStories} />
+
+<Title />
+
+<SpecProse path="docs/components/dialog.md" intro />
+
+<Stories title="Examples" />
+
+<PropsTable of={DialogStories} />
+
+<SpecProse
+  path="docs/components/dialog.md"
+  sections={['Keyboard and ARIA', 'Owned strings', "Do and don't"]}
+/>
