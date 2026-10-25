@@ -1,0 +1,273 @@
+/* Menu, from docs/components/menu.md: the Popups family's glass, holding the Rows family's rows.
+   It opens and closes at once, with no transition (CR-12), and never redefines a token: it portals
+   to <body> (CR-10). The box and the tick are the CheckboxIndicator and SelectedMark parts'; this
+   file sets only their place in the row (CR-8). */
+
+/* Everything in a portal takes z-index.dialog, so a submenu opened last paints over its menu (CR-10). */
+.pn-Menu-positioner,
+.pn-MenuSubmenu-positioner {
+  z-index: var(--perron-z-index-dialog);
+}
+
+/* The menu and the submenu: at least as wide as the trigger, at most as wide and tall as the room
+   Base UI measures, scrolling inside when taller (CR-11), the scroll padding keeping a row scrolled
+   to by the keys clear of the edge, its ring in view; an edge as a border, kept by forced colours
+   when they drop the glass and the shadow (CR-13). */
+.pn-Menu,
+.pn-MenuSubmenu-popup {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-inline-size: var(--anchor-width);
+  max-inline-size: var(--available-width);
+  max-block-size: var(--available-height);
+  padding: var(--perron-space-100);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-padding-block: var(--perron-space-100);
+  border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+  border-radius: var(--perron-radius-lg);
+  background-color: var(--perron-color-surface-overlay);
+  backdrop-filter: blur(var(--perron-effect-glass-blur))
+    saturate(var(--perron-effect-glass-saturate));
+  box-shadow: var(--perron-shadow-panel);
+  color: var(--perron-color-text-primary);
+}
+
+/* Base UI focuses the popup itself when the pointer opens it: the rows draw the ring, the popup
+   none of its own. */
+.pn-Menu:focus-visible,
+.pn-MenuSubmenu-popup:focus-visible {
+  outline: none;
+}
+
+/* The five rows share one look (CR-7): SearchField's row metrics, the Rows family's fills. The
+   states change colours only, never the box. Their marks sit at the top, each centred on the
+   label's first line below, so a wrapped label keeps them level with its first words (CR-11). */
+.pn-MenuItem,
+.pn-MenuLinkItem,
+.pn-MenuCheckboxItem,
+.pn-MenuRadioItem,
+.pn-MenuSubmenu {
+  box-sizing: border-box;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--perron-space-200);
+  min-block-size: var(--perron-size-target-min);
+  padding-block: var(--perron-space-150);
+  padding-inline: var(--perron-space-200);
+  border-radius: var(--perron-radius-md);
+  background-color: transparent;
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+  color: var(--perron-color-text-primary);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+/* hover inside (hover: hover), the highlight outside it, so the keys and a touch show it, and the
+   press after both, a step past them; none on a disabled row, which stays focusable (CR-7) */
+
+@media (hover: hover) {
+  :is(
+      .pn-MenuItem,
+      .pn-MenuLinkItem,
+      .pn-MenuCheckboxItem,
+      .pn-MenuRadioItem,
+      .pn-MenuSubmenu
+    ):hover:not([data-disabled], [data-checked]) {
+    background-color: var(--perron-color-surface-hover);
+  }
+}
+
+:is(
+    .pn-MenuItem,
+    .pn-MenuLinkItem,
+    .pn-MenuCheckboxItem,
+    .pn-MenuRadioItem,
+    .pn-MenuSubmenu
+  )[data-highlighted]:not([data-disabled], [data-checked]) {
+  background-color: var(--perron-color-surface-hover);
+}
+
+/* A submenu's row keeps the highlight while its submenu is open, so the path shows. */
+.pn-MenuSubmenu[data-popup-open]:not([data-disabled]) {
+  background-color: var(--perron-color-surface-hover);
+}
+
+/* pressed: the quiet layer a step past hover, after the hover and highlight rules it ties, outside
+   the query, so a touch press shows too (Pointer feedback) */
+:is(
+    .pn-MenuItem,
+    .pn-MenuLinkItem,
+    .pn-MenuCheckboxItem,
+    .pn-MenuRadioItem,
+    .pn-MenuSubmenu
+  ):active:not([data-disabled], [data-checked]) {
+  background-color: var(--perron-color-surface-selected);
+}
+
+/* selected: the Rows family's fill, kept while disabled; the hover layer laid over it as an image,
+   as the Fields family lays hover over a fill */
+
+:is(.pn-MenuCheckboxItem, .pn-MenuRadioItem)[data-checked] {
+  background-color: var(--perron-color-surface-selected);
+}
+
+@media (hover: hover) {
+  :is(.pn-MenuCheckboxItem, .pn-MenuRadioItem)[data-checked]:hover:not([data-disabled]) {
+    background-image: linear-gradient(
+      var(--perron-color-surface-hover),
+      var(--perron-color-surface-hover)
+    );
+  }
+}
+
+:is(.pn-MenuCheckboxItem, .pn-MenuRadioItem)[data-checked][data-highlighted]:not([data-disabled]) {
+  background-image: linear-gradient(
+    var(--perron-color-surface-hover),
+    var(--perron-color-surface-hover)
+  );
+}
+
+/* pressed while selected: the pressed layer over the fill, after the hover layer it ties */
+:is(.pn-MenuCheckboxItem, .pn-MenuRadioItem)[data-checked]:active:not([data-disabled]) {
+  background-image: linear-gradient(
+    var(--perron-color-surface-selected),
+    var(--perron-color-surface-selected)
+  );
+}
+
+/* disabled: a colour, never an opacity, and the default cursor */
+:is(
+  .pn-MenuItem,
+  .pn-MenuLinkItem,
+  .pn-MenuCheckboxItem,
+  .pn-MenuRadioItem,
+  .pn-MenuSubmenu
+)[data-disabled] {
+  color: var(--perron-color-text-tertiary);
+  cursor: default;
+}
+
+.pn-MenuItem-startIcon,
+.pn-MenuLinkItem-startIcon,
+.pn-MenuSubmenu-startIcon {
+  --perron-icon-size: var(--perron-icon-size-400);
+  display: inline-flex;
+  flex: none;
+  margin-block: calc((1lh - var(--perron-icon-size-400)) / 2);
+}
+
+/* The label grows between the row's start and its end mark; a long word breaks (CR-11). */
+.pn-MenuItem-label,
+.pn-MenuLinkItem-label,
+.pn-MenuCheckboxItem-label,
+.pn-MenuRadioItem-label,
+.pn-MenuSubmenu-label {
+  flex: 1;
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+/* The box and the tick at the row's end, keeping their size, centred on the label's first line
+   (CR-8, CR-11). */
+.pn-MenuCheckboxItem-checkboxItemIndicator,
+.pn-MenuRadioItem-radioItemIndicator {
+  flex: none;
+  margin-inline-start: auto;
+}
+
+.pn-MenuCheckboxItem-checkboxItemIndicator {
+  margin-block: calc((1lh - var(--perron-size-checkbox)) / 2);
+}
+
+.pn-MenuRadioItem-radioItemIndicator {
+  margin-block: calc((1lh - var(--perron-icon-size-325)) / 2);
+}
+
+/* The chevron's holder takes its size and colour, never the <svg> itself (Icons). */
+.pn-MenuSubmenu-chevron {
+  --perron-icon-size: var(--perron-icon-size-400);
+  display: inline-flex;
+  flex: none;
+  margin-block: calc((1lh - var(--perron-icon-size-400)) / 2);
+  color: var(--perron-color-text-secondary);
+}
+
+.pn-MenuSubmenu[data-disabled] .pn-MenuSubmenu-chevron {
+  color: var(--perron-color-text-tertiary);
+}
+
+.pn-MenuGroup,
+.pn-MenuRadioGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+/* A group's name, starting where its rows' content starts, parted from the group before. */
+.pn-MenuGroup-groupLabel,
+.pn-MenuRadioGroup-groupLabel {
+  padding-block-start: var(--perron-space-200);
+  padding-block-end: var(--perron-space-100);
+  padding-inline: var(--perron-space-200);
+  font: var(--perron-typography-overline);
+  letter-spacing: var(--perron-typography-overline-tracking);
+  text-transform: uppercase;
+  color: var(--perron-color-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+/* A hairline drawn as a border, so forced colours keep it (CR-13), across the popup's padding box. */
+.pn-MenuSeparator {
+  flex: none;
+  margin-block: var(--perron-space-100);
+  margin-inline: calc(-1 * var(--perron-space-100));
+  border-block-start: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+}
+
+/* CR-13: forced colours drop the hover surface, so the highlighted row takes the system's and
+   keeps it: left to adjust, the browser backs each line of text with Canvas, under which the
+   label's HighlightText vanishes. A selected row drops its hover layer in a rule of its own, since
+   the layer's selector outranks the row's. The chevron follows the row's ink there, and the box
+   goes back to the system's colours its own part gives it. A disabled row is GrayText. */
+@media (forced-colors: active) {
+  :is(
+      .pn-MenuItem,
+      .pn-MenuLinkItem,
+      .pn-MenuCheckboxItem,
+      .pn-MenuRadioItem,
+      .pn-MenuSubmenu
+    )[data-highlighted]:not([data-disabled]) {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    background-image: none;
+    color: HighlightText;
+  }
+
+  :is(.pn-MenuCheckboxItem, .pn-MenuRadioItem)[data-checked][data-highlighted]:not(
+      [data-disabled]
+    ) {
+    background-image: none;
+  }
+
+  .pn-MenuSubmenu[data-highlighted]:not([data-disabled]) .pn-MenuSubmenu-chevron {
+    color: HighlightText;
+  }
+
+  .pn-MenuCheckboxItem[data-highlighted]
+    > .pn-MenuCheckboxItem-checkboxItemIndicator[data-unchecked] {
+    forced-color-adjust: auto;
+  }
+
+  :is(
+    .pn-MenuItem,
+    .pn-MenuLinkItem,
+    .pn-MenuCheckboxItem,
+    .pn-MenuRadioItem,
+    .pn-MenuSubmenu
+  )[data-disabled] {
+    color: GrayText;
+  }
+}
