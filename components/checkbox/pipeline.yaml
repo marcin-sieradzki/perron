@@ -3,11 +3,21 @@ component: Checkbox
 layer: component
 deferred:
   at: 2026-10-25T04:38:49.708Z
+needsHuman:
+  stage: build
+  reason: "build failed: npm run check, at npm run test (unit): scripts/checks/shared-parts.test.ts:26 pins the contract's CheckboxIndicator row's icons as ['tick']; the build added 'the dash icon' to that row per CR-5, so the shared-tooling test fails. The spec is revised: CR-5 no longer edits the contract's Shared parts row, so revert that row to name the tick icon alone (keep the dash icon in the part's folder and the updated note below the table) and re-run npm run check."
 stages:
   brief:
     status: done
     started: 2026-10-25T04:49:41.402Z
     ended: 2026-10-25T04:51:23.451Z
+  build:
+    status: failed
+    started: 2026-10-25T04:51:28.570Z
+    runs: 1
+    spec: affb6979436a85f98bf027b8aaf355bfd864e26396aa97ef1db2f04722731191
+    ended: 2026-10-25T05:03:26.917Z
+    failing: "npm run check, at npm run test (unit): scripts/checks/shared-parts.test.ts:26 pins the contract's CheckboxIndicator row's icons as ['tick']; the build added 'the dash icon' to that row per CR-5, so the shared-tooling test fails. The spec is revised: CR-5 no longer edits the contract's Shared parts row, so revert that row to name the tick icon alone (keep the dash icon in the part's folder and the updated note below the table) and re-run npm run check."
 notes:
   - stage: brief
     at: 2026-10-25T04:49:06.599Z
@@ -39,3 +49,24 @@ notes:
   - stage: brief
     at: 2026-10-25T04:51:23.451Z
     direction: CR-5 now has the build add 'the dash icon' to the contract's Shared parts row for CheckboxIndicator, so the shared-parts gate guards both icons. That edit to the contract lands with the build, not with this brief.
+  - stage: build
+    at: 2026-10-25T05:03:26.918Z
+    direction: "Long words in a flex row: with overflow-wrap: anywhere (answer 9), two checkboxes side by side in a 320 px display:flex row break 'driftsforstyrrelsesmeddelelser' mid-word, where break-word would keep the word whole and wrap the row. LongLabel tests only a block container. The contract or CheckboxGroup's spec should say which Long words case a checkbox label is."
+  - stage: build
+    at: 2026-10-25T05:03:26.918Z
+    direction: "stateRules and stateFill in packages/perron/src/testing/stories.ts take ':hover' out of a rule's whole selectorText and call element.matches on what is left: a bare ':hover > .x' becomes '> .x', which throws; a selector list is matched as one. The part reads hover as [role]:hover > .pn-CheckboxIndicator. The helper could match per selector and leave :scope in place of the pseudo."
+  - stage: build
+    at: 2026-10-25T05:03:26.918Z
+    direction: "A shared part's own class can't be asserted in a story without an allowance: the shared-parts gate exempts only *.test.tsx files, so Default's play needed a perron-allow(shared-parts) comment. The gate could exempt reads inside expect() in stories, or the contract could name the allowance."
+  - stage: build
+    at: 2026-10-25T05:03:26.918Z
+    direction: usePart renders a plain element through useRender, so it can't merge slotProps into a Base UI part such as Checkbox.Indicator. The contract's helper row could say so, so the next brief writes 'mergeProps and withClass, as Dialog' for a Base UI part.
+  - stage: build
+    at: 2026-10-25T05:03:26.918Z
+    direction: The focus ring sits about 2 px from the label's last glyph, since the root has no inline padding and the ring is drawn by focus.offset alone. Within the rules, but tight next to Button's ring.
+  - stage: build
+    at: 2026-10-25T05:03:26.918Z
+    direction: "Two names for an on/off state now sit in the Inputs category: FilterChip's selected/defaultSelected and Checkbox's checked/defaultChecked (Base UI's and MUI's). Switch and the menu checkbox item will copy one, so the contract could name which goes with which kind of control."
+  - stage: build
+    at: 2026-10-25T05:03:26.918Z
+    direction: shared-parts.test.ts pins the contract's Shared parts table, so a component that adds an icon to its own part's row (CheckboxIndicator's dash) can't land without editing shared tooling; the dash stays out of the row and out of the gate until the maintainer adds it.

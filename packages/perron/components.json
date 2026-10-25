@@ -494,7 +494,7 @@
     "name": "Checkbox",
     "layer": "component",
     "category": "Inputs",
-    "status": "designing",
+    "status": "building",
     "baseUiParts": ["Checkbox.Root", "Checkbox.Indicator"],
     "penpotPath": "Components/Checkbox",
     "dependsOn": []

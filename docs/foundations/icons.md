@@ -60,4 +60,11 @@ Every icon renders at one of three steps, set with `--perron-icon-size` (one of 
 | <img src="../../packages/perron/icons/calendar.svg" alt="">     | `calendar`     | 14 px | `icon.size.325`, 13 px | Planned works      |
 | <img src="../../packages/perron/icons/check-circle.svg" alt=""> | `check-circle` | 14 px | `icon.size.325`, 13 px | Running normally   |
 
+### Controls
+
+| Icon                                                    | Name   | Grid  | Size                   | Use                                            |
+| ------------------------------------------------------- | ------ | ----- | ---------------------- | ---------------------------------------------- |
+| <img src="../../packages/perron/icons/tick.svg" alt=""> | `tick` | 14 px | `icon.size.325`, 13 px | A ticked checkbox                              |
+| <img src="../../packages/perron/icons/dash.svg" alt=""> | `dash` | 14 px | `icon.size.325`, 13 px | A checkbox that stands for a set partly ticked |
+
 <!-- /files -->

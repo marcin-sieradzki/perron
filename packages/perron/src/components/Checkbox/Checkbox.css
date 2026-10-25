@@ -1,0 +1,51 @@
+/* Checkbox, from docs/components/checkbox.md. The root is the control and the target, an inline
+   flex row of the box and the label (CR-9); the box's fill, edge, radius, mark and their states are
+   the CheckboxIndicator part's, and this file sets only the box's place in the row (CR-4). Every
+   state changes colours only (CR-8), at once (CR-12); the focus ring is perron.css's (CR-7). */
+
+.pn-Checkbox {
+  display: inline-flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--perron-space-200);
+  max-inline-size: 100%;
+  min-block-size: var(--perron-size-target-min);
+  min-inline-size: var(--perron-size-target-min);
+  /* one line of the root's own typography.body, centred in a size.target-min row */
+  padding-block: calc((var(--perron-size-target-min) - 1lh) / 2);
+  border-radius: var(--perron-radius-xs);
+  font: var(--perron-typography-body);
+  letter-spacing: var(--perron-typography-body-tracking);
+  /* the label's long words: it inherits this, and may break a Danish compound anywhere (CR-9) */
+  overflow-wrap: anywhere;
+  color: var(--perron-color-text-primary);
+  cursor: pointer;
+}
+
+/* the box keeps its size and sits centred on the label's first line (CR-9) */
+.pn-Checkbox-indicator {
+  flex: none;
+  margin-block: calc((1lh - var(--perron-size-checkbox)) / 2);
+}
+
+.pn-Checkbox-label {
+  min-inline-size: 0;
+}
+
+/* CR-10, CR-13: disabled is a colour, never an opacity; read-only keeps its rest look */
+
+.pn-Checkbox[data-disabled] {
+  color: var(--perron-color-text-tertiary);
+  cursor: default;
+}
+
+.pn-Checkbox[data-readonly] {
+  cursor: default;
+}
+
+/* CR-11: the <span> isn't natively disabled, so the system can't tell its words are */
+@media (forced-colors: active) {
+  .pn-Checkbox[data-disabled] {
+    color: GrayText;
+  }
+}
