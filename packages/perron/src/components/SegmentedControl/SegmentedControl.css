@@ -16,30 +16,35 @@
   vertical-align: middle;
 }
 
-/* A label wraps inside its segment, centred, rather than being cut off (CR-9). Each segment grows
-   from nothing to at most its label's width, the track's room shared out evenly, so in a narrow
-   track a short label keeps its whole width and the long ones wrap at their spaces, where shrinking
-   each in proportion to its label would break a short word mid-word. */
+/* Each segment grows from nothing to at most its label's width, the track's room shared out
+   evenly, so in a narrow track a short label keeps its whole width and the long ones wrap at their
+   spaces, where shrinking each in proportion to its label would break a short word mid-word. The
+   block padding keeps a wrapped label's lines off the raised fill's edges; a one-line segment stays
+   size.segment tall. */
 .pn-Segment {
   display: inline-flex;
   flex: 1 1 0;
   max-inline-size: max-content;
   align-items: center;
   justify-content: center;
-  gap: var(--perron-space-150);
   min-block-size: var(--perron-size-segment);
   margin: 0;
-  padding-block: 0;
+  padding-block: var(--perron-space-050);
   padding-inline: var(--perron-space-300);
   border: 0;
   border-radius: var(--perron-radius-md);
   background-color: transparent;
   color: var(--perron-color-text-secondary);
+  cursor: pointer;
+}
+
+/* The one flex item: a label given as text and elements flows as one run of text, and wraps inside
+   its segment, centred, rather than being cut off (CR-9). */
+.pn-Segment-label {
   font: var(--perron-typography-label);
   letter-spacing: var(--perron-typography-label-tracking);
   text-align: center;
   overflow-wrap: anywhere;
-  cursor: pointer;
 }
 
 /* Hover and pressed skip the selected segment, which pressing again leaves as it is (CR-4), and a
@@ -76,6 +81,7 @@
   .pn-Segment[data-pressed] {
     forced-color-adjust: none;
     background-color: Highlight;
+    box-shadow: none;
     color: HighlightText;
   }
 

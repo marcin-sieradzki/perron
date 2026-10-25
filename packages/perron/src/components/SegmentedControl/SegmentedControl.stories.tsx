@@ -1,41 +1,13 @@
 // SegmentedControl's stories: the control, then the segment in each state of the deferred design,
 // each in a control of its own, as Base UI's Toggle needs (CR-2), then a disabled control, a
-// controlled one and a narrow one. Hover and focus render at rest; the visual check drives them,
+// controlled one, a narrow one and one whose labels take each shape a label can. Hover and focus render at rest; the visual check drives them,
 // and their play tests check them.
 import { useState } from 'react'
-import type { Meta, StoryObj } from '@storybook/react-vite'
+import type { Decorator, Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, userEvent, within } from 'storybook/test'
 import { Button } from '../Button/Button.tsx'
+import { onHover, rendered } from '../../testing/stories.ts'
 import { Segment, SegmentedControl, type SegmentedControlProps } from './SegmentedControl.tsx'
-
-/** The value a token renders as here, read from a probe that sets it on `property`. */
-function rendered(token: string, property = 'color') {
-  const probe = document.createElement('div')
-  probe.style.setProperty(property, `var(--perron-${token})`)
-  document.body.append(probe)
-  const value = getComputedStyle(probe).getPropertyValue(property)
-  probe.remove()
-  return value
-}
-
-/**
- * What the `(hover: hover)` rules set `property` to when `element` is hovered, as written. A
- * synthetic pointer doesn't reach `:hover`, so this reads the rule the real pointer would apply.
- */
-function onHover(element: Element, property: string) {
-  let value = ''
-  for (const sheet of Array.from(document.styleSheets))
-    for (const rule of Array.from(sheet.cssRules))
-      if (rule instanceof CSSMediaRule && rule.conditionText.includes('hover: hover'))
-        for (const inner of Array.from(rule.cssRules))
-          if (
-            inner instanceof CSSStyleRule &&
-            inner.selectorText.includes(':hover') &&
-            element.matches(inner.selectorText.replaceAll(':hover', ''))
-          )
-            value = inner.style.getPropertyValue(property) || value
-  return value
-}
 
 /** The spy every story's control reports to; a play that asserts on it clears it first. */
 const onChange = fn()
@@ -265,6 +237,13 @@ export const Controlled: Story = {
   },
 }
 
+/** A 320 px wide container, as a phone's narrowest screen gives. */
+const narrow: Decorator = (Story) => (
+  <div style={{ inlineSize: 320 }}>
+    <Story />
+  </div>
+)
+
 /** Three long labels in a 320 px wide container: they wrap inside their segments, and nothing scrolls. */
 export const LongLabels: Story = {
   args: {
@@ -277,13 +256,7 @@ export const LongLabels: Story = {
       </>
     ),
   },
-  decorators: [
-    (Story) => (
-      <div style={{ inlineSize: 320 }}>
-        <Story />
-      </div>
-    ),
-  ],
+  decorators: [narrow],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     const control = canvas.getByRole('group', { name: 'Mode' })
@@ -296,6 +269,50 @@ export const LongLabels: Story = {
     const longest = canvas.getByRole('button', { name: 'Data feed problems' })
     await expect(longest.getBoundingClientRect().height).toBeGreaterThan(
       parseFloat(rendered('size-segment', 'height')),
+    )
+  },
+}
+
+/**
+ * A label given as a string, as an element and as a list, text then an element, in a 320 px wide
+ * container: each renders as one label, and the list wraps as one run of text.
+ */
+export const LabelShapes: Story = {
+  args: {
+    defaultValue: 'planned-works',
+    children: (
+      <>
+        <Segment value="planned-works">Planned works</Segment>
+        <Segment value="diversions">
+          <span>Diversions</span>
+        </Segment>
+        <Segment value="data-feed">
+          Data feed <span>problems</span>
+        </Segment>
+      </>
+    ),
+  },
+  decorators: [narrow],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    for (const name of ['Planned works', 'Diversions', 'Data feed problems']) {
+      const segment = canvas.getByRole('button', { name })
+      // one label, the segment's only flex item, whatever shape it was given in
+      await expect(segment.children).toHaveLength(1)
+      await expect(segment.firstElementChild).toHaveClass('pn-Segment-label')
+      await expect(segment.firstElementChild!.getBoundingClientRect().width).toBeLessThanOrEqual(
+        segment.getBoundingClientRect().width,
+      )
+    }
+    const list = canvas.getByRole('button', { name: 'Data feed problems' })
+    await expect(list.getBoundingClientRect().height).toBeGreaterThan(
+      parseFloat(rendered('size-segment', 'height')),
+    )
+    // the element wraps with the text before it, on a line below it, and whole: one line box
+    const element = within(list).getByText('problems')
+    await expect(element.getClientRects()).toHaveLength(1)
+    await expect(element.getBoundingClientRect().top).toBeGreaterThan(
+      list.firstElementChild!.getBoundingClientRect().top,
     )
   },
 }

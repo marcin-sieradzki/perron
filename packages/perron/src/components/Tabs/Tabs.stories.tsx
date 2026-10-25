@@ -5,36 +5,8 @@ import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import { Button } from '../Button/Button.tsx'
+import { onHover, rendered } from '../../testing/stories.ts'
 import { Tab, Tabs, TabsList, TabsPanel, type TabsProps } from './Tabs.tsx'
-
-/** The value a token renders as here, read from a probe that sets it on `property`. */
-function rendered(token: string, property = 'color') {
-  const probe = document.createElement('div')
-  probe.style.setProperty(property, `var(--perron-${token})`)
-  document.body.append(probe)
-  const value = getComputedStyle(probe).getPropertyValue(property)
-  probe.remove()
-  return value
-}
-
-/**
- * What the `(hover: hover)` rules set `property` to when `element` is hovered, as written. A
- * synthetic pointer doesn't reach `:hover`, so this reads the rule the real pointer would apply.
- */
-function onHover(element: Element, property: string) {
-  let value = ''
-  for (const sheet of Array.from(document.styleSheets))
-    for (const rule of Array.from(sheet.cssRules))
-      if (rule instanceof CSSMediaRule && rule.conditionText.includes('hover: hover'))
-        for (const inner of Array.from(rule.cssRules))
-          if (
-            inner instanceof CSSStyleRule &&
-            inner.selectorText.includes(':hover') &&
-            element.matches(inner.selectorText.replaceAll(':hover', ''))
-          )
-            value = inner.style.getPropertyValue(property) || value
-  return value
-}
 
 /** The underline of the list in `canvasElement`, once Base UI has measured the selected tab. */
 async function measuredIndicator(canvasElement: HTMLElement) {

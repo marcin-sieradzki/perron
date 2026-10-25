@@ -115,7 +115,14 @@ export interface SegmentProps extends Inherited<
  * One choice in a `SegmentedControl`: a native button, pressed while selected, that selects the
  * control's value of the same `value`. Renders only inside a `SegmentedControl` (CR-2).
  */
-export function Segment({ value, disabled = false, className, ref, ...rest }: SegmentProps) {
+export function Segment({
+  value,
+  disabled = false,
+  children,
+  className,
+  ref,
+  ...rest
+}: SegmentProps) {
   return (
     <Toggle
       {...rest}
@@ -123,6 +130,10 @@ export function Segment({ value, disabled = false, className, ref, ...rest }: Se
       value={value}
       disabled={disabled}
       className={classes('pn-Segment', className)}
-    />
+    >
+      {/* One label, so text and elements flow and wrap as one line of text, centred, where the
+          segment's flex row would set each beside the next as a column of its own (CR-9). */}
+      <span className="pn-Segment-label">{children}</span>
+    </Toggle>
   )
 }

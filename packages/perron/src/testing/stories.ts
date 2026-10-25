@@ -23,6 +23,35 @@ export function heard(element: Element) {
   return copy.textContent!.replace(/\s+/g, ' ').trim()
 }
 
+/** The value a token renders as here, read from a probe that sets it on `property`. */
+export function rendered(token: string, property = 'color') {
+  const probe = document.createElement('div')
+  probe.style.setProperty(property, `var(--perron-${token})`)
+  document.body.append(probe)
+  const value = getComputedStyle(probe).getPropertyValue(property)
+  probe.remove()
+  return value
+}
+
+/**
+ * What the `(hover: hover)` rules set `property` to when `element` is hovered, as written. A
+ * synthetic pointer doesn't reach `:hover`, so this reads the rule the real pointer would apply.
+ */
+export function onHover(element: Element, property: string) {
+  let value = ''
+  for (const sheet of Array.from(document.styleSheets))
+    for (const rule of Array.from(sheet.cssRules))
+      if (rule instanceof CSSMediaRule && rule.conditionText.includes('hover: hover'))
+        for (const inner of Array.from(rule.cssRules))
+          if (
+            inner instanceof CSSStyleRule &&
+            inner.selectorText.includes(':hover') &&
+            element.matches(inner.selectorText.replaceAll(':hover', ''))
+          )
+            value = inner.style.getPropertyValue(property) || value
+  return value
+}
+
 /**
  * Renders `ui` apart from the story, into a host appended to `parent`, runs `test` on the host,
  * and unmounts and removes the host after, whether `test` passes or throws.

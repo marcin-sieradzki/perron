@@ -9,19 +9,17 @@ stages:
     started: 2026-10-25T01:07:45.537Z
     ended: 2026-10-25T01:09:12.378Z
   build:
-    runs: 1
-    failing: review round 1 found 1 P1 and 2 P2 (components/segmented-control/review.md)
+    runs: 2
+    status: done
+    started: 2026-10-25T01:25:41.875Z
+    ended: 2026-10-25T01:32:07.164Z
   review:
-    status: failed
-    started: 2026-10-25T01:17:34.884Z
     rounds: 1
+    sentBack: 1
     findings:
       p1: 1
       p2: 2
       p3: 7
-    sentBack: 1
-    ended: 2026-10-25T01:25:36.612Z
-    failing: review round 1 found 1 P1 and 2 P2 (components/segmented-control/review.md)
 notes:
   - stage: build
     at: 2026-10-25T01:17:28.805Z
@@ -32,3 +30,21 @@ notes:
   - stage: build
     at: 2026-10-25T01:17:28.805Z
     direction: Tab enters the control on the first enabled segment, not the selected one (Base UI's behaviour, accepted in CR-11), so a screen-reader user lands on the first segment even when another is selected.
+  - stage: build
+    at: 2026-10-25T01:32:07.165Z
+    direction: "Review P3-1: the contract's Files rule names no exception for compound components (SegmentedControl/Segment, Tabs, Toolbar): write the exception in, or move the children into folders of their own?"
+  - stage: build
+    at: 2026-10-25T01:32:07.165Z
+    direction: 'Review P3-2: the selected segment (color.surface.raised on color.surface.inset, about 1.2:1, plus shadow.thumb) falls short of the 3:1 non-text contrast for a state, while Elevation names this pairing: add an edge such as color.border.control, or record the exception?'
+  - stage: build
+    at: 2026-10-25T01:32:07.165Z
+    direction: 'Review P3-3: ToggleGroup gives aria-pressed toggle semantics and its tab stop rests on the first enabled segment: keep ToggleGroup as the ROADMAP names it, or move to radio semantics?'
+  - stage: build
+    at: 2026-10-25T01:32:07.165Z
+    direction: 'Review P3-4: five Danish segments in a 320 px track break every word mid-word: cap segments by width in the spec, or accept mid-word breaks as the fallback?'
+  - stage: build
+    at: 2026-10-25T01:32:07.165Z
+    direction: 'Review P3-6: value takes no null for none selected, where Tabs takes string | null: add it now?'
+  - stage: build
+    at: 2026-10-25T01:32:07.165Z
+    direction: 'Review P3-7: LongLabels mixes Danish into English labels with no lang: make it an all-Danish set from content design?'
