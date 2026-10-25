@@ -53,7 +53,8 @@ const meta = {
     docs: { story: { inline: false, height: '360px' } },
     // the placeholder is a hint in color.text.tertiary, a miss Accessibility lists by name
     // (docs/foundations/accessibility.md), as a native input's placeholder is, which axe never
-    // checks; so axe's contrast rule passes over the placeholder alone, and checks the rest
+    // checks; so in the stories that show it axe's contrast rule passes over the placeholder
+    // alone, and checks the rest (CR-16)
     a11y: {
       config: {
         rules: [{ id: 'color-contrast', selector: '*:not(.pn-Select-value[data-placeholder])' }],
@@ -102,17 +103,20 @@ const reached = async (name: string) => {
   return row
 }
 
-/** The subject story, State default: the label, the trigger with its placeholder, the list closed. */
+/** The subject story, State default: the label, the trigger with "Metro" chosen, the list closed.
+ * The contract story Root renders these args without this file's meta, and so without its
+ * placeholder exception, so they choose a value and no placeholder renders (CR-16). */
 export const Default: Story = {
+  args: { defaultValue: 'metro' },
   play: async ({ args, canvasElement, step }) => {
     const trigger = triggerIn(canvasElement)
     await step('the trigger is a combobox named by the label, the list closed', async () => {
       await expect(trigger.tagName).toBe('BUTTON')
       await expect(trigger).toHaveAttribute('aria-expanded', 'false')
       const value = part(canvasElement, 'Select-value')!
-      await expect(value).toHaveAttribute('data-placeholder')
-      await expect(value).toHaveTextContent(PLACEHOLDER)
-      await expect(getComputedStyle(value).color).toBe(colour('--perron-color-text-tertiary'))
+      await expect(value).not.toHaveAttribute('data-placeholder')
+      await expect(value).toHaveTextContent(/^Metro$/)
+      await expect(getComputedStyle(value).color).toBe(colour('--perron-color-text-primary'))
     })
     await step('pressing the label focuses the trigger, the list staying closed', async () => {
       const label = part(canvasElement, 'Field-label')!
@@ -417,6 +421,12 @@ export const Controlled: Story = {
   },
   play: async ({ args, canvasElement, step }) => {
     const trigger = triggerIn(canvasElement)
+    const value = part(canvasElement, 'Select-value')!
+    await step('nothing chosen, the value shows the placeholder in tertiary ink', async () => {
+      await expect(value).toHaveAttribute('data-placeholder')
+      await expect(value).toHaveTextContent(PLACEHOLDER)
+      await expect(getComputedStyle(value).color).toBe(colour('--perron-color-text-tertiary'))
+    })
     await step('pressing the trigger asks to open, and the story opens the list', async () => {
       await userEvent.click(trigger)
       // Base UI opens on the press, a frame after it, once focus has settled
@@ -442,6 +452,7 @@ export const Controlled: Story = {
       )
       await closed(LIST)
       await expect(trigger).toHaveTextContent('Bus')
+      await expect(value).not.toHaveAttribute('data-placeholder')
     })
     await step('a press outside asks to close, and the story closes the list', async () => {
       // opened again from the keys: a synthetic press releases faster than Base UI listens for

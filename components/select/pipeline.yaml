@@ -9,13 +9,11 @@ stages:
     started: 2026-10-25T05:46:03.147Z
     ended: 2026-10-25T05:47:29.658Z
   build:
-    status: pending
-    started: 2026-10-25T05:47:45.501Z
-    runs: 1
-    spec: fe1a71d03580cbca4697aebce01e9b7a920078332f46d26b69f1c7b8c7313262
-    asked: 1
-    ended: 2026-10-25T06:05:10.001Z
-    failing: "1. Placeholder contrast: axe colour-contrast fails the text placeholder (color.text.tertiary, 4.0:1) in the contract story Root, which renders Default's args. Recommended: one rule in .storybook/preview.ts skipping colour-contrast on [data-placeholder]; alternative: draw the placeholder in color.text.secondary. 2. Validation story: Base UI 1.9.0 marks a required field invalid only after its value changed and skips validate while the native check fails. Recommended (built): the Validation story drops required, its validate alone asks for a choice, and its play mounts a required copy to show aria-required and the hidden input's required."
+    runs: 2
+    status: done
+    started: 2026-10-25T06:05:19.279Z
+    spec: 7dd76c78330cbdad3aed3a585b75843a305d83618877d469771dd767331153c9
+    ended: 2026-10-25T06:10:29.348Z
 notes:
   - stage: brief
     at: 2026-10-25T05:44:48.986Z
@@ -62,3 +60,9 @@ notes:
   - stage: build
     at: 2026-10-25T06:05:10.002Z
     questions: "1. Placeholder contrast: axe colour-contrast fails the text placeholder (color.text.tertiary, 4.0:1) in the contract story Root, which renders Default's args. Recommended: one rule in .storybook/preview.ts skipping colour-contrast on [data-placeholder]; alternative: draw the placeholder in color.text.secondary. 2. Validation story: Base UI 1.9.0 marks a required field invalid only after its value changed and skips validate while the native check fails. Recommended (built): the Validation story drops required, its validate alone asks for a choice, and its play mounts a required copy to show aria-required and the hidden input's required."
+  - stage: build
+    at: 2026-10-25T06:10:29.349Z
+    direction: Now that Default shows "Metro" chosen, Filled looks the same at rest. Only its play test (typing "b" on the closed trigger) sets it apart, so Filled could be dropped, or folded into Default's play, in a later spec revision.
+  - stage: build
+    at: 2026-10-25T06:10:29.349Z
+    direction: Factory runs in parallel share one scratchpad folder, so a log with a fixed name such as check.log can be overwritten by another worktree's run. The audit skills' rendering guide could tell each run to name its scratch files after its component.
