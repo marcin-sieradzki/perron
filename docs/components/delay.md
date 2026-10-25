@@ -44,7 +44,7 @@ The delay is given as `minutes: number | null`, required, in minutes (positive l
 | `minutesEarlyLabel`  | `string`               | The locale's | none                 | Overrides "min early", heard after the number when early                                                                                                                                  |
 | `onTimeLabel`        | `string`               | The locale's | none                 | Overrides "On time"                                                                                                                                                                       |
 | `delayUnknownLabel`  | `string`               | The locale's | none                 | Overrides "Delay unknown", heard in place of "—"                                                                                                                                          |
-| `className`, `style` | React's                |              | through `mergeProps` | Reach the root; `className` is merged after `pn-Delay`                                                                                                                                    |
+| `className`, `style` | React's                |              | through `mergeProps` | Reaches the root; `className` is merged after `pn-Delay`                                                                                                                                  |
 | `ref`                | `Ref<HTMLSpanElement>` |              | `useRender`'s `ref`  | Reaches the root element                                                                                                                                                                  |
 
 ## Tokens

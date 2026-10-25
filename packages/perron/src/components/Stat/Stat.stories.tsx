@@ -2,11 +2,11 @@
 // design deferred, and their play tests, which read what the eye sees and what the ear hears.
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { expect, userEvent } from 'storybook/test'
+import { expect } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { dictionaries, type Locale } from '../../locale/index.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
-import { heard } from '../../testing/stories.ts'
+import { expectNoFocus, heard } from '../../testing/stories.ts'
 import { Stat } from './Stat.tsx'
 
 export default {
@@ -22,13 +22,6 @@ const rootIn = (canvas: HTMLElement) => canvas.querySelector<HTMLElement>('.pn-S
 
 /** What the ear hears of each part, in reading order. */
 const heardInOrder = (root: HTMLElement) => [...root.children].map(heard).filter(Boolean)
-
-/** Tab once, and expect focus to land nowhere inside `root`. */
-async function expectNoFocus(root: HTMLElement) {
-  await userEvent.tab()
-  await expect(root.contains(document.activeElement)).toBe(false)
-  await userEvent.tab({ shift: true })
-}
 
 /** The label over the figure: "Reporting live" over "412". */
 export const Default: Story = {
