@@ -112,7 +112,9 @@ export const Default: Story = {
         await expect(button.querySelector('svg')).toHaveAttribute('aria-hidden', 'true')
       }
     })
+    const root = input.closest<HTMLElement>('.pn-NumberField')!
     await step('pressing the label focuses the input', async () => {
+      await expect(root).not.toHaveAttribute('data-touched')
       await userEvent.click(fieldPart(canvasElement, 'label')!)
       await expect(input).toHaveFocus()
       input.blur()
@@ -122,6 +124,10 @@ export const Default: Story = {
       await expect(input).toHaveFocus()
       await userEvent.tab({ shift: true })
       await expect(input).not.toHaveFocus()
+    })
+    await step('leaving the input marks the field touched', async () => {
+      await expect(root).toHaveAttribute('data-touched')
+      await expect(groupOf(input)).toHaveAttribute('data-touched')
     })
   },
 }
@@ -283,6 +289,33 @@ export const Steppers: Story = {
       await expect(reasons(args.onChange)).toEqual(['increment-press', 'decrement-press'])
       await expect(values(args.onChangeCommitted)).toEqual([9, 8])
     })
+    await step(
+      'a held press steps again every 60 ms after 400 ms, and commits once on release',
+      async () => {
+        mock(args.onChange).mockClear()
+        mock(args.onChangeCommitted).mockClear()
+        // when each step reached onChange
+        const at: number[] = []
+        mock(args.onChange).mockImplementation(() => at.push(performance.now()))
+        // one session, so the release lifts the button the press held down
+        const user = userEvent.setup()
+        await user.pointer({ keys: '[MouseLeft>]', target: increase })
+        await waitFor(() => expect(at.length).toBeGreaterThanOrEqual(4), { timeout: 2000 })
+        await expect(args.onChangeCommitted).not.toHaveBeenCalled()
+        await user.pointer({ keys: '[/MouseLeft]', target: increase })
+        const stepped = values(args.onChange) as number[]
+        await expect(stepped).toEqual(stepped.map((_, index) => 9 + index))
+        await expect(new Set(reasons(args.onChange))).toEqual(new Set(['increment-press']))
+        // the second step waits out the 400 ms hold and the first 60 ms tick, the rest one tick
+        await expect(at[1] - at[0]).toBeGreaterThanOrEqual(455)
+        for (let index = 2; index < at.length; index++)
+          await expect(at[index] - at[index - 1]).toBeGreaterThanOrEqual(55)
+        await expect(values(args.onChangeCommitted)).toEqual([stepped.at(-1)])
+        await expect(reasons(args.onChangeCommitted)).toEqual(['increment-press'])
+        await expect(input).toHaveValue(String(stepped.at(-1)))
+        mock(args.onChange).mockReset()
+      },
+    )
     await userEvent.tab({ shift: true })
     await expect(input).not.toHaveFocus()
   },
@@ -321,6 +354,9 @@ export const Bounds: Story = {
   },
 }
 
+/** The label of a second field the plays mount beside the story's. */
+const UNBOUNDED = 'Stops to skip'
+
 /** The box holding 8, with `largeStep` 5: the arrow keys, Shift, Alt, Home and End step it. */
 export const Keyboard: Story = {
   args: { largeStep: 5 },
@@ -345,27 +381,171 @@ export const Keyboard: Story = {
     }
     await expect(values(args.onChange)).toEqual([9, 8, 13, 20, 1, 1.1, 1])
     await expect(new Set(reasons(args.onChange))).toEqual(new Set(['keyboard']))
+    // each key step is a settled number, committed as it lands
+    await expect(values(args.onChangeCommitted)).toEqual([9, 8, 13, 20, 1, 1.1, 1])
+    await expect(new Set(reasons(args.onChangeCommitted))).toEqual(new Set(['keyboard']))
     await userEvent.tab({ shift: true })
     await expect(document.activeElement).toBe(start)
+    await mounted(
+      canvasElement,
+      <PerronProvider locale="en">
+        <NumberField label={UNBOUNDED} defaultValue={1500} onChange={args.onChange} />
+      </PerronProvider>,
+      async (host) => {
+        // without min and max, Home and End move the caret, as the browser's own input does
+        mock(args.onChange).mockClear()
+        const unbounded = await waitFor(() => inputIn(host, UNBOUNDED))
+        await userEvent.click(unbounded)
+        await userEvent.keyboard('{Home}')
+        await expect(unbounded.selectionStart).toBe(0)
+        await userEvent.keyboard('{End}')
+        await expect(unbounded.selectionStart).toBe(unbounded.value.length)
+        await expect(unbounded).toHaveValue('1,500')
+        await expect(args.onChange).not.toHaveBeenCalled()
+        unbounded.blur()
+      },
+    )
   },
 }
 
-/** The box holding 8: typing replaces the number, clamped to `max`, and leaving commits it. */
+/**
+ * The box holding 8: a paste is spliced in at the caret, typing replaces the number, clamped to
+ * `max`, and leaving commits it.
+ */
 export const Typing: Story = {
   play: async ({ args, canvasElement }) => {
     const input = inputIn(canvasElement)
     const start = document.activeElement
-    await userEvent.type(input, '25', { initialSelectionStart: 0, initialSelectionEnd: 1 })
-    await expect(values(args.onChange)).toEqual([2, 20])
-    await expect(reasons(args.onChange)).toEqual(['input-change', 'input-change'])
+    // a paste goes in at the caret, before the 8
+    await userEvent.click(input)
+    input.setSelectionRange(0, 0)
+    await userEvent.paste('1')
+    await expect(input).toHaveValue('18')
+    await expect(values(args.onChange)).toEqual([18])
+    await expect(reasons(args.onChange)).toEqual(['input-paste'])
+    await userEvent.type(input, '25', { initialSelectionStart: 0, initialSelectionEnd: 2 })
+    await expect(values(args.onChange)).toEqual([18, 2, 20])
+    await expect(reasons(args.onChange)).toEqual(['input-paste', 'input-change', 'input-change'])
     const shown = input.value
+    // a letter, and a minus sign while min is 0 or above, are not typed
     await userEvent.keyboard('x')
+    await userEvent.keyboard('-')
     await expect(input).toHaveValue(shown)
-    await expect(mock(args.onChange)).toHaveBeenCalledTimes(2)
+    await expect(mock(args.onChange)).toHaveBeenCalledTimes(3)
     await userEvent.tab()
     await expect(input).toHaveValue('20')
     await expect(values(args.onChangeCommitted).at(-1)).toBe(20)
     await expect(document.activeElement).toBe(start)
+  },
+}
+
+/** A wheel turn over the input, with the focus in it. */
+const wheel = (input: HTMLElement, deltaY: number) => {
+  const turn = new WheelEvent('wheel', { deltaY, bubbles: true, cancelable: true })
+  input.dispatchEvent(turn)
+  return turn
+}
+
+/** The box holding 8, with `allowWheelScrub`: the mouse wheel steps it while the input has focus. */
+export const Wheel: Story = {
+  args: { allowWheelScrub: true },
+  play: async ({ args, canvasElement, step }) => {
+    const input = inputIn(canvasElement)
+    await step('without focus, the wheel changes nothing', async () => {
+      await expect(wheel(input, -100).defaultPrevented).toBe(false)
+      await expect(input).toHaveValue('8')
+    })
+    await step('with focus, a turn up makes it 9 and a turn down 8 again', async () => {
+      await userEvent.tab()
+      await expect(input).toHaveFocus()
+      // the page doesn't scroll under the turn
+      await expect(wheel(input, -100).defaultPrevented).toBe(true)
+      await waitFor(() => expect(input).toHaveValue('9'))
+      wheel(input, 100)
+      await waitFor(() => expect(input).toHaveValue('8'))
+      await expect(values(args.onChange)).toEqual([9, 8])
+      await expect(reasons(args.onChange)).toEqual(['wheel', 'wheel'])
+      await expect(values(args.onChangeCommitted)).toEqual([9, 8])
+      await expect(reasons(args.onChangeCommitted)).toEqual(['wheel', 'wheel'])
+      await userEvent.tab({ shift: true })
+    })
+    await step('without allowWheelScrub, the wheel changes nothing', async () => {
+      await mounted(
+        canvasElement,
+        <PerronProvider locale="en">
+          <NumberField {...args} allowWheelScrub={false} label={UNBOUNDED} />
+        </PerronProvider>,
+        async (host) => {
+          mock(args.onChange).mockClear()
+          const still = await waitFor(() => inputIn(host, UNBOUNDED))
+          still.focus()
+          await expect(wheel(still, -100).defaultPrevented).toBe(false)
+          await expect(still).toHaveValue('8')
+          await expect(args.onChange).not.toHaveBeenCalled()
+          still.blur()
+        },
+      )
+    })
+  },
+}
+
+/** Base UI's hidden `<input type="number">`, which the browser's checks run on. */
+const hiddenInput = (scope: HTMLElement) =>
+  scope.querySelector<HTMLInputElement>('input[type="number"]')!
+
+/**
+ * The box holding 8, with `allowOutOfRange` and checked on blur: a number outside the bounds stays
+ * as typed, and the browser's own checks on the hidden input mark the field invalid.
+ */
+export const OutOfRange: Story = {
+  args: { allowOutOfRange: true, slotProps: { field: { validationMode: 'onBlur' } } },
+  play: async ({ args, canvasElement, step }) => {
+    const input = inputIn(canvasElement)
+    const group = groupOf(input)
+    const hidden = hiddenInput(canvasElement)
+    const start = document.activeElement
+    /** Types `text` over the whole box, leaves it, and expects the browser's message for `check`. */
+    const fails = async (
+      text: string,
+      check: 'rangeOverflow' | 'rangeUnderflow' | 'stepMismatch',
+    ) => {
+      await userEvent.type(input, text, {
+        initialSelectionStart: 0,
+        initialSelectionEnd: input.value.length,
+      })
+      await userEvent.tab()
+      await waitFor(() => expect(hidden.validity[check]).toBe(true))
+      const error = await waitFor(() => {
+        const shown = fieldPart(canvasElement, 'error')
+        expect(shown).not.toBeNull()
+        return shown!
+      })
+      await expect(error.textContent).toBe(hidden.validationMessage)
+      await expect(input).toHaveAttribute('aria-invalid', 'true')
+      await expect(getComputedStyle(group).borderColor).toBe(edge('color-status-danger'))
+    }
+    await step('a typed 25 stays 25, and leaving shows the rangeOverflow message', async () => {
+      await fails('25', 'rangeOverflow')
+      await expect(input).toHaveValue('25')
+      await expect(values(args.onChangeCommitted).at(-1)).toBe(25)
+    })
+    await step('a typed 0 shows the rangeUnderflow message', async () => {
+      await fails('0', 'rangeUnderflow')
+      await expect(input).toHaveValue('0')
+    })
+    await step('a typed 2.5, off the step of 1, shows the stepMismatch message', async () => {
+      await fails('2.5', 'stepMismatch')
+    })
+    await step('a typed 8 removes the error', async () => {
+      await userEvent.type(input, '8', {
+        initialSelectionStart: 0,
+        initialSelectionEnd: input.value.length,
+      })
+      await userEvent.tab()
+      await waitFor(() => expect(fieldPart(canvasElement, 'error')).toBeNull())
+      await expect(input).not.toHaveAttribute('aria-invalid')
+      await expect(document.activeElement).toBe(start)
+    })
   },
 }
 
