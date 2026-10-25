@@ -479,11 +479,11 @@ export const Controlled: Story = {
     const ignored = fn()
     await mounted(
       canvasElement,
-      <RadioGroup label="Map style" value="system" onChange={ignored}>
+      <RadioGroup label="Theme for print" value="system" onChange={ignored}>
         {themes()}
       </RadioGroup>,
       async (host) => {
-        await waitFor(() => expect(groupIn(host, 'Map style')).toBeInTheDocument())
+        await waitFor(() => expect(groupIn(host, 'Theme for print')).toBeInTheDocument())
         await userEvent.click(radio(host, 'Dark'))
         await expect(ignored).toHaveBeenCalledTimes(1)
         await expect(ignored).toHaveBeenLastCalledWith(
@@ -502,11 +502,11 @@ export const Controlled: Story = {
     )
     await mounted(
       canvasElement,
-      <RadioGroup label="Map style" defaultValue="system" onChange={cancelling}>
+      <RadioGroup label="Theme for print" defaultValue="system" onChange={cancelling}>
         {themes()}
       </RadioGroup>,
       async (host) => {
-        await waitFor(() => expect(groupIn(host, 'Map style')).toBeInTheDocument())
+        await waitFor(() => expect(groupIn(host, 'Theme for print')).toBeInTheDocument())
         await userEvent.click(radio(host, 'Dark'))
         await expect(cancelling).toHaveBeenCalledTimes(1)
         await expect(radio(host, 'Dark')).toHaveAttribute('aria-checked', 'false')
@@ -636,17 +636,17 @@ export const InForm: Story = {
     await mounted(
       canvasElement,
       <form>
-        <RadioGroup label="Map style" name="style" required>
+        <RadioGroup label="Theme for print" name="printTheme" required>
           {themes()}
         </RadioGroup>
       </form>,
       async (host) => {
-        await waitFor(() => expect(groupIn(host, 'Map style')).toBeInTheDocument())
+        await waitFor(() => expect(groupIn(host, 'Theme for print')).toBeInTheDocument())
         const required = host.querySelector('form')!
         await expect(required.checkValidity()).toBe(false)
         await userEvent.click(radio(host, 'Dark'))
         await expect(required.checkValidity()).toBe(true)
-        await expect(new FormData(required).get('style')).toBe('dark')
+        await expect(new FormData(required).get('printTheme')).toBe('dark')
         radio(host, 'Dark').blur()
       },
     )

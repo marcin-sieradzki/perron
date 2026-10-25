@@ -44,10 +44,12 @@
 }
 
 /* unchecked: the hover layer the Fields lay over their fill, inside (hover: hover); the press
-   outside it, so a touch press shows. Never on a disabled or a read-only radio (CR-8, CR-9). */
+   outside it, so a touch press shows. Hover and press are the radio's, the whole row, read as
+   [role]:hover; the indicator carries the radio's own state attributes, so the guard is on them:
+   never on a disabled or a read-only radio (CR-8, CR-9). */
 
 @media (hover: hover) {
-  .pn-Radio:not([data-disabled], [data-readonly]):hover > .pn-Radio-indicator:not([data-checked]) {
+  [role]:hover > .pn-Radio-indicator[data-unchecked]:not([data-disabled], [data-readonly]) {
     background-image: linear-gradient(
       var(--perron-color-surface-hover),
       var(--perron-color-surface-hover)
@@ -55,7 +57,7 @@
   }
 }
 
-.pn-Radio:not([data-disabled], [data-readonly]):active > .pn-Radio-indicator:not([data-checked]) {
+[role]:active > .pn-Radio-indicator[data-unchecked]:not([data-disabled], [data-readonly]) {
   background-image: linear-gradient(
     var(--perron-color-surface-hover),
     var(--perron-color-surface-hover)
@@ -78,13 +80,13 @@
 }
 
 @media (hover: hover) {
-  .pn-Radio:not([data-disabled], [data-readonly]):hover > .pn-Radio-indicator[data-checked] {
+  [role]:hover > .pn-Radio-indicator[data-checked]:not([data-disabled], [data-readonly]) {
     border-color: var(--perron-color-surface-inverse-hover);
     background-color: var(--perron-color-surface-inverse-hover);
   }
 }
 
-.pn-Radio:not([data-disabled], [data-readonly]):active > .pn-Radio-indicator[data-checked] {
+[role]:active > .pn-Radio-indicator[data-checked]:not([data-disabled], [data-readonly]) {
   border-color: var(--perron-color-surface-inverse-hover);
   background-color: var(--perron-color-surface-inverse-hover);
 }
@@ -121,12 +123,12 @@
 }
 
 @media (hover: hover) {
-  .pn-Radio:not([data-disabled], [data-readonly]):hover > .pn-Radio-indicator[data-invalid] {
+  [role]:hover > .pn-Radio-indicator[data-invalid]:not([data-disabled], [data-readonly]) {
     border-color: var(--perron-color-status-danger);
   }
 }
 
-.pn-Radio:not([data-disabled], [data-readonly]):active > .pn-Radio-indicator[data-invalid] {
+[role]:active > .pn-Radio-indicator[data-invalid]:not([data-disabled], [data-readonly]) {
   border-color: var(--perron-color-status-danger);
 }
 
@@ -148,8 +150,8 @@
   }
 
   /* at the hover and press rules' specificity and after them, so no theme fill shows */
-  .pn-Radio:not([data-disabled], [data-readonly]):is(:hover, :active)
-    > .pn-Radio-indicator:not([data-checked]) {
+  [role]:is(:hover, :active)
+    > .pn-Radio-indicator[data-unchecked]:not([data-disabled], [data-readonly]) {
     background-image: none;
   }
 
@@ -158,8 +160,8 @@
     background-color: Highlight;
   }
 
-  .pn-Radio:not([data-disabled], [data-readonly]):is(:hover, :active)
-    > .pn-Radio-indicator[data-checked] {
+  [role]:is(:hover, :active)
+    > .pn-Radio-indicator[data-checked]:not([data-disabled], [data-readonly]) {
     border-color: Highlight;
     background-color: Highlight;
   }

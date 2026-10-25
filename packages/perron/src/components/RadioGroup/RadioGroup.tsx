@@ -82,11 +82,20 @@ export interface RadioGroupProps extends Omit<
   required?: boolean
   /** The group's `Radio`s, in reading order, below the label. */
   children?: ReactNode
-  /** Reaches the root. Merged after `pn-RadioGroup` and Fieldset's `pn-Fieldset`. */
+  /**
+   * Reach the root, the `<div role="radiogroup">`. `className` is merged after `pn-RadioGroup` and
+   * Fieldset's `pn-Fieldset`.
+   */
   className?: string
-  /** Reaches the root. */
+  /**
+   * Reach the root, the `<div role="radiogroup">`. `className` is merged after `pn-RadioGroup` and
+   * Fieldset's `pn-Fieldset`.
+   */
   style?: CSSProperties
-  /** Reaches the root, the `<div role="radiogroup">`. */
+  /**
+   * Reach the root, the `<div role="radiogroup">`. `className` is merged after `pn-RadioGroup` and
+   * Fieldset's `pn-Fieldset`.
+   */
   ref?: Ref<HTMLDivElement>
   /** Props for each inner part, merged with the part's own, which win. */
   slotProps?: {
@@ -178,11 +187,11 @@ export interface RadioProps extends Omit<
    * is the radio's accessible name.
    */
   children?: ReactNode
-  /** Reaches the radio's `<span role="radio">`. Merged after `pn-Radio`. */
+  /** Reach the radio's `<span role="radio">`. `className` is merged after `pn-Radio`. */
   className?: string
-  /** Reaches the radio's `<span role="radio">`. */
+  /** Reach the radio's `<span role="radio">`. `className` is merged after `pn-Radio`. */
   style?: CSSProperties
-  /** Reaches the root, the radio's `<span role="radio">`. */
+  /** Reach the radio's `<span role="radio">`. `className` is merged after `pn-Radio`. */
   ref?: Ref<HTMLElement>
   /** Props for each inner part, merged with the part's own, which win. */
   slotProps?: {
