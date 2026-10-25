@@ -92,7 +92,8 @@ describe('docs', () => {
 
   it("names a key of a building entry's Keyboard table that no play test presses", () => {
     const message = (key: string) =>
-      `docs/components/pin.md's Keyboard table names \`${key}\`, which no play test in packages/perron/src/components/Pin/Pin.stories.tsx presses: give the story that shows it a step that presses it, as {Enter}, [Space], {Shift>}{ArrowUp}{/Shift}, {ArrowUp>3/} or userEvent.tab(), and checks what it does`
+      `docs/components/pin.md's Keyboard table names \`${key}\`, which no play test in packages/perron/src/components/Pin/Pin.stories.tsx presses: give the story that shows it a step that presses it, as {Enter}, [Space], {Shift>}{ArrowUp}{/Shift}, {ArrowUp>3/} or userEvent.tab(), and checks what it does; a row no play test can reproduce says why in its own row, \`Untested: <reason>\` (docs/components/README.md, "Stories")`
+    // Home's row says why no play test presses it, so it is left out
     expect(docs.run(fixture('keyboard'))).toEqual([
       { file: 'docs/components/pin.md', line: 10, message: message('Space') },
       { file: 'docs/components/pin.md', line: 12, message: message('Escape') },
