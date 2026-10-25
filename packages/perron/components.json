@@ -392,6 +392,15 @@
     "dependsOn": ["VehicleDotLabel"]
   },
   {
+    "name": "DataStateKey",
+    "layer": "pattern",
+    "category": "Data",
+    "status": "stable",
+    "baseUiParts": [],
+    "penpotPath": "Patterns/DataStateKey",
+    "dependsOn": ["VehicleDotLabel", "Text"]
+  },
+  {
     "name": "VehicleTable",
     "layer": "pattern",
     "category": "Data",

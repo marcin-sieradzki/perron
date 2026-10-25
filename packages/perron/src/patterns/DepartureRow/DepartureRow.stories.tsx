@@ -179,7 +179,7 @@ const EVERY_PROP = {
   nowLabel: 'Leaving',
   unknownLabel: 'Not known',
   cancelledLabel: 'Not running',
-  everyLabel: 'Each {count} mins',
+  everyLabel: 'Each {minutes} mins',
   everyRangeLabel: 'Each {from} or {to} mins',
   liveLabel: 'Real-time',
   ageingLabel: 'Older',
@@ -633,7 +633,7 @@ export const Interval: Story = {
     })
     await step('everyLabel and everyRangeLabel replace its words, filled alike', async () => {
       const labels = {
-        everyLabel: 'Each {count} mins',
+        everyLabel: 'Each {minutes} mins',
         everyRangeLabel: 'Each {from} or {to} mins',
       }
       await expect(shows(labels).textContent).toBe('Each 3 or 4 mins')

@@ -1,0 +1,56 @@
+/* DataStateKey: the five data states in a column, each a label and its count over the state's
+   sentence (docs/patterns/data-state-key.md, Tokens). Every rule is at rest: nothing in the key is
+   interactive (CR-12). No background, border, radius or shadow, and no position, inset, z-index or
+   outer margin: it sits on its container's surface and its screen places it (CR-9). */
+
+/* The five items one under the next */
+.pn-DataStateKey {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--perron-space-300);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Two lines: the label and its count on one baseline, the count at the inline end, then the
+   sentence. The label's column may shrink below its longest word, so a word longer than the line
+   breaks inside the label by VehicleDotLabel's break-word, and the count keeps its room (CR-10) */
+.pn-DataStateKey-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  column-gap: var(--perron-space-200);
+  row-gap: var(--perron-space-050);
+  margin: 0;
+}
+
+/* The label is VehicleDotLabel's own: its word in color.text.primary, and its dot, given no line,
+   in that ink too (CR-3); it sizes to its word */
+.pn-DataStateKey-label {
+  justify-self: start;
+}
+
+/* A count in tabular figures at the inline end, so the five line up and one that updates keeps
+   its width; its digits stay on one line (CR-10) */
+.pn-DataStateKey-count {
+  justify-self: end;
+  font: var(--perron-typography-data);
+  letter-spacing: var(--perron-typography-data-tracking);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--perron-color-text-primary);
+}
+
+/* CR-5: an unknown count's "—", quieter than the word beside it */
+.pn-DataStateKey-count[data-unknown] {
+  color: var(--perron-color-text-tertiary);
+}
+
+/* The sentence: Text's caption in color.text.secondary, across the second line, starting under
+   the label's word, past VehicleDotLabel's dot and its gap, so the dots keep a column of their
+   own; it wraps by Text's own overflow-wrap (CR-6, CR-10) */
+.pn-DataStateKey-description {
+  grid-column: 1 / -1;
+  padding-inline-start: calc(var(--perron-icon-size-325) + var(--perron-space-100));
+}
