@@ -1226,6 +1226,14 @@
       },
       "$description": "The box of a checkbox, and of a menu's checkbox item"
     },
+    "dialog-width": {
+      "$type": "dimension",
+      "$value": {
+        "value": 440,
+        "unit": "px"
+      },
+      "$description": "Widest a dialog or alert dialog gets: about 60 characters of body a line"
+    },
     "sheet-width": {
       "$type": "dimension",
       "$value": {
