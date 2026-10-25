@@ -264,6 +264,7 @@ Each of these is written once, in its file, and a component, pattern or story im
 | `fieldPart`                      | `packages/perron/src/testing/stories.ts`        | One of Field's parts in a scope, by its class, for Field and the controls it frames                                         |
 | `focusedClose`                   | `packages/perron/src/testing/stories.ts`        | An open popup's close button, once Base UI has moved focus to it                                                            |
 | `expectNoFocus`                  | `packages/perron/src/testing/stories.ts`        | Tabs once, expects focus outside an element, and tabs back, for a part that takes no focus                                  |
+| `RouterLink`                     | `packages/perron/src/testing/stories.ts`        | A router's link component as a stand-in, for a `render` prop: an `<a>` with its own destination, `to`, as its `href`        |
 | `frames`                         | `packages/perron/src/testing/stories.ts`        | Resolves after a number of animation frames, for a check that something has not changed                                     |
 | `byTestId`                       | `packages/perron/src/testing/stories.ts`        | The element with a `data-testid`, once it has rendered                                                                      |
 | `lines`                          | `packages/perron/src/testing/stories.ts`        | How many lines tall an element is, in its own line height, to show a long word wraps                                        |

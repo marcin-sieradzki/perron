@@ -1,0 +1,34 @@
+/* Link, from docs/components/link.md: the colour and type of the text around it, underlined in that
+   colour, in every state, visited ones alike (CR-2). It sets no typography role, so it has no
+   long-word rule of its own: it wraps as the text it sits in does (CR-12). Every state changes the
+   background only, at once (CR-3, CR-11), and keeps the link's geometry (CR-4). */
+
+.pn-Link {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  color: inherit;
+  /* one class beats an app's a { text-decoration: none }; the underline takes currentColor */
+  text-decoration-line: underline;
+  /* the hover and pressed layers and the focus ring, rounded on every line the link runs over */
+  border-radius: var(--perron-radius-xs);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+@media (hover: hover) {
+  .pn-Link:hover {
+    background-color: var(--perron-color-surface-hover);
+  }
+}
+
+/* after the hover rule and outside the query, so a press shows under the pointer and on touch */
+.pn-Link:active {
+  background-color: var(--perron-color-surface-selected);
+}
+
+/* Forced colours need no rule: Windows' contrast themes paint the link LinkText with its underline
+   and drop the layers, so the underline alone marks it. Focus is the ring perron.css draws on
+   :focus-visible (CR-6). */

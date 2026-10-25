@@ -8,6 +8,13 @@ stages:
     status: done
     started: 2026-10-25T08:13:35.153Z
     ended: 2026-10-25T08:15:43.776Z
+  build:
+    status: done
+    started: 2026-10-25T08:15:47.211Z
+    runs: 1
+    begun: 4c6f01166deebb1f2cf173285b1715581869f3218ef3ac3bac1f50e4258e6b3a
+    spec: 4c6f01166deebb1f2cf173285b1715581869f3218ef3ac3bac1f50e4258e6b3a
+    ended: 2026-10-25T08:24:02.087Z
 notes:
   - stage: brief
     at: 2026-10-25T08:13:31.398Z
@@ -39,3 +46,9 @@ notes:
   - stage: brief
     at: 2026-10-25T08:15:43.776Z
     direction: LinkButton leaves className and style in rest and lets mergeProps merge them, but the contract's Root rule says every prop the props type declares is taken out of rest. Either the contract allows props that mergeProps merges, or LinkButton catches up. Link's spec takes them out (CR-1).
+  - stage: build
+    at: 2026-10-25T08:24:02.087Z
+    direction: "perron.css's focus ring, offset by focus.offset round an inline Link, runs into the characters next to the link: in the Wrapping story it touches the full stop of 'day.' just before 'See'. Should inline text links get a smaller offset? That is a contract or foundations decision, not this component's."
+  - stage: build
+    at: 2026-10-25T08:24:02.087Z
+    direction: With no padding (CR-4), the hover and pressed layers cover only the 18 px text box of a 21 px typography.body line, so descenders and the underline sit on the layer's bottom edge. Spending some of the line's leading on the layer, for example with a vertical padding the line height can hold, would need a spec change.

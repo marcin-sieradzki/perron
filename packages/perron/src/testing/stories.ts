@@ -1,5 +1,5 @@
 // Helpers the stories share, written once here (docs/components/README.md, "Shared helpers").
-import { createElement, type CSSProperties, type ReactNode } from 'react'
+import { createElement, type ComponentProps, type CSSProperties, type ReactNode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { expect, screen, userEvent, waitFor, within } from 'storybook/test'
 
@@ -203,6 +203,14 @@ export function colour(property: string) {
   probe.remove()
   return value
 }
+
+/**
+ * A router's link component as a stand-in, for a `render` prop: an `<a>` that brings its own
+ * destination, `to`, as its `href`, marked `data-router-link`, with the rest of its props, `ref`
+ * among them, on the `<a>`.
+ */
+export const RouterLink = ({ to, ...rest }: ComponentProps<'a'> & { to: string }) =>
+  createElement('a', { ...rest, href: to, 'data-router-link': '' })
 
 /**
  * Renders `ui` apart from the story, into a host appended to `parent`, runs `test` on the host,

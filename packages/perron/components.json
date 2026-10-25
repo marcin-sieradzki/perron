@@ -717,7 +717,7 @@
     "name": "Link",
     "layer": "component",
     "category": "Navigation",
-    "status": "designing",
+    "status": "building",
     "baseUiParts": [],
     "penpotPath": "Components/Link",
     "dependsOn": []

@@ -1,13 +1,20 @@
 // LinkButton's stories: one per variant of the deferred design, named as the spec's Stories table
 // names them, and the play tests it asks for. Hover and focus render at rest; the visual stage drives
 // them. A decorator prevents every link's navigation, so no story leaves the page.
-import { createRef, Fragment, type ComponentProps } from 'react'
+import { createRef, Fragment } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, userEvent, within } from 'storybook/test'
 import plus from '../../../icons/plus.svg?raw'
 import search from '../../../icons/search.svg?raw'
 import { Button } from '../Button/Button.tsx'
-import { icon, pressedAfterHover, resolve, stateFill, stateRules } from '../../testing/stories.ts'
+import {
+  icon,
+  pressedAfterHover,
+  resolve,
+  RouterLink,
+  stateFill,
+  stateRules,
+} from '../../testing/stories.ts'
 import { LinkButton } from './LinkButton.tsx'
 
 const LABEL = 'Back to the map'
@@ -164,11 +171,6 @@ export const FullWidth: Story = {
     const container = link.parentElement!
     await expect(link.getBoundingClientRect().width).toBe(container.getBoundingClientRect().width)
   },
-}
-
-/** A router's link component as a stand-in: it renders an `<a>` and brings its own destination. */
-function RouterLink({ to, ...rest }: ComponentProps<'a'> & { to: string }) {
-  return <a {...rest} href={to} data-router-link="" />
 }
 
 const renderedRef = createRef<HTMLAnchorElement>()
