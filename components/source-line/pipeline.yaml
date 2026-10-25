@@ -3,6 +3,9 @@ component: SourceLine
 layer: pattern
 deferred:
   at: 2026-10-25T17:46:59.950Z
+needsHuman:
+  stage: review
+  reason: 'review round 4 found a P1 or a P2 after unblock granted one round past the cap (round 4): review round 4 found 1 P2 (components/source-line/review.md)'
 stages:
   brief:
     status: done
@@ -17,14 +20,18 @@ stages:
     spec: 2b4731e87a1d71164af06b1b9f33134b9cdff01bef76c550d5c0c6b18b5250fc
     ended: 2026-10-25T19:19:36.765Z
   review:
-    rounds: 3
-    sentBack: 3
-    reviewed: 1625038e8f99b89b3b0d544a44344e3281b6739f
+    rounds: 4
+    sentBack: 4
+    reviewed: e2afd9bbb5f6eae330c8a55998ddb761b393eef7
     findings:
       p1: 0
-      p2: 2
-      p3: 2
+      p2: 1
+      p3: 0
     granted: 4
+    status: failed
+    started: 2026-10-25T19:26:03.385Z
+    ended: 2026-10-25T19:26:04.184Z
+    failing: review round 4 found 1 P2 (components/source-line/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T17:53:46.108Z
