@@ -35,8 +35,11 @@ export interface CheckboxProps extends Omit<
   ref?: Ref<HTMLSpanElement>
   /** Props for each inner part, merged with the part's own, which win. */
   slotProps?: {
-    /** Props for the `indicator` part, the box. Its `keepMounted` and `render` stay Checkbox's. */
-    indicator?: BaseCheckbox.Indicator.Props
+    /**
+     * Props for the `indicator` part, the box, all but `keepMounted` and `render`, which stay
+     * Checkbox's.
+     */
+    indicator?: Omit<BaseCheckbox.Indicator.Props, 'keepMounted' | 'render'>
   }
 }
 
