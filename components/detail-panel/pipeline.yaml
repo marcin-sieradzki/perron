@@ -10,16 +10,18 @@ stages:
     ended: 2026-10-25T00:33:35.911Z
   build:
     runs: 5
-    status: done
-    started: 2026-10-25T01:20:55.385Z
-    ended: 2026-10-25T01:24:35.172Z
+    failing: review round 4 found 1 P1 (components/detail-panel/review.md)
   review:
-    rounds: 3
-    sentBack: 0
+    rounds: 4
+    sentBack: 1
     findings:
-      p1: 0
-      p2: 1
-      p3: 6
+      p1: 1
+      p2: 0
+      p3: 5
+    status: failed
+    started: 2026-10-25T01:24:44.871Z
+    ended: 2026-10-25T01:28:09.947Z
+    failing: review round 4 found 1 P1 (components/detail-panel/review.md)
 notes:
   - stage: review
     at: 2026-10-25T01:20:49.454Z
