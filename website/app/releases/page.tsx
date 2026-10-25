@@ -6,20 +6,13 @@ import { DocLayout } from '@/components/agents/DocLayout.tsx'
 import { Link } from '@/components/perron'
 import { Markdown } from '@/components/site/Markdown.tsx'
 import { PageHeader } from '@/components/site/PageHeader.tsx'
-import { readChangelogs, type Changelog } from '../../lib/changelog.ts'
+import { readChangelogs, releaseAnchor, versionOf, type Changelog } from '../../lib/changelog.ts'
 import { REPO_URL } from '../../lib/repo.ts'
 
 export const metadata: Metadata = { title: 'Release log' }
 
-/** A version heading's number and, when it has one, its date: `1.2.0 (2026-10-25)`, `1.2.0 - 2026-10-25`. */
-function versionOf(heading: string) {
-  const m = /^(\S+?)\s*(?:[-–—(]\s*)?(\d{4}-\d{2}-\d{2})\)?$/.exec(heading)
-  return m ? { version: m[1], date: m[2] } : { version: heading, date: undefined }
-}
-
-/** An anchor for a package's version: `perron-mcp-0-1-1`. */
-const anchor = (log: Changelog, version: string) =>
-  `${log.name.replace(/^@mylder\//, '')}-${version}`.replace(/[^a-z0-9]+/gi, '-').toLowerCase()
+/** An anchor for a package's version, `perron-mcp-0-1-1`, or for its log, with `log`. */
+const anchor = (log: Changelog, version: string) => releaseAnchor(log.name, version)
 
 /**
  * A dependency as changesets writes it, `@mylder/perron@0.2.0`, set as code, so the markdown

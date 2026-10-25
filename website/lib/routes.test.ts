@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { assetSrc, siteHref, siteRoute } from './routes.ts'
+import { assetSrc, decodePath, resolve, siteHref, siteRoute } from './routes.ts'
 import { REPO_URL } from './repo.ts'
 
 describe('siteRoute', () => {
@@ -46,6 +46,44 @@ describe('siteHref', () => {
       'https://www.w3.org/TR/WCAG22/',
     )
     expect(siteHref('#durations', 'docs/x.md')).toBe('#durations')
+  })
+
+  it('routes a root-absolute link as a relative one, escapes and all', () => {
+    expect(siteHref('/docs/foundations/motion.md#durations', 'docs/x.md')).toBe(
+      '/foundations/motion#durations',
+    )
+    expect(siteHref('/docs/content%2Ddesign.md', 'docs/x.md')).toBe('/foundations/content-design')
+    expect(siteHref('content%2Ddesign.md', 'docs/x.md')).toBe('/foundations/content-design')
+  })
+
+  it('keeps a link with a malformed escape as it is, rather than failing the build', () => {
+    expect(() => siteHref('100%.md', 'docs/x.md')).not.toThrow()
+    expect(() => siteHref('/docs/100%zz.md', 'docs/x.md')).not.toThrow()
+  })
+})
+
+describe('resolve', () => {
+  it('decodes both relative and root-absolute targets, and keeps the anchor raw', () => {
+    expect(resolve('a%20b.md#x%20y', 'docs/foundations/README.md')).toEqual({
+      path: 'docs/foundations/a b.md',
+      hash: '#x%20y',
+    })
+    expect(resolve('/docs/a%20b.md', 'docs/foundations/README.md')).toEqual({
+      path: 'docs/a b.md',
+      hash: '',
+    })
+  })
+
+  it('keeps a target with a malformed escape raw', () => {
+    expect(resolve('50%.md', 'docs/x.md').path).toBe('docs/50%.md')
+    expect(resolve('/docs/50%zz.md', 'docs/x.md').path).toBe('docs/50%zz.md')
+  })
+})
+
+describe('decodePath', () => {
+  it('decodes escapes, and returns a malformed one as it is', () => {
+    expect(decodePath('a%20b')).toBe('a b')
+    expect(decodePath('%E0%A4%A')).toBe('%E0%A4%A')
   })
 })
 

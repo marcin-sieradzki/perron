@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { parseChangelog, readChangelogs } from './changelog.ts'
+import { parseChangelog, readChangelogs, releaseAnchor, versionOf } from './changelog.ts'
 import { PACKAGES, readPackage } from './repo.ts'
 
 const log = `# @mylder/example
@@ -46,6 +46,48 @@ describe('parseChangelog', () => {
     expect(minor.releases[0].groups[0].entries[0].markdown).toBe('One\nmore line')
   })
 
+  it("keeps an entry's blank lines, so its paragraphs, list and code stay apart", () => {
+    const entry = [
+      '- 5d5f868: Add the `patterns` entry point.',
+      '',
+      '  It ships the map screen.',
+      '',
+      '  - one',
+      '  - two',
+      '',
+      '  ```ts',
+      "  import { MapScreen } from '@mylder/perron/patterns'",
+      '',
+      '  MapScreen()',
+      '  ```',
+      '',
+      '',
+      '- 1a2b3c4: The next one.',
+    ].join('\n')
+    const parsed = parseChangelog(`# x\n\n## 1.0.0\n\n### Minor Changes\n\n${entry}\n`, 'x')
+    expect(parsed.releases[0].groups[0].entries).toEqual([
+      {
+        commit: '5d5f868',
+        markdown: [
+          'Add the `patterns` entry point.',
+          '',
+          'It ships the map screen.',
+          '',
+          '- one',
+          '- two',
+          '',
+          '```ts',
+          "import { MapScreen } from '@mylder/perron/patterns'",
+          '',
+          'MapScreen()',
+          '```',
+        ].join('\n'),
+      },
+      // the blank lines after an entry belong to no entry
+      { commit: '1a2b3c4', markdown: 'The next one.' },
+    ])
+  })
+
   it("folds a release's dependency updates into one entry, where the first was", () => {
     const patch = parseChangelog(log, 'x').releases[0].groups[1].entries
     expect(patch).toEqual([
@@ -56,6 +98,16 @@ describe('parseChangelog', () => {
 
   it('throws for a file with no # heading', () => {
     expect(() => parseChangelog('## 1.0.0', 'x.md')).toThrow('x.md has no # heading')
+  })
+})
+
+describe('versionOf and releaseAnchor', () => {
+  it("reads a version heading's number and date, and anchors the version by its package", () => {
+    expect(versionOf('0.2.0')).toEqual({ version: '0.2.0', date: undefined })
+    expect(versionOf('1.2.0 (2026-10-25)')).toEqual({ version: '1.2.0', date: '2026-10-25' })
+    expect(versionOf('1.2.0 - 2026-10-25')).toEqual({ version: '1.2.0', date: '2026-10-25' })
+    expect(releaseAnchor('@mylder/perron-mcp', '0.1.1')).toBe('perron-mcp-0-1-1')
+    expect(releaseAnchor('@mylder/perron', '0.2.0')).toBe('perron-0-2-0')
   })
 })
 

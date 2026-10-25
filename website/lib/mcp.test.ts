@@ -214,6 +214,15 @@ describe('answerMarkdown', () => {
       'Popover and [MDN](https://developer.mozilla.org)',
     )
   })
+
+  it('leaves a fenced code block as it is', () => {
+    const code = '```sh\n# install it\nnpm i [x](./x.md)\n```'
+    expect(answerMarkdown(`## Use\n${code}\n# After`)).toBe(`#### Use\n${code}\n#### After`)
+    // a shorter or other fence inside does not close it
+    const nested = '````md\n```\n# still code\n```\n````'
+    expect(answerMarkdown(nested)).toBe(nested)
+    expect(answerMarkdown('~~~\n## code\n~~~\n## Prose')).toBe('~~~\n## code\n~~~\n#### Prose')
+  })
 })
 
 describe('readSources', () => {

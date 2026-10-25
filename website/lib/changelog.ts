@@ -1,7 +1,8 @@
 // The two changelogs the release workflow writes from changesets, as versions and entries: the
 // Release log's data. A changelog is `# <package>`, then `## <version>`, then `### <kind> Changes`,
-// then one list item per change, `- <commit>: <text>`, with indented lines that belong to it. A
-// release's run of "Updated dependencies" lines reads as one entry.
+// then one list item per change, `- <commit>: <text>`, with indented lines that belong to it, its
+// blank lines kept between them so its paragraphs, lists and code stay apart. A release's run of
+// "Updated dependencies" lines reads as one entry.
 import { once, readRepoFile } from './repo.ts'
 
 /** The changelogs, by path from the repo root: the package first, then the MCP server. */
@@ -54,8 +55,16 @@ export function foldDependencyUpdates(entries: ChangelogEntry[]): ChangelogEntry
 export function parseChangelog(markdown: string, path: string): Changelog {
   const log: Changelog = { name: '', path, releases: [] }
   let entry: ChangelogEntry | undefined
+  // blank lines inside an entry, kept once an indented line shows the entry goes on past them
+  let blanks = 0
   for (const line of markdown.split('\n')) {
     let m: RegExpExecArray | null
+    if (!line.trim()) {
+      blanks += 1
+      continue
+    }
+    const gap = '\n'.repeat(blanks)
+    blanks = 0
     if ((m = /^# (.+)$/.exec(line))) log.name = m[1].trim()
     else if ((m = /^## (.+)$/.exec(line))) {
       log.releases.push({ version: m[1].trim(), groups: [] })
@@ -68,13 +77,30 @@ export function parseChangelog(markdown: string, path: string): Changelog {
       if (!group) continue
       entry = m[1] ? { commit: m[1], markdown: m[2] } : { markdown: m[2] }
       group.entries.push(entry)
-    } else if (entry && /^\s+\S/.test(line)) entry.markdown += `\n${line.replace(/^ {2}/, '')}`
+    } else if (entry && /^\s+\S/.test(line))
+      entry.markdown += `${gap}\n${line.replace(/^ {2}/, '')}`
   }
   if (!log.name) throw new Error(`${path} has no # heading`)
   for (const release of log.releases)
     for (const group of release.groups) group.entries = foldDependencyUpdates(group.entries)
   return log
 }
+
+/**
+ * A version heading's number and, when it has one, its date: `1.2.0 (2026-10-25)`,
+ * `1.2.0 - 2026-10-25`.
+ */
+export function versionOf(heading: string) {
+  const m = /^(\S+?)\s*(?:[-–—(]\s*)?(\d{4}-\d{2}-\d{2})\)?$/.exec(heading)
+  return m ? { version: m[1], date: m[2] } : { version: heading, date: undefined }
+}
+
+/**
+ * The Release log's anchor for a package's version, `perron-mcp-0-1-1`: the page's ids and the
+ * search's links both come from it.
+ */
+export const releaseAnchor = (name: string, version: string) =>
+  `${name.replace(/^@mylder\//, '')}-${version}`.replace(/[^a-z0-9]+/gi, '-').toLowerCase()
 
 /** Both changelogs, the package's first. */
 export const readChangelogs = once(() => CHANGELOGS.map((p) => parseChangelog(readRepoFile(p), p)))

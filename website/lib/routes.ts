@@ -30,14 +30,26 @@ export function siteRoute(path: string): string | undefined {
 
 const EXTERNAL = /^([a-z][a-z0-9+.-]*:|\/\/)/i
 
-/** A relative link's target, by path from the repo root, and its `#anchor` (with the `#`). */
-function resolve(href: string, from: string) {
+/** A link's path with its escapes decoded, `%20` as a space, or as it is when one is malformed. */
+export function decodePath(target: string) {
+  try {
+    return decodeURI(target)
+  } catch {
+    return target
+  }
+}
+
+/**
+ * A link's target, relative to the doc at `from` or from the repo root when it starts with `/`,
+ * as a path from the repo root, and its `#anchor` (with the `#`).
+ */
+export function resolve(href: string, from: string) {
   const at = href.indexOf('#')
-  const target = at < 0 ? href : href.slice(0, at)
+  const target = decodePath(at < 0 ? href : href.slice(0, at))
   const hash = at < 0 ? '' : href.slice(at)
   const path = target.startsWith('/')
     ? posix.normalize(target.slice(1))
-    : posix.normalize(posix.join(posix.dirname(from), decodeURI(target)))
+    : posix.normalize(posix.join(posix.dirname(from), target))
   return { path: target.endsWith('/') ? `${path}/` : path, hash }
 }
 

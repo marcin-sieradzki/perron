@@ -1,7 +1,9 @@
 'use client'
 // The components index's body, from Components.dc.html: a glass sidebar over the map with the
 // filter and the categories, then each category's cards and the components still in design. The
-// filter is the only state: it narrows the cards by name. The cards come drawn from the server.
+// filter is the only state: it narrows the cards by name, and the sidebar with them, so each
+// category it lists has a section to land on and counts what that section shows. The cards come
+// drawn from the server.
 import { Fragment, useState, type ReactNode } from 'react'
 import { EmptyState, Separator, TextField } from '@mylder/perron'
 import './catalogue.css'
@@ -63,6 +65,7 @@ export function Catalogue({ intro, sections, total, more, searchIcon }: Catalogu
       designing: words ? s.designing.filter(matches) : s.designing,
     }))
     .filter((s) => s.cards.length > 0 || s.designing.length > 0)
+  const count = words ? shown.reduce((n, s) => n + s.cards.length, 0) : total
 
   return (
     <div className="catalogue">
@@ -76,9 +79,9 @@ export function Catalogue({ intro, sections, total, more, searchIcon }: Catalogu
         />
         <nav aria-label="Categories" className="catalogue-nav">
           <a href="#main" aria-current="page" className="catalogue-nav-link">
-            Overview <span className="catalogue-nav-count">{total}</span>
+            Overview <span className="catalogue-nav-count">{count}</span>
           </a>
-          {sections.map((s) => (
+          {shown.map((s) => (
             <a key={s.id} href={`#${s.id}`} className="catalogue-nav-link hover">
               {s.category} <span className="catalogue-nav-count">{s.cards.length}</span>
             </a>
