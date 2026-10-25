@@ -26,10 +26,11 @@ export interface VehicleDotLabelProps extends Omit<useRender.ComponentProps<'spa
   variant?: 'live' | 'ageing' | 'estimated' | 'timetable-only' | 'no-signal'
   /**
    * The vehicle's line, which gives the dot its colour: a metro line (`m1` to `m4`), an S-tog line
-   * (`a` to `h`), any bus (`bus`), or any regional or Øresund train (`regional`). Required, with
-   * no default; set on the root as `data-line`, and passed to the dot.
+   * (`a` to `h`), any bus (`bus`), or any regional or Øresund train (`regional`). Set on the root
+   * as `data-line`, and passed to the dot. Left out, with no default, neither sets `data-line` and
+   * the dot draws in the word's colour, for a label that stands for a state across many lines.
    */
-  line: 'm1' | 'm2' | 'm3' | 'm4' | 'a' | 'b' | 'c' | 'e' | 'f' | 'h' | 'bus' | 'regional'
+  line?: 'm1' | 'm2' | 'm3' | 'm4' | 'a' | 'b' | 'c' | 'e' | 'f' | 'h' | 'bus' | 'regional'
   /**
    * Overrides "Live", the word shown when `variant='live'`
    * @default The locale's
@@ -88,7 +89,7 @@ export function VehicleDotLabel({
     noSignal: noSignalLabel,
   })
   const word = strings[LABEL_KEY[variant]]
-  // CR-3: data-variant and data-line always, defaults included
+  // CR-3: data-variant always, its default included; data-line only when a line is given
   const own = {
     className: 'pn-VehicleDotLabel',
     'data-variant': variant,

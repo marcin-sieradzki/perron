@@ -3801,7 +3801,7 @@
         ]
       },
       "line": {
-        "optional": false,
+        "optional": true,
         "type": [
           "\"a\"",
           "\"b\"",
@@ -3891,7 +3891,7 @@
         ]
       },
       "line": {
-        "optional": false,
+        "optional": true,
         "type": [
           "\"a\"",
           "\"b\"",

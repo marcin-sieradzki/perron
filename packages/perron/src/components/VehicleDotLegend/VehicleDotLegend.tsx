@@ -83,8 +83,8 @@ export function VehicleDotLegend({
   })
   const own = {
     className: 'pn-VehicleDotLegend',
-    // CR-1, CR-2: the five items, each a hidden dot then its word; line='m1' is VehicleDot's
-    // required line, whose colour the legend's CSS replaces with its own ink (CR-3)
+    // CR-1, CR-2: the five items, each a hidden dot then its word; line='m1', which VehicleDot
+    // required when the legend was built, has its colour replaced by the legend's own ink (CR-3)
     children: STATES.map(({ variant, labelKey }) => (
       <li key={variant} className="pn-VehicleDotLegend-item">
         <VehicleDot

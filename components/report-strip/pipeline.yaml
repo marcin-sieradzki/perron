@@ -8,6 +8,13 @@ stages:
     status: done
     started: 2026-10-25T13:26:24.200Z
     ended: 2026-10-25T13:28:08.781Z
+  build:
+    status: done
+    started: 2026-10-25T13:28:12.257Z
+    runs: 1
+    begun: 6c58ebe63a2828d4b1f16de8c1699f5f69d2adf3402abf161cfe8e26ffbf6ee8
+    spec: 6c58ebe63a2828d4b1f16de8c1699f5f69d2adf3402abf161cfe8e26ffbf6ee8
+    ended: 2026-10-25T13:37:43.853Z
 notes:
   - stage: brief
     at: 2026-10-25T13:25:54.965Z
@@ -35,3 +42,6 @@ notes:
       6. (Tokens) Label space.200 from count, items space.400 apart, wrapped rows space.100 apart? Recommended: yes.
       7. (Keyboard and ARIA) Root is a list with no name of its own, not a live region, caller names it via aria-label/aria-labelledby? Recommended: yes.
       8. (CR-3) Build makes line optional on VehicleDot and VehicleDotLabel with no default; no line sets no data-line and draws in surrounding ink; ReportStrip passes no line? Recommended: yes.
+  - stage: build
+    at: 2026-10-25T13:37:43.853Z
+    direction: "Counts in typography.data (JetBrains Mono) use a monospace no-break space between digit groups, a full character wide, so the gap inside '1 046' is almost as wide as the space.200 gap between word and count and the figure can read as two numbers. Options: keep U+00A0 as CR-4 decides, or group with a narrow no-break space (U+202F) in grouped() for every pattern."

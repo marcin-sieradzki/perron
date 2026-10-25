@@ -16,6 +16,7 @@ import type {
 import { VisuallyHidden } from '../../parts/VisuallyHidden/VisuallyHidden.tsx'
 import { useOwnedStrings } from '../../PerronProvider.tsx'
 import { classes, known } from '../../internal/nodes.ts'
+import { grouped } from '../../internal/numbers.ts'
 import './DayProfileChart.css'
 
 /** One point of the day, as DayProfileChart's `points` takes it. */
@@ -103,13 +104,6 @@ function drawable(points: ReadonlyArray<DayProfileChartPoint>): Drawn[] {
     out.push({ time, minutes, count: known(count) ? (count as number) : undefined })
   }
   return out
-}
-
-/** A count in digits grouped in threes from the right by a no-break space: "1 260" (CR-3). */
-function grouped(count: number) {
-  const [whole, fraction] = String(count).split('.')
-  const digits = whole.replace(/\B(?=(\d{3})+(?!\d))/g, '\u00A0')
-  return fraction === undefined ? digits : `${digits}.${fraction}`
 }
 
 /**

@@ -1,0 +1,43 @@
+/* ReportStrip: the five data states' counts in one row that wraps between items, each count beside
+   its state's VehicleDotLabel (docs/patterns/report-strip.md, Tokens). Every rule is at rest:
+   nothing in the strip is interactive (CR-10). No background, border, radius or shadow, and no
+   position, inset, z-index or outer margin: it sits on its container's surface and its screen
+   places it (CR-8). */
+
+/* CR-7: one row, wrapping between items in a narrow container */
+.pn-ReportStrip {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--perron-space-400);
+  row-gap: var(--perron-space-100);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* The word and its count on one baseline, a step apart; never wider than the strip (CR-7) */
+.pn-ReportStrip-item {
+  display: flex;
+  align-items: baseline;
+  column-gap: var(--perron-space-200);
+  max-inline-size: 100%;
+  margin: 0;
+}
+
+/* The label is VehicleDotLabel's own: its word in color.text.primary, and its dot, given no line,
+   in that ink too (CR-3). */
+
+/* A count in tabular figures, so one that updates keeps its width; its digits stay on one line,
+   and the row wraps between items instead (CR-7) */
+.pn-ReportStrip-count {
+  font: var(--perron-typography-data);
+  letter-spacing: var(--perron-typography-data-tracking);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--perron-color-text-primary);
+}
+
+/* CR-5: an unknown count's "—", quieter than the word beside it */
+.pn-ReportStrip-count[data-unknown] {
+  color: var(--perron-color-text-tertiary);
+}
