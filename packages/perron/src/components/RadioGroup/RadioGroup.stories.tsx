@@ -198,10 +198,11 @@ export const RadioHover: Story = {
     )
     await expect(onHover(system, 'border-color')).toBe('var(--perron-color-surface-inverse-hover)')
     await expect(onHover(system, 'background-image')).toBe('')
-    // a press shows the same, outside (hover: hover)
+    // a press shows the same, outside (hover: hover); the forced-colours reset (CR-11) sets `none`
     await expect(
       stateRules(light, ':active')
         .map((s) => s.getPropertyValue('background-image'))
+        .filter((value) => value !== 'none')
         .join('')
         .replace(/\s+/g, ''),
     ).toBe(HOVER_LAYER)
