@@ -221,7 +221,7 @@ Each of these is drawn once, in its own folder, `packages/perron/src/parts/<Part
 
 ## Shared helpers
 
-Each of these is written once, in its file, and a component, pattern or story imports it from there; no other file in `packages/perron/src/` declares at its top level its name, a name after it in its cell (one a copy went by), or a function with its body under a new name (`npm run gates`, `shared-parts`). Helpers are internal: no barrel exports them. A helper a second component needs joins this table first. A story has the DOM and uses `testing/stories.ts`; a unit test runs in node with no DOM and reads server-rendered markup with `testing/markup.ts`.
+Each of these is written once, in its file, and a component, pattern or story imports it from there; no other file in `packages/perron/src/` declares at its top level its name, a name after it in its cell (one a copy went by), or a function with its body under a new name or inline, such as a `map`'s callback, unit tests included (`npm run gates`, `shared-parts`). Helpers are internal: no barrel exports them. A helper a second component needs joins this table first. A story has the DOM and uses `testing/stories.ts`; a unit test runs in node with no DOM and reads server-rendered markup with `testing/markup.ts`.
 
 | Helper                           | File                                            | Does                                                                                                               |
 | -------------------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |

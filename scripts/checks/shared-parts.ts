@@ -220,6 +220,27 @@ function topLevelNames(file: string, text: string) {
   return out
 }
 
+/**
+ * The functions nested inside a file's top-level statements, such as a callback passed to `map`,
+ * with the offset of each: a helper's body there is a copy as much as one under a new name.
+ */
+function nestedFunctions(file: string, text: string) {
+  const source = ts.createSourceFile(file, text, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
+  const out: { offset: number; fn: Fn }[] = []
+  const visit = (node: ts.Node, top: boolean) => {
+    const fn = functionOf(node)
+    if (fn && !top) out.push({ offset: node.getStart(source), fn })
+    // a top-level `const` keeps its own function at the top level, which topLevelNames reads
+    const keeps =
+      ts.isVariableStatement(node) ||
+      ts.isVariableDeclarationList(node) ||
+      ts.isVariableDeclaration(node)
+    ts.forEachChild(node, (kid) => visit(kid, top && keeps))
+  }
+  for (const statement of source.statements) visit(statement, true)
+  return out
+}
+
 /** Below this many syntax nodes a body is too small to call a copy: `(node) => node != null`. */
 const SMALLEST_COPY = 8
 
@@ -308,6 +329,16 @@ export function helperProblems(
         file,
         line: text.slice(0, offset).split('\n').length,
         message: `declares ${name}, ${what}; import ${helper.name} from ${PACKAGE}/src/${helper.file} (${CONTRACT}, "Shared helpers")`,
+      })
+    }
+    for (const { offset, fn } of nestedFunctions(file, text)) {
+      const shape = shapeOf(fn, '')
+      const helper = shape ? byShape.get(shape) : undefined
+      if (!helper || file === `${src}/${helper.file}`) continue
+      problems.push({
+        file,
+        line: text.slice(0, offset).split('\n').length,
+        message: `holds a copy of the shared helper ${helper.name} inline, such as in a map; call ${helper.name} from ${PACKAGE}/src/${helper.file} (${CONTRACT}, "Shared helpers")`,
       })
     }
   }

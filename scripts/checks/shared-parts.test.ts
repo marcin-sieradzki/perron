@@ -74,7 +74,7 @@ describe('shared-parts', () => {
     ])
   })
 
-  it('fails a copy of a shared helper under a new name, and one under an alias the table lists, in a unit test too', () => {
+  it('fails a copy of a shared helper under a new name, and one under an alias the table lists, in a unit test too, and inline in a map', () => {
     const problems = helperProblems(root, 'scripts/checks/fixtures/shared-parts/copies', [
       { name: 'classes', aliases: [], file: 'internal/nodes.ts' },
       { name: 'heard', aliases: ['exposedText'], file: 'internal/nodes.ts' },
@@ -84,6 +84,7 @@ describe('shared-parts', () => {
       [4, 'declares join, a copy of the shared helper classes'],
       [7, 'declares spoken, a copy of the shared helper heard'],
       [14, 'declares exposedText, the shared helper heard under another name'],
+      [3, 'holds a copy of the shared helper heard inline, such as in a map'],
     ])
     expect(problems[0].file).toMatch(/Card\.test\.tsx$/)
   })
