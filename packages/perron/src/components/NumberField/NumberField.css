@@ -9,12 +9,12 @@
   min-inline-size: 0;
 }
 
-/* The box: the input, then the two buttons, in a row as wide as the frame (CR-7, CR-12). */
+/* The box: the input, then the two buttons, in a row as wide as the frame (CR-7, CR-12). No gap:
+   the input's end padding is the space before the buttons, so a press there focuses it. */
 .pn-NumberField-group {
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  gap: var(--perron-space-050);
   inline-size: 100%;
   block-size: var(--perron-size-input);
   padding-inline-end: var(--perron-space-050);
@@ -47,8 +47,10 @@
 
 /* Transparent inside the box, which draws the fill, the edge and the ring; one line of figures
    that keep their widths as the number steps, and scroll, as a native input does (CR-10). It fills
-   the box from its start edge to the buttons, top to bottom, so a press anywhere but a button lands
-   on it and focuses it, and its start padding sets the number where the Fields' words start. */
+   the box from its start edge up to the buttons, top to bottom, so a press there lands on it and
+   focuses it; its start padding sets the number where the Fields' words start, and its end padding
+   is the space before the buttons. Only the strips round the buttons stay the box's own: the 1 px
+   above and below each, the space between them and the space after them. */
 .pn-NumberField-input {
   flex: 1;
   align-self: stretch;
@@ -56,6 +58,7 @@
   margin: 0;
   padding: 0;
   padding-inline-start: var(--perron-space-300);
+  padding-inline-end: var(--perron-space-050);
   border: 0;
   background: transparent;
   outline: none;
@@ -94,6 +97,11 @@
   background: transparent;
   color: var(--perron-color-text-secondary);
   cursor: pointer;
+}
+
+/* The space between the two buttons, which keeps them one pair. */
+.pn-NumberField-increment {
+  margin-inline-start: var(--perron-space-050);
 }
 
 /* Hover and pressed only while the button can step: not at a bound, read-only or disabled (CR-15). */
