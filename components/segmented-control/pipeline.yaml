@@ -1,0 +1,6 @@
+# Written by npm run factory; never by hand.
+component: SegmentedControl
+layer: component
+deferred:
+  at: 2026-10-25T01:00:27.310Z
+stages: {}
