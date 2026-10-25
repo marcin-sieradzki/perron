@@ -20,7 +20,7 @@ import {
   onHover,
   pressedAfterHover,
   rendered,
-  stateRules,
+  stateLayer,
 } from '../../testing/stories.ts'
 import { Button } from '../Button/Button.tsx'
 import { Slider } from './Slider.tsx'
@@ -414,10 +414,7 @@ export const Pressed: Story = {
     const track = part(canvasElement, 'track')
     const thumb = part(canvasElement, 'thumb')
     await step('the pressed layer is a step past hover, and its rule comes after', async () => {
-      const pressed = stateRules(thumb, ':active')
-        .map((s) => s.getPropertyValue('background-image'))
-        .filter(Boolean)
-      await expect(pressed.at(-1)).toContain('var(--perron-color-surface-selected)')
+      await expect(stateLayer(thumb, ':active')).toContain('var(--perron-color-surface-selected)')
       await expect(onHover(thumb, 'background-image')).toContain(
         'var(--perron-color-surface-hover)',
       )
@@ -474,6 +471,7 @@ export const Pressed: Story = {
         pointerAt('pointerdown', control, box.right - 1, middle)
         pointerAt('pointerup', control, box.right - 1, middle)
         await waitFor(() => expect(slider).toHaveAttribute('aria-valuenow', '10'))
+        await expect(call(args.onChangeCommitted)).toEqual({ value: 10, reason: 'track-press' })
         // and at max
         await expect(thumb.getBoundingClientRect().right).toBeLessThanOrEqual(box.right + 0.5)
       },
@@ -530,11 +528,7 @@ export const Disabled: Story = {
         await expect(getComputedStyle(control).cursor).toBe('default')
         // CR-12: the hover and pressed rules pass a disabled thumb by
         await expect(onHover(thumb, 'background-image')).toBe('')
-        await expect(
-          stateRules(thumb, ':active')
-            .map((s) => s.getPropertyValue('background-image'))
-            .filter(Boolean),
-        ).toEqual([])
+        await expect(stateLayer(thumb, ':active')).toBe('')
       },
     )
     await step('a press on the control changes nothing and calls no handler', async () => {
@@ -595,9 +589,12 @@ export const Invalid: Story = {
     await expect(root).toHaveAttribute('aria-invalid', 'true')
     await expect(root).toHaveAttribute('data-invalid')
     await expect(thumb).toHaveAttribute('data-invalid')
-    // the help first, then the error
+    // the help first, then the error, on the thumb's input and on the root group
     await waitFor(() =>
       expect(slider.getAttribute('aria-describedby')).toBe(`${description.id} ${error.id}`),
+    )
+    await waitFor(() =>
+      expect(root.getAttribute('aria-describedby')).toBe(`${description.id} ${error.id}`),
     )
     await expect(slider).toHaveAccessibleDescription(`${DESCRIPTION} Choose 8 minutes or fewer`)
     await expect(getComputedStyle(thumb).borderColor).toBe(edge('color-status-danger'))

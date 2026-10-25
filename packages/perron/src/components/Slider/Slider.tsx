@@ -108,7 +108,12 @@ export interface SliderProps extends Omit<
   maximumLabel?: string
   /** Reaches the root, the `Slider.Root` `<div>`. */
   ref?: Ref<HTMLDivElement>
-  /** Props for each inner part, merged with the part's own, which win. */
+  /**
+   * Props for each inner part. The thumb's and the control's are merged under the part's own with
+   * `mergeProps`, so the part's own win and handlers run both; the other parts' are spread first,
+   * and the part's own props, its class among them, are set after (CR-2). Each part's class comes
+   * before the caller's.
+   */
   slotProps?: {
     /**
      * Props for the `field` part, the frame: Base UI's `invalid`, `validate`, `validationMode`,
