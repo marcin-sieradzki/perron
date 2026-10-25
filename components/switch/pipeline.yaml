@@ -23,6 +23,10 @@ stages:
       p2: 0
       p3: 6
     ended: 2026-10-25T05:08:47.686Z
+  docs:
+    status: done
+    started: 2026-10-25T05:08:57.374Z
+    ended: 2026-10-25T05:12:22.014Z
 notes:
   - stage: brief
     at: 2026-10-25T04:47:26.699Z
@@ -63,3 +67,9 @@ notes:
   - stage: build
     at: 2026-10-25T05:00:54.720Z
     direction: "Switch names its state checked/defaultChecked while FilterChip and HighlightChip use selected/defaultSelected: a deliberate difference within the Inputs category (MUI's and Base UI's switch names)."
+  - stage: docs
+    at: 2026-10-25T05:12:22.015Z
+    direction: The docs page's intro block shows the spec's whole opening, so it carries the spec's process paragraph (ADR 0010, no ROADMAP line, no prototype), which is internal; every ADR 0010 spec shows the same, and SpecProse's intro could stop after the first paragraph.
+  - stage: docs
+    at: 2026-10-25T05:12:22.015Z
+    direction: The slots table's description for slotProps.thumb reads only 'Props for the thumb part', leaving out that its className joins after pn-Switch-thumb.

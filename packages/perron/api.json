@@ -2032,6 +2032,79 @@
       }
     }
   },
+  "Switch": {
+    "extends": [
+      "Omit< BaseSwitch.Root.Props, | 'checked' | 'defaultChecked' | 'onCheckedChange' | 'disabled' | 'readOnly' | 'required' | 'name' | 'className' | 'style' | 'children' | 'ref' >"
+    ],
+    "props": {
+      "checked": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "defaultChecked": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "disabled": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "name": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "onChange": {
+        "optional": true,
+        "type": [
+          "(event: Event, value: boolean, details: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) => void"
+        ]
+      },
+      "readOnly": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLElement>"
+        ]
+      },
+      "required": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ thumb?: SwitchThumbProps | undefined; }"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      }
+    }
+  },
   "Tabs": {
     "extends": [
       "Inherited< BaseTabs.Root.Props, 'value' | 'defaultValue' | 'onValueChange' | 'orientation' | 'onChange' >"
