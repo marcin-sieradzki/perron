@@ -10,6 +10,7 @@ import type { VehicleDotLegendProps } from './VehicleDotLegend.tsx'
 import {
   colour,
   expectNoFocus,
+  expectVehicleDotShape,
   forcedColourSheet,
   heard,
   lines,
@@ -71,54 +72,6 @@ const dotsOf = (legend: Element) => [
   ...legend.querySelectorAll<HTMLElement>('.pn-VehicleDotLegend-dot'),
 ]
 
-/** The `<circle>` a VehicleDot draws its state with. */
-const circleOf = (dot: Element) => dot.querySelector<SVGCircleElement>('circle')!
-
-/**
- * Each state's shape, drawn in `ink`, the colour a dot's `currentColor` takes: the fill, the rim
- * and the dash of its circle, and no signal's cut.
- */
-async function expectShape(dot: HTMLElement, ink: string, noSignalFill: string) {
-  const style = getComputedStyle(circleOf(dot))
-  const cut = getComputedStyle(dot).maskImage !== 'none'
-  switch (dot.dataset.variant) {
-    case 'live':
-      await expect(style.fill).toBe(ink)
-      await expect(style.fillOpacity).toBe('1')
-      await expect(style.stroke).toBe('none')
-      await expect(cut).toBe(false)
-      break
-    case 'ageing':
-      await expect(style.fill).toBe(ink)
-      await expect(style.fillOpacity).toBe(
-        rendered('vehicle-dot-ageing-fill-opacity', 'fill-opacity'),
-      )
-      await expect(style.stroke).toBe(ink)
-      await expect(style.strokeDasharray).toBe('none')
-      await expect(cut).toBe(false)
-      break
-    case 'estimated':
-      await expect(style.fill).toBe('none')
-      await expect(style.stroke).toBe(ink)
-      await expect(style.strokeDasharray).toBe('none')
-      await expect(cut).toBe(false)
-      break
-    case 'timetable-only':
-      await expect(style.fill).toBe('none')
-      await expect(style.stroke).toBe(ink)
-      await expect(style.strokeDasharray).toBe(
-        rendered('vehicle-dot-timetable-dash', 'stroke-dasharray'),
-      )
-      await expect(cut).toBe(false)
-      break
-    default:
-      await expect(dot.dataset.variant).toBe('no-signal')
-      await expect(style.fill).toBe(noSignalFill)
-      await expect(style.stroke).toBe('none')
-      await expect(cut).toBe(true)
-  }
-}
-
 /** The five states in one row, each dot beside its word: the subject story. */
 export const Default: Story = {
   play: async ({ canvasElement, step }) => {
@@ -159,9 +112,9 @@ export const Default: Story = {
       const ink = colour(INK)
       await expect(getComputedStyle(list).color).toBe(ink)
       await expect(ink).not.toBe(colour('--perron-color-transit-line-m1'))
-      for (const dot of dotsOf(list)) {
+      for (const [index, dot] of dotsOf(list).entries()) {
         await expect(getComputedStyle(dot).color).toBe(ink)
-        await expectShape(dot, ink, colour(NO_SIGNAL))
+        await expectVehicleDotShape(dot, STATES[index].variant, ink, colour(NO_SIGNAL))
       }
     })
     await step('the words: typography.label-sm in color.text.primary', async () => {
@@ -276,23 +229,13 @@ export const Default: Story = {
         canvasElement,
         <VehicleDotLegend
           className="caller"
-          liveLabel="Own live"
-          ageingLabel="Own ageing"
-          estimatedLabel="Own estimated"
-          timetableOnlyLabel="Own timetable only"
-          noSignalLabel="Own no signal"
+          {...Object.fromEntries(STATES.map(({ prop, word }) => [prop, `Own ${word}`]))}
         />,
         async (host) => {
           const own = await legendIn(host)
           await expect(own.getAttributeNames()).toEqual(['class'])
           await expect(own.className).toBe('pn-VehicleDotLegend caller')
-          await expect(wordsOf(own)).toEqual([
-            'Own live',
-            'Own ageing',
-            'Own estimated',
-            'Own timetable only',
-            'Own no signal',
-          ])
+          await expect(wordsOf(own)).toEqual(WORDS.map((word) => `Own ${word}`))
         },
       )
     })
@@ -362,12 +305,12 @@ export const ForcedColours: Story = {
     const text = resolve('color', 'CanvasText')
     document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet]
     try {
-      for (const [index, { word }] of STATES.entries())
+      for (const [index, { variant, word }] of STATES.entries())
         await step(`${word}: drawn in CanvasText, in its own shape (CR-3)`, async () => {
           const dot = dots[index]
           await expect(getComputedStyle(dot).color).toBe(text)
           // no signal's circle takes CanvasText too, told apart by its cut
-          await expectShape(dot, text, text)
+          await expectVehicleDotShape(dot, variant, text)
         })
     } finally {
       document.adoptedStyleSheets = document.adoptedStyleSheets.filter((s) => s !== sheet)
