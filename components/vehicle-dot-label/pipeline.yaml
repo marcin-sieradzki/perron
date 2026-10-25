@@ -1,0 +1,52 @@
+# Written by npm run factory; never by hand.
+component: VehicleDotLabel
+layer: component
+deferred:
+  at: 2026-10-25T12:33:26.690Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-25T12:38:42.851Z
+    ended: 2026-10-25T12:39:52.829Z
+  build:
+    runs: 3
+    status: done
+    started: 2026-10-25T13:03:00.152Z
+    begun: 284193da1b780cd7f52048539359490d81862b8962cfabd8c3f387a29a4098d5
+    spec: 3f48128ad0bb763089cce201b0616ca5a13153e857768afe6be65c5416cfec0b
+    ended: 2026-10-25T13:04:49.048Z
+  review:
+    rounds: 3
+    sentBack: 2
+    reviewed: afa5d6fa5785ce232d6ada6a0bffc0849cb59e0d
+    findings:
+      p1: 0
+      p2: 0
+      p3: 1
+    status: done
+    started: 2026-10-25T13:04:53.075Z
+    ended: 2026-10-25T13:07:03.436Z
+  docs:
+    status: done
+    started: 2026-10-25T13:07:11.663Z
+    ended: 2026-10-25T13:09:53.619Z
+notes:
+  - stage: brief
+    at: 2026-10-25T12:38:27.446Z
+    direction: A data state shown apart from one vehicle has no line to colour its dot, and VehicleDot requires `line` and has no neutral colour. This covers ReportStrip's counts across lines (ReportStrip depends on VehicleDotLabel) and probably VehicleDotLegend's rows. An optional `line` with an ink default on VehicleDot would only widen its API, and should be settled before either is built.
+  - stage: brief
+    at: 2026-10-25T12:38:27.446Z
+    direction: "SeverityLabel and VehicleDotLabel now share one layout: an inline grid with a zero-width-space ::before strut, so the mark stays centred on the word's first line. A third mark-and-word label would make it a candidate for a shared part."
+  - stage: brief
+    at: 2026-10-25T12:38:27.446Z
+    questions: |-
+      1. (Props) Does VehicleDotLabel take no `children`? Its word would always be the state's owned string, overridden on one instance by its `*Label` prop, and a caller's extra words, such as "since 08:02" after "No signal", would go beside the label, not in it. Recommended: yes, as SeverityLabel takes none. The five words then stay content design's on every screen, and a time is the caller's own text beside the label.
+      2. (Props) Does VehicleDotLabel come in one size, with no `size` prop: the dot at VehicleDot's `size='small'` (icon.size.325) and the word in `typography.label-sm`, with a `space.100` gap? Recommended: yes, as SeverityLabel and Delay come in one size. label-sm is the role for legend items and short labels in rows, tables and strips, and a `size` prop can be added later without a break.
+      3. (Props) Is `line` required, with no default, as on VehicleDot? Recommended: yes. The dot requires it, and a dot in a wrong default colour would name the wrong line. A label that stands for many lines at once, such as a count in ReportStrip, needs a neutral dot, which is a separate VehicleDot change (an optional `line` with an ink default) to decide before ReportStrip is built.
+      4. (Tokens) Is the word set in `color.text.primary` for every state? Recommended: yes. The word is the one place the state is told without relying on colour or a 9 px shape, so it reads at full strength (15.32:1 or more on every surface). No signal's word is never greyed like its dot, since tertiary misses 4.5:1, and a line colour is never put on text.
+  - stage: build
+    at: 2026-10-25T12:50:42.485Z
+    direction: "In Chromium, giving the label `min-inline-size: 0` makes the inline-grid's min-content the dot alone. A row that wraps (flex-wrap: wrap) still keeps whole words, which a play test checks. A row that never wraps, or an auto-layout table cell squeezed below the word, breaks the word letter by letter, so break-word buys nothing over anywhere there. VehicleTable and ReportStrip, both built on VehicleDotLabel, should give the state column a minimum width or let their row wrap. Otherwise the label needs a layout whose narrowest is its longest word, which this grid cannot pair with wrapping inside a narrow container."
+  - stage: build
+    at: 2026-10-25T13:00:31.368Z
+    direction: "The brief's note that SeverityLabel and VehicleDotLabel share one layout no longer holds: VehicleDotLabel now uses Tag's padding layout. SeverityLabel keeps its inline grid with overflow-wrap: anywhere, which lets a row that never wraps, or an auto-layout table cell, squeeze its name to a letter a line. If SeverityLabel moved to the same padding layout with break-word, the two would share one layout again, and that layout would be the candidate for a shared part."

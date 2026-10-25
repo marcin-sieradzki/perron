@@ -123,6 +123,7 @@ const preview: Preview = {
             'SeverityLabel',
             'StationIcon',
             'VehicleDot',
+            'VehicleDotLabel',
             'VehicleDotLegend',
             // registry:components end
           ],
@@ -196,6 +197,7 @@ const preview: Preview = {
             'SeverityLabel',
             'StationIcon',
             'VehicleDot',
+            'VehicleDotLabel',
             'VehicleDotLegend',
             'DataStatePanel',
             'DayProfileChart',

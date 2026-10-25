@@ -3867,6 +3867,88 @@
       }
     }
   },
+  "VehicleDotLabel": {
+    "extends": [
+      "Omit<useRender.ComponentProps<'span'>, 'children'>"
+    ],
+    "props": {
+      "ageingLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "estimatedLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "line": {
+        "optional": false,
+        "type": [
+          "\"a\"",
+          "\"b\"",
+          "\"bus\"",
+          "\"c\"",
+          "\"e\"",
+          "\"f\"",
+          "\"h\"",
+          "\"m1\"",
+          "\"m2\"",
+          "\"m3\"",
+          "\"m4\"",
+          "\"regional\""
+        ]
+      },
+      "liveLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "noSignalLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLSpanElement>"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "timetableOnlyLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "variant": {
+        "optional": true,
+        "type": [
+          "\"ageing\"",
+          "\"estimated\"",
+          "\"live\"",
+          "\"no-signal\"",
+          "\"timetable-only\""
+        ]
+      }
+    }
+  },
   "VehicleDotLegend": {
     "extends": [
       "Omit<useRender.ComponentProps<'ul'>, 'children'>"

@@ -1,0 +1,32 @@
+/* VehicleDotLabel: a vehicle's dot and its word in one inline run, at rest only (CR-6). The dot is a
+   VehicleDot, which draws itself in its line's colour (CR-1); the word is set once on the root. */
+.pn-VehicleDotLabel {
+  /* CR-5: the word wraps inside the label, and the dot hangs in the label's inline-start padding,
+     beside the word's first line, so the word never wraps between the dot and itself */
+  display: inline-block;
+  position: relative;
+  box-sizing: border-box;
+  padding-inline-start: calc(var(--perron-icon-size-325) + var(--perron-space-100));
+  font: var(--perron-typography-label-sm);
+  letter-spacing: var(--perron-typography-label-sm-tracking);
+  /* CR-5: never wider than its container, and a word longer than its line breaks inside the label;
+     break-word, not anywhere, so the label's min-content width keeps whole words and a row or a
+     table cell never squeezes it to a letter a line */
+  max-inline-size: 100%;
+  overflow-wrap: break-word;
+  /* the word at full strength in every state, never the dot's grey or a line colour */
+  color: var(--perron-color-text-primary);
+}
+
+/* CR-5: the dot in the padding, centred on the word's first line, one line of the root's own
+   typography tall */
+.pn-VehicleDotLabel-dot {
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: calc((1lh - var(--perron-icon-size-325)) / 2);
+}
+
+/* a block, so the word's box is its lines: the first line starts at the root's top edge */
+.pn-VehicleDotLabel-label {
+  display: block;
+}
