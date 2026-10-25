@@ -2,6 +2,8 @@
 
 A named group of related controls, such as the modes shown on the map or the fields of a report form: the group's name above, the caller's controls below it, and one switch that disables them all.
 
+<!-- run notes -->
+
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the [contract](README.md), the [foundations](../foundations/README.md), [content design](../content-design.md), the tokens and the Base UI reference for `Fieldset` (`@base-ui/react` 1.9.0, installed). Fieldset has nothing in `dependsOn`, no ROADMAP line names it, and the extracted prototype component is not in any branch this run can reach, so nothing here rests on it. Field, the single-field wrapper, is being built beside it and its spec is not yet in a branch this run can read, so the legend's look follows [SearchField](search-field.md)'s label, the one field label that has shipped.
 
 CheckboxGroup and RadioGroup build on Fieldset next: each renders Fieldset with its own Base UI root through `render`, as Base UI's forms guide composes `<Fieldset.Root render={<RadioGroup />}>`, so the group takes Fieldset's legend, its name and its disabled state (CR-5).

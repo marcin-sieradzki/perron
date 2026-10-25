@@ -146,13 +146,14 @@ function firstParamType(checker: ts.TypeChecker, source: ts.SourceFile, name: st
  * member the component destructures with a default gets a row from react-docgen with that default
  * and nothing else: it takes the inherited type and JSDoc, and keeps the destructuring default.
  */
-function addInherited(docs: ComponentDoc[], src: string, filename: string) {
+function addInherited(docs: ComponentDoc[], src: string, filename: string, shared?: DocgenProgram) {
   const named = docs.filter((d) => d.actualName && src.includes(`${d.actualName}Props`))
   if (!named.length) return
-  const config = ts.findConfigFile(dirname(filename), ts.sys.fileExists)
-  const root = config ? dirname(config) : dirname(filename)
+  const root = configRoot(filename)
   const file = relative(root, filename)
-  const { program, checker, propsOf } = propsProgram(root, [file], { [file]: src })
+  // a program made for many files serves this one when it read the same text from the same root
+  const fits = shared?.root === root && shared.program.getSourceFile(filename)?.text === src
+  const { program, checker, propsOf } = fits ? shared : propsProgram(root, [file], { [file]: src })
   const source = program.getSourceFile(filename)!
   for (const doc of named) {
     const { type } = propsOf(file, `${doc.actualName}Props`)
@@ -183,6 +184,31 @@ function addInherited(docs: ComponentDoc[], src: string, filename: string) {
   }
 }
 
+/** The folder of the tsconfig that holds `filename`, the root its program resolves from. */
+function configRoot(filename: string) {
+  const config = ts.findConfigFile(dirname(filename), ts.sys.fileExists)
+  return config ? dirname(config) : dirname(filename)
+}
+
+/** One TypeScript program over many components' files, for `componentDocs` to share. */
+export type DocgenProgram = ReturnType<typeof propsProgram> & { root: string }
+
+/**
+ * One program over `filenames`, as they are on disk, so a caller that reads many components, as
+ * the docs check does, builds the compiler's view of their types once rather than once a file.
+ */
+export function docgenProgram(filenames: string[]): DocgenProgram | undefined {
+  if (!filenames.length) return undefined
+  const root = configRoot(filenames[0])
+  return {
+    root,
+    ...propsProgram(
+      root,
+      filenames.map((f) => relative(root, f)),
+    ),
+  }
+}
+
 /** The text of a `@default` tag in a JSDoc description: up to the next tag or the end. */
 const DEFAULT_TAG = /^@default[ \t]+(.+?)\s*(?=^@\w|(?![\s\S]))/ms
 
@@ -198,9 +224,13 @@ function addTaggedDefaults(doc: ComponentDoc) {
 /**
  * The components `src`, the file at `filename`, declares and exports, as the docs page's docgen
  * reads them, each with every member of its `<Name>Props` but React's own; one a file only
- * re-exports is its own file's.
+ * re-exports is its own file's. `shared`, from `docgenProgram`, saves building a program for it.
  */
-export function componentDocs(src: string, filename: string): ComponentDoc[] {
+export function componentDocs(
+  src: string,
+  filename: string,
+  shared?: DocgenProgram,
+): ComponentDoc[] {
   let docs: (ComponentDoc & { definedInFile?: string })[]
   try {
     docs = parse(src, {
@@ -215,6 +245,6 @@ export function componentDocs(src: string, filename: string): ComponentDoc[] {
   }
   const own = docs.filter((d) => d.definedInFile === filename)
   own.forEach(addTaggedDefaults)
-  addInherited(own, src, filename)
+  addInherited(own, src, filename, shared)
   return own
 }

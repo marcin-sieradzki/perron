@@ -10,8 +10,6 @@ import { withClass } from '../../internal/nodes.ts'
 import { positionerOffsets } from '../../internal/tokens.ts'
 import './Tooltip.css'
 
-type ChangeDetails = BaseTooltip.Root.ChangeEventDetails
-
 export interface TooltipProps extends Omit<BaseTooltip.Popup.Props, 'children' | 'ref'> {
   /**
    * The tooltip's words: a short label in sentence case that matches the trigger's accessible
@@ -39,7 +37,7 @@ export interface TooltipProps extends Omit<BaseTooltip.Popup.Props, 'children' |
    * pointer rests on the trigger or `'trigger-focus'` when the keyboard focuses it, and
    * `details.cancel()` keeps it closed.
    */
-  onOpen?: (event: Event, details: ChangeDetails) => void
+  onOpen?: (event: Event, details: BaseTooltip.Root.ChangeEventDetails) => void
   /**
    * Called when the tooltip asks to close: `reason` is `'trigger-hover'`, `'trigger-focus'`,
    * `'trigger-press'`, `'escape-key'`, `'outside-press'` or another of Base UI's reasons, and
@@ -48,7 +46,7 @@ export interface TooltipProps extends Omit<BaseTooltip.Popup.Props, 'children' |
   onClose?: (
     event: Event,
     reason: BaseTooltip.Root.ChangeEventReason,
-    details: ChangeDetails,
+    details: BaseTooltip.Root.ChangeEventDetails,
   ) => void
   /** Reaches the root, the popup. */
   ref?: Ref<HTMLDivElement>
@@ -84,7 +82,7 @@ export function Tooltip({
   const defaults = positionerOffsets()
 
   // CR-4: Base UI's one handler becomes MUI's two
-  const handleOpenChange = (next: boolean, details: ChangeDetails) => {
+  const handleOpenChange = (next: boolean, details: BaseTooltip.Root.ChangeEventDetails) => {
     if (next) onOpen?.(details.event, details)
     else onClose?.(details.event, details.reason, details)
   }
@@ -109,7 +107,7 @@ export function Tooltip({
         className={withClass('pn-Tooltip-trigger', slotProps?.trigger?.className)}
       />
       <BaseTooltip.Portal
-        {...mergeProps<typeof BaseTooltip.Portal>(slotProps?.portal, undefined)}
+        {...slotProps?.portal}
         className={withClass('pn-Tooltip-portal', slotProps?.portal?.className)}
       >
         <BaseTooltip.Positioner

@@ -110,7 +110,7 @@ The contract story, `storybook/contract/Contract.stories.tsx`, renders every reg
 ## Customising
 
 - **`render`** is Base UI's: it swaps the root element and keeps the behaviour, class and data attributes. `<Button render={<a href="/map" />}>`.
-- **`slotProps`** is keyed by the Base UI part, its name in camelCase: `Select.Positioner` is `positioner`, `Select.Popup` is `popup`. Each value is that part's props, merged with Base UI's `mergeProps` (`@base-ui/react/merge-props`), the component's own props last. The root has no key; it takes the component's own props.
+- **`slotProps`** is keyed by the Base UI part, its name in camelCase: `Select.Positioner` is `positioner`, `Select.Popup` is `popup`. Each value is that part's props, merged with Base UI's `mergeProps` (`@base-ui/react/merge-props`), the component's own props last; a part the component sets nothing on but its class is spread as it is, `{...slotProps?.portal}`. The root has no key; it takes the component's own props.
 - A caller restyles through `className`, on the root or in `slotProps`, with the tokens.
 
 ## Change

@@ -2,6 +2,8 @@
 
 A short list of facts about one thing, each a name and what it is, such as "Operator: Movia" and "Last report: 08:14" about a vehicle, set as a description list in a detail panel or a report.
 
+<!-- run notes -->
+
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): this spec decides what the drawing would, from the [contract](README.md), the [foundations](../foundations/README.md), [content design](../content-design.md), the tokens and the specs of its Display siblings, [Stat](stat.md)'s and [Text](text.md)'s. FactList has no Base UI component and nothing in `dependsOn`, and the extracted prototype is not reachable from this branch, so nothing here rests on it.
 
 ## Anatomy

@@ -5,7 +5,7 @@
 //   begin <Name> <stage>                          records the stage as running, or refuses (exit 1)
 //   end <Name> <stage> <done|failed|pending> [--failing "<check and why>"] [--direction "<finding>"]…
 //                                                 checks the stage's gate, records it, prints next;
-//                                                 each --direction, and a pending run's --failing,
+//                                                 each --direction the notes lack, and a pending run's --failing,
 //                                                 joins the pipeline's notes, which the PR carries
 //   approve <Name>                                the maintainer's design approval
 //   defer <Name>                                  runs the loop without design and visual (ADR 0010)

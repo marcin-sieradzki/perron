@@ -2,6 +2,8 @@
 
 A button that runs one action and shows it as an icon alone, such as zoom in or show help, named for screen readers by its required `label`.
 
+<!-- run notes -->
+
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the contract, the foundations, the tokens, the Base UI reference and the spec of its sibling [Button](button.md), a source it follows rather than a dependency: IconButton builds on Base UI's `Button` and the `VisuallyHidden` part, not on Perron's Button. The [Toolbar](toolbar.md) spec gives its icon-only buttons the look and size answered below, and this spec follows it so the two match side by side.
 
 ## Anatomy
