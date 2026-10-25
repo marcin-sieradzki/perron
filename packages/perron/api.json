@@ -1408,6 +1408,43 @@
       }
     }
   },
+  "Link": {
+    "extends": [
+      "Omit< useRender.ComponentProps<'a'>, 'children' | 'ref' | 'color' | 'href' | 'className' | 'style' >"
+    ],
+    "props": {
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "href": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLAnchorElement>"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      }
+    }
+  },
   "LinkButton": {
     "extends": [
       "Omit< useRender.ComponentProps<'a'>, 'children' | 'ref' | 'color' | 'href' | 'className' | 'style' >"
