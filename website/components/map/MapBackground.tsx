@@ -164,6 +164,8 @@ export function MapBackground({ view, idPrefix = 'map' }: MapBackgroundProps) {
               >
                 <mpath href={`#${pathId(route)}`} />
               </animateMotion>
+              {/* the ring grows PULSE_GROWTH times its dot, fading from full to nothing, as the
+                  foundations tile's pulse does */}
               {v.pulses ? (
                 <circle className="map-pulse" r={r} strokeWidth={PULSE_STROKE}>
                   <animate
@@ -176,7 +178,7 @@ export function MapBackground({ view, idPrefix = 'map' }: MapBackgroundProps) {
                   />
                   <animate
                     attributeName="opacity"
-                    values="0.9;0;0"
+                    values="1;0;0"
                     keyTimes={`0;${svgList([pulse / (every * 1000)])};1`}
                     dur={`${every}s`}
                     begin={`${v.offset}s`}

@@ -228,15 +228,6 @@
   color: var(--perron-color-text-secondary);
 }
 
-.agents-visually-hidden {
-  position: absolute;
-  inline-size: 1px;
-  block-size: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-
 /* A tool: what it is and takes, beside its call and the server's answer */
 .agents-tool {
   scroll-margin-block-start: var(--perron-space-800);

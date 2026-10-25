@@ -112,16 +112,6 @@
   color: var(--perron-color-text-primary);
 }
 
-.home-command-status {
-  font: var(--perron-typography-caption);
-  letter-spacing: var(--perron-typography-caption-tracking);
-  color: var(--perron-color-text-secondary);
-}
-
-.home-command-status:empty {
-  display: none;
-}
-
 /* The columns of live components: three still columns of glass panels, set at staggered heights */
 
 .home-columns {

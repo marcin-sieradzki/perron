@@ -464,4 +464,10 @@ body {
   .site-search .pn-Kbd {
     display: none;
   }
+
+  /* a table of three columns or more keeps room for each and scrolls sideways in its frame,
+     rather than squeezing a column to a word a line */
+  .markdown table:has(th:nth-child(3)) {
+    min-inline-size: calc(var(--perron-breakpoint-compact-phone) * 1.5);
+  }
 }

@@ -1445,6 +1445,19 @@
     padding: var(--perron-space-400);
   }
 
+  /* a specimen takes its own line under its role's name and size, and wraps, so it reads whole */
+  .fd-specimen {
+    flex-wrap: wrap;
+    justify-content: space-between;
+    row-gap: var(--perron-space-100);
+  }
+
+  .fd-specimen-sample {
+    order: 1;
+    flex-basis: 100%;
+    white-space: normal;
+  }
+
   .fd-map-tile {
     padding: 0;
   }

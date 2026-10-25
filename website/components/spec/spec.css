@@ -11,6 +11,9 @@
   /* the framed map's height, and its share above a phone's bottom sheet */
   --spec-context-height: calc(var(--perron-space-800) * 9.375);
   --spec-context-map: calc(var(--perron-space-800) * 3);
+  /* a preview that opens its panel in a frame of its own, as DetailPanel's does: the panel's
+     width and its gap on each side */
+  --spec-panel-frame: calc(var(--perron-size-detail-width) + 2 * var(--perron-size-panel-gap));
 }
 
 /* Columns. wrap-reverse puts a wrapped list under the page, and the "On this page" links above it */
@@ -246,6 +249,11 @@
   max-inline-size: 100%;
 }
 
+/* a frame shrinks to the button inside it, so it is given the panel's room */
+.spec-sheet-free:has(> .preview-frame) {
+  inline-size: min(var(--spec-panel-frame), 100%);
+}
+
 .spec-sheet-handle {
   display: none;
 }
@@ -336,6 +344,11 @@
   text-align: start;
 }
 
+.spec-cell:has(> .preview-frame) {
+  flex: 0 1 var(--spec-panel-frame);
+  max-inline-size: 100%;
+}
+
 .spec-picker {
   display: none;
 }
@@ -367,7 +380,7 @@
   background: var(--perron-color-surface-raised);
 }
 
-.spec-picker-list li {
+.spec-picker-list > li {
   min-block-size: var(--perron-size-vehicle-row);
   display: flex;
   align-items: center;
@@ -377,7 +390,7 @@
   padding: var(--perron-space-200) var(--perron-space-400);
 }
 
-.spec-picker-list li + li {
+.spec-picker-list > li + li {
   border-block-start: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
 }
 
