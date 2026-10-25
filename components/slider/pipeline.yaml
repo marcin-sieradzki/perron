@@ -3,6 +3,9 @@ component: Slider
 layer: component
 deferred:
   at: 2026-10-25T06:59:37.033Z
+needsHuman:
+  stage: review
+  reason: '3 review rounds found a P1 or a P2; the last: review round 3 found 1 P2 (components/slider/review.md)'
 stages:
   brief:
     status: done
@@ -16,12 +19,16 @@ stages:
     spec: be4c5b9bb88e6d66df6b8e7fd6201302be752e2e4f95a930943777328d0d26ba
     ended: 2026-10-25T07:50:19.525Z
   review:
-    rounds: 2
-    sentBack: 2
+    rounds: 3
+    sentBack: 3
     findings:
       p1: 0
-      p2: 2
-      p3: 3
+      p2: 1
+      p3: 5
+    status: failed
+    started: 2026-10-25T07:50:23.563Z
+    ended: 2026-10-25T07:58:53.371Z
+    failing: review round 3 found 1 P2 (components/slider/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T07:13:09.465Z
