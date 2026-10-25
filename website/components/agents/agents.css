@@ -1,0 +1,507 @@
+/* Agents, Get started and the Release log: a glass side nav beside the page's column, cards on
+   the raised surface, code in the data roles on inset boxes, and the MCP tools' calls and answers.
+   In Perron's tokens only; breakpoint.phone is written as a number in the last block, as in
+   site.css. */
+
+.agents-layout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--perron-space-800);
+}
+
+/* The side nav: about seven steps of space.800 wide, beside a column at least a dialog wide */
+.agents-nav {
+  flex: 1 1 calc(7 * var(--perron-space-800));
+  max-inline-size: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-100);
+  padding: var(--perron-space-300);
+  border-radius: var(--perron-radius-xl);
+}
+
+.agents-nav-link {
+  display: flex;
+  align-items: center;
+  min-block-size: var(--perron-size-segment);
+  padding-inline: var(--perron-space-200);
+  border-radius: var(--perron-radius-md);
+  font: var(--perron-typography-body-sm);
+  letter-spacing: var(--perron-typography-body-sm-tracking);
+  color: var(--perron-color-text-secondary);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.agents-nav-link[aria-current='page'] {
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+  color: var(--perron-color-text-primary);
+  background-color: var(--perron-color-surface-selected);
+}
+
+.agents-nav-link[data-code] {
+  font: var(--perron-typography-data);
+  letter-spacing: var(--perron-typography-data-tracking);
+}
+
+.agents-nav-items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-100);
+}
+
+.agents-nav-group {
+  padding: var(--perron-space-300) var(--perron-space-200) var(--perron-space-100);
+}
+
+/* a group named by a package keeps its name as written, in the data role */
+.agents-nav-group[data-code] {
+  font: var(--perron-typography-data-sm);
+  letter-spacing: var(--perron-typography-data-sm-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.agents-overline {
+  font: var(--perron-typography-overline);
+  letter-spacing: var(--perron-typography-overline-tracking);
+  text-transform: uppercase;
+  color: var(--perron-color-text-secondary);
+}
+
+.agents-column {
+  flex: 999 1 var(--perron-size-dialog-width);
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-800);
+}
+
+.agents-intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-400);
+}
+
+.agents-tagline {
+  margin: 0;
+  font: var(--perron-typography-heading-lg);
+  letter-spacing: var(--perron-typography-heading-lg-tracking);
+  text-wrap: balance;
+}
+
+.agents-version {
+  padding: var(--perron-space-050) var(--perron-space-150);
+  border-radius: var(--perron-radius-xs);
+  border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+  font: var(--perron-typography-data-sm);
+  letter-spacing: var(--perron-typography-data-sm-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.agents-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-400);
+  scroll-margin-block-start: var(--perron-space-800);
+}
+
+.agents-section > h2 {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--perron-space-300);
+  font: var(--perron-typography-heading-md);
+  letter-spacing: var(--perron-typography-heading-md-tracking);
+}
+
+.agents-section > h2.agents-step-title {
+  align-items: center;
+}
+
+.agents-count {
+  font: var(--perron-typography-data);
+  letter-spacing: var(--perron-typography-data-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.agents-note {
+  margin: 0;
+  max-inline-size: var(--site-measure);
+  font: var(--perron-typography-body-sm);
+  letter-spacing: var(--perron-typography-body-sm-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+/* Inline code in prose that doesn't sit in .markdown, such as a tool's description */
+.agents-prose code,
+.agents-note code {
+  font: var(--perron-typography-data);
+  letter-spacing: var(--perron-typography-data-tracking);
+  color: var(--perron-color-text-primary);
+}
+
+.agents-card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-300);
+  padding: var(--perron-space-400);
+  border-radius: var(--perron-radius-lg);
+  background: var(--perron-color-surface-raised);
+  border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+}
+
+.agents-cards {
+  align-items: start;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(100%, calc(8 * var(--perron-space-800))), 1fr)
+  );
+  gap: var(--perron-space-400);
+}
+
+.agents-step {
+  display: flex;
+  align-items: center;
+  gap: var(--perron-space-200);
+  margin: 0;
+  font: var(--perron-typography-heading-sm);
+  letter-spacing: var(--perron-typography-heading-sm-tracking);
+}
+
+.agents-step-number {
+  flex: none;
+  inline-size: var(--perron-size-target-min);
+  block-size: var(--perron-size-target-min);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--perron-radius-full);
+  background: var(--perron-color-surface-inset);
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+}
+
+/* A live component, drawn by @mylder/perron itself */
+.agents-preview {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--perron-space-300);
+  padding: var(--perron-space-400);
+  border-radius: var(--perron-radius-md);
+  border: var(--perron-border-width-025) dashed var(--perron-color-border-subtle);
+}
+
+/* Code to copy: the code on an inset box, the copy button at its top end */
+.agents-code {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--perron-space-100);
+  padding: var(--perron-space-100) var(--perron-space-100) var(--perron-space-100)
+    var(--perron-space-300);
+  border-radius: var(--perron-radius-md);
+  background: var(--perron-color-surface-inset);
+}
+
+.agents-code pre {
+  flex: 1;
+  min-inline-size: 0;
+  margin: 0;
+  padding-block: var(--perron-space-150);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: var(--perron-typography-data);
+  letter-spacing: var(--perron-typography-data-tracking);
+}
+
+.agents-code .pn-IconButton {
+  flex: none;
+  color: var(--perron-color-text-secondary);
+}
+
+.agents-visually-hidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* A tool: what it is and takes, beside its call and the server's answer */
+.agents-tool {
+  scroll-margin-block-start: var(--perron-space-800);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--perron-space-500);
+  padding: var(--perron-space-500);
+  border-radius: var(--perron-radius-lg);
+  background: var(--perron-color-surface-raised);
+  border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+}
+
+.agents-tool-about {
+  flex: 1 1 calc(7.5 * var(--perron-space-800));
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-200);
+}
+
+.agents-tool-name {
+  margin: 0;
+  font: var(--perron-typography-data-lg);
+  letter-spacing: var(--perron-typography-data-lg-tracking);
+  overflow-wrap: anywhere;
+}
+
+.agents-tool-title {
+  margin: 0;
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+}
+
+.agents-tool-description {
+  margin: 0;
+  font: var(--perron-typography-body);
+  letter-spacing: var(--perron-typography-body-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.agents-tool-inputs-title {
+  margin: var(--perron-space-200) 0 0;
+}
+
+.agents-tool-inputs {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-200);
+}
+
+.agents-tool-input dt {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--perron-space-100) var(--perron-space-200);
+}
+
+.agents-tool-input-name {
+  font: var(--perron-typography-data);
+  letter-spacing: var(--perron-typography-data-tracking);
+}
+
+.agents-tool-input-type,
+.agents-tool-input-need {
+  font: var(--perron-typography-data-sm);
+  letter-spacing: var(--perron-typography-data-sm-tracking);
+  color: var(--perron-color-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.agents-tool-input dd {
+  margin: var(--perron-space-050) 0 0;
+  font: var(--perron-typography-body-sm);
+  letter-spacing: var(--perron-typography-body-sm-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.agents-tool-input dd code {
+  font: var(--perron-typography-data-sm);
+  letter-spacing: var(--perron-typography-data-sm-tracking);
+  color: var(--perron-color-text-primary);
+}
+
+/* The call and its answer, a dialog-wide column that takes the rest of the card */
+.agents-tool-call {
+  flex: 2 1 var(--perron-size-detail-width);
+  min-inline-size: 0;
+  margin: 0;
+  align-self: flex-start;
+  border-radius: var(--perron-radius-lg);
+  overflow: hidden;
+  border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+}
+
+.agents-tool-call-head {
+  padding: var(--perron-space-200) var(--perron-space-300);
+  background: var(--perron-color-surface-inset);
+  font: var(--perron-typography-data);
+  letter-spacing: var(--perron-typography-data-tracking);
+  overflow-wrap: anywhere;
+}
+
+.agents-tool-call-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-200);
+  padding: var(--perron-space-300);
+}
+
+.agents-tool-answer {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: var(--perron-typography-data-sm);
+  letter-spacing: var(--perron-typography-data-sm-tracking);
+}
+
+.agents-tool-cut,
+.agents-tool-error {
+  margin: 0;
+  padding-block-start: var(--perron-space-200);
+  border-block-start: var(--perron-border-width-025) dashed var(--perron-color-border-subtle);
+  font: var(--perron-typography-caption);
+  letter-spacing: var(--perron-typography-caption-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.agents-tool-error {
+  padding-block-start: 0;
+  border: 0;
+  color: var(--perron-color-text-danger);
+}
+
+/* Where the answers come from: a glass panel over the map */
+.agents-panel {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-300);
+  padding: var(--perron-space-500);
+  border-radius: var(--perron-radius-xl);
+}
+
+.agents-source {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-150);
+  padding: var(--perron-space-300);
+  border-radius: var(--perron-radius-lg);
+  background: var(--perron-color-surface-raised);
+}
+
+.agents-source-path {
+  font: var(--perron-typography-data);
+  letter-spacing: var(--perron-typography-data-tracking);
+  overflow-wrap: anywhere;
+}
+
+/* The release log */
+.agents-release {
+  scroll-margin-block-start: var(--perron-space-800);
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-300);
+}
+
+.agents-release-head {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--perron-space-300);
+  font: var(--perron-typography-data-lg);
+  letter-spacing: var(--perron-typography-data-lg-tracking);
+}
+
+.agents-release-date {
+  font: var(--perron-typography-data-sm);
+  letter-spacing: var(--perron-typography-data-sm-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.agents-release-group {
+  margin: 0;
+}
+
+.agents-release-entries {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-300);
+}
+
+.agents-release-entry {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-100);
+}
+
+.agents-release-commit {
+  align-self: flex-start;
+  font: var(--perron-typography-data-sm);
+  letter-spacing: var(--perron-typography-data-sm-tracking);
+}
+
+.agents-release-entry .markdown {
+  gap: var(--perron-space-200);
+}
+
+/* Previous and next, at the foot of the column */
+.agents-pager {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--perron-space-300);
+  padding-block-start: var(--perron-space-200);
+  border-block-start: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+}
+
+.agents-pager-link {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-050);
+  padding: var(--perron-space-200) var(--perron-space-300);
+  border-radius: var(--perron-radius-md);
+  color: inherit;
+  text-decoration: none;
+}
+
+.agents-pager-link[data-next] {
+  align-items: flex-end;
+  margin-inline-start: auto;
+}
+
+.agents-pager-hint {
+  font: var(--perron-typography-caption);
+  letter-spacing: var(--perron-typography-caption-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.agents-pager-label {
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+}
+
+/* Under breakpoint.phone (760px), as in site.css: a glass panel full of text turns opaque, so no
+   text sits over the moving map, the side nav gives way to the header's menu, and the tagline
+   steps down beside the smaller title. */
+@media (max-width: 759.98px) {
+  /* the header's menu holds the sections, and a page's own list would push its title down */
+  .agents-nav {
+    display: none;
+  }
+
+  .agents-panel.glass {
+    background: var(--perron-color-surface-default);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .agents-tagline {
+    font: var(--perron-typography-heading-md);
+    letter-spacing: var(--perron-typography-heading-md-tracking);
+  }
+}
