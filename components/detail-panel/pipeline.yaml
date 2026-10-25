@@ -3,17 +3,13 @@ component: DetailPanel
 layer: pattern
 deferred:
   at: 2026-10-25T00:23:51.390Z
-needsHuman:
-  stage: build
-  reason: "build failed: patterns gate: scripts/checks/patterns.ts:73 lets a pattern import only components/, parts/ and its own folder; DetailPanel.tsx:9-10 import DetailHeader (a pattern, in dependsOn) and its props type, which the spec's CR-1 requires. Whether a pattern may compose another pattern is undecided in docs/components/README.md Patterns."
 stages:
   brief:
     status: done
     started: 2026-10-25T00:31:47.795Z
     ended: 2026-10-25T00:33:35.911Z
   build:
-    status: failed
-    started: 2026-10-25T00:33:41.236Z
-    runs: 1
-    ended: 2026-10-25T00:39:53.250Z
-    failing: "patterns gate: scripts/checks/patterns.ts:73 lets a pattern import only components/, parts/ and its own folder; DetailPanel.tsx:9-10 import DetailHeader (a pattern, in dependsOn) and its props type, which the spec's CR-1 requires. Whether a pattern may compose another pattern is undecided in docs/components/README.md Patterns."
+    runs: 2
+    status: done
+    started: 2026-10-25T00:40:30.299Z
+    ended: 2026-10-25T00:48:29.337Z

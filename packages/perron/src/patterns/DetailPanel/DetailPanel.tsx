@@ -8,6 +8,7 @@ import { Sheet } from '../../components/Sheet/Sheet.tsx'
 import type { SheetProps } from '../../components/Sheet/Sheet.tsx'
 // perron-allow(patterns): the registry's dependsOn names DetailHeader, a pattern, and CR-1 composes it; the contract does not yet say whether a pattern may compose another
 import { DetailHeader, type DetailHeaderProps } from '../DetailHeader/DetailHeader.tsx'
+import { classes } from '../../internal/nodes.ts'
 import './DetailPanel.css'
 
 type SheetSlots = NonNullable<SheetProps['slotProps']>
@@ -152,16 +153,14 @@ export interface DetailPanelProps extends Omit<ComponentPropsWithRef<'div'>, 'ti
 /** Base UI's `className`, as the Sheet's parts take it: a string, or a function of the part's state. */
 type ClassName<State> = string | ((state: State) => string | undefined) | undefined
 
-const join = (own: string, theirs: string | undefined) => (theirs ? `${own} ${theirs}` : own)
-
 /**
  * The part's own class first, then the caller's, whether the caller's is a string or a function of
  * the part's state. A pattern cannot import Base UI's `mergeProps`, so the join is written here
  * (CR-1).
  */
 function withClass<State>(own: string, theirs: ClassName<State>): ClassName<State> {
-  if (typeof theirs === 'function') return (state) => join(own, theirs(state))
-  return join(own, theirs)
+  if (typeof theirs === 'function') return (state) => classes(own, theirs(state))
+  return classes(own, theirs)
 }
 
 /** The Sheet's title part as a `div`, which can hold DetailHeader's `div`s and `h2` (CR-2). */
@@ -212,7 +211,7 @@ export function DetailPanel({
     // picks the anchor; CR-7: the callbacks and the snap point props reach the Sheet unchanged
     <Sheet
       {...rest}
-      className={join('pn-DetailPanel', className)}
+      className={classes('pn-DetailPanel', className)}
       // CR-5: always set, the default included
       data-variant={variant}
       // CR-3: the DetailHeader's h2 names the dialog, not the whole header row; Base UI merges the
@@ -233,7 +232,7 @@ export function DetailPanel({
       title={
         <DetailHeader
           {...headerRest}
-          className={join('pn-DetailPanel-header', headerClass)}
+          className={classes('pn-DetailPanel-header', headerClass)}
           slotProps={{ ...headerSlots, title: { ...headerSlots?.title, id: titleId } }}
           variant={variant}
           line={line}
