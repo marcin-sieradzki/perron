@@ -88,6 +88,7 @@ const preview: Preview = {
             'Sheet',
             'Delay',
             'LineBadge',
+            'NormalService',
             'SeverityLabel',
             'StationIcon',
             // registry:components end
@@ -124,6 +125,7 @@ const preview: Preview = {
             'Sheet',
             'Delay',
             'LineBadge',
+            'NormalService',
             'SeverityLabel',
             'StationIcon',
             'DataStatePanel',
