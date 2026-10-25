@@ -3,4 +3,21 @@ component: TextField
 layer: component
 deferred:
   at: 2026-10-25T05:32:54.763Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-25T05:32:59.530Z
+    ended: 2026-10-25T05:41:55.567Z
+notes:
+  - stage: brief
+    at: 2026-10-25T05:41:55.568Z
+    direction: 'size.input''s description reads "Search field", but TextField now uses it as the height of every text box: update it through the design-tokens skill to name text inputs too.'
+  - stage: brief
+    at: 2026-10-25T05:41:55.568Z
+    direction: The contract's "Native text" rule makes the input the root, but it doesn't say which slotProps key a frame round that root takes; TextField uses 'field', and TextArea and NumberField will face the same choice, so the contract's Customising section could name the key.
+  - stage: brief
+    at: 2026-10-25T05:41:55.568Z
+    direction: Field's stories style Base UI's Input by hand with the Fields family's tokens "until TextField ships"; once TextField is stable, that inline box is a second copy of TextField's CSS that can drift from it.
+  - stage: brief
+    at: 2026-10-25T05:41:55.568Z
+    questions: "1. Is the root the <input> itself (Field.Control), with Field round it as the frame? Recommended: yes. 2. Is the frame's slotProps key 'field' (Omit<Field.Root.Props,'children'|'disabled'|'name'>, class pn-TextField-field), the way to reach invalid/validate/validationMode/validationDebounceTime/dirty/touched/actionsRef? Recommended: yes. 3. No startIcon/endIcon, prefix/suffix, clear or password reveal: the input is the whole box? Recommended: yes. 4. TextFieldProps declares name, type, placeholder, required, value, defaultValue (string), onChange (native ChangeEvent) with rows; readOnly, autoComplete etc. stay inherited? Recommended: yes. 5. type is 'text'|'email'|'password'|'tel'|'url', default 'text'? Recommended: yes. 6. optional and required independent, required defaults false? Recommended: yes. 7. No variant, size, color or fullWidth? Recommended: yes. 8. Box takes space.300 on both inline sides, no block padding? Recommended: yes. 9. Box keeps rest look when focused without focus-visible, filled, dirty, touched, valid or read-only; invalid edge only while not disabled? Recommended: yes."
