@@ -688,9 +688,11 @@ export const HiddenUntilFound: Story = {
       expect.objectContaining({ reason: 'none' }),
     )
     await expect(trigger(canvasElement, FRESHNESS)).toHaveAttribute('aria-expanded', 'true')
-    await frames(1)
-    await expect(freshness.getBoundingClientRect().height).toBeGreaterThan(0)
-    await expect(freshness.clientHeight).toBe(freshness.scrollHeight)
+    // the panel's height eases open over duration.switch, so wait for it to settle
+    await waitFor(() => {
+      expect(freshness.getBoundingClientRect().height).toBeGreaterThan(0)
+      expect(freshness.clientHeight).toBe(freshness.scrollHeight)
+    })
   },
 }
 
