@@ -5,11 +5,11 @@
 import { useState } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { expect, fn, screen, userEvent, waitFor, within } from 'storybook/test'
+import { expect, fireEvent, fn, screen, userEvent, waitFor, within } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import type { Locale } from '../../locale/index.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
-import { closed, colour, lines, mounted, onHover, rendered } from '../../testing/stories.ts'
+import { closed, colour, frames, lines, mounted, onHover, rendered } from '../../testing/stories.ts'
 import { Select } from './Select.tsx'
 import type { SelectGroup, SelectItem, SelectProps } from './Select.tsx'
 
@@ -84,6 +84,13 @@ const LIST = 'listbox'
 /** The open popup, the glass panel round the list. */
 const popup = async () => (await listbox()).closest<HTMLElement>('.pn-Select-popup')!
 
+/** Whether the page's scroll is locked, as Base UI locks it while a modal list is open: the
+ * viewport's scroller, `<html>` or `<body>`, clips its overflow. */
+const scrollLocked = () =>
+  [document.documentElement, document.body].some((element) =>
+    /hidden|clip/.test(getComputedStyle(element).overflowY),
+  )
+
 /** The open list's option named `name`. */
 const option = async (name: string) =>
   within(await listbox()).getByRole('option', { name, hidden: true })
@@ -113,6 +120,9 @@ export const Default: Story = {
     await step('the trigger is a combobox named by the label, the list closed', async () => {
       await expect(trigger.tagName).toBe('BUTTON')
       await expect(trigger).toHaveAttribute('aria-expanded', 'false')
+      await expect(trigger).toHaveAttribute('aria-haspopup', 'listbox')
+      await expect(part(canvasElement, 'Select-icon')).toHaveAttribute('aria-hidden', 'true')
+      await expect(scrollLocked()).toBe(false)
       const value = part(canvasElement, 'Select-value')!
       await expect(value).not.toHaveAttribute('data-placeholder')
       await expect(value).toHaveTextContent(/^Metro$/)
@@ -176,8 +186,26 @@ export const Open: Story = {
     await step('the list is a listbox named by the label, with five options', async () => {
       await expect(list).toHaveAccessibleName(LABEL)
       await expect(within(list).getAllByRole('option', { hidden: true })).toHaveLength(5)
+      await expect(trigger).toHaveAttribute('aria-expanded', 'true')
+      await expect(trigger).toHaveAttribute('aria-controls', list.id)
       expectOwnedStrings((await popup()).outerHTML, 'en', CALLER)
     })
+    await step(
+      'the list sits under the trigger, the page locked and presses outside blocked',
+      async () => {
+        const panel = await popup()
+        await expect(panel.closest('.pn-Select-positioner')).toHaveAttribute('data-side', 'bottom')
+        await expect(panel.getBoundingClientRect().top).toBeGreaterThanOrEqual(
+          trigger.getBoundingClientRect().bottom,
+        )
+        await waitFor(() => expect(scrollLocked()).toBe(true))
+        // Base UI's modal backdrop covers the page, so a press on the label lands on it instead
+        const label = part(canvasElement, 'Field-label')!.getBoundingClientRect()
+        const hit = document.elementFromPoint(label.left + 4, label.top + label.height / 2)
+        await expect(canvasElement.contains(hit)).toBe(false)
+        await expect(hit).toHaveAttribute('role', 'presentation')
+      },
+    )
     await step(
       '"S-tog" is chosen, highlighted and ticked; the trigger keeps its rest look',
       async () => {
@@ -222,7 +250,61 @@ export const Open: Story = {
       await closed(LIST)
       await expect(trigger).toHaveTextContent('Bus')
       await waitFor(() => expect(trigger).toHaveFocus())
+      await waitFor(() => expect(scrollLocked()).toBe(false))
+    })
+    await step(
+      'Space on the closed trigger opens the list on "Bus", the chosen option',
+      async () => {
+        // for 750 ms after a letter Base UI reads Space as part of the typed word, "r"; focus
+        // leaving the field ends the word, so Shift+Tab and Tab bring focus back without it
+        await userEvent.tab({ shift: true })
+        await userEvent.tab()
+        await expect(trigger).toHaveFocus()
+        await userEvent.keyboard(' ')
+        await waitFor(() =>
+          expect(args.onOpen).toHaveBeenLastCalledWith(
+            expect.anything(),
+            expect.objectContaining({ reason: 'trigger-press' }),
+          ),
+        )
+        await reached('Bus')
+      },
+    )
+    await step('Space on "Regional train" chooses it, closes the list, returns focus', async () => {
+      await userEvent.keyboard('{ArrowDown}')
+      await reached('Regional train')
+      await userEvent.keyboard(' ')
+      await expect(args.onChange).toHaveBeenLastCalledWith(
+        expect.anything(),
+        'regional',
+        expect.objectContaining({ reason: 'item-press' }),
+      )
+      await expect(args.onClose).toHaveBeenLastCalledWith(
+        expect.anything(),
+        'item-press',
+        expect.anything(),
+      )
+      await closed(LIST)
+      await expect(trigger).toHaveTextContent('Regional train')
+      await waitFor(() => expect(trigger).toHaveFocus())
       trigger.blur()
+    })
+    await step('with no room under the trigger, the list opens above it', async () => {
+      const bottom = (
+        <div style={{ position: 'fixed', insetBlockEnd: 0, insetInlineStart: 0, inlineSize: 320 }}>
+          <Select {...args} defaultOpen />
+        </div>
+      )
+      await mounted(canvasElement, bottom, async (host) => {
+        const low = await waitFor(() => triggerIn(host))
+        const panel = await popup()
+        await waitFor(() =>
+          expect(panel.closest('.pn-Select-positioner')).toHaveAttribute('data-side', 'top'),
+        )
+        await expect(panel.getBoundingClientRect().bottom).toBeLessThanOrEqual(
+          low.getBoundingClientRect().top,
+        )
+      })
     })
   },
 }
@@ -270,10 +352,25 @@ export const Invalid: Story = {
   },
 }
 
+/** The field with `items` and a button that takes the next of `drops` out of them, for the reset
+ * Base UI reports when the chosen option leaves the list. */
+function Dropping({ drops, ...props }: SelectProps & { drops: string[] }) {
+  const [dropped, setDropped] = useState(0)
+  const gone = drops.slice(0, dropped)
+  return (
+    <>
+      <Select {...props} items={ITEMS.filter((item) => !gone.includes(item.value))} />
+      <button type="button" onClick={() => setDropped(dropped + 1)}>
+        Take out
+      </button>
+    </>
+  )
+}
+
 /** "Metro" chosen by `defaultValue`. */
 export const Filled: Story = {
   args: { defaultValue: 'metro' },
-  play: async ({ args, canvasElement }) => {
+  play: async ({ args, canvasElement, step }) => {
     const trigger = triggerIn(canvasElement)
     const value = part(canvasElement, 'Select-value')!
     await expect(value).toHaveTextContent(/^Metro$/)
@@ -291,7 +388,47 @@ export const Filled: Story = {
     await expect(value).toHaveTextContent(/^Bus$/)
     await expect(trigger).toHaveAttribute('aria-expanded', 'false')
     await expect(args.onOpen).not.toHaveBeenCalled()
+    await step('the browser’s autofill on the hidden input chooses "Regional train"', async () => {
+      const input = canvasElement.querySelector<HTMLInputElement>('input[aria-hidden="true"]')!
+      fireEvent.change(input, { target: { value: 'regional' } })
+      await waitFor(() =>
+        expect(args.onChange).toHaveBeenLastCalledWith(
+          expect.anything(),
+          'regional',
+          expect.objectContaining({ reason: 'none' }),
+        ),
+      )
+      await expect(value).toHaveTextContent(/^Regional train$/)
+    })
     await userEvent.tab({ shift: true })
+    await step('the chosen option leaving `items` puts back "Metro", then `null`', async () => {
+      const ui = <Dropping {...args} drops={['bus', 'metro']} />
+      await mounted(canvasElement, ui, async (host) => {
+        const copy = await waitFor(() => triggerIn(host))
+        copy.focus()
+        await userEvent.keyboard('b')
+        await waitFor(() => expect(copy).toHaveTextContent('Bus'))
+        const drop = within(host).getByRole('button', { name: 'Take out' })
+        await userEvent.click(drop)
+        await waitFor(() =>
+          expect(args.onChange).toHaveBeenLastCalledWith(
+            expect.anything(),
+            'metro',
+            expect.objectContaining({ reason: 'none' }),
+          ),
+        )
+        await expect(copy).toHaveTextContent('Metro')
+        await userEvent.click(drop)
+        await waitFor(() =>
+          expect(args.onChange).toHaveBeenLastCalledWith(
+            expect.anything(),
+            null,
+            expect.objectContaining({ reason: 'none' }),
+          ),
+        )
+        await expect(part(host, 'Select-value')).toHaveAttribute('data-placeholder')
+      })
+    })
   },
 }
 
@@ -317,6 +454,8 @@ export const Groups: Story = {
       await expect(groups).toHaveLength(2)
       await expect(groups[0]).toHaveAccessibleName('Metro')
       await expect(groups[1]).toHaveAccessibleName('S-tog')
+      for (const label of list.querySelectorAll('.pn-Select-groupLabel'))
+        await expect(label).toHaveAttribute('aria-hidden', 'true')
       const separators = list.querySelectorAll('.pn-Select-separator')
       await expect(separators).toHaveLength(1)
       await expect(separators[0].previousElementSibling).toBe(groups[0])
@@ -327,14 +466,24 @@ export const Groups: Story = {
         ...LINES.flatMap((group) => [group.label, ...group.items.map((item) => item.label)]),
       ])
     })
-    await step('End moves focus to "H", Home back to "M1"', async () => {
+    await step('End moves focus to "H", Home back to "M1", where ArrowUp stops', async () => {
       await focusIn()
       await userEvent.keyboard('{End}')
       await reached('H')
       await userEvent.keyboard('{Home}')
       await reached('M1')
+      await userEvent.keyboard('{ArrowUp}')
+      await frames(2)
+      await reached('M1')
     })
-    await step('Esc closes the list and returns focus to the trigger', async () => {
+    await step('the pointer on "C" moves the highlight and focus to it', async () => {
+      const row = await option('C')
+      await expect(onHover(row, 'background-color')).toBe('var(--perron-color-surface-hover)')
+      await userEvent.hover(row)
+      await reached('C')
+      await expect(await option('M1')).not.toHaveAttribute('data-highlighted')
+    })
+    await step('Esc closes the list, keeping the value, and returns focus', async () => {
       await userEvent.keyboard('{Escape}')
       await expect(args.onClose).toHaveBeenLastCalledWith(
         expect.anything(),
@@ -342,6 +491,8 @@ export const Groups: Story = {
         expect.anything(),
       )
       await closed(LIST)
+      await expect(args.onChange).not.toHaveBeenCalled()
+      await expect(part(canvasElement, 'Select-value')).toHaveAttribute('data-placeholder')
       await waitFor(() => expect(trigger).toHaveFocus())
       trigger.blur()
     })
@@ -362,11 +513,21 @@ export const DisabledItem: Story = {
     await expect(getComputedStyle(harbour).color).toBe(colour('--perron-color-text-tertiary'))
     // opened by defaultOpen with nothing chosen, the popup holds focus and no row the highlight
     await focusIn()
+    await expect((await listbox()).querySelector('[data-highlighted]')).toBeNull()
+    // typed letters skip the disabled row: "h" matches nothing else, so nothing moves
+    await userEvent.keyboard('h')
+    await frames(2)
+    await expect((await listbox()).querySelector('[data-highlighted]')).toBeNull()
     for (const name of ['Metro', 'S-tog', 'Bus', 'Regional train', 'Harbour bus']) {
       await userEvent.keyboard('{ArrowDown}')
       await reached(name)
     }
+    // the last row stops the keys
+    await userEvent.keyboard('{ArrowDown}')
+    await frames(2)
+    await reached('Harbour bus')
     await userEvent.keyboard('{Enter}')
+    await userEvent.click(harbour)
     await expect(args.onChange).not.toHaveBeenCalled()
     await expect(await listbox()).toBeInTheDocument()
     await expect(harbour).not.toHaveAttribute('aria-selected', 'true')
@@ -379,6 +540,11 @@ export const DisabledItem: Story = {
     )
     await closed(LIST)
     await waitFor(() => expect(trigger).toHaveFocus())
+    // and on the closed trigger too: "h" chooses nothing
+    await userEvent.keyboard('h')
+    await frames(2)
+    await expect(args.onChange).not.toHaveBeenCalled()
+    await expect(part(canvasElement, 'Select-value')).toHaveAttribute('data-placeholder')
     trigger.blur()
   },
 }
@@ -392,7 +558,14 @@ export const ReadOnly: Story = {
     await userEvent.tab()
     await expect(trigger).toHaveFocus()
     await userEvent.keyboard('{Enter}')
+    await waitFor(() =>
+      expect(args.onOpen).toHaveBeenLastCalledWith(
+        expect.anything(),
+        expect.objectContaining({ reason: 'trigger-press' }),
+      ),
+    )
     await reached('Metro')
+    await expect(await listbox()).toHaveAttribute('aria-readonly', 'true')
     await userEvent.keyboard('{ArrowDown}')
     await reached('S-tog')
     await userEvent.keyboard('{Enter}')
@@ -402,7 +575,19 @@ export const ReadOnly: Story = {
     await userEvent.keyboard('{Escape}')
     await closed(LIST)
     await waitFor(() => expect(trigger).toHaveFocus())
+    // Shift+Tab in the open list closes it and returns focus, as Tab does
+    await userEvent.keyboard('{ArrowDown}')
+    await reached('Metro')
     await userEvent.tab({ shift: true })
+    await expect(args.onClose).toHaveBeenLastCalledWith(
+      expect.anything(),
+      'focus-out',
+      expect.anything(),
+    )
+    await closed(LIST)
+    await waitFor(() => expect(trigger).toHaveFocus())
+    await userEvent.tab({ shift: true })
+    await expect(trigger).not.toHaveFocus()
   },
 }
 
@@ -448,7 +633,9 @@ export const Controlled: Story = {
           expect.objectContaining({ reason: 'trigger-press' }),
         ),
       )
-      await listbox()
+      // opened by a press with nothing chosen, the popup holds focus and no row the highlight
+      await focusIn()
+      await expect((await listbox()).querySelector('[data-highlighted]')).toBeNull()
     })
     await step('a second press of the trigger asks to close, and the story closes it', async () => {
       await userEvent.click(trigger)
@@ -459,6 +646,19 @@ export const Controlled: Story = {
           expect.anything(),
         ),
       )
+      await closed(LIST)
+    })
+    await step('Space with nothing chosen asks to open, on the first option', async () => {
+      await waitFor(() => expect(trigger).toHaveFocus())
+      await userEvent.keyboard(' ')
+      await waitFor(() =>
+        expect(args.onOpen).toHaveBeenLastCalledWith(
+          expect.anything(),
+          expect.objectContaining({ reason: 'trigger-press' }),
+        ),
+      )
+      await reached('Metro')
+      await userEvent.keyboard('{Escape}')
       await closed(LIST)
     })
     await step('ArrowUp with nothing chosen opens the list on the last option', async () => {
@@ -501,7 +701,58 @@ export const Controlled: Story = {
         ),
       )
       await closed(LIST)
+      await waitFor(() => expect(trigger).toHaveFocus())
+    })
+    // one pointer, so a press and its release, apart, are one gesture
+    const mouse = userEvent.setup()
+    await step('a press on the trigger released outside it asks to close, cancelled', async () => {
+      await mouse.pointer({ keys: '[MouseLeft>]', target: trigger })
+      await waitFor(() =>
+        expect(args.onOpen).toHaveBeenLastCalledWith(
+          expect.anything(),
+          expect.objectContaining({ reason: 'trigger-press' }),
+        ),
+      )
+      await listbox()
+      // Base UI listens for the release a task after the press
+      await frames(2)
+      await mouse.pointer({ keys: '[/MouseLeft]', target: document.body, coords: { x: 0, y: 0 } })
+      await waitFor(() =>
+        expect(args.onClose).toHaveBeenLastCalledWith(
+          expect.anything(),
+          'cancel-open',
+          expect.anything(),
+        ),
+      )
+      await closed(LIST)
+    })
+    await step('a press, a drag and a release on "Regional train" chooses it', async () => {
+      await mouse.pointer({ keys: '[MouseLeft>]', target: trigger })
+      const row = await option('Regional train')
+      // the drag: Base UI takes a release on a row as a choice once the pointer has moved 8 px
+      fireEvent.pointerMove(row, { pointerType: 'mouse', buttons: 1, movementY: 8 })
+      await mouse.pointer({ keys: '[/MouseLeft]', target: row })
+      await waitFor(() =>
+        expect(args.onChange).toHaveBeenLastCalledWith(
+          expect.anything(),
+          'regional',
+          expect.objectContaining({ reason: 'item-press' }),
+        ),
+      )
+      await closed(LIST)
+      await expect(trigger).toHaveTextContent('Regional train')
       trigger.blur()
+    })
+    await step('`details.cancel()` in `onClose` keeps the list open', async () => {
+      const kept = (
+        <Select {...args} defaultOpen onClose={(_event, _reason, details) => details.cancel()} />
+      )
+      await mounted(canvasElement, kept, async () => {
+        await focusIn()
+        await userEvent.keyboard('{Escape}')
+        await frames(2)
+        await expect(await listbox()).toBeInTheDocument()
+      })
     })
   },
 }
@@ -547,9 +798,21 @@ export const Validation: Story = {
         await expect(input).toHaveAttribute('aria-hidden', 'true')
         // Base UI holds back a required field's valueMissing until its value has changed, so a
         // Tab past it with nothing chosen leaves it valid
+        await expect(input).toHaveAttribute('tabindex', '-1')
         required.focus()
         await userEvent.tab()
         await expect(required).not.toHaveAttribute('aria-invalid')
+      })
+    })
+    await step('a native form’s `FormData` reads the `name` and the chosen value', async () => {
+      const form = (
+        <form>
+          <Select {...args} name="mode" defaultValue="bus" />
+        </form>
+      )
+      await mounted(canvasElement, form, async (host) => {
+        await waitFor(() => expect(triggerIn(host)).toHaveTextContent('Bus'))
+        await expect(new FormData(host.querySelector('form')!).get('mode')).toBe('bus')
       })
     })
   },
@@ -558,15 +821,21 @@ export const Validation: Story = {
 /** `hiddenLabel`: the trigger alone, no label in view, still named "Transport mode". */
 export const HiddenLabel: Story = {
   args: { hiddenLabel: true },
-  play: async ({ canvasElement }) => {
+  play: async ({ args, canvasElement }) => {
     const label = part(canvasElement, 'Field-label')!
     // the VisuallyHidden part, through Field: a span the eye never sees
     await expect(label.tagName).toBe('SPAN')
     await expect(label.getBoundingClientRect().width).toBeLessThanOrEqual(1)
     const trigger = triggerIn(canvasElement)
     trigger.focus()
+    // ArrowDown with nothing chosen opens the list on the first option
     await userEvent.keyboard('{ArrowDown}')
+    await expect(args.onOpen).toHaveBeenLastCalledWith(
+      expect.anything(),
+      expect.objectContaining({ reason: 'list-navigation' }),
+    )
     await expect(await listbox()).toHaveAccessibleName(LABEL)
+    await reached('Metro')
     await userEvent.keyboard('{Escape}')
     await closed(LIST)
     trigger.blur()
