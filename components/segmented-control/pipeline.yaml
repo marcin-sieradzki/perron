@@ -23,6 +23,10 @@ stages:
     status: done
     started: 2026-10-25T01:32:30.800Z
     ended: 2026-10-25T01:36:02.910Z
+  docs:
+    status: done
+    started: 2026-10-25T01:36:12.970Z
+    ended: 2026-10-25T01:38:57.219Z
 notes:
   - stage: build
     at: 2026-10-25T01:17:28.805Z
@@ -51,3 +55,6 @@ notes:
   - stage: build
     at: 2026-10-25T01:32:07.165Z
     direction: 'Review P3-7: LongLabels mixes Danish into English labels with no lang: make it an all-Danish set from content design?'
+  - stage: docs
+    at: 2026-10-25T01:38:57.220Z
+    direction: The SegmentHover and SegmentFocus examples on the docs page look the same as SegmentDefault, since the page draws each story's first render without hover or focus; a story showing the state through a forced class would make it visible.
