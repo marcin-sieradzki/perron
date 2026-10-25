@@ -1,0 +1,30 @@
+/* Fieldset, from docs/components/fieldset.md: no box, fill or border of its own, its legend over
+   the caller's controls in one column. It never sets overflow, so a focused control's ring is never
+   cut (CR-2), and it draws nothing for disabled but the legend's colour (CR-6). */
+
+/* CR-1: the browser's fieldset frame reset, so the root takes its container's width.
+   CR-2: one gap between the legend and each control, the root's own children. */
+.pn-Fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-200);
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/* CR-1: a word longer than its line breaks inside the root's width. */
+.pn-Fieldset-legend {
+  margin: 0;
+  padding: 0;
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+  color: var(--perron-color-text-primary);
+  overflow-wrap: anywhere;
+}
+
+/* CR-6: a colour, never an opacity, while this fieldset or one round it is disabled. */
+.pn-Fieldset-legend[data-disabled] {
+  color: var(--perron-color-text-tertiary);
+}
