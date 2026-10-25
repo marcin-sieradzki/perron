@@ -18,6 +18,7 @@ export default defineConfig({
             'scripts/**/*.test.ts',
             'storybook/contract/*.test.ts',
             'storybook/blocks/*.test.ts',
+            '.storybook/*.test.ts',
             'penpot/*.test.ts',
             'packages/**/*.test.{ts,tsx}',
           ],

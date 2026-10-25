@@ -4,6 +4,8 @@
 import type { ReactNode } from 'react'
 import { mergeProps } from '@base-ui/react/merge-props'
 import { useRender } from '@base-ui/react/use-render'
+import { given } from '../../internal/nodes.ts'
+import { usePart } from '../../internal/use-part.ts'
 import './EmptyState.css'
 
 export interface EmptyStateProps extends Omit<
@@ -32,33 +34,6 @@ export interface EmptyStateProps extends Omit<
     /** Props for the `action` part */
     action?: useRender.ComponentProps<'div'>
   }
-}
-
-/**
- * A node that renders something. `null`, `undefined`, a boolean, `''` and an array of only such
- * values render nothing, so their part is left out (CR-1).
- */
-const given = (node: ReactNode): boolean =>
-  Array.isArray(node) ? node.some(given) : node != null && typeof node !== 'boolean' && node !== ''
-
-/**
- * One inner part: its `slotProps` value merged with the part's own props, its own last, so its
- * class and children stay while the caller's `className` joins and its `render` swaps the element
- * (CR-4). With `enabled` false it renders nothing (CR-1).
- */
-function usePart(
-  defaultTagName: 'div' | 'p',
-  slot: useRender.ComponentProps<'div'> | useRender.ComponentProps<'p'> | undefined,
-  own: useRender.ElementProps<'div'>,
-  enabled: boolean,
-) {
-  const { render, ...props } = slot ?? {}
-  return useRender({
-    defaultTagName,
-    render,
-    enabled,
-    props: mergeProps<'div'>(props as useRender.ElementProps<'div'>, own),
-  })
 }
 
 /**

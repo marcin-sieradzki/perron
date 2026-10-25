@@ -16,6 +16,7 @@ import type { SurfaceProps } from '../../components/Surface/Surface.tsx'
 import { Text } from '../../components/Text/Text.tsx'
 import type { TextProps } from '../../components/Text/Text.tsx'
 import { VisuallyHidden } from '../../parts/VisuallyHidden/VisuallyHidden.tsx'
+import { classes, given } from '../../internal/nodes.ts'
 import './DisruptionCard.css'
 
 /** One line a disruption touches: the line whose colours its badge takes, and its short name. */
@@ -82,16 +83,6 @@ export interface DisruptionCardProps extends Omit<SurfaceProps, 'variant' | 'chi
 const LIST_ITEM = <li />
 const PARAGRAPH = <p />
 const BLOCK = <div />
-
-/** `pn-DisruptionCard-<part>`, then the caller's class (CR-6). */
-const classes = (own: string, caller: string | undefined) => (caller ? `${own} ${caller}` : own)
-
-/**
- * A node that renders something. `null`, `undefined`, a boolean, `''` and an array of only such
- * values render nothing, so the description is left out (CR-5).
- */
-const given = (node: ReactNode): boolean =>
-  Array.isArray(node) ? node.some(given) : node != null && typeof node !== 'boolean' && node !== ''
 
 /**
  * One disruption on Copenhagen's network as a raised card: its kind, the lines it touches, a short

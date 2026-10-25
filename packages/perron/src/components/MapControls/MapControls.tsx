@@ -5,10 +5,8 @@ import type { CSSProperties, MouseEvent, Ref } from 'react'
 import { useOwnedStrings } from '../../PerronProvider.tsx'
 import { Toolbar, ToolbarButton, ToolbarSeparator } from '../Toolbar/Toolbar.tsx'
 import type { ToolbarProps } from '../Toolbar/Toolbar.tsx'
+import { classes } from '../../internal/nodes.ts'
 import './MapControls.css'
-
-/** `pn-MapControls` first, then the caller's class (CR-3). */
-const classes = (own: string, given: string | undefined) => (given ? `${own} ${given}` : own)
 
 /** The icons' shared attributes, from packages/perron/icons/ (CR-7). */
 const STROKE = {

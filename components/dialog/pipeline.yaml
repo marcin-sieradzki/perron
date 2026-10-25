@@ -1,0 +1,29 @@
+# Written by npm run factory; never by hand.
+component: Dialog
+layer: component
+deferred:
+  at: 2026-10-24T23:23:29.736Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-24T23:38:46.869Z
+    ended: 2026-10-24T23:40:14.414Z
+  build:
+    runs: 4
+    status: done
+    started: 2026-10-25T00:07:52.703Z
+    ended: 2026-10-25T00:10:37.396Z
+  review:
+    rounds: 3
+    sentBack: 0
+    findings:
+      p1: 0
+      p2: 0
+      p3: 1
+    status: done
+    started: 2026-10-25T00:10:38.084Z
+    ended: 2026-10-25T00:14:26.462Z
+  docs:
+    status: done
+    started: 2026-10-25T00:14:33.544Z
+    ended: 2026-10-25T00:18:22.155Z

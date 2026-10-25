@@ -111,6 +111,7 @@ One row per part, state and property. A side sheet is `anchor` `left` or `right`
 | `content`  | rest               | `padding-inline`, `padding-block-end`   | `space.400`                                                                                                              |
 | `content`  | rest               | `font`                                  | `typography.body`                                                                                                        |
 | `content`  | rest               | `letter-spacing`                        | `typography.body`'s `-tracking` twin                                                                                     |
+| `content`  | rest               | `overflow-wrap`                         | none: the keyword `anywhere`, so a long word in the caller's text breaks inside the panel                                |
 | `content`  | focus              | `outline`                               | `focus.width` solid `color.border.focus`, inset by `focus.width` + `focus.offset` so the ring stays inside the panel     |
 | `close`    | rest               | `width`, `height`                       | `size.control`                                                                                                           |
 | `close`    | rest               | `border-radius`                         | `radius.md`                                                                                                              |

@@ -17,6 +17,7 @@
   color: var(--perron-color-text-primary);
   font: var(--perron-typography-label);
   letter-spacing: var(--perron-typography-label-tracking);
+  overflow-wrap: anywhere;
   box-shadow: var(--perron-shadow-panel);
   backdrop-filter: blur(var(--perron-effect-glass-blur))
     saturate(var(--perron-effect-glass-saturate));

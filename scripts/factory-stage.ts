@@ -3,7 +3,7 @@
 // with a stand-in for `agent` and prints the call that workflow would make: the agent type, when
 // it names one, and the prompt, ending with the JSON the agent returns, from the workflow's schema.
 // A rerun's `fix`, when the args leave it out, comes from `next` over the pipeline in `dir` (or the
-// current directory), so a send-back's build is told what to fix.
+// current directory), before or after the stage's `begin`, so a send-back's build is told what to fix.
 // Usage: node scripts/factory-stage.ts '{"stage":"build","name":"Chip","dir":"…","port":6011}'
 import { readFileSync } from 'node:fs'
 import { loadPipeline, next, type Env } from './lib/pipeline.ts'
