@@ -353,7 +353,8 @@ function isQuery(fn: Fn) {
   let body: ts.Node = fn.body
   if (ts.isBlock(body)) {
     const [only] = body.statements
-    if (body.statements.length !== 1 || !ts.isReturnStatement(only) || !only.expression) return false
+    if (body.statements.length !== 1 || !ts.isReturnStatement(only) || !only.expression)
+      return false
     body = only.expression
   }
   while (ts.isParenthesizedExpression(body) || ts.isAwaitExpression(body)) body = body.expression
