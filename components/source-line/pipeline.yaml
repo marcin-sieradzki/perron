@@ -3,22 +3,19 @@ component: SourceLine
 layer: pattern
 deferred:
   at: 2026-10-25T17:46:59.950Z
-needsHuman:
-  stage: build
-  reason: 'build failed: npm run check failed:  ❯ Object.runStep node_modules/.cache/storybook/10.6.3/4013f3538612f7ed7c79acd9f5439b7a53c2236d1a33638c6f38e15109db62ae/sb-vitest/vitest/e53922df741b1d4df1a1998731800f1113be1681/deps/csf-B00LHp8e.js?v=9444478f:8875:3 /  ❯ play packages/perron/src/components/NumberField/NumberField.stories.tsx:291:6 /  ❯ runStory node_modules/.cache/storybook/10.6.3/4013f3538612f7ed7c79acd9f5439b7a53c2236d1a33638c6'
 stages:
   brief:
     status: done
     started: 2026-10-25T17:54:16.088Z
     ended: 2026-10-25T17:54:26.277Z
   build:
-    status: failed
-    started: 2026-10-25T17:54:33.725Z
-    runs: 1
-    begun: bc5a70a2f7596d09d6a76922fec7e469f34a394292bb290ca85c5f637ce53e2f
+    runs: 2
+    respecs: 1
+    status: done
+    started: 2026-10-25T18:09:24.468Z
+    begun: 9d5d039065812d4ba8bf8487c17ee08c8286c34517bca057a75331af3b8a57f5
     spec: 9d5d039065812d4ba8bf8487c17ee08c8286c34517bca057a75331af3b8a57f5
-    ended: 2026-10-25T18:08:46.922Z
-    failing: 'npm run check failed:  ❯ Object.runStep node_modules/.cache/storybook/10.6.3/4013f3538612f7ed7c79acd9f5439b7a53c2236d1a33638c6f38e15109db62ae/sb-vitest/vitest/e53922df741b1d4df1a1998731800f1113be1681/deps/csf-B00LHp8e.js?v=9444478f:8875:3 /  ❯ play packages/perron/src/components/NumberField/NumberField.stories.tsx:291:6 /  ❯ runStory node_modules/.cache/storybook/10.6.3/4013f3538612f7ed7c79acd9f5439b7a53c2236d1a33638c6'
+    ended: 2026-10-25T18:14:05.994Z
 notes:
   - stage: brief
     at: 2026-10-25T17:53:46.108Z
@@ -36,3 +33,6 @@ notes:
   - stage: build
     at: 2026-10-25T18:08:46.922Z
     direction: The time is set in typography.data (JetBrains Mono 500) inside a typography.caption line (Schibsted Grotesk 400), so it reads a touch heavier than the words around it; a design run may prefer the caption face with tabular figures.
+  - stage: build
+    at: 2026-10-25T18:09:24.468Z
+    unblocked: 'build failed: npm run check failed:  ❯ Object.runStep node_modules/.cache/storybook/10.6.3/4013f3538612f7ed7c79acd9f5439b7a53c2236d1a33638c6f38e15109db62ae/sb-vitest/vitest/e53922df741b1d4df1a1998731800f1113be1681/deps/csf-B00LHp8e.js?v=9444478f:8875:3 /  ❯ play packages/perron/src/components/NumberField/NumberField.stories.tsx:291:6 /  ❯ runStory node_modules/.cache/storybook/10.6.3/4013f3538612f7ed7c79acd9f5439b7a53c2236d1a33638c6; rerun once because the spec changed since that run began'
