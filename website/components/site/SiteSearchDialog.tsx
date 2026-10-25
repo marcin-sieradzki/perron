@@ -77,9 +77,10 @@ export function SiteSearchDialog({ index, label, icon }: SiteSearchDialogProps) 
       if (!to) return
       event.preventDefault()
       to.focus()
-    } else if (event.key === 'Enter' && shown[0]) {
+    } else if (event.key === 'Enter' && results[0]) {
+      // the best match, once there are words to match
       event.preventDefault()
-      router.push(shown[0].href)
+      router.push(results[0].href)
       close()
     }
   }
