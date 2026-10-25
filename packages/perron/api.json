@@ -818,6 +818,67 @@
       }
     }
   },
+  "Field": {
+    "extends": [
+      "Omit<BaseField.Root.Props, 'children' | 'ref'>"
+    ],
+    "props": {
+      "children": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "description": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "error": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "hiddenLabel": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "label": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "optional": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "optionalLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ label?: FieldLabelProps | undefined; description?: FieldDescriptionProps | undefined; error?: FieldErrorProps | undefined; }"
+        ]
+      }
+    }
+  },
   "Fieldset": {
     "extends": [
       "Omit< BaseFieldset.Root.Props, 'disabled' | 'children' | 'ref' >"
@@ -2071,6 +2132,79 @@
           "\"inset\"",
           "\"opaque\"",
           "\"raised\""
+        ]
+      }
+    }
+  },
+  "Switch": {
+    "extends": [
+      "Omit< BaseSwitch.Root.Props, | 'checked' | 'defaultChecked' | 'onCheckedChange' | 'disabled' | 'readOnly' | 'required' | 'name' | 'className' | 'style' | 'children' | 'ref' >"
+    ],
+    "props": {
+      "checked": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "defaultChecked": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "disabled": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "name": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "onChange": {
+        "optional": true,
+        "type": [
+          "(event: Event, value: boolean, details: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) => void"
+        ]
+      },
+      "readOnly": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLElement>"
+        ]
+      },
+      "required": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ thumb?: SwitchThumbProps | undefined; }"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
         ]
       }
     }

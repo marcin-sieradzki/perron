@@ -39,4 +39,5 @@ export const da: OwnedStrings = {
   metersUnit: 'm',
   kilometersUnit: 'km',
   noMatches: 'Ingen resultater',
+  optional: '(valgfrit)',
 }
