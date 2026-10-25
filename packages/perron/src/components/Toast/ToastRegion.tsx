@@ -139,7 +139,7 @@ function ToastItem({
     transform: undefined,
   })
 
-  // the caller's `render` wins over the part's own tag, so a title can be a heading (CR-12)
+  // the part's `p` is a default the caller's `render` replaces, so a title can be a heading (CR-12)
   const { render: titleRender, ...titleProps } = slotProps?.title ?? {}
   const { render: descriptionRender, ...descriptionProps } = slotProps?.description ?? {}
 
