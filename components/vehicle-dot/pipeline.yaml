@@ -3,4 +3,28 @@ component: VehicleDot
 layer: component
 deferred:
   at: 2026-10-25T11:49:14.032Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-25T11:49:17.789Z
+    ended: 2026-10-25T11:57:53.820Z
+    pending: 8
+notes:
+  - stage: brief
+    at: 2026-10-25T11:57:53.820Z
+    direction: "The foundations now give no signal a shape of its own everywhere: 'a grey dot cut by a slash', with the new token vehicle-dot.no-signal.cut-width. The map canvas renderer has to draw the cut too, so the legend and the map stay in step."
+  - stage: brief
+    at: 2026-10-25T11:57:53.820Z
+    direction: "Ageing and no signal sit close in colour on regional trains: #232C31 at 0.42 fill-opacity over a light surface blends to about #A3A6A8, beside no signal's #9AA4A9. Outside forced colours only the ageing rim tells them apart, which is why the cut is recommended in every theme."
+  - stage: brief
+    at: 2026-10-25T11:57:53.820Z
+    direction: vehicle-dot.timetable.dash (2.1px dash, 1.7px gap) does not close evenly on the medium ring (about 8.4 repeats). Small and large fit about 6 and 10. An even dash at every size needs a token change, such as a dash count per size or a pathLength-normalised dash.
+  - stage: brief
+    at: 2026-10-25T11:57:53.820Z
+    direction: "The ForcedColours story applies the stylesheet's (forced-colors: active) rules as an adopted sheet, because a play test cannot turn forced colours on. If a second component needs this, the helper should join the contract's Shared helpers table."
+  - stage: brief
+    at: 2026-10-25T11:57:53.820Z
+    direction: VehicleDot uses variant for its data state, as the contract requires. VehicleDotLabel and VehicleDotLegend will copy it, so neither can later take a visual variant of its own.
+  - stage: brief
+    at: 2026-10-25T11:57:53.820Z
+    questions: "1. (Anatomy) Is the root a span role=img rendered through useRender, holding an svg with one circle, render inherited as on LineBadge, StationIcon and Delay, and a caller who writes the state beside the dot passes aria-hidden? Recommended: yes. 2. (Props) Is line required, no default, named and typed as LineBadge's and StationIcon's line? Recommended: yes. 3. (Props) Does size map small, medium, large to icon.size.325, 400, 450 via --perron-icon-size, default medium? Recommended: yes, as StationIcon. 4. (Tokens) Does VehicleDot leave out the color.data-state.outline hairline (map-only)? Recommended: yes. 5. (Tokens) Does the timetable-only ring take vehicle-dot.timetable.dash as given at every size, though medium does not close evenly? Recommended: yes; an even fit is a separate token change. 6. (Component rules) Is no signal's shape a dot cut by a top-left to bottom-right diagonal slash, vehicle-dot.no-signal.cut-width (1.6px) wide, drawn as the root's mask? Recommended: yes. 7. (Component rules) Does the cut show in every theme and on the map canvas, not only in forced colours? Recommended: yes. 8. (Component rules) In forced colours does no signal fill with CanvasText like every other state, not GrayText? Recommended: yes."

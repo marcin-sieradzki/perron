@@ -93,4 +93,4 @@ Before a screen ships, check what the build can't:
 - **Zoom and reflow (1.4.4, 1.4.10).** At 200% zoom and at 320 px wide, nothing is cut off or overlaps, and only the map scrolls sideways.
 - **Text spacing (1.4.12).** Wider line, letter and word spacing breaks nothing.
 - **Announcements.** Live updates, such as countdowns and moving vehicles, don't flood a screen reader: a polite live region announces changes of state only.
-- **Forced colours.** In Windows' contrast themes, the focus ring and the selected state still show. The vehicle dot shapes keep each data state readable without colour.
+- **Forced colours.** In Windows' contrast themes, the focus ring and the selected state still show. The vehicle dot shapes keep each data state readable without colour: each of the five has a shape of its own, and no signal, a solid dot like live, is cut by a slash ([Data states](data-states.md)).
