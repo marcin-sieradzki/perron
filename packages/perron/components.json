@@ -608,7 +608,7 @@
     "name": "Menu",
     "layer": "component",
     "category": "Overlays",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [
       "Menu.Root",
       "Menu.Trigger",
