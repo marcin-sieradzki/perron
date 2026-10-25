@@ -1,0 +1,121 @@
+// Alert's server-rendered markup: data-color stays Alert's (CR-1), the optional parts render only
+// when given (CR-3), the icon stays hidden (CR-5), the caller's role wins (CR-8), its own props stay
+// off the root (CR-11), and every shape a ReactNode prop accepts renders.
+// Spec: docs/components/alert.md.
+import { renderToStaticMarkup } from 'react-dom/server'
+import { describe, expect, it } from 'vitest'
+import { PerronProvider } from '../../PerronProvider.tsx'
+import { attribute, heardMarkup } from '../../testing/markup.ts'
+import { expectOwnedStrings } from '../../testing/owned-strings.ts'
+import { Alert } from './Alert.tsx'
+
+const noop = () => {}
+
+describe('Alert', () => {
+  it('writes data-color after the caller, and joins the caller’s className after pn-Alert', () => {
+    const markup = renderToStaticMarkup(
+      // data-color is Alert's: a caller's is overwritten (CR-1)
+      <Alert color="info" data-color="danger" className="panel-note" id="feed-note">
+        Departures after 01:00 follow the night timetable.
+      </Alert>,
+    )
+    expect(attribute(markup, 'data-color')).toBe('info')
+    expect(attribute(markup, 'class')).toBe('pn-Alert panel-note')
+    expect(attribute(markup, 'id')).toBe('feed-note')
+    expect(attribute(markup, 'role')).toBe('status')
+  })
+
+  it('keeps its own props off the root, the HTML title attribute among them (CR-11)', () => {
+    const markup = renderToStaticMarkup(
+      <Alert title="Report sent" icon={null} closeLabel="Dismiss" onClose={noop} />,
+    )
+    const root = markup.match(/^<div[^>]*>/)![0]
+    expect(root).not.toMatch(/\s(title|icon|closelabel|color|action)=/i)
+    expect(heardMarkup(markup)).toBe('Report sentDismiss')
+  })
+
+  it('takes the caller’s role over status (CR-8)', () => {
+    const markup = renderToStaticMarkup(<Alert role="alert">The save failed.</Alert>)
+    expect(attribute(markup, 'role')).toBe('alert')
+  })
+
+  it.each([
+    ['a string', 'Signal fault at Danshøj', 'Signal fault at Danshøj'],
+    ['an element', <time key="t">08:02</time>, '08:02'],
+    ['a list', ['Line ', <strong key="s">5C</strong>, ' is late'], 'Line 5C is late'],
+  ])('renders %s as the title, the sentences and the action', (_, node, words) => {
+    const markup = renderToStaticMarkup(
+      <Alert title={node} action={node}>
+        {node}
+      </Alert>,
+    )
+    expect(markup).toContain('class="pn-Alert-title"')
+    expect(markup).toContain('class="pn-Alert-description"')
+    expect(markup).toContain('class="pn-Alert-action"')
+    expect(heardMarkup(markup)).toBe(words.repeat(3))
+  })
+
+  it('renders the caller’s icon as a string, an element or a list, hidden from the ear (CR-5)', () => {
+    for (const node of ['!', <span key="i">!</span>, ['!', <span key="j">!</span>]]) {
+      const markup = renderToStaticMarkup(
+        <Alert icon={node} slotProps={{ icon: { 'aria-hidden': false } }}>
+          Departures update every 30 seconds.
+        </Alert>,
+      )
+      expect(markup).toMatch(/<div aria-hidden="true" class="pn-Alert-icon">/)
+      expect(heardMarkup(markup)).toBe('Departures update every 30 seconds.')
+    }
+  })
+
+  it.each([null, false, '', [null, false]])(
+    'renders no icon part for icon=%j, nor for neutral with icon left out (CR-3)',
+    (icon) => {
+      const given = renderToStaticMarkup(
+        <Alert color="danger" icon={icon}>
+          The save failed.
+        </Alert>,
+      )
+      expect(given).not.toContain('pn-Alert-icon')
+      const neutral = renderToStaticMarkup(<Alert>Departures update every 30 seconds.</Alert>)
+      expect(neutral).not.toContain('pn-Alert-icon')
+    },
+  )
+
+  it('renders no title, description, action or close part when not given (CR-3)', () => {
+    const markup = renderToStaticMarkup(<Alert color="success" />)
+    for (const part of ['title', 'description', 'action', 'close'])
+      expect(markup).not.toContain(`pn-Alert-${part}`)
+    expect(markup).toContain('pn-Alert-icon')
+  })
+
+  it('makes the title a heading through slotProps.title.render', () => {
+    const markup = renderToStaticMarkup(
+      <Alert title="Signal fault at Danshøj" slotProps={{ title: { render: <h3 /> } }} />,
+    )
+    expect(markup).toContain('<h3 class="pn-Alert-title">Signal fault at Danshøj</h3>')
+  })
+
+  it('joins the caller’s class on the close button after its own', () => {
+    const markup = renderToStaticMarkup(
+      <Alert onClose={noop} slotProps={{ close: { className: 'quiet', id: 'close-note' } }} />,
+    )
+    expect(markup).toContain('class="pn-CloseButton pn-Alert-close quiet"')
+    expect(markup).toContain('id="close-note"')
+  })
+
+  it('names the close button in each locale, with no word of its own', () => {
+    for (const [locale, word] of [
+      ['da', 'Luk'],
+      ['sv', 'Stäng'],
+      ['nb', 'Lukk'],
+    ] as const) {
+      const markup = renderToStaticMarkup(
+        <PerronProvider locale={locale}>
+          <Alert onClose={noop} />
+        </PerronProvider>,
+      )
+      expectOwnedStrings(markup, locale)
+      expect(heardMarkup(markup)).toBe(word)
+    }
+  })
+})
