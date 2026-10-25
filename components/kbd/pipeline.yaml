@@ -3,4 +3,8 @@ component: Kbd
 layer: component
 deferred:
   at: 2026-10-25T00:13:48.691Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-25T00:13:53.643Z
+    ended: 2026-10-25T00:18:16.069Z
