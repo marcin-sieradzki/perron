@@ -3,6 +3,9 @@ component: Count
 layer: component
 deferred:
   at: 2026-10-25T00:22:20.000Z
+needsHuman:
+  stage: review
+  reason: '2 review rounds found a P1 or a P2, the last a P1: review round 2 found 1 P1 (components/count/review.md)'
 stages:
   brief:
     status: done
@@ -14,9 +17,13 @@ stages:
     started: 2026-10-25T00:38:51.376Z
     ended: 2026-10-25T00:42:28.318Z
   review:
-    rounds: 1
-    sentBack: 1
+    rounds: 2
+    sentBack: 2
     findings:
       p1: 1
       p2: 0
       p3: 2
+    status: failed
+    started: 2026-10-25T00:42:32.699Z
+    ended: 2026-10-25T00:44:59.517Z
+    failing: review round 2 found 1 P1 (components/count/review.md)
