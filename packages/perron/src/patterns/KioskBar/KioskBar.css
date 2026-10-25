@@ -1,0 +1,48 @@
+/* KioskBar: the brand, the key figures and the clock in one wrapping row on Surface's glass
+   (docs/patterns/kiosk-bar.md, Tokens). Every row is at rest: nothing in the bar is interactive.
+   No fill, border, radius, padding or shadow beyond Surface's, and no position, inset, margin or
+   z-index: the bar sizes to its container and its screen places it (CR-9, CR-10). */
+
+/* CR-3: one row, wrapping onto more lines when its container is narrow */
+.pn-KioskBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: var(--perron-space-600);
+  row-gap: var(--perron-space-300);
+}
+
+/* The lockup never shrinks */
+.pn-KioskBar-brand {
+  flex: none;
+}
+
+/* The figures take the room between the brand and the clock */
+.pn-KioskBar-stats {
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  column-gap: var(--perron-space-600);
+  row-gap: var(--perron-space-300);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* The rest is Stat's own */
+.pn-KioskBar-stat {
+  margin: 0;
+}
+
+/* CR-3: the clock ends the row, or the line it wraps to, with or without figures; tabular figures
+   keep its width as the minutes turn */
+.pn-KioskBar-time {
+  flex: none;
+  margin-inline-start: auto;
+  font: var(--perron-typography-data-xl);
+  letter-spacing: var(--perron-typography-data-xl-tracking);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--perron-color-text-primary);
+}

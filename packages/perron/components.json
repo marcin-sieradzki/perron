@@ -48,7 +48,7 @@
     "name": "Section",
     "layer": "component",
     "category": "Layout",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/Section",
     "dependsOn": []
@@ -165,7 +165,7 @@
     "name": "FactList",
     "layer": "component",
     "category": "Display",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/FactList",
     "dependsOn": []
@@ -429,9 +429,9 @@
     "name": "KioskBar",
     "layer": "pattern",
     "category": "Shell",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Patterns/KioskBar",
-    "dependsOn": ["Brand", "Stat"]
+    "dependsOn": ["Brand", "Stat", "Surface"]
   }
 ]

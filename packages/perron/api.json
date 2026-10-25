@@ -413,6 +413,49 @@
       }
     }
   },
+  "FactList": {
+    "extends": [
+      "Omit<useRender.ComponentProps<'dl'>, 'children' | 'ref'>"
+    ],
+    "props": {
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "items": {
+        "optional": false,
+        "type": [
+          "readonly FactListItem[]"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDListElement>"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ item?: ComponentProps<\"div\", {}, HTMLProps> | undefined; label?: ComponentProps<\"dt\", {}, HTMLProps> | undefined; value?: ComponentProps<\"dd\", {}, HTMLProps> | undefined; }"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "unknownLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      }
+    }
+  },
   "IconButton": {
     "extends": [
       "Omit< BaseButton.Props, 'className' | 'style' | 'color' | 'children' | 'disabled' | 'ref' >"
@@ -466,6 +509,61 @@
         "optional": true,
         "type": [
           "CSSProperties"
+        ]
+      }
+    }
+  },
+  "KioskBar": {
+    "extends": [
+      "Omit<ComponentPropsWithRef<'div'>, 'children'>"
+    ],
+    "props": {
+      "brandNameLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ brand?: Omit<BrandProps, \"render\" | \"brandNameLabel\"> | undefined; stats?: DetailedHTMLProps<HTMLAttributes<HTMLUListElement>, HTMLUListElement> | undefined; stat?: Omit<StatProps, \"label\" | \"children\" | \"render\" | \"unknownLabel\"> | undefined; time?: DetailedHTMLProps<TimeHTMLAttributes<HTMLTimeElement>, HTMLTimeElement> | undefined; }"
+        ]
+      },
+      "stats": {
+        "optional": true,
+        "type": [
+          "readonly KioskBarStat[]"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "time": {
+        "optional": false,
+        "type": [
+          "string"
+        ]
+      },
+      "unknownLabel": {
+        "optional": true,
+        "type": [
+          "string"
         ]
       }
     }
@@ -664,6 +762,37 @@
         "optional": true,
         "type": [
           "string"
+        ]
+      }
+    }
+  },
+  "Section": {
+    "extends": [
+      "Omit< useRender.ComponentProps<'section'>, 'title' | 'children' >"
+    ],
+    "props": {
+      "action": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ header?: ComponentProps<\"div\", {}, HTMLProps> | undefined; title?: ComponentProps<\"h3\", {}, HTMLProps> | undefined; action?: ComponentProps<\"div\", {}, HTMLProps> | undefined; content?: ComponentProps<\"div\", {}, HTMLProps> | undefined; }"
+        ]
+      },
+      "title": {
+        "optional": false,
+        "type": [
+          "ReactNode"
         ]
       }
     }
