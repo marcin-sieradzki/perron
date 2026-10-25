@@ -1,12 +1,15 @@
 // Tag: a short word or two on a pill that marks a property of what it sits beside, such as "Night
 // bus" or "Cancelled", set in capitals in one of the intents' colours. Spec: docs/components/tag.md.
 // No Base UI component: a <span> rendered through useRender, so the contract's render prop works.
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode, Ref } from 'react'
 import { mergeProps } from '@base-ui/react/merge-props'
 import { useRender } from '@base-ui/react/use-render'
 import './Tag.css'
 
-export interface TagProps extends Omit<useRender.ComponentProps<'span'>, 'children'> {
+export interface TagProps extends Omit<
+  useRender.ComponentProps<'span'>,
+  'children' | 'className' | 'style' | 'ref'
+> {
   /**
    * How sure the tag is: `filled` lays the intent's tinted surface under the words, for a property
    * that holds; `dashed` has no fill and a dashed edge, for something announced but not yet
@@ -27,6 +30,12 @@ export interface TagProps extends Omit<useRender.ComponentProps<'span'>, 'childr
    * string, an element such as `<time>`, or a list of both.
    */
   children: ReactNode
+  /** Joined after `pn-Tag` on the root */
+  className?: string
+  /** Reaches the root */
+  style?: CSSProperties
+  /** Reaches the root element */
+  ref?: Ref<HTMLSpanElement>
 }
 
 /** Marks a property of what it sits beside, such as "Night bus", in one or two words on a pill. */

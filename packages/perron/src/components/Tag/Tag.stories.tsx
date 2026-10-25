@@ -1,7 +1,7 @@
 // Tag's stories: one per variant of the deferred design, every `variant` with every `color`.
 import { createRoot } from 'react-dom/client'
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { expect, waitFor, within } from 'storybook/test'
+import { expect, getRoles, waitFor, within } from 'storybook/test'
 import { Tag } from './Tag.tsx'
 import type { TagProps } from './Tag.tsx'
 
@@ -41,7 +41,11 @@ async function withTag(
   }
 }
 
-/** The steps every story shares: the root's data attributes and, where given, its text. */
+/**
+ * The steps every story shares: the root's data attributes; in the accessibility tree a generic
+ * `<span>` with no role and no name, and nothing in it focusable (Keyboard and ARIA); and, where
+ * given, its text.
+ */
 const carries =
   (variant: TagProps['variant'], color: TagProps['color'], text?: string): Story['play'] =>
   async ({ canvasElement, step }) => {
@@ -50,6 +54,26 @@ const carries =
       await expect(tag).toHaveAttribute('data-variant', variant)
       await expect(tag).toHaveAttribute('data-color', color)
     })
+    await step(
+      'the root has no role and no name, and nothing in it is focusable (CR-7)',
+      async () => {
+        await expect(tag.tagName).toBe('SPAN')
+        await expect(tag).not.toHaveAttribute('role')
+        // no role query finds the tag, except as the generic container a <span> is
+        const roles = Object.entries(getRoles(canvasElement))
+          .filter(([, elements]) => elements.includes(tag))
+          .map(([role]) => role)
+        await expect(roles.filter((role) => role !== 'generic')).toEqual([])
+        // its words are read in place, as the row's text, not as a name of its own
+        await expect(tag).not.toHaveAccessibleName()
+        await expect(tag).not.toHaveAttribute('tabindex')
+        await expect(
+          tag.querySelector('a[href], button, input, select, textarea, [tabindex]'),
+        ).toBeNull()
+        tag.focus()
+        await expect(tag).not.toHaveFocus()
+      },
+    )
     if (text)
       await step(`the text is "${text}"`, async () => {
         await expect(within(canvasElement).getByText(text)).toBe(tag)
@@ -71,11 +95,6 @@ export const FilledNeutral: Story = {
         await expect(getComputedStyle(tag).textTransform).toBe('uppercase')
       },
     )
-    await step('the tag is not focusable (CR-7)', async () => {
-      await expect(tag).not.toHaveAttribute('tabindex')
-      tag.focus()
-      await expect(tag).not.toHaveFocus()
-    })
     await step('children as an element and as a list render inside the one root', async () => {
       await withTag(
         canvasElement,
@@ -126,7 +145,7 @@ export const FilledNeutral: Story = {
       'in a 320 px flex row beside a long text, the tag keeps "Night" whole (CR-6)',
       async () => {
         const row = document.createElement('div')
-        row.style.cssText = 'display: flex; gap: 8px; inline-size: 320px'
+        row.style.cssText = 'display: flex; gap: var(--perron-space-200); inline-size: 320px'
         const text = document.createElement('span')
         text.textContent = 'Nørreport St. via Rådhuspladsen, Hovedbanegården og Enghave Plads'
         row.append(text)
@@ -189,9 +208,12 @@ export const DashedNeutral: Story = {
     await step(
       'the edge is a dashed border.width.025 hairline, as filled draws (CR-4)',
       async () => {
-        const hairline = getComputedStyle(document.documentElement)
-          .getPropertyValue('--perron-border-width-025')
-          .trim()
+        // the token as the browser resolves it on an edge, so a rem or fractional token compares
+        const probe = document.createElement('div')
+        probe.style.borderTop = 'var(--perron-border-width-025) solid'
+        canvasElement.append(probe)
+        const hairline = getComputedStyle(probe).borderTopWidth
+        probe.remove()
         const dashed = getComputedStyle(tag)
         await expect(dashed.borderTopStyle).toBe('dashed')
         await expect(dashed.borderTopWidth).toBe(hairline)
