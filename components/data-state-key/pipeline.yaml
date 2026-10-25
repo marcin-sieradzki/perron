@@ -1,0 +1,22 @@
+# Written by npm run factory; never by hand.
+component: DataStateKey
+layer: pattern
+deferred:
+  at: 2026-10-25T17:49:32.921Z
+stages:
+  brief:
+    status: pending
+    started: 2026-10-25T17:49:39.338Z
+    ended: 2026-10-25T17:55:46.713Z
+    pending: 4
+notes:
+  - stage: brief
+    at: 2026-10-25T17:55:46.713Z
+    direction: The state sentences are owned strings worded from Data states' Means column, with the app's thresholds as placeholders; Data states itself does not list them, so a later edit to a state's meaning there must change the five *Description strings in all four locales too.
+  - stage: brief
+    at: 2026-10-25T17:55:46.713Z
+    questions: |-
+      1. (Anatomy) Does each item set its count at the inline end of its first line, with the sentence on a second line under the word, rather than the count straight after the word as ReportStrip sets it? Recommended: yes, so the five counts line up as a number column and the sentence is the Rows family's caption second line.
+      2. (Props) Does the key take the app's thresholds as two required numbers in milliseconds, liveThreshold and ageingThreshold, and write them into the sentences itself, rather than as words the caller formats or with the tokens' defaults? Recommended: yes: Data states makes the thresholds the app's and forbids stating the defaults as facts; milliseconds are the tokens' unit; the pattern writes them alike in every locale.
+      3. (Props) Does the key write a threshold under 2 min in whole seconds ("60 s") and one of 2 min or more in minutes to one decimal place ("2.5 min", "5 min"), in the locale's decimal mark, through owned strings "{count} s" and "{count} min"? Recommended: yes: these are the figures Data states and the ticket write, and the unit is an owned string around its figure by the contract's Words.
+      4. (Owned strings) Are the English sentences "Reported by the vehicle in the last {liveThreshold}", "Last reported {liveThreshold} to {ageingThreshold} ago", "Placed from the timetable and the latest delay", "No real-time data, placed from the timetable alone" and "No report for over {ageingThreshold}, moved on by the timetable", with no full stop? Recommended: yes: each says its state's Means from Data states, live in the ticket's words.
