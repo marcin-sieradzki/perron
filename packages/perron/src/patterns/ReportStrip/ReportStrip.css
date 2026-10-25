@@ -25,7 +25,12 @@
 }
 
 /* The label is VehicleDotLabel's own: its word in color.text.primary, and its dot, given no line,
-   in that ink too (CR-3). */
+   in that ink too (CR-3). As a flex item it may shrink below its longest word, so a word longer
+   than the item's line breaks inside the label by VehicleDotLabel's break-word, and the gap and
+   the count keep their room inside the strip (CR-7) */
+.pn-ReportStrip-label {
+  min-inline-size: 0;
+}
 
 /* A count in tabular figures, so one that updates keeps its width; its digits stay on one line,
    and the row wraps between items instead (CR-7) */

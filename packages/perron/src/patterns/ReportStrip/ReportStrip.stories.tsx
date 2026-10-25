@@ -72,6 +72,9 @@ const OWN_LABELS = {
   unknownLabel: 'No data yet',
 } satisfies Partial<ReportStripProps>
 
+/** One 50-letter word, longer than a 320 px container's line, for the long-word check (CR-7). */
+const LONG_WORD = 'køreplansoplysningsregionaltogsforbindelsesændring'
+
 const INK = '--perron-color-text-primary'
 const NO_SIGNAL = '--perron-color-data-state-no-signal'
 
@@ -343,6 +346,50 @@ export const Default: Story = {
         )
       },
     )
+    await step(
+      'the pattern’s own props win over each slotProps value, on all five (CR-12)',
+      async () => {
+        // `variant` and `line` are left out of slotProps.label's type; a caller's untyped ones still lose
+        const label = { variant: 'live', line: 'm1' } as NonNullable<
+          ReportStripProps['slotProps']
+        >['label']
+        await mounted(
+          canvasElement,
+          <ReportStrip
+            counts={UNKNOWN_COUNTS}
+            slotProps={
+              {
+                item: {
+                  'data-variant': 'caller',
+                  'data-unknown': 'caller',
+                  children: 'Caller item',
+                },
+                label,
+                count: { 'data-unknown': 'caller', children: 'Caller count' },
+              } as ReportStripProps['slotProps']
+            }
+          />,
+          async (host) => {
+            const strip = await stripIn(host)
+            const own = partsOf(strip)
+            await expect(strip.textContent).not.toContain('Caller')
+            await expect(heardItems(strip)).toEqual([
+              'Live 1 046',
+              ...STATES.slice(1).map(({ word }) => `${word} Unknown`),
+            ])
+            for (const [index, { variant }] of STATES.entries()) {
+              const unknown = index === 0 ? null : ''
+              await expect(own.items[index].getAttribute('data-variant')).toBe(variant)
+              await expect(own.items[index].getAttribute('data-unknown')).toBe(unknown)
+              await expect(own.counts[index].getAttribute('data-unknown')).toBe(unknown)
+              await expect(own.labels[index]).toHaveAttribute('data-variant', variant)
+              await expect(own.labels[index]).not.toHaveAttribute('data-line')
+              await expect(own.dots[index]).not.toHaveAttribute('data-line')
+            }
+          },
+        )
+      },
+    )
   },
 }
 
@@ -419,6 +466,31 @@ export const Narrow: Story = {
     }
     await expect(container.scrollWidth).toBe(container.clientWidth)
     await expect(strip.scrollWidth).toBe(strip.clientWidth)
+    // a word longer than the container wraps inside its label, and every count stays inside (CR-7)
+    await mounted(
+      canvasElement,
+      <div data-testid="long" style={{ inlineSize: 320 }}>
+        <ReportStrip counts={COUNTS} timetableOnlyLabel={LONG_WORD} />
+      </div>,
+      async (host) => {
+        const box = await waitFor(() => within(host).getByTestId('long'))
+        const long = await stripIn(box)
+        const own = partsOf(long)
+        const label = own.labels[3]
+        await expect(heard(label)).toBe(LONG_WORD)
+        await expect(lines(label)).toBeGreaterThan(1)
+        await expect(label.scrollWidth).toBeLessThanOrEqual(label.clientWidth)
+        const edge = box.getBoundingClientRect()
+        for (const count of own.counts) {
+          await expect(lines(count)).toBeLessThan(1.5)
+          await expect(count.getBoundingClientRect().right).toBeLessThanOrEqual(edge.right + 0.5)
+        }
+        for (const item of own.items)
+          await expect(item.getBoundingClientRect().right).toBeLessThanOrEqual(edge.right + 0.5)
+        await expect(box.scrollWidth).toBe(box.clientWidth)
+        await expect(long.scrollWidth).toBe(long.clientWidth)
+      },
+    )
   },
 }
 

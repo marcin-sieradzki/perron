@@ -9,20 +9,20 @@ stages:
     started: 2026-10-25T13:26:24.200Z
     ended: 2026-10-25T13:28:08.781Z
   build:
-    runs: 1
-    failing: review round 1 found 1 P1 and 1 P2 (components/report-strip/review.md)
+    runs: 2
+    status: done
+    started: 2026-10-25T13:43:59.419Z
+    begun: 6c58ebe63a2828d4b1f16de8c1699f5f69d2adf3402abf161cfe8e26ffbf6ee8
+    spec: d12d4ad55ed3419bf9643a281efa2fd2d0de038ece2439178a3f3a78eb538ace
+    ended: 2026-10-25T13:48:44.280Z
   review:
-    status: failed
-    started: 2026-10-25T13:39:07.009Z
     rounds: 1
+    sentBack: 1
+    reviewed: 5e579468720660d38f0f8b0791582abfd3f74719
     findings:
       p1: 1
       p2: 1
       p3: 3
-    reviewed: 5e579468720660d38f0f8b0791582abfd3f74719
-    sentBack: 1
-    ended: 2026-10-25T13:43:54.978Z
-    failing: review round 1 found 1 P1 and 1 P2 (components/report-strip/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T13:25:54.965Z
@@ -53,3 +53,6 @@ notes:
   - stage: build
     at: 2026-10-25T13:37:43.853Z
     direction: "Counts in typography.data (JetBrains Mono) use a monospace no-break space between digit groups, a full character wide, so the gap inside '1 046' is almost as wide as the space.200 gap between word and count and the figure can read as two numbers. Options: keep U+00A0 as CR-4 decides, or group with a narrow no-break space (U+202F) in grouped() for every pattern."
+  - stage: build
+    at: 2026-10-25T13:48:44.280Z
+    direction: "VehicleDotLabel's break-word keeps its longest word in its min-content width, so any flex row that puts it beside a nowrap sibling must give the label min-inline-size: 0 itself, or a long word pushes the sibling past the container's edge. VehicleDotLabel's spec (CR-5) could tell composers this, before VehicleTable and other users hit the same overflow."
