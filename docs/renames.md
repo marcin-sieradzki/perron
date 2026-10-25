@@ -2,6 +2,11 @@
 
 Token names that changed or went away, newest first, so code written against an older name can follow. The components on Mylder's `perron/components` branch use the names before 23 October 2026.
 
+## 25 October 2026: the vehicle dot
+
+- **Components.** `Prik`, `PrikLabel` and `PrikLegend` are now `VehicleDot`, `VehicleDotLabel` and `VehicleDotLegend`.
+- **Tokens.** The `prik.*` group is now `vehicle-dot.*`, and the CSS custom properties `--perron-prik-*` are now `--perron-vehicle-dot-*`. Only the group name changed: each token keeps its name and value (`prik.live-threshold` is `vehicle-dot.live-threshold`).
+
 ## 24 October 2026: the package
 
 - **Package name.** Perron installs as `@mylder/perron`. Each import keeps its path after the name: `@mylder/perron/perron.css`, `@mylder/perron/tokens.ts`, `@mylder/perron/icons/plus.svg`. No token name changed.

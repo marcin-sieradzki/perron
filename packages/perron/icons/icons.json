@@ -2,11 +2,11 @@
   "Map": {
     "plus": {
       "size": "icon.size.400",
-      "use": "Zoom in"
+      "use": "Zoom in; step a number field up"
     },
     "minus": {
       "size": "icon.size.400",
-      "use": "Zoom out"
+      "use": "Zoom out; step a number field down"
     },
     "locate": {
       "size": "icon.size.400",

@@ -33,7 +33,7 @@ describe('component-css', () => {
       'z-index.dialog',
       'color.transit.*',
       'color.data-state.*',
-      'prik.*',
+      'vehicle-dot.*',
     ]
     expect(rules.families).toEqual({
       component,

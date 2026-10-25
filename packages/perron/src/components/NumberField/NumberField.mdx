@@ -1,0 +1,19 @@
+import { Meta, Stories, Title } from '@storybook/addon-docs/blocks'
+import { PropsTable } from '../../../../../storybook/blocks/PropsTable.tsx'
+import { SpecProse } from '../../../../../storybook/blocks/SpecProse.tsx'
+import * as NumberFieldStories from './NumberField.stories.tsx'
+
+<Meta of={NumberFieldStories} />
+
+<Title />
+
+<SpecProse path="docs/components/number-field.md" intro />
+
+<Stories title="Examples" />
+
+<PropsTable of={NumberFieldStories} />
+
+<SpecProse
+  path="docs/components/number-field.md"
+  sections={['Keyboard and ARIA', 'Owned strings', "Do and don't"]}
+/>

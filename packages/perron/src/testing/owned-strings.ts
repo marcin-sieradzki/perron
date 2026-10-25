@@ -6,7 +6,8 @@ import type { Locale } from '../locale/index.ts'
 import { decode } from './markup.ts'
 
 /** The attributes whose values a person reads or hears. */
-const SPOKEN = /\s(?:aria-label|aria-valuetext|title|alt|placeholder)="([^"]*)"/g
+const SPOKEN =
+  /\s(?:aria-label|aria-valuetext|aria-roledescription|title|alt|placeholder)="([^"]*)"/g
 
 /**
  * An element with `role="presentation"` and Base UI's `visuallyHidden` inline style, its
@@ -31,8 +32,8 @@ function wordsIn(markup: string): string[] {
 }
 
 /**
- * Throws unless every word in `markup` (text, aria-label, aria-valuetext, title, alt and
- * placeholder) is in the `locale` dictionary or in `callerStrings`, the words the test passed in as
+ * Throws unless every word in `markup` (text, aria-label, aria-valuetext, aria-roledescription,
+ * title, alt and placeholder) is in the `locale` dictionary or in `callerStrings`, the words the test passed in as
  * children or props.
  * Words without a letter, such as "4 / 12" or "—", pass, and so does the "x" in Base UI's visually
  * hidden `span role="presentation"`.

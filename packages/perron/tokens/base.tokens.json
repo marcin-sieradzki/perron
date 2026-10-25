@@ -1342,8 +1342,8 @@
       "$description": "Motion trail behind live vehicles"
     }
   },
-  "prik": {
-    "$description": "Geometry of the Prik data-state glyph, shared by the SVG and canvas renderers. Lengths are in px at the rendered size.",
+  "vehicle-dot": {
+    "$description": "Geometry of the vehicle dot, the data-state glyph,, shared by the SVG and canvas renderers. Lengths are in px at the rendered size.",
     "inset": {
       "$type": "dimension",
       "$description": "Gap between the glyph box and the circle edge",

@@ -1931,6 +1931,109 @@
       }
     }
   },
+  "NumberField": {
+    "extends": [
+      "Omit< BaseNumberField.Root.Props, 'onValueChange' | 'onValueCommitted' | 'disabled' | 'locale' | 'children' | 'ref' >"
+    ],
+    "props": {
+      "decreaseLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "description": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "disabled": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "error": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "hiddenLabel": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "increaseLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "label": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "locale": {
+        "optional": true,
+        "type": [
+          "LocalesArgument"
+        ]
+      },
+      "numberFieldLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "onChange": {
+        "optional": true,
+        "type": [
+          "(event: Event, value: null | number, details: NumberFieldRootChangeEventDetails) => void"
+        ]
+      },
+      "onChangeCommitted": {
+        "optional": true,
+        "type": [
+          "(event: Event, value: null | number, details: NumberFieldRootCommitEventDetails) => void"
+        ]
+      },
+      "optional": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "optionalLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "placeholder": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ field?: Omit<FieldRootProps, \"children\" | \"disabled\" | \"name\"> | undefined; label?: FieldLabelProps | undefined; description?: FieldDescriptionProps | undefined; error?: FieldErrorProps | undefined; group?: NumberFieldGroupProps | undefined; input?: NumberFieldInputProps | undefined; decrement?: NumberFieldDecrementProps | undefined; increment?: NumberFieldIncrementProps | undefined; }"
+        ]
+      }
+    }
+  },
   "Popover": {
     "extends": [
       "Omit< BasePopover.Popup.Props, 'children' | 'title' | 'className' | 'style' | 'ref' >"

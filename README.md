@@ -50,7 +50,7 @@ Every token is `--perron-<group>-<name>` in CSS and `<group>.<name>` in the sour
 - **Type:** 16 roles under `typography.*` (`display`, `heading-*`, `body`, `label`, `overline`, `stat`, `data-*` and more), each a composite of family, weight, size, line height and tracking. Sizes use the spacing numbers: `font.size.400` is 16 px.
 - **Borders and focus:** `border.width.025` (1 px) and `border.width.050` (2 px); `focus.width` and `focus.offset` for the focus ring.
 - **Icons:** `icon.size.325`, `icon.size.400` and `icon.size.450`: 13, 16 and 18 px.
-- Also `shadow`, `size`, `opacity`, `z-index`, `duration`, `easing`, `breakpoint`, `effect`, `prik` (the data-state dot's geometry) and `map` (canvas measures).
+- Also `shadow`, `size`, `opacity`, `z-index`, `duration`, `easing`, `breakpoint`, `effect`, `vehicle-dot` (the data-state dot's geometry) and `map` (canvas measures).
 
 ## Commands
 

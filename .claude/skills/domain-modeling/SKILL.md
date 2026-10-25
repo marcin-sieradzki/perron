@@ -36,7 +36,7 @@ When the user uses a term that conflicts with the existing language in `docs/glo
 
 ### Sharpen fuzzy language
 
-When the user uses vague or overloaded terms, propose a precise canonical term. "You're saying 'state': do you mean a Prik data state or a component's hover state? Those are different things."
+When the user uses vague or overloaded terms, propose a precise canonical term. "You're saying 'state': do you mean a vehicle dot data state or a component's hover state? Those are different things."
 
 ### Discuss concrete scenarios
 
@@ -44,7 +44,7 @@ When relationships between concepts are being discussed, stress-test them with s
 
 ### Cross-reference with the sources
 
-When the user states how something works, check whether `packages/perron/tokens/`, `docs/foundations/`, `packages/perron/icons/icons.json` and `packages/perron/logos/logos.json` agree. If you find a contradiction, surface it: "The data-states page lists five Prik states, but you just described four. Which is right?"
+When the user states how something works, check whether `packages/perron/tokens/`, `docs/foundations/`, `packages/perron/icons/icons.json` and `packages/perron/logos/logos.json` agree. If you find a contradiction, surface it: "The data-states page lists five vehicle dot states, but you just described four. Which is right?"
 
 ### Update docs/glossary.md inline
 
