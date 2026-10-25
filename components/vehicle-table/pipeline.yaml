@@ -3,6 +3,9 @@ component: VehicleTable
 layer: pattern
 deferred:
   at: 2026-10-25T13:17:35.632Z
+needsHuman:
+  stage: review
+  reason: '3 review rounds found a P1 or a P2; the last: review round 3 found 1 P2 (components/vehicle-table/review.md)'
 stages:
   brief:
     status: done
@@ -17,13 +20,17 @@ stages:
     spec: c5ff972510a4f4503cfd74e78adb088a4cab2c8780425fe15cc3d664be9a9158
     ended: 2026-10-25T14:13:55.417Z
   review:
-    rounds: 2
-    sentBack: 2
-    reviewed: bd3215f57ed30b110291c5867429af1f13491e3b
+    rounds: 3
+    sentBack: 3
+    reviewed: 6ab91dc7040120e552278213ebcc0015740b687e
     findings:
       p1: 0
       p2: 1
-      p3: 1
+      p3: 2
+    status: failed
+    started: 2026-10-25T14:14:35.528Z
+    ended: 2026-10-25T14:18:06.879Z
+    failing: review round 3 found 1 P2 (components/vehicle-table/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T13:25:09.831Z
