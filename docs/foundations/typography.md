@@ -4,10 +4,11 @@ Three families, self-hosted. Familjen Grotesk is for headings and the wordmark, 
 
 ## Roles
 
-Sixteen roles, one per job. Set every piece of text with a role, either as a class (`perron-typography-body`) or as a composite custom property (`font: var(--perron-typography-body)` plus `letter-spacing: var(--perron-typography-body-tracking)`).
+Seventeen roles, one per job. Set every piece of text with a role, either as a class (`perron-typography-body`) or as a composite custom property (`font: var(--perron-typography-body)` plus `letter-spacing: var(--perron-typography-body-tracking)`).
 
 - Anything people compare down a column is a `data` role: times, countdowns, counts, delays, percentages. They use tabular figures, so columns line up.
 - `overline` sets its text in capitals: the class adds `text-transform: uppercase`, and with the custom property you add it yourself. Write the source text in sentence case.
+- `lead` is for the paragraph under a page title, on the docs website and any long-form screen. `body` stays at 14 px for sentences and inputs, so a page intro never borrows a heading role or a raw size.
 - On phones, `display` and `data-xl` step down to `font.size.800`, and `stat` to `font.size.600`. These are the only places a component reaches for a size directly.
 
 <!-- tokens: typography.* -->
@@ -18,6 +19,7 @@ Sixteen roles, one per job. Set every piece of text with a role, either as a cla
 | `typography.heading-lg` | Familjen Grotesk  | 700    | 24 px | 1.15        | -0.48 px | Dialog and page titles                                                      |
 | `typography.heading-md` | Familjen Grotesk  | 600    | 20 px | 1.15        | -0.3 px  | Panel titles: a stop or a destination. The wordmark is heading-md set bold. |
 | `typography.heading-sm` | Schibsted Grotesk | 600    | 14 px | 1.3         | 0 px     | Card titles, such as a disruption                                           |
+| `typography.lead`       | Schibsted Grotesk | 400    | 16 px | 1.5         | 0 px     | Page intros: the paragraph under a page title on long-form screens          |
 | `typography.body`       | Schibsted Grotesk | 400    | 14 px | 1.5         | 0 px     | Sentences and inputs                                                        |
 | `typography.body-sm`    | Schibsted Grotesk | 400    | 13 px | 1.5         | 0 px     | Supporting sentences: the line under a title, disruption details            |
 | `typography.caption`    | Schibsted Grotesk | 400    | 12 px | 1.5         | 0 px     | Notes, second lines in rows, legend descriptions, map credits               |

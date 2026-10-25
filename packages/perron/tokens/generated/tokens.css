@@ -91,6 +91,8 @@
   --perron-typography-heading-md-tracking: -0.3px;
   --perron-typography-heading-sm: var(--perron-font-weight-semibold) var(--perron-font-size-350)/var(--perron-font-line-height-snug) var(--perron-font-family-body);
   --perron-typography-heading-sm-tracking: 0px;
+  --perron-typography-lead: var(--perron-font-weight-regular) var(--perron-font-size-400)/var(--perron-font-line-height-normal) var(--perron-font-family-body);
+  --perron-typography-lead-tracking: 0px;
   --perron-typography-body: var(--perron-font-weight-regular) var(--perron-font-size-350)/var(--perron-font-line-height-normal) var(--perron-font-family-body);
   --perron-typography-body-tracking: 0px;
   --perron-typography-body-sm: var(--perron-font-weight-regular) var(--perron-font-size-325)/var(--perron-font-line-height-normal) var(--perron-font-family-body);
