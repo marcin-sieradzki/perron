@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import { PerronProvider } from '../../PerronProvider.tsx'
-import { heardMarkup } from '../../testing/markup.ts'
+import { drawing, heardMarkup } from '../../testing/markup.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
 import { NormalService } from './NormalService.tsx'
 
@@ -15,23 +15,6 @@ const iconFile = readFileSync(
   join(dirname(fileURLToPath(import.meta.url)), '../../../icons/check-circle.svg'),
   'utf8',
 )
-
-/** A tag's attributes, less width and height, which CR-2 leaves out of the inlined icon. */
-const attrs = (tag: string) =>
-  [...tag.matchAll(/\s([\w-]+)="([^"]*)"/g)]
-    .filter(([, name]) => name !== 'width' && name !== 'height')
-    .map(([, name, value]) => `${name}=${value}`)
-
-/** The svg's own drawing attributes and each child element, as markup. */
-const drawing = (svg: string) => ({
-  root: attrs(svg.match(/<svg\b[^>]*>/)![0]).filter(
-    (a) => !/^(class|aria-hidden|focusable)=/.test(a),
-  ),
-  children: (svg.match(/<(?!\/?svg\b)[a-z]+\b[^>]*>/g) ?? []).map((tag) => [
-    tag.match(/^<([a-z]+)/)![1],
-    ...attrs(tag).sort(),
-  ]),
-})
 
 describe('NormalService', () => {
   it('shows and reads runningNormallyLabel in place of "Running normally"', () => {
