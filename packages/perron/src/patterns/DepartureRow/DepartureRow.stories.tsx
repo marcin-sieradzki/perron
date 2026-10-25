@@ -9,7 +9,7 @@ import { PerronProvider } from '../../PerronProvider.tsx'
 import { delayKnown, VEHICLE_STATES } from '../../internal/vehicle-states.ts'
 import { dictionaries, type Locale } from '../../locale/index.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
-import { colour, expectNoFocus, heard, lines, mounted } from '../../testing/stories.ts'
+import { colour, expectNoFocus, heard, lines, mounted, struck } from '../../testing/stories.ts'
 import { DepartureRow } from './DepartureRow.tsx'
 import type { DepartureRowProps } from './DepartureRow.tsx'
 
@@ -93,10 +93,6 @@ async function dotHiddenWordRead(row: HTMLElement, word: string) {
   await expect(isInaccessible(status)).toBe(false)
   await expect(within(row).getAllByText(word)).toHaveLength(1)
 }
-
-/** Whether `element` is struck through, as a cancelled row's countdown, interval and time are. */
-const struck = (element: Element) =>
-  getComputedStyle(element).textDecorationLine.includes('line-through')
 
 /** The attributes the root carries, sorted, for the check that no own prop reaches it (CR-2). */
 const rootAttributes = (element: ReactElement) => staticRow(element).getAttributeNames().sort()
@@ -183,8 +179,8 @@ const EVERY_PROP = {
   nowLabel: 'Leaving',
   unknownLabel: 'Not known',
   cancelledLabel: 'Not running',
-  everyLabel: 'Each',
-  rangeToLabel: 'or',
+  everyLabel: 'Each {count} mins',
+  everyRangeLabel: 'Each {from} or {to} mins',
   liveLabel: 'Real-time',
   ageingLabel: 'Older',
   estimatedLabel: 'Guessed',
@@ -635,9 +631,15 @@ export const Interval: Story = {
     await step('an estimated interval takes no "~"', async () => {
       await expect(shows({ variant: 'estimated' }).textContent).toBe('Every 3 to 4 min')
     })
-    await step('everyLabel, rangeToLabel and minutesUnitLabel replace its words', async () => {
-      const found = shows({ everyLabel: 'Each', rangeToLabel: 'or', minutesUnitLabel: 'mins' })
-      await expect(found.textContent).toBe('Each 3 or 4 mins')
+    await step('everyLabel and everyRangeLabel replace its words, filled alike', async () => {
+      const labels = {
+        everyLabel: 'Each {count} mins',
+        everyRangeLabel: 'Each {from} or {to} mins',
+      }
+      await expect(shows(labels).textContent).toBe('Each 3 or 4 mins')
+      await expect(shows({ ...labels, interval: 3 }).textContent).toBe('Each 3 mins')
+      // the template carries its own unit, so minutesUnitLabel leaves the interval alone
+      await expect(shows({ minutesUnitLabel: 'mins' }).textContent).toBe('Every 3 to 4 min')
     })
     await step("slotProps.interval's class joins after the part's own", async () => {
       const found = shows({ slotProps: { interval: { className: 'caller-interval' } } })

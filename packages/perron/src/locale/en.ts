@@ -35,8 +35,36 @@ export const en = {
   plannedWorks: 'Planned works',
   /** The name of the data kind of disruption: a problem with the real-time data feed. */
   dataFeedProblems: 'Data feed problems',
+  /**
+   * The name of the neutral kind of disruption: a service notice whose message does not say which of
+   * the other kinds it is.
+   */
+  serviceNotice: 'Service notice',
   /** A disruption: said just before the list of lines it affects, heard by screen readers only. */
   affectedLines: 'Affected lines',
+  /**
+   * A disruption: the stops it affects, as in "Affects Nørreport and Kongens Nytorv". `{stops}` is
+   * the stop names, joined by `stopListEnd` or `moreStops`.
+   */
+  affectsStops: 'Affects {stops}',
+  /**
+   * A list of stops: joins the last stop to those before it, as in "Nørreport, Kongens Nytorv and
+   * Christianshavn". `{stops}` is the names before the last, comma-separated; `{stop}` the last.
+   */
+  stopListEnd: '{stops} and {stop}',
+  /**
+   * A list of stops cut short: the names shown, then how many more, as in "Nørreport, Kongens
+   * Nytorv and 3 more". `{count}` is always 2 or more.
+   */
+  moreStops: '{stops} and {count} more',
+  /** A disruption on a stretch of line: its two ends, as in "Between Hellerup and Klampenborg". */
+  betweenStops: 'Between {from} and {to}',
+  /** A disruption's time: when it starts, with no end given, as in "From 08:03". */
+  fromTime: 'From {time}',
+  /** A disruption's time: when it ends, with no start given, as in "Until 22:00". */
+  untilTime: 'Until {time}',
+  /** A disruption's time: its start and its end, as in "24 to 25 October" or "06:00 to 22:00". */
+  timeRange: '{from} to {to}',
   /** A line with no delays or disruptions. */
   runningNormally: 'Running normally',
   /** A link that shows a vehicle, stop or line on the map. */
@@ -69,14 +97,26 @@ export const en = {
    * state, its times struck through.
    */
   cancelled: 'Cancelled',
-  /** A line that runs to an interval: before the minutes between departures, as in "Every 3 min". */
-  every: 'Every',
-  /** Between the two figures of a range, as in "Every 3 to 4 min". */
-  rangeTo: 'to',
+  /**
+   * A line that runs to an interval: the minutes between departures, as in "Every 3 min". `{count}`
+   * is the whole minutes.
+   */
+  every: 'Every {count} min',
+  /**
+   * A line that runs to an interval that varies: the fewest and the most minutes between
+   * departures, as in "Every 3 to 4 min". `{from}` and `{to}` are the whole minutes, `{from}` the
+   * smaller.
+   */
+  everyRange: 'Every {from} to {to} min',
   /** A stop timeline: under the stop the vehicle reaches next. */
   nextStop: 'Next stop',
   /** A stop timeline: heard after the name of a stop the vehicle has passed. */
   passed: 'Passed',
+  /**
+   * A stop timeline: a stop's expected time, heard in place of the "~" and the time the eye reads,
+   * as in "08:13, Expected 08:16". `{time}` is the expected time.
+   */
+  expectedTime: 'Expected {time}',
   /** A vehicle table: the header of the column of each vehicle's line. */
   lineColumn: 'Line',
   /** A vehicle table: the header of the column of where each vehicle is going. */

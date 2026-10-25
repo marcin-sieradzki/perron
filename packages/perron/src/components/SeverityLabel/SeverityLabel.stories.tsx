@@ -99,6 +99,42 @@ export const Diversion: Story = {
   play: reads('diversion', 'diversions'),
 }
 
+/**
+ * `severity='notice'`: the `info-circle` icon and "Service notice", for a message whose fields don't
+ * say which kind it is.
+ */
+export const Notice: Story = {
+  args: { severity: 'notice' },
+  play: async (context) => {
+    await reads('notice', 'serviceNotice')!(context)
+    await context.step(
+      'the icon is the info-circle drawing, placed as the other kinds are',
+      async () => {
+        const root = context.canvasElement.querySelector('.pn-SeverityLabel')!
+        const icon = root.querySelector('svg')!
+        await expect(icon).toHaveClass('perron-icon', 'pn-SeverityLabel-icon')
+        await expect(getComputedStyle(icon).gridRowStart).toBe('1')
+        await expect(getComputedStyle(icon).gridColumnStart).toBe('1')
+        await expect(icon.querySelectorAll('circle')).toHaveLength(2)
+      },
+    )
+    await context.step(
+      'serviceNoticeLabel="Traffic information" shows and reads "Traffic information"',
+      async () => {
+        const props: SeverityLabelProps = {
+          severity: 'notice',
+          serviceNoticeLabel: 'Traffic information',
+        }
+        await mounted(context.canvasElement, <SeverityLabel {...props} />, async (host) => {
+          const label = await waitFor(() => within(host).getByText('Traffic information'))
+          await expect(label.closest('.pn-SeverityLabel')?.textContent).toBe('Traffic information')
+          await expect(within(host).queryByText('Service notice')).toBeNull()
+        })
+      },
+    )
+  },
+}
+
 /** `severity='planned'`: the `calendar` icon and "Planned works". */
 export const Planned: Story = {
   args: { severity: 'planned' },

@@ -55,3 +55,10 @@
   padding: 0;
   list-style: none;
 }
+
+/* CR-14: the action sits 8 px under the text above it, with the root's row gap, and keeps its own
+   width rather than stretching across the card. */
+.pn-DisruptionCard-action {
+  justify-self: start;
+  margin-block-start: var(--perron-space-100);
+}

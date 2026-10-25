@@ -385,7 +385,7 @@ export const componentPreviews: Previews = {
         A live dot has a recent GPS report. When the reports stop coming, it fades to ageing.
       </AccordionItem>,
       <AccordionItem key="silent" value="silent" title="When a vehicle goes silent">
-        After 5 minutes without a report, a vehicle turns grey and is cut by a slash. It keeps
+        When a vehicle's reports stop for too long, it turns grey and is cut by a slash. It keeps
         moving on the timetable from where it was last seen.
       </AccordionItem>,
     ],

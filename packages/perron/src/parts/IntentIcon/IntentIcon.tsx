@@ -1,10 +1,12 @@
 // The IntentIcon shared part: the icon of a status intent, drawn once for every message that shows
-// one, Alert now and Toast next. Each drawing is its file in packages/perron/icons/, inlined
-// unchanged but for width and height. The part sets no colour and no size: it draws in
-// currentColor at the --perron-icon-size the element around it sets. Internal: composed by
-// components, never registered or exported. Its class and the info-circle and exclamation-circle
-// icons live only in this folder (docs/components/README.md, "Shared parts").
+// one, Alert's and Toast's, and for SeverityLabel's service notice. Each drawing is its file in
+// packages/perron/icons/, inlined unchanged but for width and height. The part sets no colour and
+// no size: it draws in currentColor at the --perron-icon-size the element around it sets. Internal:
+// composed by components, never registered or exported. Its class and the info-circle and
+// exclamation-circle icons live only in this folder (docs/components/README.md, "Shared parts").
+import { cloneElement } from 'react'
 import type { ReactElement } from 'react'
+import { classes } from '../../internal/nodes.ts'
 
 /** The intents a message takes; `neutral` has no icon. */
 export type IntentIconColor = 'neutral' | 'success' | 'warning' | 'danger' | 'info'
@@ -12,6 +14,11 @@ export type IntentIconColor = 'neutral' | 'success' | 'warning' | 'danger' | 'in
 export interface IntentIconProps {
   /** The intent whose icon to draw: nothing for `neutral`. */
   color: IntentIconColor
+  /**
+   * A class joined after the part's own, for the component that places the icon, such as
+   * SeverityLabel's `pn-SeverityLabel-icon`
+   */
+  className?: string
 }
 
 const SVG = {
@@ -27,7 +34,7 @@ const SVG = {
   focusable: 'false',
 } as const
 
-const ICONS: Record<Exclude<IntentIconColor, 'neutral'>, ReactElement> = {
+const ICONS: Record<Exclude<IntentIconColor, 'neutral'>, ReactElement<{ className?: string }>> = {
   // icons/check-circle.svg
   success: (
     <svg {...SVG}>
@@ -62,6 +69,8 @@ const ICONS: Record<Exclude<IntentIconColor, 'neutral'>, ReactElement> = {
 }
 
 /** The intent's icon, hidden from screen readers, or nothing for `neutral`. */
-export function IntentIcon({ color }: IntentIconProps) {
-  return color === 'neutral' ? null : ICONS[color]
+export function IntentIcon({ color, className }: IntentIconProps) {
+  if (color === 'neutral') return null
+  const icon = ICONS[color]
+  return className ? cloneElement(icon, { className: classes(SVG.className, className) }) : icon
 }

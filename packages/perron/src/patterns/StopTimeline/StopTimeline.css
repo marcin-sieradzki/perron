@@ -1,6 +1,7 @@
 /* StopTimeline: an ordered list of a trip's stops on a grid whose columns every stop shares, so the
    times and delays line up, with a rail through the markers (docs/patterns/stop-timeline.md).
-   Columns: the marker, the name (and "Next stop" under it), the time, the delay. */
+   Columns: the marker, the name (and "Next stop" or "Cancelled" under it), the time, the expected
+   time when any stop gives one, the delay. */
 .pn-StopTimeline {
   display: grid;
   grid-template-columns: var(--perron-icon-size-325) minmax(0, 1fr) auto auto;
@@ -13,8 +14,17 @@
   overflow-wrap: break-word;
 }
 
-/* With no time or delay in any stop, their empty columns and gaps go, and the names take the room. */
-.pn-StopTimeline:not(:has(.pn-StopTimeline-time, .pn-StopTimeline-delay)) {
+/* With an expected time in any stop, its column joins between the time's and the delay's (CR-15);
+   without one, no empty column or gap is kept for it. */
+.pn-StopTimeline:has(.pn-StopTimeline-expected) {
+  grid-template-columns: var(--perron-icon-size-325) minmax(0, 1fr) auto auto auto;
+}
+
+/* With no time, expected time or delay in any stop, their empty columns and gaps go, and the names
+   take the room. */
+.pn-StopTimeline:not(
+  :has(.pn-StopTimeline-time, .pn-StopTimeline-expected, .pn-StopTimeline-delay)
+) {
   grid-template-columns: var(--perron-icon-size-325) minmax(0, 1fr);
 }
 
@@ -116,6 +126,16 @@
   overflow-wrap: break-word;
 }
 
+/* "Cancelled", under the name, or under "Next stop" when the stop is next too: its column is set
+   and its row left to the grid, which takes the first free one (CR-14). In the status's danger
+   colour, as DepartureRow's "Cancelled". */
+.pn-StopTimeline-cancelled {
+  grid-column: 2;
+  font: var(--perron-typography-caption);
+  letter-spacing: var(--perron-typography-caption-tracking);
+  color: var(--perron-color-text-danger);
+}
+
 /* "Next stop", the name's second line. */
 .pn-StopTimeline-next {
   grid-row: 2;
@@ -135,15 +155,35 @@
   white-space: nowrap;
 }
 
-/* Delay keeps its own type and colour, passed or not; only its place is set here. */
-.pn-StopTimeline-delay {
+/* The expected time, "~08:16", in the time's type, so the two read as a pair (CR-15). */
+.pn-StopTimeline-expected {
   grid-row: 1;
   grid-column: 4;
+  font: var(--perron-typography-data);
+  letter-spacing: var(--perron-typography-data-tracking);
+  font-variant-numeric: tabular-nums;
+  color: var(--perron-color-text-primary);
+  white-space: nowrap;
+}
+
+/* Delay keeps its own type and colour, passed or not; only its place is set here: the last column,
+   the fourth or, with an expected time in the list, the fifth. */
+.pn-StopTimeline-delay {
+  grid-row: 1;
+  grid-column: -2 / -1;
 }
 
 .pn-StopTimeline-name[data-stop='passed'],
-.pn-StopTimeline-time[data-stop='passed'] {
+.pn-StopTimeline-time[data-stop='passed'],
+.pn-StopTimeline-expected[data-stop='passed'] {
   color: var(--perron-color-text-secondary);
+}
+
+/* CR-14: a cancelled call stays in the list, and the times it would have kept are struck through,
+   their text and the "~" unchanged, which "Cancelled" says to the ear. */
+.pn-StopTimeline-stop[data-cancelled] .pn-StopTimeline-time,
+.pn-StopTimeline-stop[data-cancelled] .pn-StopTimeline-expected {
+  text-decoration-line: line-through;
 }
 
 /* The system would reset the rail's fill, so it sets its own system colours and the trip's
