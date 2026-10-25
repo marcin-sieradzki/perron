@@ -531,6 +531,11 @@ describe('the factory dry run', () => {
     expect(run('end Tally docs done').err).toBe('refused: docs is not running; begin it first\n')
   })
 
+  it('takes a word such as constructor as an argument, not as a flag', () => {
+    expect(factory(['next', 'Tally', 'constructor'], env()).code).toBe(0)
+    expect(factory(['begin', 'Tally', 'toString'], env()).err).toMatch(/"toString" is not a stage/)
+  })
+
   it('prints next as JSON for the skill, and never writes on next', () => {
     expect(JSON.parse(run('next Tally --json').out)).toEqual({
       component: 'Tally',

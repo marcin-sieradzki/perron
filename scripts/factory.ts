@@ -57,7 +57,7 @@ export function factory(argv: string[], env: Env): Printed {
   const valued: Record<string, string[]> = { '--failing': [], '--direction': [] }
   const args: string[] = []
   for (let i = 0; i < argv.length; i++) {
-    if (argv[i] in valued) valued[argv[i]].push(argv[++i] ?? '')
+    if (Object.hasOwn(valued, argv[i])) valued[argv[i]].push(argv[++i] ?? '')
     else if (argv[i] !== '--json') args.push(argv[i])
   }
   const failing = valued['--failing'].at(-1)
