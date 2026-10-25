@@ -7,20 +7,11 @@ import { mergeProps } from '@base-ui/react/merge-props'
 import { useId } from 'react'
 import type { CSSProperties, ReactElement, ReactNode, Ref } from 'react'
 import { useOwnedStrings } from '../../PerronProvider.tsx'
+import { given, withClass } from '../../internal/nodes.ts'
 import { CloseButton } from '../../parts/CloseButton/CloseButton.tsx'
-import { withClass } from '../../internal/nodes.ts'
 import './Dialog.css'
 
 type ChangeDetails = BaseDialog.Root.ChangeEventDetails
-
-/**
- * Whether a node renders anything: `null`, `undefined`, a boolean, `''` and an array of only such
- * values render nothing, so their part is left out, as in EmptyState.
- */
-const rendersSomething = (node: ReactNode): boolean =>
-  Array.isArray(node)
-    ? node.some(rendersSomething)
-    : node != null && typeof node !== 'boolean' && node !== ''
 
 export interface DialogProps extends Omit<
   BaseDialog.Popup.Props,
@@ -182,7 +173,7 @@ export function Dialog({
               className={withClass('pn-Dialog-close', slotProps?.close?.className)}
             />
           </div>
-          {rendersSomething(description) ? (
+          {given(description) ? (
             <BaseDialog.Description
               {...mergeProps<typeof BaseDialog.Description>(slotProps?.description, undefined)}
               className={withClass('pn-Dialog-description', slotProps?.description?.className)}
@@ -190,8 +181,8 @@ export function Dialog({
               {description}
             </BaseDialog.Description>
           ) : null}
-          {rendersSomething(children) ? <div className="pn-Dialog-content">{children}</div> : null}
-          {rendersSomething(actions) ? <div className="pn-Dialog-actions">{actions}</div> : null}
+          {given(children) ? <div className="pn-Dialog-content">{children}</div> : null}
+          {given(actions) ? <div className="pn-Dialog-actions">{actions}</div> : null}
         </BaseDialog.Popup>
       </BaseDialog.Portal>
     </BaseDialog.Root>

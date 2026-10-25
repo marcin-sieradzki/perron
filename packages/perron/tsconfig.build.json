@@ -5,6 +5,8 @@
     "declaration": true,
     "rootDir": "src",
     "outDir": "dist",
+    // a failed build writes nothing, so a stray tokens.js never lands beside tokens/generated/tokens.ts
+    "noEmitOnError": true,
     "rewriteRelativeImportExtensions": true,
     // a component imports its own CSS, which scripts/copy-css.ts puts beside the built JS
     "noUncheckedSideEffectImports": false,

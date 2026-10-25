@@ -5,7 +5,7 @@ import { PerronProvider } from '../../PerronProvider.tsx'
 import { dictionaries } from '../../locale/index.ts'
 import type { Locale, OwnedStringKey } from '../../locale/index.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
-import { mounted } from '../../testing/stories.ts'
+import { heard, mounted } from '../../testing/stories.ts'
 import { SeverityLabel } from './SeverityLabel.tsx'
 import type { SeverityLabelProps, SeverityLabelSeverity } from './SeverityLabel.tsx'
 
@@ -18,14 +18,6 @@ const meta = {
 export default meta
 
 type Story = StoryObj<typeof meta>
-
-/** The text under `node` that the accessibility tree exposes: its text, less every hidden subtree. */
-const exposedText = (node: Node): string =>
-  node instanceof Element && isInaccessible(node)
-    ? ''
-    : node.nodeType === Node.TEXT_NODE
-      ? (node.textContent ?? '')
-      : Array.from(node.childNodes, exposedText).join('')
 
 /**
  * The play test every story shares: the root carries `data-severity`, its only text is the kind's
@@ -44,7 +36,7 @@ const reads =
       await expect(root?.textContent).toBe(word)
       await expect(label).toBeVisible()
       await expect(isInaccessible(label)).toBe(false)
-      await expect(exposedText(root!)).toBe(word)
+      await expect(heard(root!)).toBe(word)
       // the CR-8 strut is generated content with empty alternative text, so it adds nothing
       await expect(getComputedStyle(root!, '::before').content).toBe('"\u200b" / ""')
     })

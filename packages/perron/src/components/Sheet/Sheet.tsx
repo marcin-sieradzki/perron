@@ -6,8 +6,9 @@ import { mergeProps } from '@base-ui/react/merge-props'
 import { useCallback, useState } from 'react'
 import type { ReactElement, ReactNode, Ref } from 'react'
 import { useOwnedStrings } from '../../PerronProvider.tsx'
-import { CloseButton } from '../../parts/CloseButton/CloseButton.tsx'
 import { withClass } from '../../internal/nodes.ts'
+import { tokenValue } from '../../internal/tokens.ts'
+import { CloseButton } from '../../parts/CloseButton/CloseButton.tsx'
 import './Sheet.css'
 
 type ChangeDetails = Drawer.Root.ChangeEventDetails
@@ -29,10 +30,8 @@ let withPeek: Drawer.Root.SnapPoint[] | undefined
  * stylesheet yet, there is no peek to read, and the sheet snaps to full height alone until there is.
  */
 function defaultSnapPoints(): Drawer.Root.SnapPoint[] {
-  if (withPeek === undefined && typeof document !== 'undefined') {
-    const peek = getComputedStyle(document.documentElement)
-      .getPropertyValue('--perron-size-sheet-peek')
-      .trim()
+  if (withPeek === undefined) {
+    const peek = tokenValue('--perron-size-sheet-peek')
     if (peek) withPeek = [peek, 1]
   }
   return withPeek ?? FULL_HEIGHT
