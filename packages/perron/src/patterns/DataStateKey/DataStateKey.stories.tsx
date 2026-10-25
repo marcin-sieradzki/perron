@@ -70,8 +70,8 @@ const OWN_LABELS = {
     STATE_WORDS.map(({ variant }, index) => [STATE_LABELS[variant], OWN_WORDS[index]]),
   ),
   ...Object.fromEntries(OWN_SENTENCES.map(({ prop, own }) => [prop, own])),
-  secondsDurationLabel: '{count} sec',
-  minutesDurationLabel: '{count} minutes',
+  secondsDurationLabel: '{seconds} sec',
+  minutesDurationLabel: '{minutes} minutes',
   unknownLabel: 'No data yet',
 } as Partial<DataStateKeyProps>
 
@@ -513,15 +513,35 @@ export const Thresholds: Story = {
       const figures: [number, string][] = [
         [90_000, '90 s'],
         [119_400, '119 s'],
+        [119_500, '2 min'],
         [120_000, '2 min'],
         [150_000, '2.5 min'],
         [240_000, '4 min'],
+        [-0, '0 s'],
       ]
       for (const [ms, written] of figures) {
         const [live] = await sentencesAt(canvasElement, { liveThreshold: ms, ageingThreshold: ms })
         await expect(live).toBe(`Reported by the vehicle in the last ${written}`)
       }
     })
+    await step(
+      'a figure and its unit joined by a no-break space, in every locale (CR-7)',
+      async () => {
+        for (const locale of Object.keys(dictionaries) as Locale[])
+          await mounted(
+            canvasElement,
+            <PerronProvider locale={locale}>
+              <DataStateKey counts={COUNTS} {...DEFAULTS} />
+            </PerronProvider>,
+            async (host) => {
+              const [live, ageing] = partsOf(await keyIn(host)).descriptions
+              await expect(live.textContent).toContain('60\u00A0s')
+              await expect(ageing.textContent).toContain('60\u00A0s')
+              await expect(ageing.textContent).toContain('5\u00A0min')
+            },
+          )
+      },
+    )
     await step('the locale’s decimal mark: 2,5 min in Danish (CR-7)', async () => {
       const danish = await sentencesAt(canvasElement, MYLDER, 'da')
       await expect(danish[0]).toBe('Meldt af køretøjet inden for de seneste 2,5 min')
@@ -730,7 +750,7 @@ export const Labels: Story = {
       ).toEqual(['Reported by the vehicle in the last 60 s', 'Last reported 60 s to 5 min ago'])
       await mounted(
         canvasElement,
-        <DataStateKey counts={COUNTS} {...DEFAULTS} secondsDurationLabel="{count} sec" />,
+        <DataStateKey counts={COUNTS} {...DEFAULTS} secondsDurationLabel="{seconds} sec" />,
         async (host) => {
           const [, ageing] = heardSentences(await keyIn(host))
           await expect(ageing).toBe('Last reported 60 sec to 5 min ago')
@@ -738,7 +758,7 @@ export const Labels: Story = {
       )
       await mounted(
         canvasElement,
-        <DataStateKey counts={COUNTS} {...DEFAULTS} minutesDurationLabel="{count} minutes" />,
+        <DataStateKey counts={COUNTS} {...DEFAULTS} minutesDurationLabel="{minutes} minutes" />,
         async (host) => {
           const [, ageing] = heardSentences(await keyIn(host))
           await expect(ageing).toBe('Last reported 60 s to 5 minutes ago')

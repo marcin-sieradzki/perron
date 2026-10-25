@@ -2,6 +2,7 @@
 // DataStateKey: the key to how sure the map is, each data state's dot and word, its count and one
 // sentence saying what it means in the app's own thresholds. A pattern: Perron's VehicleDotLabel
 // and Text over plain elements, never Base UI (CR-15). Spec: docs/patterns/data-state-key.md.
+import { useMemo } from 'react'
 import type { ComponentPropsWithRef, CSSProperties, ReactNode, Ref } from 'react'
 import { Text } from '../../components/Text/Text.tsx'
 import type { TextProps } from '../../components/Text/Text.tsx'
@@ -104,12 +105,12 @@ export interface DataStateKeyProps extends Omit<ComponentPropsWithRef<'ul'>, 'ch
    */
   noSignalDescriptionLabel?: string
   /**
-   * Overrides "{count} s", a threshold under 2 min; `{count}` is its whole seconds
+   * Overrides "{seconds} s", a threshold under 2 min; `{seconds}` is its whole seconds
    * @default The locale's
    */
   secondsDurationLabel?: string
   /**
-   * Overrides "{count} min", a threshold of 2 min or more; `{count}` is its minutes, to one
+   * Overrides "{minutes} min", a threshold of 2 min or more; `{minutes}` is its minutes, to one
    * decimal place
    * @default The locale's
    */
@@ -148,17 +149,16 @@ export interface DataStateKeyProps extends Omit<ComponentPropsWithRef<'ul'>, 'ch
   }
 }
 
-/** The milliseconds in a minute, and the threshold from which one is written in minutes (CR-7). */
-const MINUTE = 60_000
-const IN_MINUTES_FROM = 2 * MINUTE
+/** The seconds from which a threshold is written in minutes (CR-7). */
+const IN_MINUTES_FROM = 120
 
 /** The owned string of a state's sentence: `liveDescription` to `noSignalDescription` (CR-6). */
 const descriptionKey = (state: VehicleState) => `${STATE_KEY[state]}Description` as const
 
 /**
- * A threshold as its sentence shows it (CR-7): under 2 min its whole seconds, "60 s", from 2 min
- * on its minutes to one decimal place, "2.5 min", in the locale's decimal mark; "—" and the
- * unknown word when it is not finite or below 0.
+ * A threshold as its sentence shows it (CR-7): its unit chosen from its seconds rounded to a whole
+ * number, under 2 min those seconds, "60 s", from 2 min on its minutes to one decimal place,
+ * "2.5 min", in the locale's decimal mark; "—" and the unknown word when it is not finite or below 0.
  */
 function threshold(
   ms: number,
@@ -166,10 +166,12 @@ function threshold(
   format: Intl.NumberFormat,
 ): ReactNode {
   if (!known(ms) || ms < 0) return <UnknownValue label={strings.unknown} />
-  return ms < IN_MINUTES_FROM
-    ? interpolate(strings.secondsDuration, { count: format.format(Math.round(ms / 1000)) })
+  // `|| 0` writes a rounded -0 as 0
+  const seconds = Math.round(ms / 1000) || 0
+  return seconds < IN_MINUTES_FROM
+    ? interpolate(strings.secondsDuration, { seconds: format.format(seconds) })
     : interpolate(strings.minutesDuration, {
-        count: format.format(Math.round(ms / (MINUTE / 10)) / 10),
+        minutes: format.format(Math.round(ms / 6000) / 10),
       })
 }
 
@@ -212,8 +214,13 @@ export function DataStateKey({
     minutesDuration: minutesDurationLabel,
     unknown: unknownLabel,
   })
-  // CR-7: the figures in the locale's decimal mark, at most one fraction digit
-  const format = new Intl.NumberFormat(useLocale(), { maximumFractionDigits: 1 })
+  // CR-7: the figures in the locale's decimal mark, at most one fraction digit, built once per
+  // locale, as Slider builds its formatter
+  const locale = useLocale()
+  const format = useMemo(
+    () => new Intl.NumberFormat(locale, { maximumFractionDigits: 1 }),
+    [locale],
+  )
   const figures = {
     liveThreshold: threshold(liveThreshold, strings, format),
     ageingThreshold: threshold(ageingThreshold, strings, format),

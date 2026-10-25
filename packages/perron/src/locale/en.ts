@@ -46,13 +46,16 @@ export const en = {
    * report for over 5 min". `{ageingThreshold}` is the app's ageing threshold.
    */
   noSignalDescription: 'Moved on by the timetable, with no report for over {ageingThreshold}',
-  /** A duration under 2 min, as in "60 s", joined by a no-break space. `{count}` is its whole seconds. */
-  secondsDuration: '{count}\u00A0s',
   /**
-   * A duration of 2 min or more, as in "2.5 min", joined by a no-break space. `{count}` is its
-   * minutes, to one decimal place.
+   * Data state key: a threshold under 2 min, inside the live, ageing and no-signal sentences, as in
+   * "60 s", joined by a no-break space. `{seconds}` is its whole seconds.
    */
-  minutesDuration: '{count}\u00A0min',
+  secondsDuration: '{seconds}\u00A0s',
+  /**
+   * Data state key: a threshold of 2 min or more, inside the live, ageing and no-signal sentences,
+   * as in "2.5 min", joined by a no-break space. `{minutes}` is its minutes, to one decimal place.
+   */
+  minutesDuration: '{minutes}\u00A0min',
   /** A line's delays: a heading, and the name of the delay kind of disruption. */
   delays: 'Delays',
   /** The name of the diversion kind of disruption: a line running on a changed route. */
@@ -106,9 +109,9 @@ export const en = {
   /** Delay: no real-time data says how late a vehicle runs; heard in place of "—". */
   delayUnknown: 'Delay unknown',
   /**
-   * Stat, FactList, Count, Meter, ScaleBar, VehicleTable: no data gives the figure, value, count,
-   * distance or last-seen time; heard in place of "—", as a meter's value text, or after "Scale" on
-   * the map's scale.
+   * Stat, FactList, Count, Meter, ScaleBar, VehicleTable, ReportStrip, DataStateKey: no data gives
+   * the figure, value, count, distance, last-seen time or threshold; heard in place of "—", as a
+   * meter's value text, after "Scale" on the map's scale, or inside a data state key's sentence.
    */
   unknown: 'Unknown',
   /** Brand: the brand name, a name and never translated; the wordmark shows it lowercase. */

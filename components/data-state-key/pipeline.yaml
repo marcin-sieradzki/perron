@@ -9,20 +9,26 @@ stages:
     started: 2026-10-25T17:56:21.302Z
     ended: 2026-10-25T17:56:40.084Z
   build:
-    runs: 2
-    failing: review round 1 found 2 P2 (components/data-state-key/review.md)
+    runs: 3
+    status: pending
+    started: 2026-10-25T18:30:20.580Z
+    fix: |-
+      review round 1 found 2 P2 (components/data-state-key/review.md). Fix each of its P1 and P2 findings at the line it names:
+      - **P2-1.** `docs/patterns/data-state-key.md:91` The Props prose tells an app that keeps the defaults to pass `tokens['vehicle-dot.live-threshold']` from `@mylder/perron/tokens.ts`, but that module has no `tokens` export. The number is `numeric['vehicle-dot.live-threshold']` (`60000`, `packages/perron/tokens/generated/tokens.ts:449`), and `base['vehicle-dot.live-threshold']` is the string `"60000ms"`, which the required `number` prop refuses. A caller who copies the spec's advice gets `undefined` or a type error, so the spec disagrees with the code it points to (rubric 6, the spec against the code). Name `numeric[…]` for both thresholds.
+      - **P2-2.** `docs/patterns/data-state-key.md:235` Test coverage, one line unticked. CR-7 says "the figure and its unit are joined by the strings' no-break space, so they never part at a line's end", but only the minutes form is proven: `'2.5\u00A0min'` in English (`DataStateKey.stories.tsx:253`). No `play` step checks the U+00A0 in `secondsDuration` ("60 s", "90 s"), and the Thresholds checks at `DataStateKey.stories.tsx:504-524` compare through `heard`, which turns every `\s`, U+00A0 included, into a plain space. A plain space in `secondsDuration` in any locale would pass every story. Assert the U+00A0 in a seconds threshold's `textContent`, as line 253 does for minutes.
+    begun: c3b329a36c42b1fcfaf7194cd62da77e27d4d9ef13deb0d7b1ee73682e95aa00
+    spec: 5a78e0cd9b895c24c942be3a0e865ff8179fe77f4ed014e57b09320fac04913c
+    asked: 1
+    ended: 2026-10-25T18:38:30.980Z
+    failing: '1. (Owned strings and CR-7, secondsDuration and minutesDuration) Any owned template "{x} min" makes the shared test owned-strings.test.tsx:125 fail, since the merged expectOwnedStrings lets a placeholder hold another filled template, so "Every 3 min min" reads as minutesDuration nested in itself. Drop the two duration templates and write a threshold as its figure, a no-break space and a unit word, as Delay writes "+3 min": reuse the existing key `minutesUnit` ("min", override `minutesUnitLabel`, Delay''s name) and add `secondsUnit` ("s" in all four locales, override `secondsUnitLabel`), with CR-7, Props, Owned strings and the stories following? Recommended: yes: it reuses the unit the dictionaries already hold (the review''s P3-5), keeps Delay''s names for the same words, needs no change to shared tooling, and the figure is the key''s own number, not a caller''s words, so the contract''s Words rule against joining an owned word to the caller''s does not bind it.'
   review:
-    status: failed
-    started: 2026-10-25T18:19:22.764Z
     rounds: 1
+    sentBack: 1
+    reviewed: 0a3a676585c1bf2f856e4943306e5de5fef469ea
     findings:
       p1: 0
       p2: 2
       p3: 7
-    reviewed: 0a3a676585c1bf2f856e4943306e5de5fef469ea
-    sentBack: 1
-    ended: 2026-10-25T18:30:11.898Z
-    failing: review round 1 found 2 P2 (components/data-state-key/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T17:55:46.713Z
@@ -43,3 +49,9 @@ notes:
   - stage: build
     at: 2026-10-25T18:18:48.842Z
     direction: Text has no `color` that inherits, so a pattern composing it for a second line sets `color='neutral'` and `emphasis='secondary'` and leaves both out of its slot type; a caption-and-secondary Text recurs (DisruptionCard, DataStateKey) and may earn a named treatment in the contract's Families text.
+  - stage: build
+    at: 2026-10-25T18:38:30.980Z
+    direction: The merged expectOwnedStrings lets a template fill its own placeholder, so any owned "{x} <word>" template makes the shared test's "Every 3 min min" stray pass; the matcher could refuse a template nested in itself, or the test pick a stray no template can parse.
+  - stage: build
+    at: 2026-10-25T18:38:30.980Z
+    questions: '1. (Owned strings and CR-7, secondsDuration and minutesDuration) Any owned template "{x} min" makes the shared test owned-strings.test.tsx:125 fail, since the merged expectOwnedStrings lets a placeholder hold another filled template, so "Every 3 min min" reads as minutesDuration nested in itself. Drop the two duration templates and write a threshold as its figure, a no-break space and a unit word, as Delay writes "+3 min": reuse the existing key `minutesUnit` ("min", override `minutesUnitLabel`, Delay''s name) and add `secondsUnit` ("s" in all four locales, override `secondsUnitLabel`), with CR-7, Props, Owned strings and the stories following? Recommended: yes: it reuses the unit the dictionaries already hold (the review''s P3-5), keeps Delay''s names for the same words, needs no change to shared tooling, and the figure is the key''s own number, not a caller''s words, so the contract''s Words rule against joining an owned word to the caller''s does not bind it.'
