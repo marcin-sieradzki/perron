@@ -27,6 +27,29 @@ export const en = {
   timetableOnly: 'Timetable only',
   /** Data state: silent past the ageing threshold, moved on by the timetable. */
   noSignal: 'No signal',
+  /**
+   * Data state key: what a live vehicle means, as in "Reported by the vehicle in the last 2.5 min".
+   * `{liveThreshold}` is the app's live threshold, written by `secondsDuration` or `minutesDuration`.
+   */
+  liveDescription: 'Reported by the vehicle in the last {liveThreshold}',
+  /**
+   * Data state key: what an ageing vehicle means, as in "Last reported 2.5 min to 5 min ago".
+   * `{liveThreshold}` and `{ageingThreshold}` are the app's two thresholds.
+   */
+  ageingDescription: 'Last reported {liveThreshold} to {ageingThreshold} ago',
+  /** Data state key: what an estimated vehicle means. */
+  estimatedDescription: 'Placed from the timetable and the latest delay',
+  /** Data state key: what a timetable-only vehicle means. */
+  timetableOnlyDescription: 'No real-time data, placed from the timetable alone',
+  /**
+   * Data state key: what a vehicle with no signal means, as in "No report for over 5 min, moved on
+   * by the timetable". `{ageingThreshold}` is the app's ageing threshold.
+   */
+  noSignalDescription: 'No report for over {ageingThreshold}, moved on by the timetable',
+  /** A duration under 2 min, as in "60 s". `{count}` is its whole seconds. */
+  secondsDuration: '{count} s',
+  /** A duration of 2 min or more, as in "2.5 min". `{count}` is its minutes, to one decimal place. */
+  minutesDuration: '{count} min',
   /** A line's delays: a heading, and the name of the delay kind of disruption. */
   delays: 'Delays',
   /** The name of the diversion kind of disruption: a line running on a changed route. */

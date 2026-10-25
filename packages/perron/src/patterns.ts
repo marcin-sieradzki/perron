@@ -1,6 +1,7 @@
 // The @mylder/perron/patterns entry: every pattern past designing.
 // Generated from packages/perron/components.json: change the registry, then run
 // npm run registry. Its fixed lines live in scripts/lib/registry.ts.
+export * from './patterns/DataStateKey/DataStateKey.tsx'
 export * from './patterns/DataStatePanel/DataStatePanel.tsx'
 export * from './patterns/DayProfileChart/DayProfileChart.tsx'
 export * from './patterns/ReportStrip/ReportStrip.tsx'

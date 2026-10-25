@@ -395,10 +395,10 @@
     "name": "DataStateKey",
     "layer": "pattern",
     "category": "Data",
-    "status": "designing",
+    "status": "building",
     "baseUiParts": [],
     "penpotPath": "Patterns/DataStateKey",
-    "dependsOn": ["VehicleDotLabel"]
+    "dependsOn": ["VehicleDotLabel", "Text"]
   },
   {
     "name": "VehicleTable",

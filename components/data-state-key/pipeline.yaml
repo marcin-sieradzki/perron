@@ -8,6 +8,15 @@ stages:
     status: done
     started: 2026-10-25T17:56:21.302Z
     ended: 2026-10-25T17:56:40.084Z
+  build:
+    status: pending
+    started: 2026-10-25T17:56:48.542Z
+    runs: 1
+    begun: 1826898a4544e929ae2901cb52f1555c9f3b28c0549ddf504aa05d2594c5ab89
+    spec: 16496e8a70d2ab3d16b2f336fff2d4ac3e06adfe11cc5a6b01160861daa8bbbb
+    asked: 1
+    ended: 2026-10-25T18:04:50.682Z
+    failing: '1. (Owned strings, noSignalDescription) The no-signal sentence "No report for over {ageingThreshold}, moved on by the timetable" fails expectOwnedStrings in every locale, since its comma follows the placeholder straight after a figure ending in a letter ("5 min,"), which packages/perron/src/testing/owned-strings.ts reads as a word glued to the figure. Reword it so no punctuation follows a placeholder, in all four locales: English "Moved on by the timetable, with no report for over {ageingThreshold}", Danish "Flyttet videre efter køreplanen, uden melding i over {ageingThreshold}", Swedish "Flyttad vidare enligt tidtabellen, utan rapport på över {ageingThreshold}", Norwegian "Flyttet videre etter rutetabellen, uten melding på over {ageingThreshold}"? Recommended: yes: it keeps the foundation''s two facts and adds no part, where wrapping each figure in an element of its own would add a part and a slotProps key to split the text runs, and the shared helper is the maintainer''s to change.'
 notes:
   - stage: brief
     at: 2026-10-25T17:55:46.713Z
@@ -19,3 +28,9 @@ notes:
       2. (Props) Does the key take the app's thresholds as two required numbers in milliseconds, liveThreshold and ageingThreshold, and write them into the sentences itself, rather than as words the caller formats or with the tokens' defaults? Recommended: yes: Data states makes the thresholds the app's and forbids stating the defaults as facts; milliseconds are the tokens' unit; the pattern writes them alike in every locale.
       3. (Props) Does the key write a threshold under 2 min in whole seconds ("60 s") and one of 2 min or more in minutes to one decimal place ("2.5 min", "5 min"), in the locale's decimal mark, through owned strings "{count} s" and "{count} min"? Recommended: yes: these are the figures Data states and the ticket write, and the unit is an owned string around its figure by the contract's Words.
       4. (Owned strings) Are the English sentences "Reported by the vehicle in the last {liveThreshold}", "Last reported {liveThreshold} to {ageingThreshold} ago", "Placed from the timetable and the latest delay", "No real-time data, placed from the timetable alone" and "No report for over {ageingThreshold}, moved on by the timetable", with no full stop? Recommended: yes: each says its state's Means from Data states, live in the ticket's words.
+  - stage: build
+    at: 2026-10-25T18:04:50.682Z
+    direction: 'expectOwnedStrings (packages/perron/src/testing/owned-strings.ts, filled''s whole check) refuses a filled template whose template word starts with punctuation right after a placeholder whose value ends in a letter, such as "{ageingThreshold}, moved on" filled as "5 min, moved on": the check could treat a piece that starts with a non-letter as whole on its start side, so templates may put a comma after a placeholder.'
+  - stage: build
+    at: 2026-10-25T18:04:50.682Z
+    questions: '1. (Owned strings, noSignalDescription) The no-signal sentence "No report for over {ageingThreshold}, moved on by the timetable" fails expectOwnedStrings in every locale, since its comma follows the placeholder straight after a figure ending in a letter ("5 min,"), which packages/perron/src/testing/owned-strings.ts reads as a word glued to the figure. Reword it so no punctuation follows a placeholder, in all four locales: English "Moved on by the timetable, with no report for over {ageingThreshold}", Danish "Flyttet videre efter køreplanen, uden melding i over {ageingThreshold}", Swedish "Flyttad vidare enligt tidtabellen, utan rapport på över {ageingThreshold}", Norwegian "Flyttet videre etter rutetabellen, uten melding på over {ageingThreshold}"? Recommended: yes: it keeps the foundation''s two facts and adds no part, where wrapping each figure in an element of its own would add a part and a slotProps key to split the text runs, and the shared helper is the maintainer''s to change.'
