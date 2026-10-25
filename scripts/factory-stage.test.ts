@@ -50,9 +50,18 @@ describe('factory-stage', () => {
     expect(result).toMatchObject({ outcome: 'done' })
   })
 
-  it('passes the answers to a stage run again after its questions', async () => {
+  it('passes the answers to a stage run again after its questions, whoever gave them', async () => {
     const { calls } = await run({ stage: 'design', name: 'Chip', answers: '1. Yes' })
+    expect(calls[0].prompt).toContain("Answers to your last run's questions")
     expect(calls[0].prompt).toContain('1. Yes')
+    expect(calls[0].prompt).not.toContain('The maintainer answered')
+  })
+
+  it('scopes a later review round to what changed since the commit the round before read', async () => {
+    const { calls } = await run({ stage: 'review', name: 'Chip', round: 2, since: 'abc123' })
+    expect(calls[0].prompt).toContain('reviewed commit abc123')
+    expect(calls[0].prompt).toContain('`git diff abc123`')
+    expect((await run({ stage: 'review', name: 'Chip' })).calls[0].prompt).not.toContain('since')
   })
 
   it("puts a rerun's fix first in its prompt", async () => {
@@ -85,6 +94,8 @@ describe('factory-stage', () => {
   it('pins every agent to its worktree and Storybook port when a batch gives them', async () => {
     const { calls } = await run({ stage: 'build', name: 'Chip', dir: '/wt/chip', port: 6011 })
     expect(calls[0].prompt).toMatch(/^Work only in the worktree \/wt\/chip: .*STORYBOOK_PORT=6011/)
+    // the Perron MCP runs from the main checkout, so its tools are told which project to read
+    expect(calls[0].prompt).toContain("give the Perron MCP's tools `dir: '/wt/chip'`")
   })
 })
 
@@ -150,6 +161,18 @@ describe('withFix, for a stage the factory sent back', () => {
       expect(
         withFix({ stage: 'build', name: 'Chip', answers: '1. space.100' }, root),
       ).toMatchObject({ answers: '1. space.100', fix: 'review round 1 found 1 P2' })
+
+      // a review round after the first gets the commit the round before read, as `since`
+      write(
+        'components/chip/pipeline.yaml',
+        `component: Chip\nlayer: component\ndeferred:\n  at: x\nstages:\n  brief:\n    status: done\n  build:\n    status: done\n  review:\n    rounds: 1\n    sentBack: 1\n    reviewed: ${'c'.repeat(40)}\n`,
+      )
+      expect(withFix({ stage: 'review', name: 'Chip' }, root)).toEqual({
+        stage: 'review',
+        name: 'Chip',
+        since: 'c'.repeat(40),
+      })
+      expect(withFix({ stage: 'review', name: 'Chip', since: 'given' }, root).since).toBe('given')
     } finally {
       rmSync(root, { recursive: true })
     }

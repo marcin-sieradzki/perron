@@ -141,6 +141,16 @@ describe('shared-parts', () => {
     ])
   })
 
+  it('fails a helper two unit tests declare with one body', () => {
+    const problems = copiedStoryHelpers(root, 'scripts/checks/fixtures/shared-parts/tests')
+    expect(problems.map((p) => [p.file.split('/').at(-1), p.line])).toEqual([
+      ['Gauge.test.tsx', 4],
+      ['Meter.test.tsx', 4],
+    ])
+    expect(problems[0].message).toMatch(/^declares tagOf, a helper part in .*Meter\.test\.tsx/)
+    expect(problems[0].message).toContain('testing/markup.ts')
+  })
+
   it('passes the real tree', async () => {
     expect(await check.run(root)).toEqual([])
   })

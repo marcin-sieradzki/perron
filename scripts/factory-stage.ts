@@ -4,12 +4,13 @@
 // it names one, and the prompt, ending with the JSON the agent returns, from the workflow's schema.
 // A rerun's `fix`, when the args leave it out, comes from `next` over the pipeline in `dir` (or the
 // current directory), before or after the stage's `begin`, so a send-back's build is told what to fix,
-// with its `answers` too when the run that was sent back asked first.
+// with its `answers` too when the run that was sent back asked first. A review round after the
+// first gets `since` the same way: the commit the round before it reviewed.
 // With --prompt it prints the prompt alone, as raw text, to hand to the agent as it is; the agent
 // type is review's alone, `component-reviewer`.
 // Usage: node scripts/factory-stage.ts [--prompt] '{"stage":"build","name":"Chip","dir":"…","port":6011}'
 import { readFileSync } from 'node:fs'
-import { fixFor, loadPipeline, STAGES, type Env, type Stage } from './lib/pipeline.ts'
+import { fixFor, loadPipeline, next, STAGES, type Env, type Stage } from './lib/pipeline.ts'
 
 export interface StageCall {
   /** The agent type to start, such as `component-reviewer`; none for a skill's stage */
@@ -52,15 +53,19 @@ export async function stageCall(args: Record<string, unknown>): Promise<StageCal
 /**
  * `args` with the `fix` that `next` gives for `stage` over the repo at `root`, when `stage` is what
  * comes next and the args give none, `answers` or not: a rerun after the build's questions still
- * makes the fix its asking run was given, such as a review's findings.
+ * makes the fix its asking run was given, such as a review's findings. A review round after the
+ * first gets `since` too, the commit the round before it reviewed, when the args give none.
  */
 export function withFix(args: Record<string, unknown>, root: string): Record<string, unknown> {
   const { stage, name } = args
-  if (args.fix || typeof name !== 'string' || !/^[A-Z][A-Za-z0-9]*$/.test(name)) return args
+  if (typeof name !== 'string' || !/^[A-Z][A-Za-z0-9]*$/.test(name)) return args
   if (!STAGES.includes(stage as Stage)) return args
   const env: Env = { root, run: () => ({ ok: true, output: '' }), now: () => '' }
-  const fix = fixFor(loadPipeline(env, name), stage as Stage, env)
-  return fix ? { ...args, fix } : args
+  const p = loadPipeline(env, name)
+  const fix = args.fix ? undefined : fixFor(p, stage as Stage, env)
+  const was = stage === 'review' && !args.since ? next(p, env) : undefined
+  const since = was && 'run' in was && was.run === 'review' ? was.since : undefined
+  return { ...args, ...(fix && { fix }), ...(since && { since }) }
 }
 
 /** What the command prints for `call`: the JSON of the call, or with `prompt` its prompt alone. */
