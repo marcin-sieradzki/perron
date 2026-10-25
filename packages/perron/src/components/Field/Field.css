@@ -37,7 +37,9 @@
   overflow-wrap: anywhere;
 }
 
-/* Base UI's list of several messages, its bullets inside the field's edge. */
+/* Base UI's list of several messages, its bullets inside the field's edge. An element selector, a
+   named exception to "one class, then attributes" (field.md, CR-13): Base UI renders the <ul> with
+   no class and no slotProps key, so no class can reach it. */
 .pn-Field-error ul {
   margin: 0;
   padding-inline-start: var(--perron-space-400);

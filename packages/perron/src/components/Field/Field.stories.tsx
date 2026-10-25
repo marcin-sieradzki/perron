@@ -11,7 +11,7 @@ import { expect, userEvent, waitFor, within } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import type { Locale } from '../../locale/index.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
-import { colour, heard, mounted, rendered, typography } from '../../testing/stories.ts'
+import { colour, heard, lines, mounted, rendered, typography } from '../../testing/stories.ts'
 import { Kbd } from '../Kbd/Kbd.tsx'
 import { Field } from './Field.tsx'
 import type { FieldProps } from './Field.tsx'
@@ -63,10 +63,6 @@ const controlIn = (scope: HTMLElement, name: string | RegExp = LABEL) =>
 /** One part of the field in `scope`, by its class, or null when it isn't rendered. */
 const part = (scope: Element, name: 'label' | 'optional' | 'description' | 'error') =>
   scope.querySelector<HTMLElement>(`.pn-Field-${name}`)
-
-/** How many lines tall `element` is, in its own line height. */
-const lines = (element: Element) =>
-  element.getBoundingClientRect().height / Number.parseFloat(getComputedStyle(element).lineHeight)
 
 /** The subject story, State default: the label, the description and an empty control. */
 export const Default: Story = {
@@ -147,6 +143,7 @@ export const Validation: Story = {
   },
   play: async ({ canvasElement, step }) => {
     const control = controlIn(canvasElement)
+    const start = document.activeElement
     await step('the field is valid at first, with no error', async () => {
       await expect(part(canvasElement, 'error')).toBeNull()
       await expect(control).not.toHaveAttribute('aria-invalid')
@@ -168,7 +165,7 @@ export const Validation: Story = {
       await userEvent.tab()
       await waitFor(() => expect(part(canvasElement, 'error')).toBeNull())
       await expect(control).not.toHaveAttribute('aria-invalid')
-      await expect(control).not.toHaveFocus()
+      await expect(document.activeElement).toBe(start)
     })
   },
 }
@@ -177,8 +174,10 @@ export const Validation: Story = {
 export const HiddenLabel: Story = {
   args: { hiddenLabel: true },
   parameters: {
-    // a hidden label is the point of the story, and axe's best-practice rule for one is off for
-    // it alone: the control is still named by the label, through aria-labelledby (CR-6)
+    // axe's label-title-only fails a control with no visible label text that has a title or an
+    // aria-describedby, and here the description's aria-describedby trips it on the hidden label,
+    // the point of the story; so the rule is off for it alone: the control is still named by the
+    // label, through aria-labelledby (CR-6)
     a11y: { options: { rules: { 'label-title-only': { enabled: false } } } },
   },
   play: async ({ canvasElement }) => {
@@ -310,6 +309,7 @@ export const SeveralMessages: Story = {
   ],
   play: async ({ canvasElement, step }) => {
     const control = controlIn(canvasElement)
+    const start = document.activeElement
     /** The error's list, its items' text, and the list's own spacing (Tokens). */
     const listed = async (messages: string[]) => {
       const list = await waitFor(() => {
@@ -336,7 +336,7 @@ export const SeveralMessages: Story = {
       await userEvent.type(control, '4')
       await userEvent.tab()
       await listed(CHECK_MESSAGES)
-      await expect(control).not.toHaveFocus()
+      await expect(document.activeElement).toBe(start)
     })
   },
 }
