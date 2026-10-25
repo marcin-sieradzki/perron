@@ -3,6 +3,9 @@ component: NumberField
 layer: component
 deferred:
   at: 2026-10-25T06:34:21.822Z
+needsHuman:
+  stage: review
+  reason: '3 review rounds found a P1 or a P2; the last: review round 7 found 1 P2 (components/number-field/review.md)'
 stages:
   brief:
     status: done
@@ -16,15 +19,17 @@ stages:
     spec: 53916eaead0a957cea8e5ad74a85c8d75a6d53a1a16999d907085b4dc92e30a7
     ended: 2026-10-25T08:54:05.101Z
   review:
-    rounds: 6
-    sentBack: 2
-    reviewed: 0f01db7516a82b539a3fd7eb53b2932f52799f63
+    rounds: 7
+    sentBack: 3
+    reviewed: dee5a78a1881f80c77e00f4c054dc70faac96b41
     findings:
       p1: 0
-      p2: 3
+      p2: 1
       p3: 11
-    status: running
+    status: failed
     started: 2026-10-25T08:54:16.894Z
+    ended: 2026-10-25T08:58:11.806Z
+    failing: review round 7 found 1 P2 (components/number-field/review.md)
   docs:
     failures: 1
 notes:
