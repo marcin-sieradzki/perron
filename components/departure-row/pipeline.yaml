@@ -3,4 +3,38 @@ component: DepartureRow
 layer: pattern
 deferred:
   at: 2026-10-25T12:33:29.029Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-25T12:33:33.247Z
+    ended: 2026-10-25T12:41:14.367Z
+    pending: 10
+notes:
+  - stage: brief
+    at: 2026-10-25T12:41:14.367Z
+    direction: DepartureRow draws the dot and its state's word itself, which is the pairing VehicleDotLabel (still designing, no spec yet) will draw. Once VehicleDotLabel merges, the row's status part could compose it, and VehicleDotLabel would join DepartureRow's dependsOn.
+  - stage: brief
+    at: 2026-10-25T12:41:14.367Z
+    direction: "Destinations won't line up down a list of rows: each row is its own grid and the badge column sizes to its label ('5C', 'M2', '150S'). Aligning them needs a list-level subgrid or a badge-column measure token, which the design run should decide."
+  - stage: brief
+    at: 2026-10-25T12:41:14.367Z
+    direction: The row is plain text and can't be pressed. A pressable row (tapping a departure to open its vehicle) would need its root to compose a component that brings render, as DisruptionCard does with Surface; a decision for the design run.
+  - stage: brief
+    at: 2026-10-25T12:41:14.367Z
+    direction: Content design says '~ before estimated times' but not which data states count as estimated; this spec puts '~' on estimated, timetable-only and no-signal. A line in docs/content-design.md would settle it for every screen.
+  - stage: brief
+    at: 2026-10-25T12:41:14.367Z
+    direction: "The patterns take a composed component's labels two ways: StopTimeline and DepartureRow take Delay's labels as top-level props, DisruptionCard takes SeverityLabel's through slotProps. An api-consistency pass should pick one; ROADMAP 7.1 (pattern contract) is still unchecked though the contract has a Patterns section."
+  - stage: brief
+    at: 2026-10-25T12:41:14.367Z
+    questions: |-
+      1. (Anatomy) Is the row a grid of three columns and two lines: the LineBadge at the start, centred on both lines; the destination over the status (the VehicleDot and its state's word) in the middle; the countdown over the schedule (timetabled time and Delay) at the end; no platform, tag, action or "Show on map"? Recommended: yes.
+      2. (Anatomy) Does the row take the vehicle's data state as `variant`, VehicleDot's five values, default 'live', so the drawing has five variants? Recommended: yes.
+      3. (Props) Does the row take the departure as flat props, `line`, `lineName`, `destination`, `countdown` (seconds), `time` ('HH:MM') and `delay` (minutes, number | null), rather than one departure object or a Date? Recommended: yes.
+      4. (Props) Does the row take every label its words need as its own props (five state labels, nowLabel, unknownLabel and Delay's five), with slotProps.dot and slotProps.delay leaving them out? Recommended: yes.
+      5. (Props) Does DepartureRow take `slotProps` keyed by its eight inner parts (badge, destination, status, dot, countdown, schedule, time, delay), with `size` left out of the badge's? Recommended: yes.
+      6. (Tokens) Is the row spaced with space.300 between columns, space.050 between lines, space.200 above and below, space.100 between the dot and its word and between the time and the delay, with no divider, fill or radius? Recommended: yes.
+      7. (Tokens) Is `time` set in typography.data-sm, with the Delay brought to data-sm by a rule on pn-DepartureRow-delay? Recommended: yes.
+      8. (Owned strings) Does the row add one owned string, `now` 'Now' (da 'Nu', sv 'Nu', nb 'Nå'), outside content design's table? Recommended: yes.
+      9. (CR-3) Are the countdown's minutes Math.round(countdown / 60), with no upper bound past which the row shows a clock time? Recommended: yes.
+      10. (CR-4) Does a '~' come before the countdown's figure in an aria-hidden span when `variant` is estimated, timetable-only or no-signal, and never before 'Now', an unknown countdown, or a live or ageing one? Recommended: yes.
