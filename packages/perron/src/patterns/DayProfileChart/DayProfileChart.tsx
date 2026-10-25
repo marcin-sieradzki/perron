@@ -220,6 +220,8 @@ export function DayProfileChart({
 
   // CR-6 and CR-10: one highlighted point at most, moved to the last when new points end sooner
   const [highlight, setHighlight] = useState<number | null>(null)
+  // The move is stored, so points that grow back later keep the highlight where it moved to.
+  if (highlight !== null && highlight > last) setHighlight(last < 0 ? null : last)
   const active = highlight === null || last < 0 ? null : Math.min(highlight, last)
   const highlighted = active === null ? undefined : drawn[active]
 
