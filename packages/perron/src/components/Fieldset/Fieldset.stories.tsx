@@ -142,8 +142,13 @@ export const Disabled: Story = {
     await expect(group).toHaveAttribute('data-disabled')
     const boxes = within(group).getAllByRole('checkbox')
     for (const box of boxes) await expect(box).toBeDisabled()
+    // Tab from before the group passes over them all, and Shift+Tab returns focus where it started
+    const before = document.activeElement
     await userEvent.tab()
+    await expect(group.contains(document.activeElement)).toBe(false)
     for (const box of boxes) await expect(box).not.toHaveFocus()
+    await userEvent.tab({ shift: true })
+    await expect(document.activeElement).toBe(before)
     const legend = group.querySelector('.pn-Fieldset-legend')!
     await expect(legend).toHaveAttribute('data-disabled')
     await expect(getComputedStyle(legend).color).toBe(colour('--perron-color-text-tertiary'))

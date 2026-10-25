@@ -34,7 +34,7 @@ export interface FieldsetProps extends Omit<
   disabled?: boolean
   /** The group's controls, in reading order, below the legend: checkboxes, radios, or fields. */
   children?: ReactNode
-  /** The root element: the `<fieldset>`, or the element `render` gives. */
+  /** Reaches the root: the `<fieldset>`, or the element `render` gives. */
   ref?: Ref<HTMLElement>
   /** Props for each inner part, merged with the part's own, which win. */
   slotProps?: {
