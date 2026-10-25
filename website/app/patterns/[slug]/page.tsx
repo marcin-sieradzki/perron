@@ -1,8 +1,8 @@
-// One pattern's spec page. A placeholder until ticket T5 builds it on the spec-page template.
+// One pattern's spec page, on the components' template: one route per registry pattern with a spec
+// page.
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { Markdown } from '@/components/site/Markdown.tsx'
-import { PageHeader } from '@/components/site/PageHeader.tsx'
+import { SpecPage } from '@/components/spec/SpecPage.tsx'
 import { entryBySlug, routedEntries } from '@/lib/registry.ts'
 
 type Props = { params: Promise<{ slug: string }> }
@@ -15,19 +15,11 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const entry = entryBySlug('pattern', (await params).slug)
-  return entry ? { title: entry.name } : {}
+  return entry ? { title: entry.name, description: entry.description || undefined } : {}
 }
 
 export default async function PatternPage({ params }: Props) {
   const entry = entryBySlug('pattern', (await params).slug)
   if (!entry?.hasSpec) notFound()
-  return (
-    <div className="page">
-      <PageHeader
-        overline={entry.category}
-        title={entry.name}
-        lead={<Markdown source={entry.description} path={entry.specPath} inline />}
-      />
-    </div>
-  )
+  return <SpecPage entry={entry} />
 }
