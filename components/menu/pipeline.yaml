@@ -9,8 +9,12 @@ stages:
     started: 2026-10-25T05:51:06.415Z
     ended: 2026-10-25T05:54:23.935Z
   build:
-    runs: 4
-    failing: "docs failed: The docs page has no id row for Menu, MenuItem, MenuLinkItem, MenuCheckboxItem, MenuRadioItem or MenuSubmenu, while the spec (docs/components/menu.md Props tables) gives id as an inherited member: Base UI marks id @ignore on Menu.Popup, Menu.Item, Menu.LinkItem, Menu.CheckboxItem, Menu.RadioItem and Menu.SubmenuTrigger, scripts/lib/docgen.ts's propDoc copies that tag into the description, and Storybook's JSDoc parser drops any prop with @ignore, so storybook/blocks/PropsTable.tsx shows no row (npm run gates -- docs passes, since it reads componentDocs). Shared tooling is out of scope; fix it in Menu's own files: each of those six props types declares id itself (id?: string, with a JSDoc of its own and no @ignore), and the spec's id rows say Menu declares it."
+    runs: 5
+    status: done
+    started: 2026-10-25T07:04:00.718Z
+    begun: a46d46749f144393680f87626ecf156cb12896e08a6ae08ad4b96b6cb1a8e145
+    spec: 18fbded6032f9a3a3b4495ee0fdf23cfc38c72db2ff7df29e401623d26d5c4b1
+    ended: 2026-10-25T07:10:02.511Z
   review:
     rounds: 4
     sentBack: 0
@@ -19,11 +23,7 @@ stages:
       p2: 0
       p3: 7
   docs:
-    status: failed
-    started: 2026-10-25T06:59:12.663Z
     failures: 1
-    ended: 2026-10-25T07:03:51.013Z
-    failing: "The docs page has no id row for Menu, MenuItem, MenuLinkItem, MenuCheckboxItem, MenuRadioItem or MenuSubmenu, while the spec (docs/components/menu.md Props tables) gives id as an inherited member: Base UI marks id @ignore on Menu.Popup, Menu.Item, Menu.LinkItem, Menu.CheckboxItem, Menu.RadioItem and Menu.SubmenuTrigger, scripts/lib/docgen.ts's propDoc copies that tag into the description, and Storybook's JSDoc parser drops any prop with @ignore, so storybook/blocks/PropsTable.tsx shows no row (npm run gates -- docs passes, since it reads componentDocs). Shared tooling is out of scope; fix it in Menu's own files: each of those six props types declares id itself (id?: string, with a JSDoc of its own and no @ignore), and the spec's id rows say Menu declares it."
 notes:
   - stage: brief
     at: 2026-10-25T05:50:01.967Z
@@ -71,3 +71,6 @@ notes:
   - stage: docs
     at: 2026-10-25T07:03:51.014Z
     direction: MenuSubmenu's inherited onClick row has an empty description on the page because Base UI's SubmenuTrigger declares onClick with no JSDoc; the spec's row says 'The click handler of the row.', which no source supplies.
+  - stage: build
+    at: 2026-10-25T07:10:02.512Z
+    direction: Base UI marks id @ignore on most of its parts, and Storybook's JSDoc parser then drops the row, so each component that should show id declares it again (Menu does on six props types); scripts/lib/docgen.ts's propDoc could strip Base UI's @ignore from id for every component.

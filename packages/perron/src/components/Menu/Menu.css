@@ -61,11 +61,11 @@
   color: var(--perron-color-text-primary);
   text-decoration: none;
   overflow-wrap: anywhere;
-  cursor: default;
+  cursor: pointer;
 }
 
-/* hover inside (hover: hover), the highlight outside it, so the keys and a touch show it; neither
-   on a disabled row, which stays focusable and takes both (CR-7) */
+/* hover inside (hover: hover), the highlight outside it, so the keys and a touch show it, and the
+   press after both, a step past them; none on a disabled row, which stays focusable (CR-7) */
 
 @media (hover: hover) {
   :is(
@@ -94,6 +94,18 @@
   background-color: var(--perron-color-surface-hover);
 }
 
+/* pressed: the quiet layer a step past hover, after the hover and highlight rules it ties, outside
+   the query, so a touch press shows too (Pointer feedback) */
+:is(
+    .pn-MenuItem,
+    .pn-MenuLinkItem,
+    .pn-MenuCheckboxItem,
+    .pn-MenuRadioItem,
+    .pn-MenuSubmenu
+  ):active:not([data-disabled], [data-checked]) {
+  background-color: var(--perron-color-surface-selected);
+}
+
 /* selected: the Rows family's fill, kept while disabled; the hover layer laid over it as an image,
    as the Fields family lays hover over a fill */
 
@@ -117,7 +129,15 @@
   );
 }
 
-/* disabled: a colour, never an opacity */
+/* pressed while selected: the pressed layer over the fill, after the hover layer it ties */
+:is(.pn-MenuCheckboxItem, .pn-MenuRadioItem)[data-checked]:active:not([data-disabled]) {
+  background-image: linear-gradient(
+    var(--perron-color-surface-selected),
+    var(--perron-color-surface-selected)
+  );
+}
+
+/* disabled: a colour, never an opacity, and the default cursor */
 :is(
   .pn-MenuItem,
   .pn-MenuLinkItem,
@@ -126,6 +146,7 @@
   .pn-MenuSubmenu
 )[data-disabled] {
   color: var(--perron-color-text-tertiary);
+  cursor: default;
 }
 
 .pn-MenuItem-startIcon,

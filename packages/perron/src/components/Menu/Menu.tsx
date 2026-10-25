@@ -69,7 +69,7 @@ function RowContent({
   )
 }
 
-export interface MenuProps extends Inherited<BaseMenu.Popup.Props> {
+export interface MenuProps extends Inherited<BaseMenu.Popup.Props, 'id'> {
   /**
    * The button that opens the menu, such as a Button or an IconButton, rendered in
    * place of the menu. Required: it opens the menu, names it, and gets focus back when the menu
@@ -112,6 +112,11 @@ export interface MenuProps extends Inherited<BaseMenu.Popup.Props> {
    * @default false
    */
   disabled?: boolean
+  /**
+   * The popup's `id`, which the trigger's `aria-controls` reads. Base UI sets one itself when left
+   * out.
+   */
+  id?: string
   /** Reaches the root, the popup. Merged after `pn-Menu`. */
   className?: string
   /** Reaches the root, the popup. */
@@ -210,7 +215,7 @@ export function Menu({
   )
 }
 
-export interface MenuItemProps extends Inherited<BaseMenu.Item.Props, 'disabled'> {
+export interface MenuItemProps extends Inherited<BaseMenu.Item.Props, 'disabled' | 'id'> {
   /**
    * An icon before the label, in reading order, such as `locate` for "Centre the map". Hidden from
    * screen readers: the label names the item.
@@ -224,6 +229,8 @@ export interface MenuItemProps extends Inherited<BaseMenu.Item.Props, 'disabled'
   disabled?: boolean
   /** The label: the words that name the action, in sentence case, such as "Centre the map". */
   children?: ReactNode
+  /** The row's `id`. Base UI sets one itself when left out. */
+  id?: string
   /** Reaches the root, the row. Merged after `pn-MenuItem`. */
   className?: string
   /** Reaches the root, the row. */
@@ -255,7 +262,7 @@ export function MenuItem({
   )
 }
 
-export interface MenuLinkItemProps extends Inherited<BaseMenu.LinkItem.Props> {
+export interface MenuLinkItemProps extends Inherited<BaseMenu.LinkItem.Props, 'id'> {
   /**
    * An icon before the label, in reading order. Hidden from screen readers: the label names the
    * link.
@@ -263,6 +270,8 @@ export interface MenuLinkItemProps extends Inherited<BaseMenu.LinkItem.Props> {
   startIcon?: ReactNode
   /** The label: the words that say where the link goes, in sentence case, such as "Data sources". */
   children?: ReactNode
+  /** The `<a>`'s `id`. Base UI sets one itself when left out. */
+  id?: string
   /**
    * Reaches the root, the `<a>`. Merged after `pn-MenuLinkItem`. `href`, `target` and the other
    * attributes of an `<a>` reach it through the rest props.
@@ -296,7 +305,7 @@ const renderCheckboxItemIndicator: BaseMenu.CheckboxItemIndicator.Props['render'
 
 export interface MenuCheckboxItemProps extends Inherited<
   BaseMenu.CheckboxItem.Props,
-  'checked' | 'defaultChecked' | 'onCheckedChange' | 'onChange' | 'disabled'
+  'checked' | 'defaultChecked' | 'onCheckedChange' | 'onChange' | 'disabled' | 'id'
 > {
   /**
    * Whether the setting is on, when the caller controls it. Announced as checked or not checked.
@@ -327,6 +336,8 @@ export interface MenuCheckboxItemProps extends Inherited<
    * names".
    */
   children?: ReactNode
+  /** The row's `id`. Base UI sets one itself when left out. */
+  id?: string
   /** Reaches the root, the row. Merged after `pn-MenuCheckboxItem`. */
   className?: string
   /** Reaches the root, the row. */
@@ -467,7 +478,7 @@ export function MenuRadioGroup({
 
 export interface MenuRadioItemProps extends Inherited<
   BaseMenu.RadioItem.Props,
-  'value' | 'disabled'
+  'value' | 'disabled' | 'id'
 > {
   /** Required: the value the radio group takes when this item is chosen. */
   value: string
@@ -479,6 +490,8 @@ export interface MenuRadioItemProps extends Inherited<
   disabled?: boolean
   /** The label: the option's name, such as "Dark". */
   children?: ReactNode
+  /** The row's `id`. Base UI sets one itself when left out. */
+  id?: string
   /** Reaches the root, the row. Merged after `pn-MenuRadioItem`. */
   className?: string
   /** Reaches the root, the row. */
@@ -584,7 +597,7 @@ export function MenuSeparator({ className, ref, ...rest }: MenuSeparatorProps) {
 
 export interface MenuSubmenuProps extends Inherited<
   BaseMenu.SubmenuTrigger.Props,
-  'label' | 'disabled'
+  'label' | 'disabled' | 'id'
 > {
   /**
    * Required: the words of the row that opens the submenu, in sentence case, such as "Language".
@@ -604,6 +617,8 @@ export interface MenuSubmenuProps extends Inherited<
   disabled?: boolean
   /** The submenu's items, in reading order, the same components a Menu takes. */
   children?: ReactNode
+  /** The row's `id`. Base UI sets one itself when left out. */
+  id?: string
   /** Reaches the root, the row. Merged after `pn-MenuSubmenu`. */
   className?: string
   /** Reaches the root, the row. */

@@ -10,7 +10,19 @@ import minus from '../../../icons/minus.svg?raw'
 import plus from '../../../icons/plus.svg?raw'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
-import { closed, colour, frames, icon, lines, mounted, onHover } from '../../testing/stories.ts'
+import {
+  closed,
+  colour,
+  frames,
+  icon,
+  lines,
+  mounted,
+  onHover,
+  pressedAfterHover,
+  resolve,
+  stateFill,
+  stateRules,
+} from '../../testing/stories.ts'
 import { Button } from '../Button/Button.tsx'
 import {
   Menu,
@@ -215,6 +227,16 @@ export const ItemHighlighted: Story = {
       )
       await userEvent.unhover(zoomIn)
     })
+    await step('pressed, the row lays the pressed layer past the hover one', async () => {
+      const zoomIn = row(await menu(), ZOOM_IN)
+      const fill = 'var(--perron-color-surface-selected)'
+      await expect(stateFill(zoomIn, ':active')).toBe(fill)
+      await expect(pressedAfterHover(zoomIn)).toBe(true)
+      await expect(resolve('backgroundColor', fill)).not.toBe(
+        resolve('backgroundColor', stateFill(zoomIn)),
+      )
+      await expect(getComputedStyle(zoomIn).cursor).toBe('pointer')
+    })
     await step('opened from the keys, the first row has the focus ring', async () => {
       const popup = await reopenFromKeys(trigger)
       const centre = row(popup, CENTRE)
@@ -252,11 +274,16 @@ export const ItemDisabled: Story = {
       await expect(onZoomIn).not.toHaveBeenCalled()
       await expect(screen.getByRole('menu', { name: TRIGGER })).toBeInTheDocument()
     })
-    await step('hovered or highlighted, it lays no fill', async () => {
-      const zoomIn = row(await menu(), ZOOM_IN)
-      await expect(onHover(zoomIn, 'background-color')).toBe('')
-      await expect(getComputedStyle(zoomIn).backgroundColor).toBe('rgba(0, 0, 0, 0)')
-    })
+    await step(
+      'hovered, highlighted or pressed, it lays no fill, under the default cursor',
+      async () => {
+        const zoomIn = row(await menu(), ZOOM_IN)
+        await expect(onHover(zoomIn, 'background-color')).toBe('')
+        await expect(stateFill(zoomIn, ':active')).toBe('')
+        await expect(getComputedStyle(zoomIn).backgroundColor).toBe('rgba(0, 0, 0, 0)')
+        await expect(getComputedStyle(zoomIn).cursor).toBe('default')
+      },
+    )
     await step('Escape closes it, and focus returns to the trigger', () => closeAtRest(trigger))
   },
 }
@@ -300,6 +327,14 @@ export const ItemSelected: Story = {
         await expect(other).not.toHaveAttribute('data-checked')
         await expect(tick(other)).toBeNull()
       }
+    })
+    await step('pressed, "Light" lays the pressed layer over its fill', async () => {
+      const light = row(await menu(), LIGHT, 'menuitemradio')
+      const layers = stateRules(light, ':active').map((rule) =>
+        rule.getPropertyValue('background-image'),
+      )
+      await expect(layers.at(-1)).toContain('var(--perron-color-surface-selected)')
+      await expect(pressedAfterHover(light)).toBe(true)
     })
     await step('Escape closes it, and focus returns to the trigger', () => closeAtRest(trigger))
   },
