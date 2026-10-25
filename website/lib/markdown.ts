@@ -170,12 +170,15 @@ export function decodeEntities(
   text: string,
   { named = false, as = (c: string) => c }: { named?: boolean; as?: (c: string) => string } = {},
 ) {
-  // one pass, so `&#38;amp;` reads `&amp;`, not `&`
+  // one pass, so `&#38;amp;` reads `&amp;`, not `&`; named references are case-sensitive
   return text.replace(
-    /&#x([0-9a-f]+);|&#(\d+);|&(amp|quot|apos|lt|gt);/gi,
+    /&#[xX]([0-9a-fA-F]+);|&#(\d+);|&(amp|quot|apos|lt|gt);/g,
     (ref, hex?: string, dec?: string, name?: string) => {
-      if (name) return named ? NAMED[name.toLowerCase()] : ref
-      return as(String.fromCodePoint(hex ? Number.parseInt(hex, 16) : Number(dec)))
+      if (name) return named ? NAMED[name] : ref
+      const code = hex ? Number.parseInt(hex, 16) : Number(dec)
+      // past Unicode, or a lone surrogate: no character, so the reference stays as written
+      if (code > 0x10ffff || (code >= 0xd800 && code <= 0xdfff)) return ref
+      return as(String.fromCodePoint(code))
     },
   )
 }

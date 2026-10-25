@@ -21,7 +21,7 @@ export interface Heading extends Anchor {
 }
 
 /** Words as an id, as Markdown's headings take them: `Do and don't` as `do-and-dont`. */
-export const slug = (words: string) => slugify(words)
+export { slugify as slug }
 
 /** A leading `#` title line, which Markdown drops, since the page's header shows the title. */
 const LEADING_TITLE = /^\s*# [^\n]*\n?/
@@ -115,7 +115,7 @@ export function foundationsAnchors(groups: readonly { label?: string }[]): Ancho
 
 /** A gallery category's heading id: `fd-icons-public-transport` for Public transport. */
 export const galleryId = (kind: 'icons' | 'logos', category: string) =>
-  `fd-${kind}-${slug(category)}`
+  `fd-${kind}-${slugify(category)}`
 
 /**
  * The headings a foundation page's body draws, from its segments as the body renders them: each
@@ -157,8 +157,8 @@ function percentDecoded(fragment: string) {
 /**
  * The links in `hrefs` that land nowhere: a route with no page, or an `#anchor` its page has no
  * id for. A link is read as a browser reads it: parsed as a URL, which escapes what a fragment
- * cannot hold, then matched to an id as written or percent-decoded. `idsOf` gives a route's ids,
- * or undefined when the route has no page.
+ * cannot hold, then matched to an id as written or percent-decoded. A bare `#`, an empty id, lands
+ * nowhere. `idsOf` gives a route's ids, or undefined when the route has no page.
  */
 export function deadAnchors(
   hrefs: readonly string[],
@@ -168,7 +168,8 @@ export function deadAnchors(
     const url = new URL(href, 'https://site.invalid')
     const ids = idsOf(url.pathname)
     if (!ids) return true
+    if (!href.includes('#')) return false
     const fragment = url.hash.slice(1)
-    return Boolean(fragment) && !ids.has(fragment) && !ids.has(percentDecoded(fragment))
+    return !fragment || (!ids.has(fragment) && !ids.has(percentDecoded(fragment)))
   })
 }

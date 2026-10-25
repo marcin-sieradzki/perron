@@ -55,6 +55,16 @@ describe('decodeEntities', () => {
     expect(decodeEntities('&#38;amp;', { named: true })).toBe('&amp;')
     expect(decodeEntities('a&#xA;b', { as: (c) => (c === '\n' ? ' ' : c) })).toBe('a b')
   })
+
+  it('keeps a reference to no character as written', () => {
+    expect(decodeEntities('&#x110000;&#1114112;&#xD800;&#x1F68C;')).toBe(
+      '&#x110000;&#1114112;&#xD800;\u{1F68C}',
+    )
+  })
+
+  it('reads named references case-sensitively', () => {
+    expect(decodeEntities('&APOS;&Amp;&apos;', { named: true })).toBe("&APOS;&Amp;'")
+  })
 })
 
 const page = `# Motion

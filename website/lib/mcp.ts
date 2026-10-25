@@ -224,8 +224,11 @@ export function answerTokens(text: string): AnswerToken[] | undefined {
  */
 export function answerMarkdown(text: string) {
   const decoded = decodeEntities(text, { as: (c) => (/[\n\r]/.test(c) ? ' ' : c) })
+  // a link's words may wrap onto the next line, but hold no bracket and no blank line
   return outsideFences(decoded, (prose) =>
-    prose.replace(/^#{1,6} /gm, '#### ').replace(/\[([^\]]+)\]\((?!https?:)[^)]*\)/g, '$1'),
+    prose
+      .replace(/^#{1,6} /gm, '#### ')
+      .replace(/\[((?:[^[\]\n]|\n(?![ \t]*\n))+)\]\((?!https?:)[^)\n]*\)/g, '$1'),
   )
 }
 

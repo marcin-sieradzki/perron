@@ -233,6 +233,13 @@ describe('answerMarkdown', () => {
   it('reduces a relative link whose words wrap onto the next line', () => {
     expect(answerMarkdown('See [the\ndocs](./x.md).')).toBe('See the\ndocs.')
   })
+
+  it('never reads a link across a bracket or a blank line', () => {
+    expect(answerMarkdown('Range [0, 1) is half-open.\n\nSee [docs](./x.md).')).toBe(
+      'Range [0, 1) is half-open.\n\nSee docs.',
+    )
+    expect(answerMarkdown('[a\n\nb](./x.md)')).toBe('[a\n\nb](./x.md)')
+  })
 })
 
 describe('readSources', () => {

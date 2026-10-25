@@ -129,4 +129,8 @@ describe('idsIn and deadAnchors', () => {
       ),
     ).toEqual(['/agents#listtokens', '/releases', '/agents#100%', '/foundations#a%20c'])
   })
+
+  it('counts a bare #, an empty id, as landing nowhere', () => {
+    expect(deadAnchors(['/agents#', '/agents'], idsOf)).toEqual(['/agents#'])
+  })
 })
