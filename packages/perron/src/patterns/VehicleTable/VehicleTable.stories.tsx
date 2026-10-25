@@ -6,6 +6,8 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, isInaccessible, userEvent, waitFor, within } from 'storybook/test'
 import { Link } from '../../components/Link/Link.tsx'
+import { VEHICLE_STATES } from '../../internal/vehicle-states.ts'
+import type { VehicleState } from '../../internal/vehicle-states.ts'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
 import {
@@ -67,11 +69,8 @@ const VEHICLES: VehicleTableVehicle[] = [
   },
 ]
 
-/** The five data states, in the order Data states names them. */
-const VARIANTS = ['live', 'ageing', 'estimated', 'timetable-only', 'no-signal'] as const
-
 /** The states whose delay is always unknown, whatever `delay` holds (CR-4). */
-const HIDES_DELAY: VehicleTableVehicle['variant'][] = ['timetable-only', 'no-signal']
+const HIDES_DELAY: VehicleState[] = ['timetable-only', 'no-signal']
 
 /** The column headers, in order. */
 const HEADERS = ['Line', 'Destination', 'Position', 'Delay']
@@ -248,7 +247,7 @@ export const Default: Story = {
       'in every variant, a delay given, null or left out: a figure only where the state allows it (CR-4)',
       async () => {
         const given: Pick<VehicleTableVehicle, 'delay'>[] = [{ delay: 3 }, { delay: null }, {}]
-        const vehicles = VARIANTS.flatMap((variant) =>
+        const vehicles = VEHICLE_STATES.flatMap((variant) =>
           given.map((delay, index): VehicleTableVehicle => ({
             id: `${variant}-${index}`,
             line: 'bus',

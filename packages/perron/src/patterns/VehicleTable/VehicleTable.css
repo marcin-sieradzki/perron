@@ -69,7 +69,7 @@
    state's word on one line, and where it hasn't, shares the width above the least widths by how
    much more each column wants: among short destinations the position column alone gives way, so
    below a table about 310 px wide a state's word wraps, and beside a long destination this column
-   takes most of the spare width, so a state's word wraps even at the panel's width (CR-8) */
+   takes most of the spare width, so a state's word can wrap even at the panel's width (CR-8) */
 .pn-VehicleTable-destinationCell {
   font: var(--perron-typography-label);
   letter-spacing: var(--perron-typography-label-tracking);

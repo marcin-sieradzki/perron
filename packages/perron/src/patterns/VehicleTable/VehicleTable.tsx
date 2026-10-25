@@ -7,9 +7,9 @@ import { Delay } from '../../components/Delay/Delay.tsx'
 import { LineBadge } from '../../components/LineBadge/LineBadge.tsx'
 import type { LineBadgeProps } from '../../components/LineBadge/LineBadge.tsx'
 import { VehicleDotLabel } from '../../components/VehicleDotLabel/VehicleDotLabel.tsx'
-import type { VehicleDotLabelProps } from '../../components/VehicleDotLabel/VehicleDotLabel.tsx'
 import { useOwnedStrings } from '../../PerronProvider.tsx'
 import { classes } from '../../internal/nodes.ts'
+import type { VehicleState } from '../../internal/vehicle-states.ts'
 import './VehicleTable.css'
 
 /** One vehicle, one row of VehicleTable's `vehicles`. */
@@ -33,10 +33,10 @@ export interface VehicleTableVehicle {
   destination: ReactNode
   /**
    * How fresh the vehicle's position is, as Data states names the five states, typed as
-   * VehicleDotLabel's `variant`: the dot's shape and the word beside it. Required. Set on the row
-   * as `data-variant`.
+   * VehicleDotLabel's `variant` is: the dot's shape and the word beside it. Required. Set on the
+   * row as `data-variant`.
    */
-  variant: NonNullable<VehicleDotLabelProps['variant']>
+  variant: VehicleState
   /**
    * How late the vehicle runs, in minutes, as Delay's `minutes` takes it: positive late, negative
    * early, `0` on time, `null` unknown. Left out, the delay is unknown; a `timetable-only` or
