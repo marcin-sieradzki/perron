@@ -58,7 +58,7 @@ export async function mounted<T>(
   }
 }
 
-/** Resolves once no dialog is open: no Dialog, Sheet or DetailPanel popup is in the document. */
+/** Resolves once no dialog is open. */
 export const closed = () => waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
 
 /** The element with `data-testid` `id`, once it has rendered. */
