@@ -3,6 +3,9 @@ component: Select
 layer: component
 deferred:
   at: 2026-10-25T05:33:08.882Z
+needsHuman:
+  stage: review
+  reason: '3 review rounds found a P1 or a P2; the last: review round 3 found 1 P2 (components/select/review.md)'
 stages:
   brief:
     status: done
@@ -16,12 +19,16 @@ stages:
     spec: 14f3a38b5b98da7f16b540a78143abe7dd3463007ae2c5a13ece9e8eb47a59a2
     ended: 2026-10-25T06:40:07.023Z
   review:
-    rounds: 2
-    sentBack: 2
+    rounds: 3
+    sentBack: 3
     findings:
       p1: 0
-      p2: 3
-      p3: 6
+      p2: 1
+      p3: 4
+    status: failed
+    started: 2026-10-25T06:40:20.132Z
+    ended: 2026-10-25T06:45:21.419Z
+    failing: review round 3 found 1 P2 (components/select/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T05:44:48.986Z
