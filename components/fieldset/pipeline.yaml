@@ -8,6 +8,12 @@ stages:
     status: done
     started: 2026-10-25T04:44:58.178Z
     ended: 2026-10-25T04:46:07.941Z
+  build:
+    status: done
+    started: 2026-10-25T04:46:11.899Z
+    runs: 1
+    spec: 7eb53ac081bc1bf68d9372c8444864826d11c58a6ad4029b2c4baf7b84009b8d
+    ended: 2026-10-25T04:53:22.756Z
 notes:
   - stage: brief
     at: 2026-10-25T04:44:49.699Z
@@ -27,3 +33,21 @@ notes:
   - stage: brief
     at: 2026-10-25T04:44:49.699Z
     questions: "1. (Props) Does Fieldset take hiddenLegend, a boolean, default false, that renders the legend through the VisuallyHidden shared part? Recommended: yes, as SearchField's hiddenLabel does. 2. (Tokens) Does the legend use typography.label in color.text.primary, as SearchField's label does, rather than typography.label-sm? Recommended: yes. 3. (Tokens) Does the root put one gap, space.200, between the legend and each control, with no wrapper around the controls? Recommended: yes."
+  - stage: build
+    at: 2026-10-25T04:53:22.757Z
+    direction: In forced colours, a disabled legend shows in CanvasText (it stays color.text.tertiary, not GrayText) while the native controls in it are greyed out, so it looks live. Button already maps [data-disabled] to GrayText, but SearchField's label and Fieldset's legend do not. This could be a contract-wide rule; Fieldset follows the spec and adds none.
+  - stage: build
+    at: 2026-10-25T04:53:22.757Z
+    direction: The stories' controls are native checkboxes in labels standing in for Checkbox. Their 13 px boxes rely on the label and the 8 px gap for target size. They should move to Checkbox when it ships.
+  - stage: build
+    at: 2026-10-25T04:53:22.757Z
+    direction: CheckboxGroup and RadioGroup will set their own spacing with their own class on the element Fieldset renders. That class has the same specificity as .pn-Fieldset, so their gap wins only by CSS import order. The contract has no rule yet for a component that restyles another component's root.
+  - stage: build
+    at: 2026-10-25T04:53:22.757Z
+    direction: The description of the typography.label-sm token names 'field and stat labels', but SearchField's label and Fieldset's legend both use typography.label. The token's description and the field labels should be brought into line, and Field should follow the same choice.
+  - stage: build
+    at: 2026-10-25T04:53:22.757Z
+    direction: Fieldset takes no description or error. A group's hint and error come from a Field.Root around it, so the CheckboxGroup and RadioGroup specs should compose Field for them.
+  - stage: build
+    at: 2026-10-25T04:53:22.757Z
+    direction: FieldsetProps.ref is Ref<HTMLElement> rather than Ref<HTMLFieldSetElement>, because with render the root may be the group's div. That is wider than its siblings' concrete element types, and it matches Base UI's own RefAttributes<HTMLElement>.

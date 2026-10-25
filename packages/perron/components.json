@@ -440,7 +440,7 @@
     "name": "Fieldset",
     "layer": "component",
     "category": "Inputs",
-    "status": "designing",
+    "status": "building",
     "baseUiParts": ["Fieldset.Root", "Fieldset.Legend"],
     "penpotPath": "Components/Fieldset",
     "dependsOn": []
