@@ -3,4 +3,12 @@ component: Meter
 layer: component
 deferred:
   at: 2026-10-25T01:45:39.994Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-25T01:45:44.540Z
+    ended: 2026-10-25T01:53:19.896Z
+notes:
+  - stage: brief
+    at: 2026-10-25T01:53:19.897Z
+    questions: "1. Is label required? Recommended: yes, a required ReactNode. 2. Can value be unknown? Recommended: yes, number | null; null or non-finite shows — and 'Unknown'. 3. Does Meter take a color prop with the mark intents, no thresholds? Recommended: yes, neutral|success|warning|danger|info, default neutral. 4. Does Meter format in the PerronProvider's locale by default? Recommended: yes, via an internal useLocale() hook beside useOwnedStrings. 5. Track height token? Recommended: new base token size.meter-track, 6px. 6. How does expectOwnedStrings treat Base UI's visually hidden 'x' span? Recommended: skip text of role=presentation elements with Base UI's visuallyHidden clip-path:inset(50%) style, with its own test."
