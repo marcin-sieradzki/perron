@@ -74,9 +74,10 @@
 }
 
 /* CR-12: the time's type, in a selector that outranks .pn-Delay's whichever stylesheet loads
-   last; Delay keeps its colour, its tabular figures and its nowrap, set again here since the font
-   shorthand resets font-variant-numeric. */
-.pn-Delay.pn-DepartureRow-delay {
+   last, the delay read inside its schedule, as the contract's selectors allow; Delay keeps its
+   colour, its tabular figures and its nowrap, set again here since the font shorthand resets
+   font-variant-numeric. */
+.pn-DepartureRow-schedule .pn-DepartureRow-delay {
   font: var(--perron-typography-data-sm);
   letter-spacing: var(--perron-typography-data-sm-tracking);
   font-variant-numeric: tabular-nums;

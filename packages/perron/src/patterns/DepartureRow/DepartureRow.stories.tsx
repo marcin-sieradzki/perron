@@ -48,6 +48,12 @@ type Story = StoryObj<typeof meta>
 /** The parts of a row, in reading order. */
 const PARTS = ['badge', 'destination', 'status', 'countdown', 'time', 'delay'] as const
 
+/** The five data states, as `variant` takes them. */
+const VARIANTS = ['live', 'ageing', 'estimated', 'timetable-only', 'no-signal'] as const
+
+/** The states whose Delay is always unknown (CR-5). */
+const DELAY_UNKNOWN = new Set<string>(['timetable-only', 'no-signal'])
+
 /** One part of the row in `scope`, by its class, or null when it isn't rendered. */
 const part = (scope: Element, name: string) =>
   scope.querySelector<HTMLElement>(`.pn-DepartureRow-${name}`)
@@ -59,12 +65,13 @@ function rowIn(scope: Element) {
   return row
 }
 
-/** What a screen reader reads of a row, part by part, each part's text apart from the next. */
-const readOf = (row: Element) =>
-  PARTS.map((name) => part(row, name))
-    .filter((found): found is HTMLElement => found !== null)
-    .map(heard)
-    .join(' ')
+/** The row's parts that are rendered, in DOM order, the order a screen reader meets them. */
+const partsInOrder = (row: Element) => [
+  ...row.querySelectorAll<HTMLElement>(PARTS.map((name) => `.pn-DepartureRow-${name}`).join(', ')),
+]
+
+/** What a screen reader reads of a row: its parts in DOM order, each part's text apart. */
+const readOf = (row: Element) => partsInOrder(row).map(heard).join(' ')
 
 /** A row rendered to markup on the server and read back as an element, for shapes no story draws. */
 function staticRow(element: ReactElement) {
@@ -101,7 +108,11 @@ export const Ageing: Story = {
     await step('data-variant is ageing', async () => {
       await expect(row).toHaveAttribute('data-variant', 'ageing')
     })
-    await step('the row reads its parts in order', async () => {
+    await step('the row reads its parts in DOM order, which is its reading order', async () => {
+      const names = partsInOrder(row).map((found) =>
+        PARTS.find((name) => found.classList.contains(`pn-DepartureRow-${name}`)),
+      )
+      await expect(names).toEqual([...PARTS])
       await expect(readOf(row)).toBe('5C Husum Torv Ageing 4 min 08:14 2 min late')
     })
     await step('the dot is hidden and "Ageing" is read beside it', () =>
@@ -127,6 +138,14 @@ export const Estimated: Story = {
     await step('"Estimated" is read beside the dot', () => dotHiddenWordRead(row, 'Estimated'))
     await step('the Delay is read "3 min late"', async () => {
       await expect(heard(part(row, 'delay')!)).toBe('3 min late')
+    })
+    await step("the Delay is set in the time's type, over its own (CR-12)", async () => {
+      const delay = getComputedStyle(part(row, 'delay')!)
+      const time = getComputedStyle(part(row, 'time')!)
+      for (const property of ['font-size', 'line-height', 'font-weight', 'letter-spacing'])
+        await expect(delay.getPropertyValue(property)).toBe(time.getPropertyValue(property))
+      await expect(delay.fontVariantNumeric).toBe('tabular-nums')
+      await expect(delay.whiteSpace).toBe('nowrap')
     })
   },
 }
@@ -244,10 +263,64 @@ export const Live: Story = {
       await expect(part(root, 'dot')).toHaveAttribute('aria-hidden', 'true')
     })
 
-    await step('liveLabel replaces the word', async () => {
-      const root = staticRow(<DepartureRow {...args} liveLabel="Real-time" />)
-      await expect(heard(part(root, 'status')!)).toBe('Real-time')
-      await expect(root.textContent).not.toContain('Live')
+    await step("each state's label replaces its word (CR-6)", async () => {
+      const replaced = {
+        live: ['liveLabel', 'Live'],
+        ageing: ['ageingLabel', 'Ageing'],
+        estimated: ['estimatedLabel', 'Estimated'],
+        'timetable-only': ['timetableOnlyLabel', 'Timetable only'],
+        'no-signal': ['noSignalLabel', 'No signal'],
+      } as const
+      for (const variant of VARIANTS) {
+        const [label, word] = replaced[variant]
+        const root = staticRow(<DepartureRow {...EVERY_PROP} variant={variant} />)
+        await expect(heard(part(root, 'status')!)).toBe(EVERY_PROP[label])
+        await expect(root.textContent).not.toContain(word)
+      }
+    })
+
+    await step('minutesUnitLabel replaces the countdown\'s "min" and the Delay\'s', async () => {
+      const root = staticRow(<DepartureRow {...args} delay={3} minutesUnitLabel="mins" />)
+      await expect(part(root, 'countdown')!.textContent).toBe('4 mins')
+      await expect(part(root, 'delay')!.querySelector('.pn-Delay-unit')).toHaveTextContent(/^mins$/)
+    })
+
+    await step("Delay's four labels reach the Delay", async () => {
+      const delayRead = (delay: number | null) =>
+        heard(part(staticRow(<DepartureRow {...EVERY_PROP} delay={delay} />), 'delay')!)
+      await expect(delayRead(3)).toBe(`3 ${EVERY_PROP.minutesLateLabel}`)
+      await expect(delayRead(-2)).toBe(`2 ${EVERY_PROP.minutesEarlyLabel}`)
+      await expect(delayRead(0)).toBe(EVERY_PROP.onTimeLabel)
+      await expect(delayRead(null)).toBe(EVERY_PROP.delayUnknownLabel)
+    })
+
+    await step('lineName and destination render a string, an element and a list', async () => {
+      const shapes = [
+        ['5C', 'Husum Torv'],
+        [<b>5C</b>, <span lang="da">Husum Torv</span>],
+        [
+          ['5', 'C'],
+          ['Husum', ' ', 'Torv'],
+        ],
+      ] as const
+      for (const [lineName, destination] of shapes) {
+        const root = staticRow(
+          <DepartureRow {...args} lineName={lineName} destination={destination} />,
+        )
+        await expect(heard(part(root, 'badge')!)).toBe('5C')
+        await expect(heard(part(root, 'destination')!)).toBe('Husum Torv')
+      }
+      const elements = staticRow(
+        <DepartureRow
+          {...args}
+          lineName={<b>5C</b>}
+          destination={<span lang="da">Husum Torv</span>}
+        />,
+      )
+      await expect(part(elements, 'badge')!.querySelector('b')).toHaveTextContent('5C')
+      await expect(part(elements, 'destination')!.querySelector('[lang="da"]')).toHaveTextContent(
+        'Husum Torv',
+      )
     })
 
     await step('the countdown rounds to whole minutes (CR-3)', async () => {
@@ -272,6 +345,46 @@ export const Live: Story = {
         <DepartureRow {...args} countdown={Number.NaN} unknownLabel="Not known" />,
       )
       await expect(heard(part(overridden, 'countdown')!)).toBe('Not known')
+    })
+
+    await step('delay a number, null and left out, in every variant (CR-5)', async () => {
+      const { delay: _, ...withoutDelay } = args
+      for (const variant of VARIANTS)
+        for (const delay of [3, null, undefined]) {
+          const root = staticRow(
+            <DepartureRow
+              {...withoutDelay}
+              variant={variant}
+              {...(delay === undefined ? {} : { delay })}
+            />,
+          )
+          const found = part(root, 'delay')
+          if (delay === undefined && !DELAY_UNKNOWN.has(variant)) {
+            await expect(found).toBeNull()
+            continue
+          }
+          const unknown = delay === null || DELAY_UNKNOWN.has(variant)
+          await expect(found).toHaveAttribute('data-delay', unknown ? 'unknown' : 'late')
+          await expect(found!.querySelector('.pn-Delay-value')).toHaveTextContent(
+            unknown ? '—' : '+3',
+          )
+          await expect(heard(found!)).toBe(unknown ? 'Delay unknown' : '3 min late')
+        }
+    })
+
+    await step('with delay left out, the schedule holds the time alone (CR-10)', async () => {
+      const { delay: _, ...rest } = args
+      const schedule = part(staticRow(<DepartureRow {...rest} />), 'schedule')!
+      await expect([...schedule.children].map((child) => child.tagName)).toEqual(['TIME'])
+      await expect(schedule.textContent).toBe('08:14')
+    })
+
+    await step('with time left out, the schedule holds the Delay alone (CR-10)', async () => {
+      const { time: _, ...rest } = args
+      const schedule = part(staticRow(<DepartureRow {...rest} delay={3} />), 'schedule')!
+      await expect(schedule.children).toHaveLength(1)
+      await expect(schedule.firstElementChild).toHaveClass('pn-DepartureRow-delay')
+      await expect(schedule.querySelector('time')).toBeNull()
     })
 
     await step('with time and delay left out, no schedule renders (CR-10)', async () => {
@@ -390,7 +503,7 @@ export const LongDestination: Story = {
       </div>
     ),
   ],
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, args, step }) => {
     const row = rowIn(canvasElement)
     const destination = part(row, 'destination')!
     const countdown = part(row, 'countdown')!
@@ -413,6 +526,23 @@ export const LongDestination: Story = {
       row.parentElement!.getBoundingClientRect().width,
     )
     await expect(row.scrollWidth).toBeLessThanOrEqual(row.clientWidth)
+
+    await step("a long state's word wraps inside the middle column (CR-9)", () =>
+      mounted(
+        row.parentElement!,
+        <DepartureRow {...args} liveLabel="Realtidspositionsopdateringstjenesten" />,
+        async (host) => {
+          const long = await waitFor(() => rowIn(host))
+          const status = part(long, 'status')!
+          await expect(lines(status)).toBeGreaterThan(1.5)
+          await expect(status.getBoundingClientRect().right).toBeLessThanOrEqual(
+            part(long, 'schedule')!.getBoundingClientRect().left,
+          )
+          await expect(lines(part(long, 'time')!)).toBeLessThan(1.5)
+          await expect(long.scrollWidth).toBeLessThanOrEqual(long.clientWidth)
+        },
+      ),
+    )
   },
 }
 
