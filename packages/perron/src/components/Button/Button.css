@@ -1,6 +1,8 @@
 /* Button, from docs/components/button.md. Every state changes colours only (CR-3), at once (CR-8),
    and the colour is set on the root, which the label and the icons take (CR-6). Pressed is a step
-   past hover (CR-13), and the cursor is a pointer until the button is disabled (CR-14). */
+   past hover (CR-13), and the cursor is a pointer until the button is disabled (CR-14). A toggle is
+   drawn by its aria-pressed: off is its colour's outline look and on its solid look, whatever the
+   variant (CR-15). */
 
 .pn-Button {
   display: inline-flex;
@@ -105,6 +107,66 @@
   background-color: var(--perron-color-surface-selected);
 }
 
+/* a toggle, off: its colour's outline look, in either variant, with the outline's hover and pressed
+   layers (CR-15). Each rule is as specific as the variant rule it overrides, and after it. */
+
+.pn-Button[aria-pressed='false'][data-color='neutral'] {
+  border-color: var(--perron-color-border-control);
+  background-color: transparent;
+  color: var(--perron-color-text-primary);
+}
+
+.pn-Button[aria-pressed='false'][data-color='brand'] {
+  border-color: var(--perron-color-border-brand);
+  background-color: transparent;
+  color: var(--perron-color-text-brand);
+}
+
+@media (hover: hover) {
+  .pn-Button[aria-pressed='false'][data-color]:hover:not([data-disabled]) {
+    background-color: var(--perron-color-surface-hover);
+  }
+}
+
+.pn-Button[aria-pressed='false'][data-color]:active:not([data-disabled]) {
+  background-color: var(--perron-color-surface-selected);
+}
+
+/* a toggle, on: its colour's solid look, in either variant, with the solid's hover and pressed
+   fills; the brand edge stays (CR-10, CR-15) */
+
+.pn-Button[aria-pressed='true'][data-color='neutral'] {
+  border-color: transparent;
+  background-color: var(--perron-color-surface-inverse);
+  color: var(--perron-color-text-inverse);
+}
+
+@media (hover: hover) {
+  .pn-Button[aria-pressed='true'][data-color='neutral']:hover:not([data-disabled]) {
+    background-color: var(--perron-color-surface-inverse-hover);
+  }
+}
+
+.pn-Button[aria-pressed='true'][data-color='neutral']:active:not([data-disabled]) {
+  background-color: var(--perron-color-surface-inverse-pressed);
+}
+
+.pn-Button[aria-pressed='true'][data-color='brand'] {
+  border-color: var(--perron-color-border-brand);
+  background-color: var(--perron-color-surface-brand);
+  color: var(--perron-color-text-on-color-dark);
+}
+
+@media (hover: hover) {
+  .pn-Button[aria-pressed='true'][data-color='brand']:hover:not([data-disabled]) {
+    background-color: var(--perron-color-surface-brand-hover);
+  }
+}
+
+.pn-Button[aria-pressed='true'][data-color='brand']:active:not([data-disabled]) {
+  background-color: var(--perron-color-surface-brand-pressed);
+}
+
 /* disabled, both colours alike: a colour, never an opacity, and the default cursor (CR-14). After
    the colours, which it ties. */
 
@@ -123,9 +185,48 @@
   color: var(--perron-color-text-tertiary);
 }
 
+/* a disabled toggle takes the disabled look of the variant it is drawn as: off the outline's, on
+   the solid's, both colours alike (CR-15) */
+
+.pn-Button[aria-pressed='false'][data-disabled] {
+  border-color: var(--perron-color-border-subtle);
+  background-color: transparent;
+  color: var(--perron-color-text-tertiary);
+}
+
+.pn-Button[aria-pressed='true'][data-disabled] {
+  border-color: transparent;
+  background-color: var(--perron-color-surface-inset);
+  color: var(--perron-color-text-tertiary);
+}
+
 @media (forced-colors: active) {
   .pn-Button[data-disabled] {
     border-color: GrayText;
     color: GrayText;
+  }
+
+  /* CR-16: forced colours drop the solid fill, which would leave on looking like off, so a toggle
+     that is on keeps a system fill of its own, Highlight, or GrayText when it is disabled too. The
+     :hover and :active rules match the hover rules' specificity and come after them. */
+  .pn-Button[aria-pressed='true']:not([data-disabled]),
+  .pn-Button[aria-pressed='true'][data-color]:not([data-disabled]):is(:hover, :active) {
+    forced-color-adjust: none;
+    border-color: transparent;
+    background-color: Highlight;
+    color: HighlightText;
+  }
+
+  /* forced-color-adjust: none keeps the ring in the theme's ink too, which a dark contrast theme's
+     Canvas would hide, so the ring takes a system colour that shows on Canvas */
+  .pn-Button[aria-pressed='true']:not([data-disabled]):focus-visible {
+    outline-color: CanvasText;
+  }
+
+  .pn-Button[aria-pressed='true'][data-disabled] {
+    forced-color-adjust: none;
+    border-color: transparent;
+    background-color: GrayText;
+    color: Canvas;
   }
 }

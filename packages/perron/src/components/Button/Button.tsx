@@ -1,6 +1,7 @@
 'use client'
 // Button: a native <button> from Base UI's Button that runs one action, in ink or, for the one main
-// action of a screen, in the brand yellow. The spec is docs/components/button.md.
+// action of a screen, in the brand yellow, or, given `selected`, turns one thing on and off, with
+// `aria-pressed`. The spec is docs/components/button.md.
 import { Button as BaseButton } from '@base-ui/react/button'
 import type { CSSProperties, ReactNode, Ref } from 'react'
 import './Button.css'
@@ -47,6 +48,12 @@ export interface ButtonProps extends Omit<
    */
   fullWidth?: boolean
   /**
+   * Whether the button, a toggle such as "Follow", is on: `true` or `false` sets `aria-pressed`
+   * and draws the button on or off, and `true` sets `data-selected`. Left out, the button is no
+   * toggle and has no `aria-pressed`. The caller keeps the state and flips it in `onClick`.
+   */
+  selected?: boolean
+  /**
    * An icon before the label, in reading order, so it moves to the right in right-to-left text.
    * Hidden from screen readers: the label names the button.
    */
@@ -76,6 +83,7 @@ export function Button({
   size = 'medium',
   disabled = false,
   fullWidth = false,
+  selected,
   startIcon,
   endIcon,
   children,
@@ -95,6 +103,10 @@ export function Button({
       data-color={color}
       data-size={size}
       data-full-width={fullWidth ? '' : undefined}
+      // CR-15: a toggle only when `selected` is given, so a plain button has no aria-pressed of
+      // its own, and a caller's `aria-pressed` still reaches the root
+      aria-pressed={selected ?? rest['aria-pressed']}
+      data-selected={selected ? '' : undefined}
     >
       {rendersSomething(startIcon) && (
         <span className="pn-Button-startIcon" aria-hidden="true">
