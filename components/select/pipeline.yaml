@@ -3,4 +3,13 @@ component: Select
 layer: component
 deferred:
   at: 2026-10-25T05:33:08.882Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-25T05:33:13.677Z
+    ended: 2026-10-25T05:44:48.985Z
+    pending: 16
+notes:
+  - stage: brief
+    at: 2026-10-25T05:44:48.986Z
+    questions: 16 questions, see docs/components/select.md [PENDING] lines

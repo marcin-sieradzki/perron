@@ -54,5 +54,15 @@
       "size": "icon.size.325",
       "use": "Running normally"
     }
+  },
+  "Controls": {
+    "tick": {
+      "size": "icon.size.325",
+      "use": "A ticked checkbox"
+    },
+    "dash": {
+      "size": "icon.size.325",
+      "use": "A checkbox that stands for a set partly ticked"
+    }
   }
 }
