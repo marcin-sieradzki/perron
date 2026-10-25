@@ -5,25 +5,9 @@ import type { CSSProperties, Ref } from 'react'
 import { mergeProps } from '@base-ui/react/merge-props'
 import { useRender } from '@base-ui/react/use-render'
 import { useOwnedStrings } from '../../PerronProvider.tsx'
-import type { OwnedStringKey } from '../../locale/index.ts'
+import { STATE_KEY, VEHICLE_STATES } from '../../internal/vehicle-states.ts'
 import { VehicleDot } from '../VehicleDot/VehicleDot.tsx'
-import type { VehicleDotProps } from '../VehicleDot/VehicleDot.tsx'
 import './VehicleDotLegend.css'
-
-/**
- * The five data states, in the order Data states lists them, each with the owned string that names
- * it (CR-1). No prop picks, hides or reorders them.
- */
-const STATES = [
-  { variant: 'live', labelKey: 'live' },
-  { variant: 'ageing', labelKey: 'ageing' },
-  { variant: 'estimated', labelKey: 'estimated' },
-  { variant: 'timetable-only', labelKey: 'timetableOnly' },
-  { variant: 'no-signal', labelKey: 'noSignal' },
-] as const satisfies readonly {
-  variant: NonNullable<VehicleDotProps['variant']>
-  labelKey: OwnedStringKey
-}[]
 
 export interface VehicleDotLegendProps extends Omit<useRender.ComponentProps<'ul'>, 'children'> {
   /**
@@ -83,18 +67,18 @@ export function VehicleDotLegend({
   })
   const own = {
     className: 'pn-VehicleDotLegend',
-    // CR-1, CR-2: the five items, each a hidden dot then its word; line='m1', which VehicleDot
-    // required when the legend was built, has its colour replaced by the legend's own ink (CR-3)
-    children: STATES.map(({ variant, labelKey }) => (
+    // CR-1, CR-2: the five states in the order Data states lists them, none picked, hidden or
+    // reordered, each a hidden dot then its word; the dot has no line, so it draws in the
+    // legend's ink (CR-3)
+    children: VEHICLE_STATES.map((variant) => (
       <li key={variant} className="pn-VehicleDotLegend-item">
         <VehicleDot
           variant={variant}
-          line="m1"
           size="small"
           aria-hidden
           className="pn-VehicleDotLegend-dot"
         />
-        <span className="pn-VehicleDotLegend-label">{strings[labelKey]}</span>
+        <span className="pn-VehicleDotLegend-label">{strings[STATE_KEY[variant]]}</span>
       </li>
     )),
   }
