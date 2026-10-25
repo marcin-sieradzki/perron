@@ -3,4 +3,27 @@ component: Fieldset
 layer: component
 deferred:
   at: 2026-10-25T04:38:36.828Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-25T04:38:44.159Z
+    ended: 2026-10-25T04:44:49.699Z
+notes:
+  - stage: brief
+    at: 2026-10-25T04:44:49.699Z
+    direction: The description of typography.label-sm names "field and stat labels", but SearchField's label (and this spec's legend) uses typography.label. The token description and the field labels should be brought into line, and Field, being built in parallel, should follow the same choice.
+  - stage: brief
+    at: 2026-10-25T04:44:49.699Z
+    direction: No component gives disabled text a forced-colours treatment (GrayText). In Windows contrast themes, a disabled legend or label looks live next to native controls that the browser greys out. This could be a library-wide rule in the contract.
+  - stage: brief
+    at: 2026-10-25T04:44:49.699Z
+    direction: CheckboxGroup and RadioGroup will set their own spacing with their own class on the element Fieldset renders. That class has the same specificity as .pn-Fieldset, so their gap wins only by CSS import order. The contract has no rule yet for a component that restyles another component's root.
+  - stage: brief
+    at: 2026-10-25T04:44:49.699Z
+    direction: Fieldset takes no description or error. A group's hint and error come from a Field.Root around it, as in Base UI's forms guide, so the CheckboxGroup and RadioGroup specs should compose Field for them.
+  - stage: brief
+    at: 2026-10-25T04:44:49.699Z
+    direction: The stories' controls are native checkboxes standing in for Checkbox, which is not built yet. They should move to Checkbox once it ships.
+  - stage: brief
+    at: 2026-10-25T04:44:49.699Z
+    questions: "1. (Props) Does Fieldset take hiddenLegend, a boolean, default false, that renders the legend through the VisuallyHidden shared part? Recommended: yes, as SearchField's hiddenLabel does. 2. (Tokens) Does the legend use typography.label in color.text.primary, as SearchField's label does, rather than typography.label-sm? Recommended: yes. 3. (Tokens) Does the root put one gap, space.200, between the legend and each control, with no wrapper around the controls? Recommended: yes."
