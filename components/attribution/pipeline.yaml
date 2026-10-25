@@ -22,3 +22,23 @@ stages:
       p2: 0
       p3: 4
     ended: 2026-10-25T01:16:00.846Z
+  docs:
+    status: done
+    started: 2026-10-25T01:16:44.860Z
+    ended: 2026-10-25T01:18:43.395Z
+notes:
+  - stage: docs
+    at: 2026-10-25T01:18:43.395Z
+    direction: "build: on a link inside the caption, perron.css's focus ring slightly overlaps the © before the link and reaches past the strip's 2 px block padding onto the map; CR-4 keeps the global ring"
+  - stage: docs
+    at: 2026-10-25T01:18:43.395Z
+    direction: "build: the spec doesn't say how two credits are joined; the Wrapping story joins them as sentences. A content-design rule on separating credits (full stop, middle dot) would help callers"
+  - stage: docs
+    at: 2026-10-25T01:18:43.395Z
+    direction: "docs: P3-1 target size relies on WCAG 2.5.8's inline exception, which docs/foundations/accessibility.md does not name: adopt it or give credits a taller line"
+  - stage: docs
+    at: 2026-10-25T01:18:43.395Z
+    direction: 'docs: P3-2 accept the shared focus ring on inline links, or add a focus-ring variant for links inside text'
+  - stage: docs
+    at: 2026-10-25T01:18:43.395Z
+    direction: "docs: P3-3 Keyboard table credits Tab and Enter to Perron where LinkButton writes 'The browser', and omits Shift+Tab"

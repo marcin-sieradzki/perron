@@ -183,7 +183,7 @@
     "name": "Attribution",
     "layer": "component",
     "category": "Map",
-    "status": "building",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/Attribution",
     "dependsOn": []
