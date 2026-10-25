@@ -1224,7 +1224,7 @@
         "value": 6,
         "unit": "px"
       },
-      "$description": "Height of a meter's and a progress bar's track"
+      "$description": "Height of a meter's, a progress bar's or a slider's track"
     },
     "checkbox": {
       "$type": "dimension",

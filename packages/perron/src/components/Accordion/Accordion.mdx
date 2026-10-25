@@ -1,0 +1,28 @@
+import { Meta, Stories, Title, Unstyled } from '@storybook/addon-docs/blocks'
+import { PropsTable } from '../../../../../storybook/blocks/PropsTable.tsx'
+import { SpecProse } from '../../../../../storybook/blocks/SpecProse.tsx'
+import * as AccordionStories from './Accordion.stories.tsx'
+import { AccordionItem } from './Accordion.tsx'
+
+<Meta of={AccordionStories} />
+
+<Title />
+
+<SpecProse path="docs/components/accordion.md" intro />
+
+<Stories title="Examples" />
+
+<PropsTable of={AccordionStories} />
+
+<Unstyled>
+  <div className="pd-page">
+    <h2>AccordionItem</h2>
+  </div>
+</Unstyled>
+
+<PropsTable of={AccordionItem} />
+
+<SpecProse
+  path="docs/components/accordion.md"
+  sections={['Keyboard and ARIA', 'Owned strings', "Do and don't"]}
+/>

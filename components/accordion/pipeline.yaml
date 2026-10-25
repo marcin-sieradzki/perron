@@ -1,0 +1,81 @@
+# Written by npm run factory; never by hand.
+component: Accordion
+layer: component
+deferred:
+  at: 2026-10-25T08:07:32.135Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-25T08:15:49.681Z
+    ended: 2026-10-25T08:20:56.613Z
+  build:
+    runs: 2
+    status: done
+    started: 2026-10-25T08:41:29.885Z
+    begun: b5772140c159f2942eb54133be507062558b59011e8e53718e488600b993fb8b
+    spec: 4410cefc4b5261caaf23fee8e558f08265958ff92bd774a5e7a3b0d41ec88270
+    ended: 2026-10-25T08:47:50.519Z
+  review:
+    rounds: 2
+    sentBack: 1
+    findings:
+      p1: 0
+      p2: 0
+      p3: 8
+    status: done
+    started: 2026-10-25T08:48:25.239Z
+    reviewed: a29c9ffb35aea2f4e173c9e4ec261ae60eca14a0
+    ended: 2026-10-25T08:52:02.670Z
+  docs:
+    status: done
+    started: 2026-10-25T08:52:12.109Z
+    ended: 2026-10-25T08:54:57.713Z
+notes:
+  - stage: brief
+    at: 2026-10-25T08:15:45.377Z
+    direction: No ROADMAP wave and no Mylder screen names Accordion, so its uses in the spec (help questions, the details of each planned work) are the brief's guess. Confirm where Mylder will actually use it.
+  - stage: brief
+    at: 2026-10-25T08:15:45.377Z
+    direction: "The Perron MCP's list_tokens leaves out duration.switch, color.surface.inverse-pressed and color.surface.brand-pressed, which the worktree's tokens define: the MCP is started from a relative path and probably reads the primary checkout, so a brief that trusts it misses tokens."
+  - stage: brief
+    at: 2026-10-25T08:15:45.377Z
+    direction: "Motion has no duration for a disclosure: Accordion's panel borrows duration.switch; a duration.disclosure token (through the design-tokens skill) would name the use."
+  - stage: brief
+    at: 2026-10-25T08:15:45.377Z
+    direction: The local type Inherited<P, own> helper is copied in four files (Tabs, Toolbar, SegmentedControl, Menu); Accordion.tsx would be the fifth.
+  - stage: brief
+    at: 2026-10-25T08:15:45.377Z
+    direction: The contract's checklist line 'a collapsed region is inert' doesn't match Base UI's accordion and tabs, which keep a closed panel hidden (or hidden=until-found) rather than inert; the line could read 'hidden or inert'.
+  - stage: brief
+    at: 2026-10-25T08:15:45.377Z
+    direction: The contract's Design states table gives Open as [data-popup-open] on a trigger and [data-open] on a popup, but a disclosure trigger (Accordion, Collapsible) carries [data-panel-open]; the table could add it.
+  - stage: brief
+    at: 2026-10-25T08:15:45.377Z
+    questions: "1. (Anatomy) Two components, Accordion and AccordionItem (title, children, slotProps.header/trigger/panel), not five? Recommended: yes, two. 2. (Props) String values: value/defaultValue string[] on Accordion, onChange reports string[], optional string value on AccordionItem? Recommended: yes. 3. (Props) Inherit Base UI's multiple with default false? Recommended: yes. 4. (Props) AccordionItem takes no open props of its own (no open, defaultOpen, onOpen, onClose)? Recommended: yes. 5. (Tokens) Quiet row: border.width.025 color.border.subtle hairline between items, trigger min size.button, typography.label, space.300 sides, surface.hover/selected, no radius, chevron text.secondary, panel padded space.300? Recommended: yes. 6. (Tokens) Panel text typography.body and color.text.primary? Recommended: yes. 7. (Tokens) Chevron reuses chevron-down at icon.size.400, use widened in icons.json, turns via scale: 1 -1 while open? Recommended: yes; answered with the panel height and the chevron's turn easing over duration.switch (reduced motion through the token), per the batch's ask for panel height motion."
+  - stage: brief
+    at: 2026-10-25T08:20:56.613Z
+    direction: "The contract's Design states table has no row for Base UI's motion attributes ([data-starting-style], [data-ending-style]): Sheet and Accordion each write them as 'rest' rows with their own wording; a shared Opening/Closing row would make every spec say it the same way."
+  - stage: brief
+    at: 2026-10-25T08:20:56.613Z
+    direction: "Animating a panel's height (Accordion, later Collapsible) needs two rules the contract doesn't give: room below the content as a ::after block rather than padding (a border-box panel can't reach height 0, and Base UI's measure leaves out a clipped box's bottom padding), and clipping overflow only while the panel moves (an overflow transition with allow-discrete, step-end, or step-start on close). The contract's CSS Motion line could state both once."
+  - stage: build
+    at: 2026-10-25T08:32:12.643Z
+    direction: Section sets its heading level through slotProps.title.render, but Accordion uses slotProps.header.render, because each names its slot after its own part (Base UI's Accordion.Header is the h3, Section's header is the div around title and action). The same job has two slot names in the Layout family; the contract could say which part a heading-level override targets.
+  - stage: build
+    at: 2026-10-25T08:32:12.643Z
+    direction: The check that focus has left a story's canvas is written inline in Accordion, Tabs and others, and HighlightChip declares it as focusLeft; the shared-parts gate stopped a second declaration. A shared story helper (focusOutside in testing/stories.ts) would stop the repetition.
+  - stage: build
+    at: 2026-10-25T08:32:12.643Z
+    direction: Accordion's Motion story reads a running CSS transition's keyframes and timing through getAnimations() and CSSTransition (helpers transitions and span); Collapsible and any later height motion will need the same, so they could move to testing/stories.ts and the Shared helpers table.
+  - stage: build
+    at: 2026-10-25T08:47:50.519Z
+    direction: "Accordion's stories declare a local forcedValue, which reads what the (forced-colors: active) rules set on an element, to test CR-14; every component with a forced-colours rule needs the same read, so it could join testing/stories.ts and the Shared helpers table next to onHover."
+  - stage: build
+    at: 2026-10-25T08:47:50.519Z
+    direction: Accordion's stories declare a local geometry helper (a trigger's box, its title's offset, padding, gap and font) to prove its states keep their geometry (CR-12); most specs have a rule like this and could share one helper in testing/stories.ts.
+  - stage: docs
+    at: 2026-10-25T08:54:57.713Z
+    direction: "The slots table writes every slot row as 'Props for the <part> part', so slotProps.header's JSDoc hint (render: <h2 /> for another heading level) doesn't reach the props table; slot rows could keep the JSDoc text after that first phrase."
+  - stage: docs
+    at: 2026-10-25T08:54:57.713Z
+    direction: Inherited rows show Base UI's JSDoc, so the spec's notes on them don't reach the page (Accordion's disabled doesn't say every trigger becomes disabled; the root's keepMounted says 'the element' where the spec says 'each panel'). The spec's Description for an inherited prop could be limited to Base UI's JSDoc, or the table could add the spec's note.
