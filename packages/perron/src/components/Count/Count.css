@@ -1,0 +1,58 @@
+/* Count: a pill on its intent's tinted surface, one line of tabular figures centred in it, at least
+   as wide as it is tall, so one digit sits in a circle. Every row of docs/components/count.md's
+   Tokens table is at rest: Count is never interactive (CR-8), and the unknown count is rest with
+   data-unknown. CR-11: it sizes to its content and never wraps or truncates. */
+.pn-Count {
+  display: inline-block;
+  box-sizing: border-box;
+  min-width: calc(1lh + 2 * var(--perron-space-050));
+  padding-block: var(--perron-space-050);
+  padding-inline: var(--perron-space-150);
+  vertical-align: baseline;
+  text-align: center;
+  font: var(--perron-typography-data-sm);
+  letter-spacing: var(--perron-typography-data-sm-tracking);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  border-radius: var(--perron-radius-full);
+}
+
+.pn-Count[data-color='neutral'] {
+  background: var(--perron-color-surface-inset);
+  color: var(--perron-color-text-primary);
+}
+
+.pn-Count[data-color='success'] {
+  background: var(--perron-color-surface-success);
+  color: var(--perron-color-text-success);
+}
+
+.pn-Count[data-color='warning'] {
+  background: var(--perron-color-surface-warning);
+  color: var(--perron-color-text-warning);
+}
+
+.pn-Count[data-color='danger'] {
+  background: var(--perron-color-surface-danger);
+  color: var(--perron-color-text-danger);
+}
+
+.pn-Count[data-color='info'] {
+  background: var(--perron-color-surface-info);
+  color: var(--perron-color-text-info);
+}
+
+/* CR-6: an unknown count has no status to tint, so after the intents, at their specificity, it
+   wins over every one */
+.pn-Count[data-unknown] {
+  background: var(--perron-color-surface-inset);
+  color: var(--perron-color-text-tertiary);
+}
+
+/* CR-7: forced colours drop the background, so an outline keeps the pill apart from the words
+   beside it; an outline takes no space, so the geometry holds */
+@media (forced-colors: active) {
+  .pn-Count {
+    outline: var(--perron-border-width-025) solid CanvasText;
+  }
+}
