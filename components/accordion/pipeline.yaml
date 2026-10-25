@@ -5,9 +5,9 @@ deferred:
   at: 2026-10-25T08:07:32.135Z
 stages:
   brief:
-    status: pending
-    started: 2026-10-25T08:07:36.301Z
-    ended: 2026-10-25T08:15:45.377Z
+    status: done
+    started: 2026-10-25T08:15:49.681Z
+    ended: 2026-10-25T08:20:56.613Z
 notes:
   - stage: brief
     at: 2026-10-25T08:15:45.377Z
@@ -30,3 +30,9 @@ notes:
   - stage: brief
     at: 2026-10-25T08:15:45.377Z
     questions: "1. (Anatomy) Two components, Accordion and AccordionItem (title, children, slotProps.header/trigger/panel), not five? Recommended: yes, two. 2. (Props) String values: value/defaultValue string[] on Accordion, onChange reports string[], optional string value on AccordionItem? Recommended: yes. 3. (Props) Inherit Base UI's multiple with default false? Recommended: yes. 4. (Props) AccordionItem takes no open props of its own (no open, defaultOpen, onOpen, onClose)? Recommended: yes. 5. (Tokens) Quiet row: border.width.025 color.border.subtle hairline between items, trigger min size.button, typography.label, space.300 sides, surface.hover/selected, no radius, chevron text.secondary, panel padded space.300? Recommended: yes. 6. (Tokens) Panel text typography.body and color.text.primary? Recommended: yes. 7. (Tokens) Chevron reuses chevron-down at icon.size.400, use widened in icons.json, turns via scale: 1 -1 while open? Recommended: yes; answered with the panel height and the chevron's turn easing over duration.switch (reduced motion through the token), per the batch's ask for panel height motion."
+  - stage: brief
+    at: 2026-10-25T08:20:56.613Z
+    direction: "The contract's Design states table has no row for Base UI's motion attributes ([data-starting-style], [data-ending-style]): Sheet and Accordion each write them as 'rest' rows with their own wording; a shared Opening/Closing row would make every spec say it the same way."
+  - stage: brief
+    at: 2026-10-25T08:20:56.613Z
+    direction: "Animating a panel's height (Accordion, later Collapsible) needs two rules the contract doesn't give: room below the content as a ::after block rather than padding (a border-box panel can't reach height 0, and Base UI's measure leaves out a clipped box's bottom padding), and clipping overflow only while the panel moves (an overflow transition with allow-discrete, step-end, or step-start on close). The contract's CSS Motion line could state both once."
