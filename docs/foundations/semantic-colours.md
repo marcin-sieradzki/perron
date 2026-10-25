@@ -37,19 +37,25 @@ Every colour token in both themes. A `color` token says what a colour is for and
 
 What each surface is for, and how they stack, is on [Elevation](elevation.md).
 
-<!-- tokens: color.surface.default color.surface.raised color.surface.inset color.surface.overlay color.surface.hover color.surface.selected color.surface.inverse color.surface.inverse-hover color.scrim -->
+A control shows hover and pressed as two steps away from its rest look, each one the eye sees: the pressed step is further from rest than the hover step, so a press answers even under a pointer that is already hovering.
 
-| Token                         | Light                           | Dark                            | Use                                                                 |
-| ----------------------------- | ------------------------------- | ------------------------------- | ------------------------------------------------------------------- |
-| `color.surface.default`       | `#FAFBF9` (palette.neutral.50)  | `#12181B` (palette.neutral.900) | Opaque panel background; text on inverse surfaces                   |
-| `color.surface.raised`        | `#FFFFFF` (palette.neutral.0)   | `#1D2428` (palette.neutral.800) | Inputs, selected segment                                            |
-| `color.surface.inset`         | `#EBEEEB` (palette.neutral.100) | `#283237` (palette.neutral.700) | Segmented control track, counts, inset boxes                        |
-| `color.surface.overlay`       | `rgba(250, 251, 249, 0.9)`      | `rgba(18, 24, 27, 0.88)`        | Translucent floating panels over the map (used with backdrop blur)  |
-| `color.surface.hover`         | `rgba(18, 24, 27, 0.05)`        | `rgba(235, 238, 235, 0.06)`     | Hover state layer                                                   |
-| `color.surface.selected`      | `rgba(18, 24, 27, 0.09)`        | `rgba(235, 238, 235, 0.09)`     | Selected row                                                        |
-| `color.surface.inverse`       | `#12181B` (color.text.primary)  | `#EBEEEB` (color.text.primary)  | Primary buttons, pressed icon buttons, chart tooltip                |
-| `color.surface.inverse-hover` | `#1D2428` (palette.neutral.800) | `#A2ADB1` (palette.neutral.300) | Hover fill of a primary button, one step from color.surface.inverse |
-| `color.scrim`                 | `rgba(10, 14, 16, 0.42)`        | `rgba(10, 14, 16, 0.42)`        | Backdrop behind modal dialogs                                       |
+- A solid ink control takes `color.surface.inverse-hover` on hover and `color.surface.inverse-pressed` while pressed; a solid brand one takes `color.surface.brand-hover` and `color.surface.brand-pressed`. Each step is at least 1.2:1 from the one before it, and the label keeps 4.5:1 on all three.
+- A quiet or outline control, transparent at rest, lays `color.surface.hover` over what it sits on while hovered and `color.surface.selected` while pressed. These layers step less than the solid fills: a denser pressed layer would take a brand outline label under 4.5:1 in light.
+
+<!-- tokens: color.surface.default color.surface.raised color.surface.inset color.surface.overlay color.surface.hover color.surface.selected color.surface.inverse color.surface.inverse-hover color.surface.inverse-pressed color.scrim -->
+
+| Token                           | Light                           | Dark                            | Use                                                                                                       |
+| ------------------------------- | ------------------------------- | ------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `color.surface.default`         | `#FAFBF9` (palette.neutral.50)  | `#12181B` (palette.neutral.900) | Opaque panel background; text on inverse surfaces                                                         |
+| `color.surface.raised`          | `#FFFFFF` (palette.neutral.0)   | `#1D2428` (palette.neutral.800) | Inputs, selected segment                                                                                  |
+| `color.surface.inset`           | `#EBEEEB` (palette.neutral.100) | `#283237` (palette.neutral.700) | Segmented control track, counts, inset boxes                                                              |
+| `color.surface.overlay`         | `rgba(250, 251, 249, 0.9)`      | `rgba(18, 24, 27, 0.88)`        | Translucent floating panels over the map (used with backdrop blur)                                        |
+| `color.surface.hover`           | `rgba(18, 24, 27, 0.05)`        | `rgba(235, 238, 235, 0.06)`     | Hover state layer                                                                                         |
+| `color.surface.selected`        | `rgba(18, 24, 27, 0.09)`        | `rgba(235, 238, 235, 0.09)`     | Selected row; the pressed layer of a quiet or outline control, in place of color.surface.hover and denser |
+| `color.surface.inverse`         | `#12181B` (color.text.primary)  | `#EBEEEB` (color.text.primary)  | Primary buttons, pressed icon buttons, chart tooltip                                                      |
+| `color.surface.inverse-hover`   | `#283237` (palette.neutral.700) | `#A2ADB1` (palette.neutral.300) | Hover fill of a primary button, a step from color.surface.inverse the eye sees                            |
+| `color.surface.inverse-pressed` | `#47535A` (palette.neutral.600) | `#8B979E` (palette.neutral.400) | Pressed fill of a primary button, a step further from color.surface.inverse than its hover                |
+| `color.scrim`                   | `rgba(10, 14, 16, 0.42)`        | `rgba(10, 14, 16, 0.42)`        | Backdrop behind modal dialogs                                                                             |
 
 <!-- /tokens -->
 
@@ -99,19 +105,20 @@ Status colours are reserved for health, delays and problems: success, warning, d
 
 The brand colour is the yellow of the bus dot in the [Mylder mark](logos.md), and Perron's primary colour. It marks the main action, as a brand button, and moments of emphasis on the hero page: a band, a highlighted word. Text on the brand fill is always `color.text.on-color.dark`.
 
-- A brand button, solid or outline, has a `color.border.brand` edge: the light-theme fill reaches only 2.1:1 on the surfaces, and the edge carries the 3:1. Its hover fill is `color.surface.brand-hover`.
+- A brand button, solid or outline, has a `color.border.brand` edge: the light-theme fill reaches only 2.1:1 on the surfaces, and the edge carries the 3:1. Its hover fill is `color.surface.brand-hover` and its pressed fill `color.surface.brand-pressed`.
 - Ink actions (`color.surface.inverse`) stay for everything else, so the yellow keeps meaning the main action.
 - A brand button shares the bus badge's fill and ink label. Keep it out of rows of line and mode badges, where it reads as one.
 - Links, status and vehicles have their own colours.
 
-<!-- tokens: color.surface.brand color.surface.brand-hover color.surface.brand-subtle color.text.brand -->
+<!-- tokens: color.surface.brand color.surface.brand-hover color.surface.brand-pressed color.surface.brand-subtle color.text.brand -->
 
-| Token                        | Light                          | Dark                           | Use                                                                                               |
-| ---------------------------- | ------------------------------ | ------------------------------ | ------------------------------------------------------------------------------------------------- |
-| `color.surface.brand`        | `#D99A00` (palette.yellow.500) | `#F2B630` (palette.yellow.300) | Brand fill: brand buttons, hero bands and calls to action. Text on it is color.text.on-color.dark |
-| `color.surface.brand-hover`  | `#B07B05` (palette.yellow.600) | `#D99A00` (palette.yellow.500) | Hover fill of a brand button, one step from color.surface.brand                                   |
-| `color.surface.brand-subtle` | `#FFF2DD` (palette.yellow.100) | `#3B2B07` (palette.yellow.900) | Tinted brand background                                                                           |
-| `color.text.brand`           | `#896001` (palette.yellow.700) | `#F2B630` (palette.yellow.300) | Text in the brand colour: brand outline buttons and emphasis on the hero page; never links        |
+| Token                         | Light                          | Dark                           | Use                                                                                               |
+| ----------------------------- | ------------------------------ | ------------------------------ | ------------------------------------------------------------------------------------------------- |
+| `color.surface.brand`         | `#D99A00` (palette.yellow.500) | `#F2B630` (palette.yellow.300) | Brand fill: brand buttons, hero bands and calls to action. Text on it is color.text.on-color.dark |
+| `color.surface.brand-hover`   | `#C48A02` (palette.yellow.550) | `#D99A00` (palette.yellow.500) | Hover fill of a brand button, a step from color.surface.brand the eye sees                        |
+| `color.surface.brand-pressed` | `#B07B05` (palette.yellow.600) | `#B07B05` (palette.yellow.600) | Pressed fill of a brand button, a step further from color.surface.brand than its hover            |
+| `color.surface.brand-subtle`  | `#FFF2DD` (palette.yellow.100) | `#3B2B07` (palette.yellow.900) | Tinted brand background                                                                           |
+| `color.text.brand`            | `#896001` (palette.yellow.700) | `#F2B630` (palette.yellow.300) | Text in the brand colour: brand outline buttons and emphasis on the hero page; never links        |
 
 <!-- /tokens -->
 

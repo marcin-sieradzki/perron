@@ -77,15 +77,19 @@
           "alpha": 0.09,
           "hex": "#12181B"
         },
-        "$description": "Selected row"
+        "$description": "Selected row; the pressed layer of a quiet or outline control, in place of color.surface.hover and denser"
       },
       "inverse": {
         "$value": "{color.text.primary}",
         "$description": "Primary buttons, pressed icon buttons, chart tooltip"
       },
       "inverse-hover": {
-        "$value": "{palette.neutral.800}",
-        "$description": "Hover fill of a primary button, one step from color.surface.inverse"
+        "$value": "{palette.neutral.700}",
+        "$description": "Hover fill of a primary button, a step from color.surface.inverse the eye sees"
+      },
+      "inverse-pressed": {
+        "$value": "{palette.neutral.600}",
+        "$description": "Pressed fill of a primary button, a step further from color.surface.inverse than its hover"
       },
       "success": {
         "$value": "{palette.green.100}",
@@ -108,8 +112,12 @@
         "$description": "Brand fill: brand buttons, hero bands and calls to action. Text on it is color.text.on-color.dark"
       },
       "brand-hover": {
+        "$value": "{palette.yellow.550}",
+        "$description": "Hover fill of a brand button, a step from color.surface.brand the eye sees"
+      },
+      "brand-pressed": {
         "$value": "{palette.yellow.600}",
-        "$description": "Hover fill of a brand button, one step from color.surface.brand"
+        "$description": "Pressed fill of a brand button, a step further from color.surface.brand than its hover"
       },
       "brand-subtle": {
         "$value": "{palette.yellow.100}",
