@@ -1,0 +1,85 @@
+# Written by npm run factory; never by hand.
+component: FilterChip
+layer: component
+deferred:
+  at: 2026-10-25T01:13:03.438Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-25T01:20:17.725Z
+    ended: 2026-10-25T01:21:25.932Z
+  build:
+    runs: 3
+    status: done
+    started: 2026-10-25T01:47:25.277Z
+    ended: 2026-10-25T01:50:11.261Z
+  review:
+    rounds: 3
+    sentBack: 2
+    findings:
+      p1: 0
+      p2: 0
+      p3: 7
+    status: done
+    started: 2026-10-25T01:50:15.337Z
+    ended: 2026-10-25T01:56:04.524Z
+  docs:
+    status: done
+    started: 2026-10-25T01:56:28.764Z
+    ended: 2026-10-25T01:58:46.392Z
+notes:
+  - stage: brief
+    at: 2026-10-25T01:19:52.654Z
+    direction: "Contract, Design states: the Pressed row lists `[data-pressed]`, but on Base UI's Toggle and ToggleGroup `data-pressed` means 'on'. The table should file it under Selected for toggles, which FilterChip, HighlightChip and SegmentedControl all hit."
+  - stage: brief
+    at: 2026-10-25T01:19:52.654Z
+    direction: Tab draws its own count pill while Count now exists. FilterChip composes Count, and Tabs could move to it so every count in a chip or tab has one shape.
+  - stage: brief
+    at: 2026-10-25T01:19:52.654Z
+    direction: Token `color.surface.inverse` describes 'pressed icon buttons', but IconButton keeps no pressed state. Elevation and Semantic colours already say 'pressed toggles', so the description could follow.
+  - stage: brief
+    at: 2026-10-25T01:19:52.654Z
+    direction: Token `color.text.inverse`'s description leaves out pressed toggles, which Semantic colours' prose names.
+  - stage: brief
+    at: 2026-10-25T01:19:52.654Z
+    direction: Accessibility's 'Toggles say their state in words' rule is ambiguous for a chip whose label stays the same. FilterChip meets it through `aria-pressed` for the ear only, so the rule could say whether that is enough.
+  - stage: brief
+    at: 2026-10-25T01:19:52.654Z
+    direction: No component groups filter chips. The top bar's row of chips, its group name and the 'Later' chips hidden under `breakpoint.desktop` are left to a pattern that doesn't exist yet.
+  - stage: brief
+    at: 2026-10-25T01:19:52.654Z
+    questions: |-
+      1. (Anatomy) Does FilterChip take `count?: number` and render it as a neutral Count, adding `Count` to its `dependsOn` in packages/perron/components.json? Recommended: yes. It is typed like Tab's `count`, and Count's own spec names the '3' after 'Delays' in a filter chip as its use.
+      2. (Props) Is the state `selected`, `defaultSelected` and `onChange(event, selected, details)`, mapped onto Toggle's `pressed`, `defaultPressed` and `onPressedChange`, with none of Toggle's names exposed? Recommended: yes. `selected` is MUI ToggleButton's prop and the contract's selected design state, and `pressed` is the contract's word for `:active`.
+      3. (Props) Does FilterChip leave out Toggle's `value`, which only identifies a toggle inside a ToggleGroup? Recommended: yes. Perron has no group of filter chips, and a group can add `value` later.
+      4. (Props) Does it take `startIcon` alone, with no `endIcon`? Recommended: yes. The count is what follows the label.
+      5. (Props) Does it come in one look, with no `variant`, `color` or `size`? Recommended: yes. Filter chips have one height, `size.control`, and the brand keeps the interface ink.
+      6. (Tokens) Is the selected state read from Toggle's `[data-pressed]`, the press from `:active` alone, with no `data-selected` of FilterChip's own? Recommended: yes. Base UI sets `data-pressed` in both controlled and uncontrolled use.
+      7. (Tokens) Does the chip take Button's neutral treatments on a `radius.full` pill: off is outline (transparent, `color.border.control` edge, `color.surface.hover` on hover); on is solid (`color.surface.inverse` with `color.text.inverse`, `color.surface.inverse-hover` on hover); disabled matches Button's disabled outline or solid? Recommended: yes. Elevation gives `color.surface.inverse` to pressed toggles.
+      8. (Tokens) Is the chip's icon `icon.size.325`? Recommended: yes. It is the size for icons inline with label text, and the disruption icons are drawn on that grid.
+      9. (Tokens) Does a selected chip show its state by its fill alone, with no tick? Recommended: yes. `aria-pressed` tells the ear, forced colours get `Highlight`, and a tick appearing would widen the chip.
+      10. (Stories) Do the selected chip's hover and its disabled look get a `SelectedDisabled` story and a hover check in `Selected`'s play test, with no Penpot variant of their own, and the drawing keeping one `State` property (default, hover, focus, selected, disabled)? Recommended: yes.
+  - stage: build
+    at: 2026-10-25T01:30:28.173Z
+    direction: "Contract, State and events: the props gate requires `onChange(event, value, details)` by parameter name, so a toggle's boolean arrives as `value`. MUI's Checkbox and Switch name it `checked`, and MUI's ToggleButton passes the button's own `value` instead. Either the contract names the boolean case (for example `onChange(event, selected, details)` for FilterChip, HighlightChip and Switch) or it keeps `value` for every control."
+  - stage: build
+    at: 2026-10-25T01:30:28.173Z
+    direction: "Spec, Tokens (selected, disabled): the disabled selected chip's `color.surface.inset` fill is the same colour as the Count's inset pill, so the count's pill disappears and only its tertiary figure is left. A different pill for the count when the chip is disabled, or a different fill for the chip, would keep the count's shape."
+  - stage: build
+    at: 2026-10-25T01:30:28.173Z
+    direction: "Contract, Design states: in forced colours, a component that sets `forced-color-adjust: none` to keep a selected fill also loses the system's colour for its focus ring. FilterChip now gives the ring `CanvasText`. HighlightChip and SegmentedControl will hit the same case, so the contract could state the rule once."
+  - stage: build
+    at: 2026-10-25T01:41:55.733Z
+    direction: "Contract, Design states: when a component sets forced-color-adjust: none to keep a selected fill, the setting is inherited, so composed children such as Count keep the theme's colours unless they set forced-color-adjust: auto, and hover rules of higher specificity can bring the theme's colours back. HighlightChip and SegmentedControl will hit the same thing, so the contract could state the rule once, next to the focus-ring note from build run 1."
+  - stage: build
+    at: 2026-10-25T01:41:55.733Z
+    direction: "Spec, Tokens (selected, disabled): outside forced colours, the disabled on chip's color.surface.inset fill is still the same colour as the Count's pill (review P3-5). This run did not change it."
+  - stage: build
+    at: 2026-10-25T01:50:11.262Z
+    direction: "Spec, Tokens (selected, disabled): outside forced colours, the disabled selected chip's color.surface.inset fill is still the same colour as the Count's pill, so the pill disappears and only the tertiary figure is left (review P3-5). This run did not change it."
+  - stage: docs
+    at: 2026-10-25T01:58:46.393Z
+    direction: "Selected Disabled on the docs page shows review P3-5 in both themes: the chip's color.surface.inset fill matches the Count's pill, so the count reads as a bare tertiary figure. The maintainer should pick a different pill or a different fill."
+  - stage: docs
+    at: 2026-10-25T01:58:46.393Z
+    direction: The Row story's docs description says 'the last with a count of 0'. The spec's Stories table gives the three chips' counts as 3, 2 and 0, so the two agree, but the description is shorter than the spec's text.
