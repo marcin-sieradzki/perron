@@ -7,6 +7,7 @@ import { Accordion as BaseAccordion } from '@base-ui/react/accordion'
 import { mergeProps } from '@base-ui/react/merge-props'
 import type { CSSProperties, ReactNode, Ref } from 'react'
 import { classes, withClass } from '../../internal/nodes.ts'
+import { Chevron } from '../../parts/Chevron/Chevron.tsx'
 import './Accordion.css'
 
 /**
@@ -111,23 +112,6 @@ export interface AccordionItemProps extends Inherited<
   }
 }
 
-/** `chevron-down` from packages/perron/icons/, inlined unchanged but for width and height (CR-6). */
-const CHEVRON = (
-  <svg
-    className="perron-icon"
-    aria-hidden="true"
-    focusable="false"
-    viewBox="0 0 16 16"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.8"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="m4 6 4 4 4-4" />
-  </svg>
-)
-
 /**
  * One section of an `Accordion`: a heading whose button opens and closes the panel under it, which
  * holds `children`.
@@ -151,7 +135,7 @@ export function AccordionItem({
           <>
             <span className="pn-AccordionItem-title">{title}</span>
             <span className="pn-AccordionItem-chevron" aria-hidden="true">
-              {CHEVRON}
+              <Chevron />
             </span>
           </>
         ),
