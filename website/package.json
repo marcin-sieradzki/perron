@@ -11,7 +11,8 @@
   },
   "dependencies": {
     "@mylder/perron": "*",
-    "markdown-to-jsx": "^9.10.3",
-    "next": "16.4.3"
+    "markdown-to-jsx": "9.10.3",
+    "next": "16.4.3",
+    "postcss": "8.5.31"
   }
 }
