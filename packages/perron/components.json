@@ -413,10 +413,10 @@
     "name": "ScaleBar",
     "layer": "pattern",
     "category": "Map",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Patterns/ScaleBar",
-    "dependsOn": []
+    "dependsOn": ["Surface"]
   },
   {
     "name": "KioskBar",

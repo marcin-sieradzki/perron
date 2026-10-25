@@ -1,0 +1,56 @@
+# Written by npm run factory; never by hand.
+component: ScaleBar
+layer: pattern
+deferred:
+  at: 2026-10-25T02:03:49.659Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-25T02:11:40.278Z
+    ended: 2026-10-25T02:13:13.236Z
+  build:
+    runs: 3
+    asked: 1
+    status: done
+    started: 2026-10-25T02:33:42.377Z
+    spec: 850570599adbc1cd9622a87a7b8bd3db79f677bb9caeb27a1de5a95a8241af54
+    ended: 2026-10-25T02:36:14.416Z
+  review:
+    rounds: 2
+    sentBack: 1
+    findings:
+      p1: 0
+      p2: 0
+      p3: 6
+    status: done
+    started: 2026-10-25T02:36:47.579Z
+    ended: 2026-10-25T02:41:11.068Z
+  docs:
+    status: done
+    started: 2026-10-25T02:41:19.698Z
+    ended: 2026-10-25T02:43:32.824Z
+notes:
+  - stage: brief
+    at: 2026-10-25T02:11:34.911Z
+    direction: The scale's glass keeps Surface's edge and shadow to match the MapControls toolbar beside it, while Attribution in the same corner is an edgeless, shadowless strip at radius.xs. When the design is drawn, decide whether the bottom-right cluster should share one treatment.
+  - stage: brief
+    at: 2026-10-25T02:11:34.911Z
+    direction: The label and the bar share one ink, color.text.secondary, so the scale reads quieter than the map controls. The intents table would give a neutral mark color.text.primary, so check it in the drawing.
+  - stage: brief
+    at: 2026-10-25T02:11:34.911Z
+    direction: The root keeps a fixed 96 px content box and the bar grows from 50% to 100% of it, so the glass box doesn't change width on zoom, unlike MapLibre's control, which resizes to fit its bar.
+  - stage: brief
+    at: 2026-10-25T02:11:34.911Z
+    questions: "1. Does the root compose Surface's glass variant (Surface joins dependsOn), changing only radius to radius.md and padding to space.100 block / space.200 inline, keeping the subtle edge and shadow.panel? Recommended: yes. 2. Does ScaleBar take metersPerPixel and pick the round distance and bar length itself, rather than taking distance and length? Recommended: yes. 3. Metric units only (m under 1 km, km from 1 km), no miles/feet prop? Recommended: yes. 4. The bar's longest length: no new token, calc(4 * var(--perron-space-600)) = 96 px in ScaleBar's CSS? Recommended: yes. 5. New keys scale 'Scale', metersUnit 'm', kilometersUnit 'km' (SI symbols in every locale), overridden by scaleLabel, metersUnitLabel, kilometersUnitLabel? Recommended: yes."
+  - stage: build
+    at: 2026-10-25T02:22:39.959Z
+    direction: "Unknown story: with no bar, the glass box is 8 px shorter (25.6 px against 33.6 px), so the bottom-right anchored scale's top jumps when the map first gives its resolution. Decide whether Unknown keeps the bar's room or stays shorter."
+  - stage: build
+    at: 2026-10-25T02:22:39.959Z
+    direction: "ScaleBar.css label: the label never wraps inside a fixed 96 px content box, so a unit override longer than 'km' (e.g. 'kilometer' after '5000') runs into the padding or past the glass. Decide whether the root grows to fit its label or unit overrides are documented as SI symbols only."
+  - stage: build
+    at: 2026-10-25T02:22:39.959Z
+    questions: '1. CR-3, the 1 m floor: when the longest distance is under 1 m the floor makes the bar''s share over 100%. Recommended: keep the floor and hold the share at 100%, so the bar is drawn at its longest length under ''1 m''; rewrite CR-3''s last sentence to ''from 50% to 100%, and at 100% where the 1 m floor holds''. 2. CR-4 vs CR-7, an unknown resolution before the first measure. Recommended: CR-7 wins: ''—'' and ''Unknown'' show from the first render, server included; rewrite CR-4''s last sentence to ''Until it is read, as in a server render, a resolution that gives a distance shows only the hidden "Scale" in the label, which keeps one line''s height, and the bar is left out''.'
+  - stage: docs
+    at: 2026-10-25T02:43:32.824Z
+    direction: The docs page's slots table shows slotProps types as ComponentPropsWithRef<'span'>, while packages/perron/api.json records the expanded DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement>; this comes from the api tool, not ScaleBar.

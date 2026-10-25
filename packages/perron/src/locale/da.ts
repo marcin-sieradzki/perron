@@ -35,5 +35,8 @@ export const da: OwnedStrings = {
   zoomIn: 'Zoom ind',
   zoomOut: 'Zoom ud',
   centerMap: 'Centrér kortet',
+  scale: 'Målestok',
+  metersUnit: 'm',
+  kilometersUnit: 'km',
   noMatches: 'Ingen resultater',
 }

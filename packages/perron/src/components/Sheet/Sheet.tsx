@@ -6,7 +6,7 @@ import { mergeProps } from '@base-ui/react/merge-props'
 import { useCallback, useState } from 'react'
 import type { ReactElement, ReactNode, Ref } from 'react'
 import { useOwnedStrings } from '../../PerronProvider.tsx'
-import { withClass } from '../../internal/nodes.ts'
+import { setRef, withClass } from '../../internal/nodes.ts'
 import { tokenValue } from '../../internal/tokens.ts'
 import { CloseButton } from '../../parts/CloseButton/CloseButton.tsx'
 import './Sheet.css'
@@ -132,21 +132,6 @@ export interface SheetProps extends Omit<Drawer.Popup.Props, 'children' | 'title
     /** Props for the `content` part */
     content?: Drawer.Content.Props
   }
-}
-
-/** Points the caller's ref at the node, and returns what undoes it when the node goes. */
-function setRef<T>(ref: Ref<T> | undefined, node: T): () => void {
-  if (typeof ref === 'function') {
-    const cleanup = ref(node)
-    return typeof cleanup === 'function' ? cleanup : () => ref(null)
-  }
-  if (ref) {
-    ref.current = node
-    return () => {
-      ref.current = null
-    }
-  }
-  return () => {}
 }
 
 /**
