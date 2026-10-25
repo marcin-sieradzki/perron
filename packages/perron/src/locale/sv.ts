@@ -29,6 +29,7 @@ export const sv: OwnedStrings = {
   delayUnknown: 'Försening okänd',
   unknown: 'Okänd',
   brandName: 'Mylder',
+  now: 'Nu',
   nextStop: 'Nästa hållplats',
   passed: 'Passerad',
   lineColumn: 'Linje',

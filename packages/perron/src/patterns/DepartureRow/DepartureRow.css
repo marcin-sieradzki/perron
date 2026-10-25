@@ -1,0 +1,85 @@
+/* DepartureRow: a grid of three columns and two lines (docs/patterns/departure-row.md, Tokens): the
+   badge at the start across both lines, the destination over the state in the middle, the
+   countdown over the timetabled time and the delay at the end. No fill, border or radius: a
+   divider between rows is the list's. LineBadge, VehicleDot and Delay keep their own colours. */
+.pn-DepartureRow {
+  display: grid;
+  /* CR-9: the middle column shrinks and wraps; the badge's and the countdown's never do */
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  column-gap: var(--perron-space-300);
+  row-gap: var(--perron-space-050);
+  padding-block: var(--perron-space-200);
+  /* the destination and the countdown share the first line's baseline, the state's word and the
+     time the second's */
+  align-items: baseline;
+}
+
+.pn-DepartureRow-badge {
+  grid-row: 1 / span 2;
+  align-self: center;
+}
+
+.pn-DepartureRow-destination {
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+  color: var(--perron-color-text-primary);
+  /* CR-9: as wide as its column, so a long word breaks inside it */
+  overflow-wrap: anywhere;
+}
+
+/* The word sits on the flex line's baseline, so the status shares the time's baseline on the
+   second line; the dot, which has none, is centred on the word's line instead. */
+.pn-DepartureRow-status {
+  display: flex;
+  align-items: baseline;
+  column-gap: var(--perron-space-100);
+  font: var(--perron-typography-caption);
+  letter-spacing: var(--perron-typography-caption-tracking);
+  color: var(--perron-color-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.pn-DepartureRow-dot {
+  align-self: center;
+}
+
+.pn-DepartureRow-countdown {
+  grid-column: 3;
+  grid-row: 1;
+  justify-self: end;
+  font: var(--perron-typography-data-lg);
+  letter-spacing: var(--perron-typography-data-lg-tracking);
+  font-variant-numeric: tabular-nums;
+  color: var(--perron-color-text-primary);
+  /* CR-9: "~12 min" never breaks */
+  white-space: nowrap;
+}
+
+.pn-DepartureRow-schedule {
+  grid-column: 3;
+  grid-row: 2;
+  justify-self: end;
+  display: flex;
+  align-items: baseline;
+  column-gap: var(--perron-space-100);
+  white-space: nowrap;
+}
+
+.pn-DepartureRow-time {
+  font: var(--perron-typography-data-sm);
+  letter-spacing: var(--perron-typography-data-sm-tracking);
+  font-variant-numeric: tabular-nums;
+  color: var(--perron-color-text-secondary);
+  white-space: nowrap;
+}
+
+/* CR-12: the time's type, in a selector that outranks .pn-Delay's whichever stylesheet loads
+   last, the delay read inside its schedule, as the contract's selectors allow; Delay keeps its
+   colour, its tabular figures and its nowrap, set again here since the font shorthand resets
+   font-variant-numeric. */
+.pn-DepartureRow-schedule .pn-DepartureRow-delay {
+  font: var(--perron-typography-data-sm);
+  letter-spacing: var(--perron-typography-data-sm-tracking);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}

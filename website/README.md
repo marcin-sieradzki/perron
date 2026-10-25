@@ -39,10 +39,6 @@ The build keeps each of these. Each comes from the foundation page named.
 - **Words** follow [Content design](../docs/content-design.md): sentence case, the 24-hour clock, "−1 min" with the true minus, "~" before an estimated time.
 - **Each preview is the component it names**, in its spec's anatomy and tokens. Build it with the component from `@mylder/perron` or `@mylder/perron/patterns`.
 
-## Open before the build
+## Settled before the build
 
-- **No lead text role.** `typography.body` tops out at 14 px, which is small for a page's intro. The mockups use `body`; a lead role goes through the `design-tokens` skill.
-- **No navigation component.** The header's section links and the phone menu are stand-ins: Perron's Link is still designing, and nothing yet covers a site's top navigation.
-- **The wordmark.** The header shows the mark beside "Perron". Brand renders the mark beside "mylder", so the site needs Brand to take another name, or its own lockup.
-- **Sections.** ROADMAP 9.1 names Foundations, Components, Patterns, Get started, Skills and Release log; the mockups draw Foundations, Components, Patterns and Agents, with Content in the header. Settle the list before the routes.
-- **Penpot.** The website was designed on the canvas, outside Penpot. If its pages join the Penpot library, start from `penpot/README.md`.
+[ADR 0011](../docs/adr/0011-website-before-the-build.md) settles what was open when these pages were drawn: page intros take a new `typography.lead` role, the navigation and search are site-only components built from Perron's, the header's wordmark is `Brand` named "Perron", and the sections are Get started, Foundations, Components, Patterns, Agents and Release log. The website was designed on the canvas, outside Penpot; if its pages join the Penpot library, start from `penpot/README.md`. The build plan is [PLAN.md](PLAN.md).

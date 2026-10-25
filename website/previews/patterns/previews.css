@@ -1,0 +1,39 @@
+/* The pattern previews' own parts: the frame DetailPanel's preview opens the panel in, and the
+   departures DataStatePanel's preview shows once its data is in. */
+
+/* Layout containment makes the frame the box of the Sheet's fixed viewport, so the panel opens
+   inside the frame, size.panel-gap from its edges, rather than over the page. Presses pass through
+   to what is under the frame, as they do through the Sheet's viewport. */
+.preview-frame {
+  position: relative;
+  contain: layout;
+  box-sizing: border-box;
+  inline-size: 100%;
+  block-size: 100%;
+  min-block-size: var(--perron-size-sheet-peek);
+  display: flex;
+  align-items: center;
+  padding: var(--perron-size-panel-gap);
+  pointer-events: none;
+}
+
+.preview-frame-trigger {
+  pointer-events: auto;
+}
+
+/* While the panel is open its trigger waits out of sight; closing the panel shows it, and the
+   Sheet gives it focus back */
+.preview-frame-trigger[data-popup-open] {
+  visibility: hidden;
+}
+
+.preview-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-100);
+  font: var(--perron-typography-body-sm);
+  letter-spacing: var(--perron-typography-body-sm-tracking);
+}

@@ -355,7 +355,7 @@ Patterns are built only from Perron components, take Mylder's domain props (a de
 
 ## Phase 9: Website
 
-- [ ] **9.1 Next.js site.** Any. A workspace `website/` that reads the same `docs/`, registry and generated data as Storybook. Its sections: Foundations, Components, Patterns, Get started, Skills, Release log. Storybook stays as the workbench.
+- [ ] **9.1 Next.js site.** Any. A workspace `website/` that reads the same `docs/`, registry and generated data as Storybook, built from the mockups in `website/mockups/`. Its sections: Get started, Foundations, Components, Patterns, Agents, Release log ([ADR 0011](docs/adr/0011-website-before-the-build.md)). Storybook stays as the workbench.
 - [ ] **9.2 HTTP MCP.** Any. The site serves the Perron MCP's tools over Streamable HTTP, at `/api/mcp`, sharing its tool code with the stdio package, so agents with no npm can use it.
 
 ## Not on the roadmap

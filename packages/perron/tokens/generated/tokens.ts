@@ -92,6 +92,7 @@ export const base = {
   "typography.heading-lg": "700 24px/1.15 \"Familjen Grotesk\", \"Schibsted Grotesk\", system-ui, sans-serif",
   "typography.heading-md": "600 20px/1.15 \"Familjen Grotesk\", \"Schibsted Grotesk\", system-ui, sans-serif",
   "typography.heading-sm": "600 14px/1.3 \"Schibsted Grotesk\", system-ui, -apple-system, \"Segoe UI\", \"Roboto\", sans-serif",
+  "typography.lead": "400 16px/1.5 \"Schibsted Grotesk\", system-ui, -apple-system, \"Segoe UI\", \"Roboto\", sans-serif",
   "typography.body": "400 14px/1.5 \"Schibsted Grotesk\", system-ui, -apple-system, \"Segoe UI\", \"Roboto\", sans-serif",
   "typography.body-sm": "400 13px/1.5 \"Schibsted Grotesk\", system-ui, -apple-system, \"Segoe UI\", \"Roboto\", sans-serif",
   "typography.caption": "400 12px/1.5 \"Schibsted Grotesk\", system-ui, -apple-system, \"Segoe UI\", \"Roboto\", sans-serif",

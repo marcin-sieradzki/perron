@@ -1,0 +1,19 @@
+import { Meta, Stories, Title } from '@storybook/addon-docs/blocks'
+import { PropsTable } from '../../../../../storybook/blocks/PropsTable.tsx'
+import { SpecProse } from '../../../../../storybook/blocks/SpecProse.tsx'
+import * as DepartureRowStories from './DepartureRow.stories.tsx'
+
+<Meta of={DepartureRowStories} />
+
+<Title />
+
+<SpecProse path="docs/patterns/departure-row.md" intro />
+
+<Stories title="Examples" />
+
+<PropsTable of={DepartureRowStories} />
+
+<SpecProse
+  path="docs/patterns/departure-row.md"
+  sections={['Keyboard and ARIA', 'Owned strings', "Do and don't"]}
+/>

@@ -670,6 +670,145 @@
       }
     }
   },
+  "DepartureRow": {
+    "extends": [
+      "Omit<ComponentPropsWithRef<'div'>, 'children'>"
+    ],
+    "props": {
+      "ageingLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "countdown": {
+        "optional": false,
+        "type": [
+          "number"
+        ]
+      },
+      "delay": {
+        "optional": true,
+        "type": [
+          "null",
+          "number"
+        ]
+      },
+      "delayUnknownLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "destination": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "estimatedLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "line": {
+        "optional": false,
+        "type": [
+          "\"a\"",
+          "\"b\"",
+          "\"bus\"",
+          "\"c\"",
+          "\"e\"",
+          "\"f\"",
+          "\"h\"",
+          "\"m1\"",
+          "\"m2\"",
+          "\"m3\"",
+          "\"m4\"",
+          "\"regional\""
+        ]
+      },
+      "lineName": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "liveLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "minutesEarlyLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "minutesLateLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "minutesUnitLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "noSignalLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "nowLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "onTimeLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ badge?: Omit<LineBadgeProps, \"children\" | \"line\" | \"size\"> | undefined; destination?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; status?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; dot?: Omit<VehicleDotProps, \"ageingLabel\" | \"estimatedLabel\" | \"line\" | \"liveLabel\" | \"noSignalLabel\" | \"size\" | \"timetableOnlyLabel\" | \"variant\"> | undefined; countdown?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; schedule?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; time?: DetailedHTMLProps<TimeHTMLAttributes<HTMLTimeElement>, HTMLTimeElement> | undefined; delay?: Omit<DelayProps, \"delayUnknownLabel\" | \"minutes\" | \"minutesEarlyLabel\" | \"minutesLateLabel\" | \"minutesUnitLabel\" | \"onTimeLabel\"> | undefined; }"
+        ]
+      },
+      "time": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "timetableOnlyLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "unknownLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "variant": {
+        "optional": true,
+        "type": [
+          "NonNullable<\"ageing\" | \"estimated\" | \"live\" | \"no-signal\" | \"timetable-only\" | undefined>"
+        ]
+      }
+    }
+  },
   "DetailHeader": {
     "extends": [
       "Omit< ComponentPropsWithRef<'div'>, 'title' | 'children' >"
