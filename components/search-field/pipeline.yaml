@@ -3,4 +3,47 @@ component: SearchField
 layer: component
 deferred:
   at: 2026-10-25T01:28:01.472Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-25T01:28:05.705Z
+    ended: 2026-10-25T01:40:53.602Z
+    pending: 16
+notes:
+  - stage: brief
+    at: 2026-10-25T01:40:53.602Z
+    direction: withClass (setting a part's class after mergeProps) would now be declared in a fourth component (Dialog, Sheet, MapTooltip, SearchField); a candidate for the contract's Shared helpers table.
+  - stage: brief
+    at: 2026-10-25T01:40:53.602Z
+    direction: A popup gap from a token needs either MapTooltip's script reader of --perron-* pixel lengths or a CSS workaround; the spec uses positioner padding. If sideOffset is preferred, the reader must first become a shared helper.
+  - stage: brief
+    at: 2026-10-25T01:40:53.602Z
+    direction: CloseButton would now also clear a field, not only close its container; the contract's Shared parts row, the part's own comment and the close icon's use in icons.json would need to say so.
+  - stage: brief
+    at: 2026-10-25T01:40:53.602Z
+    direction: The contract's 'Native text' rule doesn't mention a text input with suggestions whose value Base UI also changes; the contract could say whether Autocomplete-style fields follow the composite rule.
+  - stage: brief
+    at: 2026-10-25T01:40:53.602Z
+    direction: PerronProvider exposes only owned strings, not its locale, so no component can use the app's locale for collation or formatting.
+  - stage: brief
+    at: 2026-10-25T01:40:53.602Z
+    direction: The registry gives SearchField no Field.Error or Field.Description, so the Fields family's invalid edge still has no component that draws it.
+  - stage: brief
+    at: 2026-10-25T01:40:53.602Z
+    questions: |-
+      1. (Anatomy) Clear button composes the CloseButton shared part through Autocomplete.Clear's render, with the owned 'Clear' label, not rendered while disabled; the build adds Autocomplete.Clear to the part's "Composed in" cell. Recommended: yes.
+      2. (Props) SearchField is a composite control: root is Field.Root's div, value is the typed words, onChange(event, value, details) adapted from onValueChange. Recommended: yes.
+      3. (Props) From Autocomplete.Root it offers only items, filter, value, defaultValue, onChange, open, defaultOpen, onOpen, onClose, keeping Base UI's defaults for the rest. Recommended: yes.
+      4. (Props) SearchFieldProps extends Field.Root.Props without children, ref, invalid, validate, validationMode, validationDebounceTime, actionsRef, dirty, touched; no invalid state. Recommended: yes.
+      5. (Props) A suggestion is SearchFieldItem { value; label; description?; startIcon? }, items SearchFieldItem[], filter ((item, query) => boolean) | null, no disabled per item. Recommended: yes.
+      6. (Props) A chosen suggestion is reported by onItemSelect(event, item) from the item's onClick. Recommended: yes.
+      7. (Props) A required label ReactNode plus hiddenLabel boolean (default false) through VisuallyHidden. Recommended: yes.
+      8. (Props) No variant, size, color or fullWidth; root takes its container's width, box size.input tall. Recommended: yes.
+      9. (Props) The default filter keeps Base UI's collator in the runtime's locale. Recommended: yes.
+      10. (Tokens) Label typography.label/color.text.primary, space.100 above the box; icon color.text.secondary at icon.size.400, space.300 in; space.200 icon to input; clear button space.050 from the end edge. Recommended: yes.
+      11. (Tokens) The list sits space.100 below the box as positioner padding-block, popup var(--anchor-width) wide, capped by --available-height. Recommended: yes.
+      12. (Tokens) Rows space.150 block, space.200 inline, space.200 icon gap; empty message typography.body-sm color.text.secondary, padded only on :not(:empty). Recommended: yes.
+      13. (Owned strings) New key noMatches "No matches" (override noMatchesLabel), build writes da, sv, nb. Recommended: yes.
+      14. (Component rules) The input gets enterKeyHint="search", keeping type="text". Recommended: yes.
+      15. (Component rules) The list opens and closes at once, with no transition. Recommended: yes.
+      16. (Stories) No variant property; State property default, hover, focus, open, disabled; stories Default, Hover, Focus, Open, Disabled plus content and behaviour stories. Recommended: yes.
