@@ -219,10 +219,10 @@
     "name": "FilterChip",
     "layer": "component",
     "category": "Inputs",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": ["Toggle"],
     "penpotPath": "Components/FilterChip",
-    "dependsOn": []
+    "dependsOn": ["Count"]
   },
   {
     "name": "HighlightChip",
