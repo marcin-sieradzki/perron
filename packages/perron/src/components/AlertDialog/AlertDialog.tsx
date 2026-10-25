@@ -1,6 +1,6 @@
-// AlertDialog: a modal question over the map and a scrim, on Base UI's AlertDialog, that only one of
-// its actions or Esc answers. It moves focus to the first action, Cancel, wraps Tab inside the popup
-// until it closes, then gives focus back to the button that opened it. One component that takes its words and controls
+// AlertDialog: a modal question over the map and a scrim, on Base UI's AlertDialog, that one of its
+// actions or Esc answers. It moves focus to the first action, Cancel, wraps Tab inside the popup while
+// focus is in it, and on close gives focus back to the button that opened it. One component that takes its words and controls
 // as props and renders every Base UI part itself, the popup as its root. The spec is
 // docs/components/alert-dialog.md.
 import { AlertDialog as BaseAlertDialog } from '@base-ui/react/alert-dialog'
@@ -45,9 +45,10 @@ export interface AlertDialogProps extends Omit<
    */
   open?: boolean
   /**
-   * Whether the alert dialog is open at first, when `open` is left out. Uncontrolled, the alert dialog
-   * closes only by Esc, since its actions close it through `open`: an alert dialog whose actions must
-   * close it is controlled with `open` instead.
+   * Whether the alert dialog is open at first, when `open` is left out. Uncontrolled, its actions cannot
+   * close it, since they close it through `open`: it closes by Esc, or by Enter or Space on the trigger,
+   * reached by Shift+Tab after a press on the backdrop, so an alert dialog whose actions must close it
+   * is controlled with `open` instead.
    * @default false
    */
   defaultOpen?: boolean
@@ -88,7 +89,7 @@ export interface AlertDialogProps extends Omit<
   }
 }
 
-/** A modal question that only one of its actions or Esc answers, over the map and a scrim. */
+/** A modal question that one of its actions or Esc answers, over the map and a scrim. */
 export function AlertDialog({
   title,
   description,

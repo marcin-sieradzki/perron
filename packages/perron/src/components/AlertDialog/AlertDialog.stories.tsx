@@ -98,6 +98,29 @@ export const Default: Story = {
       await expect(await alertDialog()).toBeInTheDocument()
       await expect(args.onClose).not.toHaveBeenCalled()
     })
+    await step('the trigger, still focusable behind the scrim, closes it on Space', async () => {
+      // the browser's Shift+Tab after a press on the backdrop lands on the trigger; user-event's Tab
+      // starts from the start of <body> rather than from the press, so the step moves focus there itself
+      trigger.focus()
+      await expect(trigger).toHaveFocus()
+      await userEvent.keyboard('[Space]')
+      await closed('alertdialog')
+      await expect(args.onClose).toHaveBeenLastCalledWith(
+        expect.anything(),
+        'trigger-press',
+        expect.anything(),
+      )
+      await expect(trigger).toHaveFocus()
+    })
+    await step('Space on the trigger opens it again, with focus on Cancel', async () => {
+      await userEvent.keyboard('[Space]')
+      const popup = await alertDialog()
+      await expect(args.onOpen).toHaveBeenLastCalledWith(
+        expect.anything(),
+        expect.objectContaining({ reason: 'trigger-press' }),
+      )
+      await waitFor(() => expect(action(popup, CANCEL)).toHaveFocus())
+    })
     await step('Escape closes it, and focus returns to the trigger', async () => {
       await userEvent.keyboard('{Escape}')
       await closed('alertdialog')
@@ -194,8 +217,32 @@ export const Actions: Story = {
       await expect(onConfirm).toHaveBeenCalledTimes(1)
       await expect(args.onClose).not.toHaveBeenCalled()
       await waitFor(() => expect(trigger).toHaveFocus())
-      trigger.blur()
     })
+    await step('Enter on the trigger opens it; Space on Cancel closes it', async () => {
+      await userEvent.keyboard('{Enter}')
+      const popup = await alertDialog()
+      await waitFor(() => expect(action(popup, CANCEL)).toHaveFocus())
+      await userEvent.keyboard('[Space]')
+      await closed('alertdialog')
+      await expect(onConfirm).toHaveBeenCalledTimes(1)
+      await waitFor(() => expect(trigger).toHaveFocus())
+    })
+    await step(
+      'Enter on Clear filters calls its onClick and closes it with no onClose',
+      async () => {
+        await userEvent.keyboard('{Enter}')
+        const popup = await alertDialog()
+        await waitFor(() => expect(action(popup, CANCEL)).toHaveFocus())
+        await userEvent.tab()
+        await waitFor(() => expect(action(popup, CONFIRM)).toHaveFocus())
+        await userEvent.keyboard('{Enter}')
+        await closed('alertdialog')
+        await expect(onConfirm).toHaveBeenCalledTimes(2)
+        await expect(args.onClose).not.toHaveBeenCalled()
+        await waitFor(() => expect(trigger).toHaveFocus())
+        trigger.blur()
+      },
+    )
   },
 }
 
