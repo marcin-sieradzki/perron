@@ -3,9 +3,6 @@ component: SourceLine
 layer: pattern
 deferred:
   at: 2026-10-25T17:46:59.950Z
-needsHuman:
-  stage: review
-  reason: 'review round 4 found a P1 or a P2 after unblock granted one round past the cap (round 4): review round 4 found 1 P2 (components/source-line/review.md)'
 stages:
   brief:
     status: done
@@ -14,11 +11,7 @@ stages:
   build:
     runs: 5
     respecs: 1
-    status: done
-    started: 2026-10-25T19:13:28.373Z
-    begun: 1c5b2d9d756b857e7ce210f0e60d262e9a7a2442ee8043765b258bb57f3203bf
-    spec: 2b4731e87a1d71164af06b1b9f33134b9cdff01bef76c550d5c0c6b18b5250fc
-    ended: 2026-10-25T19:19:36.765Z
+    failing: review round 4 found 1 P2 (components/source-line/review.md)
   review:
     rounds: 4
     sentBack: 4
@@ -27,11 +20,7 @@ stages:
       p1: 0
       p2: 1
       p3: 0
-    granted: 4
-    status: failed
-    started: 2026-10-25T19:26:03.385Z
-    ended: 2026-10-25T19:26:04.184Z
-    failing: review round 4 found 1 P2 (components/source-line/review.md)
+    granted: 5
 notes:
   - stage: brief
     at: 2026-10-25T17:53:46.108Z
@@ -64,3 +53,6 @@ notes:
   - stage: build
     at: 2026-10-25T19:19:36.765Z
     direction: The whole out-of-date phrase, 'updated 08:09:40, may be out of date', is in color.text.warning, not only its last words as brief answer 6 had it, since one owned string can't be coloured in part without markup in the string; a design run should confirm it, with the caption face for the time.
+  - stage: review
+    at: 2026-10-25T19:26:11.494Z
+    unblocked: 'review round 4 found a P1 or a P2 after unblock granted one round past the cap (round 4): review round 4 found 1 P2 (components/source-line/review.md)'
