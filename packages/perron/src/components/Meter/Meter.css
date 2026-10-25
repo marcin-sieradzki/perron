@@ -1,0 +1,88 @@
+/* Meter: the label and the figure on one row, the track across both below, on its container's
+   surface, with no fill, border, radius, padding or shadow of its own. Every row of
+   docs/components/meter.md's Tokens table is at rest: Meter is never interactive, and the unknown
+   value is rest with data-unknown on the root and the value. CR-7: the root takes its container's
+   inline size, so a long label never pushes the figure past the inline end. */
+.pn-Meter {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  column-gap: var(--perron-space-200);
+  row-gap: var(--perron-space-100);
+  margin: 0;
+}
+
+/* CR-7: the label takes its column's width, so a long Danish word breaks inside it */
+.pn-Meter-label {
+  margin: 0;
+  font: var(--perron-typography-label-sm);
+  letter-spacing: var(--perron-typography-label-sm-tracking);
+  color: var(--perron-color-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+/* CR-7: the figure never wraps, so "82 %" never breaks from its sign */
+.pn-Meter-value {
+  margin: 0;
+  font: var(--perron-typography-data);
+  letter-spacing: var(--perron-typography-data-tracking);
+  color: var(--perron-color-text-primary);
+  white-space: nowrap;
+}
+
+/* CR-5: the "—" an unknown value shows */
+.pn-Meter-value[data-unknown] {
+  color: var(--perron-color-text-tertiary);
+}
+
+/* The whole range, an inset pill that clips the fill to its round ends */
+.pn-Meter-track {
+  grid-column: 1 / -1;
+  block-size: var(--perron-size-meter-track);
+  margin: 0;
+  overflow: hidden;
+  border-radius: var(--perron-radius-full);
+  background-color: var(--perron-color-surface-inset);
+}
+
+/* Base UI sets the width as a percentage and the height to the track's; CR-6: a change eases, and
+   under reduced motion duration.meter is 0.01 ms, so no query of its own */
+.pn-Meter-indicator {
+  border-radius: var(--perron-radius-full);
+  transition: width var(--perron-duration-meter) var(--perron-easing-standard);
+}
+
+/* CR-2: the mark column of the contract's Intents, read from the root's data-color */
+.pn-Meter[data-color='neutral'] .pn-Meter-indicator {
+  background-color: var(--perron-color-text-primary);
+}
+
+.pn-Meter[data-color='success'] .pn-Meter-indicator {
+  background-color: var(--perron-color-status-success);
+}
+
+.pn-Meter[data-color='warning'] .pn-Meter-indicator {
+  background-color: var(--perron-color-status-warning);
+}
+
+.pn-Meter[data-color='danger'] .pn-Meter-indicator {
+  background-color: var(--perron-color-status-danger);
+}
+
+.pn-Meter[data-color='info'] .pn-Meter-indicator {
+  background-color: var(--perron-color-status-info);
+}
+
+/* CR-8: forced colours drop backgrounds, so the track draws an outline and the fill keeps its own
+   colour; an outline takes no space, so the geometry holds. The fill's selector matches the
+   intents' specificity and comes after them, so it wins over every one */
+@media (forced-colors: active) {
+  .pn-Meter-track {
+    outline: var(--perron-border-width-025) solid CanvasText;
+  }
+
+  .pn-Meter[data-color] .pn-Meter-indicator {
+    forced-color-adjust: none;
+    background-color: CanvasText;
+  }
+}
