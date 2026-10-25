@@ -122,6 +122,7 @@ const preview: Preview = {
             'NormalService',
             'SeverityLabel',
             'StationIcon',
+            'VehicleDot',
             // registry:components end
           ],
           // registry:patterns start: written by npm run registry, by category then name
@@ -193,6 +194,7 @@ const preview: Preview = {
             'NormalService',
             'SeverityLabel',
             'StationIcon',
+            'VehicleDot',
             'DataStatePanel',
             'DayProfileChart',
             'DetailHeader',

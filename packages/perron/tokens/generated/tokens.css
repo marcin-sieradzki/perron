@@ -199,6 +199,7 @@
   --perron-vehicle-dot-timetable-stroke-width: 1.6px;
   --perron-vehicle-dot-timetable-stroke-inset: 0.9px;
   --perron-vehicle-dot-timetable-dash: 2.1px 1.7px;
+  --perron-vehicle-dot-no-signal-cut-width: 1.6px;
   --perron-vehicle-dot-live-threshold: 60000ms;
   --perron-vehicle-dot-ageing-threshold: 300000ms;
   --perron-map-dot-radius-bus: 3.3px;

@@ -1436,6 +1436,16 @@
         "$description": "Dash and gap of the timetable-only ring"
       }
     },
+    "no-signal": {
+      "cut-width": {
+        "$type": "dimension",
+        "$value": {
+          "value": 1.6,
+          "unit": "px"
+        },
+        "$description": "Width of the diagonal cut, top left to bottom right, through a no-signal dot, the one shape no other state has"
+      }
+    },
     "live-threshold": {
       "$type": "duration",
       "$value": {

@@ -955,6 +955,13 @@
           "$value": "0.9px",
           "$description": "Pulls the timetable ring in so the dot keeps its outer size"
         }
+      },
+      "no-signal": {
+        "cut-width": {
+          "$type": "dimension",
+          "$value": "1.6px",
+          "$description": "Width of the diagonal cut, top left to bottom right, through a no-signal dot, the one shape no other state has"
+        }
       }
     },
     "map": {
