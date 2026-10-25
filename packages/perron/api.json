@@ -312,6 +312,97 @@
       }
     }
   },
+  "Dialog": {
+    "extends": [
+      "Omit< BaseDialog.Popup.Props, 'children' | 'title' | 'className' | 'style' | 'ref' >"
+    ],
+    "props": {
+      "actions": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "closeLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "defaultOpen": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "description": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "onClose": {
+        "optional": true,
+        "type": [
+          "(event: Event, reason: DialogRootChangeEventReason, details: DialogRootChangeEventDetails) => void"
+        ]
+      },
+      "onOpen": {
+        "optional": true,
+        "type": [
+          "(event: Event, details: DialogRootChangeEventDetails) => void"
+        ]
+      },
+      "open": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ trigger?: Props<unknown> | undefined; portal?: DialogPortalProps | undefined; backdrop?: DialogBackdropProps | undefined; title?: DialogTitleProps | undefined; description?: DialogDescriptionProps | undefined; close?: Omit<DialogCloseProps, \"disabled\"> | undefined; }"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "title": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "trigger": {
+        "optional": true,
+        "type": [
+          "ReactElement<unknown, string | JSXElementConstructor<any>>"
+        ]
+      }
+    }
+  },
   "DisruptionCard": {
     "extends": [
       "Omit<SurfaceProps, 'variant' | 'children' | 'title'>"
