@@ -13,7 +13,7 @@ export interface CheckboxIndicatorProps extends Omit<ComponentProps<'span'>, 'ch
   mark?: 'tick' | 'dash'
 }
 
-/** A 16 px box, empty, ticked or dashed, drawn in the colours of the state Base UI marks it with. */
+/** A `size.checkbox` box, empty, ticked or dashed, drawn in the colours of the state Base UI marks it with. */
 export function CheckboxIndicator({ mark, className, ...rest }: CheckboxIndicatorProps) {
   return (
     <span {...rest} className={classes('pn-CheckboxIndicator', className)}>

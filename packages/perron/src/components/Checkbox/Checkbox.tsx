@@ -32,7 +32,7 @@ export interface CheckboxProps extends Omit<
   /** Reaches the root, the `<span role="checkbox">`. */
   style?: CSSProperties
   /** Reaches the root, the `<span role="checkbox">`. */
-  ref?: Ref<HTMLSpanElement>
+  ref?: Ref<HTMLElement>
   /** Props for each inner part, merged with the part's own, which win. */
   slotProps?: {
     /**

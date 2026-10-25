@@ -152,7 +152,7 @@
       "ref": {
         "optional": true,
         "type": [
-          "Ref<HTMLSpanElement>"
+          "Ref<HTMLElement>"
         ]
       },
       "slotProps": {
