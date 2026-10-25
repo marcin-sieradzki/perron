@@ -64,10 +64,11 @@ Every icon renders at one of three steps, set with `--perron-icon-size` (one of 
 
 ### Controls
 
-| Icon                                                    | Name   | Grid  | Size                   | Use                                                |
-| ------------------------------------------------------- | ------ | ----- | ---------------------- | -------------------------------------------------- |
-| <img src="../../packages/perron/icons/tick.svg" alt=""> | `tick` | 14 px | `icon.size.325`, 13 px | A ticked checkbox, and the chosen option in a list |
-| <img src="../../packages/perron/icons/dash.svg" alt=""> | `dash` | 14 px | `icon.size.325`, 13 px | A checkbox that stands for a set partly ticked     |
+| Icon                                                          | Name         | Grid  | Size                   | Use                                                                                      |
+| ------------------------------------------------------------- | ------------ | ----- | ---------------------- | ---------------------------------------------------------------------------------------- |
+| <img src="../../packages/perron/icons/tick.svg" alt="">       | `tick`       | 14 px | `icon.size.325`, 13 px | A ticked checkbox, and the chosen option in a list                                       |
+| <img src="../../packages/perron/icons/dash.svg" alt="">       | `dash`       | 14 px | `icon.size.325`, 13 px | A checkbox that stands for a set partly ticked                                           |
+| <img src="../../packages/perron/icons/arrow-down.svg" alt=""> | `arrow-down` | 14 px | `icon.size.325`, 13 px | The column a table is sorted by: pointing down when descending, turned up when ascending |
 
 ### Feedback
 

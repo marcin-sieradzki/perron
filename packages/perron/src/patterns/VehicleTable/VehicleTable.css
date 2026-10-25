@@ -1,5 +1,6 @@
-/* VehicleTable: a native table of four columns, Line, Destination, Position and Delay, at rest only
-   (CR-7): no fill, no radius, no hover; rows divided by a hairline (docs/patterns/vehicle-table.md).
+/* VehicleTable: a native table of up to five columns, Line, Destination, Position, Last seen and
+   Delay, its rows at rest only (CR-7): no fill, no radius, no hover; rows divided by a hairline
+   (docs/patterns/vehicle-table.md). Only a sortable header's button answers the pointer (CR-10).
    No rule sets `display` on the table or its parts, so none loses its role (CR-1). */
 .pn-VehicleTable {
   /* CR-8: as wide as its container, with the browser's automatic table layout */
@@ -25,6 +26,8 @@
   /* CR-8: a long translated header wraps at its spaces and keeps whole words: its longest word is
      its column's least width */
   overflow-wrap: break-word;
+  /* the sorted column's arrow, inline with the header's words */
+  --perron-icon-size: var(--perron-icon-size-325);
 }
 
 /* the first column flush with the table's start edge */
@@ -32,9 +35,70 @@
   padding-inline-start: 0;
 }
 
-/* delays are figures compared down a column, so they line up at its end */
+/* delays and times are figures compared down a column, so they line up at its end */
+.pn-VehicleTable-headerCell[data-column='last-seen'],
 .pn-VehicleTable-headerCell[data-column='delay'] {
   text-align: end;
+}
+
+/* CR-10: the sorted column's header is inked as the data is, beside its arrow */
+.pn-VehicleTable-headerCell[data-direction] {
+  color: var(--perron-color-text-primary);
+}
+
+/* CR-10: a sortable header's button fills its cell, so the cell's padding moves inside it and the
+   whole header is its target */
+.pn-VehicleTable-headerCell[data-sortable] {
+  padding: 0;
+}
+
+.pn-VehicleTable-sortButton {
+  display: flex;
+  align-items: center;
+  inline-size: 100%;
+  min-block-size: var(--perron-size-target-min);
+  margin: 0;
+  padding-block: var(--perron-space-200);
+  padding-inline: var(--perron-space-300) 0;
+  border: 0;
+  background-color: transparent;
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  text-align: inherit;
+  cursor: pointer;
+}
+
+.pn-VehicleTable-headerCell[data-column='line'] .pn-VehicleTable-sortButton {
+  padding-inline-start: 0;
+}
+
+.pn-VehicleTable-headerCell[data-column='last-seen'] .pn-VehicleTable-sortButton,
+.pn-VehicleTable-headerCell[data-column='delay'] .pn-VehicleTable-sortButton {
+  justify-content: flex-end;
+}
+
+/* hover inks the words; pressed lays the hover layer behind them too, a step past hover, in a rule
+   after the hover one and outside its query, so a touch press shows (CR-10) */
+@media (hover: hover) {
+  .pn-VehicleTable-sortButton:hover {
+    color: var(--perron-color-text-primary);
+  }
+}
+
+.pn-VehicleTable-sortButton:active {
+  background-color: var(--perron-color-surface-hover);
+  color: var(--perron-color-text-primary);
+}
+
+/* after the words, pointing down when descending and turned up when ascending */
+.pn-VehicleTable-sortIcon {
+  margin-inline-start: var(--perron-space-100);
+  vertical-align: middle;
+}
+
+.pn-VehicleTable-headerCell[data-direction='asc'] .pn-VehicleTable-sortIcon {
+  scale: 1 -1;
 }
 
 /* CR-8: a table row's height is its least height, so a row grows only when its content is taller */
@@ -50,6 +114,7 @@
 .pn-VehicleTable-lineCell,
 .pn-VehicleTable-destinationCell,
 .pn-VehicleTable-positionCell,
+.pn-VehicleTable-lastSeenCell,
 .pn-VehicleTable-delayCell {
   padding-block: var(--perron-space-200);
   padding-inline: var(--perron-space-300) 0;
@@ -81,6 +146,17 @@
   /* CR-8: only a word longer than the 84 px that least width leaves inside the start padding
      breaks inside it, never past the table's edge */
   overflow-wrap: anywhere;
+}
+
+/* CR-11: a time compared down a column, in the data role with tabular figures, at the column's
+   end, and never wrapped; "—" when none is given takes the same type */
+.pn-VehicleTable-lastSeenCell {
+  font: var(--perron-typography-data);
+  letter-spacing: var(--perron-typography-data-tracking);
+  font-variant-numeric: tabular-nums;
+  color: var(--perron-color-text-primary);
+  text-align: end;
+  white-space: nowrap;
 }
 
 /* Delay keeps its own type and colour; only its place is set here */

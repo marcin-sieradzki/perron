@@ -39,6 +39,7 @@ export const nb: OwnedStrings = {
   destinationColumn: 'Destinasjon',
   positionColumn: 'Posisjon',
   delayColumn: 'Forsinkelse',
+  lastSeenColumn: 'Sist sett',
   mapControls: 'Kartknapper',
   zoomIn: 'Zoom inn',
   zoomOut: 'Zoom ut',

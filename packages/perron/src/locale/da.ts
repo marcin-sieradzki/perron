@@ -39,6 +39,7 @@ export const da: OwnedStrings = {
   destinationColumn: 'Destination',
   positionColumn: 'Position',
   delayColumn: 'Forsinkelse',
+  lastSeenColumn: 'Sidst set',
   mapControls: 'Kortknapper',
   zoomIn: 'Zoom ind',
   zoomOut: 'Zoom ud',
