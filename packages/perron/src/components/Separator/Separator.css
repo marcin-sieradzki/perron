@@ -1,0 +1,17 @@
+/* Separator (docs/components/separator.md). The line is one border on a box of no size, never a
+   background, so forced colours keep it (CR-3). No margin and no size: the space on either side
+   comes from the container's gap or padding, and stretch gives the line its container's length
+   (CR-4). Never interactive, so no state rules and no cursor (CR-6). */
+.pn-Separator {
+  flex: none;
+  align-self: stretch;
+  margin: 0;
+}
+
+.pn-Separator[data-orientation='horizontal'] {
+  border-block-start: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+}
+
+.pn-Separator[data-orientation='vertical'] {
+  border-inline-start: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+}

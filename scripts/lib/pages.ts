@@ -55,6 +55,7 @@ export const PAGES = [
   'docs/components/text-area.md',
   'docs/components/text-field.md',
   'docs/components/section.md',
+  'docs/components/separator.md',
   'docs/components/surface.md',
   'docs/components/attribution.md',
   'docs/components/map-controls.md',

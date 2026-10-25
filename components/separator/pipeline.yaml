@@ -8,6 +8,13 @@ stages:
     status: done
     started: 2026-10-25T07:36:10.911Z
     ended: 2026-10-25T07:37:06.217Z
+  build:
+    status: done
+    started: 2026-10-25T07:37:11.174Z
+    runs: 1
+    begun: ebce6b9361cecaa3ba578264b8221803c117d5438e9642b30e1882af7d918bac
+    spec: 96e96a2d09a1889024d984a4fd150d68ff5cdf9ffb894c122bfdc0fab9f391cf
+    ended: 2026-10-25T07:42:02.327Z
 notes:
   - stage: brief
     at: 2026-10-25T07:36:06.915Z
@@ -25,3 +32,9 @@ notes:
       2. (Props) Is Separator always announced as a separator, with no decorative prop that swaps its role for none? Recommended: yes.
       3. (Tokens) Does Separator take no margin of its own, so the space on either side comes from its container's gap or padding? Recommended: yes.
       4. (Component rules, CR-8) Do ToolbarSeparator, Select's separator and Menu's (once built) keep their own Base UI parts rather than later render Separator? Recommended: yes, with no follow-up.
+  - stage: build
+    at: 2026-10-25T07:42:02.327Z
+    direction: "Library-wide, the JSDoc on className, style and ref is written three or four ways: Surface's 'Reaches the root, merged after `pn-Surface`', Button's 'Classes for the root, merged after `pn-Button`', Toolbar's 'Reaches the root. Merged after `pn-Toolbar`.' and Kbd's and Separator's 'Joined after `pn-<Name>` on the root'. Pick one form for the template and the contract's Props section."
+  - stage: build
+    at: 2026-10-25T07:42:02.327Z
+    direction: "The `rendered` story helper cannot read a border width: its probe sets no border-style, so the computed width is always 0px. Border checks have to use `resolve`. The contract's Shared helpers row for `rendered` could say so, so specs stop naming it for borders."
