@@ -1,8 +1,6 @@
-// ScaleBar's arithmetic and its ref merge, in its own folder: the round distance the scale shows
-// and its bar's share of the longest length (CR-3), and the caller's ref joined with the pattern's
-// own, which a pattern cannot take from Base UI (CR-4). Not exported from the package: the barrel
-// reads ScaleBar.tsx only. Spec: docs/patterns/scale-bar.md.
-import type { Ref, RefCallback } from 'react'
+// ScaleBar's arithmetic, in its own folder: the round distance the scale shows and its bar's share
+// of the longest length (CR-3). Not exported from the package: the barrel reads ScaleBar.tsx only.
+// Spec: docs/patterns/scale-bar.md.
 
 /** The round steps a distance takes, each times a power of ten, longest first. */
 const STEPS = [5, 3, 2, 1] as const
@@ -16,7 +14,7 @@ export interface Scale {
 }
 
 /** Whether `value` is a positive finite number, the only kind that gives a distance (CR-7). */
-const measurable = (value: number) => Number.isFinite(value) && value > 0
+export const measurable = (value: number) => Number.isFinite(value) && value > 0
 
 /**
  * The scale for a map at `metersPerPixel` and a bar at most `longestPixels` long (CR-3): the
@@ -42,29 +40,4 @@ export function figureOf(meters: number): { figure: string; unit: 'meters' | 'ki
   return meters < 1000
     ? { figure: String(meters), unit: 'meters' }
     : { figure: String(Math.round(meters / 1000)), unit: 'kilometers' }
-}
-
-/**
- * One callback ref that sets every ref in `refs`, objects and callbacks alike, and clears them on
- * detach, calling a callback's own cleanup where it returns one (React 19).
- */
-export function joinRefs<T>(...refs: ReadonlyArray<Ref<T> | undefined>): RefCallback<T> {
-  return (node) => {
-    const cleanups = refs.map((ref) => {
-      if (typeof ref === 'function') {
-        const cleanup = ref(node)
-        return typeof cleanup === 'function' ? cleanup : () => ref(null)
-      }
-      if (ref) {
-        ref.current = node
-        return () => {
-          ref.current = null
-        }
-      }
-      return undefined
-    })
-    return () => {
-      for (const cleanup of cleanups) cleanup?.()
-    }
-  }
 }

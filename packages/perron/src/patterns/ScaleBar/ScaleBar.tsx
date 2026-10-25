@@ -7,8 +7,8 @@ import type { ComponentPropsWithRef, CSSProperties, Ref } from 'react'
 import { Surface } from '../../components/Surface/Surface.tsx'
 import { VisuallyHidden } from '../../parts/VisuallyHidden/VisuallyHidden.tsx'
 import { useOwnedStrings } from '../../PerronProvider.tsx'
-import { classes } from '../../internal/nodes.ts'
-import { figureOf, joinRefs, scaleFor } from './scale.ts'
+import { classes, joinRefs } from '../../internal/nodes.ts'
+import { figureOf, measurable, scaleFor } from './scale.ts'
 import './ScaleBar.css'
 
 export interface ScaleBarProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
@@ -92,7 +92,7 @@ export function ScaleBar({
   }, [])
 
   // CR-7: a resolution that is not a positive finite number gives no distance
-  const unknown = !(Number.isFinite(metersPerPixel) && metersPerPixel > 0)
+  const unknown = !measurable(metersPerPixel)
   const scale = longest === undefined ? undefined : scaleFor(metersPerPixel, longest)
   const reading = scale && figureOf(scale.meters)
 
