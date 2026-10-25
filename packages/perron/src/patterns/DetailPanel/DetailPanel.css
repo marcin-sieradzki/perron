@@ -1,0 +1,39 @@
+/* DetailPanel, from docs/patterns/detail-panel.md: the Sheet's panel and the DetailHeader draw
+   everything but these rows, all at rest; the pattern draws no surface of its own (CR-5). */
+
+/* The detail panel's own width beside the map, at most the viewport's box, as the Sheet keeps it.
+   One attribute more than the Sheet's .pn-Sheet[data-anchor='right'], data-variant, which the root
+   always carries (CR-5), so it wins; a bottom panel keeps the Sheet's full width. */
+.pn-DetailPanel[data-anchor='right'][data-variant] {
+  inline-size: var(--perron-size-detail-width);
+}
+
+/* Stacked among the map's panels: above the overview sheet and the highlight chip, below the top
+   bar, a tooltip and a dialog. The attribute beats the Sheet's .pn-Sheet-viewport. */
+.pn-DetailPanel-viewport[data-anchor] {
+  z-index: var(--perron-z-index-detail);
+}
+
+/* The caller's controls in a row of their own under the mark, the title and the subheader, from
+   the header's start edge, so the title takes the row beside the close button and keeps its words
+   whole. DetailHeader's grid ends its mark at the last of its four rows, so this fifth row is the
+   action's alone; two controls that don't fit wrap onto another line. One attribute more than
+   DetailHeader's .pn-DetailHeader-action, the data-anchor the panel gives the action (CR-5), so it
+   wins. */
+.pn-DetailPanel-action[data-anchor] {
+  grid-column: 1 / -1;
+  grid-row: 5;
+  flex-wrap: wrap;
+  row-gap: var(--perron-space-200);
+  margin-block-start: var(--perron-space-300);
+  margin-inline-start: 0;
+}
+
+/* The caller's blocks in one column, packed at the start, space.300 apart; minmax(0, 1fr) keeps a
+   long word from widening the scrolling body. */
+.pn-DetailPanel-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  row-gap: var(--perron-space-300);
+}

@@ -13,10 +13,10 @@ You are a read-only reviewer: you read, search and run the commands below, and t
 Judge from three inputs only, so the review is independent of how the build reasoned:
 
 - **The spec**: `docs/components/<name>.md`, or `docs/patterns/<name>.md` for a pattern, and the rules it cites in the contract, `docs/components/README.md`.
-- **The diff**: `git diff $(git merge-base HEAD main)`, plus each untracked file `git status --short` lists. Read the code, the CSS, the stories and the registry entry it changes; leave commit messages and any notes from the build aside.
+- **The diff**: `git diff $(git merge-base HEAD main)`, plus each untracked file `git status --short` lists. Read the code, the CSS, the stories and the registry entry it changes; leave commit messages and the build's `direction` notes in `pipeline.yaml` aside.
 - **The gate output**: what you see when you run the gates yourself.
 
-`components/<name>/pipeline.yaml` says whether the design is `deferred`. Its `unblocked` notes each mark a cap the maintainer cleared after fixing what stopped the loop: the round count starts again there by design, and the code is judged as it stands.
+`components/<name>/pipeline.yaml` says whether the design is `deferred`. Its `unblocked` notes each mark a cap cleared after what stopped the loop was fixed: the round count starts again there by design, and the code is judged as it stands. Its `questions` notes are decisions a stage asked for, answered by the maintainer or, in an unattended run, by each one's recommended answer: where the spec is silent they bind the code as the spec does, and a P3 may question one. Its `direction` notes are the build's view of the design, not a requirement.
 
 The round is the one the prompt gives; without one, it is one more than the round in an existing `components/<name>/review.md`, or 1.
 

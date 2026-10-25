@@ -6,7 +6,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, screen, userEvent, waitFor, within } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
-import { mounted } from '../../testing/stories.ts'
+import { byTestId, closed, mounted } from '../../testing/stories.ts'
 import { Sheet } from './Sheet.tsx'
 import type { SheetProps } from './Sheet.tsx'
 
@@ -49,17 +49,6 @@ type Story = StoryObj<typeof meta>
 
 /** The open sheet, found by its role in the portal at the end of `<body>`. */
 const sheet = () => screen.findByRole('dialog', { name: TITLE })
-
-/** Resolves once no sheet is open. */
-const closed = () => waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
-
-/** The element with `data-testid` `id`, once it has rendered. */
-const byTestId = (id: string) =>
-  waitFor(() => {
-    const found = document.querySelector(`[data-testid="${id}"]`)
-    expect(found).not.toBeNull()
-    return found as HTMLElement
-  })
 
 /**
  * The shapes `title` and `children` take, a string, an element and a list each, paired so three

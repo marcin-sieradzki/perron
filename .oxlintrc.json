@@ -29,6 +29,35 @@
   },
   "overrides": [
     {
+      "files": ["packages/perron/src/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@mui/**"],
+                "allowTypeImports": true,
+                "message": "MUI is installed for its bundled docs only (get_reference). Build on @base-ui/react; a type-only import is fine."
+              },
+              {
+                "group": ["@base-ui-components/**"],
+                "message": "Base UI's old package name. Import from @base-ui/react/<part>."
+              },
+              {
+                "group": ["@base-ui/react/internals", "@base-ui/react/internals/**"],
+                "message": "Base UI's internals are not its public API. Import from @base-ui/react/<part>."
+              },
+              {
+                "group": ["**/tokens/generated/**", "@mylder/perron/tokens.ts"],
+                "message": "tokens.ts is outside the package build's rootDir (src), so the build fails with TS6059. Read the token at run time with tokenValue from src/internal/tokens.ts (docs/components/README.md, \"CSS\")."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
       "files": ["packages/mcp/**", "scripts/**"],
       "rules": { "no-restricted-imports": "off" }
     }

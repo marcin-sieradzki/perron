@@ -1,0 +1,69 @@
+# Written by npm run factory; never by hand.
+component: DetailPanel
+layer: pattern
+deferred:
+  at: 2026-10-25T00:23:51.390Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-25T00:31:47.795Z
+    ended: 2026-10-25T00:33:35.911Z
+  build:
+    runs: 6
+    status: done
+    started: 2026-10-25T01:28:15.548Z
+    ended: 2026-10-25T01:29:43.759Z
+  review:
+    rounds: 5
+    sentBack: 1
+    findings:
+      p1: 0
+      p2: 0
+      p3: 5
+    status: done
+    started: 2026-10-25T01:30:05.473Z
+    ended: 2026-10-25T01:34:01.997Z
+  docs:
+    status: done
+    started: 2026-10-25T01:34:08.346Z
+    ended: 2026-10-25T01:37:04.350Z
+notes:
+  - stage: review
+    at: 2026-10-25T01:20:49.454Z
+    unblocked: '3 review rounds found a P1 or a P2; the last: review round 3 found 1 P2 (components/detail-panel/review.md)'
+  - stage: build
+    at: 2026-10-25T01:24:35.172Z
+    direction: "P3-1 / CR-1 (DetailPanel.tsx:9): the contract's Patterns section does not list another pattern among what a pattern may import, but dependsOn and CR-1 compose DetailHeader. Either extend that line (and the patterns gate) to the patterns an entry's dependsOn names, or reword the perron-allow reason to call this a departure."
+  - stage: build
+    at: 2026-10-25T01:24:35.172Z
+    direction: "P3-2 (DetailPanel.tsx:154): the Sheet's title, rendered as a div, passes typography.heading-md down to the action row, so a plain-string action looks like a second heading. Should the panel or DetailHeader give the action a typography role, such as typography.label?"
+  - stage: build
+    at: 2026-10-25T01:24:35.172Z
+    direction: "P3-3 (DetailPanel.tsx:56, :65): the children and anchor JSDoc end with design reasoning copied from the spec, shown in the docs page's props table. Move it to the spec's prose only?"
+  - stage: build
+    at: 2026-10-25T01:24:35.172Z
+    direction: "P3-4 (DetailHeader.tsx:42, detail-header.md:19, :50): DetailHeader still puts action at the end of the row, and DetailPanel overrides DetailHeader's four-row grid from outside to add a fifth row. Should DetailHeader get an action-below layout of its own?"
+  - stage: build
+    at: 2026-10-25T01:24:35.172Z
+    direction: "P3-5 (detail-panel.md:24): the Anatomy note still ends with an instruction to the build and cites DetailHeader's spec by line number. Cut it down to the decision alone?"
+  - stage: build
+    at: 2026-10-25T01:24:35.172Z
+    direction: "Tab reaches the action before the close button, although the close button sits above the action row (DOM order unchanged: the action stays in DetailHeader inside the Sheet's title slot)."
+  - stage: build
+    at: 2026-10-25T01:24:35.172Z
+    direction: With the close button at the top of the header row, its centre sits about 6 px above the line badge's when a subheader makes the title block taller, as Sheet does with a wrapping title.
+  - stage: build
+    at: 2026-10-25T01:24:35.172Z
+    direction: 'Inherited from Sheet: the popup takes focus on open, so the global :focus-visible ring outlines the whole panel in every open story.'
+  - stage: docs
+    at: 2026-10-25T01:37:04.351Z
+    direction: Props table shows callbacks and snap point props as SheetProps['onOpen'], SheetProps['snapPoints'] etc. where the spec gives (event, details) => void; a reader has to open Sheet's page for the signature.
+  - stage: docs
+    at: 2026-10-25T01:37:04.351Z
+    direction: Slots table shows SheetSlots['trigger'] etc.; SheetSlots is a local unexported alias in DetailPanel.tsx, so the page names a type a caller cannot import. Spell it NonNullable<SheetProps['slotProps']>['trigger'], as the spec does.
+  - stage: docs
+    at: 2026-10-25T01:37:04.351Z
+    direction: npm run api reorders union members in callback types it does not own (Tooltip onOpenChange, Sheet onClose/onOpen/onSnapPointChange now start MouseEvent | Event); sorting union members in scripts/build-api.ts would keep api.json stable.
+  - stage: docs
+    at: 2026-10-25T01:37:04.351Z
+    direction: 'Docs page: the popup that took focus last on load (e.g. LongTitle) shows the focus ring, so the examples look uneven; cosmetic.'

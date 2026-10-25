@@ -164,6 +164,7 @@ Tokens only.
   - `overflow-wrap: anywhere` breaks it, for text whose box takes its container's width: a title, a body, a cell.
   - `overflow-wrap: break-word` breaks it too, for a box that sizes to its content beside others in a flex or inline row, such as a tag: `anywhere` lets the row squeeze that box to one letter a line, where `break-word` keeps whole words at its narrowest, and the row that holds it wraps (`flex-wrap: wrap`).
   - `white-space: nowrap` keeps it on one line. `pre-wrap` and `pre-line` decide nothing: they wrap at spaces only.
+- **In script:** a token a prop needs as a value, such as an offset or a snap point Base UI takes as a number or a string, is read at run time with `tokenValue('--perron-…')` ([Shared helpers](#shared-helpers)), once, and kept; until it can be read, as on a server, Base UI's own default holds. A component never imports `tokens.ts`: it is outside the package build's `rootDir`, so the release build fails (TS6059), and the lint stops the import.
 - **Icons** are sized by setting `--perron-icon-size` to an `icon.size.*` token on the element that holds them. See [Icons](../foundations/icons.md#sizes).
 - **Motion** takes `duration.*` and `easing.*`. A state with no fitting duration changes at once; a new one goes through the `design-tokens` skill. A loop (`infinite`) stops inside `@media (prefers-reduced-motion: reduce)`, in a rule with the loop's own selector that sets its `animation`. See [Motion](../foundations/motion.md).
 - **Stacking:** everything that renders in a portal (popups, tooltips, dialogs) takes `z-index.dialog`, so the one opened last paints on top. The other `z-index.*` tokens order the map screen's panels, for patterns.
@@ -202,6 +203,7 @@ Members of a family share one treatment, in Penpot and in CSS. A new member join
 
 - Text: rows and buttons in `typography.label`, a row's second line in `typography.caption` with `color.text.secondary`, fields in `typography.body`, tooltips in `typography.label-sm`. A placeholder and anything disabled is `color.text.tertiary`.
 - Height: a field is `size.input` tall. A row is at least `size.target-min`.
+- Glass: a component or pattern whose own element floats over the map as glass composes Surface with `variant='glass'`, as KioskBar does, and its CSS sets only what its spec changes, such as the radius or the padding; it never writes the fill, the `backdrop-filter` and the shadow again. A Base UI popup or panel, whose element Base UI renders, writes its row's treatment in its own CSS.
 
 ## Shared parts
 
@@ -219,19 +221,26 @@ Each of these is drawn once, in its own folder, `packages/perron/src/parts/<Part
 
 ## Shared helpers
 
-Each of these is written once, in its file, and a component, pattern or story imports it from there; no other file in `packages/perron/src/` declares its name at the top level. Helpers are internal: no barrel exports them. A helper a second component needs joins this table first.
+Each of these is written once, in its file, and a component, pattern or story imports it from there; no other file in `packages/perron/src/` declares at its top level its name, a name after it in its cell (one a copy went by), or a function with its body under a new name (`npm run gates`, `shared-parts`). Helpers are internal: no barrel exports them. A helper a second component needs joins this table first. A story has the DOM and uses `testing/stories.ts`; a unit test runs in node with no DOM and reads server-rendered markup with `testing/markup.ts`.
 
-| Helper         | File                                            | Does                                                                                                               |
-| -------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| `given`        | `packages/perron/src/internal/nodes.ts`         | Whether a node renders something, so a part given nothing is left out                                              |
-| `known`        | `packages/perron/src/internal/nodes.ts`         | Whether a value says something, so one that says nothing shows `UnknownValue`                                      |
-| `classes`      | `packages/perron/src/internal/nodes.ts`         | A part's own class first, then the caller's                                                                        |
-| `usePart`      | `packages/perron/src/internal/use-part.ts`      | One inner part, from its `slotProps` value merged under the part's own props; it reads Base UI                     |
-| `UnknownValue` | `packages/perron/src/internal/UnknownValue.tsx` | A value no one knows: "—" for the eye, the caller's or the locale's word for the ear                               |
-| `typography`   | `packages/perron/src/testing/stories.ts`        | The style of one typography role with its `-tracking` twin and no margin, for a story's own text                   |
-| `heard`        | `packages/perron/src/testing/stories.ts`        | What a screen reader reads of an element: its text outside `aria-hidden`, white space collapsed                    |
-| `mounted`      | `packages/perron/src/testing/stories.ts`        | Renders a node apart from the story into a host it appends, runs a test on it, and unmounts it after, pass or fail |
-| `colour`       | `packages/perron/src/testing/stories.ts`        | A colour custom property as it renders, the computed `color` of a probe, to compare with an element's              |
+| Helper                           | File                                            | Does                                                                                                               |
+| -------------------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `given`                          | `packages/perron/src/internal/nodes.ts`         | Whether a node renders something, so a part given nothing is left out                                              |
+| `known`                          | `packages/perron/src/internal/nodes.ts`         | Whether a value says something, so one that says nothing shows `UnknownValue`                                      |
+| `classes`                        | `packages/perron/src/internal/nodes.ts`         | A part's own class first, then the caller's                                                                        |
+| `withClass`                      | `packages/perron/src/internal/nodes.ts`         | `classes` for a Base UI part whose caller's `className` may be a function of its state                             |
+| `tokenValue`                     | `packages/perron/src/internal/tokens.ts`        | A token's value in script, from its custom property on the document root, for a prop Base UI takes as a value      |
+| `usePart`                        | `packages/perron/src/internal/use-part.ts`      | One inner part, from its `slotProps` value merged under the part's own props; it reads Base UI                     |
+| `UnknownValue`                   | `packages/perron/src/internal/UnknownValue.tsx` | A value no one knows: "—" for the eye, the caller's or the locale's word for the ear                               |
+| `typography`                     | `packages/perron/src/testing/stories.ts`        | The style of one typography role with its `-tracking` twin and no margin, for a story's own text                   |
+| `heard`, `exposedText`, `textOf` | `packages/perron/src/testing/stories.ts`        | What a screen reader reads of an element: its text outside `aria-hidden`, white space collapsed                    |
+| `mounted`, `mount`               | `packages/perron/src/testing/stories.ts`        | Renders a node apart from the story into a host it appends, runs a test on it, and unmounts it after, pass or fail |
+| `colour`                         | `packages/perron/src/testing/stories.ts`        | A colour custom property as it renders, the computed `color` of a probe, to compare with an element's              |
+| `rendered`                       | `packages/perron/src/testing/stories.ts`        | The value a token renders as on one CSS property, read from a probe; a colour as `color` is `colour`'s             |
+| `onHover`                        | `packages/perron/src/testing/stories.ts`        | What the `(hover: hover)` rules set a property to on an element, as written, since a synthetic pointer can't hover |
+| `closed`                         | `packages/perron/src/testing/stories.ts`        | Resolves once no dialog is open, for a story of Dialog, Sheet or a pattern on them                                 |
+| `byTestId`                       | `packages/perron/src/testing/stories.ts`        | The element with a `data-testid`, once it has rendered                                                             |
+| `heardMarkup`                    | `packages/perron/src/testing/markup.ts`         | `heard` for a unit test: what a screen reader reads of server-rendered markup, with no DOM                         |
 
 ## What axe won't catch
 
