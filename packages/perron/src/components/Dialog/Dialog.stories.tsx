@@ -6,7 +6,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, screen, userEvent, waitFor, within } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
-import { mounted } from '../../testing/stories.ts'
+import { closed, mounted } from '../../testing/stories.ts'
 import { Button } from '../Button/Button.tsx'
 import { Text } from '../Text/Text.tsx'
 import { Dialog } from './Dialog.tsx'
@@ -58,9 +58,6 @@ type Story = StoryObj<typeof meta>
 
 /** The open dialog, found by its role in the portal at the end of `<body>`. */
 const dialog = (name = TITLE) => screen.findByRole('dialog', { name })
-
-/** Resolves once no dialog is open. */
-const closed = () => waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
 
 /** The trigger, found while the open dialog hides the page from assistive technology. */
 const triggerIn = (canvasElement: HTMLElement, name = TRIGGER) =>
