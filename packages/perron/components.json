@@ -413,7 +413,7 @@
     "name": "ScaleBar",
     "layer": "pattern",
     "category": "Map",
-    "status": "building",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Patterns/ScaleBar",
     "dependsOn": ["Surface"]

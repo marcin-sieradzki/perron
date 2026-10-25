@@ -1,0 +1,19 @@
+import { Meta, Stories, Title } from '@storybook/addon-docs/blocks'
+import { PropsTable } from '../../../../../storybook/blocks/PropsTable.tsx'
+import { SpecProse } from '../../../../../storybook/blocks/SpecProse.tsx'
+import * as ScaleBarStories from './ScaleBar.stories.tsx'
+
+<Meta of={ScaleBarStories} />
+
+<Title />
+
+<SpecProse path="docs/patterns/scale-bar.md" intro />
+
+<Stories title="Examples" />
+
+<PropsTable of={ScaleBarStories} />
+
+<SpecProse
+  path="docs/patterns/scale-bar.md"
+  sections={['Keyboard and ARIA', 'Owned strings', "Do and don't"]}
+/>

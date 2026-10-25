@@ -25,6 +25,10 @@ stages:
     status: done
     started: 2026-10-25T02:36:47.579Z
     ended: 2026-10-25T02:41:11.068Z
+  docs:
+    status: done
+    started: 2026-10-25T02:41:19.698Z
+    ended: 2026-10-25T02:43:32.824Z
 notes:
   - stage: brief
     at: 2026-10-25T02:11:34.911Z
@@ -47,3 +51,6 @@ notes:
   - stage: build
     at: 2026-10-25T02:22:39.959Z
     questions: '1. CR-3, the 1 m floor: when the longest distance is under 1 m the floor makes the bar''s share over 100%. Recommended: keep the floor and hold the share at 100%, so the bar is drawn at its longest length under ''1 m''; rewrite CR-3''s last sentence to ''from 50% to 100%, and at 100% where the 1 m floor holds''. 2. CR-4 vs CR-7, an unknown resolution before the first measure. Recommended: CR-7 wins: ''—'' and ''Unknown'' show from the first render, server included; rewrite CR-4''s last sentence to ''Until it is read, as in a server render, a resolution that gives a distance shows only the hidden "Scale" in the label, which keeps one line''s height, and the bar is left out''.'
+  - stage: docs
+    at: 2026-10-25T02:43:32.824Z
+    direction: The docs page's slots table shows slotProps types as ComponentPropsWithRef<'span'>, while packages/perron/api.json records the expanded DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement>; this comes from the api tool, not ScaleBar.

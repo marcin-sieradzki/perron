@@ -1297,6 +1297,67 @@
       }
     }
   },
+  "ScaleBar": {
+    "extends": [
+      "Omit<ComponentPropsWithRef<'div'>, 'children'>"
+    ],
+    "props": {
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "kilometersUnitLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "metersPerPixel": {
+        "optional": false,
+        "type": [
+          "number"
+        ]
+      },
+      "metersUnitLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "scaleLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ label?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; bar?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; }"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "unknownLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      }
+    }
+  },
   "Section": {
     "extends": [
       "Omit< useRender.ComponentProps<'section'>, 'title' | 'children' >"
