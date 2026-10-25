@@ -238,7 +238,11 @@ Each of these is written once, in its file, and a component, pattern or story im
 | `colour`                         | `packages/perron/src/testing/stories.ts`        | A colour custom property as it renders, the computed `color` of a probe, to compare with an element's              |
 | `rendered`                       | `packages/perron/src/testing/stories.ts`        | The value a token renders as on one CSS property, read from a probe; a colour as `color` is `colour`'s             |
 | `onHover`                        | `packages/perron/src/testing/stories.ts`        | What the `(hover: hover)` rules set a property to on an element, as written, since a synthetic pointer can't hover |
-| `closed`                         | `packages/perron/src/testing/stories.ts`        | Resolves once no dialog is open, for a story of Dialog, Sheet or a pattern on them                                 |
+| `closed`, `listClosed`           | `packages/perron/src/testing/stories.ts`        | Resolves once nothing with a role, a dialog by default, is open, or nothing matches a `{ selector }`               |
+| `icon`                           | `packages/perron/src/testing/stories.ts`        | An icon file's `?raw` text, inline, sized by `.perron-icon`, for a story's icon prop                               |
+| `resolve`                        | `packages/perron/src/testing/stories.ts`        | A value, such as a `var(--perron-…)`, as it renders on one style property, read from a block probe                 |
+| `stateRules`, `hoverRules`       | `packages/perron/src/testing/stories.ts`        | The declarations a `:hover`, `:active` or `:visited` rule adds to an element, as written                           |
+| `stateFill`                      | `packages/perron/src/testing/stories.ts`        | The background a state's rules give an element last, as written                                                    |
 | `byTestId`                       | `packages/perron/src/testing/stories.ts`        | The element with a `data-testid`, once it has rendered                                                             |
 | `heardMarkup`                    | `packages/perron/src/testing/markup.ts`         | `heard` for a unit test: what a screen reader reads of server-rendered markup, with no DOM                         |
 | `attribute`, `attr`              | `packages/perron/src/testing/markup.ts`         | One attribute's value in the first tag of server-rendered markup, its character references read back               |

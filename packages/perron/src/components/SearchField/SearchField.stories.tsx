@@ -8,7 +8,7 @@ import { expect, fireEvent, fn, screen, userEvent, waitFor, within } from 'story
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { dictionaries } from '../../locale/index.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
-import { colour, heard, mounted, onHover, rendered } from '../../testing/stories.ts'
+import { closed, colour, heard, mounted, onHover, rendered } from '../../testing/stories.ts'
 import { LineBadge } from '../LineBadge/LineBadge.tsx'
 import { StationIcon } from '../StationIcon/StationIcon.tsx'
 import { SearchField } from './SearchField.tsx'
@@ -69,12 +69,11 @@ const inputIn = (canvasElement: HTMLElement, name = LABEL) =>
 /** The open list, found through `screen`: it portals outside the canvas. */
 const listbox = () => screen.findByRole('listbox')
 
+/** The popup's selector: the list is closed once no element matches it. */
+const LIST = { selector: '.pn-SearchField-popup' }
+
 /** The open popup, the glass panel round the list. */
 const popup = async () => (await listbox()).closest('.pn-SearchField-popup') as HTMLElement
-
-/** Resolves once no list is in the document. */
-const listClosed = () =>
-  waitFor(() => expect(document.querySelector('.pn-SearchField-popup')).toBeNull())
 
 /**
  * The screen-reader-only Dismiss controls Base UI 1.9.0 adds while the list is open, one before the
@@ -192,7 +191,7 @@ export const Open: Story = {
         'item-press',
         expect.anything(),
       )
-      await listClosed()
+      await closed(LIST)
       await expect(input).toHaveFocus()
       await expect(dismissControls()).toHaveLength(0)
       await expect(canvasElement.querySelector('.pn-SearchField-label')).not.toHaveAttribute(
@@ -251,7 +250,7 @@ export const Filled: Story = {
       await userEvent.type(input, '5C')
       await listbox()
       await userEvent.keyboard('{Escape}')
-      await listClosed()
+      await closed(LIST)
       await expect(input).toHaveValue('5C')
       await userEvent.keyboard('{Escape}')
       await expect(input).toHaveValue('')
@@ -328,7 +327,7 @@ export const NoMatches: Story = {
         'escape-key',
         expect.anything(),
       )
-      await listClosed()
+      await closed(LIST)
       input.blur()
     })
   },
@@ -348,7 +347,7 @@ export const HiddenLabel: Story = {
     await userEvent.keyboard('{ArrowDown}')
     await expect(await listbox()).toHaveAccessibleName(LABEL)
     await userEvent.keyboard('{Escape}')
-    await listClosed()
+    await closed(LIST)
     input.blur()
   },
 }
@@ -396,7 +395,7 @@ export const WithMarks: Story = {
     const input = inputIn(canvasElement)
     input.focus()
     await userEvent.keyboard('{Escape}')
-    await listClosed()
+    await closed(LIST)
     input.blur()
   },
 }
@@ -410,7 +409,7 @@ export const CallerFilter: Story = {
     const input = inputIn(canvasElement)
     input.focus()
     await userEvent.keyboard('{Escape}')
-    await listClosed()
+    await closed(LIST)
     input.blur()
   },
 }
@@ -468,7 +467,7 @@ export const Controlled: Story = {
         'escape-key',
         expect.anything(),
       )
-      await listClosed()
+      await closed(LIST)
     })
     await step('a press outside calls onClose with outside-press', async () => {
       await userEvent.keyboard('{ArrowDown}')
@@ -486,7 +485,7 @@ export const Controlled: Story = {
           expect.anything(),
         ),
       )
-      await listClosed()
+      await closed(LIST)
       await expect(input).toHaveFocus()
       input.blur()
     })
@@ -534,7 +533,7 @@ export const LongWords: Story = {
     const input = inputIn(canvasElement, `Søg ${COMPOUND}`)
     input.focus()
     await userEvent.keyboard('{Escape}')
-    await listClosed()
+    await closed(LIST)
     input.blur()
   },
 }

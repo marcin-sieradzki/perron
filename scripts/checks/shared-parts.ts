@@ -290,7 +290,8 @@ export function helperProblems(
   const byShape = helperShapes(root, src, helpers)
   const texts = new Map<string, string>()
   const problems: Problem[] = []
-  for (const file of walk(root, src, (n) => /\.tsx?$/.test(n) && !/\.test\.tsx?$/.test(n))) {
+  // unit tests too: a renamed copy of heardMarkup in a test is a copy all the same
+  for (const file of walk(root, src, (n) => /\.tsx?$/.test(n))) {
     const text = readFileSync(join(root, file), 'utf8')
     texts.set(file, text)
     for (const { name, offset, fn } of topLevelNames(file, text)) {

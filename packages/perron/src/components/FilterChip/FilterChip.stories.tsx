@@ -8,16 +8,8 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import calendar from '../../../icons/calendar.svg?raw'
 import diversion from '../../../icons/diversion.svg?raw'
 import warning from '../../../icons/warning.svg?raw'
-import { mounted } from '../../testing/stories.ts'
+import { icon, mounted, resolve, stateFill, stateRules } from '../../testing/stories.ts'
 import { FilterChip, type FilterChipProps } from './FilterChip.tsx'
-
-/** An icon file from packages/perron/icons, inline, sized by `.perron-icon`. */
-const icon = (svg: string) => (
-  <span
-    style={{ display: 'contents' }}
-    dangerouslySetInnerHTML={{ __html: svg.replace('<svg ', '<svg class="perron-icon" ') }}
-  />
-)
 
 const meta = {
   title: 'Components/FilterChip',
@@ -28,52 +20,6 @@ const meta = {
 export default meta
 
 type Story = StoryObj<typeof meta>
-
-/** A value as it renders, through a probe that reads it as `property`. */
-function resolve(
-  property: 'backgroundColor' | 'borderColor' | 'outlineWidth' | 'outlineOffset' | 'blockSize',
-  value: string,
-) {
-  const probe = document.createElement('span')
-  probe.style.display = 'block'
-  probe.style.borderStyle = 'solid'
-  probe.style.outlineStyle = 'solid'
-  probe.style[property] = value
-  document.body.append(probe)
-  const rendered = getComputedStyle(probe)[property]
-  probe.remove()
-  return rendered
-}
-
-/**
- * The declarations hovering `element` adds: each rule inside `(hover: hover)` whose selector,
- * without `:hover`, matches it. A script's events can't set `:hover`, so this reads the rule the
- * pointer triggers; the visual check hovers for real.
- */
-function hoverRules(element: Element) {
-  const found: CSSStyleDeclaration[] = []
-  const visit = (rules: CSSRuleList, inQuery: boolean) => {
-    for (const rule of Array.from(rules))
-      if (rule instanceof CSSMediaRule)
-        visit(rule.cssRules, inQuery || rule.conditionText.includes('(hover: hover)'))
-      else if (
-        rule instanceof CSSStyleRule &&
-        inQuery &&
-        rule.selectorText.includes(':hover') &&
-        element.matches(rule.selectorText.replaceAll(':hover', ''))
-      )
-        found.push(rule.style)
-  }
-  for (const sheet of Array.from(document.styleSheets)) visit(sheet.cssRules, false)
-  return found
-}
-
-/** The background hovering `element` sets, as written: the last `(hover: hover)` rule's. */
-const hoverFill = (element: Element) =>
-  hoverRules(element)
-    .map((s) => s.getPropertyValue('background-color'))
-    .filter(Boolean)
-    .at(-1)
 
 /** The chip in `canvasElement`, by its name. */
 const chip = (canvasElement: HTMLElement, name = 'Delays 3') =>
@@ -145,11 +91,11 @@ export const Default: Story = {
 export const Hover: Story = {
   play: async ({ canvasElement }) => {
     const root = chip(canvasElement)
-    await expect(hoverFill(root)).toBe('var(--perron-color-surface-hover)')
+    await expect(stateFill(root)).toBe('var(--perron-color-surface-hover)')
     await expect(resolve('backgroundColor', 'var(--perron-color-surface-hover)')).not.toBe(
       getComputedStyle(root).backgroundColor,
     )
-    await expect(hoverRules(root).every((s) => !s.getPropertyValue('border-color'))).toBe(true)
+    await expect(stateRules(root).every((s) => !s.getPropertyValue('border-color'))).toBe(true)
     await expect(getComputedStyle(root).borderColor).toBe(
       resolve('borderColor', 'var(--perron-color-border-control)'),
     )
@@ -183,7 +129,7 @@ export const Selected: Story = {
     await expect(getComputedStyle(root).backgroundColor).toBe(
       resolve('backgroundColor', 'var(--perron-color-surface-inverse)'),
     )
-    await expect(hoverFill(root)).toBe('var(--perron-color-surface-inverse-hover)')
+    await expect(stateFill(root)).toBe('var(--perron-color-surface-inverse-hover)')
     // CR-5: on and off share one box
     const on = root.getBoundingClientRect()
     await mounted(

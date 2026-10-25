@@ -1,7 +1,14 @@
 // Helpers the stories share, written once here (docs/components/README.md, "Shared helpers").
-import type { CSSProperties, ReactNode } from 'react'
+import { createElement, type CSSProperties, type ReactNode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { expect, screen, waitFor } from 'storybook/test'
+
+/** An icon file from packages/perron/icons, as its `?raw` text, inline, sized by `.perron-icon`. */
+export const icon = (svg: string) =>
+  createElement('span', {
+    style: { display: 'contents' },
+    dangerouslySetInnerHTML: { __html: svg.replace('<svg ', '<svg class="perron-icon" ') },
+  })
 
 /**
  * The style of one typography role with its `-tracking` twin, for a story's own text, with no
@@ -36,6 +43,59 @@ export function rendered(token: string, property: string) {
   probe.remove()
   return value
 }
+
+/** A property of an element's inline style that takes a string, such as `backgroundColor`. */
+type StyleProperty = {
+  [K in keyof CSSStyleDeclaration]: CSSStyleDeclaration[K] extends string ? K : never
+}[keyof CSSStyleDeclaration] &
+  string
+
+/**
+ * A value, such as `var(--perron-color-border-focus)`, as it renders on `property`: read from a
+ * block probe with a solid border and outline, so a border colour or an outline width shows.
+ */
+export function resolve(property: StyleProperty, value: string) {
+  const probe = document.createElement('span')
+  probe.style.display = 'block'
+  probe.style.borderStyle = 'solid'
+  probe.style.outlineStyle = 'solid'
+  probe.style[property] = value
+  document.body.append(probe)
+  const rendered = getComputedStyle(probe)[property]
+  probe.remove()
+  return rendered
+}
+
+/**
+ * The declarations a state adds to `element`: each rule whose selector holds `pseudo` and, without
+ * it, matches the element; for `:hover`, only the rules inside `(hover: hover)`, at any depth. A
+ * script's events can't set `:hover`, `:active` or `:visited`, so this reads the rules the browser
+ * would apply; the visual stage drives the states for real.
+ */
+export function stateRules(element: Element, pseudo: ':hover' | ':active' | ':visited' = ':hover') {
+  const found: CSSStyleDeclaration[] = []
+  const visit = (rules: CSSRuleList, inQuery: boolean) => {
+    for (const rule of Array.from(rules))
+      if (rule instanceof CSSMediaRule)
+        visit(rule.cssRules, inQuery || rule.conditionText.includes('(hover: hover)'))
+      else if (
+        rule instanceof CSSStyleRule &&
+        (pseudo !== ':hover' || inQuery) &&
+        rule.selectorText.includes(pseudo) &&
+        element.matches(rule.selectorText.replaceAll(pseudo, ''))
+      )
+        found.push(rule.style)
+  }
+  for (const sheet of Array.from(document.styleSheets)) visit(sheet.cssRules, false)
+  return found
+}
+
+/** The background a state's rules give `element` last, as written, or '' when none sets one. */
+export const stateFill = (element: Element, pseudo: ':hover' | ':active' = ':hover') =>
+  stateRules(element, pseudo)
+    .map((s) => s.getPropertyValue('background-color'))
+    .filter(Boolean)
+    .at(-1) ?? ''
 
 /**
  * What the `(hover: hover)` rules set `property` to when `element` is hovered, as written. A
@@ -90,8 +150,16 @@ export async function mounted<T>(
   }
 }
 
-/** Resolves once no dialog is open. */
-export const closed = () => waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+/**
+ * Resolves once nothing with `role` is open, a dialog by default; or, given `{ selector }`, once no
+ * element matches it, for a popup that leaves the document as it closes.
+ */
+export const closed = (what: string | { selector: string } = 'dialog') =>
+  waitFor(() =>
+    expect(
+      typeof what === 'string' ? screen.queryByRole(what) : document.querySelector(what.selector),
+    ).toBeNull(),
+  )
 
 /** The element with `data-testid` `id`, once it has rendered. */
 export const byTestId = (id: string) =>

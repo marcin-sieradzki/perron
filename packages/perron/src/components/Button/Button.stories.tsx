@@ -4,6 +4,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, userEvent, within } from 'storybook/test'
 import plus from '../../../icons/plus.svg?raw'
 import search from '../../../icons/search.svg?raw'
+import { icon, resolve, stateRules } from '../../testing/stories.ts'
 import { Button } from './Button.tsx'
 
 const meta = {
@@ -16,52 +17,6 @@ export default meta
 
 type Story = StoryObj<typeof meta>
 type Play = NonNullable<Story['play']>
-
-/** An icon file from packages/perron/icons, inline, sized by `.perron-icon`. */
-const icon = (svg: string) => (
-  <span
-    style={{ display: 'contents' }}
-    dangerouslySetInnerHTML={{ __html: svg.replace('<svg ', '<svg class="perron-icon" ') }}
-  />
-)
-
-/** A value as it renders, through a probe that reads it as `property`. */
-function resolve(
-  property: 'backgroundColor' | 'borderColor' | 'outlineWidth' | 'outlineOffset',
-  value: string,
-) {
-  const probe = document.createElement('span')
-  probe.style.borderStyle = 'solid'
-  probe.style.outlineStyle = 'solid'
-  probe.style[property] = value
-  document.body.append(probe)
-  const rendered = getComputedStyle(probe)[property]
-  probe.remove()
-  return rendered
-}
-
-/**
- * The declarations hovering `element` adds: each rule inside `(hover: hover)` whose selector,
- * without `:hover`, matches it. A script's events can't set `:hover`, so this reads the rule the
- * pointer triggers; the visual stage hovers for real.
- */
-function hoverRules(element: Element) {
-  const found: CSSStyleDeclaration[] = []
-  const visit = (rules: CSSRuleList, inQuery: boolean) => {
-    for (const rule of Array.from(rules))
-      if (rule instanceof CSSMediaRule)
-        visit(rule.cssRules, inQuery || rule.conditionText.includes('(hover: hover)'))
-      else if (
-        rule instanceof CSSStyleRule &&
-        inQuery &&
-        rule.selectorText.includes(':hover') &&
-        element.matches(rule.selectorText.replaceAll(':hover', ''))
-      )
-        found.push(rule.style)
-  }
-  for (const sheet of Array.from(document.styleSheets)) visit(sheet.cssRules, false)
-  return found
-}
 
 /** Tab focuses the button, Enter and Space each fire `onClick` once, Shift+Tab returns focus. */
 const activates: Play = async ({ args, canvasElement }) => {
@@ -81,7 +36,7 @@ const hoverFill =
   (fill: string, edge?: string): Play =>
   async ({ canvasElement }) => {
     const button = within(canvasElement).getByRole('button', { name: 'Show departures' })
-    const hover = hoverRules(button)
+    const hover = stateRules(button)
     const fills = hover.map((s) => s.getPropertyValue('background-color')).filter(Boolean)
     await expect(fills.at(-1)).toBe(fill)
     await expect(resolve('backgroundColor', fill)).not.toBe(
