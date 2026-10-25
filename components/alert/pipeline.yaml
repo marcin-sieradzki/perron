@@ -3,32 +3,25 @@ component: Alert
 layer: component
 deferred:
   at: 2026-10-25T07:20:14.474Z
-needsHuman:
-  stage: review
-  reason: '3 review rounds found a P1 or a P2; the last: review round 3 found 1 P2 (components/alert/review.md)'
 stages:
   brief:
     status: done
     started: 2026-10-25T07:28:39.007Z
     ended: 2026-10-25T07:30:10.698Z
   build:
-    runs: 3
+    runs: 4
     status: done
-    started: 2026-10-25T08:00:53.833Z
-    begun: f3d911ee7095ce133317e8606586bac2e4300e6a97aded35735e2ea5e31185d6
-    spec: 3ddbe4e77609265e566e54bbec2116327c48eae08b932481e59dbafe909089b0
-    ended: 2026-10-25T08:03:32.171Z
+    started: 2026-10-25T08:10:07.435Z
+    begun: 2a4c46a444f641d61719d80425f7ea5998801f8fe48860e3c002b23ade22f71b
+    spec: 2a4c46a444f641d61719d80425f7ea5998801f8fe48860e3c002b23ade22f71b
+    ended: 2026-10-25T08:11:49.271Z
   review:
     rounds: 3
-    sentBack: 3
+    sentBack: 0
     findings:
       p1: 0
       p2: 1
       p3: 6
-    status: failed
-    started: 2026-10-25T08:04:22.066Z
-    ended: 2026-10-25T08:09:56.036Z
-    failing: review round 3 found 1 P2 (components/alert/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T07:28:35.814Z
@@ -75,3 +68,6 @@ notes:
   - stage: build
     at: 2026-10-25T07:55:26.833Z
     direction: "The shared-parts gate's copiedStoryHelpers only catches copies declared as top-level functions. A helper's body copied inline into a play test passes unflagged: Alert's Info story copied expectNoFocus's tab and shift-tab inline."
+  - stage: review
+    at: 2026-10-25T08:10:02.106Z
+    unblocked: '3 review rounds found a P1 or a P2; the last: review round 3 found 1 P2 (components/alert/review.md)'
