@@ -17,11 +17,14 @@ let clock: number
 /** Each command the factory ran, and the results still scripted for `npm run check`. */
 let ran: string[]
 let checks: boolean[]
+/** The commit `git rev-parse HEAD` gives, which a review round records as the one it read */
+let head: string
 
 const env = (): Env => ({
   root,
   run(command) {
     ran.push(command)
+    if (command === 'git rev-parse HEAD') return { ok: true, output: `${head}\n` }
     const ok = command === 'npm run check' ? (checks.shift() ?? true) : true
     return { ok, output: ok ? '' : 'lint: Tally.tsx:3 no-unused-vars' }
   },
@@ -147,6 +150,7 @@ beforeEach(() => {
   root = mkdtempSync(join(tmpdir(), 'perron-factory-'))
   clock = 0
   ran = []
+  head = 'a'.repeat(40)
   checks = []
   write('docs/components/TEMPLATE.md', template)
   write('packages/perron/components.json', '[]')
@@ -226,7 +230,10 @@ describe('the factory dry run', () => {
       'ended review: failed, round 1: 2 P1, 0 P2, 0 P3: review round 1 found 2 P1 (components/tally/review.md)\nrun: build\nwhy: sent back: review round 1 found 2 P1 (components/tally/review.md)\nfix: review round 1 found 2 P1 (components/tally/review.md). Fix each of its P1 and P2 findings at the line it names:\n- **P1-1.** `Tally.tsx:1` Breaks the contract.\n- **P1-2.** `Tally.tsx:2` Breaks the contract.\n',
     )
     stage('build', () => build())
-    expect(run('next Tally').out).toMatch(/^run: review\nround: 2\n/)
+    // round 2 is scoped to what changed since the commit round 1 read
+    expect(run('next Tally').out).toMatch(/^run: review\nround: 2\nsince: a{40}\n/)
+    expect(JSON.parse(run('next Tally --json').out)).toMatchObject({ since: 'a'.repeat(40) })
+    head = 'b'.repeat(40)
 
     // a review.md left from round 1 is not round 2's review
     expect(stage('review', () => {}).out).toMatch(
@@ -242,7 +249,7 @@ describe('the factory dry run', () => {
     )
     expect(run('begin Tally docs').err).toBe('refused: docs cannot begin: build is not done\n')
     stage('build', () => build())
-    expect(run('next Tally').out).toMatch(/^run: review\nround: 3\n/)
+    expect(run('next Tally').out).toMatch(/^run: review\nround: 3\nsince: b{40}\n/)
     stage('review', () => review(3))
     expect(stage('docs', () => build('stable')).out).toContain('ended docs: done\nrun: visual')
     expect(ran.at(-1)).toBe('npm run check')

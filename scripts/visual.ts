@@ -221,7 +221,9 @@ export async function runVisual(o: VisualOptions): Promise<Report> {
               const shot = await page
                 .locator(rootSelector)
                 .first()
-                .screenshot({ omitBackground: true })
+                // an infinite loop, such as Progress's indeterminate bar, goes back to its first
+                // frame and a finite one to its last, so the pixels hold still between runs
+                .screenshot({ omitBackground: true, animations: 'disabled' })
               const { percent, diff } = pixelDiff(readFileSync(expected), shot)
               const file = `${variant}.${theme}.diff.png`
               writeFileSync(join(out, file), diff)
