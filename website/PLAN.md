@@ -43,7 +43,7 @@ Built once, in T1, and used by every page:
 
 ## Tickets
 
-Order: T0, then T1 and T2 together, then T3 to T8 in parallel once T1 is merged into the branch, then T9, then T10.
+Order: T0, then T1 and T2 together, then T3 to T8 (with T5 split in two) in parallel once T1 is merged into the branch, then T9, then T10.
 
 ### T0. Settle the open items and write this plan
 
@@ -113,16 +113,28 @@ Order: T0, then T1 and T2 together, then T3 to T8 in parallel once T1 is merged 
 
 **Blocked by:** T1.
 
-### T5. Components
+### T5a. Components index and previews
 
-**What to build:** the index of `Components.dc.html` (every stable component as a card holding the component, grouped by category, the designing ones marked as in design) and the spec page of `Button.dc.html` for every component and pattern: in context on the map with a glass sheet, variants × states, sizes, with icons, props from `api.json`, and the install strip with the `get_reference` call. Button is the reference page; other components take the sections their props support. Hover, pressed and focus cells use the component's own CSS rules, applied by the site from the component's stylesheet, never hand-copied values. Under `breakpoint.phone` the page follows `Phone-Button.dc.html`.
+**What to build:** the index of `Components.dc.html`: every stable component as a card holding the component, grouped by category, the designing ones marked as in design. Behind it, a preview for every stable component in the previews registry: `componentPreviews[name](props)` draws the component with `props` spread onto it and the content its spec's examples use, so a spec page can ask for any variant, colour, size or state.
 
-**Owns:** `website/app/components/**`, `website/app/patterns/[slug]/**`, `website/components/spec/*`, `website/previews/components.tsx`.
+**Owns:** `website/app/components/page.tsx`, `website/components/catalogue/*`, `website/previews/components.tsx` and any client preview files under `website/previews/components/`.
 
 **Acceptance criteria:**
 
-- [ ] Every stable component has a card with its preview; every registry entry with a spec page has a page.
-- [ ] A designing entry's page says it is in design and draws no preview.
+- [ ] Every stable component has a card with its preview, and every preview is the shipped component.
+- [ ] `getPreview('Button', { variant: 'outline', size: 'small' })` draws an outline small Button.
+
+**Blocked by:** T1.
+
+### T5b. Spec pages
+
+**What to build:** the spec page of `Button.dc.html` for every component and pattern: in context on the map with a glass sheet, variants × states, sizes, with icons, props from `api.json`, and the install strip with the `get_reference` call. Button is the reference page; other entries take the sections their props support, and draw each cell through `getPreview`. Hover, pressed and focus cells use the component's own CSS rules, applied by the site from the component's stylesheet, never hand-copied values. Under `breakpoint.phone` the page follows `Phone-Button.dc.html`.
+
+**Owns:** `website/app/components/[slug]/**`, `website/app/patterns/[slug]/**`, `website/components/spec/*`, `website/lib/spec.ts` and its test.
+
+**Acceptance criteria:**
+
+- [ ] Every registry entry with a spec page has a page; a designing entry's page says it is in design and draws no preview.
 - [ ] The props table matches `api.json` for Button, row for row.
 
 **Blocked by:** T1.
@@ -172,7 +184,7 @@ Order: T0, then T1 and T2 together, then T3 to T8 in parallel once T1 is merged 
 
 **Owns:** nothing; it reads.
 
-**Blocked by:** T3, T4, T5, T6, T7, T8.
+**Blocked by:** T3, T4, T5a, T5b, T6, T7, T8.
 
 ### T10. Fix, screenshot and ship
 
