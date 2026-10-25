@@ -6,7 +6,7 @@ import postcss, { type AtRule, type ChildNode, type Container, type Rule } from 
 import { specProse } from '../../storybook/blocks/component-page.ts'
 import { folderOf, kebab, type Layer } from '../../scripts/lib/entry.ts'
 import type { ComponentApi } from './api.ts'
-import { sections } from './markdown.ts'
+import { firstTable, sections } from './markdown.ts'
 import type { RegistryEntry } from './registry.ts'
 import { readRepoFile, repoFileExists, REPO_URL } from './repo.ts'
 import { readTokenData } from './tokens.ts'
@@ -52,28 +52,11 @@ export interface SpecPropRow {
   description: string
 }
 
-/** A table row's cells, split on the pipes a cell does not escape. */
-const cells = (line: string) =>
-  line
-    .trim()
-    .replace(/^\||\|$/g, '')
-    .split(/(?<!\\)\|/)
-    .map((c) => c.trim().replaceAll('\\|', '|'))
-
 /** The first markdown table in `text`, as rows keyed by the header's lowercased names. */
-function firstTable(text: string) {
-  const lines = text.split('\n')
-  const start = lines.findIndex((l, i) => l.startsWith('|') && /^\|[\s:|-]+\|$/.test(lines[i + 1]))
-  if (start < 0) return []
-  const head = cells(lines[start]).map((h) => h.toLowerCase())
-  const rows: Record<string, string>[] = []
-  for (const line of lines.slice(start + 2)) {
-    if (!line.startsWith('|')) break
-    const row = cells(line)
-    rows.push(Object.fromEntries(head.map((h, i) => [h, row[i] ?? ''])))
-  }
-  return rows
-}
+const propTable = (text: string) =>
+  firstTable(text).rows.map((r) =>
+    Object.fromEntries(Object.entries(r).map(([k, v]) => [k.toLowerCase(), v])),
+  )
 
 const unquote = (s: string) => s.replace(/^`|`$/g, '')
 
@@ -85,7 +68,7 @@ export function specPropsTable(markdown: string, name: string): SpecPropRow[] {
   if (!hasSection(markdown, 'Props')) return []
   const section = specProse(markdown, ['Props'])
   const own = sections(section).find((s) => s.level === 3 && s.heading === name)
-  return firstTable(own?.text ?? section).map((r) => {
+  return propTable(own?.text ?? section).map((r) => {
     const named = [...(r.name ?? '').matchAll(/`([^`]+)`/g)].map((m) => m[1])
     return {
       names: named.length ? named : (r.name ?? '').split(/,\s*/).filter(Boolean),
@@ -442,7 +425,7 @@ export function agentCalls(entry: Pick<RegistryEntry, 'name' | 'baseUiParts'>) {
 }
 
 /** The published Storybook: the repository's GitHub Pages site. */
-const STORYBOOK_URL = REPO_URL.replace(
+export const STORYBOOK_URL = REPO_URL.replace(
   /^https:\/\/github\.com\/([^/]+)\/([^/]+)$/,
   'https://$1.github.io/$2/',
 )

@@ -3,6 +3,8 @@ import { describe, expect, it } from 'vitest'
 import { z } from 'zod'
 import {
   EXAMPLES,
+  answerMarkdown,
+  answerTokens,
   callTool,
   connect,
   connectPerron,
@@ -14,6 +16,7 @@ import {
   readSources,
   readTools,
   segments,
+  serverCommand,
   showCall,
 } from './mcp.ts'
 import { readRepoFile } from './repo.ts'
@@ -168,6 +171,48 @@ describe('readSetup', () => {
     const setup = readSetup()
     for (const piece of [setup.intro, setup.notes, ...setup.steps.map((s) => s.code?.text ?? '')])
       expect(readme).toContain(piece)
+  })
+})
+
+describe('serverCommand', () => {
+  it("is the readme's command, as Get started and Agents show it", () => {
+    expect(serverCommand()).toBe('npx @mylder/perron-mcp')
+    expect(() => serverCommand({ intro: '', steps: [], notes: '', toolsIntro: '' })).toThrow(
+      'no shell command',
+    )
+  })
+})
+
+describe('answerTokens', () => {
+  it("reads list_tokens' answer as tokens", async () => {
+    const tool = (await loadTools()).find((t) => t.name === 'list_tokens')
+    const tokens = answerTokens(tool?.example?.text ?? '')
+    expect(tokens?.[0]).toMatchObject({
+      name: 'color.surface.warning',
+      type: 'color',
+      cssVar: '--perron-color-surface-warning',
+    })
+    expect(Object.keys(tokens?.[0].values ?? {})).toEqual(['light', 'dark'])
+  })
+
+  it('leaves any other answer alone', () => {
+    expect(answerTokens('12 tokens.\n\ncolor.text.primary (color)')).toBeUndefined()
+    expect(answerTokens('{"a":1}')).toBeUndefined()
+    expect(answerTokens('')).toBeUndefined()
+  })
+})
+
+describe('answerMarkdown', () => {
+  it('decodes references, lowers headings and unlinks relative links', () => {
+    expect(answerMarkdown('| a | pixels.&#xA;Also &#38; more |')).toBe(
+      '| a | pixels. Also & more |',
+    )
+    expect(answerMarkdown('## Reduced motion\n### Positioner')).toBe(
+      '#### Reduced motion\n#### Positioner',
+    )
+    expect(answerMarkdown('[Popover](./popover.md) and [MDN](https://developer.mozilla.org)')).toBe(
+      'Popover and [MDN](https://developer.mozilla.org)',
+    )
   })
 })
 

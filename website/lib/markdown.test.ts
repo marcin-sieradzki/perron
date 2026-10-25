@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest'
-import { docTitle, firstParagraph, readDoc, sectionBody, sections, stripTitle } from './markdown.ts'
+import {
+  docTitle,
+  firstParagraph,
+  firstTable,
+  readDoc,
+  sectionBody,
+  sections,
+  stripTitle,
+  tables,
+} from './markdown.ts'
 
 const page = `# Motion
 
@@ -52,5 +61,40 @@ describe('readDoc', () => {
     expect(doc.intro).toMatch(/^Perron is the design system of Mylder/)
     expect(doc.body).not.toMatch(/^# /)
     expect(sectionBody(doc.markdown, 'Using the tokens')).toMatch(/@mylder\/perron\/perron\.css/)
+  })
+})
+
+describe('tables and firstTable', () => {
+  const md = [
+    'Intro.',
+    '',
+    '| State | Means |',
+    '| ----- | :---- |',
+    '| Live  | New   |',
+    '| A \\| B | Piped |',
+    '',
+    '| x |',
+    '',
+    '| Page | Use |',
+    '| --- | --- |',
+    '| [Map](map.md) | Lines |',
+  ].join('\n')
+
+  it('reads every table with a separator row, keyed by its header', () => {
+    expect(tables(md)).toEqual([
+      {
+        head: ['State', 'Means'],
+        rows: [
+          { State: 'Live', Means: 'New' },
+          { State: 'A | B', Means: 'Piped' },
+        ],
+      },
+      { head: ['Page', 'Use'], rows: [{ Page: '[Map](map.md)', Use: 'Lines' }] },
+    ])
+  })
+
+  it('gives the first table, or an empty one', () => {
+    expect(firstTable(md).rows[0]).toEqual({ State: 'Live', Means: 'New' })
+    expect(firstTable('No table.')).toEqual({ head: [], rows: [] })
   })
 })

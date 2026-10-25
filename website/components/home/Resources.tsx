@@ -1,10 +1,8 @@
 // Where Perron lives, and what it is built with: the versions from the repo's package files.
 import NextLink from 'next/link'
 import { PACKAGES, readPackage, REPO_URL } from '@/lib/repo.ts'
+import { STORYBOOK_URL } from '@/lib/spec.ts'
 import type { HomeFigures } from './figures.ts'
-
-/** The Storybook the repository's README names, deployed from main. */
-const STORYBOOK_URL = 'https://marcin-sieradzki.github.io/perron/'
 
 export function Resources({ figures }: { figures: HomeFigures }) {
   const npm = `https://www.npmjs.com/package/${readPackage(PACKAGES.perron).name}`

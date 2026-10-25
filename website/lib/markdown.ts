@@ -55,6 +55,42 @@ export function sectionBody(markdown: string, heading: string) {
   return s?.text.replace(/^#{1,6} .*\n?/, '').trim()
 }
 
+/** A markdown table: its header's names, as written, and its body rows keyed by them. */
+export interface Table {
+  head: string[]
+  rows: Record<string, string>[]
+}
+
+/** A table row's cells, split on the pipes a cell does not escape. */
+const cells = (line: string) =>
+  line
+    .trim()
+    .replace(/^\||\|$/g, '')
+    .split(/(?<!\\)\|/)
+    .map((c) => c.trim().replaceAll('\\|', '|'))
+
+const SEPARATOR = /^\|[\s:|-]+\|$/
+
+/** Every table in the markdown, in order: a header row, its separator, then the rows under it. */
+export function tables(markdown: string): Table[] {
+  const lines = markdown.split('\n').map((l) => l.trim())
+  const out: Table[] = []
+  for (let i = 0; i < lines.length - 1; i++) {
+    if (!lines[i].startsWith('|') || !SEPARATOR.test(lines[i + 1])) continue
+    const head = cells(lines[i])
+    const rows: Record<string, string>[] = []
+    for (i += 2; i < lines.length && lines[i].startsWith('|'); i++) {
+      const row = cells(lines[i])
+      rows.push(Object.fromEntries(head.map((h, c) => [h, row[c] ?? ''])))
+    }
+    out.push({ head, rows })
+  }
+  return out
+}
+
+/** The first table in the markdown, or an empty one when it has none. */
+export const firstTable = (markdown: string): Table => tables(markdown)[0] ?? { head: [], rows: [] }
+
 /** A doc read from the repo, in the pieces above. */
 export function readDoc(path: string): Doc {
   const markdown = readRepoFile(path)
