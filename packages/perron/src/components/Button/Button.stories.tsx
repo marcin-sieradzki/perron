@@ -61,9 +61,10 @@ const pressFill =
     const pressed = resolve('backgroundColor', fill)
     await expect(pressed).not.toBe(getComputedStyle(button).backgroundColor)
     await expect(pressed).not.toBe(resolve('backgroundColor', stateFill(button)))
-    await expect(
-      stateRules(button, ':active').every((s) => !s.getPropertyValue('border-color')),
-    ).toBe(true)
+    // pressed changes the fill alone, so nothing moves (CR-3) and the brand edge stays (CR-10)
+    for (const declarations of stateRules(button, ':active'))
+      for (const property of Array.from(declarations))
+        await expect(['background-color']).toContain(property)
     await expect(getComputedStyle(button).cursor).toBe('pointer')
     if (edge) await expect(getComputedStyle(button).borderColor).toBe(resolve('borderColor', edge))
   }

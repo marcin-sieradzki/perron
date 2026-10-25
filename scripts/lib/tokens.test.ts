@@ -181,13 +181,20 @@ describe('contrast', () => {
   it('lays a pressed layer over a quiet control that is denser than its hover layer', () => {
     for (const th of ['light', 'dark'] as const) {
       const t = theme[th]
-      const ground = t['color.surface.default']
-      const hover = composite(t['color.surface.hover'], ground)
-      const pressed = composite(t['color.surface.selected'], ground)
-      expect(contrastRatio(pressed, ground)).toBeGreaterThan(contrastRatio(hover, ground))
-      // the label of a pressed outline button, brand or ink, still reads
-      for (const label of ['color.text.brand', 'color.text.primary'] as const)
-        expect(contrastRatio(t[label], pressed), `${th} ${label}`).toBeGreaterThanOrEqual(4.5)
+      // a brand outline button sits on default or raised: on inset its light label misses
+      // (docs/foundations/accessibility.md)
+      for (const surface of ['color.surface.default', 'color.surface.raised'] as const) {
+        const ground = t[surface]
+        const hover = composite(t['color.surface.hover'], ground)
+        const pressed = composite(t['color.surface.selected'], ground)
+        expect(contrastRatio(pressed, ground)).toBeGreaterThan(contrastRatio(hover, ground))
+        // the label of a pressed outline button, brand or ink, still reads
+        for (const label of ['color.text.brand', 'color.text.primary'] as const)
+          expect(
+            contrastRatio(t[label], pressed),
+            `${th} ${label} on ${surface}`,
+          ).toBeGreaterThanOrEqual(4.5)
+      }
     }
   })
 

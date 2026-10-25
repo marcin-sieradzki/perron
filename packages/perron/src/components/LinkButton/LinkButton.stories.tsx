@@ -69,6 +69,12 @@ const hoverFill =
     await expect(stateFill(link, ':active')).toBe(pressed)
     await expect(pressedAfterHover(link)).toBe(true)
     await expect(resolve('backgroundColor', pressed)).not.toBe(resolve('backgroundColor', fill))
+    await expect(resolve('backgroundColor', pressed)).not.toBe(
+      getComputedStyle(link).backgroundColor,
+    )
+    for (const declarations of stateRules(link, ':active'))
+      for (const property of Array.from(declarations))
+        await expect(['background-color']).toContain(property)
   }
 
 /** Tab gives the root `:focus-visible` and the ring perron.css draws; Shift+Tab leaves it. */
