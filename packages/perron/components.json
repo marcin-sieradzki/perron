@@ -296,7 +296,7 @@
     "name": "Meter",
     "layer": "component",
     "category": "Display",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": ["Meter.Root", "Meter.Label", "Meter.Track", "Meter.Indicator", "Meter.Value"],
     "penpotPath": "Components/Meter",
     "dependsOn": []

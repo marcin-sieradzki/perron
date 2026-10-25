@@ -801,6 +801,11 @@
         "$value": "34px",
         "$description": "Large line badge height"
       },
+      "meter-track": {
+        "$type": "sizing",
+        "$value": "6px",
+        "$description": "Height of a meter's track"
+      },
       "sheet-width": {
         "$type": "sizing",
         "$value": "376px",
