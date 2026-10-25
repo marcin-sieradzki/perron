@@ -1,0 +1,186 @@
+/* RadioGroup, from docs/components/radio-group.md. The group is Fieldset's column and sets nothing
+   of its own (CR-2) but its disabled legend's forced colour (CR-11); this file draws the radios: a row of a round mark and its words, the mark on
+   the raised surface with the control edge, and checked, read from Base UI's data-checked, the
+   pressed toggle's ink with a raised dot. Every state changes the fills, the edge's colour and the
+   dot only, never the geometry (CR-6), and at once: nothing changes place. */
+
+/* the row: size.target-min tall on one line, as wide as its words up to the group's width.
+   CR-7: a word longer than its line breaks; the row is never wider than the group. */
+.pn-Radio {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--perron-space-200);
+  box-sizing: border-box;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  min-block-size: var(--perron-size-target-min);
+  padding-block: calc((var(--perron-size-target-min) - 1lh) / 2);
+  font: var(--perron-typography-body);
+  letter-spacing: var(--perron-typography-body-tracking);
+  overflow-wrap: anywhere;
+  color: var(--perron-color-text-primary);
+  /* the focus ring perron.css draws follows it (CR-10) */
+  border-radius: var(--perron-radius-md);
+  cursor: pointer;
+}
+
+/* the circle, centred on the label's first line, never squeezed by a long label (CR-6) */
+.pn-Radio-indicator {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  box-sizing: border-box;
+  inline-size: var(--perron-icon-size-400);
+  block-size: var(--perron-icon-size-400);
+  margin-block: calc((1lh - var(--perron-icon-size-400)) / 2);
+  border: var(--perron-border-width-025) solid var(--perron-color-border-control);
+  border-radius: var(--perron-radius-full);
+  background-color: var(--perron-color-surface-raised);
+}
+
+/* the label shrinks and wraps beside the circle, rather than pushing the row wider than the group */
+.pn-Radio-label {
+  min-inline-size: 0;
+}
+
+/* unchecked: the hover layer the Fields lay over their fill, inside (hover: hover); the press
+   outside it, so a touch press shows. Hover and press are the radio's, the whole row, read as
+   [role]:hover; the indicator carries the radio's own state attributes, so the guard is on them:
+   never on a disabled or a read-only radio (CR-8, CR-9). */
+
+@media (hover: hover) {
+  [role]:hover > .pn-Radio-indicator[data-unchecked]:not([data-disabled], [data-readonly]) {
+    background-image: linear-gradient(
+      var(--perron-color-surface-hover),
+      var(--perron-color-surface-hover)
+    );
+  }
+}
+
+[role]:active > .pn-Radio-indicator[data-unchecked]:not([data-disabled], [data-readonly]) {
+  background-image: linear-gradient(
+    var(--perron-color-surface-hover),
+    var(--perron-color-surface-hover)
+  );
+}
+
+/* checked: the selected design state, the edge in the fill's colour, its width kept (CR-6) */
+
+.pn-Radio-indicator[data-checked] {
+  border-color: var(--perron-color-surface-inverse);
+  background-color: var(--perron-color-surface-inverse);
+}
+
+.pn-Radio-indicator[data-checked]::before {
+  content: '';
+  inline-size: calc(var(--perron-icon-size-400) / 2);
+  block-size: calc(var(--perron-icon-size-400) / 2);
+  border-radius: var(--perron-radius-full);
+  background-color: var(--perron-color-surface-raised);
+}
+
+@media (hover: hover) {
+  [role]:hover > .pn-Radio-indicator[data-checked]:not([data-disabled], [data-readonly]) {
+    border-color: var(--perron-color-surface-inverse-hover);
+    background-color: var(--perron-color-surface-inverse-hover);
+  }
+}
+
+[role]:active > .pn-Radio-indicator[data-checked]:not([data-disabled], [data-readonly]) {
+  border-color: var(--perron-color-surface-inverse-hover);
+  background-color: var(--perron-color-surface-inverse-hover);
+}
+
+/* disabled and read-only keep the default cursor (CR-9) */
+
+.pn-Radio:is([data-disabled], [data-readonly]) {
+  cursor: default;
+}
+
+/* disabled, unchecked and checked: a colour, never an opacity, after the colours, which it ties.
+   The checked circle still shows which choice the group holds; its dot stays raised. */
+
+.pn-Radio[data-disabled] {
+  color: var(--perron-color-text-tertiary);
+}
+
+.pn-Radio-indicator[data-disabled] {
+  border-color: var(--perron-color-border-subtle);
+  background-color: var(--perron-color-surface-inset);
+}
+
+.pn-Radio-indicator[data-checked][data-disabled] {
+  border-color: var(--perron-color-text-tertiary);
+  background-color: var(--perron-color-text-tertiary);
+}
+
+/* invalid, inside an invalid Field.Root: the edge alone, checked or not, kept over the checked
+   radio's hover and press, at their specificity and after them; a disabled radio keeps its own
+   edge (CR-9) */
+
+.pn-Radio-indicator[data-invalid]:not([data-disabled]) {
+  border-color: var(--perron-color-status-danger);
+}
+
+@media (hover: hover) {
+  [role]:hover > .pn-Radio-indicator[data-invalid]:not([data-disabled], [data-readonly]) {
+    border-color: var(--perron-color-status-danger);
+  }
+}
+
+[role]:active > .pn-Radio-indicator[data-invalid]:not([data-disabled], [data-readonly]) {
+  border-color: var(--perron-color-status-danger);
+}
+
+/* CR-11: forced colours drop the fills, and the checked circle would vanish into Canvas, so the
+   indicator keeps its own system colours: ButtonText on Canvas unchecked, HighlightText on
+   Highlight checked, GrayText when disabled. The row keeps the browser's own ring. */
+@media (forced-colors: active) {
+  /* the radio's <span> and the legend's <div> aren't natively disabled, so the system can't tell
+     their words are, as Checkbox's root (Checkbox CR-11) */
+  .pn-Radio[data-disabled],
+  .pn-RadioGroup-legend[data-disabled] {
+    color: GrayText;
+  }
+
+  .pn-Radio-indicator {
+    forced-color-adjust: none;
+    border-color: ButtonText;
+    background-color: Canvas;
+  }
+
+  /* at the hover and press rules' specificity and after them, so no theme fill shows */
+  [role]:is(:hover, :active)
+    > .pn-Radio-indicator[data-unchecked]:not([data-disabled], [data-readonly]) {
+    background-image: none;
+  }
+
+  .pn-Radio-indicator[data-checked] {
+    border-color: Highlight;
+    background-color: Highlight;
+  }
+
+  [role]:is(:hover, :active)
+    > .pn-Radio-indicator[data-checked]:not([data-disabled], [data-readonly]) {
+    border-color: Highlight;
+    background-color: Highlight;
+  }
+
+  .pn-Radio-indicator[data-checked]::before {
+    background-color: HighlightText;
+  }
+
+  .pn-Radio-indicator[data-disabled] {
+    border-color: GrayText;
+    background-color: Canvas;
+  }
+
+  .pn-Radio-indicator[data-checked][data-disabled] {
+    border-color: GrayText;
+    background-color: GrayText;
+  }
+
+  .pn-Radio-indicator[data-checked][data-disabled]::before {
+    background-color: Canvas;
+  }
+}
