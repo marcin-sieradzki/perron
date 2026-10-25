@@ -44,7 +44,9 @@ export interface AlertProps extends Omit<
   children?: ReactNode
   /**
    * Replaces the intent's icon, for the eye only: it is hidden from screen readers. `null` or
-   * `false` shows no icon; left out, the intent's own shows, and `neutral` has none
+   * `false` shows no icon; left out, the intent's own shows, and `neutral` has none. It renders at
+   * 13 px, `icon.size.325`, so give an icon drawn on the 14 px grid, or set `--perron-icon-size` to
+   * its step's `icon.size.*` through `slotProps.icon`
    */
   icon?: ReactNode
   /**
