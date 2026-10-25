@@ -479,7 +479,7 @@
     "name": "NumberField",
     "layer": "component",
     "category": "Inputs",
-    "status": "building",
+    "status": "stable",
     "baseUiParts": [
       "NumberField.Root",
       "NumberField.Group",

@@ -28,6 +28,9 @@ stages:
     ended: 2026-10-25T09:08:08.808Z
   docs:
     failures: 1
+    status: done
+    started: 2026-10-25T09:08:43.757Z
+    ended: 2026-10-25T09:12:22.607Z
 notes:
   - stage: brief
     at: 2026-10-25T06:46:08.247Z
@@ -98,3 +101,9 @@ notes:
   - stage: build
     at: 2026-10-25T09:05:20.282Z
     direction: "SearchField sets cursor: text on its whole input group, so its strips round the icon and the clear button show a text cursor although a press there focuses nothing, while NumberField leaves the default cursor on its equivalent strips. The family could pick one rule for a box's dead strips."
+  - stage: docs
+    at: 2026-10-25T09:12:22.607Z
+    direction: The props table lists NumberField's inherited Base UI members in docgen's order (className, defaultValue, style, form, id, render, min, max, …), not the spec's (value, defaultValue, name, min, max, step, …), so the page and the spec's Props table read in different orders; PropsTable could sort inherited rows by the spec's order.
+  - stage: docs
+    at: 2026-10-25T09:12:22.607Z
+    direction: On the page, inherited render and inputRef show Base UI's expanded types (ReactElement<…> | ComponentRenderFn<…>, the callback-or-RefObject union) where the spec says Base UI's render and Ref<HTMLInputElement>; they agree but read longer.
