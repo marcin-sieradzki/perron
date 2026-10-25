@@ -246,6 +246,20 @@ function unknownTypes(e: Entry, doc: ComponentDoc): Problem[] {
     }))
 }
 
+/**
+ * Each member whose description carries `@ignore`, which the props table's JSDoc parser drops the
+ * row for, while this rule reads it as a row: docgen leaves Base UI's out, so it is the
+ * component's own.
+ */
+function hiddenProps(e: Entry, doc: ComponentDoc): Problem[] {
+  return Object.entries(doc.props ?? {})
+    .filter(([, p]) => /(^|\n)@ignore\b/.test(p.description ?? ''))
+    .map(([name]) => ({
+      file: codeFile(e),
+      message: `${e.name}'s docs page would leave out ${name}, whose JSDoc carries @ignore, though ${specPage(e)}'s Props table gives it a row: take @ignore out of its JSDoc`,
+    }))
+}
+
 /** The names of the types a component's file declares for itself, unexported: `type ChangeDetails = …`. */
 const localTypes = (code: string) =>
   [...code.matchAll(/^(?:type|interface)\s+([A-Z]\w*)\b/gm)].map((m) => m[1])
@@ -340,6 +354,7 @@ export default {
         problems.push(
           ...tableProblems(root, e, doc),
           ...unknownTypes(e, doc),
+          ...hiddenProps(e, doc),
           ...overlayProblems(root, e, doc),
           ...privateTypes(root, e, doc),
         )

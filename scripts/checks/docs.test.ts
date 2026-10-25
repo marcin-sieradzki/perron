@@ -47,6 +47,16 @@ describe('docs', () => {
     ])
   })
 
+  it('names a member whose JSDoc carries @ignore, which the docs page drops its row for', () => {
+    expect(docs.run(fixture('hidden'))).toEqual([
+      {
+        file: 'packages/perron/src/components/Flag/Flag.tsx',
+        message:
+          "Flag's docs page would leave out closedLabel, whose JSDoc carries @ignore, though docs/components/flag.md's Props table gives it a row: take @ignore out of its JSDoc",
+      },
+    ])
+  })
+
   it("names a member the spec's Props table has no row for, and a row with no member", () => {
     // Note inherits render from Base UI, which its spec leaves out; its spec's tone is no member
     expect(docs.run(fixture('rows'))).toEqual([
