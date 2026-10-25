@@ -1,5 +1,5 @@
 // Chevron draws the chevron-down icon as its file in packages/perron/icons/, inlined unchanged but
-// for width and height and hidden from the ear (docs/components/README.md, "Shared parts").
+// for width, height and xmlns, and hidden from the ear (docs/components/README.md, "Shared parts").
 import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -14,7 +14,7 @@ const iconFile = readFileSync(
 )
 
 describe('Chevron', () => {
-  it('draws the chevron-down file, unchanged but for width and height, hidden from the ear', () => {
+  it('draws the chevron-down file, unchanged but for width, height and xmlns, hidden from the ear', () => {
     const svg = renderToStaticMarkup(<Chevron />)
     // the file's xmlns too, which inline SVG in HTML doesn't need and Select drew without
     expect(drawing(svg)).toEqual(drawing(iconFile.replace(/\sxmlns="[^"]*"/, '')))
