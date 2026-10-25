@@ -9,8 +9,12 @@ stages:
     started: 2026-10-25T06:46:40.740Z
     ended: 2026-10-25T06:48:00.020Z
   build:
-    runs: 5
-    failing: review round 5 found 2 P2 (components/number-field/review.md)
+    runs: 6
+    status: done
+    started: 2026-10-25T08:35:44.414Z
+    begun: 916143d73b50bbcf7b4fd765969d8523e14108913e6e03a7fd5b0b004ffa81c5
+    spec: b8a863527b14ed3e9f10b665b31b4720b107fd760d154d60a0c725d8084168e4
+    ended: 2026-10-25T08:43:04.603Z
   review:
     rounds: 5
     sentBack: 1
@@ -18,10 +22,6 @@ stages:
       p1: 0
       p2: 2
       p3: 8
-    status: failed
-    started: 2026-10-25T08:30:04.088Z
-    ended: 2026-10-25T08:35:39.992Z
-    failing: review round 5 found 2 P2 (components/number-field/review.md)
   docs:
     failures: 1
 notes:
@@ -82,3 +82,6 @@ notes:
   - stage: build
     at: 2026-10-25T08:30:00.697Z
     direction: 'With a format that rounds (such as maximumFractionDigits: 0), Base UI rounds the value as the person types: typing "2.6" calls onChange with 3 while the box still shows "2.6", and only leaving rewrites the text and commits, so the ''input-blur'' reason for rounding arises only for a value set from outside, such as a controlled 2.6.'
+  - stage: build
+    at: 2026-10-25T08:43:04.603Z
+    direction: 'Base UI checks a paste with parseFloat, so letters pasted after a leading digit are let in: pasting "two" with the caret after the 1 in "18" leaves "1two8" in the box and sets the value to 1. Decide whether NumberField should refuse a paste holding characters it wouldn''t let a person type.'

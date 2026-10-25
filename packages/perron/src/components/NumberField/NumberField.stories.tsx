@@ -3,7 +3,7 @@
 // (docs/components/number-field.md), each in a 320 px container. Hover, focus and pressed render
 // at rest; their plays drive them.
 import { Form } from '@base-ui/react/form'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
@@ -376,6 +376,18 @@ const UNBOUNDED = 'Stops to skip'
 /** The label of a field whose `onChange` cancels every change. */
 const HELD = 'Departures held'
 
+/** The label of a field whose `min` is below zero. */
+const DELAY = 'Delay in minutes'
+
+/** The label of a field written as a percentage. */
+const SHARE = 'Share of late departures'
+
+/** The label of a field written in euros. */
+const FARE = 'Fare in euros'
+
+/** The label of a controlled field the plays mount beside the story's. */
+const SET_OUTSIDE = 'Departures set elsewhere'
+
 /** The box holding 8, with `largeStep` 5: the arrow keys, Shift, Alt, Home and End step it. */
 export const Keyboard: Story = {
   args: { largeStep: 5 },
@@ -433,6 +445,16 @@ export const Keyboard: Story = {
         })
         await expect(unbounded).toHaveValue('-1.5')
         await expect(values(args.onChange).at(-1)).toBe(-1.5)
+        // one sign only: with the minus there, neither a plus nor a second minus is typed
+        await userEvent.keyboard('+-')
+        await expect(unbounded).toHaveValue('-1.5')
+        // a plus sign is typed, and then no minus after it
+        await userEvent.type(unbounded, '+2-', {
+          initialSelectionStart: 0,
+          initialSelectionEnd: unbounded.value.length,
+        })
+        await expect(unbounded).toHaveValue('+2')
+        await expect(values(args.onChange).at(-1)).toBe(2)
         unbounded.blur()
       },
     )
@@ -480,6 +502,11 @@ export const Typing: Story = {
     await expect(input).toHaveValue('18')
     await expect(values(args.onChange)).toEqual([18])
     await expect(reasons(args.onChange)).toEqual(['input-paste'])
+    // a paste that wouldn't parse, "two" over the whole box, isn't spliced in
+    input.setSelectionRange(0, input.value.length)
+    await userEvent.paste('two')
+    await expect(input).toHaveValue('18')
+    await expect(values(args.onChange)).toEqual([18])
     await userEvent.type(input, '25', { initialSelectionStart: 0, initialSelectionEnd: 2 })
     await expect(values(args.onChange)).toEqual([18, 2, 20])
     await expect(reasons(args.onChange)).toEqual(['input-paste', 'input-change', 'input-change'])
@@ -521,6 +548,27 @@ export const Typing: Story = {
         await waitFor(() => expect(rounded).toHaveValue('3'))
         await expect(values(args.onChangeCommitted)).toEqual([3])
         await expect(reasons(args.onChangeCommitted)).toEqual(['input-blur'])
+      },
+    )
+    // with min below zero, a minus sign is typed
+    mock(args.onChange).mockClear()
+    await mounted(
+      canvasElement,
+      <PerronProvider locale="en">
+        <NumberField
+          label={DELAY}
+          min={-10}
+          max={10}
+          defaultValue={undefined}
+          onChange={args.onChange}
+        />
+      </PerronProvider>,
+      async (host) => {
+        const delay = await waitFor(() => inputIn(host, DELAY))
+        await userEvent.type(delay, '-4')
+        await expect(delay).toHaveValue('-4')
+        await expect(values(args.onChange)).toEqual([-4])
+        delay.blur()
       },
     )
   },
@@ -623,6 +671,11 @@ export const OutOfRange: Story = {
     await step('a typed 2.5, off the step of 1, shows the stepMismatch message', async () => {
       await fails('2.5', 'stepMismatch')
     })
+    await step('with allowOutOfRange, a minus sign is typed: -3 shows rangeUnderflow', async () => {
+      await fails('-3', 'rangeUnderflow')
+      await expect(input).toHaveValue('-3')
+      await expect(values(args.onChangeCommitted).at(-1)).toBe(-3)
+    })
     await step('a typed 8 removes the error', async () => {
       await userEvent.type(input, '8', {
         initialSelectionStart: 0,
@@ -653,7 +706,48 @@ export const Units: Story = {
     await userEvent.keyboard('{ArrowUp}')
     await expect(input).toHaveValue('5 min')
     await expect(values(args.onChange)).toEqual([5])
+    // the unit the format writes is typed, and a letter outside it is not
+    await userEvent.type(input, '6 minx', {
+      initialSelectionStart: 0,
+      initialSelectionEnd: input.value.length,
+    })
+    await expect(input).toHaveValue('6 min')
+    await expect(values(args.onChange).at(-1)).toBe(6)
     await userEvent.tab({ shift: true })
+    // a percent sign is typed once, and a second one is not
+    mock(args.onChange).mockClear()
+    await mounted(
+      canvasElement,
+      <PerronProvider locale="en">
+        <NumberField label={SHARE} format={{ style: 'percent' }} onChange={args.onChange} />
+      </PerronProvider>,
+      async (host) => {
+        const share = await waitFor(() => inputIn(host, SHARE))
+        await userEvent.type(share, '25%%')
+        await expect(share).toHaveValue('25%')
+        await expect(values(args.onChange).at(-1)).toBe(0.25)
+        share.blur()
+      },
+    )
+    // a currency symbol the same: once, and not a second time
+    mock(args.onChange).mockClear()
+    await mounted(
+      canvasElement,
+      <PerronProvider locale="en">
+        <NumberField
+          label={FARE}
+          format={{ style: 'currency', currency: 'EUR' }}
+          onChange={args.onChange}
+        />
+      </PerronProvider>,
+      async (host) => {
+        const fare = await waitFor(() => inputIn(host, FARE))
+        await userEvent.type(fare, '€€25')
+        await expect(fare).toHaveValue('€25')
+        await expect(values(args.onChange).at(-1)).toBe(25)
+        fare.blur()
+      },
+    )
   },
 }
 
@@ -834,9 +928,20 @@ export const Labels: Story = {
   },
 }
 
-/** The number held in the story's state, set from each change's `value`. */
-function ControlledField(props: NumberFieldProps) {
-  const [value, setValue] = useState<number | null>(8)
+/**
+ * The number held in the story's state, from `start`, set from each change's `value`; `expose`
+ * hands a play the setter, to change the number from outside.
+ */
+function ControlledField({
+  start = 8,
+  expose,
+  ...props
+}: NumberFieldProps & {
+  start?: number
+  expose?: (set: (value: number | null) => void) => void
+}) {
+  const [value, setValue] = useState<number | null>(start)
+  useEffect(() => expose?.(setValue), [expose])
   return (
     <NumberField
       {...props}
@@ -866,6 +971,55 @@ export const Controlled: Story = {
     await expect(input).toHaveValue('')
     await userEvent.tab()
     await expect(document.activeElement).toBe(start)
+    const changed = fn()
+    const committed = fn()
+    // a change to value from outside while the input has focus
+    let setOutside: (value: number | null) => void = () => {}
+    await mounted(
+      canvasElement,
+      <PerronProvider locale="en">
+        <ControlledField
+          label={SET_OUTSIDE}
+          expose={(set) => (setOutside = set)}
+          onChange={changed}
+          onChangeCommitted={committed}
+        />
+      </PerronProvider>,
+      async (host) => {
+        const outside = await waitFor(() => inputIn(host, SET_OUTSIDE))
+        await userEvent.click(outside)
+        setOutside(12)
+        await waitFor(() => expect(outside).toHaveValue('12'))
+        outside.blur()
+        await frames(2)
+        await expect(changed).not.toHaveBeenCalled()
+        await expect(committed).not.toHaveBeenCalled()
+      },
+    )
+    // a format that rounds a value set from outside: leaving writes and commits the rounded number
+    await mounted(
+      canvasElement,
+      <PerronProvider locale="en">
+        <ControlledField
+          label={SET_OUTSIDE}
+          start={2.6}
+          format={{ maximumFractionDigits: 0 }}
+          onChange={changed}
+          onChangeCommitted={committed}
+        />
+      </PerronProvider>,
+      async (host) => {
+        const rounded = await waitFor(() => inputIn(host, SET_OUTSIDE))
+        await expect(rounded).toHaveValue('3')
+        await userEvent.click(rounded)
+        rounded.blur()
+        await waitFor(() => expect(values(committed)).toEqual([3]))
+        await expect(values(changed)).toEqual([3])
+        await expect(reasons(changed)).toEqual(['input-blur'])
+        await expect(reasons(committed)).toEqual(['input-blur'])
+        await expect(rounded).toHaveValue('3')
+      },
+    )
   },
 }
 
@@ -942,7 +1096,8 @@ export const Validation: Story = {
     const input = inputIn(canvasElement)
     const group = groupOf(input)
     const start = document.activeElement
-    await step('the field is valid at first, with no error', async () => {
+    await step('the input is required, and valid at first, with no error', async () => {
+      await expect(input).toBeRequired()
       await expect(fieldPart(canvasElement, 'error')).toBeNull()
       await expect(input).not.toHaveAttribute('aria-invalid')
     })
