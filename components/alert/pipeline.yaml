@@ -25,6 +25,10 @@ stages:
     status: done
     started: 2026-10-25T08:12:27.763Z
     ended: 2026-10-25T08:16:12.200Z
+  docs:
+    status: done
+    started: 2026-10-25T08:16:51.256Z
+    ended: 2026-10-25T08:19:13.089Z
 notes:
   - stage: brief
     at: 2026-10-25T07:28:35.814Z
@@ -74,3 +78,6 @@ notes:
   - stage: review
     at: 2026-10-25T08:10:02.106Z
     unblocked: '3 review rounds found a P1 or a P2; the last: review round 3 found 1 P2 (components/alert/review.md)'
+  - stage: docs
+    at: 2026-10-25T08:19:13.089Z
+    direction: "The PropsTable block always describes a slot as 'Props for the <part> part'. Two slots lose the guidance their JSDoc carries: slotProps.title's 'Its render makes the title a heading: render: <h3 />', and slotProps.close's 'all but disabled ... Its onClick runs before onClose'. The slots table could add any JSDoc beyond that fixed opening sentence."
