@@ -1,0 +1,129 @@
+/* Accordion, from docs/components/accordion.md. A quiet row per item, divided from the item before
+   it by Separator's hairline (CR-13); the states change colours and the chevron's direction only
+   (CR-12). The panel's height and the chevron's turn ease over duration.switch, which reduced
+   motion already shortens (CR-10), and the panel clips only while it moves (CR-9). */
+
+/* the root sizes to its container, with no fill, border or padding of its own (CR-15) */
+.pn-Accordion {
+  display: flex;
+  flex-direction: column;
+}
+
+/* the hairline between items, never at the accordion's outer edges (CR-13) */
+.pn-AccordionItem + .pn-AccordionItem {
+  border-block-start: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+}
+
+.pn-AccordionItem-header {
+  margin: 0;
+}
+
+/* a flex row as wide as the header: the title grows and wraps, the chevron keeps its size, level
+   with the title's first line, and one line of title makes the row size.button tall (CR-7). Its
+   words break anywhere, as the row takes its container's width. */
+.pn-AccordionItem-trigger {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--perron-space-200);
+  inline-size: 100%;
+  min-block-size: var(--perron-size-button);
+  margin: 0;
+  padding-block: calc((var(--perron-size-button) - 1lh) / 2);
+  padding-inline: var(--perron-space-300);
+  border: 0;
+  border-radius: 0;
+  background-color: transparent;
+  color: var(--perron-color-text-primary);
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+  text-align: start;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+.pn-AccordionItem-title {
+  flex: 1;
+  min-inline-size: 0;
+}
+
+/* the chevron's holder sets its size and colour, never the svg (CR-6), and centres it on the
+   title's first line; it turns by scale, which the panel's motion shares (CR-10) */
+.pn-AccordionItem-chevron {
+  display: inline-flex;
+  flex: none;
+  margin-block: calc((1lh - var(--perron-icon-size-400)) / 2);
+  color: var(--perron-color-text-secondary);
+  transition: scale var(--perron-duration-switch) var(--perron-easing-standard);
+  --perron-icon-size: var(--perron-icon-size-400);
+}
+
+/* hover in the query, pressed a step past it after and outside it, so a touch press shows; never
+   on a disabled trigger, which still matches :hover (CR-8) */
+@media (hover: hover) {
+  .pn-AccordionItem-trigger:hover:not([data-disabled]) {
+    background-color: var(--perron-color-surface-hover);
+  }
+}
+
+.pn-AccordionItem-trigger:active:not([data-disabled]) {
+  background-color: var(--perron-color-surface-selected);
+}
+
+/* open changes only the chevron, upside down (CR-8) */
+.pn-AccordionItem-trigger[data-panel-open] .pn-AccordionItem-chevron {
+  scale: 1 -1;
+}
+
+/* disabled: a colour, never an opacity, and the default cursor */
+.pn-AccordionItem-trigger[data-disabled] {
+  color: var(--perron-color-text-tertiary);
+  cursor: default;
+}
+
+.pn-AccordionItem-trigger[data-disabled] .pn-AccordionItem-chevron {
+  color: var(--perron-color-text-tertiary);
+}
+
+/* the panel: its words start under the title's and break anywhere, as it takes its container's
+   width. No display, so Base UI's hidden attribute holds (CR-9); its height is Base UI's measure,
+   auto at rest, and it clips only while it moves: the overflow transition holds clip until the
+   height arrives (step-end), and as it closes clips at once (step-start) (CR-9, CR-10). */
+.pn-AccordionItem-panel {
+  height: var(--accordion-panel-height);
+  padding-inline: var(--perron-space-300);
+  color: var(--perron-color-text-primary);
+  font: var(--perron-typography-body);
+  letter-spacing: var(--perron-typography-body-tracking);
+  overflow-wrap: anywhere;
+  transition-property: height, overflow;
+  transition-duration: var(--perron-duration-switch);
+  transition-timing-function: var(--perron-easing-standard), step-end;
+  /* discrete for overflow alone: height between Base UI's pixels and auto must not hold a step */
+  transition-behavior: normal, allow-discrete;
+}
+
+/* the room below the content: a block, not padding, so the panel reaches height 0 and Base UI's
+   measure counts it (CR-9) */
+.pn-AccordionItem-panel::after {
+  content: '';
+  display: block;
+  block-size: var(--perron-space-300);
+}
+
+.pn-AccordionItem-panel[data-starting-style],
+.pn-AccordionItem-panel[data-ending-style] {
+  height: 0;
+  overflow: clip;
+}
+
+.pn-AccordionItem-panel[data-ending-style] {
+  transition-timing-function: var(--perron-easing-standard), step-start;
+}
+
+/* forced colours draw no fills, so hover and pressed drop out; disabled keeps showing (CR-14) */
+@media (forced-colors: active) {
+  .pn-AccordionItem-trigger[data-disabled],
+  .pn-AccordionItem-trigger[data-disabled] .pn-AccordionItem-chevron {
+    color: GrayText;
+  }
+}

@@ -702,7 +702,7 @@
     "name": "Accordion",
     "layer": "component",
     "category": "Layout",
-    "status": "designing",
+    "status": "building",
     "baseUiParts": [
       "Accordion.Root",
       "Accordion.Item",
