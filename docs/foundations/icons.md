@@ -42,7 +42,7 @@ Every icon renders at one of three steps, set with `--perron-icon-size` (one of 
 | --------------------------------------------------------------- | -------------- | ----- | ---------------------- | -------------------------------------- |
 | <img src="../../packages/perron/icons/search.svg" alt="">       | `search`       | 16 px | `icon.size.400`, 16 px | The search field                       |
 | <img src="../../packages/perron/icons/close.svg" alt="">        | `close`        | 16 px | `icon.size.400`, 16 px | Close a panel, a dialog or a highlight |
-| <img src="../../packages/perron/icons/chevron-down.svg" alt=""> | `chevron-down` | 16 px | `icon.size.400`, 16 px | Opens a select's list                  |
+| <img src="../../packages/perron/icons/chevron-down.svg" alt=""> | `chevron-down` | 16 px | `icon.size.400`, 16 px | Open a select's list                   |
 
 ### App
 

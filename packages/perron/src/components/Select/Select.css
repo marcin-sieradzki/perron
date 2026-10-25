@@ -4,7 +4,8 @@
    (CR-12), and never redefines a token: it portals to <body>. */
 
 /* The box: the value growing, the chevron keeping its size (CR-9). Its focus ring is perron.css's,
-   on :focus-visible, never redrawn; pressed, open and read-only keep this rest look. */
+   on :focus-visible, never redrawn; pressed, open and read-only keep this rest look: the Fields
+   have no pressed look, and a press opens the list at once, the change the person sees (CR-9). */
 .pn-Select-trigger {
   box-sizing: border-box;
   display: flex;
@@ -23,12 +24,13 @@
   color: var(--perron-color-text-primary);
   text-align: start;
   white-space: nowrap;
-  cursor: default;
+  cursor: pointer;
 }
 
-/* The hover layer laid over the raised fill, as the Fields do; never on a disabled box. */
+/* The hover layer laid over the raised fill, as the Fields do; never on a disabled or read-only
+   box (CR-9). */
 @media (hover: hover) {
-  .pn-Select-trigger:not([data-disabled]):hover {
+  .pn-Select-trigger:not([data-disabled]):not([data-readonly]):hover {
     background-image: linear-gradient(
       var(--perron-color-surface-hover),
       var(--perron-color-surface-hover)
@@ -43,6 +45,12 @@
 /* Disabled is a colour, never an opacity. */
 .pn-Select-trigger[data-disabled] {
   color: var(--perron-color-text-tertiary);
+}
+
+/* the default cursor while disabled or read-only (CR-9) */
+.pn-Select-trigger[data-disabled],
+.pn-Select-trigger[data-readonly] {
+  cursor: default;
 }
 
 /* The chosen option's words, or the placeholder, on one line that ends in an ellipsis (CR-11). */
@@ -153,6 +161,13 @@
   letter-spacing: var(--perron-typography-label-tracking);
   color: var(--perron-color-text-primary);
   overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+/* the default cursor on a disabled row and in a read-only list, which Base UI marks on the list,
+   not the row (CR-17) */
+.pn-Select-item[data-disabled],
+.pn-Select-list[aria-readonly='true'] .pn-Select-item {
   cursor: default;
 }
 
@@ -160,13 +175,17 @@
   background-color: var(--perron-color-surface-selected);
 }
 
+/* Hover and pressed never reach a disabled row or a read-only list's (CR-17). The list's test sits
+   in :where(), which adds nothing to the weight, so the forced-colours highlight below still wins. */
 @media (hover: hover) {
-  .pn-Select-item:hover {
+  :where(.pn-Select-list:not([aria-readonly='true'])) .pn-Select-item:not([data-disabled]):hover {
     background-color: var(--perron-color-surface-hover);
   }
 
-  /* the hover laid over the selected fill, as the Fields lay it over theirs */
-  .pn-Select-item[data-selected]:hover {
+  /* the hover laid over the selected fill, as the Fields lay it over theirs; the highlight's rule
+     below lays the same, outside the query, where the keys reach a row without a pointer */
+  :where(.pn-Select-list:not([aria-readonly='true']))
+    .pn-Select-item[data-selected]:not([data-disabled]):hover {
     background-color: var(--perron-color-surface-selected);
     background-image: linear-gradient(
       var(--perron-color-surface-hover),
@@ -187,6 +206,21 @@
   );
 }
 
+/* Pressed, a step past hover, after the hover and highlight rules and outside the query, so a touch
+   press shows too: Base UI's item sets no data-pressed, so :active alone marks it. A row lays
+   color.surface.selected; the chosen row, already that fill, lays a second over it (CR-17). */
+:where(.pn-Select-list:not([aria-readonly='true'])) .pn-Select-item:not([data-disabled]):active {
+  background-color: var(--perron-color-surface-selected);
+}
+
+:where(.pn-Select-list:not([aria-readonly='true']))
+  .pn-Select-item[data-selected]:not([data-disabled]):active {
+  background-image: linear-gradient(
+    var(--perron-color-surface-selected),
+    var(--perron-color-surface-selected)
+  );
+}
+
 /* Disabled is a colour, never an opacity; a disabled row keeps the highlight the keys give it. */
 .pn-Select-item[data-disabled] {
   color: var(--perron-color-text-tertiary);
@@ -196,14 +230,16 @@
    system's GrayText, as Checkbox's label does. The highlighted row takes the system's highlight,
    after it so a disabled highlighted row keeps HighlightText, and keeps it: left to adjust, the
    browser backs each line of text with Canvas. The chosen row's rule is matched too, so its
-   selected fill never shows under HighlightText; the tick follows the row's ink. */
+   selected fill never shows under HighlightText, and both read the list's class, as heavy as the
+   hover and pressed rules they follow, so a hovered or pressed row keeps Highlight; the tick follows
+   the row's ink. */
 @media (forced-colors: active) {
   .pn-Select-item[data-disabled] {
     color: GrayText;
   }
 
-  .pn-Select-item[data-highlighted],
-  .pn-Select-item[data-selected][data-highlighted] {
+  .pn-Select-list .pn-Select-item[data-highlighted],
+  .pn-Select-list .pn-Select-item[data-selected][data-highlighted] {
     forced-color-adjust: none;
     background-color: Highlight;
     background-image: none;

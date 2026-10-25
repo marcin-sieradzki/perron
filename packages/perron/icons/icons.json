@@ -24,7 +24,7 @@
     },
     "chevron-down": {
       "size": "icon.size.400",
-      "use": "Opens a select's list"
+      "use": "Open a select's list"
     }
   },
   "App": {

@@ -9,7 +9,19 @@ import { expect, fireEvent, fn, screen, userEvent, waitFor, within } from 'story
 import { PerronProvider } from '../../PerronProvider.tsx'
 import type { Locale } from '../../locale/index.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
-import { closed, colour, frames, lines, mounted, onHover, rendered } from '../../testing/stories.ts'
+import {
+  closed,
+  colour,
+  frames,
+  lines,
+  mounted,
+  onHover,
+  pressedAfterHover,
+  rendered,
+  resolve,
+  stateFill,
+  stateRules,
+} from '../../testing/stories.ts'
 import { Select } from './Select.tsx'
 import type { SelectGroup, SelectItem, SelectProps } from './Select.tsx'
 
@@ -91,6 +103,13 @@ const scrollLocked = () =>
     /hidden|clip/.test(getComputedStyle(element).overflowY),
   )
 
+/** The last background layer a state's rules give `element`, as written, or '' when none does. */
+const stateLayer = (element: Element, pseudo: ':hover' | ':active') =>
+  stateRules(element, pseudo)
+    .map((s) => s.getPropertyValue('background-image'))
+    .filter(Boolean)
+    .at(-1) ?? ''
+
 /** The open list's option named `name`. */
 const option = async (name: string) =>
   within(await listbox()).getByRole('option', { name, hidden: true })
@@ -157,6 +176,7 @@ export const Hover: Story = {
     await expect(getComputedStyle(trigger).backgroundColor).toBe(
       colour('--perron-color-surface-raised'),
     )
+    await expect(getComputedStyle(trigger).cursor).toBe('pointer')
   },
 }
 
@@ -223,6 +243,29 @@ export const Open: Story = {
         await expect(getComputedStyle(trigger).borderTopColor).toBe(
           colour('--perron-color-border-control'),
         )
+      },
+    )
+    await step(
+      'a pressed row lays color.surface.selected, a step past its hover, after it (CR-17)',
+      async () => {
+        const bus = await option('Bus')
+        await expect(getComputedStyle(bus).cursor).toBe('pointer')
+        await expect(stateFill(bus)).toBe('var(--perron-color-surface-hover)')
+        await expect(stateFill(bus, ':active')).toBe('var(--perron-color-surface-selected)')
+        await expect(resolve('backgroundColor', stateFill(bus, ':active'))).not.toBe(
+          resolve('backgroundColor', stateFill(bus)),
+        )
+        await expect(pressedAfterHover(bus)).toBe(true)
+        // the chosen row keeps its selected fill and lays a denser layer over it than its hover's
+        const chosen = await option('S-tog')
+        await expect(stateLayer(chosen, ':hover')).toContain('var(--perron-color-surface-hover)')
+        await expect(stateLayer(chosen, ':active')).toContain(
+          'var(--perron-color-surface-selected)',
+        )
+        await expect(resolve('backgroundImage', stateLayer(chosen, ':active'))).not.toBe(
+          resolve('backgroundImage', stateLayer(chosen, ':hover')),
+        )
+        await expect(pressedAfterHover(chosen)).toBe(true)
       },
     )
     await step('ArrowDown moves the highlight and focus to "Bus"', async () => {
@@ -331,6 +374,7 @@ export const Disabled: Story = {
     const tertiary = colour('--perron-color-text-tertiary')
     await expect(getComputedStyle(trigger).color).toBe(tertiary)
     await expect(getComputedStyle(part(canvasElement, 'Select-icon')!).color).toBe(tertiary)
+    await expect(getComputedStyle(trigger).cursor).toBe('default')
     await userEvent.tab({ shift: true })
   },
 }
@@ -511,6 +555,10 @@ export const DisabledItem: Story = {
     const harbour = await option('Harbour bus')
     await expect(harbour).toHaveAttribute('aria-disabled', 'true')
     await expect(getComputedStyle(harbour).color).toBe(colour('--perron-color-text-tertiary'))
+    // no hover or pressed reaches the disabled row, and its cursor is the default (CR-17)
+    await expect(getComputedStyle(harbour).cursor).toBe('default')
+    await expect(stateFill(harbour)).toBe('')
+    await expect(stateFill(harbour, ':active')).toBe('')
     // opened by defaultOpen with nothing chosen, the popup holds focus and no row the highlight
     await focusIn()
     await expect((await listbox()).querySelector('[data-highlighted]')).toBeNull()
@@ -555,6 +603,9 @@ export const ReadOnly: Story = {
   play: async ({ args, canvasElement }) => {
     const trigger = triggerIn(canvasElement)
     await expect(trigger).toHaveAttribute('aria-readonly', 'true')
+    // read-only takes no hover and the default cursor (CR-9)
+    await expect(getComputedStyle(trigger).cursor).toBe('default')
+    await expect(onHover(trigger, 'background-image')).toBe('')
     await userEvent.tab()
     await expect(trigger).toHaveFocus()
     await userEvent.keyboard('{Enter}')
@@ -566,6 +617,15 @@ export const ReadOnly: Story = {
     )
     await reached('Metro')
     await expect(await listbox()).toHaveAttribute('aria-readonly', 'true')
+    // nor do its rows, chosen or not, take hover or pressed (CR-17)
+    for (const name of ['Metro', 'S-tog']) {
+      const row = await option(name)
+      await expect(getComputedStyle(row).cursor).toBe('default')
+      await expect(stateFill(row)).toBe('')
+      await expect(stateFill(row, ':active')).toBe('')
+      await expect(stateLayer(row, ':hover')).toBe('')
+      await expect(stateLayer(row, ':active')).toBe('')
+    }
     await userEvent.keyboard('{ArrowDown}')
     await reached('S-tog')
     await userEvent.keyboard('{Enter}')
