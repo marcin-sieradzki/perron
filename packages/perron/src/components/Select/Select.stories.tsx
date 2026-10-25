@@ -48,9 +48,9 @@ const meta = {
     ),
   ],
   // The list portals to the end of <body>, placed under the box, so on the docs page each story
-  // renders in its own iframe, tall enough for the open list (CR-16).
+  // renders in its own iframe, tall enough for the tallest open list, Groups', not to scroll (CR-16).
   parameters: {
-    docs: { story: { inline: false, height: '360px' } },
+    docs: { story: { inline: false, height: '480px' } },
     // the placeholder is a hint in color.text.tertiary, a miss Accessibility lists by name
     // (docs/foundations/accessibility.md), as a native input's placeholder is, which axe never
     // checks; so in the stories that show it axe's contrast rule passes over the placeholder
@@ -199,6 +199,12 @@ export const Open: Story = {
     )
     await step('ArrowDown moves the highlight and focus to "Bus"', async () => {
       await userEvent.keyboard('{ArrowDown}')
+      await reached('Bus')
+    })
+    await step('typing "r" moves them to "Regional train", ArrowUp back to "Bus"', async () => {
+      await userEvent.keyboard('r')
+      await reached('Regional train')
+      await userEvent.keyboard('{ArrowUp}')
       await reached('Bus')
     })
     await step('Enter chooses it, closes the list and returns focus to the trigger', async () => {
@@ -364,7 +370,13 @@ export const DisabledItem: Story = {
     await expect(args.onChange).not.toHaveBeenCalled()
     await expect(await listbox()).toBeInTheDocument()
     await expect(harbour).not.toHaveAttribute('aria-selected', 'true')
-    await userEvent.keyboard('{Escape}')
+    // Tab leaves the list: Base UI closes it and puts focus back on the trigger, not past it
+    await userEvent.tab()
+    await expect(args.onClose).toHaveBeenLastCalledWith(
+      expect.anything(),
+      'focus-out',
+      expect.anything(),
+    )
     await closed(LIST)
     await waitFor(() => expect(trigger).toHaveFocus())
     trigger.blur()
@@ -437,6 +449,26 @@ export const Controlled: Story = {
         ),
       )
       await listbox()
+    })
+    await step('a second press of the trigger asks to close, and the story closes it', async () => {
+      await userEvent.click(trigger)
+      await waitFor(() =>
+        expect(args.onClose).toHaveBeenLastCalledWith(
+          expect.anything(),
+          'trigger-press',
+          expect.anything(),
+        ),
+      )
+      await closed(LIST)
+    })
+    await step('ArrowUp with nothing chosen opens the list on the last option', async () => {
+      await waitFor(() => expect(trigger).toHaveFocus())
+      await userEvent.keyboard('{ArrowUp}')
+      await expect(args.onOpen).toHaveBeenLastCalledWith(
+        expect.anything(),
+        expect.objectContaining({ reason: 'list-navigation' }),
+      )
+      await reached('Harbour bus')
     })
     await step('choosing "Bus" changes the value and closes the list', async () => {
       await userEvent.click(await option('Bus'))

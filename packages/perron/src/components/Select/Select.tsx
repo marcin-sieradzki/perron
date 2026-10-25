@@ -54,7 +54,9 @@ export interface SelectProps extends Omit<
   defaultValue?: string | null
   /**
    * Called when the chosen option changes: by a press or Enter on a row (`details.reason`
-   * `'item-press'`), or by letters typed on the closed box (`'none'`). `event` is `details.event`.
+   * `'item-press'`); or, with `'none'`, by letters typed on the closed box, by the browser's
+   * autofill, or when the chosen option leaves `items`, which puts back the value given at first,
+   * while that option is still in `items`, or else `null`. `event` is `details.event`.
    */
   onChange?: (
     event: Event,

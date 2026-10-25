@@ -9,8 +9,12 @@ stages:
     started: 2026-10-25T05:46:03.147Z
     ended: 2026-10-25T05:47:29.658Z
   build:
-    runs: 3
-    failing: review round 2 found 3 P2 (components/select/review.md)
+    runs: 4
+    status: done
+    started: 2026-10-25T06:35:21.492Z
+    begun: c09cbf61093a251d493aa01c1bee325b0db29bdec3f81a078d6539d16fdbb008
+    spec: 14f3a38b5b98da7f16b540a78143abe7dd3463007ae2c5a13ece9e8eb47a59a2
+    ended: 2026-10-25T06:40:07.023Z
   review:
     rounds: 2
     sentBack: 2
@@ -18,10 +22,6 @@ stages:
       p1: 0
       p2: 3
       p3: 6
-    status: failed
-    started: 2026-10-25T06:27:20.999Z
-    ended: 2026-10-25T06:35:21.244Z
-    failing: review round 2 found 3 P2 (components/select/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T05:44:48.986Z
@@ -80,3 +80,9 @@ notes:
   - stage: build
     at: 2026-10-25T06:27:07.661Z
     direction: CR-5 now lists which Select parts are merged and which are spread as they are. The list must change whenever Select starts or stops setting props on a part, so the contract could ask specs to state the rule rather than list the parts.
+  - stage: build
+    at: 2026-10-25T06:40:07.023Z
+    direction: A caller that filters `items` gets `onChange` with 'none' when the chosen option drops out, because Base UI resets the value to the first value or to `null`. Combobox will meet the same reset, so the Inputs family could say how a dependent describes it.
+  - stage: build
+    at: 2026-10-25T06:40:07.023Z
+    direction: The brief chose the overlay docs frame height (360px) without measuring the tallest open story. The contract's Stories rule could ask the spec to size the frame from its tallest open overlay, or the audit skills could render each overlay story at the frame's height.
