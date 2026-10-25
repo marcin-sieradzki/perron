@@ -221,14 +221,16 @@ Each of these is drawn once, in its own folder, `packages/perron/src/parts/<Part
 
 Each of these is written once, in its file, and a component, pattern or story imports it from there; no other file in `packages/perron/src/` declares its name at the top level. Helpers are internal: no barrel exports them. A helper a second component needs joins this table first.
 
-| Helper         | File                                            | Does                                                                                             |
-| -------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| `given`        | `packages/perron/src/internal/nodes.ts`         | Whether a node renders something, so a part given nothing is left out                            |
-| `known`        | `packages/perron/src/internal/nodes.ts`         | Whether a value says something, so one that says nothing shows `UnknownValue`                    |
-| `classes`      | `packages/perron/src/internal/nodes.ts`         | A part's own class first, then the caller's                                                      |
-| `usePart`      | `packages/perron/src/internal/use-part.ts`      | One inner part, from its `slotProps` value merged under the part's own props; it reads Base UI   |
-| `UnknownValue` | `packages/perron/src/internal/UnknownValue.tsx` | A value no one knows: "—" for the eye, the caller's or the locale's word for the ear             |
-| `typography`   | `packages/perron/src/testing/stories.ts`        | The style of one typography role with its `-tracking` twin and no margin, for a story's own text |
+| Helper         | File                                            | Does                                                                                                               |
+| -------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `given`        | `packages/perron/src/internal/nodes.ts`         | Whether a node renders something, so a part given nothing is left out                                              |
+| `known`        | `packages/perron/src/internal/nodes.ts`         | Whether a value says something, so one that says nothing shows `UnknownValue`                                      |
+| `classes`      | `packages/perron/src/internal/nodes.ts`         | A part's own class first, then the caller's                                                                        |
+| `usePart`      | `packages/perron/src/internal/use-part.ts`      | One inner part, from its `slotProps` value merged under the part's own props; it reads Base UI                     |
+| `UnknownValue` | `packages/perron/src/internal/UnknownValue.tsx` | A value no one knows: "—" for the eye, the caller's or the locale's word for the ear                               |
+| `typography`   | `packages/perron/src/testing/stories.ts`        | The style of one typography role with its `-tracking` twin and no margin, for a story's own text                   |
+| `heard`        | `packages/perron/src/testing/stories.ts`        | What a screen reader reads of an element: its text outside `aria-hidden`, white space collapsed                    |
+| `mounted`      | `packages/perron/src/testing/stories.ts`        | Renders a node apart from the story into a host it appends, runs a test on it, and unmounts it after, pass or fail |
 
 ## What axe won't catch
 
