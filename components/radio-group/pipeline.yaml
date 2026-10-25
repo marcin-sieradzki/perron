@@ -1,0 +1,110 @@
+# Written by npm run factory; never by hand.
+component: RadioGroup
+layer: component
+deferred:
+  at: 2026-10-25T05:22:58.444Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-25T05:39:21.021Z
+    ended: 2026-10-25T05:40:26.391Z
+  build:
+    runs: 3
+    status: done
+    started: 2026-10-25T06:04:37.426Z
+    spec: a25dfabf6443e05fb79ef9783fba7a4a8c9e059178d156dee1bd56f1fbff7313
+    ended: 2026-10-25T06:11:08.209Z
+  review:
+    rounds: 3
+    sentBack: 0
+    findings:
+      p1: 0
+      p2: 0
+      p3: 5
+    status: done
+    started: 2026-10-25T06:19:05.967Z
+    ended: 2026-10-25T06:22:31.149Z
+  docs:
+    status: done
+    started: 2026-10-25T06:22:44.352Z
+    ended: 2026-10-25T06:26:03.565Z
+notes:
+  - stage: brief
+    at: 2026-10-25T05:33:10.548Z
+    direction: This branch was cut before Switch was merged to main (f094951), so Switch's spec and its duration.switch token are missing here. Merge main before the build so the review can hold the radio's look to Switch's, and so a state transition can take duration.switch through the design-tokens skill if wanted.
+  - stage: brief
+    at: 2026-10-25T05:33:10.548Z
+    direction: Checkbox, CheckboxGroup and Field are still designing. RadioGroup sets the first round choice mark (icon.size.400 on color.surface.raised and inverse), so Checkbox's box should take the same size and fills, or a shared size token should be added for both now.
+  - stage: brief
+    at: 2026-10-25T05:33:10.548Z
+    direction: The Invalid story uses Base UI's Field.Root directly until Perron's Field ships; move it to Field when Field reaches building.
+  - stage: brief
+    at: 2026-10-25T05:33:10.548Z
+    direction: Radio has no description (second line) prop; add an optional description with aria-describedby when a screen needs one.
+  - stage: brief
+    at: 2026-10-25T05:33:10.548Z
+    questions: |-
+      1. Anatomy: Is the control two components, RadioGroup and Radio, both exported from RadioGroup.tsx as an exception to 'one component per folder', the way SegmentedControl/Segment and Tabs are? Recommended: yes. Radio.Root reads the group's context, callers write many radios, a ReactNode label is simpler than an options array, MUI nests radios the same way, and the registry keeps one entry.
+      2. Anatomy: Is each radio's root Base UI's Radio.Root itself, a <span role="radio"> that holds the indicator and a label span as one row, rather than a <label> wrapped round a bare Radio.Root? Recommended: yes. One element then takes ref, class, the other props, render and the focus ring. Its words become its accessible name, the whole row is the click target, and slotProps has one key, indicator.
+      3. Props: Is the group's name the required `label` prop, with `hiddenLabel` to hide it visually (SearchField's names), passed to Fieldset as `legend` and `hiddenLegend`? Recommended: yes. A radio group is one form field, and Fieldset's spec already expects RadioGroup to pass its own hiddenLabel.
+      4. Props: Is the value a `string`, with no radio checked when neither value nor defaultValue is given, and no fallback to the first radio? Recommended: yes. A string is what the hidden input submits, it matches SegmentedControl, and Base UI has no fallback.
+      5. Props: Does the group come in one look, a vertical column, with no variant, size, color or orientation? Recommended: yes. The brand keeps controls ink and neutral, a row is already at size.target-min, a horizontal row of choices is SegmentedControl's job, and each prop can be added later without a break.
+      6. Tokens: Is the indicator a 16 px circle using icon.size.400, with a dot half its size, kept on the label's first line with margin-block calc((1lh - icon.size.400)/2)? Recommended: yes. Checkbox can reuse the same token so the two marks match. The alternative is a new size token through the design-tokens skill.
+      7. Tokens: Is a checked radio a color.surface.inverse circle and edge with a color.surface.raised dot, and an unchecked one a color.surface.raised circle with a border.width.025 edge in color.border.control, with a color.surface.hover overlay on hover and color.surface.inverse-hover for checked hover? Recommended: yes. Elevation's inputs and pressed toggles use these surfaces, the control edge reaches 3:1, and the geometry stays fixed across states.
+      8. Tokens: Base UI produces read-only and invalid states that no drawing shows. Does read-only look like rest (no hover, default cursor), and invalid turn the edge color.status.danger, checked or not, with disabled winning over invalid? Recommended: yes. This follows the Fields family and Base UI dropping aria-invalid while disabled.
+      9. Tokens: Does the focus ring go round the radio's whole row, using perron.css's own outline and the row's radius.md, rather than round the circle alone? Recommended: yes. The row is the focusable element and the click target, and the component then draws no ring of its own.
+      10. Stories: Does the deferred design's page draw the group as `Default`, plus the radio with one `State` property (default, hover, focus, checked, disabled), its stories prefixed Radio (RadioDefault, RadioHover, RadioFocus, RadioChecked, RadioDisabled) the way SegmentedControl's are prefixed Segment? Recommended: yes. Disabled, ReadOnly, Invalid, HiddenLabel, Controlled, LabelShapes, LongLabels and InForm are extra stories with no Penpot variant.
+  - stage: brief
+    at: 2026-10-25T05:39:10.050Z
+    direction: Perron's Field can't frame a radio or checkbox group. Its required label, rendered as a root Field.Label, takes over the group's aria-labelledby from the legend and each radio's name from its own words. Field needs a group mode, for example rendering no Field.Label when its child is a named group, before CheckboxGroup and RadioGroup can take a hint and an error through it.
+  - stage: brief
+    at: 2026-10-25T05:39:10.050Z
+    direction: Fieldset's spec ('CheckboxGroup and RadioGroup take them that way, through Field'; Do row 'Give the group's description and error through a Field round it') is now wrong for Perron's Field. Correct it when Field gains a group mode.
+  - stage: brief
+    at: 2026-10-25T05:39:10.050Z
+    direction: Checkbox and CheckboxGroup are still designing. RadioGroup sets the first round choice mark (icon.size.400, color.surface.raised and color.surface.inverse, the Switch-matching disabled, read-only and invalid looks), and its spec now says Checkbox is to match. Checkbox's brief should take the same size and fills, or add a shared size token for both.
+  - stage: brief
+    at: 2026-10-25T05:39:10.050Z
+    direction: "The earlier finding about merging main for Switch's spec and duration.switch is resolved: main is merged in, and the radio keeps no transition because nothing in it changes place."
+  - stage: brief
+    at: 2026-10-25T05:39:10.050Z
+    questions: "1. Anatomy: Perron's Field has shipped with a required label, which it always renders as Field.Label. Does RadioGroup still take no description and no error of its own? A caller who needs either would wrap the group in Base UI's Field.Root with Field.Description and Field.Error and no Field.Label, and never in Perron's Field, until Field can frame a group. Recommended: yes. A root Field.Label becomes the aria-labelledby of the group and of each Radio.Root, so inside Perron's Field every radio would be heard as the field's label; Base UI's forms guide frames a radio group with a Field.Root and no root label; own description and error props would rebuild Field; either can join later without a break."
+  - stage: build
+    at: 2026-10-25T05:49:03.713Z
+    direction: "With forced colours on, an invalid radio's edge keeps the theme's color.status.danger, because the indicator sets forced-color-adjust: none and the invalid rule outranks the forced ButtonText edge. CR-11 doesn't name an invalid look in forced colours. Decide whether it should be a system colour, such as Highlight or Mark."
+  - stage: build
+    at: 2026-10-25T05:49:03.713Z
+    direction: The spec says every story names its group 'Theme', so LabelShapes and LongLabels put 'Theme' over choices that are not themes. Consider a label that fits each story, such as 'Show on the map', when the spec is next touched.
+  - stage: build
+    at: 2026-10-25T05:49:03.713Z
+    direction: In Perron's composition, Fieldset.Root passes aria-labelledby (the legend's id) to the rendered Base UI RadioGroup as an element prop, which overrides the group's own 'Field label id, else legend id'. So the claim that a root Field.Label renames the group may hold only for each radio, not the group. Worth checking when Field gains a group mode.
+  - stage: build
+    at: 2026-10-25T05:49:03.713Z
+    direction: Base UI 1.9.0 keeps a disabled RadioGroup in the tab order, and a checked radio disabled on its own too. CheckboxGroup and other composite Base UI groups may behave the same way, so their specs should be checked against the installed source rather than the docs.
+  - stage: build
+    at: 2026-10-25T05:49:03.713Z
+    questions: "1. Props (disabled), Keyboard and ARIA (Tab row), Base UI parts, CR-1 and Stories (Disabled row): the spec says a disabled group leaves the tab order and a disabled radio leaves the tab and arrow-key order. Installed Base UI 1.9.0 does neither in full: the group's single tab stop keeps tabIndex 0 while disabled (a disabled group's checked or first radio, and a checked radio disabled alone, keep tabindex 0, aria-disabled); arrow keys do skip disabled radios. Which side should hold? Recommended: (A) keep Base UI's behaviour and rewrite those lines: a disabled group, or a checked radio disabled alone, keeps one focusable stop announced as dimmed that changes nothing; the Disabled story checks Tab reaches 'Match the system', heard as dimmed and checked, and the next Tab reaches the Button. (B) forcing tabIndex -1 would add behaviour against CR-1 and collide with the caller's render prop."
+  - stage: build
+    at: 2026-10-25T05:54:58.810Z
+    direction: With forced colours on, a disabled radio's words and the disabled legend render in CanvasText, the same as enabled text. Only the indicator's GrayText marks them disabled, because the row keeps the browser's colours. Decide whether disabled words in the choice controls should take GrayText.
+  - stage: build
+    at: 2026-10-25T05:54:58.810Z
+    direction: 'Switch has the same forced-colours invalid-edge gap as RadioGroup (color.status.danger kept under forced-color-adjust: none); decide a system colour for both.'
+  - stage: build
+    at: 2026-10-25T06:11:08.210Z
+    direction: Fieldset's disabled legend has no forced-colours rule of its own. RadioGroup now gives its legend GrayText itself, but a plain disabled Fieldset still renders its legend in CanvasText. Moving the rule into Fieldset.css would fix it for every group.
+  - stage: build
+    at: 2026-10-25T06:11:08.210Z
+    direction: 'Radio and Checkbox draw disabled differently. Radio follows Switch: an inset circle with a subtle edge, and a tertiary fill with a raised dot when checked. Checkbox uses a transparent box with a subtle edge, and an inset box with a tertiary mark when ticked. The maintainer should pick one look for both choice marks (review P3-2).'
+  - stage: build
+    at: 2026-10-25T06:11:08.210Z
+    direction: The radio's circle uses icon.size.400 and Checkbox's box uses size.checkbox, both 16 px. A shared choice-mark size token, added through the design-tokens skill, would tie the two (review P3-4).
+  - stage: build
+    at: 2026-10-25T06:11:08.210Z
+    direction: Fieldset's spec (docs/components/fieldset.md:22,141) still says RadioGroup takes its description and error through a Field round it, which RadioGroup's CR-12 forbids for Perron's Field (review P3-5).
+  - stage: review
+    at: 2026-10-25T06:18:59.346Z
+    unblocked: '2 review rounds found a P1 or a P2, the last a P1: review round 2 found 1 P1 (components/radio-group/review.md)'
+  - stage: docs
+    at: 2026-10-25T06:26:03.566Z
+    direction: In the LongLabels story, 'Realtidsdataforsinkelser' breaks mid-word with no hyphen at 120 px, because Chromium has no Danish hyphenation. Decide whether long Danish words in choice labels should get soft hyphens from the caller, or whether that break is acceptable.

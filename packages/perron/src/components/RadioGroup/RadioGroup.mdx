@@ -1,0 +1,28 @@
+import { Meta, Stories, Title, Unstyled } from '@storybook/addon-docs/blocks'
+import { PropsTable } from '../../../../../storybook/blocks/PropsTable.tsx'
+import { SpecProse } from '../../../../../storybook/blocks/SpecProse.tsx'
+import * as RadioGroupStories from './RadioGroup.stories.tsx'
+import { Radio } from './RadioGroup.tsx'
+
+<Meta of={RadioGroupStories} />
+
+<Title />
+
+<SpecProse path="docs/components/radio-group.md" intro />
+
+<Stories title="Examples" />
+
+<PropsTable of={RadioGroupStories} />
+
+<Unstyled>
+  <div className="pd-page">
+    <h2>Radio</h2>
+  </div>
+</Unstyled>
+
+<PropsTable of={Radio} />
+
+<SpecProse
+  path="docs/components/radio-group.md"
+  sections={['Keyboard and ARIA', 'Owned strings', "Do and don't"]}
+/>
