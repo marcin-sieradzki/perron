@@ -1,0 +1,206 @@
+/* The components index (Components.dc.html): a glass sidebar over the map beside the sections of
+   cards, which stack under it when the column is too narrow for both. Tokens only; the few
+   measures with no token of their own are counted in control heights, size.control. */
+
+.catalogue {
+  /* about the mockup's 220 px sidebar and 560 px column, in control heights, the sidebar a card
+     wide so that four columns of cards fit beside it in the site's width */
+  --catalogue-sidebar: calc(6 * var(--perron-size-control));
+  --catalogue-column: calc(16 * var(--perron-size-control));
+  /* a card's narrowest width and its preview's least height, as the mockup's 208 by 196 px card */
+  --catalogue-card-min: calc(6 * var(--perron-size-control));
+  --catalogue-preview-min: calc(4 * var(--perron-size-control));
+
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--perron-space-800);
+}
+
+/* The sidebar */
+
+.catalogue-sidebar {
+  flex: 1 1 var(--catalogue-sidebar);
+  max-inline-size: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-300);
+  padding: var(--perron-space-300);
+  border-radius: var(--perron-radius-xl);
+}
+
+.catalogue-nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-050);
+}
+
+.catalogue-nav-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--perron-space-200);
+  min-block-size: var(--perron-size-segment);
+  padding-inline: var(--perron-space-300);
+  border-radius: var(--perron-radius-md);
+  font: var(--perron-typography-body-sm);
+  letter-spacing: var(--perron-typography-body-sm-tracking);
+  color: var(--perron-color-text-secondary);
+  text-decoration: none;
+}
+
+.catalogue-nav-link[aria-current='page'] {
+  background-color: var(--perron-color-surface-selected);
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+  color: var(--perron-color-text-primary);
+}
+
+.catalogue-nav-count {
+  font: var(--perron-typography-data-sm);
+  letter-spacing: var(--perron-typography-data-sm-tracking);
+  color: var(--perron-color-text-tertiary);
+}
+
+.catalogue-nav-link[aria-current='page'] .catalogue-nav-count {
+  color: var(--perron-color-text-secondary);
+}
+
+/* The sections */
+
+.catalogue-main {
+  flex: 999 1 var(--catalogue-column);
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--perron-space-800) + var(--perron-space-400));
+}
+
+.catalogue-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-400);
+  scroll-margin-block-start: var(--perron-space-800);
+}
+
+.catalogue-group-title {
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  gap: var(--perron-space-300);
+  font: var(--perron-typography-heading-md);
+  letter-spacing: var(--perron-typography-heading-md-tracking);
+}
+
+.catalogue-group-count {
+  font: var(--perron-typography-data);
+  letter-spacing: var(--perron-typography-data-tracking);
+  color: var(--perron-color-text-tertiary);
+}
+
+.catalogue-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(var(--catalogue-card-min), 100%), 1fr));
+  grid-auto-rows: 1fr;
+  gap: var(--perron-space-400);
+}
+
+/* A card: the previews over the name, the name's link stretched over the whole card. Hover lays
+   color.surface.hover over the card (.lift); nothing moves and nothing casts a shadow. */
+
+.catalogue-card {
+  position: relative;
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-300);
+  padding: var(--perron-space-400);
+  border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+  border-radius: var(--perron-radius-xl);
+  background-color: var(--perron-color-surface-raised);
+  color: var(--perron-color-text-primary);
+}
+
+.catalogue-preview {
+  flex: 1;
+  min-block-size: var(--catalogue-preview-min);
+  min-inline-size: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  gap: var(--perron-space-200);
+  overflow: hidden;
+}
+
+.catalogue-preview[data-layout='column'] {
+  flex-direction: column;
+  flex-wrap: nowrap;
+}
+
+/* a field, a panel part or a line of text takes the card's width, as it takes its container's */
+.catalogue-preview[data-layout='fill'] {
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: stretch;
+}
+
+.catalogue-card-title {
+  margin: 0;
+  text-align: center;
+  font: var(--perron-typography-heading-sm);
+  letter-spacing: var(--perron-typography-heading-sm-tracking);
+  overflow-wrap: anywhere;
+}
+
+.catalogue-card-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.catalogue-card-link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+/* The components a category still has in design: named in a dashed frame, never drawn */
+
+.catalogue-designing {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--perron-space-200);
+  padding: var(--perron-space-400);
+  border: var(--perron-border-width-025) dashed var(--perron-color-border-strong);
+  border-radius: var(--perron-radius-xl);
+}
+
+.catalogue-designing-title {
+  font: var(--perron-typography-heading-sm);
+  letter-spacing: var(--perron-typography-heading-sm-tracking);
+}
+
+.catalogue-designing-text {
+  font: var(--perron-typography-caption);
+  letter-spacing: var(--perron-typography-caption-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+/* Under breakpoint.phone (760px; media queries can't read var(--perron-breakpoint-phone)): the
+   sidebar, full of text, turns opaque, and its categories wrap into rows */
+@media (max-width: 759.98px) {
+  .catalogue-sidebar {
+    background-color: var(--perron-color-surface-default);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .catalogue-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--perron-space-100);
+  }
+}
