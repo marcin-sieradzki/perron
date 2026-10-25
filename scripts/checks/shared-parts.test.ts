@@ -2,7 +2,13 @@ import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
-import check, { helperProblems, partProblems, readHelpers, readParts } from './shared-parts.ts'
+import check, {
+  copiedStoryHelpers,
+  helperProblems,
+  partProblems,
+  readHelpers,
+  readParts,
+} from './shared-parts.ts'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const root = join(here, '../..')
@@ -115,6 +121,24 @@ describe('shared-parts', () => {
       [3, 'holds a copy of the shared helper heard inline, such as in a map'],
     ])
     expect(problems[0].file).toMatch(/Card\.test\.tsx$/)
+  })
+
+  it('fails a helper two story files declare with one body, but not a query or one reading its own file', () => {
+    const problems = copiedStoryHelpers(root, 'scripts/checks/fixtures/shared-parts/stories')
+    expect(
+      problems.map((p) => [p.file.split('/').at(-1), p.line, p.message.split(';')[0]]),
+    ).toEqual([
+      [
+        'Card.stories.tsx',
+        6,
+        'declares noFocusIn, a helper expectNoFocus in scripts/checks/fixtures/shared-parts/stories/components/Chip/Chip.stories.tsx declares too',
+      ],
+      [
+        'Chip.stories.tsx',
+        6,
+        'declares expectNoFocus, a helper noFocusIn in scripts/checks/fixtures/shared-parts/stories/components/Card/Card.stories.tsx declares too',
+      ],
+    ])
   })
 
   it('passes the real tree', async () => {

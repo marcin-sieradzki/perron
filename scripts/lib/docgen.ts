@@ -90,9 +90,22 @@ const ROOT_PROPS: Record<string, string> = {
 const inBaseUi = (d: ts.Declaration) =>
   /[\\/]node_modules[\\/]@base-ui[\\/]/.test(d.getSourceFile().fileName)
 
+/**
+ * A member's type as the Props table shows it: without the `undefined` an optional member adds,
+ * but with a `null` the type itself takes, such as Base UI's `value: number | null`, a ref's aside.
+ */
+function typeName(checker: ts.TypeChecker, type: ts.Type) {
+  const name = (t: ts.Type) => checker.typeToString(t, undefined, ts.TypeFormatFlags.NoTruncation)
+  const nullable = type.isUnion() && type.types.some((t) => t.flags & ts.TypeFlags.Null)
+  const shown = name(checker.getNonNullableType(type))
+  // React's `Ref<T>` takes null as every ref does; the table shows it as it always has
+  if (!nullable || shown.includes('RefObject<')) return shown
+  return `${shown.includes('=>') ? `(${shown})` : shown} | null`
+}
+
 /** A member as react-docgen writes one: its JSDoc with the tags as written, its `@default`. */
 function propDoc(checker: ts.TypeChecker, member: ts.Symbol, at: ts.Declaration): PropDoc {
-  const type = checker.getNonNullableType(checker.getTypeOfSymbolAtLocation(member, at))
+  const type = checker.getTypeOfSymbolAtLocation(member, at)
   const tags = member.getJsDocTags(checker)
   const text = ts.displayPartsToString(member.getDocumentationComment(checker))
   const description = [
@@ -105,7 +118,7 @@ function propDoc(checker: ts.TypeChecker, member: ts.Symbol, at: ts.Declaration)
   return {
     required: (member.flags & ts.SymbolFlags.Optional) === 0,
     tsType: {
-      name: checker.typeToString(type, undefined, ts.TypeFormatFlags.NoTruncation),
+      name: typeName(checker, type),
     } as PropDoc['tsType'],
     description,
     ...(fallback && {

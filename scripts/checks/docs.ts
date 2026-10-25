@@ -169,6 +169,73 @@ function storyProblems(root: string, e: Entry): Problem[] {
   ]
 }
 
+/** Keys a `play` test can press in a way of their own, besides `userEvent.keyboard`'s syntax. */
+const PRESSES: Record<string, RegExp> = {
+  Tab: /userEvent\.tab\(/,
+  'Shift+Tab': /tab\(\s*\{\s*shift:\s*true/,
+  Space: /\{ \}|keyboard\(\s*(['"`]) \1/,
+}
+
+const escaped = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+/**
+ * Whether `stories` presses `key`, a key of the spec's Keyboard table: in `userEvent.keyboard`'s
+ * syntax, `{Enter}` or `[Enter]`, released `{/Shift}`, held `{Shift>}` or repeated `{ArrowUp>3/}`;
+ * in a way of the key's own, such as `userEvent.tab()`; or, for a combination such as
+ * `Shift+ArrowUp`, each of its keys.
+ */
+export function pressed(stories: string, key: string): boolean {
+  if (PRESSES[key]?.test(stories)) return true
+  if (key.includes('+')) return key.split('+').every((part) => pressed(stories, part))
+  return new RegExp(`[{[]/?${escaped(key)}(>[^}\\]]*)?[}\\]]`).test(stories)
+}
+
+/**
+ * Each key of the spec's Keyboard table, a code span starting a row of its first table, such as
+ * `Enter` or `Shift+Tab`, with its line: the keys a `play` test presses. A row of words, such as
+ * "Typing" or "A press on the label", names no key.
+ */
+function keyboardRows(spec: string) {
+  const lines = spec.split('\n')
+  const start = lines.findIndex((l) => /^## Keyboard/.test(l))
+  if (start < 0) return []
+  const keys: { key: string; line: number }[] = []
+  let seen = false
+  for (let i = start + 1; i < lines.length && !lines[i].startsWith('## '); i++) {
+    if (!lines[i].startsWith('|')) {
+      if (seen) break
+      continue
+    }
+    seen = true
+    const first = lines[i].split('|')[1] ?? ''
+    // the keys a row starts with, `Enter`, `Space`, before the words after them
+    const keyList = /^\s*((?:`[^`]+`(?:,\s*)?)+)/.exec(first)?.[1] ?? ''
+    for (const [, key] of keyList.matchAll(/`([^`]+)`/g))
+      if (/^[A-Z][\w+]*$/.test(key)) keys.push({ key, line: i + 1 })
+  }
+  return keys
+}
+
+/**
+ * Each key of the spec's Keyboard table that no `play` test in the stories file presses, for an
+ * entry still `building`: the loop's build and review hold to it, and a stable entry catches up
+ * in a change of its own.
+ */
+function keyboardProblems(root: string, e: Entry): Problem[] {
+  if (e.status !== 'building') return []
+  const spec = join(root, specPage(e))
+  const file = join(root, storiesFile(e))
+  if (!existsSync(spec) || !existsSync(file)) return []
+  const stories = readFileSync(file, 'utf8')
+  return keyboardRows(readFileSync(spec, 'utf8'))
+    .filter(({ key }) => !pressed(stories, key))
+    .map(({ key, line }) => ({
+      file: specPage(e),
+      line,
+      message: `${specPage(e)}'s Keyboard table names \`${key}\`, which no play test in ${storiesFile(e)} presses: give the story that shows it a step that presses it, as {Enter}, [Space], {Shift>}{ArrowUp}{/Shift}, {ArrowUp>3/} or userEvent.tab(), and checks what it does`,
+    }))
+}
+
 /** Each member whose type the docs page would show as `unknown`, where docgen could not read it. */
 function unknownTypes(e: Entry, doc: ComponentDoc): Problem[] {
   return Object.entries(doc.props ?? {})
@@ -276,7 +343,11 @@ export default {
           ...overlayProblems(root, e, doc),
           ...privateTypes(root, e, doc),
         )
-      problems.push(...storyProblems(root, e), ...introProblems(root, e))
+      problems.push(
+        ...storyProblems(root, e),
+        ...introProblems(root, e),
+        ...keyboardProblems(root, e),
+      )
       if (DOCUMENTED.has(e.status) && missing(docsPage(e)))
         problems.push({
           file: docsPage(e),

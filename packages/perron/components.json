@@ -530,7 +530,7 @@
     "name": "Select",
     "layer": "component",
     "category": "Inputs",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [
       "Select.Root",
       "Select.Trigger",
@@ -605,7 +605,7 @@
     "name": "Menu",
     "layer": "component",
     "category": "Overlays",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [
       "Menu.Root",
       "Menu.Trigger",

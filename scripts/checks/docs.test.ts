@@ -1,7 +1,7 @@
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
-import docs from './docs.ts'
+import docs, { pressed } from './docs.ts'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const fixture = (name: string) => join(here, 'fixtures/docs', name)
@@ -78,6 +78,38 @@ describe('docs', () => {
           "Large is a row of docs/components/pin.md's Stories table but no story packages/perron/src/components/Pin/Pin.stories.tsx exports: export it under that name, or take the row out",
       },
     ])
+  })
+
+  it("names a key of a building entry's Keyboard table that no play test presses", () => {
+    const message = (key: string) =>
+      `docs/components/pin.md's Keyboard table names \`${key}\`, which no play test in packages/perron/src/components/Pin/Pin.stories.tsx presses: give the story that shows it a step that presses it, as {Enter}, [Space], {Shift>}{ArrowUp}{/Shift}, {ArrowUp>3/} or userEvent.tab(), and checks what it does`
+    expect(docs.run(fixture('keyboard'))).toEqual([
+      { file: 'docs/components/pin.md', line: 10, message: message('Space') },
+      { file: 'docs/components/pin.md', line: 12, message: message('Escape') },
+    ])
+  })
+
+  it("counts a key pressed in userEvent's syntax, held, released, repeated or in a combination", () => {
+    const stories = [
+      "await userEvent.keyboard('{Enter}')",
+      "await userEvent.keyboard('[Space]')",
+      "await userEvent.keyboard('{Shift>}{ArrowUp}{/Shift}')",
+      "await userEvent.keyboard('{ArrowDown>3/}')",
+      "await userEvent.keyboard('{Alt>}[PageUp]{/Alt}')",
+      'await userEvent.tab({ shift: true })',
+    ].join('\n')
+    for (const key of [
+      'Enter',
+      'Space',
+      'ArrowUp',
+      'ArrowDown',
+      'Shift+ArrowUp',
+      'Alt+PageUp',
+      'Shift+Tab',
+    ])
+      expect([key, pressed(stories, key)]).toEqual([key, true])
+    for (const key of ['Escape', 'Home', 'Alt+Home', 'Control+ArrowUp'])
+      expect([key, pressed(stories, key)]).toEqual([key, false])
   })
 
   it('names an overlay no story opens by defaultOpen, an intro that shows run notes, and a private type', () => {

@@ -6,7 +6,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, screen, userEvent, waitFor, within } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
-import { byTestId, closed, mounted, rendered } from '../../testing/stories.ts'
+import { byTestId, closed, focusedClose, mounted, rendered } from '../../testing/stories.ts'
 import { Button } from '../Button/Button.tsx'
 import { Text } from '../Text/Text.tsx'
 import { Popover } from './Popover.tsx'
@@ -64,13 +64,6 @@ const popover = (name = TITLE) => screen.findByRole('dialog', { name })
 /** The trigger, in the story's canvas. */
 const triggerIn = (canvasElement: HTMLElement, name = TRIGGER) =>
   within(canvasElement).getByRole('button', { name })
-
-/** The open popover's close button, once Base UI has moved focus to it. */
-async function focusedClose(popup: HTMLElement, name = 'Close') {
-  const close = within(popup).getByRole('button', { name })
-  await waitFor(() => expect(close).toHaveFocus())
-  return close
-}
 
 /** The one variant: open, with a title, a description and a sentence of content, below its trigger. */
 export const Default: Story = {
