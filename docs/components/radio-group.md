@@ -59,7 +59,7 @@ RadioGroup takes no `description` and no `error`: a hint or an error reaches the
 
 ### RadioGroup
 
-`RadioGroupProps` extends Base UI's `RadioGroup.Props` without `value`, `defaultValue`, `onValueChange`, `disabled`, `readOnly`, `required`, `name`, `className`, `style`, `children` and `ref`, which it declares itself.
+`RadioGroupProps` extends Base UI's `RadioGroup.Props` without `value`, `defaultValue`, `onValueChange`, the `<div>`'s own `onChange`, `disabled`, `readOnly`, `required`, `name`, `className`, `style`, `children` and `ref`, which it declares itself.
 
 | Name                        | Type                                                                            | Default | Base UI prop                               | Description                                                                                                                                                                                                                                                                     |
 | --------------------------- | ------------------------------------------------------------------------------- | ------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
