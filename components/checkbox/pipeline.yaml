@@ -1,0 +1,6 @@
+# Written by npm run factory; never by hand.
+component: Checkbox
+layer: component
+deferred:
+  at: 2026-10-25T04:38:49.708Z
+stages: {}
