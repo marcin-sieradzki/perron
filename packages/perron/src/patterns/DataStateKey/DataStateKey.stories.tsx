@@ -555,42 +555,61 @@ export const Thresholds: Story = {
         'da',
       )
     })
-    await step('a threshold not finite or below 0 is unknown, in its sentence (CR-7)', async () => {
-      await mounted(
-        canvasElement,
-        <DataStateKey counts={COUNTS} liveThreshold={Number.NaN} ageingThreshold={-1} />,
-        async (host) => {
-          const own = partsOf(await keyIn(host))
-          await expect(heardSentences(await keyIn(host))).toEqual([
-            'Reported by the vehicle in the last Unknown',
-            'Last reported Unknown to Unknown ago',
-            MYLDER_SENTENCES[2],
-            MYLDER_SENTENCES[3],
-            'Moved on by the timetable, with no report for over Unknown',
-          ])
-          for (const index of [0, 1, 4]) {
-            const dashes = own.descriptions[index].querySelectorAll('[aria-hidden="true"]')
-            await expect(dashes.length).toBeGreaterThan(0)
-            for (const dash of dashes) {
+    await step(
+      'an unknown threshold: "Unknown" in place of each sentence holding it (CR-7)',
+      async () => {
+        await mounted(
+          canvasElement,
+          <DataStateKey counts={COUNTS} liveThreshold={Number.NaN} ageingThreshold={-1} />,
+          async (host) => {
+            const unknownKey = await keyIn(host)
+            const own = partsOf(unknownKey)
+            await expect(heardSentences(unknownKey)).toEqual([
+              'Unknown',
+              'Unknown',
+              MYLDER_SENTENCES[2],
+              MYLDER_SENTENCES[3],
+              'Unknown',
+            ])
+            for (const index of [0, 1, 4]) {
+              const description = own.descriptions[index]
+              await expect(description.textContent).toBe('—Unknown')
+              const dash = description.querySelector('[aria-hidden="true"]')!
               await expect(dash).toHaveTextContent(/^—$/)
               await expect(isInaccessible(dash)).toBe(true)
             }
-          }
-          await expect(own.descriptions[0].textContent).toBe(
-            'Reported by the vehicle in the last —Unknown',
-          )
-        },
-      )
-      for (const locale of Object.keys(dictionaries) as Locale[])
-        expectOwnedStrings(
-          renderToStaticMarkup(
-            <PerronProvider locale={locale}>
-              <DataStateKey counts={COUNTS} liveThreshold={Number.NaN} ageingThreshold={-1} />
-            </PerronProvider>,
-          ),
-          locale,
+          },
         )
-    })
+        // a threshold only one sentence holds leaves the others whole, an override's included
+        await mounted(
+          canvasElement,
+          <DataStateKey
+            counts={COUNTS}
+            liveThreshold={150_000}
+            ageingThreshold={Number.POSITIVE_INFINITY}
+            liveDescriptionLabel="Heard from within {liveThreshold}"
+          />,
+          async (host) => {
+            await expect(heardSentences(await keyIn(host))).toEqual([
+              'Heard from within 2.5 min',
+              'Unknown',
+              MYLDER_SENTENCES[2],
+              MYLDER_SENTENCES[3],
+              'Unknown',
+            ])
+          },
+        )
+        for (const locale of Object.keys(dictionaries) as Locale[])
+          expectOwnedStrings(
+            renderToStaticMarkup(
+              <PerronProvider locale={locale}>
+                <DataStateKey counts={COUNTS} liveThreshold={Number.NaN} ageingThreshold={-1} />
+              </PerronProvider>,
+            ),
+            locale,
+          )
+      },
+    )
   },
 }
 

@@ -41,13 +41,15 @@ export interface DataStateKeyProps extends Omit<ComponentPropsWithRef<'ul'>, 'ch
   /**
    * The app's live threshold in milliseconds, the age under which a report is live, such as
    * `150000`, filled into the live and ageing sentences as "2.5 min". Required: each app sets its
-   * own from its feed. Not finite or below 0, it shows "—" and says "Unknown".
+   * own from its feed. Not finite or below 0, each sentence that holds it shows "—" and
+   * says "Unknown" in its place.
    */
   liveThreshold: number
   /**
    * The app's ageing threshold in milliseconds, the age past which a vehicle has no signal, such
    * as `300000`, filled into the ageing and no-signal sentences as "5 min". Required, as
-   * `liveThreshold` is. Not finite or below 0, it shows "—" and says "Unknown".
+   * `liveThreshold` is. Not finite or below 0, each sentence that holds it shows "—" and
+   * says "Unknown" in its place.
    */
   ageingThreshold: number
   /**
@@ -158,14 +160,15 @@ const descriptionKey = (state: VehicleState) => `${STATE_KEY[state]}Description`
 /**
  * A threshold as its sentence shows it (CR-7): its unit chosen from its seconds rounded to a whole
  * number, under 2 min those seconds, "60 s", from 2 min on its minutes to one decimal place,
- * "2.5 min", in the locale's decimal mark; "—" and the unknown word when it is not finite or below 0.
+ * "2.5 min", in the locale's decimal mark; `null` when it is not finite or below 0, so the sentences
+ * that hold it say "Unknown" in its place.
  */
 function threshold(
   ms: number,
   strings: ReturnType<typeof useOwnedStrings>,
   format: Intl.NumberFormat,
 ): ReactNode {
-  if (!known(ms) || ms < 0) return <UnknownValue label={strings.unknown} />
+  if (!known(ms) || ms < 0) return null
   // `|| 0` writes a rounded -0 as 0
   const seconds = Math.round(ms / 1000) || 0
   return seconds < IN_MINUTES_FROM
@@ -173,6 +176,21 @@ function threshold(
     : interpolate(strings.minutesDuration, {
         minutes: format.format(Math.round(ms / 6000) / 10),
       })
+}
+
+/**
+ * A state's sentence with its thresholds filled in (CR-6), or "—" heard as "Unknown" in place of
+ * the whole sentence when a threshold it holds is unknown (CR-7).
+ */
+function sentence(
+  template: string,
+  figures: Readonly<Record<string, ReactNode>>,
+  unknownLabel: string,
+): ReactNode {
+  const missing = Object.entries(figures).some(
+    ([name, figure]) => figure === null && template.includes(`{${name}}`),
+  )
+  return missing ? <UnknownValue label={unknownLabel} /> : interpolate(template, figures)
 }
 
 /**
@@ -279,7 +297,7 @@ export function DataStateKey({
               color="neutral"
               emphasis="secondary"
             >
-              {interpolate(strings[descriptionKey(variant)], figures)}
+              {sentence(strings[descriptionKey(variant)], figures, strings.unknown)}
             </Text>
           </li>
         )
