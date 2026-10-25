@@ -9,19 +9,18 @@ stages:
     started: 2026-10-25T04:48:22.948Z
     ended: 2026-10-25T04:49:27.022Z
   build:
-    runs: 1
-    failing: review round 1 found 3 P2 (components/field/review.md)
+    runs: 2
+    status: done
+    started: 2026-10-25T05:05:18.624Z
+    spec: 793d3fc8825c574279e8dd2943dd2d632bfc03ddddf04a5b0bcd2d8b1d77e117
+    ended: 2026-10-25T05:11:03.167Z
   review:
-    status: failed
-    started: 2026-10-25T04:57:13.477Z
     rounds: 1
+    sentBack: 1
     findings:
       p1: 0
       p2: 3
       p3: 3
-    sentBack: 1
-    ended: 2026-10-25T05:05:14.406Z
-    failing: review round 1 found 3 P2 (components/field/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T04:45:40.176Z
@@ -50,3 +49,6 @@ notes:
   - stage: build
     at: 2026-10-25T04:57:04.476Z
     direction: The stories' control is Base UI's Input, styled inline with the Fields family's tokens, including the danger edge when invalid. When TextField ships, the stories should use it and drop the inline box style.
+  - stage: build
+    at: 2026-10-25T05:11:03.168Z
+    direction: SeveralMessages wraps the story in Base UI's own Form (@base-ui/react/form) to show Base UI's list of several messages at rest, because Perron has no Form component yet. Swap it for Perron's Form once one exists.

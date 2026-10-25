@@ -2,6 +2,7 @@
 // stories of content and behaviour the spec's Stories table names (docs/components/field.md), each
 // in a 320 px container. The control is Base UI's Input, which registers with the field (CR-10),
 // styled here with the Fields family's tokens until TextField ships; Field's own CSS draws no box.
+import { Form } from '@base-ui/react/form'
 import { Input } from '@base-ui/react/input'
 import type { CSSProperties } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
@@ -10,7 +11,7 @@ import { expect, userEvent, waitFor, within } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import type { Locale } from '../../locale/index.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
-import { colour, heard, mounted, typography } from '../../testing/stories.ts'
+import { colour, heard, mounted, rendered, typography } from '../../testing/stories.ts'
 import { Kbd } from '../Kbd/Kbd.tsx'
 import { Field } from './Field.tsx'
 import type { FieldProps } from './Field.tsx'
@@ -233,36 +234,133 @@ export const NoDescription: Story = {
   },
 }
 
-/** The label, the description and the error given as elements and lists, the help with a Kbd. */
+/** The label, the description and the error each given as an element, the help with a Kbd. */
 export const RichContent: Story = {
   args: {
     label: <span>Stop name</span>,
     description: (
-      <>
+      <span>
         As written on the stop sign. Press <Kbd>Tab</Kbd> to move on.
-      </>
+      </span>
     ),
-    error: ['Enter ', <strong key="letters">at least 2 letters</strong>, ' of the stop name'],
+    error: (
+      <span>
+        Enter <strong>at least 2 letters</strong> of the stop name
+      </span>
+    ),
   },
-  play: async ({ canvasElement }) => {
-    const control = controlIn(canvasElement)
-    await expect(part(canvasElement, 'label')!.querySelector('span')).toHaveTextContent(LABEL)
-    await expect(part(canvasElement, 'description')!.querySelector('kbd')).toHaveTextContent('Tab')
-    await expect(part(canvasElement, 'error')!.querySelector('strong')).toHaveTextContent(
-      'at least 2 letters',
-    )
-    await expect(control).toHaveAccessibleDescription(
-      'As written on the stop sign. Press Tab to move on. Enter at least 2 letters of the stop name',
-    )
+  play: async ({ canvasElement, step }) => {
+    const heardAs = async (scope: HTMLElement) => {
+      const control = controlIn(scope)
+      await expect(part(scope, 'label')).toHaveTextContent(/^Stop name$/)
+      await expect(part(scope, 'description')!.querySelector('kbd')).toHaveTextContent('Tab')
+      await expect(part(scope, 'error')!.querySelector('strong')).toHaveTextContent(
+        'at least 2 letters',
+      )
+      await expect(control).toHaveAccessibleDescription(
+        'As written on the stop sign. Press Tab to move on. Enter at least 2 letters of the stop name',
+      )
+    }
+    await step('each part renders its element, and the control hears its text', async () => {
+      await expect(part(canvasElement, 'label')!.querySelector('span')).toHaveTextContent(LABEL)
+      await heardAs(canvasElement)
+    })
+    await step('each part renders a list of strings and elements alike', async () => {
+      await mounted(
+        canvasElement,
+        <Field
+          label={['Stop ', <span key="name">name</span>]}
+          description={[
+            'As written on the stop sign. Press ',
+            <Kbd key="tab">Tab</Kbd>,
+            ' to move on.',
+          ]}
+          error={['Enter ', <strong key="letters">at least 2 letters</strong>, ' of the stop name']}
+        >
+          <Input style={box} />
+        </Field>,
+        async (host) => {
+          await waitFor(() => expect(part(host, 'error')).not.toBeNull())
+          await expect(part(host, 'label')!.querySelector('span')).toHaveTextContent(/^name$/)
+          await heardAs(host)
+        },
+      )
+    })
   },
 }
 
-const COMPOUND = 'Hovedstadsområdetsbuslinjestoppestedsoversigten'
+// two messages from the server after a submit, given through Base UI's Form, and two from the
+// field's own checks: Base UI shows each pair as a list
+const SERVER_MESSAGES = ['No stop has this name', 'Check the spelling on the stop sign']
+const CHECK_MESSAGES = ['Enter at least 2 letters', 'Use letters, not digits']
 
-/** A long Danish compound in the label, the description and the error, each wrapping (CR-8). */
+/** Base UI's several messages, as a list: two from the server, then two from `validate`. */
+export const SeveralMessages: Story = {
+  args: {
+    name: 'stop',
+    validationMode: 'onBlur',
+    validate: (value) => (typeof value === 'string' && /^\d$/.test(value) ? CHECK_MESSAGES : null),
+  },
+  decorators: [
+    (Story) => (
+      <Form errors={{ stop: SERVER_MESSAGES }}>
+        <Story />
+      </Form>
+    ),
+  ],
+  play: async ({ canvasElement, step }) => {
+    const control = controlIn(canvasElement)
+    /** The error's list, its items' text, and the list's own spacing (Tokens). */
+    const listed = async (messages: string[]) => {
+      const list = await waitFor(() => {
+        const found = part(canvasElement, 'error')?.querySelector('ul')
+        expect(found).toBeTruthy()
+        return found!
+      })
+      await expect(Array.from(list.querySelectorAll('li'), (item) => item.textContent)).toEqual(
+        messages,
+      )
+      await expect(getComputedStyle(list).marginBlockStart).toBe('0px')
+      await expect(getComputedStyle(list).marginBlockEnd).toBe('0px')
+      await expect(getComputedStyle(list).paddingInlineStart).toBe(
+        rendered('space-400', 'padding-inline-start'),
+      )
+      await expect(control).toHaveAttribute('aria-invalid', 'true')
+      await expect(control).toHaveAccessibleDescription(`${DESCRIPTION} ${messages.join(' ')}`)
+    }
+    await step('the server’s two messages show as a list', async () => {
+      await listed(SERVER_MESSAGES)
+    })
+    await step('a digit, then Tab out, shows the two messages of the checks', async () => {
+      await userEvent.tab()
+      await userEvent.type(control, '4')
+      await userEvent.tab()
+      await listed(CHECK_MESSAGES)
+      await expect(control).not.toHaveFocus()
+    })
+  },
+}
+
+const COMPOUND = 'Hovedstadsområdetsbuslinjestoppestedsoversigtskortudgivelsen'
+
+/** Whether `word`, inside `element`'s text, breaks across more than one line itself. */
+const breaks = (element: Element, word: string) => {
+  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT)
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    const start = node.textContent!.indexOf(word)
+    if (start === -1) continue
+    const range = document.createRange()
+    range.setStart(node, start)
+    range.setEnd(node, start + word.length)
+    return range.getClientRects().length > 1
+  }
+  return false
+}
+
+/** A Danish compound longer than its line in the label, the description and the error (CR-8). */
 export const LongWords: Story = {
   args: {
-    label: `Stoppested${COMPOUND}`,
+    label: COMPOUND,
     description: `Som skrevet i ${COMPOUND}`,
     error: `Skriv navnet fra ${COMPOUND}`,
   },
@@ -271,6 +369,8 @@ export const LongWords: Story = {
     for (const name of ['label', 'description', 'error'] as const) {
       const element = part(canvasElement, name)!
       await expect(lines(element)).toBeGreaterThan(1.5)
+      // the compound itself breaks, inside the word, not only at the space before it
+      await expect(breaks(element, COMPOUND)).toBe(true)
       await expect(element.getBoundingClientRect().right).toBeLessThanOrEqual(field.right + 0.5)
       await expect(element.scrollWidth).toBeLessThanOrEqual(element.clientWidth)
     }
