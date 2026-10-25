@@ -43,8 +43,8 @@
   min-inline-size: 0;
 }
 
-/* unchecked: the hover layer the Fields lay over their fill, inside (hover: hover); the press
-   outside it, so a touch press shows. Hover and press are the radio's, the whole row, read as
+/* unchecked: the hover layer the Fields lay over their fill, inside (hover: hover); the press, a
+   denser layer, outside it, so a touch press shows. Hover and press are the radio's, the whole row, read as
    [role]:hover; the indicator carries the radio's own state attributes, so the guard is on them:
    never on a disabled or a read-only radio (CR-8, CR-9). */
 
@@ -59,8 +59,8 @@
 
 [role]:active > .pn-Radio-indicator[data-unchecked]:not([data-disabled], [data-readonly]) {
   background-image: linear-gradient(
-    var(--perron-color-surface-hover),
-    var(--perron-color-surface-hover)
+    var(--perron-color-surface-selected),
+    var(--perron-color-surface-selected)
   );
 }
 
@@ -87,8 +87,8 @@
 }
 
 [role]:active > .pn-Radio-indicator[data-checked]:not([data-disabled], [data-readonly]) {
-  border-color: var(--perron-color-surface-inverse-hover);
-  background-color: var(--perron-color-surface-inverse-hover);
+  border-color: var(--perron-color-surface-inverse-pressed);
+  background-color: var(--perron-color-surface-inverse-pressed);
 }
 
 /* disabled and read-only keep the default cursor (CR-9) */

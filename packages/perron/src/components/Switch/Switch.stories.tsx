@@ -6,7 +6,14 @@ import { Field } from '@base-ui/react/field'
 import { createRef, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
-import { mounted, onHover, resolve, stateRules, typography } from '../../testing/stories.ts'
+import {
+  mounted,
+  onHover,
+  pressedAfterHover,
+  resolve,
+  stateRules,
+  typography,
+} from '../../testing/stories.ts'
 import { Button } from '../Button/Button.tsx'
 import { Switch, type SwitchProps } from './Switch.tsx'
 
@@ -101,6 +108,16 @@ export const Hover: Story = {
     // the edge stays the control edge: no hover rule sets it
     await expect(stateRules(root).every((s) => !s.getPropertyValue('border-color'))).toBe(true)
     await expect(style.borderColor).toBe(edge('color-border-control'))
+    await expect(
+      stateRules(root, ':active')
+        .map((s) => s.getPropertyValue('background-image'))
+        .filter((value) => value !== 'none')
+        .join('')
+        .replace(/\s+/g, ''),
+    ).toBe(
+      'linear-gradient(var(--perron-color-surface-selected),var(--perron-color-surface-selected))',
+    )
+    await expect(pressedAfterHover(root)).toBe(true)
   },
 }
 
@@ -136,6 +153,14 @@ export const Checked: Story = {
       'var(--perron-color-surface-inverse-hover)',
     )
     await expect(onHover(root, 'border-color')).toBe('var(--perron-color-surface-inverse-hover)')
+    // the forced-colours rules after it set a system colour, so the theme's press is read alone
+    await expect(
+      stateRules(root, ':active').some(
+        (s) =>
+          s.getPropertyValue('background-color') === 'var(--perron-color-surface-inverse-pressed)',
+      ),
+    ).toBe(true)
+    await expect(pressedAfterHover(root)).toBe(true)
     // CR-5, CR-6: the thumb sits space.400 further along than an off switch's, at the same size
     const travel = parseFloat(resolve('blockSize', 'var(--perron-space-400)'))
     const on = thumb.getBoundingClientRect()

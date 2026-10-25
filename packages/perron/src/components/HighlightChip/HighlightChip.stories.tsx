@@ -5,7 +5,14 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, userEvent, within } from 'storybook/test'
 import { LineBadge } from '../LineBadge/LineBadge.tsx'
-import { colour, mounted, onHover, rendered } from '../../testing/stories.ts'
+import {
+  colour,
+  mounted,
+  onHover,
+  pressedAfterHover,
+  rendered,
+  stateRules,
+} from '../../testing/stories.ts'
 import { HighlightChip } from './HighlightChip.tsx'
 
 const meta = {
@@ -144,6 +151,17 @@ export const Hover: Story = {
     const layer = onHover(chip, 'background-image')
     await expect(layer).toContain('linear-gradient')
     await expect(layer).toContain('var(--perron-color-surface-hover)')
+    await expect(
+      stateRules(chip, ':active')
+        .map((s) => s.getPropertyValue('background-image'))
+        .filter((value) => value !== 'none')
+        .join('')
+        .replace(/\s+/g, ''),
+    ).toBe(
+      'linear-gradient(var(--perron-color-surface-selected),var(--perron-color-surface-selected))',
+    )
+    await expect(pressedAfterHover(chip)).toBe(true)
+    await expect(getComputedStyle(chip).cursor).toBe('pointer')
     // the layer lies over the glass, which stays
     await expect(onHover(chip, 'background-color')).toBe('')
     await expect(getComputedStyle(chip).backgroundColor).toBe(
@@ -218,6 +236,14 @@ export const SelectedHover: Story = {
       'var(--perron-color-surface-inverse-hover)',
     )
     await expect(onHover(chip, 'background-image')).toBe('none')
+    // the forced-colours rules after it set a system colour, so the theme's press is read alone
+    await expect(
+      stateRules(chip, ':active').some(
+        (s) =>
+          s.getPropertyValue('background-color') === 'var(--perron-color-surface-inverse-pressed)',
+      ),
+    ).toBe(true)
+    await expect(pressedAfterHover(chip)).toBe(true)
   },
 }
 

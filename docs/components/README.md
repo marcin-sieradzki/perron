@@ -154,7 +154,7 @@ A component that draws its own focus ring uses `focus.width`, `focus.offset` and
 
 ### Pointer feedback
 
-Every part a pointer presses to act or to change a value, such as a button, a tab, a chip, a switch, a checkbox or a row, answers the pointer three ways, unless its spec gives a reason in a `CR-n`:
+Every part a pointer presses to act or to change a value, such as a button, a link card, a tab, a chip, a switch, a checkbox or a radio, answers the pointer three ways:
 
 - **Hover** changes its look, inside `@media (hover: hover)`, by a step the eye sees.
 - **Pressed** changes it again, a step past hover, in a rule after the hover rule and outside the query, so a touch press shows too. A pointer that presses has already hovered, so a pressed look equal to the hover look shows no press. A solid ink part takes `color.surface.inverse-hover`, then `color.surface.inverse-pressed`; a solid brand part `color.surface.brand-hover`, then `color.surface.brand-pressed`; a quiet or outline part lays `color.surface.hover`, then `color.surface.selected`, a smaller step, since a denser layer would take a brand label under 4.5:1 ([Semantic colours](../foundations/semantic-colours.md#surfaces)).
@@ -162,7 +162,11 @@ Every part a pointer presses to act or to change a value, such as a button, a ta
 
 Neither hover nor pressed applies to a disabled or read-only part: the rules exclude `[data-disabled]` and `[data-readonly]`, since a part with `focusableWhenDisabled` has no native `disabled` and still matches `:hover` and `:active`. The spec's Tokens table has a hover row, a pressed row and the two cursor rows for each such part, and a `play` test checks the pressed fill, as written, renders apart from the hover one and its rule comes after the hover rule (`stateFill`, `pressedAfterHover`, [Shared helpers](#shared-helpers)). The states change at once, as [Motion](#css) says; a transition on them takes a `duration.*` token, which reduced motion already shortens.
 
-Components built before this rule catch up in a change of their own, spec first. IconButton, ToolbarButton, FilterChip, HighlightChip, SegmentedControl, Tabs, Switch, Checkbox and RadioGroup press with their hover look, and IconButton, ToolbarButton, FilterChip and HighlightChip set no cursor. Button and LinkButton follow the rule.
+The `pointer-feedback` check ([Checks](#checks)) holds the CSS to this: every hover rule needs its `:active` rule, outside the query, after it and painting otherwise, and a file that hovers a part of its own sets `cursor: pointer`, and `cursor: default` when it styles a disabled state. A part a press doesn't change says why in a `perron-allow(pointer-feedback)` on its hover rule:
+
+- a text box (the Fields family), which a press focuses: the focus ring and the text cursor answer it;
+- a row in a popup, which a press chooses and closes, so no pressed look would show;
+- a link inside running text, which keeps the browser's own press and pointer.
 
 ## CSS
 
@@ -329,3 +333,4 @@ In Markdown it is an HTML comment holding `perron-allow(paths): reason`, at the 
 | `api-compatibility` | A `stable` or `deprecated` entry's props API shrinking against the last release tag (see [Change](#change))                                                                                                                                                                                                                                                                     |
 | `paths`             | A path a doc or skill names, in a link or a code span, that does not exist                                                                                                                                                                                                                                                                                                      |
 | `penpot`            | A design read back with an unknown token, an unbound value, or an unmapped variant or layer                                                                                                                                                                                                                                                                                     |
+| `pointer-feedback`  | A part with a hover look and no [pressed one](#pointer-feedback) a step past it, outside `(hover: hover)` and after the hover rule, or a hovered part with no `cursor: pointer`, or a disabled one with no `cursor: default`                                                                                                                                                    |

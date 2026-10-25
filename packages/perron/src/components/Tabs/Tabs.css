@@ -66,7 +66,8 @@
   letter-spacing: var(--perron-typography-data-sm-tracking);
 }
 
-/* Hover and pressed skip a disabled tab, which keeps aria-disabled, not the native disabled, and
+/* Hover inks the label; pressed lays the hover layer behind it too, a step past hover. Both skip
+   a disabled tab, which keeps aria-disabled, not the native disabled, and
    still matches :hover and :active (CR-8). */
 @media (hover: hover) {
   .pn-Tab:hover:not([data-disabled]) {
@@ -75,6 +76,7 @@
 }
 
 .pn-Tab:active:not([data-disabled]) {
+  background-color: var(--perron-color-surface-hover);
   color: var(--perron-color-text-primary);
 }
 

@@ -8,7 +8,14 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import calendar from '../../../icons/calendar.svg?raw'
 import diversion from '../../../icons/diversion.svg?raw'
 import warning from '../../../icons/warning.svg?raw'
-import { icon, mounted, resolve, stateFill, stateRules } from '../../testing/stories.ts'
+import {
+  icon,
+  mounted,
+  pressedAfterHover,
+  resolve,
+  stateFill,
+  stateRules,
+} from '../../testing/stories.ts'
 import { FilterChip, type FilterChipProps } from './FilterChip.tsx'
 
 const meta = {
@@ -92,6 +99,9 @@ export const Hover: Story = {
   play: async ({ canvasElement }) => {
     const root = chip(canvasElement)
     await expect(stateFill(root)).toBe('var(--perron-color-surface-hover)')
+    await expect(stateFill(root, ':active')).toBe('var(--perron-color-surface-selected)')
+    await expect(pressedAfterHover(root)).toBe(true)
+    await expect(getComputedStyle(root).cursor).toBe('pointer')
     await expect(resolve('backgroundColor', 'var(--perron-color-surface-hover)')).not.toBe(
       getComputedStyle(root).backgroundColor,
     )
@@ -130,6 +140,14 @@ export const Selected: Story = {
       resolve('backgroundColor', 'var(--perron-color-surface-inverse)'),
     )
     await expect(stateFill(root)).toBe('var(--perron-color-surface-inverse-hover)')
+    // the forced-colours rules after it set a system colour, so the theme's press is read alone
+    await expect(
+      stateRules(root, ':active').some(
+        (s) =>
+          s.getPropertyValue('background-color') === 'var(--perron-color-surface-inverse-pressed)',
+      ),
+    ).toBe(true)
+    await expect(pressedAfterHover(root)).toBe(true)
     // CR-5: on and off share one box
     const on = root.getBoundingClientRect()
     await mounted(

@@ -48,7 +48,7 @@
   overflow-wrap: anywhere;
 }
 
-/* Hover and pressed skip the selected segment, which pressing again leaves as it is (CR-4), and a
+/* Hover, and pressed a denser layer past it, skip the selected segment, which pressing again leaves as it is (CR-4), and a
    disabled one (CR-6). */
 @media (hover: hover) {
   .pn-Segment:hover:not([data-pressed]):not([data-disabled]) {
@@ -58,7 +58,7 @@
 }
 
 .pn-Segment:active:not([data-pressed]):not([data-disabled]) {
-  background-color: var(--perron-color-surface-hover);
+  background-color: var(--perron-color-surface-selected);
   color: var(--perron-color-text-primary);
 }
 

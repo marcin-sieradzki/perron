@@ -14,6 +14,7 @@ import {
   mounted,
   onHover,
   rendered,
+  pressedAfterHover,
   resolve,
   stateRules,
   typography,
@@ -82,6 +83,10 @@ const length = (token: string) => parseFloat(resolve('blockSize', `var(--perron-
 /** The hover layer an unchecked indicator takes, as the CSS writes it, without its spaces. */
 const HOVER_LAYER =
   'linear-gradient(var(--perron-color-surface-hover),var(--perron-color-surface-hover))'
+
+/** The pressed layer, a step past the hover one, as the CSS writes it, without its spaces. */
+const PRESSED_LAYER =
+  'linear-gradient(var(--perron-color-surface-selected),var(--perron-color-surface-selected))'
 
 const defaultRef = createRef<HTMLDivElement>()
 
@@ -198,14 +203,23 @@ export const RadioHover: Story = {
     )
     await expect(onHover(system, 'border-color')).toBe('var(--perron-color-surface-inverse-hover)')
     await expect(onHover(system, 'background-image')).toBe('')
-    // a press shows the same, outside (hover: hover); the forced-colours reset (CR-11) sets `none`
+    // a press lays the denser selected layer, outside (hover: hover) and after it; the
+    // forced-colours reset (CR-11) sets `none`
     await expect(
       stateRules(light, ':active')
         .map((s) => s.getPropertyValue('background-image'))
         .filter((value) => value !== 'none')
         .join('')
         .replace(/\s+/g, ''),
-    ).toBe(HOVER_LAYER)
+    ).toBe(PRESSED_LAYER)
+    await expect(pressedAfterHover(light)).toBe(true)
+    // the forced-colours rules after it set a system colour, so the theme's press is read alone
+    await expect(
+      stateRules(system, ':active').some(
+        (s) =>
+          s.getPropertyValue('background-color') === 'var(--perron-color-surface-inverse-pressed)',
+      ),
+    ).toBe(true)
   },
 }
 
