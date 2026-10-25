@@ -3,6 +3,9 @@ component: SourceLine
 layer: pattern
 deferred:
   at: 2026-10-25T17:46:59.950Z
+needsHuman:
+  stage: review
+  reason: '3 review rounds found a P1 or a P2; the last: review round 3 found 2 P2 (components/source-line/review.md)'
 stages:
   brief:
     status: done
@@ -17,13 +20,17 @@ stages:
     spec: 1c5b2d9d756b857e7ce210f0e60d262e9a7a2442ee8043765b258bb57f3203bf
     ended: 2026-10-25T19:05:14.141Z
   review:
-    rounds: 2
-    sentBack: 2
-    reviewed: 0104b855289416b0574e1e1a46af9c4c0138e623
+    rounds: 3
+    sentBack: 3
+    reviewed: 1625038e8f99b89b3b0d544a44344e3281b6739f
     findings:
       p1: 0
       p2: 2
-      p3: 3
+      p3: 2
+    status: failed
+    started: 2026-10-25T19:05:37.680Z
+    ended: 2026-10-25T19:13:09.859Z
+    failing: review round 3 found 2 P2 (components/source-line/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T17:53:46.108Z
