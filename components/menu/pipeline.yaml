@@ -10,18 +10,18 @@ stages:
     ended: 2026-10-25T05:54:23.935Z
   build:
     runs: 3
-    status: done
-    started: 2026-10-25T06:24:51.035Z
-    begun: 9265c9d671d92b95395e092193203af5f6547e7443fcd0925b85f783ddff068e
-    spec: 4622a377d9b8ccbe028715d0435f42079af64ff9863ec8ccbc57258862279cd0
-    ended: 2026-10-25T06:33:21.496Z
+    failing: review round 2 found 2 P2 (components/menu/review.md)
   review:
-    rounds: 1
-    sentBack: 1
+    rounds: 2
+    sentBack: 2
     findings:
-      p1: 2
-      p2: 6
+      p1: 0
+      p2: 2
       p3: 6
+    status: failed
+    started: 2026-10-25T06:33:56.095Z
+    ended: 2026-10-25T06:42:15.897Z
+    failing: review round 2 found 2 P2 (components/menu/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T05:50:01.967Z
