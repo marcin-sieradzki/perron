@@ -64,5 +64,15 @@
       "size": "icon.size.325",
       "use": "A checkbox that stands for a set partly ticked"
     }
+  },
+  "Feedback": {
+    "exclamation-circle": {
+      "size": "icon.size.325",
+      "use": "A danger message"
+    },
+    "info-circle": {
+      "size": "icon.size.325",
+      "use": "An info message"
+    }
   }
 }

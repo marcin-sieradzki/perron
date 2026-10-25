@@ -67,4 +67,11 @@ Every icon renders at one of three steps, set with `--perron-icon-size` (one of 
 | <img src="../../packages/perron/icons/tick.svg" alt=""> | `tick` | 14 px | `icon.size.325`, 13 px | A ticked checkbox                              |
 | <img src="../../packages/perron/icons/dash.svg" alt=""> | `dash` | 14 px | `icon.size.325`, 13 px | A checkbox that stands for a set partly ticked |
 
+### Feedback
+
+| Icon                                                                  | Name                 | Grid  | Size                   | Use              |
+| --------------------------------------------------------------------- | -------------------- | ----- | ---------------------- | ---------------- |
+| <img src="../../packages/perron/icons/exclamation-circle.svg" alt=""> | `exclamation-circle` | 14 px | `icon.size.325`, 13 px | A danger message |
+| <img src="../../packages/perron/icons/info-circle.svg" alt="">        | `info-circle`        | 14 px | `icon.size.325`, 13 px | An info message  |
+
 <!-- /files -->

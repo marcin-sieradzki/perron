@@ -51,3 +51,26 @@ export function heardMarkup(markup: string) {
   }
   return decode(text).replace(/\s+/g, ' ').trim()
 }
+
+/** A tag's attributes as `name=value`, less width and height, which an inlined icon leaves out. */
+const drawnAttributes = (tag: string) =>
+  [...tag.matchAll(/\s([\w-]+)="([^"]*)"/g)]
+    .filter(([, name]) => name !== 'width' && name !== 'height')
+    .map(([, name, value]) => `${name}=${value}`)
+
+/**
+ * An svg's drawing, from an icon file or server-rendered markup: its own attributes, less width,
+ * height and the `class`, `aria-hidden` and `focusable` an inlined icon adds, and each child
+ * element with its attributes, so an inlined icon compares equal to its file.
+ *
+ * @example expect(drawing(renderToStaticMarkup(<IntentIcon color="info" />))).toEqual(drawing(file))
+ */
+export const drawing = (svg: string) => ({
+  root: drawnAttributes(svg.match(/<svg\b[^>]*>/)![0]).filter(
+    (a) => !/^(class|aria-hidden|focusable)=/.test(a),
+  ),
+  children: (svg.match(/<(?!\/?svg\b)[a-z]+\b[^>]*>/g) ?? []).map((tag) => [
+    tag.match(/^<([a-z]+)/)![1],
+    ...drawnAttributes(tag).sort(),
+  ]),
+})

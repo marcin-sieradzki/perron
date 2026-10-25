@@ -8,6 +8,13 @@ stages:
     status: done
     started: 2026-10-25T07:28:39.007Z
     ended: 2026-10-25T07:30:10.698Z
+  build:
+    status: done
+    started: 2026-10-25T07:30:14.250Z
+    runs: 1
+    begun: 29ab3cd315e1038b26470f3731cc5754315df6df22ffc40a89a9cc1dbf64cb8c
+    spec: 54b24fe041c898d041fc7d036e977d99d8b53c145476973fcfb4151b0c64dffd
+    ended: 2026-10-25T07:44:18.732Z
 notes:
   - stage: brief
     at: 2026-10-25T07:28:35.814Z
@@ -30,3 +37,21 @@ notes:
   - stage: brief
     at: 2026-10-25T07:30:10.698Z
     direction: The contract's Shared parts table lists only Base UI parts in CloseButton's 'Composed in' column. A component that composes a shared part without a Base UI root, such as Alert, has no stated way to be listed there.
+  - stage: build
+    at: 2026-10-25T07:44:18.733Z
+    direction: warning.svg's dot is a circle of r .3 with the 1.6 stroke inherited, and Chromium renders it as a ring at high pixel density. signal-off draws its dot as a stroke-less disc, and the two new icons now do too. warning.svg could be redrawn the same way, which would change SeverityLabel's and IntentIcon's copies.
+  - stage: build
+    at: 2026-10-25T07:44:18.733Z
+    direction: IntentIcon owns only info-circle and exclamation-circle, because NormalService inlines check-circle and SeverityLabel inlines warning. If IntentIcon should be the one drawing of every intent icon, NormalService could compose IntentIcon with color='success'. SeverityLabel draws warning in a transit colour, so it would still keep its own copy.
+  - stage: build
+    at: 2026-10-25T07:44:18.733Z
+    direction: The contract's Customising section says 'the component's own props last', but Base UI's mergeProps runs the rightmost handler first. A component's own handler merged last therefore runs before the caller's and can't be stopped by it. The contract could say which order handlers run, and that a caller-first handler (Base UI's convention, with preventBaseUIHandler) is merged first.
+  - stage: build
+    at: 2026-10-25T07:44:18.733Z
+    direction: The shared-parts gate reads a part's icons only in the singular form '`x` icon'. A plural such as 'the `a` and `b` icons' is silently left unchecked, so the contract row has to name each icon on its own.
+  - stage: build
+    at: 2026-10-25T07:44:18.733Z
+    direction: "A state fill written as the shorthand `background: var(--…)` reads as empty to stateFill and pressedAfterHover, because a var() shorthand's longhands serialize empty. component-css could require background-color for hover and pressed fills, so the pointer-feedback play tests can always read them."
+  - stage: build
+    at: 2026-10-25T07:44:18.733Z
+    direction: Alert's icon part is one line of body-sm tall (19.5 px), but a title's line is heading-sm (18.2 px), so with a title the icon sits about 0.65 px below the title line's centre. It is under a pixel, but Toast will inherit it; the icon could take the first line's role when a title is present.
