@@ -93,6 +93,19 @@ export const Default: Story = {
     }
     await expect(chip.getBoundingClientRect().height).toBe(oneLine)
 
+    // a single word longer than the line breaks within the chip, which stays inside its
+    // container (CR-7)
+    const longWord = 'Trafikinformationsforsinkelsesoversigten'
+    await mounted(canvasElement, <HighlightChip>{longWord}</HighlightChip>, async (host) => {
+      host.style.inlineSize = '12ch'
+      const long = await chipFound(host, longWord)
+      const box = long.getBoundingClientRect()
+      const container = host.getBoundingClientRect()
+      await expect(box.left).toBeGreaterThanOrEqual(container.left)
+      await expect(box.right).toBeLessThanOrEqual(container.right)
+      await expect(long.scrollWidth).toBeLessThanOrEqual(long.clientWidth)
+    })
+
     // children as an element, and as a list of an element and a string, inside the one root
     await mounted(
       canvasElement,

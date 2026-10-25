@@ -29,7 +29,7 @@
   color: var(--perron-color-text-primary);
   font: var(--perron-typography-label);
   letter-spacing: var(--perron-typography-label-tracking);
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
   text-align: center;
   --perron-icon-size: var(--perron-icon-size-400);
 }

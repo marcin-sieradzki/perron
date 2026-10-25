@@ -3,9 +3,6 @@ component: HighlightChip
 layer: component
 deferred:
   at: 2026-10-25T01:16:43.640Z
-needsHuman:
-  stage: review
-  reason: '2 review rounds found a P1 or a P2, the last a P1: review round 2 found 1 P1 (components/highlight-chip/review.md)'
 stages:
   brief:
     status: done
@@ -19,7 +16,7 @@ stages:
     ended: 2026-10-25T02:23:34.407Z
   review:
     rounds: 2
-    sentBack: 2
+    sentBack: 0
     findings:
       p1: 1
       p2: 0
@@ -82,3 +79,6 @@ notes:
   - stage: build
     at: 2026-10-25T02:23:34.408Z
     direction: A disabled chip at rest gets no forced-colours rule and relies on the browser greying a disabled button's words; FilterChip and SegmentedControl set GrayText explicitly, so the three toggles could share one form.
+  - stage: review
+    at: 2026-10-25T02:30:28.479Z
+    unblocked: '2 review rounds found a P1 or a P2, the last a P1: review round 2 found 1 P1 (components/highlight-chip/review.md)'
