@@ -3,4 +3,23 @@ component: VehicleDotLabel
 layer: component
 deferred:
   at: 2026-10-25T12:33:26.690Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-25T12:33:30.848Z
+    ended: 2026-10-25T12:38:27.446Z
+    pending: 4
+notes:
+  - stage: brief
+    at: 2026-10-25T12:38:27.446Z
+    direction: A data state shown apart from one vehicle has no line to colour its dot, and VehicleDot requires `line` and has no neutral colour. This covers ReportStrip's counts across lines (ReportStrip depends on VehicleDotLabel) and probably VehicleDotLegend's rows. An optional `line` with an ink default on VehicleDot would only widen its API, and should be settled before either is built.
+  - stage: brief
+    at: 2026-10-25T12:38:27.446Z
+    direction: "SeverityLabel and VehicleDotLabel now share one layout: an inline grid with a zero-width-space ::before strut, so the mark stays centred on the word's first line. A third mark-and-word label would make it a candidate for a shared part."
+  - stage: brief
+    at: 2026-10-25T12:38:27.446Z
+    questions: |-
+      1. (Props) Does VehicleDotLabel take no `children`? Its word would always be the state's owned string, overridden on one instance by its `*Label` prop, and a caller's extra words, such as "since 08:02" after "No signal", would go beside the label, not in it. Recommended: yes, as SeverityLabel takes none. The five words then stay content design's on every screen, and a time is the caller's own text beside the label.
+      2. (Props) Does VehicleDotLabel come in one size, with no `size` prop: the dot at VehicleDot's `size='small'` (icon.size.325) and the word in `typography.label-sm`, with a `space.100` gap? Recommended: yes, as SeverityLabel and Delay come in one size. label-sm is the role for legend items and short labels in rows, tables and strips, and a `size` prop can be added later without a break.
+      3. (Props) Is `line` required, with no default, as on VehicleDot? Recommended: yes. The dot requires it, and a dot in a wrong default colour would name the wrong line. A label that stands for many lines at once, such as a count in ReportStrip, needs a neutral dot, which is a separate VehicleDot change (an optional `line` with an ink default) to decide before ReportStrip is built.
+      4. (Tokens) Is the word set in `color.text.primary` for every state? Recommended: yes. The word is the one place the state is told without relying on colour or a 9 px shape, so it reads at full strength (15.32:1 or more on every surface). No signal's word is never greyed like its dot, since tertiary misses 4.5:1, and a line colour is never put on text.
