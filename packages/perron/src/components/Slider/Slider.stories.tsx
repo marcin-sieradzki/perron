@@ -80,6 +80,23 @@ const part = (
 /** The figure as it is read in place: the value text, without the hidden sizers. */
 const figure = (scope: Element) => heard(part(scope, 'value'))
 
+/** The figure's two hidden sizers, the formatted ends, as their text (CR-8). */
+const sizers = (scope: Element) =>
+  Array.from(part(scope, 'value').querySelectorAll('.pn-Slider-valueSizer'), (s) => s.textContent)
+
+/** Every key of `slotProps`, each one of Slider's parts. */
+const SLOTS = [
+  'field',
+  'label',
+  'description',
+  'error',
+  'control',
+  'track',
+  'indicator',
+  'thumb',
+  'value',
+] as const
+
 /** The `onChange` or `onChangeCommitted` spy of a story's args. */
 const spy = (handler: unknown) => handler as ReturnType<typeof fn>
 
@@ -198,6 +215,11 @@ export const Default: Story = {
         await expect(getComputedStyle(control).blockSize).toBe(
           rendered('size-target-min', 'block-size'),
         )
+        // the thumb sits inside the control, the press target
+        const box = control.getBoundingClientRect()
+        const thumb = part(canvasElement, 'thumb').getBoundingClientRect()
+        await expect(thumb.top).toBeGreaterThanOrEqual(box.top)
+        await expect(thumb.bottom).toBeLessThanOrEqual(box.bottom)
       },
     )
     await step('the figure is an output read in place, its sizers hidden (CR-8)', async () => {
@@ -301,7 +323,7 @@ export const Default: Story = {
       slider.blur()
     })
     await step(
-      'the caller’s props reach the root, and a slot’s class follows its own (CR-4)',
+      'the caller’s props reach the root, and each slot’s class follows its own (CR-2, CR-4)',
       async () => {
         const ref = createRef<HTMLDivElement>()
         await mounted(
@@ -309,12 +331,16 @@ export const Default: Story = {
           <PerronProvider locale="en">
             <Slider
               label="Probe"
+              description="Probe help"
+              error="Probe error"
               ref={ref}
               id="probe"
               data-testid="probe"
               className="caller"
               style={{ marginBlockStart: 1 }}
-              slotProps={{ control: { className: 'caller-control' } }}
+              slotProps={Object.fromEntries(
+                SLOTS.map((slot) => [slot, { className: `caller-${slot}` }]),
+              )}
             />
           </PerronProvider>,
           async (host) => {
@@ -324,9 +350,12 @@ export const Default: Story = {
             await expect(probe).toHaveAttribute('data-testid', 'probe')
             await expect(probe.className).toBe('pn-Slider caller')
             await expect(probe.style.marginBlockStart).toBe('1px')
-            await expect(part(host, 'control').className).toContain(
-              'pn-Slider-control caller-control',
-            )
+            for (const slot of ['field', 'label', 'description', 'error'] as const)
+              await expect(fieldPart(host, slot)!.className).toBe(
+                `pn-Field${slot === 'field' ? '' : `-${slot}`} pn-Slider-${slot} caller-${slot}`,
+              )
+            for (const slot of ['control', 'track', 'indicator', 'thumb', 'value'] as const)
+              await expect(part(host, slot).className).toContain(`pn-Slider-${slot} caller-${slot}`)
             // with no defaultValue, a single thumb starts at min
             await expect(sliderIn(host, 'Probe')).toHaveAttribute('aria-valuenow', '0')
           },
@@ -369,6 +398,8 @@ export const Focus: Story = {
     await expect(ring.outlineColor).toBe(colour('--perron-color-border-focus'))
     await expect(ring.outlineWidth).toBe(rendered('focus-width', 'outline-width'))
     await expect(ring.outlineOffset).toBe(rendered('focus-offset', 'outline-offset'))
+    // the ring is the thumb's own outline, so it follows the thumb's round radius
+    await expect(ring.borderTopLeftRadius).toBe(rendered('radius-full', 'border-top-left-radius'))
     await userEvent.tab({ shift: true })
     await expect(slider).not.toHaveFocus()
     await expect(getComputedStyle(thumb).outlineStyle).toBe('none')
@@ -433,9 +464,13 @@ export const Pressed: Story = {
         pointerAt('pointerup', control, box.left + 1, middle)
         await waitFor(() => expect(slider).toHaveAttribute('aria-valuenow', '0'))
         await expect(call(args.onChangeCommitted)).toEqual({ value: 0, reason: 'track-press' })
+        // at min, the thumb stays inside the control
+        await expect(thumb.getBoundingClientRect().left).toBeGreaterThanOrEqual(box.left - 0.5)
         pointerAt('pointerdown', control, box.right - 1, middle)
         pointerAt('pointerup', control, box.right - 1, middle)
         await waitFor(() => expect(slider).toHaveAttribute('aria-valuenow', '10'))
+        // and at max
+        await expect(thumb.getBoundingClientRect().right).toBeLessThanOrEqual(box.right + 0.5)
       },
     )
     await step('a press and release at the middle commits 5, with track-press', async () => {
@@ -561,8 +596,12 @@ export const Invalid: Story = {
     )
     await expect(slider).toHaveAccessibleDescription(`${DESCRIPTION} Choose 8 minutes or fewer`)
     await expect(getComputedStyle(thumb).borderColor).toBe(edge('color-status-danger'))
+    // the fill and the figure keep their rest look
     await expect(getComputedStyle(part(canvasElement, 'indicator')).backgroundColor).toBe(
       fill('color-text-primary'),
+    )
+    await expect(getComputedStyle(part(canvasElement, 'value')).color).toBe(
+      colour('--perron-color-text-primary'),
     )
     // with no error given, the field's own check shows its message when it fails
     await mounted(
@@ -639,8 +678,7 @@ export const Range: Story = {
       },
     )
     await step('the figure’s sizers write each end twice (CR-8)', async () => {
-      const sizers = part(canvasElement, 'value').querySelectorAll('.pn-Slider-valueSizer')
-      await expect(Array.from(sizers, (sizer) => sizer.textContent)).toEqual(['0 – 0', '30 – 30'])
+      await expect(sizers(canvasElement)).toEqual(['0 – 0', '30 – 30'])
     })
     await step('a press on the label focuses nothing', async () => {
       await userEvent.click(fieldPart(canvasElement, 'label')!)
@@ -739,7 +777,13 @@ export const Range: Story = {
           const bound = within(host).getAllByRole('slider', { name: 'Bound' })
           await expect(bound).toHaveLength(2)
           for (const input of bound) await expect(input).toHaveAttribute('aria-valuetext', 'Any')
-          await expect(within(host).getAllByRole('slider', { name: 'Ends' })).toHaveLength(2)
+          const ends = within(host).getAllByRole('slider', { name: 'Ends' })
+          await expect(ends).toHaveLength(2)
+          // a caller's name alone leaves Slider's value text in place, the value alone
+          await expect(ends.map((input) => input.getAttribute('aria-valuetext'))).toEqual([
+            '4',
+            '12',
+          ])
           await expect(within(host).queryAllByRole('slider', { name: /Minimum|Maximum/ })).toEqual(
             [],
           )
@@ -787,25 +831,49 @@ export const Units: Story = {
       </PerronProvider>
     </div>
   ),
-  play: async ({ canvasElement }) => {
+  play: async ({ args, canvasElement, step }) => {
     const [english, danish] = Array.from(
       canvasElement.querySelectorAll<HTMLElement>('.pn-Slider-field'),
     )
     const slider = sliderIn(english, UNITS.label)
-    // with no description given, none is rendered
-    await expect(fieldPart(english, 'description')).toBeNull()
-    await expect(figure(english)).toBe('1.5 km')
-    await expect(slider).toHaveAttribute('aria-valuetext', '1.5 km')
-    await expect(figure(danish)).toBe('1,5 km')
-    await expect(sliderIn(danish, UNITS.label)).toHaveAttribute('aria-valuetext', '1,5 km')
-    slider.focus()
-    await userEvent.keyboard('{ArrowRight}')
-    await expect(figure(english)).toBe('2 km')
-    for (const field of [english, danish])
-      await expect(lines(part(field, 'valueText'))).toBeLessThan(1.5)
-    await userEvent.keyboard('{ArrowLeft}')
-    await expect(figure(english)).toBe('1.5 km')
-    slider.blur()
+    await step('the figure and the value text in each provider’s locale (CR-13)', async () => {
+      // with no description given, none is rendered
+      await expect(fieldPart(english, 'description')).toBeNull()
+      await expect(figure(english)).toBe('1.5 km')
+      await expect(slider).toHaveAttribute('aria-valuetext', '1.5 km')
+      await expect(figure(danish)).toBe('1,5 km')
+      await expect(sliderIn(danish, UNITS.label)).toHaveAttribute('aria-valuetext', '1,5 km')
+    })
+    await step('the sizers are the ends in the same locale and format (CR-8)', async () => {
+      await expect(sizers(english)).toEqual(['0.5 km', '3 km'])
+      await expect(sizers(danish)).toEqual(['0,5 km', '3 km'])
+    })
+    await step('ArrowRight makes it "2 km" on one line, the track as wide (CR-8)', async () => {
+      const width = part(english, 'track').getBoundingClientRect().width
+      slider.focus()
+      await userEvent.keyboard('{ArrowRight}')
+      await expect(figure(english)).toBe('2 km')
+      await expect(part(english, 'track').getBoundingClientRect().width).toBe(width)
+      for (const field of [english, danish])
+        await expect(lines(part(field, 'valueText'))).toBeLessThan(1.5)
+      await userEvent.keyboard('{ArrowLeft}')
+      await expect(figure(english)).toBe('1.5 km')
+      slider.blur()
+    })
+    await step('a caller’s locale wins over the PerronProvider’s (CR-13)', async () => {
+      await mounted(
+        canvasElement,
+        <PerronProvider locale="da">
+          <Slider {...args} label="Own locale" locale="en" />
+        </PerronProvider>,
+        async (host) => {
+          const own = await waitFor(() => sliderIn(host, 'Own locale'))
+          await expect(figure(host)).toBe('1.5 km')
+          await expect(own).toHaveAttribute('aria-valuetext', '1.5 km')
+          await expect(sizers(host)).toEqual(['0.5 km', '3 km'])
+        },
+      )
+    })
   },
 }
 

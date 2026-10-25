@@ -9,8 +9,12 @@ stages:
     started: 2026-10-25T07:13:13.551Z
     ended: 2026-10-25T07:14:59.750Z
   build:
-    runs: 4
-    failing: review round 4 found 1 P2 (components/slider/review.md)
+    runs: 5
+    status: done
+    started: 2026-10-25T08:15:46.897Z
+    begun: 6d30ea0021f1566b74f56d21d32b16120ad869434ee27ef58a346f6835c33a17
+    spec: fd8429de4181f2a64bfb336637a11477893c5cab105d4fb1c06e289ff367b056
+    ended: 2026-10-25T08:20:14.306Z
   review:
     rounds: 4
     sentBack: 1
@@ -18,10 +22,6 @@ stages:
       p1: 0
       p2: 1
       p3: 4
-    status: failed
-    started: 2026-10-25T08:10:08.698Z
-    ended: 2026-10-25T08:15:39.751Z
-    failing: review round 4 found 1 P2 (components/slider/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T07:13:09.465Z
@@ -56,3 +56,6 @@ notes:
   - stage: build
     at: 2026-10-25T08:09:34.839Z
     direction: "Slider's stories define three helpers other components could use: setInput (sets a hidden range input with no key, so Base UI reports 'input-change'), still (an element runs no transition or animation) and pointerAt (a pointer event at a point). The next control on a hidden input, or with a no-motion rule, could take them from packages/perron/src/testing/stories.ts."
+  - stage: build
+    at: 2026-10-25T08:20:14.306Z
+    direction: Slider's stories have a sizers(scope) helper that reads a figure's hidden sizer text, and a SLOTS list that checks every slotProps class comes after the part's own; a component with hidden sizers or merged slot classes could take them from packages/perron/src/testing/stories.ts.
