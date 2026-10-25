@@ -1,0 +1,1485 @@
+/* The Foundations section: the index of Foundations.dc.html and each foundation page, in Perron's
+   tokens only. Sizes the tokens have no step for are sums and multiples of them, named once below.
+   Media queries can't read custom properties, so breakpoint.phone is written as a number in the
+   last block of this file. */
+
+.fd-layout {
+  /* the unit the measures below are built from, space.800 (32 px) */
+  --fd-unit: var(--perron-space-800);
+  --fd-nav-width: calc(var(--fd-unit) * 7);
+  --fd-tile-min: calc(var(--fd-unit) * 9);
+  --fd-card-min: calc(var(--fd-unit) * 6);
+  --fd-swatch-height: calc(var(--fd-unit) + var(--perron-space-600));
+  --fd-name-width: calc(var(--fd-unit) * 2);
+  /* a checkerboard under a fill, so a translucent colour shows as one */
+  --fd-checker: repeating-conic-gradient(
+      var(--perron-color-surface-inset) 0 25%,
+      var(--perron-color-surface-raised) 0 50%
+    )
+    0 0 / var(--perron-space-200) var(--perron-space-200);
+
+  display: flex;
+  align-items: flex-start;
+  gap: var(--perron-space-800);
+}
+
+.fd-main {
+  flex: 1 1 0;
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--perron-space-800) + var(--perron-space-200));
+}
+
+.fd-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-400);
+}
+
+.fd-section-title {
+  margin: 0;
+  font: var(--perron-typography-heading-md);
+  letter-spacing: var(--perron-typography-heading-md-tracking);
+}
+
+.fd-note {
+  font: var(--perron-typography-caption);
+  letter-spacing: var(--perron-typography-caption-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.fd-use {
+  display: block;
+  font: var(--perron-typography-caption);
+  letter-spacing: var(--perron-typography-caption-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+/* The sidebar */
+
+.fd-nav {
+  flex: none;
+  inline-size: var(--fd-nav-width);
+  position: sticky;
+  inset-block-start: var(--perron-space-400);
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-100);
+  padding: var(--perron-space-300);
+  border-radius: var(--perron-radius-xl);
+}
+
+.fd-nav-link {
+  flex: none;
+  display: flex;
+  align-items: center;
+  min-block-size: var(--perron-size-segment);
+  padding-inline: var(--perron-space-300);
+  border-radius: var(--perron-radius-md);
+  font: var(--perron-typography-body-sm);
+  letter-spacing: var(--perron-typography-body-sm-tracking);
+  color: var(--perron-color-text-secondary);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.fd-nav .fd-nav-link[aria-current='page'] {
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+  color: var(--perron-color-text-primary);
+  background-color: var(--perron-color-surface-selected);
+}
+
+.fd-nav-group {
+  flex: none;
+  padding: var(--perron-space-300) var(--perron-space-300) var(--perron-space-100);
+  font: var(--perron-typography-overline);
+  letter-spacing: var(--perron-typography-overline-tracking);
+  text-transform: uppercase;
+  color: var(--perron-color-text-tertiary);
+  white-space: nowrap;
+}
+
+/* Breadcrumb, and the links to the pages before and after */
+
+.fd-crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--perron-space-150);
+  font: var(--perron-typography-label-sm);
+  letter-spacing: var(--perron-typography-label-sm-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.fd-crumb {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--perron-size-target-min);
+}
+
+.fd-pages {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--perron-space-300);
+  padding-block-start: var(--perron-space-200);
+  border-block-start: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+}
+
+.fd-page-link {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-050);
+  padding: var(--perron-space-200) var(--perron-space-300);
+  border-radius: var(--perron-radius-md);
+  color: var(--perron-color-text-primary);
+  text-decoration: none;
+}
+
+.fd-page-next {
+  align-items: flex-end;
+  margin-inline-start: auto;
+}
+
+.fd-page-dir {
+  font: var(--perron-typography-caption);
+  letter-spacing: var(--perron-typography-caption-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.fd-page-name {
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+}
+
+/* The index: its header note, the brand's values and "Using the tokens" */
+
+.fd-meta {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--perron-space-200);
+  font: var(--perron-typography-label-sm);
+  letter-spacing: var(--perron-typography-label-sm-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.fd-meta-format {
+  padding: var(--perron-space-050) var(--perron-space-150);
+  border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+  border-radius: var(--perron-radius-xs);
+  font: var(--perron-typography-data-sm);
+  letter-spacing: var(--perron-typography-data-sm-tracking);
+}
+
+.fd-brand {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--fd-card-min), 1fr));
+  gap: var(--perron-space-300);
+}
+
+.fd-brand-value {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-100);
+  padding: var(--perron-space-400);
+  border-radius: var(--perron-radius-xl);
+}
+
+.fd-brand-value p {
+  margin: 0;
+}
+
+.fd-brand-name {
+  font: var(--perron-typography-heading-sm);
+  letter-spacing: var(--perron-typography-heading-sm-tracking);
+}
+
+.fd-brand-text {
+  font: var(--perron-typography-body-sm);
+  letter-spacing: var(--perron-typography-body-sm-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.fd-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-400);
+}
+
+.fd-using {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--perron-space-600);
+  padding: var(--perron-space-500);
+  border-radius: var(--perron-radius-xl);
+}
+
+.fd-using-text {
+  flex: 1 1 var(--fd-tile-min);
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-300);
+}
+
+.fd-using-text .markdown li {
+  color: var(--perron-color-text-secondary);
+}
+
+.fd-code {
+  flex: 1 1 var(--fd-tile-min);
+  min-inline-size: 0;
+  align-self: flex-start;
+  margin: 0;
+  padding: var(--perron-space-400);
+  overflow-x: auto;
+  border-radius: var(--perron-radius-lg);
+  background: var(--perron-color-surface-inset);
+  font: var(--perron-typography-data);
+  letter-spacing: var(--perron-typography-data-tracking);
+  line-height: var(--perron-font-line-height-normal);
+  color: var(--perron-color-text-secondary);
+}
+
+.fd-code code {
+  font: inherit;
+}
+
+.fd-code-quiet {
+  color: var(--perron-color-text-tertiary);
+}
+
+.fd-code-strong {
+  color: var(--perron-color-text-primary);
+}
+
+/* Tiles */
+
+.fd-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--fd-tile-min), 1fr));
+  gap: var(--perron-space-400);
+}
+
+.fd-tile {
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-400);
+  padding: var(--perron-space-500);
+  border-radius: var(--perron-radius-xl);
+  background-color: var(--perron-color-surface-raised);
+  border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+  color: inherit;
+  text-decoration: none;
+}
+
+.fd-tile.glass {
+  background-color: var(--perron-color-surface-overlay);
+}
+
+.fd-tile[data-wide] {
+  grid-column: 1 / -1;
+}
+
+.fd-tile-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--perron-space-200);
+}
+
+.fd-tile-title {
+  font: var(--perron-typography-heading-md);
+  letter-spacing: var(--perron-typography-heading-md-tracking);
+}
+
+.fd-tile-meta {
+  font: var(--perron-typography-data-sm);
+  letter-spacing: var(--perron-typography-data-sm-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.fd-tile-caption {
+  font: var(--perron-typography-body-sm);
+  letter-spacing: var(--perron-typography-body-sm-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.fd-tile code,
+.fd-quote {
+  font: var(--perron-typography-data-sm);
+  letter-spacing: var(--perron-typography-data-sm-tracking);
+  color: var(--perron-color-text-primary);
+}
+
+/* Semantic colours */
+
+.fd-swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(calc(var(--fd-unit) * 3), 1fr));
+  gap: var(--perron-space-300);
+}
+
+.fd-swatch {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-150);
+  min-inline-size: 0;
+}
+
+.fd-swatch-fill {
+  block-size: var(--fd-swatch-height);
+  border-radius: var(--perron-radius-md);
+  border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+  background: linear-gradient(var(--fd-fill), var(--fd-fill)), var(--fd-checker);
+}
+
+.fd-swatch-label {
+  font: var(--perron-typography-label-sm);
+  letter-spacing: var(--perron-typography-label-sm-tracking);
+}
+
+.fd-swatch-name,
+.fd-ramp-name,
+.fd-ramp-label,
+.fd-bar-name,
+.fd-specimen-name,
+.fd-specimen-size,
+.fd-breakpoint-name {
+  font: var(--perron-typography-data-sm);
+  letter-spacing: var(--perron-typography-data-sm-tracking);
+  color: var(--perron-color-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.fd-badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--perron-space-100);
+}
+
+.fd-badges-label {
+  margin-inline-end: var(--perron-space-150);
+  font: var(--perron-typography-label-sm);
+  letter-spacing: var(--perron-typography-label-sm-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+/* Primitive colours */
+
+.fd-ramps {
+  display: grid;
+  gap: var(--perron-space-200);
+}
+
+.fd-ramp {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--perron-space-300);
+}
+
+.fd-ramp-name {
+  flex: none;
+  inline-size: var(--fd-name-width);
+  padding-block-start: var(--perron-space-150);
+}
+
+.fd-ramp-steps {
+  flex: 1;
+  min-inline-size: 0;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: var(--perron-space-050);
+}
+
+.fd-ramp-step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-050);
+  min-inline-size: 0;
+}
+
+.fd-ramp-fill {
+  block-size: var(--perron-space-600);
+  border-radius: var(--perron-radius-xs);
+  outline: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+  outline-offset: calc(-1 * var(--perron-border-width-025));
+  background: var(--fd-fill);
+}
+
+/* Typography */
+
+.fd-type-tile {
+  flex-flow: row wrap;
+  gap: var(--perron-space-600);
+}
+
+.fd-type-tile > .fd-tile-head {
+  flex-basis: 100%;
+}
+
+.fd-type-side {
+  flex: 1 1 calc(var(--fd-unit) * 7);
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-300);
+}
+
+.fd-families {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-200);
+}
+
+.fd-family {
+  display: flex;
+  flex-direction: column;
+  font: var(--perron-typography-body-sm);
+  letter-spacing: var(--perron-typography-body-sm-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.fd-family > :first-child {
+  color: var(--perron-color-text-primary);
+}
+
+.fd-specimens {
+  flex: 2 1 calc(var(--fd-unit) * 12);
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.fd-specimen {
+  display: flex;
+  align-items: baseline;
+  gap: var(--perron-space-400);
+  padding-block: var(--perron-space-200);
+  border-block-end: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+}
+
+.fd-specimen + .fd-tile-caption {
+  padding-block-start: var(--perron-space-200);
+}
+
+.fd-specimen-name {
+  flex: none;
+  inline-size: calc(var(--fd-unit) * 3);
+}
+
+.fd-specimen-sample {
+  flex: 1;
+  min-inline-size: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.fd-specimen-size {
+  flex: none;
+}
+
+/* Spacing, radius and focus */
+
+.fd-bars {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-150);
+}
+
+.fd-bar-row {
+  display: flex;
+  align-items: center;
+  gap: var(--perron-space-300);
+}
+
+.fd-bar-name {
+  flex: none;
+  inline-size: var(--fd-name-width);
+}
+
+.fd-bar {
+  flex: none;
+  display: inline-block;
+  block-size: var(--perron-space-300);
+  max-inline-size: 100%;
+  border-radius: var(--perron-radius-xs);
+  background: var(--perron-color-surface-inverse);
+}
+
+.fd-bar-value,
+.fd-corner-label,
+.fd-breakpoint-value {
+  font: var(--perron-typography-data-sm);
+  letter-spacing: var(--perron-typography-data-sm-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.fd-corners {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--perron-space-400) var(--perron-space-300);
+}
+
+.fd-corner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--perron-space-150);
+}
+
+.fd-corner-shape {
+  inline-size: calc(var(--fd-unit) + var(--perron-space-500));
+  block-size: calc(var(--fd-unit) + var(--perron-space-500));
+  border: var(--perron-border-width-050) solid var(--perron-color-text-primary);
+  border-inline-end-color: transparent;
+  border-block-end-color: transparent;
+}
+
+.fd-focus {
+  display: flex;
+  align-items: center;
+  gap: var(--perron-space-300);
+  padding-block-start: var(--perron-space-100);
+}
+
+.fd-focus-sample {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  block-size: var(--perron-size-button-sm);
+  padding-inline: var(--perron-space-300);
+  border-radius: var(--perron-radius-md);
+  border: var(--perron-border-width-025) solid var(--perron-color-border-control);
+  outline: var(--perron-focus-width) solid var(--perron-color-border-focus);
+  outline-offset: var(--perron-focus-offset);
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+}
+
+/* A framed piece of the live map: the elevation tile's ground and the map tile */
+
+.fd-map {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  block-size: calc(var(--fd-unit) * 5 + var(--perron-space-400));
+  border-radius: var(--perron-radius-lg);
+  background: var(--perron-color-map-land);
+}
+
+/* the frame shows the map itself, with no fade into the page */
+.fd-map .map-veil {
+  display: none;
+}
+
+.fd-ground-label {
+  position: absolute;
+  inset-block-start: var(--perron-space-300);
+  inset-inline-start: var(--perron-space-300);
+  font: var(--perron-typography-overline);
+  letter-spacing: var(--perron-typography-overline-tracking);
+  text-transform: uppercase;
+  color: var(--perron-color-map-label);
+}
+
+.fd-glass-sample {
+  position: absolute;
+  inset: calc(var(--fd-unit) + var(--perron-space-200)) var(--perron-space-300)
+    var(--perron-space-300) calc(var(--fd-unit) * 2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-200);
+  padding: var(--perron-space-300);
+  border-radius: var(--perron-radius-lg);
+  font: var(--perron-typography-label-sm);
+  letter-spacing: var(--perron-typography-label-sm-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.fd-raised-sample {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-200);
+  padding: var(--perron-space-300);
+  border-radius: var(--perron-radius-md);
+  background: var(--perron-color-surface-raised);
+}
+
+.fd-inset-sample {
+  block-size: var(--perron-space-400);
+  border-radius: var(--perron-radius-sm);
+  background: var(--perron-color-surface-inset);
+}
+
+.fd-map-tile {
+  padding: 0;
+  gap: 0;
+  overflow: hidden;
+}
+
+.fd-map-tile > .fd-tile-head {
+  order: 1;
+  padding: var(--perron-space-400) var(--perron-space-500) 0;
+}
+
+.fd-map-tile > .fd-map {
+  border-radius: 0;
+}
+
+.fd-map-text {
+  order: 2;
+  padding: var(--perron-space-200) var(--perron-space-500) var(--perron-space-500);
+}
+
+/* Motion: the tile plays its motions when it is hovered or focused, and stands still otherwise */
+
+.fd-motions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-300);
+}
+
+.fd-motion-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-150);
+}
+
+.fd-motion-names {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--perron-space-200);
+  font: var(--perron-typography-data-sm);
+  letter-spacing: var(--perron-typography-data-sm-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.fd-track {
+  position: relative;
+  block-size: calc(var(--perron-space-600) + var(--perron-space-050));
+  border-radius: var(--perron-radius-full);
+  background: var(--perron-color-surface-inset);
+}
+
+.fd-track-dot {
+  position: absolute;
+  inset-block-start: var(--perron-space-100);
+  inset-inline-start: var(--perron-space-100);
+  inline-size: calc(var(--perron-space-400) + var(--perron-space-050));
+  block-size: calc(var(--perron-space-400) + var(--perron-space-050));
+  border-radius: var(--perron-radius-full);
+  background: var(--perron-color-surface-inverse);
+  transition: inset-inline-start var(--fd-duration) var(--fd-easing);
+}
+
+.fd-track[data-quiet] .fd-track-dot {
+  background: var(--perron-color-text-secondary);
+}
+
+.fd-tile:is(:hover, :focus-visible) .fd-track-dot {
+  inset-inline-start: calc(
+    100% - var(--perron-space-400) - var(--perron-space-050) - var(--perron-space-100)
+  );
+}
+
+.fd-pulse-row {
+  display: flex;
+  align-items: center;
+  gap: var(--perron-space-300);
+}
+
+.fd-pulse {
+  flex: none;
+  inline-size: calc(var(--perron-space-600) + var(--perron-space-050));
+  block-size: calc(var(--perron-space-600) + var(--perron-space-050));
+  overflow: visible;
+}
+
+.fd-pulse-dot {
+  fill: var(--perron-color-transit-line-a);
+}
+
+.fd-pulse-ring {
+  fill: none;
+  stroke: var(--perron-color-transit-line-a);
+  stroke-width: var(--perron-vehicle-dot-timetable-stroke-width);
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+}
+
+/* a report pulses once: hovering the tile shows one */
+.fd-tile:is(:hover, :focus-visible) .fd-pulse-ring {
+  animation: fd-pulse var(--fd-duration) var(--perron-easing-standard);
+}
+
+@keyframes fd-pulse {
+  from {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+
+  to {
+    transform: scale(2.8);
+    opacity: 0;
+  }
+}
+
+/* Icons, logos and layout */
+
+.fd-icons {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--perron-space-150);
+  color: var(--perron-color-text-primary);
+}
+
+.fd-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  block-size: calc(var(--fd-unit) + var(--perron-space-300));
+  border-radius: var(--perron-radius-md);
+  background: var(--perron-color-surface-inset);
+}
+
+.fd-logos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--perron-space-200);
+}
+
+.fd-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  block-size: calc(var(--fd-unit) * 3 + var(--perron-space-400));
+  border-radius: var(--perron-radius-lg);
+  background: var(--perron-color-surface-default);
+}
+
+.fd-logo svg {
+  inline-size: auto;
+  block-size: calc(var(--fd-unit) + var(--perron-space-500));
+}
+
+.fd-screen {
+  position: relative;
+  block-size: calc(var(--fd-unit) * 3 + var(--perron-space-400));
+  overflow: hidden;
+  border-radius: var(--perron-radius-lg);
+  background: var(--perron-color-map-land);
+}
+
+.fd-screen > span {
+  position: absolute;
+  background: var(--perron-color-surface-overlay);
+  border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+  border-radius: var(--perron-radius-md);
+}
+
+.fd-screen-bar {
+  inset: var(--perron-space-200) var(--perron-space-200) auto;
+  block-size: var(--perron-space-400);
+}
+
+.fd-screen-sheet {
+  inset-block: calc(var(--perron-space-600) + var(--perron-space-100)) var(--perron-space-200);
+  inset-inline-start: var(--perron-space-200);
+  inline-size: 30%;
+}
+
+.fd-screen-detail {
+  inset-block: calc(var(--perron-space-600) + var(--perron-space-100)) var(--perron-space-200);
+  inset-inline-end: var(--perron-space-200);
+  inline-size: 26%;
+}
+
+.fd-screen-controls {
+  inset-block-end: var(--perron-space-300);
+  inset-inline-end: 36%;
+  inline-size: var(--perron-space-300);
+  block-size: var(--perron-space-600);
+}
+
+.fd-breakpoints {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-100);
+}
+
+.fd-breakpoint {
+  display: flex;
+  align-items: baseline;
+  gap: var(--perron-space-300);
+}
+
+.fd-breakpoint-name {
+  flex: none;
+  inline-size: calc(var(--fd-unit) * 3);
+}
+
+.fd-breakpoint-value {
+  flex: none;
+  inline-size: var(--fd-name-width);
+  color: var(--perron-color-text-primary);
+}
+
+.fd-breakpoint-use {
+  font: var(--perron-typography-caption);
+  letter-spacing: var(--perron-typography-caption-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+/* Accessibility */
+
+.fd-pairs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-200);
+}
+
+.fd-pair {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--perron-space-300);
+  padding: var(--perron-space-300);
+  border-radius: var(--perron-radius-md);
+  border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+}
+
+.fd-pair-name {
+  flex: 1;
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+}
+
+.fd-pair-ratio {
+  font: var(--perron-typography-data-sm);
+  letter-spacing: var(--perron-typography-data-sm-tracking);
+}
+
+/* the ratio the page's theme measures, beside the colours that theme paints */
+:root[data-theme='light'] [data-for-theme='dark'],
+:root:not([data-theme='light']) [data-for-theme='light'] {
+  display: none;
+}
+
+/* Content design */
+
+.fd-words-tile .fd-quote {
+  font: var(--perron-typography-heading-sm);
+  letter-spacing: var(--perron-typography-heading-sm-tracking);
+}
+
+.fd-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--perron-space-150);
+}
+
+.fd-chip {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--perron-size-segment);
+  padding-inline: var(--perron-space-300);
+  border-radius: var(--perron-radius-full);
+  background: var(--perron-color-surface-inset);
+  font: var(--perron-typography-data);
+  letter-spacing: var(--perron-typography-data-tracking);
+}
+
+/* Data states */
+
+.fd-states {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-300);
+}
+
+.fd-state {
+  display: flex;
+  align-items: center;
+  gap: var(--perron-space-300);
+  --map-line: var(--perron-color-transit-line-m3);
+}
+
+.fd-state-dot {
+  flex: none;
+  inline-size: var(--perron-space-500);
+  block-size: var(--perron-space-500);
+}
+
+.fd-state-name {
+  flex: none;
+  inline-size: calc(var(--fd-unit) * 3 + var(--perron-space-200));
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+}
+
+.fd-state-means {
+  min-inline-size: 0;
+  font: var(--perron-typography-body-sm);
+  letter-spacing: var(--perron-typography-body-sm-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+/* A foundation page's body */
+
+.fd-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-600);
+}
+
+.fd-body code,
+.fd-value code {
+  font: var(--perron-typography-data-sm);
+  letter-spacing: var(--perron-typography-data-sm-tracking);
+}
+
+.fd-value {
+  display: grid;
+  gap: var(--perron-space-050);
+  min-inline-size: 0;
+}
+
+.fd-alias {
+  font: var(--perron-typography-caption);
+  letter-spacing: var(--perron-typography-caption-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+/* Typography roles */
+
+.fd-types {
+  display: grid;
+  gap: var(--perron-space-200);
+}
+
+.fd-type {
+  padding: var(--perron-space-400);
+  border-radius: var(--perron-radius-lg);
+  background: var(--perron-color-surface-raised);
+  border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+  overflow-wrap: anywhere;
+}
+
+.fd-type-meta,
+.fd-type-use {
+  margin: var(--perron-space-200) 0 0;
+  font: var(--perron-typography-caption);
+  letter-spacing: var(--perron-typography-caption-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+/* Colour swatches, split into their themes */
+
+.fd-swatch-grid {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--fd-card-min), 1fr));
+  gap: var(--perron-space-300);
+}
+
+.fd-swatch-card {
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-150);
+  padding: var(--perron-space-200) var(--perron-space-200) var(--perron-space-300);
+  border-radius: var(--perron-radius-lg);
+  background: var(--perron-color-surface-raised);
+  border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+}
+
+.fd-swatch-card > :not(.fd-swatch-split) {
+  padding-inline: var(--perron-space-100);
+}
+
+.fd-swatch-split {
+  display: flex;
+  overflow: hidden;
+  border-radius: var(--perron-radius-md);
+  border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+}
+
+/* each half sits in its theme, on a checkerboard, so a translucent colour shows as one */
+.fd-swatch-half {
+  flex: 1;
+  display: flex;
+  padding: var(--perron-space-200);
+  background:
+    var(--fd-checker) content-box,
+    var(--perron-color-surface-default);
+}
+
+.fd-swatch-paint {
+  flex: 1;
+  block-size: calc(var(--fd-swatch-height) - var(--perron-space-400));
+  border-radius: var(--perron-radius-sm);
+  outline: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+}
+
+.fd-swatch-token {
+  overflow-wrap: anywhere;
+}
+
+.fd-swatch-values {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--perron-space-200) var(--perron-space-400);
+}
+
+.fd-swatch-value {
+  display: grid;
+  gap: var(--perron-space-050);
+}
+
+.fd-theme-name {
+  font: var(--perron-typography-label-sm);
+  letter-spacing: var(--perron-typography-label-sm-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+/* The spacing scale */
+
+.fd-scale {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--perron-space-200);
+}
+
+.fd-scale-row {
+  display: flex;
+  align-items: center;
+  gap: var(--perron-space-400);
+}
+
+.fd-scale-name {
+  flex: none;
+  inline-size: calc(var(--fd-unit) * 3);
+}
+
+/* Token rows and contrast cells */
+
+.scroll-x.fd-table-frame {
+  /* a table wider than the page shows its scrollbar, so a pointer can reach the rest */
+  scrollbar-width: thin;
+  padding: var(--site-ring-room);
+  margin: calc(-1 * var(--site-ring-room));
+}
+
+.fd-table {
+  inline-size: 100%;
+  border-collapse: collapse;
+}
+
+.fd-table :is(th, td) {
+  padding: var(--perron-space-200) var(--perron-space-300);
+  border-block-end: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+  text-align: start;
+  vertical-align: middle;
+}
+
+.fd-table thead th {
+  font: var(--perron-typography-label-sm);
+  letter-spacing: var(--perron-typography-label-sm-tracking);
+  color: var(--perron-color-text-secondary);
+  white-space: nowrap;
+}
+
+.fd-table tbody th {
+  min-inline-size: calc(var(--fd-unit) * 6);
+  font-weight: inherit;
+}
+
+.fd-table tbody th code {
+  white-space: nowrap;
+}
+
+.fd-table td {
+  font: var(--perron-typography-body-sm);
+  letter-spacing: var(--perron-typography-body-sm-tracking);
+}
+
+.fd-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--perron-space-300);
+  min-inline-size: calc(var(--fd-unit) * 5);
+  padding: var(--perron-space-200);
+  border-radius: var(--perron-radius-md);
+  color: var(--perron-color-text-primary);
+}
+
+.fd-cell[data-theme] {
+  background: var(--perron-color-surface-default);
+  border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+}
+
+.fd-contrast-caption {
+  padding-block-end: var(--perron-space-200);
+  text-align: start;
+  font: var(--perron-typography-caption);
+  letter-spacing: var(--perron-typography-caption-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.fd-contrast td {
+  padding: var(--perron-space-100);
+}
+
+.fd-contrast-cell {
+  display: flex;
+  align-items: baseline;
+  gap: var(--perron-space-200);
+  padding: var(--perron-space-200) var(--perron-space-300);
+  border-radius: var(--perron-radius-sm);
+  border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+}
+
+.fd-contrast-sample {
+  font: var(--perron-typography-heading-md);
+  letter-spacing: var(--perron-typography-heading-md-tracking);
+}
+
+.fd-contrast-ratio {
+  font: var(--perron-typography-data-sm);
+  letter-spacing: var(--perron-typography-data-sm-tracking);
+  white-space: nowrap;
+}
+
+.fd-contrast-cell[data-miss] .fd-contrast-ratio {
+  text-decoration: underline wavy;
+}
+
+/* Previews */
+
+.fd-chip-swatch {
+  flex: none;
+  inline-size: var(--fd-unit);
+  block-size: var(--fd-unit);
+  border-radius: var(--perron-radius-sm);
+  border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+  background: linear-gradient(var(--fd-fill), var(--fd-fill)), var(--fd-checker);
+}
+
+.fd-solid {
+  background: var(--perron-color-text-primary);
+}
+
+.fd-shadow {
+  flex: none;
+  inline-size: calc(var(--fd-unit) * 2);
+  block-size: calc(var(--fd-unit) + var(--perron-space-200));
+  border-radius: var(--perron-radius-md);
+  background: var(--perron-color-surface-raised);
+}
+
+.fd-curve {
+  flex: none;
+  inline-size: calc(var(--fd-unit) * 2);
+  block-size: calc(var(--fd-unit) * 2);
+  overflow: visible;
+}
+
+.fd-curve path {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+}
+
+.fd-curve-axis {
+  stroke: var(--perron-color-border-strong);
+  stroke-width: var(--perron-border-width-025);
+}
+
+.fd-curve-line {
+  stroke: var(--perron-color-text-primary);
+  stroke-width: var(--perron-border-width-050);
+}
+
+.fd-dash {
+  flex: none;
+  inline-size: var(--perron-space-500);
+  block-size: var(--perron-space-500);
+}
+
+.fd-dash circle {
+  fill: none;
+  stroke: var(--perron-color-transit-line-m3);
+  stroke-width: var(--perron-vehicle-dot-timetable-stroke-width);
+}
+
+.fd-leading {
+  font: var(--perron-typography-body);
+  letter-spacing: var(--perron-typography-body-tracking);
+  background: linear-gradient(
+    var(--perron-color-surface-selected),
+    var(--perron-color-surface-selected)
+  );
+}
+
+.fd-stack {
+  inline-size: calc(var(--fd-layer) * var(--perron-space-200));
+}
+
+.fd-glass-chip {
+  flex: none;
+  position: relative;
+  inline-size: calc(var(--fd-unit) * 2);
+  block-size: var(--fd-unit);
+  overflow: hidden;
+  border-radius: var(--perron-radius-sm);
+  background: repeating-linear-gradient(
+    90deg,
+    var(--perron-color-transit-line-m1) 0 var(--perron-space-100),
+    var(--perron-color-transit-line-a) 0 var(--perron-space-200),
+    var(--perron-color-map-land) 0 var(--perron-space-300)
+  );
+}
+
+.fd-glass-chip::after {
+  content: '';
+  position: absolute;
+  inset: var(--perron-space-100) 0 var(--perron-space-100) 50%;
+  background: var(--perron-color-surface-overlay);
+  -webkit-backdrop-filter: blur(var(--perron-effect-glass-blur))
+    saturate(var(--perron-effect-glass-saturate));
+  backdrop-filter: blur(var(--perron-effect-glass-blur))
+    saturate(var(--perron-effect-glass-saturate));
+}
+
+.fd-square {
+  flex: none;
+  inline-size: var(--fd-unit);
+  block-size: var(--fd-unit);
+  background: var(--perron-color-surface-selected);
+  border: var(--perron-border-width-025) solid var(--perron-color-border-control);
+}
+
+.fd-ring {
+  border-radius: var(--perron-radius-md);
+  outline: var(--perron-focus-width) solid var(--perron-color-border-focus);
+}
+
+.fd-stroke {
+  flex: none;
+  inline-size: var(--fd-unit);
+  border-block-start: var(--perron-border-width-050) solid var(--perron-color-text-primary);
+}
+
+.fd-icon-size {
+  display: inline-flex;
+  color: var(--perron-color-text-primary);
+}
+
+.fd-dot {
+  flex: none;
+  inline-size: calc(var(--fd-radius) * 2);
+  block-size: calc(var(--fd-radius) * 2);
+  border-radius: var(--perron-radius-full);
+  background: var(--perron-color-transit-line-a);
+}
+
+.fd-tracks {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  inline-size: var(--fd-unit);
+}
+
+.fd-tracks::before,
+.fd-tracks::after {
+  content: '';
+  border-block-start: var(--perron-map-line-width-stog) solid var(--perron-color-transit-line-a);
+}
+
+.fd-tracks::after {
+  border-block-start-color: var(--perron-color-transit-line-c);
+}
+
+.fd-scaled {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--perron-space-200);
+}
+
+/* A duration, played by its button */
+
+.fd-demo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--perron-space-300);
+}
+
+.fd-demo-track {
+  position: relative;
+  flex: none;
+  inline-size: calc(var(--fd-unit) * 3);
+  block-size: var(--perron-space-400);
+  border-radius: var(--perron-radius-full);
+  background: var(--perron-color-surface-inset);
+}
+
+.fd-demo-dot {
+  position: absolute;
+  inset-block-start: var(--perron-space-050);
+  inset-inline-start: var(--perron-space-050);
+  inline-size: var(--perron-space-300);
+  block-size: var(--perron-space-300);
+  border-radius: var(--perron-radius-full);
+  background: var(--perron-color-status-info);
+  transition: inset-inline-start var(--fd-duration) var(--fd-easing);
+}
+
+.fd-demo-track[data-end] .fd-demo-dot {
+  inset-inline-start: calc(100% - var(--perron-space-300) - var(--perron-space-050));
+}
+
+/* Icon and logo galleries */
+
+.fd-gallery-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-300);
+}
+
+.fd-gallery-title {
+  margin: 0;
+  font: var(--perron-typography-heading-sm);
+  letter-spacing: var(--perron-typography-heading-sm-tracking);
+}
+
+.fd-gallery {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--fd-card-min), 1fr));
+  gap: var(--perron-space-300);
+}
+
+.fd-gallery-item {
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--perron-space-100);
+  padding: var(--perron-space-400);
+  border-radius: var(--perron-radius-lg);
+  background: var(--perron-color-surface-raised);
+  border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+}
+
+.fd-gallery-icon {
+  display: flex;
+  align-items: center;
+  gap: var(--perron-space-400);
+  block-size: calc(var(--fd-unit) * 2);
+  color: var(--perron-color-text-primary);
+}
+
+/* the same drawing at three times its size, to read the strokes */
+.fd-gallery-icon svg + svg {
+  inline-size: calc(var(--perron-icon-size) * 3);
+  block-size: calc(var(--perron-icon-size) * 3);
+}
+
+.fd-gallery-logo {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  block-size: calc(var(--fd-unit) * 3);
+  border-radius: var(--perron-radius-md);
+  background: var(--perron-color-surface-default);
+}
+
+.fd-gallery-logo svg {
+  inline-size: auto;
+  block-size: calc(var(--fd-unit) + var(--perron-space-400));
+}
+
+.fd-gallery-label {
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+}
+
+/* Under breakpoint.phone (760px): the sidebar becomes a row that scrolls sideways above the page,
+   and panels full of text turn opaque, so no text sits on the moving map. */
+@media (max-width: 759.98px) {
+  .fd-layout {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .fd-nav {
+    position: static;
+    inline-size: auto;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .fd-nav.glass,
+  .fd-brand-value.glass,
+  .fd-using.glass,
+  .fd-tile.glass {
+    background-color: var(--perron-color-surface-raised);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .fd-nav-group {
+    padding-block: 0;
+  }
+
+  .fd-ramp {
+    flex-direction: column;
+    gap: var(--perron-space-100);
+  }
+
+  .fd-ramp-name {
+    padding-block-start: 0;
+  }
+
+  .fd-ramp-steps {
+    inline-size: 100%;
+  }
+
+  .fd-tile {
+    padding: var(--perron-space-400);
+  }
+
+  .fd-map-tile {
+    padding: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* a loop's duration stays in its token under reduced motion, so the tile's pulse stops here */
+  .fd-tile:is(:hover, :focus-visible) .fd-pulse-ring {
+    animation: none;
+  }
+
+  .fd-demo-dot,
+  .fd-track-dot {
+    transition: none;
+  }
+}
