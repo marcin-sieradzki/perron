@@ -3,4 +3,30 @@ component: Accordion
 layer: component
 deferred:
   at: 2026-10-25T08:07:32.135Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-25T08:07:36.301Z
+    ended: 2026-10-25T08:15:45.377Z
+notes:
+  - stage: brief
+    at: 2026-10-25T08:15:45.377Z
+    direction: No ROADMAP wave and no Mylder screen names Accordion, so its uses in the spec (help questions, the details of each planned work) are the brief's guess. Confirm where Mylder will actually use it.
+  - stage: brief
+    at: 2026-10-25T08:15:45.377Z
+    direction: "The Perron MCP's list_tokens leaves out duration.switch, color.surface.inverse-pressed and color.surface.brand-pressed, which the worktree's tokens define: the MCP is started from a relative path and probably reads the primary checkout, so a brief that trusts it misses tokens."
+  - stage: brief
+    at: 2026-10-25T08:15:45.377Z
+    direction: "Motion has no duration for a disclosure: Accordion's panel borrows duration.switch; a duration.disclosure token (through the design-tokens skill) would name the use."
+  - stage: brief
+    at: 2026-10-25T08:15:45.377Z
+    direction: The local type Inherited<P, own> helper is copied in four files (Tabs, Toolbar, SegmentedControl, Menu); Accordion.tsx would be the fifth.
+  - stage: brief
+    at: 2026-10-25T08:15:45.377Z
+    direction: The contract's checklist line 'a collapsed region is inert' doesn't match Base UI's accordion and tabs, which keep a closed panel hidden (or hidden=until-found) rather than inert; the line could read 'hidden or inert'.
+  - stage: brief
+    at: 2026-10-25T08:15:45.377Z
+    direction: The contract's Design states table gives Open as [data-popup-open] on a trigger and [data-open] on a popup, but a disclosure trigger (Accordion, Collapsible) carries [data-panel-open]; the table could add it.
+  - stage: brief
+    at: 2026-10-25T08:15:45.377Z
+    questions: "1. (Anatomy) Two components, Accordion and AccordionItem (title, children, slotProps.header/trigger/panel), not five? Recommended: yes, two. 2. (Props) String values: value/defaultValue string[] on Accordion, onChange reports string[], optional string value on AccordionItem? Recommended: yes. 3. (Props) Inherit Base UI's multiple with default false? Recommended: yes. 4. (Props) AccordionItem takes no open props of its own (no open, defaultOpen, onOpen, onClose)? Recommended: yes. 5. (Tokens) Quiet row: border.width.025 color.border.subtle hairline between items, trigger min size.button, typography.label, space.300 sides, surface.hover/selected, no radius, chevron text.secondary, panel padded space.300? Recommended: yes. 6. (Tokens) Panel text typography.body and color.text.primary? Recommended: yes. 7. (Tokens) Chevron reuses chevron-down at icon.size.400, use widened in icons.json, turns via scale: 1 -1 while open? Recommended: yes; answered with the panel height and the chevron's turn easing over duration.switch (reduced motion through the token), per the batch's ask for panel height motion."
