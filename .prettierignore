@@ -7,3 +7,5 @@ packages/perron/api.json
 .claude/skills/software-factory
 .claude/skills/vercel-react-best-practices
 website/mockups
+website/.next
+website/next-env.d.ts

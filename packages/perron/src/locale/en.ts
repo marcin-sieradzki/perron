@@ -58,6 +58,11 @@ export const en = {
   unknown: 'Unknown',
   /** Brand: the brand name, a name and never translated; the wordmark shows it lowercase. */
   brandName: 'Mylder',
+  /**
+   * A departure's countdown: shown and announced in place of the minutes when it leaves in under 45
+   * seconds.
+   */
+  now: 'Now',
   /** A stop timeline: under the stop the vehicle reaches next. */
   nextStop: 'Next stop',
   /** A stop timeline: heard after the name of a stop the vehicle has passed. */

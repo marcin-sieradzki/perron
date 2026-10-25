@@ -1,0 +1,4 @@
+# Next.js: the build, and the type files `next build`, `next dev` and `next typegen` write
+.next/
+next-env.d.ts
+*.tsbuildinfo

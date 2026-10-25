@@ -1,0 +1,567 @@
+/* The home page, from Home.dc.html, and under breakpoint.phone from Phone-Home.dc.html. Perron's
+   tokens only; the phone block at the end uses the site's one query for breakpoint.phone. */
+
+.home {
+  /* the narrowest a column of panels gets: a detail panel less its padding */
+  --home-panel-min: calc(var(--perron-size-detail-width) - 4 * var(--perron-space-400));
+  display: flex;
+  flex-direction: column;
+}
+
+/* The hero, centred over the map's glow */
+
+.home-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--perron-space-500);
+  max-inline-size: calc(var(--perron-size-dialog-width) * 2);
+  margin-inline: auto;
+  padding-block-start: calc(2 * var(--perron-space-800));
+  text-align: center;
+}
+
+.home-hero .page-header {
+  align-items: center;
+}
+
+.home-hero .page-header-row {
+  justify-content: center;
+}
+
+.home-hero .lead {
+  margin-inline: auto;
+}
+
+.home-overline {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--perron-space-100) var(--perron-space-300);
+  border-radius: var(--perron-radius-full);
+}
+
+.home-counts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  inline-size: 100%;
+  margin: var(--perron-space-300) 0 0;
+  padding: 0;
+  list-style: none;
+  border-block: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+}
+
+.home-count {
+  flex: 1 1 calc(5 * var(--perron-space-600));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--perron-space-100);
+  padding: var(--perron-space-500) var(--perron-space-300);
+}
+
+.home-count-value {
+  font: var(--perron-typography-stat);
+  letter-spacing: var(--perron-typography-stat-tracking);
+  font-variant-numeric: tabular-nums;
+}
+
+.home-count-label {
+  font: var(--perron-typography-label-sm);
+  letter-spacing: var(--perron-typography-label-sm-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.home-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--perron-space-300);
+  margin-block-start: var(--perron-space-200);
+}
+
+.home-mcp {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: var(--perron-space-200);
+}
+
+.home-mcp-label {
+  margin: 0;
+  font: var(--perron-typography-body-sm);
+  letter-spacing: var(--perron-typography-body-sm-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.home-command {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--perron-space-100);
+  min-inline-size: 0;
+}
+
+.home-command-text {
+  padding: var(--perron-space-100) var(--perron-space-200);
+  border-radius: var(--perron-radius-sm);
+  background: var(--perron-color-surface-inset);
+  font: var(--perron-typography-data);
+  letter-spacing: var(--perron-typography-data-tracking);
+  color: var(--perron-color-text-primary);
+}
+
+/* The columns of live components: three still columns of glass panels, set at staggered heights */
+
+.home-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--home-panel-min)), 1fr));
+  align-items: start;
+  gap: var(--perron-space-400);
+  margin-block-start: calc(2 * var(--perron-space-800) + var(--perron-space-200));
+}
+
+.home-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-400);
+}
+
+.home-column:first-child {
+  padding-block-start: var(--perron-space-600);
+}
+
+.home-column:last-child {
+  padding-block-start: calc(2 * var(--perron-space-800));
+}
+
+.home-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-300);
+  min-inline-size: 0;
+  padding: var(--perron-space-400);
+  border-radius: var(--perron-radius-xl);
+  text-align: start;
+}
+
+.home-panel-opaque {
+  border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+  border-radius: var(--perron-radius-lg);
+  background: var(--perron-color-surface-raised);
+}
+
+.home-panel-links {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--perron-space-300);
+  font: var(--perron-typography-label-sm);
+  letter-spacing: var(--perron-typography-label-sm-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+/* each link a target in both directions, even a short name such as "Tag" */
+.home-panel-links > * {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: var(--perron-size-target-min);
+  min-inline-size: var(--perron-size-target-min);
+}
+
+/* sentences in a panel: a list of the site's own, as FactList's values are set for figures */
+.home-facts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-200);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.home-fact {
+  display: flex;
+  align-items: baseline;
+  gap: var(--perron-space-300);
+}
+
+.home-fact-name {
+  flex: none;
+  inline-size: calc(var(--perron-space-800) * 3 + var(--perron-space-200));
+  font: var(--perron-typography-label-sm);
+  letter-spacing: var(--perron-typography-label-sm-tracking);
+}
+
+/* a state's dot leads its word, and the word keeps its own width beside it */
+.home-fact-name:has(.pn-VehicleDot) {
+  inline-size: calc(
+    var(--perron-space-800) * 3 + var(--perron-space-200) * 2 + var(--perron-icon-size-325)
+  );
+}
+
+.home-fact-name .pn-VehicleDot {
+  margin-inline-end: var(--perron-space-200);
+}
+
+.home-fact-text {
+  min-inline-size: 0;
+  font: var(--perron-typography-caption);
+  letter-spacing: var(--perron-typography-caption-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.home-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--perron-space-200);
+}
+
+.home-row-wide {
+  gap: var(--perron-space-300) var(--perron-space-600);
+}
+
+/* a state's dot beside its word, at the size of a panel title */
+.home-state {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--perron-space-200);
+  font: var(--perron-typography-heading-sm);
+  letter-spacing: var(--perron-typography-heading-sm-tracking);
+}
+
+.home-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--perron-space-100);
+}
+
+.home-badges-large {
+  gap: var(--perron-space-150);
+}
+
+.home-languages {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: var(--perron-space-200) var(--perron-space-300);
+  margin: 0;
+}
+
+.home-language {
+  display: contents;
+}
+
+.home-language dd {
+  margin: 0;
+}
+
+/* What the system is made of */
+
+.home-made-of {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-600);
+  margin-block-start: calc(3 * var(--perron-space-800));
+}
+
+.home-heading {
+  margin: 0;
+  font: var(--perron-typography-heading-lg);
+  letter-spacing: var(--perron-typography-heading-lg-tracking);
+}
+
+.home-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--home-panel-min)), 1fr));
+  gap: var(--perron-space-400);
+}
+
+.home-tile {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--perron-space-600);
+  min-inline-size: 0;
+  min-block-size: calc(var(--perron-size-sheet-peek) + var(--perron-space-800));
+  padding: var(--perron-space-600);
+  border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+  border-radius: var(--perron-radius-xl);
+  background-color: var(--perron-color-surface-raised);
+  color: inherit;
+  text-decoration: none;
+}
+
+.home-tile[data-wide] {
+  grid-column: 1 / -1;
+}
+
+.home-tile-figure {
+  min-inline-size: 0;
+}
+
+.home-tile-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-150);
+}
+
+.home-tile-title {
+  margin: 0;
+  font: var(--perron-typography-heading-md);
+  letter-spacing: var(--perron-typography-heading-md-tracking);
+}
+
+.home-tile-body {
+  margin: 0;
+  max-inline-size: var(--site-measure);
+  font: var(--perron-typography-body);
+  letter-spacing: var(--perron-typography-body-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.home-code {
+  margin: 0;
+  overflow-x: auto;
+  padding: var(--perron-space-300);
+  border-radius: var(--perron-radius-md);
+  background: var(--perron-color-surface-inset);
+  font: var(--perron-typography-data);
+  letter-spacing: var(--perron-typography-data-tracking);
+}
+
+.home-tools {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-200);
+  margin: 0;
+  padding-inline-start: var(--perron-space-400);
+  font: var(--perron-typography-data);
+  letter-spacing: var(--perron-typography-data-tracking);
+}
+
+.home-tools ::marker {
+  color: var(--perron-color-text-secondary);
+}
+
+.home-themes {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--perron-space-100);
+}
+
+.home-theme {
+  inline-size: var(--perron-size-badge);
+  block-size: calc(2 * var(--perron-size-control));
+  border: var(--perron-border-width-025) solid var(--perron-color-border-strong);
+  border-radius: var(--perron-radius-xs);
+  background: var(--perron-color-surface-default);
+}
+
+.home-themes-names {
+  margin-inline-start: var(--perron-space-300);
+  font: var(--perron-typography-data);
+  letter-spacing: var(--perron-typography-data-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+/* Phones only: the sections and the stop panel */
+
+.home-phone {
+  display: none;
+}
+
+/* Where Perron lives */
+
+.home-resources {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--perron-space-400);
+  margin-block-start: calc(2 * var(--perron-space-800) + var(--perron-space-200));
+}
+
+.home-resources-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--perron-space-100);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.home-resource {
+  display: inline-flex;
+  align-items: center;
+  block-size: var(--perron-size-button);
+  padding-inline: var(--perron-space-300);
+  border-radius: var(--perron-radius-md);
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+  color: var(--perron-color-text-primary);
+  text-decoration: none;
+}
+
+.home-resources-note {
+  margin: 0;
+  font: var(--perron-typography-caption);
+  letter-spacing: var(--perron-typography-caption-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+/* Under breakpoint.phone (760px), written as the site writes it (site.css): the page sits on the
+   layout's one opaque sheet (phone.css), under a strip of the map, so no text sits on moving map.
+   The counts follow the actions in a grid of four, the columns and tiles give way to the sections
+   and one panel. */
+@media (max-width: 759.98px) {
+  .home {
+    gap: var(--perron-space-800);
+  }
+
+  .home-hero {
+    align-items: stretch;
+    gap: var(--perron-space-400);
+    padding-block-start: 0;
+    text-align: start;
+  }
+
+  .home-hero .page-header {
+    align-items: stretch;
+  }
+
+  .home-hero .page-header-row {
+    justify-content: start;
+  }
+
+  .home-hero .lead {
+    margin-inline: 0;
+  }
+
+  .home-overline {
+    padding: 0;
+    border-color: transparent;
+    background: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .home-counts {
+    order: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--perron-border-width-025);
+    margin: var(--perron-space-400) 0 0;
+    overflow: hidden;
+    border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+    border-radius: var(--perron-radius-lg);
+    background: var(--perron-color-border-subtle);
+  }
+
+  .home-count {
+    align-items: start;
+    padding: var(--perron-space-300);
+    background: var(--perron-color-surface-default);
+  }
+
+  .home-count[data-wide] {
+    display: none;
+  }
+
+  .home-actions {
+    flex-direction: column;
+    margin: 0;
+  }
+
+  .home-mcp {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--perron-space-150);
+  }
+
+  .home-command {
+    flex-wrap: nowrap;
+    padding: var(--perron-space-100) var(--perron-space-100) var(--perron-space-100)
+      var(--perron-space-300);
+    border-radius: var(--perron-radius-md);
+    background: var(--perron-color-surface-inset);
+  }
+
+  .home-command-text {
+    flex: 1;
+    min-inline-size: 0;
+    overflow-x: auto;
+    padding: 0;
+    white-space: nowrap;
+  }
+
+  .home-columns,
+  .home-made-of {
+    display: none;
+  }
+
+  .home-phone {
+    display: flex;
+    flex-direction: column;
+    gap: var(--perron-space-200);
+  }
+
+  .home-phone-heading {
+    margin: 0;
+    font: var(--perron-typography-overline);
+    letter-spacing: var(--perron-typography-overline-tracking);
+    text-transform: uppercase;
+    color: var(--perron-color-text-secondary);
+  }
+
+  .home-explore {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+    border-radius: var(--perron-radius-lg);
+    background: var(--perron-color-surface-raised);
+  }
+
+  .home-explore-link {
+    display: flex;
+    align-items: center;
+    gap: var(--perron-space-300);
+    min-block-size: calc(var(--perron-size-button) + 5 * var(--perron-space-100));
+    padding: var(--perron-space-200) var(--perron-space-300);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .home-explore-link + .home-explore-link {
+    border-block-start: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+  }
+
+  .home-explore-link .site-icon {
+    color: var(--perron-color-text-secondary);
+  }
+
+  .home-explore-text {
+    flex: 1;
+    min-inline-size: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--perron-space-050);
+  }
+
+  .home-explore-label {
+    font: var(--perron-typography-heading-sm);
+    letter-spacing: var(--perron-typography-heading-sm-tracking);
+  }
+
+  .home-explore-hint {
+    font: var(--perron-typography-caption);
+    letter-spacing: var(--perron-typography-caption-tracking);
+    color: var(--perron-color-text-secondary);
+  }
+
+  .home-resources {
+    margin: 0;
+  }
+}

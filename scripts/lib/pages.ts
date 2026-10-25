@@ -85,6 +85,7 @@ export const PAGES = [
   'docs/patterns/data-state-panel.md',
   'docs/patterns/day-profile-chart.md',
   'docs/patterns/report-strip.md',
+  'docs/patterns/departure-row.md',
   'docs/patterns/detail-header.md',
   'docs/patterns/detail-panel.md',
   'docs/patterns/stop-timeline.md',
