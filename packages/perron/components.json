@@ -426,5 +426,302 @@
     "baseUiParts": [],
     "penpotPath": "Patterns/KioskBar",
     "dependsOn": ["Brand", "Stat", "Surface"]
+  },
+  {
+    "name": "Field",
+    "layer": "component",
+    "category": "Inputs",
+    "status": "designing",
+    "baseUiParts": ["Field.Root", "Field.Label", "Field.Description", "Field.Error"],
+    "penpotPath": "Components/Field",
+    "dependsOn": []
+  },
+  {
+    "name": "Fieldset",
+    "layer": "component",
+    "category": "Inputs",
+    "status": "designing",
+    "baseUiParts": ["Fieldset.Root", "Fieldset.Legend"],
+    "penpotPath": "Components/Fieldset",
+    "dependsOn": []
+  },
+  {
+    "name": "TextField",
+    "layer": "component",
+    "category": "Inputs",
+    "status": "designing",
+    "baseUiParts": [
+      "Field.Root",
+      "Field.Label",
+      "Field.Control",
+      "Field.Description",
+      "Field.Error"
+    ],
+    "penpotPath": "Components/TextField",
+    "dependsOn": ["Field"]
+  },
+  {
+    "name": "TextArea",
+    "layer": "component",
+    "category": "Inputs",
+    "status": "designing",
+    "baseUiParts": [
+      "Field.Root",
+      "Field.Label",
+      "Field.Control",
+      "Field.Description",
+      "Field.Error"
+    ],
+    "penpotPath": "Components/TextArea",
+    "dependsOn": ["Field"]
+  },
+  {
+    "name": "NumberField",
+    "layer": "component",
+    "category": "Inputs",
+    "status": "designing",
+    "baseUiParts": [
+      "NumberField.Root",
+      "NumberField.Group",
+      "NumberField.Input",
+      "NumberField.Increment",
+      "NumberField.Decrement"
+    ],
+    "penpotPath": "Components/NumberField",
+    "dependsOn": ["Field"]
+  },
+  {
+    "name": "Checkbox",
+    "layer": "component",
+    "category": "Inputs",
+    "status": "designing",
+    "baseUiParts": ["Checkbox.Root", "Checkbox.Indicator"],
+    "penpotPath": "Components/Checkbox",
+    "dependsOn": []
+  },
+  {
+    "name": "CheckboxGroup",
+    "layer": "component",
+    "category": "Inputs",
+    "status": "designing",
+    "baseUiParts": ["CheckboxGroup"],
+    "penpotPath": "Components/CheckboxGroup",
+    "dependsOn": ["Checkbox", "Fieldset"]
+  },
+  {
+    "name": "RadioGroup",
+    "layer": "component",
+    "category": "Inputs",
+    "status": "designing",
+    "baseUiParts": ["RadioGroup", "Radio.Root", "Radio.Indicator"],
+    "penpotPath": "Components/RadioGroup",
+    "dependsOn": ["Fieldset"]
+  },
+  {
+    "name": "Switch",
+    "layer": "component",
+    "category": "Inputs",
+    "status": "designing",
+    "baseUiParts": ["Switch.Root", "Switch.Thumb"],
+    "penpotPath": "Components/Switch",
+    "dependsOn": []
+  },
+  {
+    "name": "Select",
+    "layer": "component",
+    "category": "Inputs",
+    "status": "designing",
+    "baseUiParts": [
+      "Select.Root",
+      "Select.Trigger",
+      "Select.Value",
+      "Select.Icon",
+      "Select.Portal",
+      "Select.Positioner",
+      "Select.Popup",
+      "Select.List",
+      "Select.Item",
+      "Select.ItemText",
+      "Select.ItemIndicator",
+      "Select.Group",
+      "Select.GroupLabel",
+      "Select.Separator"
+    ],
+    "penpotPath": "Components/Select",
+    "dependsOn": ["Field"]
+  },
+  {
+    "name": "Slider",
+    "layer": "component",
+    "category": "Inputs",
+    "status": "designing",
+    "baseUiParts": [
+      "Slider.Root",
+      "Slider.Label",
+      "Slider.Value",
+      "Slider.Control",
+      "Slider.Track",
+      "Slider.Indicator",
+      "Slider.Thumb"
+    ],
+    "penpotPath": "Components/Slider",
+    "dependsOn": ["Field"]
+  },
+  {
+    "name": "Tooltip",
+    "layer": "component",
+    "category": "Overlays",
+    "status": "designing",
+    "baseUiParts": [
+      "Tooltip.Provider",
+      "Tooltip.Root",
+      "Tooltip.Trigger",
+      "Tooltip.Portal",
+      "Tooltip.Positioner",
+      "Tooltip.Popup",
+      "Tooltip.Arrow"
+    ],
+    "penpotPath": "Components/Tooltip",
+    "dependsOn": []
+  },
+  {
+    "name": "Popover",
+    "layer": "component",
+    "category": "Overlays",
+    "status": "designing",
+    "baseUiParts": [
+      "Popover.Root",
+      "Popover.Trigger",
+      "Popover.Portal",
+      "Popover.Positioner",
+      "Popover.Popup",
+      "Popover.Title",
+      "Popover.Description",
+      "Popover.Close",
+      "Popover.Arrow"
+    ],
+    "penpotPath": "Components/Popover",
+    "dependsOn": []
+  },
+  {
+    "name": "Menu",
+    "layer": "component",
+    "category": "Overlays",
+    "status": "designing",
+    "baseUiParts": [
+      "Menu.Root",
+      "Menu.Trigger",
+      "Menu.Portal",
+      "Menu.Positioner",
+      "Menu.Popup",
+      "Menu.Item",
+      "Menu.LinkItem",
+      "Menu.Separator",
+      "Menu.Group",
+      "Menu.GroupLabel",
+      "Menu.CheckboxItem",
+      "Menu.CheckboxItemIndicator",
+      "Menu.RadioGroup",
+      "Menu.RadioItem",
+      "Menu.RadioItemIndicator",
+      "Menu.SubmenuRoot",
+      "Menu.SubmenuTrigger"
+    ],
+    "penpotPath": "Components/Menu",
+    "dependsOn": []
+  },
+  {
+    "name": "AlertDialog",
+    "layer": "component",
+    "category": "Overlays",
+    "status": "designing",
+    "baseUiParts": [
+      "AlertDialog.Root",
+      "AlertDialog.Trigger",
+      "AlertDialog.Portal",
+      "AlertDialog.Backdrop",
+      "AlertDialog.Popup",
+      "AlertDialog.Title",
+      "AlertDialog.Description",
+      "AlertDialog.Close"
+    ],
+    "penpotPath": "Components/AlertDialog",
+    "dependsOn": ["Button"]
+  },
+  {
+    "name": "Alert",
+    "layer": "component",
+    "category": "Feedback",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Components/Alert",
+    "dependsOn": []
+  },
+  {
+    "name": "Toast",
+    "layer": "component",
+    "category": "Feedback",
+    "status": "designing",
+    "baseUiParts": [
+      "Toast.Provider",
+      "Toast.Portal",
+      "Toast.Viewport",
+      "Toast.Root",
+      "Toast.Content",
+      "Toast.Title",
+      "Toast.Description",
+      "Toast.Action",
+      "Toast.Close"
+    ],
+    "penpotPath": "Components/Toast",
+    "dependsOn": []
+  },
+  {
+    "name": "Progress",
+    "layer": "component",
+    "category": "Feedback",
+    "status": "designing",
+    "baseUiParts": [
+      "Progress.Root",
+      "Progress.Label",
+      "Progress.Value",
+      "Progress.Track",
+      "Progress.Indicator"
+    ],
+    "penpotPath": "Components/Progress",
+    "dependsOn": []
+  },
+  {
+    "name": "Separator",
+    "layer": "component",
+    "category": "Layout",
+    "status": "designing",
+    "baseUiParts": ["Separator"],
+    "penpotPath": "Components/Separator",
+    "dependsOn": []
+  },
+  {
+    "name": "Accordion",
+    "layer": "component",
+    "category": "Layout",
+    "status": "designing",
+    "baseUiParts": [
+      "Accordion.Root",
+      "Accordion.Item",
+      "Accordion.Header",
+      "Accordion.Trigger",
+      "Accordion.Panel"
+    ],
+    "penpotPath": "Components/Accordion",
+    "dependsOn": []
+  },
+  {
+    "name": "Link",
+    "layer": "component",
+    "category": "Navigation",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Components/Link",
+    "dependsOn": []
   }
 ]
