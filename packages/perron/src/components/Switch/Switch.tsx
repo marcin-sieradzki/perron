@@ -66,7 +66,10 @@ export interface SwitchProps extends Omit<
   ref?: Ref<HTMLElement>
   /** Props for each inner part, merged with the part's own, which win. */
   slotProps?: {
-    /** Props for the `thumb` part; its `className` joins after `pn-Switch-thumb`. */
+    /**
+     * Props for the thumb part, merged under Perron's own; its `className` joins after
+     * `pn-Switch-thumb`.
+     */
     thumb?: BaseSwitch.Thumb.Props
   }
 }
@@ -89,6 +92,7 @@ export function Switch({
   slotProps,
   ...rest
 }: SwitchProps) {
+  const { className: thumbClassName, ...thumb } = slotProps?.thumb ?? {}
   return (
     <BaseSwitch.Root
       {...rest}
@@ -109,10 +113,12 @@ export function Switch({
       style={style}
     >
       {/* CR-4: Base UI's thumb, which keeps the root's state attributes, with the caller's props
-          merged under its own and its class first, a string or a function of the thumb's state */}
+          merged under its own: its class first, by `withClass`, since the caller's may be a function
+          of the thumb's state, which `mergeProps` can't join */}
       <BaseSwitch.Thumb
-        {...mergeProps<typeof BaseSwitch.Thumb>(slotProps?.thumb, undefined)}
-        className={withClass('pn-Switch-thumb', slotProps?.thumb?.className)}
+        {...mergeProps<typeof BaseSwitch.Thumb>(thumb, {
+          className: withClass('pn-Switch-thumb', thumbClassName),
+        })}
       />
     </BaseSwitch.Root>
   )

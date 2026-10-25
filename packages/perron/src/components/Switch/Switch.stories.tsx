@@ -37,8 +37,11 @@ const edge = (token: string) => resolve('borderColor', `var(--perron-${token})`)
 const HOVER_LAYER =
   'linear-gradient(var(--perron-color-surface-hover), var(--perron-color-surface-hover))'
 
+const defaultRef = createRef<HTMLElement>()
+
 /** Off, at rest; the subject story. */
 export const Default: Story = {
+  render: (args) => <Switch {...args} ref={defaultRef} />,
   play: async ({ args, canvasElement }) => {
     const onChange = args.onChange as ReturnType<typeof fn>
     onChange.mockClear()
@@ -51,12 +54,7 @@ export const Default: Story = {
     const box = root.getBoundingClientRect()
     await expect(box.width).toBe(40)
     await expect(box.height).toBe(24)
-    // the ref reaches the root, in a switch rendered apart from the story
-    const ref = createRef<HTMLElement>()
-    await mounted(canvasElement, <Switch ref={ref} aria-label="Show stations" />, async (host) => {
-      await waitFor(() => expect(host.querySelector('[role="switch"]')).not.toBeNull())
-      await expect(ref.current).toBe(host.querySelector('[role="switch"]'))
-    })
+    await expect(defaultRef.current).toBe(root)
     await userEvent.click(root)
     await expect(root).toHaveAttribute('aria-checked', 'true')
     await expect(root).toHaveAttribute('data-checked')
@@ -154,9 +152,15 @@ export const Checked: Story = {
   },
 }
 
-/** Off, disabled. */
+/** Off, disabled, with a Button after it for Tab to reach. */
 export const Disabled: Story = {
   args: { disabled: true },
+  render: (args) => (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--perron-space-300)' }}>
+      <Switch {...args} />
+      <Button>Save</Button>
+    </div>
+  ),
   play: async ({ args, canvasElement }) => {
     const onChange = args.onChange as ReturnType<typeof fn>
     onChange.mockClear()
@@ -165,8 +169,12 @@ export const Disabled: Story = {
     await expect(root).toHaveAttribute('data-disabled')
     await expect(getComputedStyle(root).borderColor).toBe(edge('color-border-subtle'))
     await expect(getComputedStyle(thumbOf(root)).backgroundColor).toBe(fill('color-text-tertiary'))
+    // Tab skips the switch and lands on the Button after it
+    const after = within(canvasElement).getByRole('button', { name: 'Save' })
     await userEvent.tab()
+    await expect(after).toHaveFocus()
     await expect(root).not.toHaveFocus()
+    after.blur()
     await userEvent.click(root, { pointerEventsCheck: 0 })
     root.focus()
     await userEvent.keyboard(' ')
