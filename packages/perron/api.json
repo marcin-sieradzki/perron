@@ -1871,6 +1871,62 @@
       }
     }
   },
+  "Progress": {
+    "extends": [
+      "Omit< BaseProgress.Root.Props, 'value' | 'children' | 'locale' | 'className' | 'style' | 'ref' >"
+    ],
+    "props": {
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "inProgressLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "label": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "locale": {
+        "optional": true,
+        "type": [
+          "LocalesArgument"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ label?: ProgressLabelProps | undefined; value?: ProgressValueProps | undefined; track?: ProgressTrackProps | undefined; indicator?: ProgressIndicatorProps | undefined; }"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "value": {
+        "optional": false,
+        "type": [
+          "null",
+          "number"
+        ]
+      }
+    }
+  },
   "RadioGroup": {
     "extends": [
       "Omit< BaseRadioGroup.Props<string>, | 'value' | 'defaultValue' | 'onValueChange' | 'onChange' | 'disabled' | 'readOnly' | 'required' | 'name' | 'className' | 'style' | 'children' | 'ref' >"
