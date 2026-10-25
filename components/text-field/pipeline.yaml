@@ -8,6 +8,12 @@ stages:
     status: done
     started: 2026-10-25T05:42:00.874Z
     ended: 2026-10-25T05:43:28.416Z
+  build:
+    status: done
+    started: 2026-10-25T05:43:33.371Z
+    runs: 1
+    spec: 11afb8c8a38aa91f277174cd80f5efd965fd6f715ac2c985dfcf811c1fd9b3e1
+    ended: 2026-10-25T05:51:14.905Z
 notes:
   - stage: brief
     at: 2026-10-25T05:41:55.568Z
@@ -21,3 +27,12 @@ notes:
   - stage: brief
     at: 2026-10-25T05:41:55.568Z
     questions: "1. Is the root the <input> itself (Field.Control), with Field round it as the frame? Recommended: yes. 2. Is the frame's slotProps key 'field' (Omit<Field.Root.Props,'children'|'disabled'|'name'>, class pn-TextField-field), the way to reach invalid/validate/validationMode/validationDebounceTime/dirty/touched/actionsRef? Recommended: yes. 3. No startIcon/endIcon, prefix/suffix, clear or password reveal: the input is the whole box? Recommended: yes. 4. TextFieldProps declares name, type, placeholder, required, value, defaultValue (string), onChange (native ChangeEvent) with rows; readOnly, autoComplete etc. stay inherited? Recommended: yes. 5. type is 'text'|'email'|'password'|'tel'|'url', default 'text'? Recommended: yes. 6. optional and required independent, required defaults false? Recommended: yes. 7. No variant, size, color or fullWidth? Recommended: yes. 8. Box takes space.300 on both inline sides, no block padding? Recommended: yes. 9. Box keeps rest look when focused without focus-visible, filled, dirty, touched, valid or read-only; invalid edge only while not disabled? Recommended: yes."
+  - stage: build
+    at: 2026-10-25T05:51:14.906Z
+    direction: "The Fields family has no rule for iOS Safari's native input look (its inner shadow and dimmed disabled text): TextField sets no appearance or opacity override, and neither does SearchField. Should the Fields family name one, through the contract's Families row?"
+  - stage: build
+    at: 2026-10-25T05:51:14.906Z
+    direction: Under forced colours the invalid edge turns to the same system colour as the rest edge, so an invalid TextField shows only through its error words; a forced-colours rule for the invalid edge could be added to the Fields family.
+  - stage: build
+    at: 2026-10-25T05:51:14.906Z
+    direction: The TextField spec's root row says Chromium shows a password input as a protected textbox, while HTML's ARIA mapping gives it no role; check that this reading matches what the reviewer should hold.
