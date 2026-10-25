@@ -80,6 +80,8 @@ export const PAGES = [
   'docs/components/severity-label.md',
   'docs/components/station-icon.md',
   'docs/components/vehicle-dot.md',
+  'docs/components/vehicle-dot-label.md',
+  'docs/components/vehicle-dot-legend.md',
   'docs/patterns/data-state-panel.md',
   'docs/patterns/day-profile-chart.md',
   'docs/patterns/departure-row.md',

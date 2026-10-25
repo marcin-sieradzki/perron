@@ -1,0 +1,39 @@
+/* VehicleDotLegend: the five data states in one row that wraps between items, each a dot beside its
+   word, all in one ink (docs/components/vehicle-dot-legend.md). It draws no surface and places
+   nothing: the screen puts it on its surface (CR-5). */
+.pn-VehicleDotLegend {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--perron-space-300);
+  row-gap: var(--perron-space-100);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font: var(--perron-typography-label-sm);
+  letter-spacing: var(--perron-typography-label-sm-tracking);
+  /* CR-8: each state's word stays whole on one line, and the row wraps between items instead. */
+  white-space: nowrap;
+  /* CR-3: the legend's ink, for the words and the dots */
+  color: var(--perron-color-text-primary);
+}
+
+.pn-VehicleDotLegend-item {
+  display: flex;
+  align-items: center;
+  column-gap: var(--perron-space-100);
+}
+
+/* CR-3: every dot draws in the legend's ink in place of its line's colour. One class and two
+   attributes outweigh VehicleDot's line rules, one class and one attribute, in any load order.
+   No signal's circle keeps VehicleDot's own grey fill. */
+.pn-VehicleDotLegend-dot[data-line][data-variant] {
+  color: inherit;
+}
+
+/* CR-3: forced colours keep the system's text colour that VehicleDot's own rule gives every dot,
+   which the rule above would otherwise outweigh. */
+@media (forced-colors: active) {
+  .pn-VehicleDotLegend-dot[data-line][data-variant] {
+    color: CanvasText;
+  }
+}
