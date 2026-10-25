@@ -970,6 +970,25 @@
       }
     }
   },
+  "NormalService": {
+    "extends": [
+      "Omit< useRender.ComponentProps<'span'>, 'children' | 'ref' >"
+    ],
+    "props": {
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLSpanElement>"
+        ]
+      },
+      "runningNormallyLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      }
+    }
+  },
   "Section": {
     "extends": [
       "Omit< useRender.ComponentProps<'section'>, 'title' | 'children' >"

@@ -174,7 +174,7 @@
     "name": "NormalService",
     "layer": "component",
     "category": "Transit",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/NormalService",
     "dependsOn": []

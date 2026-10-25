@@ -49,6 +49,10 @@
     "calendar": {
       "size": "icon.size.325",
       "use": "Planned works"
+    },
+    "check-circle": {
+      "size": "icon.size.325",
+      "use": "Running normally"
     }
   }
 }
