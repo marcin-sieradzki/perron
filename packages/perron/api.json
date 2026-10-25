@@ -882,8 +882,7 @@
           "Element",
           "RefObject<Element | null>",
           "VirtualElement",
-          "null",
-          "undefined"
+          "null"
         ]
       },
       "children": {

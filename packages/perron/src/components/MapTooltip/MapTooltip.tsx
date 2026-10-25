@@ -51,7 +51,7 @@ export interface MapTooltipProps extends Omit<Tooltip.Popup.Props, 'children' | 
    * the point the map projects for a vehicle or stop, or an element. Pass a new one when the point
    * moves, so the card follows.
    */
-  anchorEl: Tooltip.Positioner.Props['anchor']
+  anchorEl: Exclude<Tooltip.Positioner.Props['anchor'], undefined>
   /**
    * Whether the card is shown. Set it while the pointer rests on what the card describes, and
    * clear it in `onClose`.
