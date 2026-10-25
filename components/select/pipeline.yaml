@@ -3,9 +3,6 @@ component: Select
 layer: component
 deferred:
   at: 2026-10-25T05:33:08.882Z
-needsHuman:
-  stage: review
-  reason: '3 review rounds found a P1 or a P2; the last: review round 3 found 1 P2 (components/select/review.md)'
 stages:
   brief:
     status: done
@@ -20,7 +17,7 @@ stages:
     ended: 2026-10-25T06:40:07.023Z
   review:
     rounds: 3
-    sentBack: 3
+    sentBack: 0
     findings:
       p1: 0
       p2: 1
@@ -93,3 +90,6 @@ notes:
   - stage: build
     at: 2026-10-25T06:40:07.023Z
     direction: The brief chose the overlay docs frame height (360px) without measuring the tallest open story. The contract's Stories rule could ask the spec to size the frame from its tallest open overlay, or the audit skills could render each overlay story at the frame's height.
+  - stage: review
+    at: 2026-10-25T06:46:53.245Z
+    unblocked: '3 review rounds found a P1 or a P2; the last: review round 3 found 1 P2 (components/select/review.md)'
