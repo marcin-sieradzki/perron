@@ -64,8 +64,10 @@
   white-space: nowrap;
 }
 
-/* over a <th>'s bold and centring; no cell sets a width, so the automatic table layout gives each
-   column its content's width wherever the table has room, a state's word on one line (CR-8) */
+/* over a <th>'s bold and centring; the one cell that sets a width, and only a least one: the
+   automatic table layout gives each column its content's width wherever the table has room, a
+   state's word on one line, and where it hasn't, the other columns give up width before this one,
+   so below a table about 310 px wide a state's word wraps even beside a short destination (CR-8) */
 .pn-VehicleTable-destinationCell {
   font: var(--perron-typography-label);
   letter-spacing: var(--perron-typography-label-tracking);

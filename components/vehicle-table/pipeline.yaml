@@ -9,9 +9,13 @@ stages:
     started: 2026-10-25T13:25:13.975Z
     ended: 2026-10-25T13:27:10.436Z
   build:
-    runs: 4
+    runs: 5
     respecs: 1
-    failing: review round 2 found 1 P2 (components/vehicle-table/review.md)
+    status: done
+    started: 2026-10-25T14:10:03.960Z
+    begun: 464e46caa066d0ffce9ef83b10a03b5a218888f323549b54a8d199fd01dfd59f
+    spec: c5ff972510a4f4503cfd74e78adb088a4cab2c8780425fe15cc3d664be9a9158
+    ended: 2026-10-25T14:13:55.417Z
   review:
     rounds: 2
     sentBack: 2
@@ -20,10 +24,6 @@ stages:
       p1: 0
       p2: 1
       p3: 1
-    status: failed
-    started: 2026-10-25T14:04:54.057Z
-    ended: 2026-10-25T14:10:00.469Z
-    failing: review round 2 found 1 P2 (components/vehicle-table/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T13:25:09.831Z
@@ -84,3 +84,6 @@ notes:
   - stage: build
     at: 2026-10-25T14:04:07.607Z
     direction: Between 288 and 300 px containers, 'Timetable only' wraps onto two lines, because the destination column's 96 px least width takes its width from the position column first. A design run could weigh a slightly smaller least width, about 88 px, which kept 'Lufthavnen' and 'Københavns' whole in earlier measurements.
+  - stage: build
+    at: 2026-10-25T14:13:55.417Z
+    direction: "Correction to the note that 'Timetable only' wraps between 288 and 300 px containers: measured on Default, it wraps up to a 310 px table and takes one line from 312 px, so the range is 288 to 310 px."

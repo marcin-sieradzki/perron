@@ -631,6 +631,17 @@ export const LongDestination: Story = {
                 // the column breaks inside it
                 await expectWholeWords(cell, ['Lufthavnsterminalen'])
               }
+              if (vehicles === VEHICLES) {
+                // no destination here needs its least width, yet the column keeps it, and the
+                // position column gives up width instead: "Timetable only" wraps at its space
+                for (const cell of root.querySelectorAll('.pn-VehicleTable-destinationCell'))
+                  await expect(cell.getBoundingClientRect().width).toBeLessThan(least + 0.5)
+                const timetableOnly = root.querySelector(
+                  '[data-variant="timetable-only"] .pn-VehicleDotLabel-label',
+                )!
+                await expect(lines(timetableOnly)).toBeGreaterThan(1.5)
+                await expectWholeWords(timetableOnly)
+              }
             },
           )
       },
