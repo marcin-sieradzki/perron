@@ -10,10 +10,18 @@ stages:
     ended: 2026-10-25T05:40:26.391Z
   build:
     runs: 2
-    status: done
-    started: 2026-10-25T05:49:10.400Z
-    spec: c8c2587aa7388af3e0a16161e084fc2c38dbbb373d373236c39fdd1dd23eb7f8
-    ended: 2026-10-25T05:54:58.809Z
+    failing: review round 1 found 8 P2 (components/radio-group/review.md)
+  review:
+    status: failed
+    started: 2026-10-25T05:55:39.748Z
+    rounds: 1
+    findings:
+      p1: 0
+      p2: 8
+      p3: 5
+    sentBack: 1
+    ended: 2026-10-25T06:04:30.106Z
+    failing: review round 1 found 8 P2 (components/radio-group/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T05:33:10.548Z
