@@ -556,7 +556,7 @@ export const Disabled: Story = {
   },
 }
 
-const LONG_ITEM = 'Trafikinformationsoversigtssiden'
+const LONG_ITEM = 'Trafikinformationsoversigtssidesindstillinger'
 const LONG_GROUP = 'Realtidsdataindstillinger'
 
 /** The menu in a 320 px frame, the room it is placed in, as on a phone. */

@@ -9,15 +9,11 @@ stages:
     started: 2026-10-25T05:51:06.415Z
     ended: 2026-10-25T05:54:23.935Z
   build:
-    status: pending
-    started: 2026-10-25T05:54:28.226Z
-    runs: 1
-    spec: 5adba3e3accfdfbb9a442f1f78e9f1e8ff70f05fdb4d6fb939f392cca038b975
-    asked: 1
-    ended: 2026-10-25T06:09:34.175Z
-    failing: |-
-      1. Stories, LongLabel (CR-11): at 320 px 'Trafikinformationsoversigtssiden' fits on one line, so the wrap test can't pass. Recommended: keep the 320 px frame and the group label, and change the item to a longer compound such as 'Trafikinformationsoversigtssidesindstillinger', so the label wraps inside the popup.
-      2. Tokens (focusRing) and Keyboard and ARIA: Base UI focuses the popup itself on pointer open or first render, and perron.css draws its :focus-visible ring around the popup. Recommended: the menu and submenu popups draw no ring of their own (outline: none on .pn-Menu:focus-visible and .pn-MenuSubmenu-popup:focus-visible), written as a Tokens row; rows draw the ring.
+    runs: 2
+    status: done
+    started: 2026-10-25T06:09:58.738Z
+    spec: 9265c9d671d92b95395e092193203af5f6547e7443fcd0925b85f783ddff068e
+    ended: 2026-10-25T06:13:52.648Z
 notes:
   - stage: brief
     at: 2026-10-25T05:50:01.967Z
@@ -44,3 +40,6 @@ notes:
     questions: |-
       1. Stories, LongLabel (CR-11): at 320 px 'Trafikinformationsoversigtssiden' fits on one line, so the wrap test can't pass. Recommended: keep the 320 px frame and the group label, and change the item to a longer compound such as 'Trafikinformationsoversigtssidesindstillinger', so the label wraps inside the popup.
       2. Tokens (focusRing) and Keyboard and ARIA: Base UI focuses the popup itself on pointer open or first render, and perron.css draws its :focus-visible ring around the popup. Recommended: the menu and submenu popups draw no ring of their own (outline: none on .pn-Menu:focus-visible and .pn-MenuSubmenu-popup:focus-visible), written as a Tokens row; rows draw the ring.
+  - stage: build
+    at: 2026-10-25T06:13:52.649Z
+    direction: "When a row's label wraps, as in LongLabel, the rows' align-items: center puts the start icon midway between the two lines instead of level with the first; lining it up with the first line would need a Tokens line in the spec."

@@ -69,8 +69,6 @@ function RowContent({
   )
 }
 
-type OpenDetails = BaseMenu.Root.ChangeEventDetails
-
 export interface MenuProps extends Inherited<BaseMenu.Popup.Props> {
   /**
    * The button that opens the menu, such as a Button or an IconButton, rendered in
@@ -97,13 +95,17 @@ export interface MenuProps extends Inherited<BaseMenu.Popup.Props> {
    * Called when the menu asks to open, from its trigger: `details.reason` is `'trigger-press'`,
    * `'trigger-hover'` or another of Base UI's reasons, and `details.cancel()` keeps it closed.
    */
-  onOpen?: (event: Event, details: OpenDetails) => void
+  onOpen?: (event: Event, details: BaseMenu.Root.ChangeEventDetails) => void
   /**
    * Called when the menu asks to close: `reason` is `'item-press'`, `'escape-key'`,
    * `'outside-press'`, `'focus-out'` or another of Base UI's reasons, and `details.cancel()` keeps
    * it open.
    */
-  onClose?: (event: Event, reason: BaseMenu.Root.ChangeEventReason, details: OpenDetails) => void
+  onClose?: (
+    event: Event,
+    reason: BaseMenu.Root.ChangeEventReason,
+    details: BaseMenu.Root.ChangeEventDetails,
+  ) => void
   /**
    * Whether the trigger ignores the pointer and the keys, so the menu can't open. The trigger
    * carries `data-disabled`.
@@ -151,7 +153,7 @@ export function Menu({
   const generatedId = useId()
 
   // CR-4: Base UI's one handler becomes MUI's two
-  const handleOpenChange = (next: boolean, details: OpenDetails) => {
+  const handleOpenChange = (next: boolean, details: BaseMenu.Root.ChangeEventDetails) => {
     if (next) onOpen?.(details.event, details)
     else onClose?.(details.event, details.reason, details)
   }
@@ -279,8 +281,6 @@ export function MenuLinkItem({ startIcon, children, className, ref, ...rest }: M
   )
 }
 
-type CheckedDetails = BaseMenu.CheckboxItem.ChangeEventDetails
-
 /**
  * The box as the CheckboxIndicator part, with Base UI's props and the tick while ticked (CR-8).
  * Written once, outside the component, since it reads nothing but its arguments.
@@ -307,7 +307,11 @@ export interface MenuCheckboxItemProps extends Inherited<
    * Called when a press, Enter or Space turns the setting on or off, with the new state as
    * `value`; `details.cancel()` keeps it as it was. `event` is `details.event`.
    */
-  onChange?: (event: Event, value: boolean, details: CheckedDetails) => void
+  onChange?: (
+    event: Event,
+    value: boolean,
+    details: BaseMenu.CheckboxItem.ChangeEventDetails,
+  ) => void
   /**
    * Whether the item ignores presses. It stays focusable and in the arrow-key order, keeps its
    * state, and is announced as dimmed.
@@ -357,7 +361,8 @@ export function MenuCheckboxItem({
       // CR-4: Base UI's one handler, adapted to the contract's onChange(event, value, details)
       onCheckedChange={
         onChange &&
-        ((next: boolean, details: CheckedDetails) => onChange(details.event, next, details))
+        ((next: boolean, details: BaseMenu.CheckboxItem.ChangeEventDetails) =>
+          onChange(details.event, next, details))
       }
       className={classes('pn-MenuCheckboxItem', className)}
     >
@@ -376,8 +381,6 @@ export function MenuCheckboxItem({
   )
 }
 
-type ValueDetails = BaseMenu.RadioGroup.ChangeEventDetails
-
 export interface MenuRadioGroupProps extends Inherited<
   BaseMenu.RadioGroup.Props,
   'value' | 'defaultValue' | 'onValueChange' | 'onChange' | 'disabled'
@@ -395,7 +398,7 @@ export interface MenuRadioGroupProps extends Inherited<
    * Called when a press, Enter or Space chooses another radio item, with its `value`;
    * `details.cancel()` keeps the choice as it was. `event` is `details.event`.
    */
-  onChange?: (event: Event, value: string, details: ValueDetails) => void
+  onChange?: (event: Event, value: string, details: BaseMenu.RadioGroup.ChangeEventDetails) => void
   /**
    * Whether every radio item in the group ignores presses. They stay focusable and keep the choice.
    * @default false
@@ -439,7 +442,8 @@ export function MenuRadioGroup({
       // CR-4: Base UI's one handler, adapted to the contract's onChange(event, value, details)
       onValueChange={
         onChange &&
-        ((next: string, details: ValueDetails) => onChange(details.event, next, details))
+        ((next: string, details: BaseMenu.RadioGroup.ChangeEventDetails) =>
+          onChange(details.event, next, details))
       }
       className={classes('pn-MenuRadioGroup', className)}
     >

@@ -32,6 +32,13 @@
   color: var(--perron-color-text-primary);
 }
 
+/* Base UI focuses the popup itself when the pointer opens it: the rows draw the ring, the popup
+   none of its own. */
+.pn-Menu:focus-visible,
+.pn-MenuSubmenu-popup:focus-visible {
+  outline: none;
+}
+
 /* The five rows share one look (CR-7): SearchField's row metrics, the Rows family's fills. The
    states change colours only, never the box. */
 .pn-MenuItem,
