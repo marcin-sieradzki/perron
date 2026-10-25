@@ -1,0 +1,30 @@
+# Written by npm run factory; never by hand.
+component: Sheet
+layer: component
+deferred:
+  at: 2026-10-24T21:03:51.759Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-24T21:11:36.821Z
+    ended: 2026-10-24T21:12:38.653Z
+  build:
+    runs: 6
+    status: done
+    started: 2026-10-25T00:01:09.072Z
+    ended: 2026-10-25T00:02:56.875Z
+  review:
+    rounds: 5
+    sentBack: 1
+    findings:
+      p1: 0
+      p2: 0
+      p3: 5
+    status: done
+    started: 2026-10-25T00:02:57.121Z
+    ended: 2026-10-25T00:07:17.599Z
+  docs:
+    failures: 1
+    status: done
+    started: 2026-10-25T00:07:17.845Z
+    ended: 2026-10-25T00:10:33.196Z

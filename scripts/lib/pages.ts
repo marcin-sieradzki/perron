@@ -33,13 +33,17 @@ export const PAGES = [
   'docs/components/link-button.md',
   'docs/components/toolbar.md',
   'docs/components/brand.md',
+  'docs/components/fact-list.md',
   'docs/components/stat.md',
   'docs/components/text.md',
   'docs/components/empty-state.md',
   'docs/components/section.md',
   'docs/components/surface.md',
   'docs/components/map-controls.md',
+  'docs/components/tabs.md',
+  'docs/components/dialog.md',
   'docs/components/map-tooltip.md',
+  'docs/components/sheet.md',
   'docs/components/delay.md',
   'docs/components/line-badge.md',
   'docs/components/severity-label.md',
@@ -48,6 +52,7 @@ export const PAGES = [
   'docs/patterns/detail-header.md',
   'docs/patterns/stop-timeline.md',
   'docs/patterns/disruption-card.md',
+  'docs/patterns/kiosk-bar.md',
   // registry:specs end
 ]
 
