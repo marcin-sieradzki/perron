@@ -3,13 +3,13 @@
 // play tests for its name, its size and stacking, dismissal, focus, the header row and every shape
 // its ReactNode props take.
 import type { ReactNode } from 'react'
-import { createRoot } from 'react-dom/client'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, screen, userEvent, waitFor, within } from 'storybook/test'
 import { Button } from '../../components/Button/Button.tsx'
 import { Text } from '../../components/Text/Text.tsx'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
+import { mounted } from '../../testing/stories.ts'
 import { DetailPanel } from './DetailPanel.tsx'
 import type { DetailPanelProps } from './DetailPanel.tsx'
 
@@ -82,18 +82,6 @@ const token = (name: string) =>
 const part = (dialog: HTMLElement, name: string) =>
   dialog.querySelector<HTMLElement>(`.pn-${name}`)!
 
-/** Renders `ui` in a root of its own at the end of `<body>`, and returns what unmounts it. */
-function mount(ui: ReactNode) {
-  const host = document.createElement('div')
-  document.body.append(host)
-  const root = createRoot(host)
-  root.render(ui)
-  return () => {
-    root.unmount()
-    host.remove()
-  }
-}
-
 /** The element with `data-testid` `id`, once it has rendered. */
 const byTestId = (id: string) =>
   waitFor(() => {
@@ -139,14 +127,16 @@ async function expectEveryShape(
     const given = Object.fromEntries(
       entries.map(([prop, text], i) => [prop, shapes(text)[(render + i) % 3]]),
     )
-    const unmount = mount(
+    await mounted(
+      document.body,
       <DetailPanel {...args} title={args.title} {...given} defaultOpen data-testid="panel-shape" />,
+      async () => {
+        const dialog = await byTestId('panel-shape')
+        await expect(dialog).toHaveAccessibleName(name)
+        for (const [i, [prop, text]] of entries.entries())
+          await expectShape(part(dialog, parts[prop]), text, (render + i) % 3)
+      },
     )
-    const dialog = await byTestId('panel-shape')
-    await expect(dialog).toHaveAccessibleName(name)
-    for (const [i, [prop, text]] of entries.entries())
-      await expectShape(part(dialog, parts[prop]), text, (render + i) % 3)
-    unmount()
   }
   await closed()
   // Base UI hands focus back on the next frame, to the element focused last, which can be the
@@ -187,14 +177,16 @@ export const Line: Story = {
       },
     )
     await step('the open panel holds only owned and caller words, in da (CR-8)', async () => {
-      const unmount = mount(
+      await mounted(
+        document.body,
         <PerronProvider locale="da">
           <DetailPanel {...args} data-testid="panel-da" />
         </PerronProvider>,
+        async () => {
+          const da = await byTestId('panel-da')
+          expectOwnedStrings(da.outerHTML, 'da', [LINE_NAME, DESTINATION, NEXT_STOP, ...LINES])
+        },
       )
-      const da = await byTestId('panel-da')
-      expectOwnedStrings(da.outerHTML, 'da', [LINE_NAME, DESTINATION, NEXT_STOP, ...LINES])
-      unmount()
     })
     await step(
       'Esc closes it with reason escape-key, and focus returns to the trigger',
