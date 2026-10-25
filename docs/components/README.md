@@ -160,7 +160,10 @@ Tokens only.
 - `var()` has no fallback: `var(--perron-space-200)`.
 - Every `--perron-*` name read is a token in `packages/perron/tokens/`. A typography role brings its `-tracking` twin: `font: var(--perron-typography-label)` with `letter-spacing: var(--perron-typography-label-tracking)`.
 - Each layer reads the tokens of its row in [Token families](#token-families).
-- **Long words:** a rule that sets a typography role decides what a word longer than its line does, a Danish compound in a 320 px container: `overflow-wrap: anywhere` breaks it, `white-space: nowrap` keeps it on one line, a choice the spec names. It sits on that rule or on the plain class it inherits from, its own or its root's `.pn-<Name>`.
+- **Long words:** a rule that sets a typography role decides what a word longer than its line does, a Danish compound in a 320 px container, and the spec names the choice. It sits on that rule or on the plain class it inherits from, its own or its root's `.pn-<Name>`:
+  - `overflow-wrap: anywhere` breaks it, for text whose box takes its container's width: a title, a body, a cell.
+  - `overflow-wrap: break-word` breaks it too, for a box that sizes to its content beside others in a flex or inline row, such as a tag: `anywhere` lets the row squeeze that box to one letter a line, where `break-word` keeps whole words at its narrowest, and the row that holds it wraps (`flex-wrap: wrap`).
+  - `white-space: nowrap` keeps it on one line. `pre-wrap` and `pre-line` decide nothing: they wrap at spaces only.
 - **Icons** are sized by setting `--perron-icon-size` to an `icon.size.*` token on the element that holds them. See [Icons](../foundations/icons.md#sizes).
 - **Motion** takes `duration.*` and `easing.*`. A state with no fitting duration changes at once; a new one goes through the `design-tokens` skill. A loop (`infinite`) stops inside `@media (prefers-reduced-motion: reduce)`, in a rule with the loop's own selector that sets its `animation`. See [Motion](../foundations/motion.md).
 - **Stacking:** everything that renders in a portal (popups, tooltips, dialogs) takes `z-index.dialog`, so the one opened last paints on top. The other `z-index.*` tokens order the map screen's panels, for patterns.
@@ -218,15 +221,17 @@ Each of these is drawn once, in its own folder, `packages/perron/src/parts/<Part
 
 Each of these is written once, in its file, and a component, pattern or story imports it from there; no other file in `packages/perron/src/` declares its name at the top level. Helpers are internal: no barrel exports them. A helper a second component needs joins this table first.
 
-| Helper         | File                                            | Does                                                                                             |
-| -------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| `given`        | `packages/perron/src/internal/nodes.ts`         | Whether a node renders something, so a part given nothing is left out                            |
-| `known`        | `packages/perron/src/internal/nodes.ts`         | Whether a value says something, so one that says nothing shows `UnknownValue`                    |
-| `classes`      | `packages/perron/src/internal/nodes.ts`         | A part's own class first, then the caller's                                                      |
-| `withClass`    | `packages/perron/src/internal/nodes.ts`         | As `classes`, for a Base UI part, whose caller's class may be a function of the part's state     |
-| `usePart`      | `packages/perron/src/internal/use-part.ts`      | One inner part, from its `slotProps` value merged under the part's own props; it reads Base UI   |
-| `UnknownValue` | `packages/perron/src/internal/UnknownValue.tsx` | A value no one knows: "—" for the eye, the caller's or the locale's word for the ear             |
-| `typography`   | `packages/perron/src/testing/stories.ts`        | The style of one typography role with its `-tracking` twin and no margin, for a story's own text |
+| Helper         | File                                            | Does                                                                                                               |
+| -------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `given`        | `packages/perron/src/internal/nodes.ts`         | Whether a node renders something, so a part given nothing is left out                                              |
+| `known`        | `packages/perron/src/internal/nodes.ts`         | Whether a value says something, so one that says nothing shows `UnknownValue`                                      |
+| `classes`      | `packages/perron/src/internal/nodes.ts`         | A part's own class first, then the caller's                                                                        |
+| `withClass`    | `packages/perron/src/internal/nodes.ts`         | As `classes`, for a Base UI part, whose caller's class may be a function of the part's state                       |
+| `usePart`      | `packages/perron/src/internal/use-part.ts`      | One inner part, from its `slotProps` value merged under the part's own props; it reads Base UI                     |
+| `UnknownValue` | `packages/perron/src/internal/UnknownValue.tsx` | A value no one knows: "—" for the eye, the caller's or the locale's word for the ear                               |
+| `typography`   | `packages/perron/src/testing/stories.ts`        | The style of one typography role with its `-tracking` twin and no margin, for a story's own text                   |
+| `heard`        | `packages/perron/src/testing/stories.ts`        | What a screen reader reads of an element: its text outside `aria-hidden`, white space collapsed                    |
+| `mounted`      | `packages/perron/src/testing/stories.ts`        | Renders a node apart from the story into a host it appends, runs a test on it, and unmounts it after, pass or fail |
 
 ## What axe won't catch
 

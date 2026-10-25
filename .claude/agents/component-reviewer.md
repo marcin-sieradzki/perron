@@ -16,6 +16,8 @@ Judge from three inputs only, so the review is independent of how the build reas
 - **The diff**: `git diff $(git merge-base HEAD main)`, plus each untracked file `git status --short` lists. Read the code, the CSS, the stories and the registry entry it changes; leave commit messages and any notes from the build aside.
 - **The gate output**: what you see when you run the gates yourself.
 
+`components/<name>/pipeline.yaml` says whether the design is `deferred`. Its `unblocked` notes each mark a cap the maintainer cleared after fixing what stopped the loop: the round count starts again there by design, and the code is judged as it stands.
+
 The round is the one the prompt gives; without one, it is one more than the round in an existing `components/<name>/review.md`, or 1.
 
 Commands you run: `git diff`, `git status`, `git log`, `npm run check`, `npm run test:stories`, `npm run gates` (or `npm run gates -- <rule> <Name>`), `npm run storybook` in the background, Node scripts that drive Playwright against it, and the commands the audit skills give. For a Base UI part's API, ask `get_reference` (it reads the docs of the version pinned here).
@@ -42,6 +44,7 @@ Each audit skill reports in [`format.md`](../skills/design-qa/format.md), whose 
    - **A leaked Base UI name**: `onValueChange` or `onOpenChange` in the props type, or an import from outside `@base-ui/react/<component>`.
    - **A redeclared Base UI prop**: `<Name>Props` declaring again a member it would inherit from Base UI, such as `render`, so Perron's JSDoc replaces Base UI's. The spec's Props row for that member, reading `inherited` under Base UI prop, is the contract's [Props](../../docs/components/README.md#props) rule kept: the row documents the inherited member, and the `docs` gate needs it.
 5. **Owned strings and docs**: the [`content-audit`](../skills/content-audit/SKILL.md) skill on `<Name>`: its owned strings in all four locales, the words in its code, spec and stories, and every JSDoc comment on `<Name>Props`.
+6. **The spec against the code**: every row of the spec's Props, Base UI parts, Tokens, Keyboard and ARIA and Stories tables, every `CR-n` and the prose beside them, read against the code, the CSS and the stories, and against Base UI's own source under `node_modules/@base-ui/react/` where the line says what Base UI does (where focus goes, which reasons an event gives). Every round reads the whole spec, not only the lines the last fix touched, and reports every disagreement it finds in that round: each one left for a later round costs a build run. A fix that landed in the wrong section, or that one line now says and another still denies, is a finding at that line.
 
 ## Levels
 

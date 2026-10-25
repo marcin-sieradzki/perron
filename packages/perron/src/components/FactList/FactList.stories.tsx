@@ -9,6 +9,7 @@ import { expect, userEvent } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { dictionaries, type Locale } from '../../locale/index.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
+import { heard } from '../../testing/stories.ts'
 import { FactList, type FactListItem } from './FactList.tsx'
 
 /** Four facts about a bus, every one known. */
@@ -36,13 +37,6 @@ type Story = StoryObj<typeof FactList>
 
 /** The root FactList rendered inside `canvas`. */
 const rootIn = (canvas: HTMLElement) => canvas.querySelector<HTMLElement>('.pn-FactList')!
-
-/** What a screen reader reads of `element`: its text outside `aria-hidden`. */
-function heard(element: Element) {
-  const copy = element.cloneNode(true) as HTMLElement
-  for (const hidden of copy.querySelectorAll('[aria-hidden="true"]')) hidden.remove()
-  return copy.textContent!.replace(/\s+/g, ' ').trim()
-}
 
 /** What the ear hears of each fact, part by part, in reading order. */
 const heardInOrder = (root: HTMLElement) =>

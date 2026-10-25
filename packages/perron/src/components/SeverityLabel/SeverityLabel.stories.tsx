@@ -1,4 +1,3 @@
-import { createRoot } from 'react-dom/client'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, getRoles, isInaccessible, waitFor, within } from 'storybook/test'
@@ -6,6 +5,7 @@ import { PerronProvider } from '../../PerronProvider.tsx'
 import { dictionaries } from '../../locale/index.ts'
 import type { Locale, OwnedStringKey } from '../../locale/index.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
+import { mounted } from '../../testing/stories.ts'
 import { SeverityLabel } from './SeverityLabel.tsx'
 import type { SeverityLabelProps, SeverityLabelSeverity } from './SeverityLabel.tsx'
 
@@ -83,11 +83,7 @@ export const Delay: Story = {
     await reads('delay', 'delays')!(context)
     await context.step('delaysLabel="Late trains" shows and reads "Late trains"', async () => {
       const props: SeverityLabelProps = { severity: 'delay', delaysLabel: 'Late trains' }
-      const host = document.createElement('div')
-      context.canvasElement.append(host)
-      const root = createRoot(host)
-      root.render(<SeverityLabel {...props} />)
-      try {
+      await mounted(context.canvasElement, <SeverityLabel {...props} />, async (host) => {
         const label = await waitFor(() => within(host).getByText('Late trains'))
         await expect(label.closest('.pn-SeverityLabel')?.textContent).toBe('Late trains')
         await expect(within(host).queryByText('Delays')).toBeNull()
@@ -100,10 +96,7 @@ export const Delay: Story = {
           'da',
           ['Late trains'],
         )
-      } finally {
-        root.unmount()
-        host.remove()
-      }
+      })
     })
   },
 }
