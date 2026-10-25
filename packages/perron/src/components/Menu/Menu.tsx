@@ -488,10 +488,10 @@ export interface MenuRadioItemProps extends Inherited<
   /** Props for each inner part, merged with the part's own, which win. */
   slotProps?: {
     /**
-     * Props for the tick, such as `keepMounted`, all but `render`: the tick is always the
-     * `SelectedMark` part.
+     * Props for the tick, all but `keepMounted` and `render`: the tick shows only on the chosen
+     * item, and is always the `SelectedMark` part.
      */
-    radioItemIndicator?: Omit<BaseMenu.RadioItemIndicator.Props, 'render'>
+    radioItemIndicator?: Omit<BaseMenu.RadioItemIndicator.Props, 'keepMounted' | 'render'>
   }
 }
 
@@ -516,6 +516,7 @@ export function MenuRadioItem({
       <span className="pn-MenuRadioItem-label">{children}</span>
       <BaseMenu.RadioItemIndicator
         {...mergeProps<typeof BaseMenu.RadioItemIndicator>(slotProps?.radioItemIndicator, {
+          keepMounted: false,
           render: <SelectedMark />,
         })}
         className={withClass(

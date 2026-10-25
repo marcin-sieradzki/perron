@@ -204,8 +204,9 @@
 
 /* CR-13: forced colours drop the hover surface, so the highlighted row takes the system's and
    keeps it: left to adjust, the browser backs each line of text with Canvas, under which the
-   label's HighlightText vanishes. The chevron follows the row's ink there, and the box goes back to
-   the system's colours its own part gives it. A disabled row is GrayText. */
+   label's HighlightText vanishes. A selected row drops its hover layer in a rule of its own, since
+   the layer's selector outranks the row's. The chevron follows the row's ink there, and the box
+   goes back to the system's colours its own part gives it. A disabled row is GrayText. */
 @media (forced-colors: active) {
   :is(
       .pn-MenuItem,
@@ -220,7 +221,13 @@
     color: HighlightText;
   }
 
-  .pn-MenuSubmenu[data-highlighted] .pn-MenuSubmenu-chevron {
+  :is(.pn-MenuCheckboxItem, .pn-MenuRadioItem)[data-checked][data-highlighted]:not(
+      [data-disabled]
+    ) {
+    background-image: none;
+  }
+
+  .pn-MenuSubmenu[data-highlighted]:not([data-disabled]) .pn-MenuSubmenu-chevron {
     color: HighlightText;
   }
 
