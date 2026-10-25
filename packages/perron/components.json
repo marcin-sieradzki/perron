@@ -201,7 +201,7 @@
     "name": "SegmentedControl",
     "layer": "component",
     "category": "Inputs",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": ["ToggleGroup", "Toggle"],
     "penpotPath": "Components/SegmentedControl",
     "dependsOn": []

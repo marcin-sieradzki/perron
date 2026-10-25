@@ -3,6 +3,7 @@
 // the visual check drives them, and their play tests check them.
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, userEvent, within } from 'storybook/test'
+import { colour, onHover, rendered } from '../../testing/stories.ts'
 import { Toolbar, ToolbarButton, ToolbarGroup, ToolbarSeparator } from './Toolbar.tsx'
 
 /** `plus` from packages/perron/icons/. */
@@ -53,35 +54,6 @@ const Locate = () => (
 
 const onShowDepartures = fn()
 const onShowWholeLine = fn()
-
-/** The value a token renders as here, read from a probe that sets it on `property`. */
-function rendered(token: string, property = 'background-color') {
-  const probe = document.createElement('div')
-  probe.style.setProperty(property, `var(--perron-${token})`)
-  document.body.append(probe)
-  const value = getComputedStyle(probe).getPropertyValue(property)
-  probe.remove()
-  return value
-}
-
-/**
- * What the `(hover: hover)` rules set `property` to when `element` is hovered, as written. A
- * synthetic pointer doesn't reach `:hover`, so this reads the rule the real pointer would apply.
- */
-function onHover(element: Element, property: string) {
-  let value = ''
-  for (const sheet of Array.from(document.styleSheets))
-    for (const rule of Array.from(sheet.cssRules))
-      if (rule instanceof CSSMediaRule && rule.conditionText.includes('hover: hover'))
-        for (const inner of Array.from(rule.cssRules))
-          if (
-            inner instanceof CSSStyleRule &&
-            inner.selectorText.includes(':hover') &&
-            element.matches(inner.selectorText.replaceAll(':hover', ''))
-          )
-            value = inner.style.getPropertyValue(property) || value
-  return value
-}
 
 const mapControls = (
   <>
@@ -194,9 +166,7 @@ export const ButtonNeutralFocus: Story = {
     await expect(button).toHaveFocus()
     await expect(button.matches(':focus-visible')).toBe(true)
     await expect(getComputedStyle(button).outlineStyle).toBe('solid')
-    await expect(getComputedStyle(button).outlineColor).toBe(
-      rendered('color-border-focus', 'color'),
-    )
+    await expect(getComputedStyle(button).outlineColor).toBe(colour('--perron-color-border-focus'))
     await userEvent.tab({ shift: true })
     await expect(button).not.toHaveFocus()
   },
@@ -239,7 +209,7 @@ export const ButtonBrandHover: Story = {
     )
     await expect(onHover(button, 'border-color')).toBe('')
     await expect(getComputedStyle(button).borderTopColor).toBe(
-      rendered('color-border-brand', 'color'),
+      colour('--perron-color-border-brand'),
     )
   },
 }

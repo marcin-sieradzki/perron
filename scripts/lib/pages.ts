@@ -41,6 +41,7 @@ export const PAGES = [
   'docs/components/text.md',
   'docs/components/empty-state.md',
   'docs/components/filter-chip.md',
+  'docs/components/segmented-control.md',
   'docs/components/section.md',
   'docs/components/surface.md',
   'docs/components/attribution.md',
