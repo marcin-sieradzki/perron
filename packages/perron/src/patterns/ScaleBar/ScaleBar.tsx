@@ -56,6 +56,9 @@ export interface ScaleBarProps extends Omit<ComponentPropsWithRef<'div'>, 'child
 /** U+2014, the dash content design writes for unknown. */
 const DASH = '—'
 
+/** U+00A0, the no-break space between a figure and its unit, so the two never wrap apart (CR-6). */
+const NBSP = '\u00a0'
+
 /**
  * The map's scale: a short bar on glass with the ground distance its length spans written above
  * it, picked from the map's resolution and rounded to 1, 2, 3 or 5 times a power of ten.
@@ -111,7 +114,7 @@ export function ScaleBar({
           reading && (
             <>
               {reading.figure}
-              {' '}
+              {NBSP}
               {reading.unit === 'meters' ? strings.metersUnit : strings.kilometersUnit}
             </>
           )
