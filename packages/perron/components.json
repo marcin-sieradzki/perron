@@ -649,7 +649,7 @@
     "name": "Alert",
     "layer": "component",
     "category": "Feedback",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/Alert",
     "dependsOn": []

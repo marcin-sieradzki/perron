@@ -31,10 +31,12 @@
   letter-spacing: var(--perron-typography-label-tracking);
   overflow-wrap: anywhere;
   text-align: center;
+  cursor: pointer;
   --perron-icon-size: var(--perron-icon-size-400);
 }
 
-/* Hover and the press lay the hover layer over the glass, never on a disabled chip (CR-6). */
+/* Hover lays the hover layer over the glass and the press a denser one, never on a disabled chip
+   (CR-6). */
 @media (hover: hover) {
   .pn-HighlightChip:not([data-disabled]):hover {
     background-image: linear-gradient(
@@ -46,8 +48,8 @@
 
 .pn-HighlightChip:not([data-disabled]):active {
   background-image: linear-gradient(
-    var(--perron-color-surface-hover),
-    var(--perron-color-surface-hover)
+    var(--perron-color-surface-selected),
+    var(--perron-color-surface-selected)
   );
 }
 
@@ -67,7 +69,7 @@
 }
 
 .pn-HighlightChip[data-pressed]:not([data-disabled]):active {
-  background-color: var(--perron-color-surface-inverse-hover);
+  background-color: var(--perron-color-surface-inverse-pressed);
   background-image: none;
 }
 
@@ -76,6 +78,7 @@
 .pn-HighlightChip[data-disabled] {
   background-image: none;
   color: var(--perron-color-text-tertiary);
+  cursor: default;
 }
 
 .pn-HighlightChip[data-pressed][data-disabled] {

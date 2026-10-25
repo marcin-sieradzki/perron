@@ -2,6 +2,7 @@
 import { createElement, type CSSProperties, type ReactNode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { expect, screen, userEvent, waitFor, within } from 'storybook/test'
+import { holds, isPaint } from './pointer.ts'
 
 /** An icon file from packages/perron/icons, as its `?raw` text, inline, sized by `.perron-icon`. */
 export const icon = (svg: string) =>
@@ -33,10 +34,13 @@ export function heard(element: Element) {
 
 /**
  * The value a token renders as here, read from a probe that sets it on `property`. A colour read
- * as `color` is `colour`'s.
+ * as `color` is `colour`'s. The probe's border and outline are solid, so a width read as
+ * `border-width` or `outline-width` shows rather than computing to `0px`.
  */
 export function rendered(token: string, property: string) {
   const probe = document.createElement('div')
+  probe.style.borderStyle = 'solid'
+  probe.style.outlineStyle = 'solid'
   probe.style.setProperty(property, `var(--perron-${token})`)
   document.body.append(probe)
   const value = getComputedStyle(probe).getPropertyValue(property)
@@ -75,7 +79,7 @@ export const withoutState = (selector: string, pseudo: string) =>
   selector.replaceAll(pseudo, ':is(*)')
 
 /** The query of the rules that reset a state for forced colours, which a story never renders in. */
-const FORCED_COLORS = 'forced-colors: active'
+const FORCED_COLORS = '(forced-colors: active)'
 
 /** A rule as `stateRulesIn` reads it: a media rule's query and rules, or a style rule. */
 export interface SheetRule {
@@ -104,8 +108,8 @@ export function stateRulesIn(
   const visit = (rules: ArrayLike<SheetRule>, inQuery: boolean) => {
     for (const rule of Array.from(rules))
       if (rule.conditionText !== undefined && rule.cssRules) {
-        if (!rule.conditionText.includes(FORCED_COLORS))
-          visit(rule.cssRules, inQuery || rule.conditionText.includes('(hover: hover)'))
+        if (!holds(rule.conditionText, FORCED_COLORS))
+          visit(rule.cssRules, inQuery || holds(rule.conditionText, '(hover: hover)'))
       } else if (
         rule.selectorText !== undefined &&
         rule.style &&
@@ -135,20 +139,20 @@ export const stateRules = (
   )
 
 /**
- * Whether `element` has a `(hover: hover)` rule and an `:active` rule that set its background, a
- * colour or a layer, and the last `:active` one, outside the query, comes after the last hover one in source order. The
- * contract's selectors make the two as specific, so the later one wins while a mouse presses, and a
- * press written first shows the hover fill.
+ * Whether `element` has a `(hover: hover)` rule and an `:active` rule that paint it, as the
+ * pointer-feedback check reads paint (pointer.ts), and the last `:active` one, outside the query,
+ * comes after the last hover one in source order. Forced colours' rules are left out, as they
+ * replace both. The contract's selectors make the two as specific, so the later one wins while a
+ * mouse presses, and a press written first shows the hover look.
  */
 export function pressedAfterHover(element: Element) {
   let [index, hover, active] = [0, -1, -1]
-  const paints = (style: CSSStyleDeclaration) =>
-    style.getPropertyValue('background-color') || style.getPropertyValue('background-image')
+  const paints = (style: CSSStyleDeclaration) => Array.from(style).some(isPaint)
   const visit = (rules: CSSRuleList, inQuery: boolean) => {
     for (const rule of Array.from(rules))
       if (rule instanceof CSSMediaRule) {
-        if (!rule.conditionText.includes(FORCED_COLORS))
-          visit(rule.cssRules, inQuery || rule.conditionText.includes('(hover: hover)'))
+        if (!holds(rule.conditionText, FORCED_COLORS))
+          visit(rule.cssRules, inQuery || holds(rule.conditionText, '(hover: hover)'))
       } else if (rule instanceof CSSGroupingRule && !(rule instanceof CSSStyleRule))
         visit(rule.cssRules, inQuery)
       else if (rule instanceof CSSStyleRule && paints(rule.style)) {
@@ -180,7 +184,7 @@ export function onHover(element: Element, property: string) {
   let value = ''
   for (const sheet of Array.from(document.styleSheets))
     for (const rule of Array.from(sheet.cssRules))
-      if (rule instanceof CSSMediaRule && rule.conditionText.includes('hover: hover'))
+      if (rule instanceof CSSMediaRule && holds(rule.conditionText, '(hover: hover)'))
         for (const inner of Array.from(rule.cssRules))
           if (
             inner instanceof CSSStyleRule &&

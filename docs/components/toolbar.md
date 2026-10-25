@@ -59,9 +59,9 @@ The caller names the toolbar with `aria-label` or `aria-labelledby`, which reach
 
 ### ToolbarButton
 
-`ToolbarButton` has one size, no `size` or `variant` prop, and a quiet neutral look: `size.control` tall and at least as wide, transparent at rest in `color.text.primary`, `color.surface.hover` on hover and press, as the toolbar's glass already marks the bar. `size.control` is the height of icon buttons and filter chips, so a toolbar of icon buttons matches the IconButtons beside it.
+`ToolbarButton` has one size, no `size` or `variant` prop, and a quiet neutral look: `size.control` tall and at least as wide, transparent at rest in `color.text.primary`, `color.surface.hover` on hover and `color.surface.selected` while pressed, as the toolbar's glass already marks the bar. `size.control` is the height of icon buttons and filter chips, so a toolbar of icon buttons matches the IconButtons beside it.
 
-`ToolbarButton`'s `color` offers `'neutral' | 'brand'`, the contract's two intents for a toolbar's buttons, with `brand` drawn as a solid brand button (`color.surface.brand` with a `color.border.brand` edge and `color.text.on-color.dark`, `color.surface.brand-hover` on hover and press).
+`ToolbarButton`'s `color` offers `'neutral' | 'brand'`, the contract's two intents for a toolbar's buttons, with `brand` drawn as a solid brand button (`color.surface.brand` with a `color.border.brand` edge and `color.text.on-color.dark`, `color.surface.brand-hover` on hover and `color.surface.brand-pressed` while pressed).
 
 A `ToolbarButton` with a `startIcon` and no `children` is an icon-only button: square (`size.control` both ways, no inline padding), marked `data-icon-only`, and named by the caller's `aria-label`, which its JSDoc requires. The map's zoom and locate controls are icons alone, and the `props` check would not read a union type that enforces the label.
 
@@ -106,21 +106,23 @@ The toolbar's root takes the Popups' glass (`color.surface.overlay`, a `backdrop
 
 The toolbar, its group and its separator:
 
-| Part                    | State | Property              | Token                                                  |
-| ----------------------- | ----- | --------------------- | ------------------------------------------------------ |
-| `root`                  | rest  | `background-color`    | `color.surface.overlay`                                |
-| `root`                  | rest  | `backdrop-filter`     | `effect.glass-blur` (blur) and `effect.glass-saturate` |
-| `root`                  | rest  | `box-shadow`          | `shadow.panel`                                         |
-| `root`                  | rest  | `border-width`        | `border.width.025`                                     |
-| `root`                  | rest  | `border-color`        | `color.border.subtle`                                  |
-| `root`                  | rest  | `border-radius`       | `radius.lg`                                            |
-| `root`                  | rest  | `padding`             | `space.100`                                            |
-| `root`                  | rest  | `gap`                 | `space.100`                                            |
-| `group`                 | rest  | `gap`                 | `space.100`                                            |
-| `separator`, vertical   | rest  | `border-inline-start` | `border.width.025` in `color.border.subtle`            |
-| `separator`, vertical   | rest  | `margin-block`        | `space.100`                                            |
-| `separator`, horizontal | rest  | `border-block-start`  | `border.width.025` in `color.border.subtle`            |
-| `separator`, horizontal | rest  | `margin-inline`       | `space.100`                                            |
+| Part                    | State    | Property              | Token                                                  |
+| ----------------------- | -------- | --------------------- | ------------------------------------------------------ |
+| `button`                | rest     | `cursor`              | none: the keyword `pointer`                            |
+| `button`                | disabled | `cursor`              | none: the keyword `default`                            |
+| `root`                  | rest     | `background-color`    | `color.surface.overlay`                                |
+| `root`                  | rest     | `backdrop-filter`     | `effect.glass-blur` (blur) and `effect.glass-saturate` |
+| `root`                  | rest     | `box-shadow`          | `shadow.panel`                                         |
+| `root`                  | rest     | `border-width`        | `border.width.025`                                     |
+| `root`                  | rest     | `border-color`        | `color.border.subtle`                                  |
+| `root`                  | rest     | `border-radius`       | `radius.lg`                                            |
+| `root`                  | rest     | `padding`             | `space.100`                                            |
+| `root`                  | rest     | `gap`                 | `space.100`                                            |
+| `group`                 | rest     | `gap`                 | `space.100`                                            |
+| `separator`, vertical   | rest     | `border-inline-start` | `border.width.025` in `color.border.subtle`            |
+| `separator`, vertical   | rest     | `margin-block`        | `space.100`                                            |
+| `separator`, horizontal | rest     | `border-block-start`  | `border.width.025` in `color.border.subtle`            |
+| `separator`, horizontal | rest     | `margin-inline`       | `space.100`                                            |
 
 `ToolbarButton`, every colour:
 
@@ -137,28 +139,28 @@ The toolbar, its group and its separator:
 
 `ToolbarButton`, `neutral`:
 
-| Part     | State    | Property           | Token                 |
-| -------- | -------- | ------------------ | --------------------- |
-| `button` | rest     | `background-color` | `transparent`         |
-| `button` | rest     | `border-color`     | `transparent`         |
-| `button` | rest     | `color`            | `color.text.primary`  |
-| `button` | hover    | `background-color` | `color.surface.hover` |
-| `button` | pressed  | `background-color` | `color.surface.hover` |
-| `button` | disabled | `background-color` | `transparent`         |
-| `button` | disabled | `color`            | `color.text.tertiary` |
+| Part     | State    | Property           | Token                    |
+| -------- | -------- | ------------------ | ------------------------ |
+| `button` | rest     | `background-color` | `transparent`            |
+| `button` | rest     | `border-color`     | `transparent`            |
+| `button` | rest     | `color`            | `color.text.primary`     |
+| `button` | hover    | `background-color` | `color.surface.hover`    |
+| `button` | pressed  | `background-color` | `color.surface.selected` |
+| `button` | disabled | `background-color` | `transparent`            |
+| `button` | disabled | `color`            | `color.text.tertiary`    |
 
 `ToolbarButton`, `brand`:
 
-| Part     | State    | Property           | Token                       |
-| -------- | -------- | ------------------ | --------------------------- |
-| `button` | rest     | `background-color` | `color.surface.brand`       |
-| `button` | rest     | `border-color`     | `color.border.brand`        |
-| `button` | rest     | `color`            | `color.text.on-color.dark`  |
-| `button` | hover    | `background-color` | `color.surface.brand-hover` |
-| `button` | pressed  | `background-color` | `color.surface.brand-hover` |
-| `button` | disabled | `background-color` | `color.surface.inset`       |
-| `button` | disabled | `border-color`     | `transparent`               |
-| `button` | disabled | `color`            | `color.text.tertiary`       |
+| Part     | State    | Property           | Token                         |
+| -------- | -------- | ------------------ | ----------------------------- |
+| `button` | rest     | `background-color` | `color.surface.brand`         |
+| `button` | rest     | `border-color`     | `color.border.brand`          |
+| `button` | rest     | `color`            | `color.text.on-color.dark`    |
+| `button` | hover    | `background-color` | `color.surface.brand-hover`   |
+| `button` | pressed  | `background-color` | `color.surface.brand-pressed` |
+| `button` | disabled | `background-color` | `color.surface.inset`         |
+| `button` | disabled | `border-color`     | `transparent`                 |
+| `button` | disabled | `color`            | `color.text.tertiary`         |
 
 A disabled brand button looks like a disabled neutral one on a fill, `color.surface.inset` with `color.text.tertiary` and no edge: disabled is a colour, and a yellow that can't be pressed shouldn't still mark the main action.
 
@@ -211,7 +213,7 @@ Rules for this component alone, numbered so the build and the review can cite th
 - **CR-3.** Each of the four takes `{...rest}` before its own attributes and its own props out of `rest` first (`orientation`, `disabled`, `color`, `startIcon`, `endIcon`; an inherited Base UI prop such as `loopFocus` stays in `rest`, keeping Base UI's default), and merges `className` after its own `pn-` class; `ref` reaches its one element.
 - **CR-4.** `ToolbarButton`'s root always carries `data-color`, default included, and `data-icon-only` when it has a `startIcon` and no `children`; the CSS selects on them, one class then attributes: `.pn-ToolbarButton[data-color='brand']`. The toolbar's layout reads Base UI's `data-orientation`: `.pn-Toolbar[data-orientation='vertical']` is a column.
 - **CR-5.** The states keep the button's geometry: hover, pressed, focus and disabled change colours only, never the height, padding, gap, border width or radius. Every button draws a `border.width.025` border, `transparent` on a neutral button and a disabled brand one, so both colours share one size and Windows' forced colours draw an edge round each.
-- **CR-6.** Hover is read inside `@media (hover: hover)`; pressed (`:active`) takes the hover tokens in a rule outside it, so a touch press shows. Neither applies to a disabled button: both rules exclude `[data-disabled]`, since a button focusable when disabled has no native `disabled` and still matches `:hover` and `:active`.
+- **CR-6.** Hover is read inside `@media (hover: hover)`; pressed (`:active`) takes the pressed tokens, a step past hover, in a rule after it and outside it, so a touch press shows. Neither applies to a disabled button: both rules exclude `[data-disabled]`, since a button focusable when disabled has no native `disabled` and still matches `:hover` and `:active`.
 - **CR-7.** Focus uses the ring `perron.css` draws on `:focus-visible`; the component draws no ring of its own and never removes the outline. The root's `space.100` padding and gap leave the ring, `focus.offset` plus `focus.width` out, inside the bar.
 - **CR-8.** The colour is set on the button's `color`; the label and the icons take it through `currentColor`. No rule sets a colour on an icon. The icon spans are `aria-hidden="true"`, rendered only when their prop is given, and set `--perron-icon-size` to `icon.size.400`.
 - **CR-9.** A button's label stays on one line (`white-space: nowrap`), the button growing with it, rather than wrapping inside the fixed `size.control` height.

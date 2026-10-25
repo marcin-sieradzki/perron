@@ -1,4 +1,63 @@
 {
+  "Alert": {
+    "extends": [
+      "Omit< useRender.ComponentProps<'div'>, 'title' | 'children' | 'color' | 'onClose' >"
+    ],
+    "props": {
+      "action": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "closeLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "color": {
+        "optional": true,
+        "type": [
+          "\"danger\"",
+          "\"info\"",
+          "\"neutral\"",
+          "\"success\"",
+          "\"warning\""
+        ]
+      },
+      "icon": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "onClose": {
+        "optional": true,
+        "type": [
+          "(event: MouseEvent, reason: \"close-press\", details: AlertCloseDetails) => void"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ icon?: ComponentProps<\"div\", {}, HTMLProps> | undefined; content?: ComponentProps<\"div\", {}, HTMLProps> | undefined; title?: ComponentProps<\"p\", {}, HTMLProps> | undefined; description?: ComponentProps<\"div\", {}, HTMLProps> | undefined; action?: ComponentProps<\"div\", {}, HTMLProps> | undefined; close?: Omit<DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>, \"children\" | \"disabled\"> | undefined; }"
+        ]
+      },
+      "title": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      }
+    }
+  },
   "AlertDialog": {
     "extends": [
       "Omit< BaseAlertDialog.Popup.Props, 'children' | 'title' | 'className' | 'style' | 'ref' >"

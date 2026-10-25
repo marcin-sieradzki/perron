@@ -55,50 +55,52 @@ No `slotProps`: IconButton has one Base UI part, `Button`, which is the root, an
 
 One row per part, state and property. States are the contract's design states; the deferred design's `State` values map as Button's do: `default` is rest, `hover` is `:hover` inside `@media (hover: hover)`, `focus` is `:focus-visible`, `disabled` is `[data-disabled]`; pressed, which the design doesn't draw, is `:active`. Every `color` row sets the root's `color`, which the icon takes through `currentColor`.
 
-IconButton has no `variant` prop and one look per colour, as Toolbar's icon-only buttons have: `neutral` quiet (transparent at rest in `color.text.primary`, `color.surface.hover` on hover and press), `brand` a solid brand button (`color.surface.brand` with a `color.border.brand` edge and `color.text.on-color.dark`, `color.surface.brand-hover` on hover and press). Icon buttons sit on panels, sheets and the top bar's glass, which already mark where they are; the brand is calm, with ink and neutral surfaces around the map; MUI's IconButton has no `variant` either; and a toolbar of icon buttons then matches the IconButtons beside it.
+IconButton has no `variant` prop and one look per colour, as Toolbar's icon-only buttons have: `neutral` quiet (transparent at rest in `color.text.primary`, `color.surface.hover` on hover and `color.surface.selected` while pressed), `brand` a solid brand button (`color.surface.brand` with a `color.border.brand` edge and `color.text.on-color.dark`, `color.surface.brand-hover` on hover and `color.surface.brand-pressed` while pressed). Icon buttons sit on panels, sheets and the top bar's glass, which already mark where they are; the brand is calm, with ink and neutral surfaces around the map; MUI's IconButton has no `variant` either; and a toolbar of icon buttons then matches the IconButtons beside it.
 
 IconButton leaves out a toggled ("pressed") state, `aria-pressed` and the `color.surface.inverse` fill whose description names "pressed icon buttons", leaving an icon that turns something on and off to a component on Base UI's `Toggle`. IconButton's one Base UI part is `Button`, which keeps no pressed state; [Accessibility](../foundations/accessibility.md#rules) wants a toggle's state said in words as well as looks, which a label-only button can't show; and FilterChip and HighlightChip, on `Toggle`, are the roadmap's toggles.
 
 Every colour and size:
 
-| Part        | State | Property                    | Token                                                                                                                                     |
-| ----------- | ----- | --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| `root`      | rest  | `width`, `height`           | `size.control`                                                                                                                            |
-| `root`      | rest  | `padding`                   | 0                                                                                                                                         |
-| `root`      | rest  | `border-radius`             | `radius.md`                                                                                                                               |
-| `root`      | rest  | `border-width`              | `border.width.025`                                                                                                                        |
-| `root`      | rest  | `--perron-icon-size`        | `icon.size.400` when `size` is `medium`, `icon.size.450` when `large`, inherited by the icon                                              |
-| `root`      | focus | `outline`, `outline-offset` | `focus.width` in `color.border.focus`, `focus.offset` (drawn by `perron.css`)                                                             |
-| `focusRing` | focus | ring corner radius          | `radius.lg`, as Button's: the outline follows the root's `radius.md` out by `focus.offset` plus `focus.width`, and the CSS sets no radius |
+| Part        | State    | Property                    | Token                                                                                                                                     |
+| ----------- | -------- | --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `root`      | rest     | `cursor`                    | none: the keyword `pointer`                                                                                                               |
+| `root`      | disabled | `cursor`                    | none: the keyword `default`                                                                                                               |
+| `root`      | rest     | `width`, `height`           | `size.control`                                                                                                                            |
+| `root`      | rest     | `padding`                   | 0                                                                                                                                         |
+| `root`      | rest     | `border-radius`             | `radius.md`                                                                                                                               |
+| `root`      | rest     | `border-width`              | `border.width.025`                                                                                                                        |
+| `root`      | rest     | `--perron-icon-size`        | `icon.size.400` when `size` is `medium`, `icon.size.450` when `large`, inherited by the icon                                              |
+| `root`      | focus    | `outline`, `outline-offset` | `focus.width` in `color.border.focus`, `focus.offset` (drawn by `perron.css`)                                                             |
+| `focusRing` | focus    | ring corner radius          | `radius.lg`, as Button's: the outline follows the root's `radius.md` out by `focus.offset` plus `focus.width`, and the CSS sets no radius |
 
 `neutral`:
 
-| Part   | State    | Property           | Token                 |
-| ------ | -------- | ------------------ | --------------------- |
-| `root` | rest     | `background-color` | `transparent`         |
-| `root` | rest     | `border-color`     | `transparent`         |
-| `root` | rest     | `color`            | `color.text.primary`  |
-| `root` | hover    | `background-color` | `color.surface.hover` |
-| `root` | pressed  | `background-color` | `color.surface.hover` |
-| `root` | disabled | `background-color` | `transparent`         |
-| `root` | disabled | `color`            | `color.text.tertiary` |
+| Part   | State    | Property           | Token                    |
+| ------ | -------- | ------------------ | ------------------------ |
+| `root` | rest     | `background-color` | `transparent`            |
+| `root` | rest     | `border-color`     | `transparent`            |
+| `root` | rest     | `color`            | `color.text.primary`     |
+| `root` | hover    | `background-color` | `color.surface.hover`    |
+| `root` | pressed  | `background-color` | `color.surface.selected` |
+| `root` | disabled | `background-color` | `transparent`            |
+| `root` | disabled | `color`            | `color.text.tertiary`    |
 
 `brand`:
 
-| Part   | State    | Property           | Token                       |
-| ------ | -------- | ------------------ | --------------------------- |
-| `root` | rest     | `background-color` | `color.surface.brand`       |
-| `root` | rest     | `border-color`     | `color.border.brand`        |
-| `root` | rest     | `color`            | `color.text.on-color.dark`  |
-| `root` | hover    | `background-color` | `color.surface.brand-hover` |
-| `root` | pressed  | `background-color` | `color.surface.brand-hover` |
-| `root` | disabled | `background-color` | `color.surface.inset`       |
-| `root` | disabled | `border-color`     | `transparent`               |
-| `root` | disabled | `color`            | `color.text.tertiary`       |
+| Part   | State    | Property           | Token                         |
+| ------ | -------- | ------------------ | ----------------------------- |
+| `root` | rest     | `background-color` | `color.surface.brand`         |
+| `root` | rest     | `border-color`     | `color.border.brand`          |
+| `root` | rest     | `color`            | `color.text.on-color.dark`    |
+| `root` | hover    | `background-color` | `color.surface.brand-hover`   |
+| `root` | pressed  | `background-color` | `color.surface.brand-pressed` |
+| `root` | disabled | `background-color` | `color.surface.inset`         |
+| `root` | disabled | `border-color`     | `transparent`                 |
+| `root` | disabled | `color`            | `color.text.tertiary`         |
 
 A disabled brand icon button looks like Button's disabled solid one, `color.surface.inset` with `color.text.tertiary` and no edge: disabled is a colour, and a yellow that can't be pressed shouldn't still mark the main action.
 
-Pressed takes the hover row's tokens, in a rule outside `@media (hover: hover)` so a press on a touch screen shows, as on Button: no token is made for a pressed fill.
+Pressed is a step past hover, Button's pressed tokens, in a rule outside `@media (hover: hover)` so a press on a touch screen shows, as the contract's [Pointer feedback](README.md#pointer-feedback) asks. The cursor is `pointer`, and `default` while disabled.
 
 Highlighted, open, selected and invalid don't apply: Base UI's `Button` produces only `data-disabled`, a button takes focus rather than `data-highlighted`, a popup trigger given through `render` keeps the button's look while its popup is open, and an icon button holds no choice or value.
 
@@ -142,7 +144,7 @@ Rules for this component alone, numbered so the build and the review can cite th
 - **CR-2.** The root always carries `data-color` and `data-size`, defaults included; the CSS selects on them, one class then attributes: `.pn-IconButton[data-color='brand']`, `.pn-IconButton[data-size='large']`.
 - **CR-3.** The root is a `size.control` square in both sizes, with no padding, and centres the icon (`display: inline-flex`, `align-items` and `justify-content` `center`, `flex: none` so a flex row never squeezes it). The icon span is at most the square and clips what overflows it, so a long string stays inside the square and the root's ring and label are untouched. `size` changes only the icon's step.
 - **CR-4.** The states keep the geometry: hover, pressed, focus and disabled change colours only, never the size, border width or radius. Both colours draw a `border.width.025` border, `transparent` on `neutral` and on a disabled `brand`, so the two share one box and Windows' forced colours draw an edge round every icon button.
-- **CR-5.** Hover is read inside `@media (hover: hover)`; pressed (`:active`) takes the hover tokens in a rule outside it, so a touch press shows. Neither applies to a disabled button: both rules exclude `[data-disabled]`, since a native disabled button still matches `:hover`, and one with `focusableWhenDisabled` still matches `:active`.
+- **CR-5.** Hover is read inside `@media (hover: hover)`; pressed (`:active`) takes the pressed tokens, a step past hover, in a rule after it and outside it, so a touch press shows. Neither applies to a disabled button: both rules exclude `[data-disabled]`, since a native disabled button still matches `:hover`, and one with `focusableWhenDisabled` still matches `:active`.
 - **CR-6.** Focus uses the ring `perron.css` draws on `:focus-visible`; the component draws no ring of its own and never removes the outline. The focus state otherwise looks like rest.
 - **CR-7.** The colour is set on the root's `color`; the icon takes it through `currentColor`. No rule sets a colour on the icon.
 - **CR-8.** The icon span is `aria-hidden="true"`, and the root sets `--perron-icon-size`, which the icon inherits: `icon.size.400` for `medium`, `icon.size.450` for `large`, on `.pn-IconButton` and `.pn-IconButton[data-size='large']` with no descendant selector, so an icon from `packages/perron/icons/` renders at the step its grid was drawn for.

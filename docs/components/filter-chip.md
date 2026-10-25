@@ -69,7 +69,7 @@ One row per part, state and property. States are the contract's design states; t
 
 The selected design state is read from Toggle's `[data-pressed]`, the momentary press from `:active` alone, and FilterChip sets no `data-selected` of its own: on Base UI's Toggle `data-pressed` means "on", not the press the contract's [Design states](README.md#design-states) table files it under, Base UI sets it in both controlled and uncontrolled use where a `data-selected` of Perron's would need the state FilterChip doesn't keep when uncontrolled, and the selector stays one class then an attribute, `.pn-FilterChip[data-pressed]`.
 
-The chip takes Button's two neutral treatments on a pill: off, Button's `outline` (transparent, a `border.width.025` edge in `color.border.control`, `color.text.primary`, `color.surface.hover` on hover and press); on, Button's `solid` (`color.surface.inverse` with `color.text.inverse`, `color.surface.inverse-hover` on hover and press); disabled, Button's disabled outline when off and disabled solid when on. [Elevation](../foundations/elevation.md#surfaces) gives `color.surface.inverse` to pressed toggles, `color.border.control` is the edge "that shows where a control is" and reaches 3:1 where an off chip on the top bar's glass would otherwise not show at all, and borrowing Button's rows keeps one ink language across the library.
+The chip takes Button's two neutral treatments on a pill: off, Button's `outline` (transparent, a `border.width.025` edge in `color.border.control`, `color.text.primary`, `color.surface.hover` on hover and `color.surface.selected` while pressed); on, Button's `solid` (`color.surface.inverse` with `color.text.inverse`, `color.surface.inverse-hover` on hover and `color.surface.inverse-pressed` while pressed); disabled, Button's disabled outline when off and disabled solid when on. [Elevation](../foundations/elevation.md#surfaces) gives `color.surface.inverse` to pressed toggles, `color.border.control` is the edge "that shows where a control is" and reaches 3:1 where an off chip on the top bar's glass would otherwise not show at all, and borrowing Button's rows keeps one ink language across the library.
 
 The chip's icon is `icon.size.325`: [Icons](../foundations/icons.md#sizes) gives it to icons "inline with label and caption text: the disruption icons", the icons a filter of disruption kinds shows, drawn on that grid, and an icon is never scaled off its grid; a chip with a 16 px control icon is a later `size` or a new drawing.
 
@@ -79,6 +79,8 @@ All states:
 
 | Part                 | State    | Property                    | Token                                                                                                                       |
 | -------------------- | -------- | --------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `root`               | rest     | `cursor`                    | none: the keyword `pointer`                                                                                                 |
+| `root`               | disabled | `cursor`                    | none: the keyword `default`                                                                                                 |
 | `root`               | rest     | `block-size`                | `size.control`                                                                                                              |
 | `root`               | rest     | `padding-inline`            | `space.300`                                                                                                                 |
 | `root`               | rest     | `gap`                       | `space.150`                                                                                                                 |
@@ -91,29 +93,29 @@ All states:
 
 Off (no `data-pressed`):
 
-| Part   | State    | Property           | Token                  |
-| ------ | -------- | ------------------ | ---------------------- |
-| `root` | rest     | `background-color` | `transparent`          |
-| `root` | rest     | `border-color`     | `color.border.control` |
-| `root` | rest     | `color`            | `color.text.primary`   |
-| `root` | hover    | `background-color` | `color.surface.hover`  |
-| `root` | pressed  | `background-color` | `color.surface.hover`  |
-| `root` | disabled | `background-color` | `transparent`          |
-| `root` | disabled | `border-color`     | `color.border.subtle`  |
-| `root` | disabled | `color`            | `color.text.tertiary`  |
+| Part   | State    | Property           | Token                    |
+| ------ | -------- | ------------------ | ------------------------ |
+| `root` | rest     | `background-color` | `transparent`            |
+| `root` | rest     | `border-color`     | `color.border.control`   |
+| `root` | rest     | `color`            | `color.text.primary`     |
+| `root` | hover    | `background-color` | `color.surface.hover`    |
+| `root` | pressed  | `background-color` | `color.surface.selected` |
+| `root` | disabled | `background-color` | `transparent`            |
+| `root` | disabled | `border-color`     | `color.border.subtle`    |
+| `root` | disabled | `color`            | `color.text.tertiary`    |
 
 On (`data-pressed`, the selected design state):
 
-| Part   | State              | Property           | Token                         |
-| ------ | ------------------ | ------------------ | ----------------------------- |
-| `root` | selected           | `background-color` | `color.surface.inverse`       |
-| `root` | selected           | `border-color`     | `transparent`                 |
-| `root` | selected           | `color`            | `color.text.inverse`          |
-| `root` | selected, hover    | `background-color` | `color.surface.inverse-hover` |
-| `root` | selected, pressed  | `background-color` | `color.surface.inverse-hover` |
-| `root` | selected, disabled | `background-color` | `color.surface.inset`         |
-| `root` | selected, disabled | `border-color`     | `transparent`                 |
-| `root` | selected, disabled | `color`            | `color.text.tertiary`         |
+| Part   | State              | Property           | Token                           |
+| ------ | ------------------ | ------------------ | ------------------------------- |
+| `root` | selected           | `background-color` | `color.surface.inverse`         |
+| `root` | selected           | `border-color`     | `transparent`                   |
+| `root` | selected           | `color`            | `color.text.inverse`            |
+| `root` | selected, hover    | `background-color` | `color.surface.inverse-hover`   |
+| `root` | selected, pressed  | `background-color` | `color.surface.inverse-pressed` |
+| `root` | selected, disabled | `background-color` | `color.surface.inset`           |
+| `root` | selected, disabled | `border-color`     | `transparent`                   |
+| `root` | selected, disabled | `color`            | `color.text.tertiary`           |
 
 Forced colours, inside `@media (forced-colors: active)`:
 
@@ -175,7 +177,7 @@ Rules for this component alone, numbered so the build and the review can cite th
 - **CR-3.** It takes `{...rest}` before its own attributes and its own props out of `rest` first (`selected`, `defaultSelected`, `onChange`, `disabled`, `startIcon`, `count`, `children`; an inherited Base UI prop such as `nativeButton` stays in `rest`, keeping Base UI's default), and merges `className` after `pn-FilterChip`; `ref` reaches the root.
 - **CR-4.** The selected look reads Base UI's attribute, `.pn-FilterChip[data-pressed]`, and the momentary press `:active`; FilterChip sets no `data-selected`, `data-variant`, `data-color` or `data-size`, having none of those props.
 - **CR-5.** The states keep the chip's geometry: hover, pressed, focus, selected and disabled change colours only, never the height, padding, gap, border width, radius, typography or weight, so turning a filter on never moves its neighbours. Every state draws the `border.width.025` border, `transparent` when selected, so on and off share one box. In Windows' forced colours an off chip's border takes the system's edge, while a selected one, which keeps its `transparent` border under `forced-color-adjust: none`, shows by its fill (CR-11). The selected state is the fill alone: no tick or other mark appears before the label.
-- **CR-6.** Hover is read inside `@media (hover: hover)`; pressed (`:active`) takes the hover tokens of the chip's state, off or on, in a rule outside it, so a touch press shows. Neither applies to a disabled chip: both rules exclude `[data-disabled]`, since a native disabled button still matches `:hover`.
+- **CR-6.** Hover is read inside `@media (hover: hover)`; pressed (`:active`) takes the pressed tokens of the chip's state, off or on, a step past hover, in a rule after it and outside it, so a touch press shows. Neither applies to a disabled chip: both rules exclude `[data-disabled]`, since a native disabled button still matches `:hover`.
 - **CR-7.** Focus uses the ring `perron.css` draws on `:focus-visible`; the component draws no ring of its own and never removes the outline.
 - **CR-8.** The colour is set on the root's `color`; the label and the icon take it through `currentColor`, and no rule sets a colour on an icon. The icon span is `aria-hidden="true"`, rendered only when `startIcon` is given, and sets `--perron-icon-size` to `icon.size.325`.
 - **CR-9.** The count is a [Count](count.md) with its default `color`, given `className="pn-FilterChip-count"`, rendered only when `count` is a finite number, `0` included, after the label with a space between in the markup, not only the CSS gap, so the chip's name is "Delays 3", which a `play` test checks. `.pn-FilterChip[data-disabled] .pn-FilterChip-count` sets its `color` to `color.text.tertiary`; besides it, only CR-11's forced-colours rules reach inside the Count, setting its `forced-color-adjust`, `color` and `outline-color`. `Count` joins FilterChip's `dependsOn` in `packages/perron/components.json`, and `npm run registry` runs after.
