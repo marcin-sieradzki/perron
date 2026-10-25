@@ -1,0 +1,33 @@
+/* The little layout some previews draw round their component, as the spec's stories do: a marker
+   beside its stop's name, a separator between two lines, a list of departures. Tokens only. */
+
+.preview-row {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--perron-space-200);
+  color: var(--perron-color-text-primary);
+}
+
+.preview-row-wide {
+  gap: var(--perron-space-600);
+}
+
+.preview-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-100);
+  inline-size: 100%;
+  color: var(--perron-color-text-primary);
+}
+
+.preview-list {
+  display: grid;
+  gap: var(--perron-space-200);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.preview-start {
+  align-items: flex-start;
+}
