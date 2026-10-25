@@ -1,8 +1,9 @@
-// Every public entry of Base UI, for Vite to pre-bundle before the first story loads. Vite otherwise
-// finds a Base UI part a story newly imports (after a rebase, or in a fresh worktree whose cache
-// predates it) only mid-run, re-optimises, and reloads the page under the running tests, which then
-// fail with "Failed to fetch dynamically imported module". Listing them all keeps the list current
-// as components start using new parts.
+// Every package the stories import, for Vite to pre-bundle before the first story loads. Vite otherwise
+// finds a package a story newly imports (after a merge of main, or in a worktree whose cache predates
+// it: FactList's and the contract story's `react-dom`) only mid-run, re-optimises, and reloads the
+// page under the running tests, which then fail with "Failed to fetch dynamically imported module".
+// Base UI's entries are listed whole, so the list stays current as components use new parts;
+// prebundle.test.ts fails any other package a story reaches that STORY_DEPS leaves out.
 import { readFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 
@@ -18,3 +19,17 @@ export function baseUiEntries(): string[] {
     .filter((key) => key.startsWith('./') && !/^\.\/(internals\/|types$|package\.json$)/.test(key))
     .map((key) => `@base-ui/react/${key.slice(2)}`)
 }
+
+/** The packages besides Base UI that the stories and the code they import load in the browser. */
+export const STORY_DEPS = [
+  'react',
+  'react/jsx-runtime',
+  'react/jsx-dev-runtime',
+  'react-dom',
+  'react-dom/client',
+  'react-dom/server',
+  'storybook/test',
+]
+
+/** What Vite pre-bundles for the stories: STORY_DEPS and every Base UI entry. */
+export const prebundled = (): string[] => [...STORY_DEPS, ...baseUiEntries()]

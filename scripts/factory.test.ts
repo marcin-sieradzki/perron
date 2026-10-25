@@ -336,6 +336,19 @@ describe('the factory dry run', () => {
     expect(n.fix).toBe(
       'review round 1 found 2 P2 (components/tally/review.md). Fix each of its P1 and P2 findings at the line it names:\n- **P2-1.** `Tally.tsx:1` Breaks the contract.\n- **P2-2.** `Tally.tsx:2` Breaks the contract.',
     )
+
+    // begin clears the send-back's reason, but next still gives the fix while the rerun runs
+    run('begin Tally build')
+    expect(JSON.parse(run('next Tally --json').out)).toMatchObject({
+      run: 'build',
+      why: expect.stringMatching(/^build began at .* and has not ended/),
+      fix: n.fix,
+    })
+    expect(run('begin Tally build').code).toBe(0)
+    expect(JSON.parse(run('next Tally --json').out).fix).toBe(n.fix)
+    build()
+    run('end Tally build done')
+    expect(pipeline().stages.build?.fix).toBeUndefined()
   })
 
   it('reads the P1 rounds of a pipeline written before P2s sent a component back', () => {
@@ -375,6 +388,7 @@ describe('the factory dry run', () => {
       /^ended brief: pending\nrun: brief\nwhy: the answers/,
     )
     expect(run('begin Tally brief').code).toBe(0)
+    expect(JSON.parse(run('next Tally --json').out).fix).toMatch(/component-brief, "Run again"/)
     expect(run('end Tally brief done').out).toContain('ended brief: done\nrun: build')
   })
 

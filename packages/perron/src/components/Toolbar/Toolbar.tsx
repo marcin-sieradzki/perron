@@ -3,10 +3,8 @@
 // so they can't be built or shown apart (docs/components/toolbar.md, Anatomy).
 import { Toolbar as BaseToolbar } from '@base-ui/react/toolbar'
 import type { CSSProperties, ReactNode, Ref } from 'react'
+import { classes } from '../../internal/nodes.ts'
 import './Toolbar.css'
-
-/** `pn-<Name>` first, then the caller's class. */
-const classes = (own: string, given: string | undefined) => (given ? `${own} ${given}` : own)
 
 /** Whether `node` renders anything: React draws nothing for null, undefined, a boolean or ''. */
 const renders = (node: ReactNode) =>

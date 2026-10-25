@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, getRoles, isInaccessible, userEvent, within } from 'storybook/test'
 import { StationIcon } from './StationIcon.tsx'
 import type { StationIconProps } from './StationIcon.tsx'
+import { typography } from '../../testing/stories.ts'
 
 /** The text beside each size of marker: caption, label and panel title (docs/components/station-icon.md). */
 const TEXT = {
@@ -10,11 +11,6 @@ const TEXT = {
   medium: 'label',
   large: 'heading-md',
 } as const
-
-const typography = (role: string): CSSProperties => ({
-  font: `var(--perron-typography-${role})`,
-  letterSpacing: `var(--perron-typography-${role}-tracking)`,
-})
 
 const row: CSSProperties = {
   display: 'flex',

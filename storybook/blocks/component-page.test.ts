@@ -78,7 +78,7 @@ describe('propRows', () => {
       {
         name: 'slotProps.indicator',
         required: false,
-        type: 'Meter.Indicator.Props',
+        type: "Omit<Meter.Indicator.Props, 'children'>",
         default: '',
         description: 'Props for the `indicator` part.',
       },

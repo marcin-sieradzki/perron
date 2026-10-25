@@ -8,12 +8,7 @@ import { expect, userEvent, within } from 'storybook/test'
 import { Button } from '../Button/Button.tsx'
 import { Surface } from './Surface.tsx'
 import type { SurfaceProps } from './Surface.tsx'
-
-const typography = (role: string): CSSProperties => ({
-  font: `var(--perron-typography-${role})`,
-  letterSpacing: `var(--perron-typography-${role}-tracking)`,
-  margin: 0,
-})
+import { typography } from '../../testing/stories.ts'
 
 /**
  * A busy, map-like backdrop of land, water, a park, streets and a metro line, its busiest parts
