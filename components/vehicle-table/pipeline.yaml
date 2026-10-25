@@ -5,9 +5,9 @@ deferred:
   at: 2026-10-25T13:17:35.632Z
 stages:
   brief:
-    status: pending
-    started: 2026-10-25T13:17:39.739Z
-    ended: 2026-10-25T13:25:09.831Z
+    status: done
+    started: 2026-10-25T13:25:13.975Z
+    ended: 2026-10-25T13:27:10.436Z
 notes:
   - stage: brief
     at: 2026-10-25T13:25:09.831Z
@@ -35,3 +35,12 @@ notes:
       6. (Tokens) Is each row at least `size.vehicle-row` tall (the <tr>'s `height`, which a table row treats as a least height, so the row grows only when a long destination wraps), with no virtualisation in the pattern itself? Recommended: yes.
       7. (Tokens) Are the header cells in typography.label-sm and color.text.secondary, the destination in typography.label and color.text.primary, and every cell space.200 above and below and space.300 from the cell before it, with the first column flush to the start edge? Is the delay column aligned to the end, with a border.width.025 color.border.subtle divider under the header and between rows but none after the last, and no fill, radius or hover? Recommended: yes.
       8. (Owned strings) Does the table add four owned strings for its column headers, `lineColumn` "Line", `destinationColumn` "Destination", `positionColumn` "Position" and `delayColumn` "Delay" (overridden by `lineColumnLabel`, `destinationColumnLabel`, `positionColumnLabel` and `delayColumnLabel`), kept out of content design's table? Recommended: yes.
+  - stage: brief
+    at: 2026-10-25T13:27:10.436Z
+    direction: DepartureRow, now on main, gives each of its parts a slotProps key even though it has no Base UI parts. VehicleTable, by its answer, takes none, because its parts repeat once per row. The api-consistency audit should confirm the two patterns may differ here, or the contract should say when a pattern without Base UI parts takes slotProps.
+  - stage: brief
+    at: 2026-10-25T13:27:10.436Z
+    direction: DepartureRow on main defaults variant to 'live', while VehicleTable requires each vehicle's variant, so that no vehicle claims Live by default. If the same vehicle object feeds both, a later change could make DepartureRow's variant required too.
+  - stage: brief
+    at: 2026-10-25T13:27:10.436Z
+    direction: DepartureRow on main shows the data state with VehicleDot and words of its own, while VehicleTable composes VehicleDotLabel. A design run could check that the two read the same, side by side.
