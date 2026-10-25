@@ -17,7 +17,7 @@
   font: var(--perron-typography-caption);
   letter-spacing: var(--perron-typography-caption-tracking);
   /* a long word, a Danish compound or a source's name, breaks in a narrow corner (CR-3) */
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 /* The caller's links: the credits' ink, underlined in every state, visited ones alike, with no
