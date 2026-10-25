@@ -1,0 +1,111 @@
+/* Progress: the label and the figure on one row, the track across both below, on its container's
+   surface, with no fill, border, radius, padding or shadow of its own. Every row of
+   docs/components/progress.md's Tokens table is at rest: Progress is never interactive, and Base
+   UI's statuses are rest with data-progressing, data-complete or data-indeterminate on every part.
+   CR-2: the complete status keeps the progressing look, so no rule reads data-complete alone.
+   CR-7: the root takes its container's inline size, so a long label never pushes the figure past
+   the inline end. */
+.pn-Progress {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  column-gap: var(--perron-space-200);
+  row-gap: var(--perron-space-100);
+  margin: 0;
+}
+
+/* CR-7: the label takes its column's width, so a long Danish word breaks inside it */
+.pn-Progress-label {
+  margin: 0;
+  font: var(--perron-typography-label-sm);
+  letter-spacing: var(--perron-typography-label-sm-tracking);
+  color: var(--perron-color-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+/* CR-7: the figure never wraps, so "45 %" never breaks from its sign */
+.pn-Progress-value {
+  margin: 0;
+  font: var(--perron-typography-data);
+  letter-spacing: var(--perron-typography-data-tracking);
+  color: var(--perron-color-text-primary);
+  white-space: nowrap;
+}
+
+/* CR-5: a strut, a zero-width space hidden from screen readers, so the empty figure still sets its
+   baseline and the first row keeps its height when a value arrives: the track never moves */
+.pn-Progress-value[data-indeterminate]::before {
+  content: '\200b' / '';
+}
+
+/* The whole task, an inset pill that clips the fill and the sweeping segment to its round ends;
+   the indicator is placed against it, so Base UI's inline inset-inline-start places the fill from
+   the inline start in either writing direction */
+.pn-Progress-track {
+  position: relative;
+  grid-column: 1 / -1;
+  block-size: var(--perron-size-meter-track);
+  margin: 0;
+  overflow: hidden;
+  border-radius: var(--perron-radius-full);
+  background-color: var(--perron-color-surface-inset);
+}
+
+/* The share done, in the neutral mark; Base UI sets its width as a percentage while the value is
+   known */
+.pn-Progress-indicator {
+  position: absolute;
+  inset-block: 0;
+  margin: 0;
+  border-radius: var(--perron-radius-full);
+  background-color: var(--perron-color-text-primary);
+}
+
+/* CR-6: a change eases, and under reduced motion duration.meter is 0.01 ms, so no query of its own.
+   The segment below leaves its width auto, which a transition cannot ease from, so a task's first
+   figure appears at once at its share, never shrinking from the segment */
+.pn-Progress-indicator[data-progressing],
+.pn-Progress-indicator[data-complete] {
+  transition: width var(--perron-duration-meter) var(--perron-easing-standard);
+}
+
+/* CR-6: while how far is not known, a segment 40% of the track wide, set by its two insets, sweeps
+   along it; where the sweep does not run, it rests at the middle of the track, where it never reads
+   as a share done from the inline start */
+.pn-Progress-indicator[data-indeterminate] {
+  inset-inline: 30%;
+  animation: pn-Progress-sweep var(--perron-duration-progress-sweep) var(--perron-easing-standard)
+    infinite;
+}
+
+@keyframes pn-Progress-sweep {
+  from {
+    inset-inline-start: -40%;
+    inset-inline-end: 100%;
+  }
+
+  to {
+    inset-inline-start: 100%;
+    inset-inline-end: -40%;
+  }
+}
+
+/* CR-6: when the system asks for less motion, the sweep stops, and the segment keeps its rest */
+@media (prefers-reduced-motion: reduce) {
+  .pn-Progress-indicator[data-indeterminate] {
+    animation: none;
+  }
+}
+
+/* CR-8: forced colours drop backgrounds, so the track draws an outline and the fill and the
+   segment keep their own colour; an outline takes no space, so the geometry holds */
+@media (forced-colors: active) {
+  .pn-Progress-track {
+    outline: var(--perron-border-width-025) solid CanvasText;
+  }
+
+  .pn-Progress-indicator {
+    forced-color-adjust: none;
+    background-color: CanvasText;
+  }
+}

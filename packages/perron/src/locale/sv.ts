@@ -40,4 +40,5 @@ export const sv: OwnedStrings = {
   kilometersUnit: 'km',
   noMatches: 'Inga träffar',
   optional: '(valfritt)',
+  inProgress: 'Pågår',
 }
