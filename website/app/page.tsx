@@ -1,16 +1,24 @@
-// Home. A placeholder until ticket T3 builds the page of Home.dc.html over the full map.
-import { PageHeader } from '@/components/site/PageHeader.tsx'
-import { PACKAGES, readPackage } from '@/lib/repo.ts'
+// Home, from Home.dc.html over the layout's full map: the hero, the still columns of live
+// components in glass, what the system is made of, and where Perron lives. Under breakpoint.phone
+// it follows Phone-Home.dc.html: an opaque sheet with the sections and one panel in place of the
+// columns and tiles. Every figure comes from readHomeFigures.
+import '@/components/home/home.css'
+import { readHomeFigures } from '@/components/home/figures.ts'
+import { Hero } from '@/components/home/Hero.tsx'
+import { LiveColumns } from '@/components/home/LiveColumns.tsx'
+import { MadeOf } from '@/components/home/MadeOf.tsx'
+import { PhoneSections } from '@/components/home/PhoneSections.tsx'
+import { Resources } from '@/components/home/Resources.tsx'
 
 export default function HomePage() {
-  const { version } = readPackage(PACKAGES.perron)
+  const figures = readHomeFigures()
   return (
-    <div className="page">
-      <PageHeader
-        overline={`Mylder's design system, version ${version}`}
-        title="Everything that floats over the map"
-        lead="Perron is the set of tokens, components, patterns and words behind Mylder, a live map of Copenhagen's buses, S-tog, metro and trains, and how sure we are about each of them."
-      />
+    <div className="page home">
+      <Hero figures={figures} />
+      <LiveColumns figures={figures} />
+      <MadeOf figures={figures} />
+      <PhoneSections figures={figures} />
+      <Resources figures={figures} />
     </div>
   )
 }
