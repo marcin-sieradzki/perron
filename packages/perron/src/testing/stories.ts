@@ -1,7 +1,7 @@
 // Helpers the stories share, written once here (docs/components/README.md, "Shared helpers").
 import { createElement, type CSSProperties, type ReactNode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { expect, screen, waitFor } from 'storybook/test'
+import { expect, screen, userEvent, waitFor, within } from 'storybook/test'
 
 /** An icon file from packages/perron/icons, as its `?raw` text, inline, sized by `.perron-icon`. */
 export const icon = (svg: string) =>
@@ -67,12 +67,6 @@ export function resolve(property: StyleProperty, value: string) {
 }
 
 /**
- * The declarations a state adds to `element`: each rule whose selector holds `pseudo` and, without
- * it, matches the element; for `:hover`, only the rules inside `(hover: hover)`, at any depth. A
- * script's events can't set `:hover`, `:active` or `:visited`, so this reads the rules the browser
- * would apply; the visual stage drives the states for real.
- */
-/**
  * `selector` with each `pseudo` in it made to match any element, `:is(*)`, so the selector matches
  * an element at rest wherever the state is written: after a compound (`.a:hover > .b`), alone
  * (`:hover > .b`) or inside `:not()`. Taking the pseudo-class out would leave the last two invalid.
@@ -80,23 +74,65 @@ export function resolve(property: StyleProperty, value: string) {
 export const withoutState = (selector: string, pseudo: string) =>
   selector.replaceAll(pseudo, ':is(*)')
 
-export function stateRules(element: Element, pseudo: ':hover' | ':active' | ':visited' = ':hover') {
+/** The query of the rules that reset a state for forced colours, which a story never renders in. */
+const FORCED_COLORS = 'forced-colors: active'
+
+/** A rule as `stateRulesIn` reads it: a media rule's query and rules, or a style rule. */
+export interface SheetRule {
+  /** A media rule's query, such as `(hover: hover)` */
+  conditionText?: string
+  /** A media rule's own rules */
+  cssRules?: ArrayLike<SheetRule>
+  /** A style rule's selector */
+  selectorText?: string
+  /** A style rule's declarations */
+  style?: CSSStyleDeclaration
+}
+
+/**
+ * The declarations a state adds to `element` in `sheets`: each style rule whose selector holds
+ * `pseudo` and, without it, matches the element; for `:hover`, only the rules inside
+ * `(hover: hover)`, at any depth; and never the rules inside `(forced-colors: active)`, the reset
+ * a story's browser doesn't apply. `stateRules` reads the document's sheets with it.
+ */
+export function stateRulesIn(
+  sheets: ArrayLike<{ cssRules: ArrayLike<SheetRule> }>,
+  element: { matches(selector: string): boolean },
+  pseudo: ':hover' | ':active' | ':visited' = ':hover',
+) {
   const found: CSSStyleDeclaration[] = []
-  const visit = (rules: CSSRuleList, inQuery: boolean) => {
+  const visit = (rules: ArrayLike<SheetRule>, inQuery: boolean) => {
     for (const rule of Array.from(rules))
-      if (rule instanceof CSSMediaRule)
-        visit(rule.cssRules, inQuery || rule.conditionText.includes('(hover: hover)'))
-      else if (
-        rule instanceof CSSStyleRule &&
+      if (rule.conditionText !== undefined && rule.cssRules) {
+        if (!rule.conditionText.includes(FORCED_COLORS))
+          visit(rule.cssRules, inQuery || rule.conditionText.includes('(hover: hover)'))
+      } else if (
+        rule.selectorText !== undefined &&
+        rule.style &&
         (pseudo !== ':hover' || inQuery) &&
         rule.selectorText.includes(pseudo) &&
         element.matches(withoutState(rule.selectorText, pseudo))
       )
         found.push(rule.style)
   }
-  for (const sheet of Array.from(document.styleSheets)) visit(sheet.cssRules, false)
+  for (const sheet of Array.from(sheets)) visit(sheet.cssRules, false)
   return found
 }
+
+/**
+ * The declarations a state adds to `element`, by `stateRulesIn` over the document's sheets. A
+ * script's events can't set `:hover`, `:active` or `:visited`, so this reads the rules the browser
+ * would apply; the visual stage drives the states for real.
+ */
+export const stateRules = (
+  element: Element,
+  pseudo: ':hover' | ':active' | ':visited' = ':hover',
+) =>
+  stateRulesIn(
+    document.styleSheets as ArrayLike<{ cssRules: ArrayLike<SheetRule> }>,
+    element,
+    pseudo,
+  )
 
 /**
  * Whether `element` has a `(hover: hover)` rule and an `:active` rule that set its background, a
@@ -110,9 +146,10 @@ export function pressedAfterHover(element: Element) {
     style.getPropertyValue('background-color') || style.getPropertyValue('background-image')
   const visit = (rules: CSSRuleList, inQuery: boolean) => {
     for (const rule of Array.from(rules))
-      if (rule instanceof CSSMediaRule)
-        visit(rule.cssRules, inQuery || rule.conditionText.includes('(hover: hover)'))
-      else if (rule instanceof CSSGroupingRule && !(rule instanceof CSSStyleRule))
+      if (rule instanceof CSSMediaRule) {
+        if (!rule.conditionText.includes(FORCED_COLORS))
+          visit(rule.cssRules, inQuery || rule.conditionText.includes('(hover: hover)'))
+      } else if (rule instanceof CSSGroupingRule && !(rule instanceof CSSStyleRule))
         visit(rule.cssRules, inQuery)
       else if (rule instanceof CSSStyleRule && paints(rule.style)) {
         index++
@@ -215,3 +252,35 @@ export const frames = async (count: number) => {
 /** How many lines tall `element` is, in its own line height. */
 export const lines = (element: Element) =>
   element.getBoundingClientRect().height / Number.parseFloat(getComputedStyle(element).lineHeight)
+
+/** A colour or other token, by its custom property's name without `--perron-`, as a fill renders it. */
+export const fill = (token: string) => resolve('backgroundColor', `var(--perron-${token})`)
+
+/**
+ * A colour token, by its custom property's name without `--perron-`, as an edge renders it, to
+ * compare with an element's `border-color` or `outline-color`.
+ */
+export const edge = (token: string) => resolve('borderColor', `var(--perron-${token})`)
+
+/**
+ * One of Field's parts in `scope`, by its class: the frame, `pn-Field`, or an inner part, such as
+ * `pn-Field-label`; null when it isn't rendered. For Field and the controls it frames.
+ */
+export const fieldPart = (
+  scope: Element,
+  name: 'field' | 'label' | 'optional' | 'description' | 'error',
+) => scope.querySelector<HTMLElement>(name === 'field' ? '.pn-Field' : `.pn-Field-${name}`)
+
+/** The close button of an open popup, by its name, once Base UI has moved focus to it. */
+export async function focusedClose(popup: HTMLElement, name = 'Close') {
+  const close = within(popup).getByRole('button', { name })
+  await waitFor(() => expect(close).toHaveFocus())
+  return close
+}
+
+/** Tabs once and expects focus to land nowhere inside `root`, then tabs back. */
+export async function expectNoFocus(root: HTMLElement) {
+  await userEvent.tab()
+  await expect(root.contains(document.activeElement)).toBe(false)
+  await userEvent.tab({ shift: true })
+}
