@@ -282,6 +282,42 @@ describe('the factory dry run', () => {
     expect(stage('design', () => design()).out).toContain('wait: design-approval')
   })
 
+  it('stops at pending-questions when the build asks, and runs the build again once answered', () => {
+    throughBrief()
+    const asked =
+      '1. Tokens: the key grows its line by 0.59 px. Recommended: a negative margin-block.'
+    expect(stage('build', () => build(), 'pending', asked).out).toBe(
+      `ended build: pending: ${asked}\nwait: pending-questions\nstage: build\nwhy: ${asked}\n`,
+    )
+    expect(pipeline().needsHuman).toBeUndefined()
+    // the answers go to the rerun as `answers`; the build begins again and its gate holds as ever
+    expect(stage('build', () => build()).out).toContain('ended build: done\nrun: review')
+    expect(pipeline().stages.build?.runs).toBe(2)
+    expect(pipeline().notes).toEqual([{ stage: 'build', at: expect.any(String), questions: asked }])
+  })
+
+  it('keeps each Direction finding and each unblock in the notes, across reruns', () => {
+    throughBrief()
+    const finding = 'typography.data-sm does not list keys in help text'
+    run('begin Tally build')
+    build()
+    expect(factory(['end', 'Tally', 'build', 'done', '--direction', finding], env()).code).toBe(0)
+    // the rerun a review sends back voids the build's record, never its notes
+    stage('review', () => review(1, 1))
+    stage('build', () => build())
+    stage('review', () => review(2, 1))
+    expect(run('unblock Tally').out).toContain('unblocked review')
+    expect(pipeline().notes).toEqual([
+      { stage: 'build', at: expect.any(String), direction: finding },
+      {
+        stage: 'review',
+        at: expect.any(String),
+        unblocked: expect.stringMatching(/^2 review rounds found a P1 or a P2/),
+      },
+    ])
+    expect(read('components/tally/pipeline.yaml')).toMatch(/\nnotes:\n {2}- stage: build\n/)
+  })
+
   it('stops at needs-human after two review rounds with a P1', () => {
     throughBrief()
     stage('build', () => build())
