@@ -41,6 +41,7 @@ export const PAGES = [
   'docs/components/surface.md',
   'docs/components/map-controls.md',
   'docs/components/tabs.md',
+  'docs/components/sheet.md',
   'docs/components/delay.md',
   'docs/components/line-badge.md',
   'docs/components/severity-label.md',
@@ -49,6 +50,7 @@ export const PAGES = [
   'docs/patterns/detail-header.md',
   'docs/patterns/stop-timeline.md',
   'docs/patterns/disruption-card.md',
+  'docs/patterns/kiosk-bar.md',
   // registry:specs end
 ]
 

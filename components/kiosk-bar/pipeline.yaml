@@ -1,0 +1,28 @@
+# Written by npm run factory; never by hand.
+component: KioskBar
+layer: pattern
+deferred:
+  at: 2026-10-24T23:39:56.412Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-24T23:47:14.924Z
+    ended: 2026-10-24T23:48:29.106Z
+  build:
+    status: done
+    started: 2026-10-24T23:48:33.181Z
+    runs: 1
+    ended: 2026-10-24T23:54:49.956Z
+  review:
+    status: done
+    started: 2026-10-24T23:55:59.520Z
+    rounds: 1
+    findings:
+      p1: 0
+      p2: 0
+      p3: 3
+    ended: 2026-10-25T00:00:45.253Z
+  docs:
+    status: done
+    started: 2026-10-25T00:01:19.307Z
+    ended: 2026-10-25T00:03:42.687Z
