@@ -76,7 +76,7 @@
   padding-block-start: var(--perron-space-050);
   font: var(--perron-typography-data-sm);
   letter-spacing: var(--perron-typography-data-sm-tracking);
-  color: var(--perron-color-text-tertiary);
+  color: var(--perron-color-text-secondary);
   white-space: nowrap;
 }
 
@@ -129,7 +129,7 @@
   direction: ltr;
   font: var(--perron-typography-data-sm);
   letter-spacing: var(--perron-typography-data-sm-tracking);
-  color: var(--perron-color-text-tertiary);
+  color: var(--perron-color-text-secondary);
   white-space: nowrap;
 }
 

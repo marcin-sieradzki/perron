@@ -9,13 +9,10 @@ stages:
     started: 2026-10-25T01:59:06.340Z
     ended: 2026-10-25T02:00:24.926Z
   build:
-    status: pending
-    started: 2026-10-25T02:00:29.346Z
-    runs: 1
-    ended: 2026-10-25T02:15:45.301Z
-    failing: |-
-      1. (Tokens: the scale and axis colour rows; Keyboard and ARIA, the contrast paragraph) The spec gives the scale's top count and the axis ticks color.text.tertiary, which is 4.00:1 on white. axe's color-contrast fails it in every DayProfileChart story and in the contract's Root story (storybook/contract/Contract.stories.tsx renders the Default args under axe). aria-hidden does not exempt visible text from WCAG 1.4.3. Which colour do the scale and the axis take? Recommended: color.text.secondary for both, which reaches 4.5:1 on every surface in both themes. That needs no axe rule turned off and no change to the contract story; tertiary stays for hints next to stronger text.
-      2. (Keyboard and ARIA: the ArrowRight and ArrowLeft rows; CR-6) What do ArrowRight and ArrowLeft do while the plot has focus but no point is highlighted, as after Escape? Recommended: highlight the last point, as focus does, and move one point from there on later presses; Home and End work as always. The code already does this.
+    runs: 2
+    status: done
+    started: 2026-10-25T02:15:51.713Z
+    ended: 2026-10-25T02:19:34.726Z
 notes:
   - stage: brief
     at: 2026-10-25T01:58:32.189Z
@@ -66,3 +63,9 @@ notes:
     questions: |-
       1. (Tokens: the scale and axis colour rows; Keyboard and ARIA, the contrast paragraph) The spec gives the scale's top count and the axis ticks color.text.tertiary, which is 4.00:1 on white. axe's color-contrast fails it in every DayProfileChart story and in the contract's Root story (storybook/contract/Contract.stories.tsx renders the Default args under axe). aria-hidden does not exempt visible text from WCAG 1.4.3. Which colour do the scale and the axis take? Recommended: color.text.secondary for both, which reaches 4.5:1 on every surface in both themes. That needs no axe rule turned off and no change to the contract story; tertiary stays for hints next to stronger text.
       2. (Keyboard and ARIA: the ArrowRight and ArrowLeft rows; CR-6) What do ArrowRight and ArrowLeft do while the plot has focus but no point is highlighted, as after Escape? Recommended: highlight the last point, as focus does, and move one point from there on later presses; Home and End work as always. The code already does this.
+  - stage: build
+    at: 2026-10-25T02:19:34.726Z
+    direction: "The foundations still give axis labels color.text.tertiary (docs/foundations/semantic-colours.md line 14, and the Typography roles the spec cites), and axe's color-contrast fails that colour on visible text even inside aria-hidden. This chart now uses color.text.secondary, but the next chart will hit the same failure. Options: change the foundations' axis-label colour to secondary, or keep tertiary for hints only."
+  - stage: build
+    at: 2026-10-25T02:19:34.726Z
+    direction: The tip still sits along the plot's top edge (CR-8). At 00:00 it covers the scale's top count, and near a rush-hour peak it covers the line it describes. Placing it above the plot, or offsetting it from the line, would avoid this.
