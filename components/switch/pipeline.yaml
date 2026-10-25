@@ -5,9 +5,9 @@ deferred:
   at: 2026-10-25T04:39:00.902Z
 stages:
   brief:
-    status: pending
-    started: 2026-10-25T04:39:05.981Z
-    ended: 2026-10-25T04:47:26.699Z
+    status: done
+    started: 2026-10-25T04:47:31.908Z
+    ended: 2026-10-25T04:49:00.236Z
 notes:
   - stage: brief
     at: 2026-10-25T04:47:26.699Z
@@ -30,3 +30,9 @@ notes:
   - stage: brief
     at: 2026-10-25T04:47:26.699Z
     questions: "1. (Props) Is the switch's state checked, defaultChecked and onChange(event, checked, details), with value kept as the string a form submits when it is on? Recommended: yes. 2. (Props) Does the switch take no label of its own, so the caller names it with a <label>, a Field's label, or aria-label/aria-labelledby? Recommended: yes. 3. (Props) Does it come in one look, with no variant, size or color? Recommended: yes. 4. (Props) Does it pass value, uncheckedValue, form, inputRef, id, nativeButton and render through unchanged, and declare readOnly, required and name with Perron's own descriptions? Recommended: yes. 5. (Tokens) Is the track 40 x 24 px and the thumb 18 px, built with calc() from size.target-min, space.400, space.050 and border.width.025, with no new size token? Recommended: yes. 6. (Tokens) Off: color.surface.inset track, color.border.control edge, color.text.secondary thumb; on: color.surface.inverse track and edge, color.surface.raised thumb; hover/pressed lay color.surface.hover over off and turn on to color.surface.inverse-hover; no shadow? Recommended: yes. 7. (Tokens) Disabled off: inset track, color.border.subtle edge, color.text.tertiary thumb; disabled on: color.text.tertiary track and edge, color.surface.raised thumb; no hover/pressed? Recommended: yes. 8. (Tokens) Inside an invalid Field.Root (data-invalid) the edge turns color.status.danger, on and off, fills unchanged? Recommended: yes. 9. (Tokens) Add a new base token duration.switch of 150ms with a 0.01ms reduced-motion override through the design-tokens skill, read with easing.standard? Recommended: yes. 10. (Owned strings) No On/Off word, though Accessibility's 'State in words' rule asks toggles to say their state? Recommended: yes, no words. 11. (CR-8) A read-only switch looks as at rest, no hover or pressed layer, default cursor? Recommended: yes. 12. (Stories) The on state is the State value checked, story Checked, not selected? Recommended: yes."
+  - stage: brief
+    at: 2026-10-25T04:49:00.237Z
+    direction: The answers commit the build to a new base token, duration.switch (150ms, with a 0.01ms reduced-motion override); the build adds it through the design-tokens skill, and Motion's 'Transitions' prose should name it beside duration.sheet.
+  - stage: brief
+    at: 2026-10-25T04:49:00.237Z
+    direction: Answer 10 limits Accessibility's 'say their state in words' rule to toggle buttons; docs/foundations/accessibility.md#rules could say so, so the next two-state control doesn't ask again.
