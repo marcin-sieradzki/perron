@@ -24,6 +24,10 @@ stages:
     status: done
     started: 2026-10-25T06:19:05.967Z
     ended: 2026-10-25T06:22:31.149Z
+  docs:
+    status: done
+    started: 2026-10-25T06:22:44.352Z
+    ended: 2026-10-25T06:26:03.565Z
 notes:
   - stage: brief
     at: 2026-10-25T05:33:10.548Z
@@ -101,3 +105,6 @@ notes:
   - stage: review
     at: 2026-10-25T06:18:59.346Z
     unblocked: '2 review rounds found a P1 or a P2, the last a P1: review round 2 found 1 P1 (components/radio-group/review.md)'
+  - stage: docs
+    at: 2026-10-25T06:26:03.566Z
+    direction: In the LongLabels story, 'Realtidsdataforsinkelser' breaks mid-word with no hyphen at 120 px, because Chromium has no Danish hyphenation. Decide whether long Danish words in choice labels should get soft hyphens from the caller, or whether that break is acceptable.
