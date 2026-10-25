@@ -4219,5 +4219,120 @@
         ]
       }
     }
+  },
+  "VehicleTable": {
+    "extends": [
+      "Omit<ComponentPropsWithRef<'table'>, 'children'>"
+    ],
+    "props": {
+      "ageingLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "delayColumnLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "delayUnknownLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "destinationColumnLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "estimatedLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "lineColumnLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "liveLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "minutesEarlyLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "minutesLateLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "minutesUnitLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "noSignalLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "onTimeLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "positionColumnLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLTableElement>"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "timetableOnlyLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "vehicles": {
+        "optional": false,
+        "type": [
+          "readonly VehicleTableVehicle[]"
+        ]
+      }
+    }
   }
 }

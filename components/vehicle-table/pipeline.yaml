@@ -1,0 +1,103 @@
+# Written by npm run factory; never by hand.
+component: VehicleTable
+layer: pattern
+deferred:
+  at: 2026-10-25T13:17:35.632Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-25T13:25:13.975Z
+    ended: 2026-10-25T13:27:10.436Z
+  build:
+    runs: 5
+    respecs: 1
+    status: done
+    started: 2026-10-25T14:10:03.960Z
+    begun: 464e46caa066d0ffce9ef83b10a03b5a218888f323549b54a8d199fd01dfd59f
+    spec: c5ff972510a4f4503cfd74e78adb088a4cab2c8780425fe15cc3d664be9a9158
+    ended: 2026-10-25T14:13:55.417Z
+  review:
+    rounds: 4
+    sentBack: 3
+    reviewed: e3ac53c2288d87256e0516e3f4fbf0cf6606b161
+    findings:
+      p1: 0
+      p2: 0
+      p3: 3
+    granted: 4
+    status: done
+    started: 2026-10-25T14:19:16.490Z
+    ended: 2026-10-25T14:21:33.895Z
+  docs:
+    status: done
+    started: 2026-10-25T14:21:42.250Z
+    ended: 2026-10-25T14:24:25.723Z
+notes:
+  - stage: brief
+    at: 2026-10-25T13:25:09.831Z
+    direction: "The rows can't be pressed or selected (CR-7): to open a vehicle, a caller passes a Perron Link as its destination. The table has no selected row for the vehicle open in the detail panel or followed on the map. The Rows family's selected look (color.surface.selected with SelectedMark) is a decision for the design run."
+  - stage: brief
+    at: 2026-10-25T13:25:09.831Z
+    direction: size.vehicle-row says a virtualised list relies on it, but no Perron part virtualises, and a pattern can import nothing to do so. The spec treats the token as a least row height and leaves windowing to the screen. The design run should decide whether a vehicle row is fixed at 52 px (with its destination truncated, which breaks reflow at 320 px) or grows with the text.
+  - stage: brief
+    at: 2026-10-25T13:25:09.831Z
+    direction: '"Position" as the name of the data-state column is new vocabulary. A line in docs/content-design.md naming that column once would keep it the same on every screen.'
+  - stage: brief
+    at: 2026-10-25T13:25:09.831Z
+    direction: Every row has two row headers, the line and the destination, so that each cell is heard with the vehicle it belongs to. Screen readers differ in whether they read both, so the accessibility audit should confirm this in VoiceOver and NVDA.
+  - stage: brief
+    at: 2026-10-25T13:25:09.831Z
+    direction: font.family.data lists 'data ages' among its uses, but the table has no 'since 08:02' column for a vehicle's last report. If the design wants one, it can join later as an optional field.
+  - stage: brief
+    at: 2026-10-25T13:25:09.831Z
+    questions: |-
+      1. (Anatomy) Is the table a native <table> of four columns (Line, Destination, Position, Delay) under a visible header row, with each row's line and destination cells as its row headers (<th scope="row">), and no column for a vehicle number, a data age or an action? Recommended: yes.
+      2. (Props) Does the table take its vehicles as one array, `vehicles: ReadonlyArray<VehicleTableVehicle>`, each with `id`, `line`, `lineName`, `destination`, `variant` and an optional `delay` (minutes, number | null, left out meaning unknown), with `variant` required so that no vehicle defaults to Live? Recommended: yes.
+      3. (Props) Does the table show the vehicles in the order given, with no sorting of its own, no sortable column headers and no aria-sort? Recommended: yes.
+      4. (Props) Does VehicleTable take no `slotProps`, and take the composed components' labels as its own top-level props (the five state labels, Delay's five, and its four column labels)? Recommended: yes.
+      5. (Props) Does the table own no accessible name, taking its name from the caller through `aria-labelledby` or `aria-label` on the root? Recommended: yes.
+      6. (Tokens) Is each row at least `size.vehicle-row` tall (the <tr>'s `height`, which a table row treats as a least height, so the row grows only when a long destination wraps), with no virtualisation in the pattern itself? Recommended: yes.
+      7. (Tokens) Are the header cells in typography.label-sm and color.text.secondary, the destination in typography.label and color.text.primary, and every cell space.200 above and below and space.300 from the cell before it, with the first column flush to the start edge? Is the delay column aligned to the end, with a border.width.025 color.border.subtle divider under the header and between rows but none after the last, and no fill, radius or hover? Recommended: yes.
+      8. (Owned strings) Does the table add four owned strings for its column headers, `lineColumn` "Line", `destinationColumn` "Destination", `positionColumn` "Position" and `delayColumn` "Delay" (overridden by `lineColumnLabel`, `destinationColumnLabel`, `positionColumnLabel` and `delayColumnLabel`), kept out of content design's table? Recommended: yes.
+  - stage: brief
+    at: 2026-10-25T13:27:10.436Z
+    direction: DepartureRow, now on main, gives each of its parts a slotProps key even though it has no Base UI parts. VehicleTable, by its answer, takes none, because its parts repeat once per row. The api-consistency audit should confirm the two patterns may differ here, or the contract should say when a pattern without Base UI parts takes slotProps.
+  - stage: brief
+    at: 2026-10-25T13:27:10.436Z
+    direction: DepartureRow on main defaults variant to 'live', while VehicleTable requires each vehicle's variant, so that no vehicle claims Live by default. If the same vehicle object feeds both, a later change could make DepartureRow's variant required too.
+  - stage: brief
+    at: 2026-10-25T13:27:10.436Z
+    direction: DepartureRow on main shows the data state with VehicleDot and words of its own, while VehicleTable composes VehicleDotLabel. A design run could check that the two read the same, side by side.
+  - stage: build
+    at: 2026-10-25T13:36:30.389Z
+    direction: "Rows are centred vertically (vertical-align: middle). As a result, Delay's figures, set in typography.data, sit about 1 px below the label baseline of the destination and the state's word. A row whose destination wraps centres its badge, state and delay on the whole destination block. DepartureRow instead aligns its parts on the baseline of the first line. A design run should choose one alignment for both patterns. Baseline alignment in a 52 px row would push the content to the top of the row."
+  - stage: build
+    at: 2026-10-25T13:36:30.389Z
+    questions: "1. (Tokens, the destinationCell `inline-size` row, and CR-8) The `inline-size: 100%` on destinationCell makes the browser give the line, position and delay columns only their narrowest width, not their natural one. So in the Default story, at panel width (332 px table), 'Timetable only' wraps onto two lines even though the destination column has about 60 px to spare. That works against CR-8's 'the line, position and delay columns size to their content'. Recommended: drop `inline-size: 100%` from destinationCell and leave the browser's automatic table layout to share out the spare width. 'Timetable only' then stays on one line wherever it fits, and at 320 px the long destination still wraps with `overflow-wrap: anywhere`. Rewrite the Tokens row and CR-8 to say so. The cost: the spare width goes mostly to the delay column, so the gap between Position and Delay grows on wide panels. The alternative is to keep 100% and accept that the state's word wraps at every width."
+  - stage: build
+    at: 2026-10-25T13:40:55.532Z
+    direction: "Without inline-size: 100% on the destination, LongDestination at 320 px splits the narrow width between the destination and position columns: 'Lufthavnsterminalen' breaks mid-word and 'Timetable only' wraps onto two lines, though there is room for one of them whole. A design run could weigh a least width for the destination column, or hyphens: auto, against keeping the automatic layout."
+  - stage: build
+    at: 2026-10-25T13:57:28.266Z
+    direction: At a 320 px viewport, Storybook's own padding plus the decorator's space.400 leave the table a 256 px box. Even with anywhere, the four columns' least widths add up to 265 px, so Default and LongDestination already run 9 px past their box there. A real 320 px screen with one space.400 sheet padding gives 288 px, where the table fits. A design run should say which width the 320 px reflow promise is measured at for a table inside a padded panel.
+  - stage: build
+    at: 2026-10-25T13:57:28.266Z
+    direction: 'Hyphenation (hyphens: auto with hyphenate-limit-chars) only works with the page''s lang and a Chromium hyphenation dictionary, so it cannot be the table''s only way of keeping a long destination inside the table. If Mylder''s pages set lang="da", it could be added on top of a token-based least width, so that a long compound breaks at a syllable rather than a letter.'
+  - stage: build
+    at: 2026-10-25T13:58:18.247Z
+    unblocked: 'build failed: P2-1 (packages/perron/src/patterns/VehicleTable/VehicleTable.css:75, and the Tokens row for destinationCell overflow-wrap with CR-8 in docs/patterns/vehicle-table.md) needs a token, and adding one is not the build''s to do. Measured container widths 256-600 px: the line, position and delay columns together need at least 188 px. With `anywhere`, the destination''s least width falls to its header word (76 px), so "Lufthavnen" breaks at a 272 px container even though whole words would fit. Plain `break-word` keeps words whole but LongDestination needs 329 px. Chromium''s auto table layout ignores `min-inline-size: 30%`, `inline-size: max-content` and `fit-content` on the cell. Hyphenation works only with lang="da" and a Chromium hyphenation dictionary, which CI (ubuntu-latest) lacks. The only reliable fix is a least width on the destination cell, a length no token holds (measured: `min-inline-size: 88px` kept every Default word whole from a 276 px container up). Recommendation: add a size token through the design-tokens skill for the destination column''s least width, about 92 to 100 px, so "Københavns" and "Lufthavnen" stay whole and the table fits a 288 px container (a 320 px screen less a space.400 sheet padding); use it on destinationCell next to `overflow-wrap: anywhere`.; rerun once because the spec changed since that run began'
+  - stage: build
+    at: 2026-10-25T14:04:07.607Z
+    direction: "The least width raises the table's least width from 265 to 284 px; under Storybook's default padded layout at a 320 px viewport (a 256 px box) the table would run 28 px past its panel. The stories now use layout: 'fullscreen', the first in the library, so the decorator's space.400 is the only padding. A design run or the maintainer could decide whether that becomes the convention for patterns shown inside a sheet's padding."
+  - stage: build
+    at: 2026-10-25T14:04:07.607Z
+    direction: Between 288 and 300 px containers, 'Timetable only' wraps onto two lines, because the destination column's 96 px least width takes its width from the position column first. A design run could weigh a slightly smaller least width, about 88 px, which kept 'Lufthavnen' and 'Københavns' whole in earlier measurements.
+  - stage: build
+    at: 2026-10-25T14:13:55.417Z
+    direction: "Correction to the note that 'Timetable only' wraps between 288 and 300 px containers: measured on Default, it wraps up to a 310 px table and takes one line from 312 px, so the range is 288 to 310 px."
+  - stage: review
+    at: 2026-10-25T14:19:12.653Z
+    unblocked: '3 review rounds found a P1 or a P2; the last: review round 3 found 1 P2 (components/vehicle-table/review.md)'
+  - stage: docs
+    at: 2026-10-25T14:24:25.723Z
+    direction: On the docs page, LongDestination's 'Lufthavnsterminalen' breaks as 'Lufthavnsterminal' / 'en', leaving a two-letter orphan on its own line. The spec allows this break (CR-8), but a design run could weigh how a mid-word break should look against the hyphenation and least-width options the notes already list.
