@@ -108,6 +108,20 @@ export const Default: Story = {
       await userEvent.tab({ shift: true })
       await expect(input).not.toHaveFocus()
     })
+    await step("without placeholder, slotProps.input's own reaches the input", async () => {
+      await mounted(
+        canvasElement,
+        <SearchField
+          label={LABEL}
+          items={ITEMS}
+          slotProps={{ input: { placeholder: 'Stop, such as Nørreport' } }}
+        />,
+        async (host) => {
+          const own = (await within(host).findAllByRole('combobox'))[0]
+          await expect(own).toHaveAttribute('placeholder', 'Stop, such as Nørreport')
+        },
+      )
+    })
   },
 }
 

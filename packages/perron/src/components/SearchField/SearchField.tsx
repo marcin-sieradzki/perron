@@ -224,7 +224,8 @@ export function SearchField({
           {SEARCH_ICON}
           <Autocomplete.Input
             {...mergeProps<typeof Autocomplete.Input>(slotProps?.input, {
-              placeholder,
+              // mergeProps copies an undefined value too, so the caller's own placeholder stays
+              placeholder: placeholder ?? slotProps?.input?.placeholder,
               // CR-8: a phone labels its Enter key as a search; slotProps.input replaces it
               enterKeyHint: slotProps?.input?.enterKeyHint ?? 'search',
             })}
