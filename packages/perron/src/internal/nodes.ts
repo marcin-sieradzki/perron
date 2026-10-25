@@ -22,3 +22,16 @@ export const known = (node: ReactNode): boolean =>
 /** A part's own class first, then the caller's: joined, never replaced. */
 export const classes = (own: string, caller: string | undefined) =>
   caller ? `${own} ${caller}` : own
+
+/** Base UI's `className`, as a part takes it: a string, or a function of the part's state. */
+export type ClassName<State> = string | ((state: State) => string | undefined) | undefined
+
+/**
+ * A part's own class first, then the caller's, whether the caller's is a string or Base UI's
+ * function of the part's state, which it calls first. `mergeProps` joins strings only, and a
+ * pattern can't import it, so a part's class is set after the merge with this.
+ */
+export function withClass<State>(own: string, theirs: ClassName<State>): ClassName<State> {
+  if (typeof theirs === 'function') return (state) => classes(own, theirs(state))
+  return classes(own, theirs)
+}

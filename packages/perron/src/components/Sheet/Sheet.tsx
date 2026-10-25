@@ -7,6 +7,7 @@ import { useCallback, useState } from 'react'
 import type { ReactElement, ReactNode, Ref } from 'react'
 import { useOwnedStrings } from '../../PerronProvider.tsx'
 import { CloseButton } from '../../parts/CloseButton/CloseButton.tsx'
+import { withClass } from '../../internal/nodes.ts'
 import './Sheet.css'
 
 type ChangeDetails = Drawer.Root.ChangeEventDetails
@@ -133,20 +134,6 @@ export interface SheetProps extends Omit<Drawer.Popup.Props, 'children' | 'title
     content?: Drawer.Content.Props
   }
 }
-
-/**
- * Base UI's `className`: a string, or a function of the part's state. `mergeProps` joins strings
- * only, so each part's class is set after the merge, by `withClass`.
- */
-type ClassName<State> = string | ((state: State) => string | undefined) | undefined
-
-/** The part's own class first, then the caller's, whether the caller's is a string or a function. */
-function withClass<State>(own: string, theirs: ClassName<State>): ClassName<State> {
-  if (typeof theirs === 'function') return (state) => join(own, theirs(state))
-  return join(own, theirs)
-}
-
-const join = (own: string, theirs: string | undefined) => (theirs ? `${own} ${theirs}` : own)
 
 /** Points the caller's ref at the node, and returns what undoes it when the node goes. */
 function setRef<T>(ref: Ref<T> | undefined, node: T): () => void {

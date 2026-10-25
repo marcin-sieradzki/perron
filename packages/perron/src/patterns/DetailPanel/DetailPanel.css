@@ -14,10 +14,18 @@
   z-index: var(--perron-z-index-detail);
 }
 
-/* Centred on the header row, as DetailHeader centres its mark and its action, when a subheader
-   makes the row taller than the button. */
-.pn-DetailPanel-close {
-  align-self: center;
+/* The caller's controls in a row of their own under the mark, the title and the subheader, from
+   the header's start edge, so the title takes the row beside the close button and keeps its words
+   whole. DetailHeader's grid ends its mark at the last of its four rows, so this fifth row is the
+   action's alone; two controls that don't fit wrap onto another line. One class more than
+   DetailHeader's .pn-DetailHeader-action, so it wins. */
+.pn-DetailHeader-action.pn-DetailPanel-action {
+  grid-column: 1 / -1;
+  grid-row: 5;
+  flex-wrap: wrap;
+  row-gap: var(--perron-space-200);
+  margin-block-start: var(--perron-space-300);
+  margin-inline-start: 0;
 }
 
 /* The caller's blocks in one column, packed at the start, space.300 apart; minmax(0, 1fr) keeps a

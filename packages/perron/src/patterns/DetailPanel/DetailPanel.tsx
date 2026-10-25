@@ -8,7 +8,7 @@ import { Sheet } from '../../components/Sheet/Sheet.tsx'
 import type { SheetProps } from '../../components/Sheet/Sheet.tsx'
 // perron-allow(patterns): the registry's dependsOn names DetailHeader, a pattern, and CR-1 composes it; the contract does not yet say whether a pattern may compose another
 import { DetailHeader, type DetailHeaderProps } from '../DetailHeader/DetailHeader.tsx'
-import { classes } from '../../internal/nodes.ts'
+import { classes, withClass } from '../../internal/nodes.ts'
 import './DetailPanel.css'
 
 type SheetSlots = NonNullable<SheetProps['slotProps']>
@@ -45,9 +45,9 @@ export interface DetailPanelProps extends Omit<ComponentPropsWithRef<'div'>, 'ti
    */
   subheader?: ReactNode
   /**
-   * The panel's own controls in its header row, before the close button, as DetailHeader's
-   * `action`, such as a "Show on map" link. The close button is the panel's and needs no place
-   * here.
+   * The panel's own controls, in a row of their own under the title and the subheader, as
+   * DetailHeader's `action`, such as a "Show on map" link. The close button is the panel's and
+   * needs no place here.
    */
   action?: ReactNode
   /**
@@ -150,19 +150,6 @@ export interface DetailPanelProps extends Omit<ComponentPropsWithRef<'div'>, 'ti
   }
 }
 
-/** Base UI's `className`, as the Sheet's parts take it: a string, or a function of the part's state. */
-type ClassName<State> = string | ((state: State) => string | undefined) | undefined
-
-/**
- * The part's own class first, then the caller's, whether the caller's is a string or a function of
- * the part's state. A pattern cannot import Base UI's `mergeProps`, so the join is written here
- * (CR-1).
- */
-function withClass<State>(own: string, theirs: ClassName<State>): ClassName<State> {
-  if (typeof theirs === 'function') return (state) => classes(own, theirs(state))
-  return classes(own, theirs)
-}
-
 /** The Sheet's title part as a `div`, which can hold DetailHeader's `div`s and `h2` (CR-2). */
 const TITLE = { render: <div /> }
 
@@ -233,7 +220,15 @@ export function DetailPanel({
         <DetailHeader
           {...headerRest}
           className={classes('pn-DetailPanel-header', headerClass)}
-          slotProps={{ ...headerSlots, title: { ...headerSlots?.title, id: titleId } }}
+          slotProps={{
+            ...headerSlots,
+            title: { ...headerSlots?.title, id: titleId },
+            // CR-2: the action takes a row of its own under the title and the subheader
+            action: {
+              ...headerSlots?.action,
+              className: classes('pn-DetailPanel-action', headerSlots?.action?.className),
+            },
+          }}
           variant={variant}
           line={line}
           lineName={lineName}

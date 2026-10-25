@@ -264,7 +264,7 @@ export const Stop: Story = {
   },
 }
 
-/** Line's panel with its own control, "Show on map", before the close button. */
+/** Line's panel with its own control, "Show on map", in a row of its own under the title. */
 export const WithAction: Story = {
   args: { action: showOnMap },
   play: async ({ canvasElement, args, step }) => {
@@ -284,12 +284,21 @@ export const WithAction: Story = {
         await expect(action).toHaveFocus()
       },
     )
-    await step("the close button is centred on the header's height", async () => {
-      const header = part(dialog, 'DetailPanel-header').getBoundingClientRect()
-      const button = close.getBoundingClientRect()
-      const centre = (box: DOMRect) => box.top + box.height / 2
-      await expect(Math.abs(centre(button) - centre(header))).toBeLessThanOrEqual(1)
-    })
+    await step(
+      "the action sits under the subheader from the header's start edge, the title runs to the header's end beside the close button, and the close button's top is the header's",
+      async () => {
+        const header = part(dialog, 'DetailPanel-header').getBoundingClientRect()
+        const title = part(dialog, 'DetailHeader-title').getBoundingClientRect()
+        const subheader = part(dialog, 'DetailHeader-subheader').getBoundingClientRect()
+        const row = part(dialog, 'DetailPanel-action').getBoundingClientRect()
+        const button = close.getBoundingClientRect()
+        await expect(row.top).toBeGreaterThanOrEqual(subheader.bottom)
+        await expect(Math.abs(row.left - header.left)).toBeLessThanOrEqual(1)
+        await expect(Math.abs(title.right - header.right)).toBeLessThanOrEqual(1)
+        await expect(button.left).toBeGreaterThanOrEqual(header.right)
+        await expect(Math.abs(button.top - header.top)).toBeLessThanOrEqual(1)
+      },
+    )
     await step(
       'Esc closes it with reason escape-key, and focus returns to the trigger',
       async () => {
@@ -302,7 +311,7 @@ export const WithAction: Story = {
   },
 }
 
-/** A long Danish name and a subheader, each wrapping beside the action and the close button. */
+/** A long Danish name and a subheader, each wrapping beside the close button, over the action. */
 export const LongTitle: Story = {
   args: {
     variant: 'stop',
@@ -318,9 +327,12 @@ export const LongTitle: Story = {
     const trigger = within(canvasElement).getByRole('button', { name: STOP_TRIGGER })
     const dialog = await screen.findByRole('dialog')
     await step(
-      'the title and the subheader wrap, the buttons stay whole inside the panel, and the root is no wider than size.detail-width',
+      'the title and the subheader wrap, the buttons stay whole inside the panel, the action under the subheader, and the root is no wider than size.detail-width',
       async () => {
         const box = dialog.getBoundingClientRect()
+        const row = part(dialog, 'DetailPanel-action').getBoundingClientRect()
+        const subheader = part(dialog, 'DetailHeader-subheader').getBoundingClientRect()
+        await expect(row.top).toBeGreaterThanOrEqual(subheader.bottom)
         await expect(box.width).toBeLessThanOrEqual(parseFloat(token('size-detail-width')) + 0.5)
         for (const name of ['DetailHeader-title', 'DetailHeader-subheader']) {
           const text = part(dialog, name)

@@ -223,6 +223,7 @@ Each of these is written once, in its file, and a component, pattern or story im
 | `given`        | `packages/perron/src/internal/nodes.ts`         | Whether a node renders something, so a part given nothing is left out                            |
 | `known`        | `packages/perron/src/internal/nodes.ts`         | Whether a value says something, so one that says nothing shows `UnknownValue`                    |
 | `classes`      | `packages/perron/src/internal/nodes.ts`         | A part's own class first, then the caller's                                                      |
+| `withClass`    | `packages/perron/src/internal/nodes.ts`         | As `classes`, for a Base UI part, whose caller's class may be a function of the part's state     |
 | `usePart`      | `packages/perron/src/internal/use-part.ts`      | One inner part, from its `slotProps` value merged under the part's own props; it reads Base UI   |
 | `UnknownValue` | `packages/perron/src/internal/UnknownValue.tsx` | A value no one knows: "—" for the eye, the caller's or the locale's word for the ear             |
 | `typography`   | `packages/perron/src/testing/stories.ts`        | The style of one typography role with its `-tracking` twin and no margin, for a story's own text |

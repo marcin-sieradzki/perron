@@ -8,6 +8,7 @@ import { useId } from 'react'
 import type { CSSProperties, ReactElement, ReactNode, Ref } from 'react'
 import { useOwnedStrings } from '../../PerronProvider.tsx'
 import { CloseButton } from '../../parts/CloseButton/CloseButton.tsx'
+import { withClass } from '../../internal/nodes.ts'
 import './Dialog.css'
 
 type ChangeDetails = BaseDialog.Root.ChangeEventDetails
@@ -98,20 +99,6 @@ export interface DialogProps extends Omit<
     close?: Omit<BaseDialog.Close.Props, 'disabled'>
   }
 }
-
-/**
- * Base UI's `className`: a string, or a function of the part's state. `mergeProps` joins strings
- * only, so each part's class is set after the merge, by `withClass`.
- */
-type ClassName<State> = string | ((state: State) => string | undefined) | undefined
-
-/** The part's own class first, then the caller's, whether the caller's is a string or a function. */
-function withClass<State>(own: string, theirs: ClassName<State>): ClassName<State> {
-  if (typeof theirs === 'function') return (state) => join(own, theirs(state))
-  return join(own, theirs)
-}
-
-const join = (own: string, theirs: string | undefined) => (theirs ? `${own} ${theirs}` : own)
 
 /** A modal panel that asks one question or gives help, over the map and a scrim. */
 export function Dialog({
