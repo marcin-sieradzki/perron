@@ -1,6 +1,7 @@
 /* VehicleDot: one vehicle as a dot in its line's colour, drawn in the shape of its data state
    (docs/components/vehicle-dot.md). The line sets the root's color once, and the dot draws in
-   currentColor, so one rule per line colours every state (CR-7). */
+   currentColor, so one rule per line colours every state; with no line, no rule matches and the
+   dot draws in the colour of the text around it (CR-7). */
 .pn-VehicleDot {
   display: inline-block;
   flex: none;
@@ -130,10 +131,12 @@
 
 /* Forced colours keep each state's shape: the system's text colour for every line and state, with
    the fills, opacity, rings and cut kept, and no signal's dot in that colour too, told apart by its
-   cut (CR-9). [data-line] matches the line rules' weight, so this colour wins over them. */
+   cut (CR-9). [data-line] matches the line rules' weight, so this colour wins over them, and a
+   dot with no line takes it too, rather than the colour it inherits. */
 @media (forced-colors: active) {
   .pn-VehicleDot {
     forced-color-adjust: none;
+    color: CanvasText;
   }
 
   .pn-VehicleDot[data-line] {

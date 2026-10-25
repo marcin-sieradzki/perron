@@ -35,10 +35,11 @@ export interface VehicleDotProps extends Omit<useRender.ComponentProps<'span'>, 
   variant?: 'live' | 'ageing' | 'estimated' | 'timetable-only' | 'no-signal'
   /**
    * The vehicle's line, which gives the dot its colour: a metro line (`m1` to `m4`), an S-tog line
-   * (`a` to `h`), any bus (`bus`), or any regional or Øresund train (`regional`). Required, with
-   * no default; set on the root as `data-line`.
+   * (`a` to `h`), any bus (`bus`), or any regional or Øresund train (`regional`). Set on the root
+   * as `data-line`. Left out, with no default, the root sets no `data-line` and the dot draws in
+   * the colour of the text around it, for a dot that stands for a state across many lines.
    */
-  line: 'm1' | 'm2' | 'm3' | 'm4' | 'a' | 'b' | 'c' | 'e' | 'f' | 'h' | 'bus' | 'regional'
+  line?: 'm1' | 'm2' | 'm3' | 'm4' | 'a' | 'b' | 'c' | 'e' | 'f' | 'h' | 'bus' | 'regional'
   /**
    * The glyph box, at the icon size for where it sits: `small` beside caption and label text;
    * `medium` inside controls and rows; `large` beside a panel title. Set on the root as `data-size`.

@@ -9,6 +9,7 @@ import type { VehicleDotLabelProps } from './VehicleDotLabel.tsx'
 import {
   colour,
   expectNoFocus,
+  expectVehicleDotShape,
   heard,
   lines,
   mounted,
@@ -354,6 +355,25 @@ export const Live: Story = {
         },
       )
     })
+  },
+}
+
+/**
+ * A solid dot and "Live" with no line, as a label that stands for a state across many lines shows
+ * it: the dot in the word's ink (CR-3).
+ */
+export const NoLine: Story = {
+  args: { variant: 'live', line: undefined },
+  play: async ({ canvasElement }) => {
+    await expectState(canvasElement, 'live')
+    const { root, dot, label } = parts(canvasElement)
+    await expect(root).not.toHaveAttribute('data-line')
+    await expect(dot).not.toHaveAttribute('data-line')
+    await expectWordStyle(label)
+    const ink = colour('--perron-color-text-primary')
+    await expect(ink).not.toBe(colour('--perron-color-transit-line-m1'))
+    await expect(getComputedStyle(dot).color).toBe(ink)
+    await expectVehicleDotShape(dot, 'live', ink)
   },
 }
 

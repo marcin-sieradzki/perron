@@ -386,7 +386,7 @@
     "name": "ReportStrip",
     "layer": "pattern",
     "category": "Data",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Patterns/ReportStrip",
     "dependsOn": ["VehicleDotLabel"]

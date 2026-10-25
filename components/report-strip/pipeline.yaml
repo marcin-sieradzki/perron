@@ -1,0 +1,65 @@
+# Written by npm run factory; never by hand.
+component: ReportStrip
+layer: pattern
+deferred:
+  at: 2026-10-25T13:17:34.575Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-25T13:26:24.200Z
+    ended: 2026-10-25T13:28:08.781Z
+  build:
+    runs: 2
+    status: done
+    started: 2026-10-25T13:43:59.419Z
+    begun: 6c58ebe63a2828d4b1f16de8c1699f5f69d2adf3402abf161cfe8e26ffbf6ee8
+    spec: d12d4ad55ed3419bf9643a281efa2fd2d0de038ece2439178a3f3a78eb538ace
+    ended: 2026-10-25T13:48:44.280Z
+  review:
+    rounds: 2
+    sentBack: 1
+    reviewed: 8444dd7bf6285ff1e6d8484a642046f6cf267c2b
+    findings:
+      p1: 0
+      p2: 0
+      p3: 4
+    status: done
+    started: 2026-10-25T13:48:49.077Z
+    ended: 2026-10-25T13:51:35.440Z
+  docs:
+    status: done
+    started: 2026-10-25T13:51:43.196Z
+    ended: 2026-10-25T13:54:24.403Z
+notes:
+  - stage: brief
+    at: 2026-10-25T13:25:54.965Z
+    direction: ReportStrip draws the same five states in the same order as VehicleDotLegend, plus counts. The legend's spec promises counts as a later optional prop, which would duplicate ReportStrip, so drop that promise from vehicle-dot-legend.md.
+  - stage: brief
+    at: 2026-10-25T13:25:54.965Z
+    direction: "Once VehicleDot's line is optional, VehicleDotLegend's line='m1' and its .pn-VehicleDotLegend-dot[data-line][data-variant] { color: inherit } override can be replaced by passing no line, in a follow-up."
+  - stage: brief
+    at: 2026-10-25T13:25:54.965Z
+    direction: "The library writes numbers two ways: Meter formats with Intl.NumberFormat in the locale, while DayProfileChart, KioskBar's examples and ReportStrip group digits with a no-break space in every locale. Content design should name one grouping."
+  - stage: brief
+    at: 2026-10-25T13:25:54.965Z
+    direction: "DayProfileChart's spec (CR-5) says the contract keeps patterns from importing UnknownValue. That line is stale: the contract's Patterns section and the patterns gate now allow every internal helper but usePart."
+  - stage: brief
+    at: 2026-10-25T13:25:54.965Z
+    direction: No token gives each data state a fill of its own (only color.data-state.no-signal exists). A share-of-fleet bar for the data view would need tokens through the design-tokens skill and an approved drawing first.
+  - stage: brief
+    at: 2026-10-25T13:25:54.965Z
+    questions: |-
+      1. (Anatomy) One row of five items, one per data state in Data states' order, each VehicleDotLabel then count, wrapping, always all five with 0 shown? Recommended: yes.
+      2. (Anatomy) Five counts alone, no proportional bar, no total, no share? Recommended: yes.
+      3. (Props) One required counts object (ReportStripCounts), optional number | null per state; missing/null/non-finite is unknown shown as a dash read as Unknown; digits grouped by a no-break space in every locale? Recommended: yes.
+      4. (Props) slotProps keys item, label, count, each applied to all five copies; slotProps.label is VehicleDotLabel's props less those the strip sets? Recommended: yes.
+      5. (Tokens) Counts in typography.data and color.text.primary, unknown dash in color.text.tertiary? Recommended: yes.
+      6. (Tokens) Label space.200 from count, items space.400 apart, wrapped rows space.100 apart? Recommended: yes.
+      7. (Keyboard and ARIA) Root is a list with no name of its own, not a live region, caller names it via aria-label/aria-labelledby? Recommended: yes.
+      8. (CR-3) Build makes line optional on VehicleDot and VehicleDotLabel with no default; no line sets no data-line and draws in surrounding ink; ReportStrip passes no line? Recommended: yes.
+  - stage: build
+    at: 2026-10-25T13:37:43.853Z
+    direction: "Counts in typography.data (JetBrains Mono) use a monospace no-break space between digit groups, a full character wide, so the gap inside '1 046' is almost as wide as the space.200 gap between word and count and the figure can read as two numbers. Options: keep U+00A0 as CR-4 decides, or group with a narrow no-break space (U+202F) in grouped() for every pattern."
+  - stage: build
+    at: 2026-10-25T13:48:44.280Z
+    direction: "VehicleDotLabel's break-word keeps its longest word in its min-content width, so any flex row that puts it beside a nowrap sibling must give the label min-inline-size: 0 itself, or a long word pushes the sibling past the container's edge. VehicleDotLabel's spec (CR-5) could tell composers this, before VehicleTable and other users hit the same overflow."
