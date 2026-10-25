@@ -3,6 +3,9 @@ component: AlertDialog
 layer: component
 deferred:
   at: 2026-10-25T07:07:47.613Z
+needsHuman:
+  stage: review
+  reason: '3 review rounds found a P1 or a P2; the last: review round 3 found 1 P2 (components/alert-dialog/review.md)'
 stages:
   brief:
     status: done
@@ -16,12 +19,16 @@ stages:
     spec: 263e612ac39118b6197a98dfeb885bf2c9f972168ab63e9c323059997647af99
     ended: 2026-10-25T07:46:33.826Z
   review:
-    rounds: 2
-    sentBack: 2
+    rounds: 3
+    sentBack: 3
     findings:
       p1: 0
-      p2: 2
+      p2: 1
       p3: 3
+    status: failed
+    started: 2026-10-25T07:46:37.512Z
+    ended: 2026-10-25T07:50:46.899Z
+    failing: review round 3 found 1 P2 (components/alert-dialog/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T07:14:18.875Z
