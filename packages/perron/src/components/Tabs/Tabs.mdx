@@ -1,0 +1,44 @@
+import { Meta, Stories, Title, Unstyled } from '@storybook/addon-docs/blocks'
+import { PropsTable } from '../../../../../storybook/blocks/PropsTable.tsx'
+import { SpecProse } from '../../../../../storybook/blocks/SpecProse.tsx'
+import * as TabsStories from './Tabs.stories.tsx'
+import { Tab, TabsList, TabsPanel } from './Tabs.tsx'
+
+<Meta of={TabsStories} />
+
+<Title />
+
+<SpecProse path="docs/components/tabs.md" intro />
+
+<Stories title="Examples" />
+
+<PropsTable of={TabsStories} />
+
+<Unstyled>
+  <div className="pd-page">
+    <h2>TabsList</h2>
+  </div>
+</Unstyled>
+
+<PropsTable of={TabsList} />
+
+<Unstyled>
+  <div className="pd-page">
+    <h2>Tab</h2>
+  </div>
+</Unstyled>
+
+<PropsTable of={Tab} />
+
+<Unstyled>
+  <div className="pd-page">
+    <h2>TabsPanel</h2>
+  </div>
+</Unstyled>
+
+<PropsTable of={TabsPanel} />
+
+<SpecProse
+  path="docs/components/tabs.md"
+  sections={['Keyboard and ARIA', 'Owned strings', "Do and don't"]}
+/>
