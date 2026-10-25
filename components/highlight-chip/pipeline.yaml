@@ -8,6 +8,12 @@ stages:
     status: done
     started: 2026-10-25T01:23:35.517Z
     ended: 2026-10-25T02:05:51.436Z
+  build:
+    status: done
+    started: 2026-10-25T02:06:04.908Z
+    runs: 1
+    spec: 9c3b93051eae004880909a2c48789482bedd5e5a2927d3f61b39355e8a62b678
+    ended: 2026-10-25T02:14:06.366Z
 notes:
   - stage: brief
     at: 2026-10-25T01:23:29.991Z
@@ -47,3 +53,15 @@ notes:
   - stage: brief
     at: 2026-10-25T02:05:51.437Z
     direction: "CR-5 now sets forced-color-adjust: none on the selected chip, matching FilterChip's forced-colours rule."
+  - stage: build
+    at: 2026-10-25T02:14:06.366Z
+    direction: "Forced colours: a selected disabled chip shows GrayText on Highlight (CR-5), which is hard to read; SegmentedControl's selected disabled segment uses a GrayText fill with Canvas text. Pick one form for both toggles and FilterChip."
+  - stage: build
+    at: 2026-10-25T02:14:06.366Z
+    direction: The chip writes its glass fill, backdrop-filter and shadow in its own CSS, as Toolbar does, since Base UI's Toggle renders the element; the contract's Glass line could also name a control Base UI renders.
+  - stage: build
+    at: 2026-10-25T02:14:06.366Z
+    direction: A long label wraps inside the radius.full pill into a two-line stadium; check that shape when the design is drawn.
+  - stage: build
+    at: 2026-10-25T02:14:06.366Z
+    direction: CR-5 and the selected border-color row were rewritten at build to match the accessibility foundation's forced-colours rule; confirm the wording.
