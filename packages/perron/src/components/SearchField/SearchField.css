@@ -1,0 +1,199 @@
+/* SearchField, from docs/components/search-field.md: the Fields family's box with the search icon
+   and the clear button, over the Popups family's glass list of the Rows family's rows. The list
+   opens and closes at once, with no transition (CR-12), and never redefines a token: it portals to
+   <body>. */
+
+/* The label over the box, space.100 apart; the root takes its container's width. */
+.pn-SearchField {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-100);
+  min-inline-size: 0;
+}
+
+.pn-SearchField-label {
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+  color: var(--perron-color-text-primary);
+  overflow-wrap: anywhere;
+}
+
+.pn-SearchField-label[data-disabled] {
+  color: var(--perron-color-text-tertiary);
+}
+
+/* The box: icon, input, clear button in a row, the input growing (CR-9). */
+.pn-SearchField-inputGroup {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--perron-space-200);
+  block-size: var(--perron-size-input);
+  padding-inline-start: var(--perron-space-300);
+  padding-inline-end: var(--perron-space-050);
+  border: var(--perron-border-width-025) solid var(--perron-color-border-control);
+  border-radius: var(--perron-radius-md);
+  background-color: var(--perron-color-surface-raised);
+  cursor: text;
+}
+
+/* The hover layer laid over the raised fill, as the Fields do; an open field keeps its rest look. */
+@media (hover: hover) {
+  .pn-SearchField-inputGroup:not([data-disabled]):hover {
+    background-image: linear-gradient(
+      var(--perron-color-surface-hover),
+      var(--perron-color-surface-hover)
+    );
+  }
+}
+
+/* The ring rings the whole box, never the bare input inside it (CR-9). */
+.pn-SearchField-inputGroup:has(.pn-SearchField-input:focus-visible) {
+  outline: var(--perron-focus-width) solid var(--perron-color-border-focus);
+  outline-offset: var(--perron-focus-offset);
+}
+
+.pn-SearchField-inputGroup[data-disabled] {
+  cursor: default;
+}
+
+.pn-SearchField-icon {
+  --perron-icon-size: var(--perron-icon-size-400);
+  flex: none;
+  color: var(--perron-color-text-secondary);
+}
+
+.pn-SearchField-inputGroup[data-disabled] .pn-SearchField-icon {
+  color: var(--perron-color-text-tertiary);
+}
+
+/* Transparent inside the box, which draws the fill, the edge and the ring; one line of words that
+   scrolls, as a native input does (CR-11). */
+.pn-SearchField-input {
+  flex: 1;
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font: var(--perron-typography-body);
+  letter-spacing: var(--perron-typography-body-tracking);
+  color: var(--perron-color-text-primary);
+  white-space: nowrap;
+  outline: none;
+}
+
+.pn-SearchField-input::placeholder {
+  color: var(--perron-color-text-tertiary);
+  opacity: 1;
+}
+
+.pn-SearchField-input:disabled {
+  color: var(--perron-color-text-tertiary);
+  cursor: default;
+}
+
+/* Only its place in the row: the look and the states are the CloseButton part's (CR-7). */
+.pn-SearchField-clear {
+  flex: none;
+}
+
+/* The gap on whichever side the list flips to, inside the box Base UI measures (CR-10). */
+.pn-SearchField-positioner {
+  z-index: var(--perron-z-index-dialog);
+  padding-block: var(--perron-space-100);
+}
+
+/* The Popups family's glass, as wide as the box and scrolling when the room is short; an edge as a
+   border, kept by forced colours when they drop the glass and the shadow (CR-10). */
+.pn-SearchField-popup {
+  box-sizing: border-box;
+  inline-size: var(--anchor-width);
+  max-block-size: calc(var(--available-height) - 2 * var(--perron-space-100));
+  padding: var(--perron-space-100);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+  border-radius: var(--perron-radius-lg);
+  background-color: var(--perron-color-surface-overlay);
+  backdrop-filter: blur(var(--perron-effect-glass-blur))
+    saturate(var(--perron-effect-glass-saturate));
+  box-shadow: var(--perron-shadow-panel);
+  color: var(--perron-color-text-primary);
+}
+
+/* Always mounted, as Base UI asks of its live region, so padded only while it holds the message
+   (CR-14). */
+.pn-SearchField-empty {
+  font: var(--perron-typography-body-sm);
+  letter-spacing: var(--perron-typography-body-sm-tracking);
+  color: var(--perron-color-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.pn-SearchField-empty:not(:empty) {
+  padding-block: var(--perron-space-150);
+  padding-inline: var(--perron-space-200);
+}
+
+/* A row of the Rows family: its mark, then its label over its description. */
+.pn-SearchField-item {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--perron-space-200);
+  min-block-size: var(--perron-size-target-min);
+  padding-block: var(--perron-space-150);
+  padding-inline: var(--perron-space-200);
+  border-radius: var(--perron-radius-md);
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+  color: var(--perron-color-text-primary);
+  overflow-wrap: anywhere;
+  cursor: default;
+}
+
+@media (hover: hover) {
+  .pn-SearchField-item:hover {
+    background-color: var(--perron-color-surface-hover);
+  }
+}
+
+.pn-SearchField-item[data-highlighted] {
+  background-color: var(--perron-color-surface-hover);
+}
+
+/* Forced colours drop the hover surface, so the highlighted row takes the system's (CR-13), and
+   keeps it: left to adjust, the browser backs each line of text with Canvas, under which the
+   label's HighlightText vanishes. The description follows the row's ink there. */
+@media (forced-colors: active) {
+  .pn-SearchField-item[data-highlighted] {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    color: HighlightText;
+  }
+
+  .pn-SearchField-item[data-highlighted] .pn-SearchField-description {
+    color: HighlightText;
+  }
+}
+
+.pn-SearchField-startIcon {
+  --perron-icon-size: var(--perron-icon-size-400);
+  display: inline-flex;
+  flex: none;
+}
+
+.pn-SearchField-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+
+.pn-SearchField-description {
+  font: var(--perron-typography-caption);
+  letter-spacing: var(--perron-typography-caption-tracking);
+  color: var(--perron-color-text-secondary);
+  overflow-wrap: anywhere;
+}

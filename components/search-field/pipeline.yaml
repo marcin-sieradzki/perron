@@ -1,0 +1,128 @@
+# Written by npm run factory; never by hand.
+component: SearchField
+layer: component
+deferred:
+  at: 2026-10-25T01:28:01.472Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-25T01:41:44.227Z
+    ended: 2026-10-25T01:43:26.113Z
+  build:
+    runs: 4
+    status: done
+    started: 2026-10-25T02:25:25.054Z
+    spec: 61472928da9f70645ef15a46493936112894e1598690df9bf9151e71a2737f19
+    ended: 2026-10-25T02:27:20.474Z
+  review:
+    rounds: 3
+    sentBack: 2
+    findings:
+      p1: 0
+      p2: 0
+      p3: 10
+    status: done
+    started: 2026-10-25T02:27:24.931Z
+    ended: 2026-10-25T02:31:35.147Z
+  docs:
+    status: done
+    started: 2026-10-25T02:31:47.466Z
+    ended: 2026-10-25T02:35:42.626Z
+notes:
+  - stage: brief
+    at: 2026-10-25T01:40:53.602Z
+    direction: withClass (setting a part's class after mergeProps) would now be declared in a fourth component (Dialog, Sheet, MapTooltip, SearchField); a candidate for the contract's Shared helpers table.
+  - stage: brief
+    at: 2026-10-25T01:40:53.602Z
+    direction: A popup gap from a token needs either MapTooltip's script reader of --perron-* pixel lengths or a CSS workaround; the spec uses positioner padding. If sideOffset is preferred, the reader must first become a shared helper.
+  - stage: brief
+    at: 2026-10-25T01:40:53.602Z
+    direction: CloseButton would now also clear a field, not only close its container; the contract's Shared parts row, the part's own comment and the close icon's use in icons.json would need to say so.
+  - stage: brief
+    at: 2026-10-25T01:40:53.602Z
+    direction: The contract's 'Native text' rule doesn't mention a text input with suggestions whose value Base UI also changes; the contract could say whether Autocomplete-style fields follow the composite rule.
+  - stage: brief
+    at: 2026-10-25T01:40:53.602Z
+    direction: PerronProvider exposes only owned strings, not its locale, so no component can use the app's locale for collation or formatting.
+  - stage: brief
+    at: 2026-10-25T01:40:53.602Z
+    direction: The registry gives SearchField no Field.Error or Field.Description, so the Fields family's invalid edge still has no component that draws it.
+  - stage: brief
+    at: 2026-10-25T01:40:53.602Z
+    questions: |-
+      1. (Anatomy) Clear button composes the CloseButton shared part through Autocomplete.Clear's render, with the owned 'Clear' label, not rendered while disabled; the build adds Autocomplete.Clear to the part's "Composed in" cell. Recommended: yes.
+      2. (Props) SearchField is a composite control: root is Field.Root's div, value is the typed words, onChange(event, value, details) adapted from onValueChange. Recommended: yes.
+      3. (Props) From Autocomplete.Root it offers only items, filter, value, defaultValue, onChange, open, defaultOpen, onOpen, onClose, keeping Base UI's defaults for the rest. Recommended: yes.
+      4. (Props) SearchFieldProps extends Field.Root.Props without children, ref, invalid, validate, validationMode, validationDebounceTime, actionsRef, dirty, touched; no invalid state. Recommended: yes.
+      5. (Props) A suggestion is SearchFieldItem { value; label; description?; startIcon? }, items SearchFieldItem[], filter ((item, query) => boolean) | null, no disabled per item. Recommended: yes.
+      6. (Props) A chosen suggestion is reported by onItemSelect(event, item) from the item's onClick. Recommended: yes.
+      7. (Props) A required label ReactNode plus hiddenLabel boolean (default false) through VisuallyHidden. Recommended: yes.
+      8. (Props) No variant, size, color or fullWidth; root takes its container's width, box size.input tall. Recommended: yes.
+      9. (Props) The default filter keeps Base UI's collator in the runtime's locale. Recommended: yes.
+      10. (Tokens) Label typography.label/color.text.primary, space.100 above the box; icon color.text.secondary at icon.size.400, space.300 in; space.200 icon to input; clear button space.050 from the end edge. Recommended: yes.
+      11. (Tokens) The list sits space.100 below the box as positioner padding-block, popup var(--anchor-width) wide, capped by --available-height. Recommended: yes.
+      12. (Tokens) Rows space.150 block, space.200 inline, space.200 icon gap; empty message typography.body-sm color.text.secondary, padded only on :not(:empty). Recommended: yes.
+      13. (Owned strings) New key noMatches "No matches" (override noMatchesLabel), build writes da, sv, nb. Recommended: yes.
+      14. (Component rules) The input gets enterKeyHint="search", keeping type="text". Recommended: yes.
+      15. (Component rules) The list opens and closes at once, with no transition. Recommended: yes.
+      16. (Stories) No variant property; State property default, hover, focus, open, disabled; stories Default, Hover, Focus, Open, Disabled plus content and behaviour stories. Recommended: yes.
+  - stage: brief
+    at: 2026-10-25T01:43:26.115Z
+    direction: withClass (setting a part's class after mergeProps) would now be declared in a fourth component (Dialog, Sheet, MapTooltip, SearchField); a candidate for the contract's Shared helpers table.
+  - stage: brief
+    at: 2026-10-25T01:43:26.115Z
+    direction: A popup gap from a token needs either MapTooltip's script reader of --perron-* pixel lengths or a CSS workaround; the spec uses positioner padding. If sideOffset is preferred, the reader must first become a shared helper.
+  - stage: brief
+    at: 2026-10-25T01:43:26.115Z
+    direction: "CloseButton would now also clear a field, not only close its container: the contract's Shared parts row and its line that CloseButton's label is the owned 'Close' overridden by closeLabel (SearchField gives 'Clear' through clearLabel), the part's own comment and the close icon's use in icons.json would need to say so."
+  - stage: brief
+    at: 2026-10-25T01:43:26.115Z
+    direction: The contract's 'Native text' rule doesn't mention a text input with suggestions whose value Base UI also changes; the contract could say whether Autocomplete-style fields follow the composite rule.
+  - stage: brief
+    at: 2026-10-25T01:43:26.115Z
+    direction: PerronProvider exposes only owned strings, not its locale, so no component can use the app's locale for collation or formatting.
+  - stage: brief
+    at: 2026-10-25T01:43:26.115Z
+    direction: The registry gives SearchField no Field.Error or Field.Description, so the Fields family's invalid edge still has no component that draws it.
+  - stage: build
+    at: 2026-10-25T01:56:49.830Z
+    direction: The props gate's *Label rule reads hiddenLabel, MUI's name for a boolean, as an owned-string override; the code excuses it with perron-allow(props). The contract's Props table or the gate could name hiddenLabel as an exception to the <key>Label convention.
+  - stage: build
+    at: 2026-10-25T01:56:49.830Z
+    direction: onItemSelect(event, item) is a new event name that later list components will copy; MUI's Autocomplete reports a chosen option through onChange instead. The contract could settle the name for choosing a row in a list that keeps no selection.
+  - stage: build
+    at: 2026-10-25T01:56:49.830Z
+    direction: In WithMarks, rows whose marks have different widths (a 5C badge, a 250S badge, a StationIcon) start their text at different points; a fixed-width mark column would need a token.
+  - stage: build
+    at: 2026-10-25T01:56:49.830Z
+    direction: A disabled field keeps the Fields family's full color.border.control edge and its raised fill; only the text, icon and label turn tertiary. The Fields family row has no disabled edge.
+  - stage: build
+    at: 2026-10-25T01:56:49.830Z
+    direction: Base UI's modal focus manager sets aria-hidden on everything outside the input and the popup while the list is open, the label and the clear button included; the input stays named through aria-labelledby.
+  - stage: build
+    at: 2026-10-25T01:56:49.830Z
+    questions: '1. (Keyboard and ARIA, What axe won''t catch; Owned strings) While the list is open, Base UI 1.9.0 adds two screen-reader-only span role="button" aria-label="Dismiss" controls (from ComboboxInput and ComboboxPopup), hard-coded English, and its modal focus manager sets aria-hidden on the label and the clear button. (a) keep Base UI''s behaviour, name them in the spec as known exceptions, assert them in a story, and add a Direction asking Base UI for a label prop; (b) hide them with CSS; (c) relabel them with a new owned string. Recommended: (a).'
+  - stage: build
+    at: 2026-10-25T02:02:58.866Z
+    direction: Base UI 1.9.0's ComboboxInternalDismissButton hard-codes aria-label="Dismiss" on two screen-reader-only controls while an Autocomplete or Combobox list is open, so no owned string or *Label prop can translate them. Ask Base UI for a label prop (or a localisation hook) on Autocomplete.Input and Autocomplete.Popup; once it lands, SearchField gains a dismissLabel owned string.
+  - stage: build
+    at: 2026-10-25T02:02:58.866Z
+    direction: "Base UI's modal focus manager sets aria-hidden on the field's label and clear button while the list is open; the input stays named through aria-labelledby. Also part of the Base UI request: an option to keep a field's own label and controls exposed."
+  - stage: build
+    at: 2026-10-25T02:02:58.866Z
+    direction: The shared closed story helper waits only for a dialog; SearchField keeps a local listClosed for its popup list. When a second popup-list component needs it, it could join the Shared helpers table.
+  - stage: build
+    at: 2026-10-25T02:15:59.608Z
+    direction: "The clear button can still look enabled while it is disabled: when a Base UI Fieldset around the field disables it, rather than SearchField's own disabled prop, Base UI still renders the CloseButton disabled with no disabled look (review P3-7). Leaving it out on Field's disabled state would need the field's context, not just its own prop."
+  - stage: build
+    at: 2026-10-25T02:15:59.608Z
+    direction: onClose takes Base UI's whole ChangeEventReason type, which also allows reasons SearchField never sends (such as 'imperative-action'). A narrower union type for SearchField's close reasons would let a caller's switch statement be checked for missing cases.
+  - stage: docs
+    at: 2026-10-25T02:35:42.626Z
+    direction: 'The docs page renders each SearchField story in a lazy iframe (inline: false, 360px, CR-16); a full-page screenshot without scrolling shows CallerFilter, Controlled and LongWords as empty frames. The docs screenshot method in design-qa/rendering.md could scroll each docs-story iframe into view first.'
+  - stage: docs
+    at: 2026-10-25T02:35:42.626Z
+    direction: The props table shows onChange, onOpen and onClose with SearchField.tsx's private aliases ChangeDetails and OpenDetails rather than Autocomplete.Root.ChangeEventDetails and OpenChangeEventDetails, as Dialog, Sheet and MapTooltip do; the library could show the Base UI names instead.
+  - stage: docs
+    at: 2026-10-25T02:35:42.626Z
+    direction: onClose's type shows in the props table with its source line breaks and trailing comma, as Dialog's does; PropsTable could normalise a multi-line function type.
