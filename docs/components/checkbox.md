@@ -78,7 +78,7 @@ The box's side is `size.checkbox`, a new base token of `16px`, "The box of a che
 
 The tick and the dash are two new icons, `tick` and `dash`, drawn on the 14 px grid with a 1.8 px round stroke and shown at `icon.size.325` inside the box, each a file in `packages/perron/icons/` that joins `icons.json` under a new "Controls" category. The contract's [Shared parts](README.md#shared-parts) row names the tick icon alone, and CR-5 keeps the dash in the part's folder all the same. The contract says the tick and the dash are in `packages/perron/icons/`, added with `CheckboxIndicator` following [Icons](../foundations/icons.md); `icon.size.325` is the step for marks inline with text, and on its grid the tick leaves a clear margin inside a 16 px box, where a 16 px control icon would touch the edge; `minus`, the zoom-out icon, is drawn on the 16 px grid, and scaling it to the tick's step would break the rule that an icon is never scaled off its grid; and a dash drawn beside the tick keeps one stroke weight in the box.
 
-The box takes the Fields family's edge and hover while unticked, a `color.surface.raised` fill with a `border.width.025` edge in `color.border.control`, `color.surface.hover` laid over the fill as a `linear-gradient` background-image on hover and press, and `radius.xs`, and turns ink while ticked or indeterminate, `color.surface.inverse` with its mark in `color.text.inverse` and a `transparent` edge, `color.surface.inverse-hover` on hover and press. [Elevation](../foundations/elevation.md#surfaces) sets inputs on `color.surface.raised`, and `color.border.control` is the edge "that shows where a control is", 3:1 or better on every surface; `radius.xs` is the radius for "small marks and ticks", where `radius.md` would round a 16 px box into a circle's look; ink, not yellow, is the [brand](../foundations/README.md#the-brand)'s interface colour and the fill [Elevation](../foundations/elevation.md#surfaces) gives pressed toggles, as FilterChip's on state is, and moves the box from about 1:1 to 17:1 against the surface; and a `transparent` edge keeps one box size while forced colours still draw it.
+The box takes the Fields family's edge and hover while unticked, a `color.surface.raised` fill with a `border.width.025` edge in `color.border.control`, `color.surface.hover` laid over the fill as a `linear-gradient` background-image on hover and `color.surface.selected` while pressed, and `radius.xs`, and turns ink while ticked or indeterminate, `color.surface.inverse` with its mark in `color.text.inverse` and a `transparent` edge, `color.surface.inverse-hover` on hover and `color.surface.inverse-pressed` while pressed. [Elevation](../foundations/elevation.md#surfaces) sets inputs on `color.surface.raised`, and `color.border.control` is the edge "that shows where a control is", 3:1 or better on every surface; `radius.xs` is the radius for "small marks and ticks", where `radius.md` would round a 16 px box into a circle's look; ink, not yellow, is the [brand](../foundations/README.md#the-brand)'s interface colour and the fill [Elevation](../foundations/elevation.md#surfaces) gives pressed toggles, as FilterChip's on state is, and moves the box from about 1:1 to 17:1 against the surface; and a `transparent` edge keeps one box size while forced colours still draw it.
 
 A disabled checkbox is drawn as FilterChip's disabled states are: unticked a `transparent` fill with a `color.border.subtle` edge, ticked or indeterminate a `color.surface.inset` fill with its mark in `color.text.tertiary` and a `transparent` edge, and its label in `color.text.tertiary`, with no hover or press. The contract makes disabled a colour, `color.text.tertiary`, never an opacity; a faint edge and an inset fill keep the ticked state readable while disabled; and FilterChip has drawn the same pair for the same states since Wave 3, so one disabled language runs across the library.
 
@@ -117,29 +117,29 @@ All states:
 
 Unticked (`data-unchecked`):
 
-| Part        | State    | Property           | Token                                                                  |
-| ----------- | -------- | ------------------ | ---------------------------------------------------------------------- |
-| `indicator` | rest     | `background-color` | `color.surface.raised`                                                 |
-| `indicator` | rest     | `border-color`     | `color.border.control`                                                 |
-| `indicator` | hover    | `background-image` | `color.surface.hover`, as a `linear-gradient` of itself, over the fill |
-| `indicator` | pressed  | `background-image` | `color.surface.hover`, as a `linear-gradient` of itself, over the fill |
-| `indicator` | disabled | `background-color` | `transparent`                                                          |
-| `indicator` | disabled | `border-color`     | `color.border.subtle`                                                  |
-| `indicator` | invalid  | `border-color`     | `color.status.danger`                                                  |
+| Part        | State    | Property           | Token                                                                     |
+| ----------- | -------- | ------------------ | ------------------------------------------------------------------------- |
+| `indicator` | rest     | `background-color` | `color.surface.raised`                                                    |
+| `indicator` | rest     | `border-color`     | `color.border.control`                                                    |
+| `indicator` | hover    | `background-image` | `color.surface.hover`, as a `linear-gradient` of itself, over the fill    |
+| `indicator` | pressed  | `background-image` | `color.surface.selected`, as a `linear-gradient` of itself, over the fill |
+| `indicator` | disabled | `background-color` | `transparent`                                                             |
+| `indicator` | disabled | `border-color`     | `color.border.subtle`                                                     |
+| `indicator` | invalid  | `border-color`     | `color.status.danger`                                                     |
 
 Ticked or indeterminate (`data-checked`, `data-indeterminate`, the selected design state):
 
-| Part               | State              | Property           | Token                         |
-| ------------------ | ------------------ | ------------------ | ----------------------------- |
-| `indicator`        | selected           | `background-color` | `color.surface.inverse`       |
-| `indicator`        | selected           | `border-color`     | `transparent`                 |
-| `indicator` (mark) | selected           | `color`            | `color.text.inverse`          |
-| `indicator`        | selected, hover    | `background-color` | `color.surface.inverse-hover` |
-| `indicator`        | selected, pressed  | `background-color` | `color.surface.inverse-hover` |
-| `indicator`        | selected, disabled | `background-color` | `color.surface.inset`         |
-| `indicator`        | selected, disabled | `border-color`     | `transparent`                 |
-| `indicator` (mark) | selected, disabled | `color`            | `color.text.tertiary`         |
-| `indicator`        | selected, invalid  | `border-color`     | `color.status.danger`         |
+| Part               | State              | Property           | Token                           |
+| ------------------ | ------------------ | ------------------ | ------------------------------- |
+| `indicator`        | selected           | `background-color` | `color.surface.inverse`         |
+| `indicator`        | selected           | `border-color`     | `transparent`                   |
+| `indicator` (mark) | selected           | `color`            | `color.text.inverse`            |
+| `indicator`        | selected, hover    | `background-color` | `color.surface.inverse-hover`   |
+| `indicator`        | selected, pressed  | `background-color` | `color.surface.inverse-pressed` |
+| `indicator`        | selected, disabled | `background-color` | `color.surface.inset`           |
+| `indicator`        | selected, disabled | `border-color`     | `transparent`                   |
+| `indicator` (mark) | selected, disabled | `color`            | `color.text.tertiary`           |
+| `indicator`        | selected, invalid  | `border-color`     | `color.status.danger`           |
 
 Disabled and read-only (`data-disabled`, `data-readonly`):
 
@@ -206,7 +206,7 @@ Rules for this component alone, numbered so the build and the review can cite th
 - **CR-3.** It takes `{...rest}` before its own attributes and its own props out of `rest` first (`onChange`, `children`, `className`, `style`, `slotProps`; an inherited Base UI prop such as `checked`, `name` or `nativeButton` stays in `rest`, keeping Base UI's default), and merges `className` after `pn-Checkbox`; `ref` reaches the root, the `<span role="checkbox">`.
 - **CR-4.** The indicator is `Checkbox.Indicator` with `keepMounted` and a `render` callback that returns the `CheckboxIndicator` part with the props Base UI passes and a `mark` of `'tick'` while `state.indeterminate` is false and `state.checked` is true, `'dash'` while `state.indeterminate` is true, and none otherwise; `slotProps.indicator`, typed `Omit<Checkbox.Indicator.Props, 'keepMounted' | 'render'>` so a caller can't pass either, is merged under these with `mergeProps` (`@base-ui/react/merge-props`), as Dialog merges its Base UI parts, Checkbox's own last, and its class set after the merge by `withClass`, `pn-Checkbox-indicator` first. Checkbox's CSS sets only the indicator's `margin-block` and `flex` on `.pn-Checkbox-indicator`; the box's size, fill, edge, radius, mark and their states are the part's, in its own folder, which no other file names (`npm run gates -- shared-parts`).
 - **CR-5.** The `CheckboxIndicator` part draws the box and its mark, the `tick` or the `dash` icon inlined as JSX from its file, unchanged but for `width` and `height`, with the classes `perron-icon` and `pn-CheckboxIndicator-mark`, `aria-hidden="true"` and `focusable="false"`, and draws no mark for none. It sets `--perron-icon-size` to `icon.size.325` and centres the mark (`display: inline-flex`, `align-items: center`, `justify-content: center`). The mark draws in `currentColor`, its colour set on the box. The part takes no state props of its own beyond `mark`, reading its states from Base UI's attributes, so `Menu.CheckboxItemIndicator` can render it the same way later. The build adds both icon files following [Icons](../foundations/icons.md), joins them to `icons.json`, leaves the contract's `CheckboxIndicator` row naming the tick icon alone, adds `size.checkbox` (`16px`, "The box of a checkbox, and of a menu's checkbox item") to the base tokens through the `design-tokens` skill, and runs `npm run tokens` to rebuild the icon set's table and the size marker on [Layout](../foundations/layout.md#other-layout-properties).
-- **CR-6.** Hover lays its colour on the box when the pointer is over the element that holds it, the whole row, read in the part's CSS as `[role]:hover > .pn-CheckboxIndicator` inside `@media (hover: hover)`; pressed takes the same tokens on `[role]:active > .pn-CheckboxIndicator`, in a rule outside the media query, so a touch press shows. The holder is always a control with a role (`checkbox`, later `menuitemcheckbox`), which `[role]` names. Neither applies to a disabled or read-only box: both rules exclude `[data-disabled]` and `[data-readonly]`.
+- **CR-6.** Hover lays its colour on the box when the pointer is over the element that holds it, the whole row, read in the part's CSS as `[role]:hover > .pn-CheckboxIndicator` inside `@media (hover: hover)`; pressed takes the pressed tokens, a step past hover, on `[role]:active > .pn-CheckboxIndicator`, in a rule after it and outside the media query, so a touch press shows. The holder is always a control with a role (`checkbox`, later `menuitemcheckbox`), which `[role]` names. Neither applies to a disabled or read-only box: both rules exclude `[data-disabled]` and `[data-readonly]`.
 - **CR-7.** Focus uses the ring `perron.css` draws on the root's `:focus-visible`; the component draws no ring of its own and never removes the outline.
 - **CR-8.** The states keep the geometry: hover, pressed, focus, ticked, indeterminate, disabled, read-only and invalid change colours only, never the box's size, the edge's width, the radius, the gap, the padding or the typography, so ticking a box never moves its label. Every state draws the `border.width.025` edge, `transparent` while ticked or indeterminate, so every state shares one box.
 - **CR-9.** The root is the target: an inline flex row, `align-items: flex-start`, `justify-content: center`, at least `size.target-min` tall and wide, its block padding `calc((size.target-min - 1lh) / 2)` over its own `typography.body` line, and `max-inline-size: 100%`. The box keeps its size (`flex: none`) and sits centred on the label's first line through its block margin, `calc((1lh - size.checkbox) / 2)`; the label wraps beside it (`min-inline-size: 0`, and `overflow-wrap: anywhere`, set on the root beside its `typography.body` and inherited). With no label, the box sits centred in its 24 px square.

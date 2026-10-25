@@ -17,8 +17,8 @@
   background-color: var(--perron-color-surface-raised);
 }
 
-/* unticked: the Fields family's hover layer over the fill, inside (hover: hover); the press outside
-   it, so a touch press shows; never on a disabled or read-only box (CR-6) */
+/* unticked: the Fields family's hover layer over the fill, inside (hover: hover); the press, a
+   denser layer, outside it, so a touch press shows; never on a disabled or read-only box (CR-6) */
 
 @media (hover: hover) {
   [role]:hover > .pn-CheckboxIndicator[data-unchecked]:not([data-disabled], [data-readonly]) {
@@ -31,8 +31,8 @@
 
 [role]:active > .pn-CheckboxIndicator[data-unchecked]:not([data-disabled], [data-readonly]) {
   background-image: linear-gradient(
-    var(--perron-color-surface-hover),
-    var(--perron-color-surface-hover)
+    var(--perron-color-surface-selected),
+    var(--perron-color-surface-selected)
   );
 }
 
@@ -59,7 +59,7 @@
     [data-disabled],
     [data-readonly]
   ) {
-  background-color: var(--perron-color-surface-inverse-hover);
+  background-color: var(--perron-color-surface-inverse-pressed);
 }
 
 /* invalid, ticked or not: the danger edge, the fill and the mark kept */

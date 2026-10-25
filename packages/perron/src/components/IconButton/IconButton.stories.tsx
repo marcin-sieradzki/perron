@@ -5,7 +5,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, userEvent, within } from 'storybook/test'
 import info from '../../../icons/info.svg?raw'
 import plus from '../../../icons/plus.svg?raw'
-import { icon, resolve, stateRules } from '../../testing/stories.ts'
+import { icon, pressedAfterHover, resolve, stateFill, stateRules } from '../../testing/stories.ts'
 import { IconButton } from './IconButton.tsx'
 
 const meta = {
@@ -42,9 +42,12 @@ const activates: Play = async ({ args, canvasElement }) => {
   await expect(document.activeElement).toBe(before)
 }
 
-/** Hovering sets the `fill` token's background, and keeps the `edge` token's border when given. */
+/**
+ * Hovering sets the `fill` token's background, and keeps the `edge` token's border when given;
+ * pressing sets the `pressed` token's, a step past it, after the hover rule; the cursor is `pointer`.
+ */
 const hoverFill =
-  (fill: string, edge?: string): Play =>
+  (fill: string, pressed: string, edge?: string): Play =>
   async ({ args, canvasElement }) => {
     const button = within(canvasElement).getByRole('button', { name: args.label })
     const hover = stateRules(button)
@@ -54,6 +57,10 @@ const hoverFill =
       getComputedStyle(button).backgroundColor,
     )
     await expect(hover.every((s) => !s.getPropertyValue('border-color'))).toBe(true)
+    await expect(stateFill(button, ':active')).toBe(pressed)
+    await expect(resolve('backgroundColor', pressed)).not.toBe(resolve('backgroundColor', fill))
+    await expect(pressedAfterHover(button)).toBe(true)
+    await expect(getComputedStyle(button).cursor).toBe('pointer')
     if (edge) await expect(getComputedStyle(button).borderColor).toBe(resolve('borderColor', edge))
   }
 
@@ -112,7 +119,7 @@ export const NeutralMediumDefault: Story = {
 }
 export const NeutralMediumHover: Story = {
   args: { color: 'neutral', size: 'medium' },
-  play: hoverFill('var(--perron-color-surface-hover)'),
+  play: hoverFill('var(--perron-color-surface-hover)', 'var(--perron-color-surface-selected)'),
 }
 export const NeutralMediumFocus: Story = {
   args: { color: 'neutral', size: 'medium' },
@@ -140,7 +147,11 @@ export const BrandMediumDefault: Story = {
 }
 export const BrandMediumHover: Story = {
   args: { color: 'brand', size: 'medium' },
-  play: hoverFill('var(--perron-color-surface-brand-hover)', 'var(--perron-color-border-brand)'),
+  play: hoverFill(
+    'var(--perron-color-surface-brand-hover)',
+    'var(--perron-color-surface-brand-pressed)',
+    'var(--perron-color-border-brand)',
+  ),
 }
 export const BrandMediumFocus: Story = {
   args: { color: 'brand', size: 'medium' },

@@ -3,6 +3,9 @@
 // contract (docs/components/README.md), whose tables and lists the checks take their rules from.
 import { readdirSync, statSync } from 'node:fs'
 import { join, relative } from 'node:path'
+import type { AtRule, Node } from 'postcss'
+import { holds } from '../../packages/perron/src/testing/pointer.ts'
+import { PACKAGE } from '../lib/paths.ts'
 
 /** One breach of a rule, at a file and line. */
 export interface Problem {
@@ -146,3 +149,44 @@ export const codeSpans = (text: string) => [...text.matchAll(/`([^`]+)`/g)].map(
 /** `file:line: message` lines, for the terminal. */
 export const format = (rule: string, problems: Problem[]) =>
   problems.map((p) => `${p.file}${p.line ? `:${p.line}` : ''}: [${rule}] ${p.message}`)
+
+/** The folders of component, pattern and part CSS, by path from the repo root, and their layer. */
+export const CSS_LAYERS = [
+  [`${PACKAGE}/src/components`, 'component'],
+  [`${PACKAGE}/src/patterns`, 'pattern'],
+  [`${PACKAGE}/src/parts`, 'part'],
+] as const
+
+/** A media query lowercased, with one spacing, so `(hover:hover)` reads `(hover: hover)`. */
+export const media = (params: string) =>
+  params
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .replace(/\(\s*/g, '(')
+    .replace(/\s*\)/g, ')')
+    .replace(/\s*:\s*/g, ': ')
+    .trim()
+
+/**
+ * Whether `node` sits in a `@media` whose query holds `query`, as `media` spells it, and doesn't
+ * negate it: `not all and (hover: hover)` holds on the devices `(hover: hover)` leaves out.
+ */
+export const inMedia = (node: Node, query: string) => {
+  for (let p = node.parent; p; p = p.parent)
+    if (p.type === 'atrule' && (p as AtRule).name.toLowerCase() === 'media') {
+      if (holds(media((p as AtRule).params), query)) return true
+    }
+  return false
+}
+
+/**
+ * A selector with one spacing: white space collapsed, none inside parentheses' edges and one
+ * after a comma, so two spellings of one selector, one wrapped across lines, compare equal.
+ */
+export const selector = (text: string) =>
+  text
+    .replace(/\s+/g, ' ')
+    .replace(/\(\s/g, '(')
+    .replace(/\s\)/g, ')')
+    .replace(/\s?,\s?/g, ', ')
+    .trim()

@@ -18,6 +18,8 @@
   text-decoration: none;
   white-space: nowrap;
   vertical-align: middle;
+  /* the pointer an <a href> has, kept when a render element drops the href */
+  cursor: pointer;
 }
 
 .pn-LinkButton[data-size='small'] {
