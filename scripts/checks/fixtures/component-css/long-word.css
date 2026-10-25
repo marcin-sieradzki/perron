@@ -1,0 +1,38 @@
+/* Each part that sets a typography role decides what a long word does, or inherits the choice. */
+.pn-Fixture {
+  overflow-wrap: anywhere;
+}
+
+/* inherits the root's overflow-wrap */
+.pn-Fixture-title,
+.pn-Fixture[data-variant='large'] {
+  font: var(--perron-typography-heading-md);
+  letter-spacing: var(--perron-typography-heading-md-tracking);
+}
+
+/* stays on one line, as its spec says */
+.pn-Badge {
+  font: var(--perron-typography-badge);
+  letter-spacing: var(--perron-typography-badge-tracking);
+  white-space: nowrap;
+}
+
+/* inherits its root's nowrap */
+.pn-Badge-label {
+  font: var(--perron-typography-badge);
+  letter-spacing: var(--perron-typography-badge-tracking);
+}
+
+.pn-Badge[data-size='large'] {
+  white-space: normal;
+}
+
+/* decides nothing, and its root, set only under an attribute, decides nothing for it */
+.pn-Card[data-wrap] {
+  overflow-wrap: anywhere;
+}
+
+.pn-Card-title {
+  font: var(--perron-typography-heading-md);
+  letter-spacing: var(--perron-typography-heading-md-tracking);
+}

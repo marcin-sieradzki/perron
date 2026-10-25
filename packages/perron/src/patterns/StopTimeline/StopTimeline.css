@@ -8,6 +8,9 @@
   margin: 0;
   padding: 0;
   list-style: none;
+  /* A word longer than its column, such as a long Danish station name or "Next stop" translated,
+     breaks inside the name's column rather than overflowing it. */
+  overflow-wrap: break-word;
 }
 
 /* With no time or delay in any stop, their empty columns and gaps go, and the names take the room. */

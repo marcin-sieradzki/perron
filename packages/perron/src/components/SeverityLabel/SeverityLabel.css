@@ -10,6 +10,8 @@
   column-gap: var(--perron-space-100);
   font: var(--perron-typography-label-sm);
   letter-spacing: var(--perron-typography-label-sm-tracking);
+  /* CR-8: a translated name with a word longer than the label's line breaks inside it. */
+  overflow-wrap: anywhere;
   --perron-icon-size: var(--perron-icon-size-325);
 }
 

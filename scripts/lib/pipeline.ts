@@ -59,6 +59,8 @@ export interface StageState {
   ended?: string
   /** Why the latest run failed, what it asks, or why the stage was sent back */
   failing?: string
+  /** While running: the `fix` `next` gave when it began, so `next` still gives it after `begin` */
+  fix?: string
   /** brief: the `[PENDING]` questions left in the spec */
   pending?: number
   /** build: runs begun, each a fresh set of the build stage's attempts */
@@ -425,6 +427,7 @@ export function next(p: Pipeline, env: Env): Next {
         run: stage,
         ...round,
         why: `${stage} began at ${s.started} and has not ended; run it again`,
+        ...(s.fix && { fix: s.fix }),
       }
     if (s.status === 'pending') {
       if (stage !== 'brief')
@@ -479,6 +482,9 @@ function counters(s: StageState = {}): StageState {
 export function begin(p: Pipeline, stage: Stage, env: Env): Result {
   const why = refusal(p, stage, env)
   if (why) return { ok: false, why: `${stage} cannot begin: ${why}` }
+  // the fix a rerun was sent back with outlives `begin`, which clears the reason it comes from
+  const was = next(p, env)
+  const fix = 'run' in was && was.run === stage ? was.fix : undefined
   const out = clone(p)
   if (stage === 'design') {
     delete out.approval
@@ -488,6 +494,7 @@ export function begin(p: Pipeline, stage: Stage, env: Env): Result {
     if (out.stages[later]) out.stages[later] = counters(out.stages[later])
   const s = (out.stages[stage] = { ...counters(out.stages[stage]), status: 'running' as const })
   s.started = env.now()
+  if (fix) s.fix = fix
   if (stage === 'build') s.runs = (s.runs ?? 0) + 1
   const extra =
     stage === 'build' ? ` (run ${s.runs})` : stage === 'review' ? ` (round ${roundOf(s)})` : ''
@@ -728,6 +735,7 @@ export function end(
   }
   s.status = verdict.outcome
   s.ended = env.now()
+  delete s.fix
   if (verdict.failing) s.failing = verdict.failing
   else delete s.failing
   if (verdict.pending) s.pending = verdict.pending

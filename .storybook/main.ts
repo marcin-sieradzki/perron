@@ -1,7 +1,7 @@
 import type { StorybookConfig } from '@storybook/react-vite'
 import { perronDocgen } from './perron-docgen.ts'
 import { perronPages } from './perron-pages.ts'
-import { baseUiEntries } from './prebundle.ts'
+import { prebundled } from './prebundle.ts'
 
 const config: StorybookConfig = {
   framework: '@storybook/react-vite',
@@ -21,7 +21,7 @@ const config: StorybookConfig = {
     // pre-bundled up front, so a newly imported part never reloads the page mid-run (prebundle.ts)
     optimizeDeps: {
       ...vite.optimizeDeps,
-      include: [...(vite.optimizeDeps?.include ?? []), ...baseUiEntries()],
+      include: [...(vite.optimizeDeps?.include ?? []), ...prebundled()],
     },
   }),
 }

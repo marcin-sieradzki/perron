@@ -1,3 +1,4 @@
 .pn-Fixture {
   font: var(--perron-typography-label);
+  white-space: nowrap;
 }
