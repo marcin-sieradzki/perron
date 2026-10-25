@@ -1,0 +1,70 @@
+# Written by npm run factory; never by hand.
+component: DataStateKey
+layer: pattern
+deferred:
+  at: 2026-10-25T17:49:32.921Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-25T17:56:21.302Z
+    ended: 2026-10-25T17:56:40.084Z
+  build:
+    runs: 7
+    respecs: 1
+    status: done
+    started: 2026-10-25T19:11:28.397Z
+    begun: 54b2692c4988282f2e3d4da607f8b267a7daf9dc8876f40cc402b5daeedb34e9
+    spec: 54b2692c4988282f2e3d4da607f8b267a7daf9dc8876f40cc402b5daeedb34e9
+    ended: 2026-10-25T19:14:31.545Z
+  review:
+    rounds: 3
+    sentBack: 2
+    reviewed: db29106222d1b89c60f920f79c5dad836cb9ff0b
+    findings:
+      p1: 0
+      p2: 0
+      p3: 4
+    status: done
+    started: 2026-10-25T19:14:49.121Z
+    ended: 2026-10-25T19:22:50.379Z
+  docs:
+    status: done
+    started: 2026-10-25T19:22:58.216Z
+    ended: 2026-10-25T19:33:58.229Z
+notes:
+  - stage: brief
+    at: 2026-10-25T17:55:46.713Z
+    direction: The state sentences are owned strings worded from Data states' Means column, with the app's thresholds as placeholders; Data states itself does not list them, so a later edit to a state's meaning there must change the five *Description strings in all four locales too.
+  - stage: brief
+    at: 2026-10-25T17:55:46.713Z
+    questions: |-
+      1. (Anatomy) Does each item set its count at the inline end of its first line, with the sentence on a second line under the word, rather than the count straight after the word as ReportStrip sets it? Recommended: yes, so the five counts line up as a number column and the sentence is the Rows family's caption second line.
+      2. (Props) Does the key take the app's thresholds as two required numbers in milliseconds, liveThreshold and ageingThreshold, and write them into the sentences itself, rather than as words the caller formats or with the tokens' defaults? Recommended: yes: Data states makes the thresholds the app's and forbids stating the defaults as facts; milliseconds are the tokens' unit; the pattern writes them alike in every locale.
+      3. (Props) Does the key write a threshold under 2 min in whole seconds ("60 s") and one of 2 min or more in minutes to one decimal place ("2.5 min", "5 min"), in the locale's decimal mark, through owned strings "{count} s" and "{count} min"? Recommended: yes: these are the figures Data states and the ticket write, and the unit is an owned string around its figure by the contract's Words.
+      4. (Owned strings) Are the English sentences "Reported by the vehicle in the last {liveThreshold}", "Last reported {liveThreshold} to {ageingThreshold} ago", "Placed from the timetable and the latest delay", "No real-time data, placed from the timetable alone" and "No report for over {ageingThreshold}, moved on by the timetable", with no full stop? Recommended: yes: each says its state's Means from Data states, live in the ticket's words.
+  - stage: build
+    at: 2026-10-25T18:04:50.682Z
+    direction: 'expectOwnedStrings (packages/perron/src/testing/owned-strings.ts, filled''s whole check) refuses a filled template whose template word starts with punctuation right after a placeholder whose value ends in a letter, such as "{ageingThreshold}, moved on" filled as "5 min, moved on": the check could treat a piece that starts with a non-letter as whole on its start side, so templates may put a comma after a placeholder.'
+  - stage: build
+    at: 2026-10-25T18:04:50.682Z
+    questions: '1. (Owned strings, noSignalDescription) The no-signal sentence "No report for over {ageingThreshold}, moved on by the timetable" fails expectOwnedStrings in every locale, since its comma follows the placeholder straight after a figure ending in a letter ("5 min,"), which packages/perron/src/testing/owned-strings.ts reads as a word glued to the figure. Reword it so no punctuation follows a placeholder, in all four locales: English "Moved on by the timetable, with no report for over {ageingThreshold}", Danish "Flyttet videre efter køreplanen, uden melding i over {ageingThreshold}", Swedish "Flyttad vidare enligt tidtabellen, utan rapport på över {ageingThreshold}", Norwegian "Flyttet videre etter rutetabellen, uten melding på over {ageingThreshold}"? Recommended: yes: it keeps the foundation''s two facts and adds no part, where wrapping each figure in an element of its own would add a part and a slotProps key to split the text runs, and the shared helper is the maintainer''s to change.'
+  - stage: build
+    at: 2026-10-25T18:18:48.842Z
+    direction: Text has no `color` that inherits, so a pattern composing it for a second line sets `color='neutral'` and `emphasis='secondary'` and leaves both out of its slot type; a caption-and-secondary Text recurs (DisruptionCard, DataStateKey) and may earn a named treatment in the contract's Families text.
+  - stage: build
+    at: 2026-10-25T18:38:30.980Z
+    direction: The merged expectOwnedStrings lets a template fill its own placeholder, so any owned "{x} <word>" template makes the shared test's "Every 3 min min" stray pass; the matcher could refuse a template nested in itself, or the test pick a stray no template can parse.
+  - stage: build
+    at: 2026-10-25T18:38:30.980Z
+    questions: '1. (Owned strings and CR-7, secondsDuration and minutesDuration) Any owned template "{x} min" makes the shared test owned-strings.test.tsx:125 fail, since the merged expectOwnedStrings lets a placeholder hold another filled template, so "Every 3 min min" reads as minutesDuration nested in itself. Drop the two duration templates and write a threshold as its figure, a no-break space and a unit word, as Delay writes "+3 min": reuse the existing key `minutesUnit` ("min", override `minutesUnitLabel`, Delay''s name) and add `secondsUnit` ("s" in all four locales, override `secondsUnitLabel`), with CR-7, Props, Owned strings and the stories following? Recommended: yes: it reuses the unit the dictionaries already hold (the review''s P3-5), keeps Delay''s names for the same words, needs no change to shared tooling, and the figure is the key''s own number, not a caller''s words, so the contract''s Words rule against joining an owned word to the caller''s does not bind it.'
+  - stage: build
+    at: 2026-10-25T18:44:21.822Z
+    direction: The merged expectOwnedStrings refuses a template whose placeholder holds an element, such as UnknownValue or a caller's <time>, since the element splits the template into text runs no template matches whole; a component that fills a placeholder with a node cannot pass it.
+  - stage: build
+    at: 2026-10-25T18:44:21.822Z
+    questions: |-
+      1. (Owned strings and CR-7) Keep the duration templates `secondsDuration: '{seconds}\u00A0s'` and `minutesDuration: '{minutes}\u00A0min'`, in place of run 3's answer (a unit word joined to the figure), which the merged expectOwnedStrings refuses in every locale, and leave the shared test's stray "Every 3 min min" for the maintainer to replace on the integration branch? Recommended: yes: the templates are the dictionary's own form for a figure and its unit, as `every: 'Every {count} min'`, they pass every story, and the test line is shared tooling the build may not edit.
+      2. (CR-7 and Keyboard and ARIA) A threshold that is not finite or is below 0: show "—" (aria-hidden) and say "Unknown" (or `unknownLabel`) in place of the whole sentence, rather than in place of the figure inside it? Recommended: yes: the merged expectOwnedStrings refuses a template split by an element, so UnknownValue inside a placeholder fails in every locale, and a sentence with its figure missing says less than "Unknown" does; the estimated and timetable-only sentences, which take no threshold, stand as they are.
+  - stage: build
+    at: 2026-10-25T19:11:28.397Z
+    unblocked: 'build failed: npm run check failed:        |   ^ /      26|     const rows = propRows(gaugeArgTypes()) /      27|     const declared = rows.filter((r) => OWN.includes(r.name) || r.name… /  / ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯; rerun once because the spec changed since that run began'

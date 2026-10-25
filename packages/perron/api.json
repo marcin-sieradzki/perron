@@ -489,6 +489,133 @@
       }
     }
   },
+  "DataStateKey": {
+    "extends": [
+      "Omit<ComponentPropsWithRef<'ul'>, 'children'>"
+    ],
+    "props": {
+      "ageingDescriptionLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "ageingLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "ageingThreshold": {
+        "optional": false,
+        "type": [
+          "number"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "counts": {
+        "optional": false,
+        "type": [
+          "DataStateKeyCounts"
+        ]
+      },
+      "estimatedDescriptionLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "estimatedLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "liveDescriptionLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "liveLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "liveThreshold": {
+        "optional": false,
+        "type": [
+          "number"
+        ]
+      },
+      "minutesDurationLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "noSignalDescriptionLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "noSignalLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLUListElement>"
+        ]
+      },
+      "secondsDurationLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ item?: DetailedHTMLProps<LiHTMLAttributes<HTMLLIElement>, HTMLLIElement> | undefined; label?: Omit<VehicleDotLabelProps, \"ageingLabel\" | \"estimatedLabel\" | \"line\" | \"liveLabel\" | \"noSignalLabel\" | \"render\" | \"timetableOnlyLabel\" | \"variant\"> | undefined; count?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; description?: Omit<TextProps, \"children\" | \"color\" | \"emphasis\" | \"render\" | \"variant\"> | undefined; }"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "timetableOnlyDescriptionLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "timetableOnlyLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "unknownLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      }
+    }
+  },
   "DataStatePanel": {
     "extends": [
       "Omit<ComponentPropsWithRef<'div'>, 'children'>"
@@ -3238,6 +3365,68 @@
         "type": [
           "number",
           "readonly [ number, number ]"
+        ]
+      }
+    }
+  },
+  "SourceLine": {
+    "extends": [
+      "Omit<ComponentPropsWithRef<'p'>, 'children' | 'color'>"
+    ],
+    "props": {
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "paused": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLParagraphElement>"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ paused?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; source?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; name?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; separator?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; time?: DetailedHTMLProps<TimeHTMLAttributes<HTMLTimeElement>, HTMLTimeElement> | undefined; }"
+        ]
+      },
+      "sourceOutOfDateLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "sourcePausedLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "sourceUpdatedLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "sources": {
+        "optional": false,
+        "type": [
+          "readonly [ SourceLineSource ]",
+          "readonly [ SourceLineSource, SourceLineSource ]"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
         ]
       }
     }

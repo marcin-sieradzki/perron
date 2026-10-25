@@ -27,6 +27,35 @@ export const en = {
   timetableOnly: 'Timetable only',
   /** Data state: silent past the ageing threshold, moved on by the timetable. */
   noSignal: 'No signal',
+  /**
+   * Data state key: what a live vehicle means, as in "Reported by the vehicle in the last 2.5 min".
+   * `{liveThreshold}` is the app's live threshold, written by `secondsDuration` or `minutesDuration`.
+   */
+  liveDescription: 'Reported by the vehicle in the last {liveThreshold}',
+  /**
+   * Data state key: what an ageing vehicle means, as in "Last reported 2.5 min to 5 min ago".
+   * `{liveThreshold}` and `{ageingThreshold}` are the app's two thresholds.
+   */
+  ageingDescription: 'Last reported {liveThreshold} to {ageingThreshold} ago',
+  /** Data state key: what an estimated vehicle means. */
+  estimatedDescription: 'Placed from the timetable and the latest delay',
+  /** Data state key: what a timetable-only vehicle means. */
+  timetableOnlyDescription: 'No real-time data, placed from the timetable alone',
+  /**
+   * Data state key: what a vehicle with no signal means, as in "Moved on by the timetable, with no
+   * report for over 5 min". `{ageingThreshold}` is the app's ageing threshold.
+   */
+  noSignalDescription: 'Moved on by the timetable, with no report for over {ageingThreshold}',
+  /**
+   * Data state key: a threshold under 2 min, inside the live, ageing and no-signal sentences, as in
+   * "60 s", joined by a no-break space. `{seconds}` is its whole seconds.
+   */
+  secondsDuration: '{seconds}\u00A0s',
+  /**
+   * Data state key: a threshold of 2 min or more, inside the live, ageing and no-signal sentences,
+   * as in "2.5 min", joined by a no-break space. `{minutes}` is its minutes, to one decimal place.
+   */
+  minutesDuration: '{minutes}\u00A0min',
   /** A line's delays: a heading, and the name of the delay kind of disruption. */
   delays: 'Delays',
   /** The name of the diversion kind of disruption: a line running on a changed route. */
@@ -80,9 +109,10 @@ export const en = {
   /** Delay: no real-time data says how late a vehicle runs; heard in place of "—". */
   delayUnknown: 'Delay unknown',
   /**
-   * Stat, FactList, Count, Meter, ScaleBar, VehicleTable: no data gives the figure, value, count,
-   * distance or last-seen time; heard in place of "—", as a meter's value text, or after "Scale" on
-   * the map's scale.
+   * Stat, FactList, Count, Meter, ScaleBar, VehicleTable, ReportStrip, DataStateKey: no data gives
+   * the figure, value, count, distance, last-seen time or threshold; heard in place of "—", as a
+   * meter's value text, after "Scale" on the map's scale, or in place of a data state key's whole
+   * sentence when a threshold it holds is unknown.
    */
   unknown: 'Unknown',
   /** Brand: the brand name, a name and never translated; the wordmark shows it lowercase. */
@@ -98,10 +128,10 @@ export const en = {
    */
   cancelled: 'Cancelled',
   /**
-   * A line that runs to an interval: the minutes between departures, as in "Every 3 min". `{count}`
+   * A line that runs to an interval: the minutes between departures, as in "Every 3 min". `{minutes}`
    * is the whole minutes.
    */
-  every: 'Every {count} min',
+  every: 'Every {minutes} min',
   /**
    * A line that runs to an interval that varies: the fewest and the most minutes between
    * departures, as in "Every 3 to 4 min". `{from}` and `{to}` are the whole minutes, `{from}` the
@@ -162,6 +192,15 @@ export const en = {
   inProgress: 'In progress',
   /** The region at the bottom of the screen that holds the toasts. */
   notifications: 'Notifications',
+  /** A source line: the time of a source's data, as in "Rejseplanen · updated 08:14:05". */
+  sourceUpdated: 'updated {time}',
+  /** A source line: first in the line while the panel takes no updates. */
+  sourcePaused: 'Paused',
+  /**
+   * A source line: the time of a source's data when the app judges it may be out of date, as in
+   * "Vehicle positions · updated 08:09:40, may be out of date".
+   */
+  sourceOutOfDate: 'updated {time}, may be out of date',
 }
 
 /** The name of one owned string. */
