@@ -413,6 +413,31 @@
       }
     }
   },
+  "FactList": {
+    "extends": [
+      "Omit<useRender.ComponentProps<'dl'>, 'children'>"
+    ],
+    "props": {
+      "items": {
+        "optional": false,
+        "type": [
+          "readonly FactListItem[]"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ item?: ComponentProps<\"div\", {}, HTMLProps> | undefined; label?: ComponentProps<\"dt\", {}, HTMLProps> | undefined; value?: ComponentProps<\"dd\", {}, HTMLProps> | undefined; }"
+        ]
+      },
+      "unknownLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      }
+    }
+  },
   "IconButton": {
     "extends": [
       "Omit< BaseButton.Props, 'className' | 'style' | 'color' | 'children' | 'disabled' | 'ref' >"
