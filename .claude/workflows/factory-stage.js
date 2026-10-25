@@ -81,7 +81,7 @@ if (stage === 'review') {
   const result = await agent(
     `${worktreeNote}Review ${name}, round ${round ?? 1}.` +
       (since
-        ? ` The round before reviewed commit ${since}: in this round a new P1 or P2 sits on a line \`git diff ${since}\` changes in the branch's own files, or is a regression that change causes; a gap in code that round already read is a P3 (your Steps, "Later rounds").`
+        ? ` The round before reviewed commit ${since}: in this round a P1 or P2 sits on a line \`git diff ${since}\` changes in the branch's own files, is a regression that change causes, is a finding of that round still unfixed, or is a red gate; any other gap in code that round already read is a P3 (the "Later rounds" section of your instructions).`
         : '') +
       ` Return review.md's whole text as \`review\`.`,
     { label, phase: 'Stage', agentType: 'component-reviewer', schema: REVIEW },

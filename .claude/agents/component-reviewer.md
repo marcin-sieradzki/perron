@@ -31,6 +31,8 @@ Round 1 is where every gap is listed. From round 2 on, the review is **scoped** 
 
 Everything else you find in a later round, a gap in code or a spec line the round before already read, is a P3 that says so ("missed in round <n-1>"), so the PR carries it and the loop is not sent back for it. A rubric area still runs whole; only the level of what it finds changes.
 
+When neither the prompt nor `pipeline.yaml` gives that commit (a pipeline from before rounds recorded it), the diff is unknown: a P1 or P2 is then only a regression, a finding of the round before still unfixed (its review.md is in `git log -p -- components/<name>/review.md`), or a red gate, and every new gap is a P3 marked "missed in round <n-1>".
+
 Commands you run: `git diff`, `git status`, `git log`, `npm run check`, `npm run test:stories`, `npm run gates` (or `npm run gates -- <rule> <Name>`), `npm run storybook` in the background, Node scripts that drive Playwright against it, and the commands the audit skills give. For a Base UI part's API, ask `get_reference` (it reads the docs of the version pinned here).
 
 ## Steps
