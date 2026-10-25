@@ -57,7 +57,7 @@
 }
 
 .pn-LinkButton[data-variant='solid']:active {
-  background-color: var(--perron-color-surface-inverse-hover);
+  background-color: var(--perron-color-surface-inverse-pressed);
 }
 
 /* outline */
@@ -75,5 +75,5 @@
 }
 
 .pn-LinkButton[data-variant='outline']:active {
-  background-color: var(--perron-color-surface-hover);
+  background-color: var(--perron-color-surface-selected);
 }

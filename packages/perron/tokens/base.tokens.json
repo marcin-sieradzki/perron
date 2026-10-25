@@ -2,7 +2,7 @@
   "$description": "Perron base tokens: everything that does not change between light and dark. Values extracted from the Mylder live map prototype (23 Oct 2026).",
   "palette": {
     "$type": "color",
-    "$description": "Raw colours, named by hue and step; the step rises as the colour darkens, with gaps left so a step can be added without renaming. Only color.* tokens point here: components and apps use color.*, never palette.*. Each hue has five steps: 100 a light tint, 300 the dark-theme fill and text, 500 the light-theme fill, 700 light-theme text (4.5:1 or better on every light surface), 900 a dark tint. Yellow adds 600, the light-theme brand hover.",
+    "$description": "Raw colours, named by hue and step; the step rises as the colour darkens, with gaps left so a step can be added without renaming. Only color.* tokens point here: components and apps use color.*, never palette.*. Each hue has five steps: 100 a light tint, 300 the dark-theme fill and text, 500 the light-theme fill, 700 light-theme text (4.5:1 or better on every light surface), 900 a dark tint. Yellow adds 550 and 600 and neutral adds 400, the hover and pressed fills of the buttons.",
     "neutral": {
       "0": {
         "$value": {
@@ -31,6 +31,14 @@
           "components": [0.6353, 0.6784, 0.6941],
           "hex": "#A2ADB1"
         }
+      },
+      "400": {
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.5451, 0.5922, 0.6196],
+          "hex": "#8B979E"
+        },
+        "$description": "Pressed fill of a dark-theme primary button, between its hover step and the 500"
       },
       "500": {
         "$value": {
@@ -246,13 +254,21 @@
           "hex": "#D99A00"
         }
       },
+      "550": {
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.7686, 0.5412, 0.0078],
+          "hex": "#C48A02"
+        },
+        "$description": "Hover fill of a light-theme brand button, halfway from the fill to the pressed step"
+      },
       "600": {
         "$value": {
           "colorSpace": "srgb",
           "components": [0.6902, 0.4824, 0.0196],
           "hex": "#B07B05"
         },
-        "$description": "Hover fill of a light-theme brand button, between the fill and the text step"
+        "$description": "Pressed fill of a light-theme brand button, the darkest yellow dark text still reads on at 4.5:1; also the dark-theme brand button's pressed fill"
       },
       "700": {
         "$value": {
