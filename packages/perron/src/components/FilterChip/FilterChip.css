@@ -1,0 +1,127 @@
+/* FilterChip, from docs/components/filter-chip.md. Off is Button's neutral outline and on, read
+   from Toggle's data-pressed (CR-4), its neutral solid, on a pill. Every state changes colours
+   only (CR-5), at once (CR-12), and the colour is set on the root, which the label and the icon
+   take (CR-8). */
+
+.pn-FilterChip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--perron-space-150);
+  box-sizing: border-box;
+  block-size: var(--perron-size-control);
+  margin: 0;
+  padding-block: 0;
+  padding-inline: var(--perron-space-300);
+  /* every state has the edge, transparent when selected, so on and off share one box (CR-5) */
+  border: var(--perron-border-width-025) solid var(--perron-color-border-control);
+  border-radius: var(--perron-radius-full);
+  background-color: transparent;
+  color: var(--perron-color-text-primary);
+  /* CR-10: the label stays on one line and the chip grows with it; the row of chips wraps */
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.pn-FilterChip-label {
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+}
+
+.pn-FilterChip-startIcon {
+  display: inline-flex;
+  flex: none;
+  --perron-icon-size: var(--perron-icon-size-325);
+}
+
+/* off: the hover layer every control shares, inside (hover: hover); the press outside it, so a
+   touch press shows (CR-6) */
+
+@media (hover: hover) {
+  .pn-FilterChip:not([data-pressed], [data-disabled]):hover {
+    background-color: var(--perron-color-surface-hover);
+  }
+}
+
+.pn-FilterChip:not([data-pressed], [data-disabled]):active {
+  background-color: var(--perron-color-surface-hover);
+}
+
+/* on: the selected design state */
+
+.pn-FilterChip[data-pressed] {
+  border-color: transparent;
+  background-color: var(--perron-color-surface-inverse);
+  color: var(--perron-color-text-inverse);
+}
+
+@media (hover: hover) {
+  .pn-FilterChip[data-pressed]:not([data-disabled]):hover {
+    background-color: var(--perron-color-surface-inverse-hover);
+  }
+}
+
+.pn-FilterChip[data-pressed]:not([data-disabled]):active {
+  background-color: var(--perron-color-surface-inverse-hover);
+}
+
+/* disabled, off and on: a colour, never an opacity. After the colours, which it ties. */
+
+.pn-FilterChip[data-disabled] {
+  border-color: var(--perron-color-border-subtle);
+  background-color: transparent;
+  color: var(--perron-color-text-tertiary);
+}
+
+.pn-FilterChip[data-pressed][data-disabled] {
+  border-color: transparent;
+  background-color: var(--perron-color-surface-inset);
+  color: var(--perron-color-text-tertiary);
+}
+
+/* CR-9: the one rule that reaches inside the Count, but for CR-11's in forced colours */
+.pn-FilterChip[data-disabled] .pn-FilterChip-count {
+  color: var(--perron-color-text-tertiary);
+}
+
+/* CR-11: forced colours drop the inverse fill, so a selected chip keeps a system fill of its own,
+   Highlight, or GrayText when it is disabled too, and the selected state still shows beside a
+   disabled chip that is off, which takes GrayText words and edge on Canvas */
+@media (forced-colors: active) {
+  /* :hover and :active too, at the hover rules' specificity and after them, so the theme's
+     inverse-hover never shows inside forced-color-adjust: none */
+  .pn-FilterChip[data-pressed]:not([data-disabled]),
+  .pn-FilterChip[data-pressed]:not([data-disabled]):is(:hover, :active) {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    color: HighlightText;
+  }
+
+  /* forced-color-adjust: none keeps the ring in the theme's ink too, which a dark contrast theme's
+     Canvas would hide, so the ring takes a system colour that shows on Canvas (CR-7, CR-11) */
+  .pn-FilterChip[data-pressed]:not([data-disabled]):focus-visible {
+    outline-color: CanvasText;
+  }
+
+  .pn-FilterChip[data-disabled] {
+    border-color: GrayText;
+    color: GrayText;
+  }
+
+  .pn-FilterChip[data-pressed][data-disabled] {
+    forced-color-adjust: none;
+    border-color: transparent;
+    background-color: GrayText;
+    color: Canvas;
+  }
+
+  /* forced-color-adjust is inherited: the Count is not part of the fill, so the system draws it
+     as it draws every Count, a Canvas pill with its CanvasText outline (Count's CR-7) */
+  .pn-FilterChip[data-pressed] .pn-FilterChip-count {
+    forced-color-adjust: auto;
+  }
+
+  .pn-FilterChip[data-disabled] .pn-FilterChip-count {
+    outline-color: GrayText;
+    color: GrayText;
+  }
+}
