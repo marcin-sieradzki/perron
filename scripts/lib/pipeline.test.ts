@@ -129,6 +129,32 @@ describe('specProblems', () => {
     ])
   })
 
+  it("takes a template slot quoted after other words, in prose or in a cell, as text: only the template's own slots count", () => {
+    const spec = filled(
+      'Swatch',
+      [
+        "The `legend` part takes the contract's `pn-<Name>-<part>` class, here `pn-Swatch-legend`.",
+        '',
+        "| `legend` | Fieldset's legend | the contract's `pn-<Name>-<part>`, here `pn-Swatch-legend` |",
+      ].join('\n'),
+    )
+    expect(specProblems(spec, template, 'Swatch')).toEqual({ pending: 0, problems: [] })
+    const left = filled(
+      'Swatch',
+      [
+        '| `<part>` | `<what this part is and holds>` | `Swatch.Part` | `pn-<Name>-<part>` | `<part>` |',
+        '',
+        'Penpot page `Components/Swatch`. Family: `<Rows | Fields | Popups | Panels | Tooltips | none>`.',
+      ].join('\n'),
+    )
+    expect(specProblems(left, template, 'Swatch').problems.sort()).toEqual([
+      'still has the placeholder <Name>',
+      'still has the placeholder <Rows | Fields | Popups | Panels | Tooltips | none>',
+      'still has the placeholder <part>',
+      'still has the placeholder <what this part is and holds>',
+    ])
+  })
+
   it("names a spec still headed with the template's title", () => {
     expect(specProblems(filled('Spec template'), template, 'Swatch').problems).toEqual([
       'starts with "# Spec template", not "# Swatch"',

@@ -630,6 +630,45 @@ describe('the factory dry run', () => {
     expect(existsSync(join(root, 'components/tally/pipeline.yaml'))).toBe(false)
   })
 
+  it("keeps a brief's questions when its gate fails it, and gives them to the rerun with the answers", () => {
+    stage('design', () => design())
+    run('approve Tally')
+    const questions = '1. Which tone is the default? Recommended: plain.'
+    run('begin Tally brief')
+    // a placeholder left fails the gate, though the run returned pending with its question
+    brief(
+      '[PENDING] Which tone is the default? Recommended: plain.\n\n| `<key>Label` | `string` |\n',
+    )
+    expect(run('end Tally brief pending', questions).out).toMatch(
+      /^ended brief: failed: the spec still has the placeholder <key>/,
+    )
+    expect(pipeline().notes).toContainEqual(expect.objectContaining({ stage: 'brief', questions }))
+    // the question still stands: the rerun keeps it
+    const kept = JSON.parse(run('next Tally --json').out).fix
+    expect(kept).toContain(`with these questions:\n${questions}`)
+    expect(kept).toMatch(/Keep each \[PENDING\] line/)
+    // answered meanwhile: the rerun carries the answer through too
+    brief('The default tone is plain.\n\n| `<key>Label` | `string` |\n')
+    const carried = JSON.parse(run('next Tally --json').out).fix
+    expect(carried).toMatch(/^the spec still has the placeholder <key>/)
+    expect(carried).toContain(questions)
+    expect(carried).toMatch(/component-brief, "Run again"/)
+  })
+
+  it('warns when a stage ends pending without its numbered questions', () => {
+    stage('design', () => design())
+    run('approve Tally')
+    run('begin Tally brief')
+    brief('[PENDING] Which tone is the default? Recommended: plain.\n')
+    expect(run('end Tally brief pending', 'see the spec').err).toMatch(
+      /^warning: brief ended pending without its numbered questions/,
+    )
+    brief('The default tone is plain.\n')
+    run('begin Tally brief')
+    brief('[PENDING] Is it ever negative? Recommended: no.\n')
+    expect(run('end Tally brief pending', '1. Is it ever negative? Recommended: no.').err).toBe('')
+  })
+
   it('runs brief to docs without design and visual once the design is deferred', () => {
     expect(run('defer Tally').out).toBe(
       'deferred the design of Tally\nrun: brief\nwhy: the design is deferred\n',

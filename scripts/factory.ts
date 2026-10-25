@@ -5,7 +5,8 @@
 //   begin <Name> <stage>                          records the stage as running, or refuses (exit 1)
 //   end <Name> <stage> <done|failed|pending> [--failing "<check and why>"] [--direction "<finding>"]…
 //                                                 checks the stage's gate, records it, prints next;
-//                                                 each --direction the notes lack, and a pending run's --failing,
+//                                                 each --direction the notes lack, and a pending run's --failing
+//                                                 (its numbered questions, kept though the gate fails it),
 //                                                 joins the pipeline's notes, which the PR carries
 //   approve <Name>                                the maintainer's design approval
 //   defer <Name>                                  runs the loop without design and visual (ADR 0010)
@@ -112,9 +113,9 @@ export function factory(argv: string[], env: Env): Printed {
   return {
     code: 0,
     out: json
-      ? `${JSON.stringify({ ok: true, said: result.said, next: n })}\n`
+      ? `${JSON.stringify({ ok: true, said: result.said, next: n, ...(result.warnings && { warnings: result.warnings }) })}\n`
       : `${result.said}\n${command === 'begin' ? '' : `${nextLines(n)}\n`}`,
-    err: '',
+    err: (result.warnings ?? []).map((w) => `warning: ${w}\n`).join(''),
   }
 }
 

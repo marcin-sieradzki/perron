@@ -157,7 +157,15 @@ export type Next =
   | { wait: Gate; stage?: Stage; why: string }
 
 /** A command's result: the new pipeline when it was accepted, or why it was refused. */
-export type Result = { ok: true; pipeline: Pipeline; said: string } | { ok: false; why: string }
+export type Result =
+  | {
+      ok: true
+      pipeline: Pipeline
+      said: string
+      /** What the command took but the orchestrator should fix next time, for stderr */
+      warnings?: string[]
+    }
+  | { ok: false; why: string }
 
 /** The files the loop reads and writes for `<Name>`, by path from the repo root. */
 export function filesOf(name: string, layer: Layer) {
@@ -225,24 +233,42 @@ const CODE_SPAN = /`[^`\n]+`/g
 const isRow = (line: string) => line.trimStart().startsWith('|')
 
 /**
+ * The template's slots in one line: each code span, keyed by the kind of line (a table row or
+ * prose) and its **context**, the words before it in its cell, or in prose since the last code
+ * span, at most 24 characters. A slot is the template's own only where its context is too.
+ */
+function spanKeys(line: string) {
+  const row = isRow(line)
+  const keys: { span: string; key: string }[] = []
+  let from = 0
+  for (const m of line.matchAll(CODE_SPAN)) {
+    let before = line.slice(from, m.index)
+    if (row) before = before.slice(before.lastIndexOf('|') + 1)
+    const context = before.trim().slice(-24)
+    keys.push({ span: m[0], key: `${row ? 'row' : 'prose'}\n${context}\n${m[0]}` })
+    from = m.index + m[0].length
+  }
+  return keys
+}
+
+/**
  * Where a template placeholder left in `spec` would show: its text outside the `[PENDING]`
  * questions, whose words are the maintainer's to answer, and outside its code spans, which can hold
- * angle brackets as code (`[data-delay='<value>']`), but for a code span the template has as is, on
- * a line of the same kind: a table row for a span the template has in a table, prose for one it has
- * in prose. So a cell left as `<key>Label` is a slot, and prose naming the contract's `<key>Label`
- * is not.
+ * angle brackets as code (`[data-delay='<value>']`), but for a code span that is one of the
+ * template's own slots: the same span, on the same kind of line, after the same words. So a cell
+ * left as `<key>Label` is a slot, and prose or a cell naming the contract's `<key>Label` or
+ * `pn-<Name>-<part>` is not.
  */
 function unfilledText(spec: string, template: string) {
-  const spans = { row: new Set<string>(), prose: new Set<string>() }
-  for (const line of template.split('\n'))
-    for (const span of line.match(CODE_SPAN) ?? []) spans[isRow(line) ? 'row' : 'prose'].add(span)
+  const slots = new Set(template.split('\n').flatMap((line) => spanKeys(line).map((k) => k.key)))
   return spec
     .replace(PENDING_MENTION, '')
     .split('\n')
     .filter((line) => !line.includes('[PENDING]'))
     .map((line) => {
-      const kept = spans[isRow(line) ? 'row' : 'prose']
-      return line.replace(CODE_SPAN, (span) => (kept.has(span) ? span : ''))
+      const keys = spanKeys(line)
+      let i = 0
+      return line.replace(CODE_SPAN, (span) => (slots.has(keys[i++].key) ? span : ''))
     })
     .join('\n')
 }
@@ -466,6 +492,27 @@ function fixOf(p: Pipeline, failing: string, env: Env) {
   return `${failing}. Fix each of its P1 and P2 findings at the line it names:\n${blockingFindings(text)}`
 }
 
+/** The fix of a brief run that carries the answers written in `spec` through it. */
+const carryAnswers = (spec: string) =>
+  `The maintainer's answers are written in ${spec} in place of their [PENDING] lines: rewrite any still worded as a question or labelled, then carry each one into every section it touches (component-brief, "Run again"), and run its steps 3 to 5 again.`
+
+/**
+ * What a failed brief's rerun is told of the questions its run asked, returning `pending` before
+ * its gate failed it: none for another stage or a run that asked none. With the answers written in
+ * the spec since, it carries them through as well; with the questions still there, it keeps them.
+ */
+function askedBefore(p: Pipeline, stage: Stage, env: Env) {
+  const s = p.stages[stage]
+  if (stage !== 'brief' || s?.status !== 'failed') return ''
+  const asked = p.notes?.find((n) => n.stage === 'brief' && n.at === s.ended && n.questions)
+  if (!asked) return ''
+  const { spec } = filesOf(p.component, p.layer)
+  const then = specPending(env, spec)
+    ? `Keep each [PENDING] line in ${spec}, and return the questions again, with any the fix adds.`
+    : carryAnswers(spec)
+  return `\nThe failed run returned pending, with these questions:\n${asked.questions}\n${then}`
+}
+
 /**
  * Whether a failed build's needs-human stop gives way to one rerun: the spec was revised since the
  * failed run began, before it ended or after (a run that answers the build's questions counts from
@@ -523,7 +570,7 @@ export function next(p: Pipeline, env: Env): Next {
         return {
           run: stage,
           why: `the answers are written in ${spec}; run the brief again to carry them through the spec`,
-          fix: `The maintainer's answers are written in ${spec} in place of their [PENDING] lines: rewrite any still worded as a question or labelled, then carry each one into every section it touches (component-brief, "Run again"), and run its steps 3 to 5 again.`,
+          fix: carryAnswers(spec),
         }
       return {
         wait: 'pending-questions',
@@ -538,7 +585,8 @@ export function next(p: Pipeline, env: Env): Next {
         : stage === stages[0]
           ? `the design is deferred`
           : `${stages[stages.indexOf(stage) - 1]} is done`
-    return { run: stage, ...round, why, ...(s.failing && { fix: fixOf(p, s.failing, env) }) }
+    const fix = s.failing && fixOf(p, s.failing, env) + askedBefore(p, stage, env)
+    return { run: stage, ...round, why, ...(fix && { fix }) }
   }
   return {
     wait: 'done',
@@ -793,6 +841,9 @@ export function newDirection(direction: string[], notes: Note[] = []) {
   return fresh
 }
 
+/** Questions numbered from 1, as a stage returns them: `1. …` or `1) …`. */
+const NUMBERED = /(^|\s)1[.)]\s/
+
 /**
  * Ends a running stage: checks its gate from the files (a stage's `done` is a claim, its `failed`
  * and `pending` are taken as said), records the result, and applies the caps and send-backs. The
@@ -911,20 +962,33 @@ export function end(
       break
     }
   }
+  const at = env.now()
   s.status = verdict.outcome
-  s.ended = env.now()
+  s.ended = at
   // a run that asks keeps its fix, such as a review's findings, for the rerun with the answers
   if (verdict.outcome !== 'pending') delete s.fix
   if (verdict.failing) s.failing = verdict.failing
   else delete s.failing
   if (verdict.pending) s.pending = verdict.pending
   else delete s.pending
-  const at = env.now()
+  // a run's questions are kept though its gate failed it, so its rerun and the PR still have them
+  const asked = outcome === 'pending' && failing
   const notes = [
     ...newDirection(direction, p.notes).map((d) => ({ stage, at, direction: d })),
-    ...(verdict.outcome === 'pending' && failing ? [{ stage, at, questions: failing }] : []),
+    ...(asked ? [{ stage, at, questions: failing }] : []),
   ]
   if (notes.length) (out.notes ??= []).push(...notes)
   const why = verdict.failing ? `: ${verdict.failing}` : ''
-  return { ok: true, pipeline: out, said: `ended ${stage}: ${verdict.outcome}${note}${why}` }
+  const warnings =
+    outcome === 'pending' && !NUMBERED.test(failing ?? '')
+      ? [
+          `${stage} ended pending without its numbered questions in --failing ("1. <question> Recommended: <answer>. 2. …"), so the notes, the rerun and the PR's Decisions to confirm lack them; give them on the next end`,
+        ]
+      : []
+  return {
+    ok: true,
+    pipeline: out,
+    said: `ended ${stage}: ${verdict.outcome}${note}${why}`,
+    ...(warnings.length && { warnings }),
+  }
 }
