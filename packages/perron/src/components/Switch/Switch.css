@@ -1,0 +1,189 @@
+/* Switch, from docs/components/switch.md. A pill track on the inset surface with a thumb at its
+   inline start; on, read from Base UI's data-checked, the track takes the pressed toggle's ink and
+   the thumb slides to the inline end. Every state changes the fills, the edge's colour and the
+   thumb's place only, never the geometry (CR-5). */
+
+.pn-Switch {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  box-sizing: border-box;
+  /* the track is the target: size.target-min tall, and as wide again as the thumb's travel */
+  block-size: var(--perron-size-target-min);
+  inline-size: calc(var(--perron-size-target-min) + var(--perron-space-400));
+  margin: 0;
+  padding: var(--perron-space-050);
+  /* the edge keeps its width in every state, in the fill's colour when on (CR-5) */
+  border: var(--perron-border-width-025) solid var(--perron-color-border-control);
+  border-radius: var(--perron-radius-full);
+  background-color: var(--perron-color-surface-inset);
+  vertical-align: middle;
+  cursor: pointer;
+  transition:
+    background-color var(--perron-duration-switch) var(--perron-easing-standard),
+    border-color var(--perron-duration-switch) var(--perron-easing-standard);
+}
+
+/* the thumb: the track's height less its padding and edge, so it travels exactly space.400; it
+   moves by margin-inline-start, so it goes to the inline end in right-to-left text too (CR-6) */
+.pn-Switch-thumb {
+  display: block;
+  flex: none;
+  block-size: calc(
+    var(--perron-size-target-min) - 2 * var(--perron-space-050) - 2 * var(--perron-border-width-025)
+  );
+  inline-size: calc(
+    var(--perron-size-target-min) - 2 * var(--perron-space-050) - 2 * var(--perron-border-width-025)
+  );
+  margin-inline-start: 0;
+  border-radius: var(--perron-radius-full);
+  background-color: var(--perron-color-text-secondary);
+  transition:
+    margin-inline-start var(--perron-duration-switch) var(--perron-easing-standard),
+    background-color var(--perron-duration-switch) var(--perron-easing-standard);
+}
+
+/* off: the hover layer the Fields lay over their fill, inside (hover: hover); the press outside
+   it, so a touch press shows. Never on a disabled or a read-only switch (CR-7, CR-8). */
+
+@media (hover: hover) {
+  .pn-Switch:not([data-checked], [data-disabled], [data-readonly]):hover {
+    background-image: linear-gradient(
+      var(--perron-color-surface-hover),
+      var(--perron-color-surface-hover)
+    );
+  }
+}
+
+.pn-Switch:not([data-checked], [data-disabled], [data-readonly]):active {
+  background-image: linear-gradient(
+    var(--perron-color-surface-hover),
+    var(--perron-color-surface-hover)
+  );
+}
+
+/* on: the selected design state */
+
+.pn-Switch[data-checked] {
+  border-color: var(--perron-color-surface-inverse);
+  background-color: var(--perron-color-surface-inverse);
+}
+
+.pn-Switch-thumb[data-checked] {
+  margin-inline-start: var(--perron-space-400);
+  background-color: var(--perron-color-surface-raised);
+}
+
+@media (hover: hover) {
+  .pn-Switch[data-checked]:not([data-disabled], [data-readonly]):hover {
+    border-color: var(--perron-color-surface-inverse-hover);
+    background-color: var(--perron-color-surface-inverse-hover);
+  }
+}
+
+.pn-Switch[data-checked]:not([data-disabled], [data-readonly]):active {
+  border-color: var(--perron-color-surface-inverse-hover);
+  background-color: var(--perron-color-surface-inverse-hover);
+}
+
+/* disabled and read-only keep the default cursor (CR-9) */
+
+.pn-Switch:is([data-disabled], [data-readonly]) {
+  cursor: default;
+}
+
+/* disabled, off and on: a colour, never an opacity, after the colours, which it ties. The thumb's
+   place and the track's fill still show whether the setting is on. */
+
+.pn-Switch[data-disabled] {
+  border-color: var(--perron-color-border-subtle);
+  background-color: var(--perron-color-surface-inset);
+}
+
+.pn-Switch[data-checked][data-disabled] {
+  border-color: var(--perron-color-text-tertiary);
+  background-color: var(--perron-color-text-tertiary);
+}
+
+.pn-Switch-thumb[data-disabled] {
+  background-color: var(--perron-color-text-tertiary);
+}
+
+.pn-Switch-thumb[data-checked][data-disabled] {
+  background-color: var(--perron-color-surface-raised);
+}
+
+/* invalid, inside an invalid Field.Root: the edge alone, on and off, kept over the on switch's
+   hover and press, at their specificity and after them */
+
+.pn-Switch[data-invalid]:not([data-disabled]) {
+  border-color: var(--perron-color-status-danger);
+}
+
+@media (hover: hover) {
+  .pn-Switch[data-checked][data-invalid]:not([data-disabled], [data-readonly]):hover {
+    border-color: var(--perron-color-status-danger);
+  }
+}
+
+.pn-Switch[data-checked][data-invalid]:not([data-disabled], [data-readonly]):active {
+  border-color: var(--perron-color-status-danger);
+}
+
+/* CR-11: forced colours drop the fills, and the thumb would vanish into Canvas, so the switch keeps
+   its own system colours: ButtonText on Canvas off, HighlightText on Highlight on, GrayText when
+   disabled. forced-color-adjust is inherited, so the thumb takes it from the root. */
+@media (forced-colors: active) {
+  .pn-Switch {
+    forced-color-adjust: none;
+    border-color: ButtonText;
+    background-color: Canvas;
+  }
+
+  /* at the hover and press rules' specificity and after them, so no theme fill shows */
+  .pn-Switch:not([data-checked], [data-disabled], [data-readonly]):is(:hover, :active) {
+    background-image: none;
+  }
+
+  .pn-Switch-thumb {
+    background-color: ButtonText;
+  }
+
+  .pn-Switch[data-checked] {
+    border-color: Highlight;
+    background-color: Highlight;
+  }
+
+  .pn-Switch[data-checked]:not([data-disabled], [data-readonly]):is(:hover, :active) {
+    border-color: Highlight;
+    background-color: Highlight;
+  }
+
+  .pn-Switch-thumb[data-checked] {
+    background-color: HighlightText;
+  }
+
+  .pn-Switch[data-disabled] {
+    border-color: GrayText;
+    background-color: Canvas;
+  }
+
+  .pn-Switch-thumb[data-disabled] {
+    background-color: GrayText;
+  }
+
+  .pn-Switch[data-checked][data-disabled] {
+    border-color: GrayText;
+    background-color: GrayText;
+  }
+
+  .pn-Switch-thumb[data-checked][data-disabled] {
+    background-color: Canvas;
+  }
+
+  /* forced-color-adjust: none keeps the ring in the theme's ink too, which a dark contrast theme's
+     Canvas would hide (CR-10, CR-11) */
+  .pn-Switch:focus-visible {
+    outline-color: CanvasText;
+  }
+}
