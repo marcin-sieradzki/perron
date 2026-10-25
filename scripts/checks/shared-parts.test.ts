@@ -53,19 +53,36 @@ describe('shared-parts', () => {
 
   it("reads the helpers from the contract's table", () => {
     const helpers = readHelpers(readFileSync(join(root, 'docs/components/README.md'), 'utf8'))
-    expect(helpers).toContainEqual({ name: 'given', file: 'internal/nodes.ts' })
-    expect(helpers).toContainEqual({ name: 'usePart', file: 'internal/use-part.ts' })
+    expect(helpers).toContainEqual({ name: 'given', aliases: [], file: 'internal/nodes.ts' })
+    expect(helpers).toContainEqual({ name: 'usePart', aliases: [], file: 'internal/use-part.ts' })
+    expect(helpers).toContainEqual({
+      name: 'heard',
+      aliases: ['exposedText', 'textOf'],
+      file: 'testing/stories.ts',
+    })
   })
 
   it('fails a shared helper declared outside its file, at the top level only', () => {
     const problems = helperProblems(root, 'scripts/checks/fixtures/shared-parts/helpers', [
-      { name: 'given', file: 'internal/nodes.ts' },
-      { name: 'known', file: 'internal/nodes.ts' },
-      { name: 'usePart', file: 'internal/use-part.ts' },
+      { name: 'given', aliases: [], file: 'internal/nodes.ts' },
+      { name: 'known', aliases: [], file: 'internal/nodes.ts' },
+      { name: 'usePart', aliases: [], file: 'internal/use-part.ts' },
     ])
     expect(problems.map((p) => [p.line, p.message.split(';')[0]])).toEqual([
       [4, 'declares given, a shared helper'],
       [6, 'declares usePart, a shared helper'],
+    ])
+  })
+
+  it('fails a copy of a shared helper under a new name, and one under an alias the table lists', () => {
+    const problems = helperProblems(root, 'scripts/checks/fixtures/shared-parts/copies', [
+      { name: 'classes', aliases: [], file: 'internal/nodes.ts' },
+      { name: 'heard', aliases: ['exposedText'], file: 'internal/nodes.ts' },
+    ])
+    expect(problems.map((p) => [p.line, p.message.split(';')[0]])).toEqual([
+      [4, 'declares join, a copy of the shared helper classes'],
+      [7, 'declares spoken, a copy of the shared helper heard'],
+      [14, 'declares exposedText, the shared helper heard under another name'],
     ])
   })
 

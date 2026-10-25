@@ -3,20 +3,10 @@
 // Not shipped: the build leaves src/testing out.
 import { dictionaries } from '../locale/index.ts'
 import type { Locale } from '../locale/index.ts'
+import { decode } from './markup.ts'
 
 /** The attributes whose values a person reads or hears. */
 const SPOKEN = /\s(?:aria-label|title|alt|placeholder)="([^"]*)"/g
-
-const ENTITIES: Record<string, string> = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'" }
-
-const decode = (s: string) =>
-  s.replace(/&(#x[\da-f]+|#\d+|\w+);/gi, (entity, name: string) =>
-    name[0] === '#'
-      ? String.fromCodePoint(
-          Number(name[1].toLowerCase() === 'x' ? `0${name.slice(1)}` : name.slice(1)),
-        )
-      : (ENTITIES[name] ?? entity),
-  )
 
 /** Every text run and spoken attribute value in an HTML render that holds a letter. */
 function wordsIn(markup: string): string[] {
