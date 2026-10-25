@@ -1,0 +1,25 @@
+/* Kbd: one key on the line of the text around it (CR-3), a raised box with a solid edge in the
+   semantic tokens, which carry both themes (CR-4), and no interactive state (CR-2). */
+.pn-Kbd {
+  display: inline-block;
+  vertical-align: baseline;
+  white-space: nowrap;
+  text-align: center;
+  padding-block: 0;
+  /* the border paints outside the line's layout: only the key's 1lh counts toward the line, so a
+     key never pushes a caption or body line apart (CR-3) */
+  margin-block: calc(-1 * var(--perron-border-width-025));
+  padding-inline: var(--perron-space-100);
+  background: var(--perron-color-surface-raised);
+  border: var(--perron-border-width-025) solid var(--perron-color-border-strong);
+  border-radius: var(--perron-radius-xs);
+  color: var(--perron-color-text-primary);
+  font: var(--perron-typography-data-sm);
+  /* tight, in place of the role's snug: the key is one line, short enough that the keys of two
+     wrapped caption lines stand apart (CR-3) */
+  line-height: var(--perron-font-line-height-tight);
+  letter-spacing: var(--perron-typography-data-sm-tracking);
+}
+
+/* Forced colours need no rule: Windows' contrast themes drop the fill and paint the same border in
+   the text colour, so the key keeps its edge. */
