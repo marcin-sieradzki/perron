@@ -5,9 +5,9 @@ deferred:
   at: 2026-10-25T08:08:16.724Z
 stages:
   brief:
-    status: pending
-    started: 2026-10-25T08:08:20.795Z
-    ended: 2026-10-25T08:13:31.398Z
+    status: done
+    started: 2026-10-25T08:13:35.153Z
+    ended: 2026-10-25T08:15:43.776Z
 notes:
   - stage: brief
     at: 2026-10-25T08:13:31.398Z
@@ -33,3 +33,9 @@ notes:
       4. (Keyboard and ARIA, target checklist line) Does Link add no padding or minimum height of its own, meeting WCAG 2.5.8 by the inline and spacing exceptions? Recommended: yes.
       5. (Owned strings) Does Link, like LinkButton, own no 'Opens in a new tab' string, draw no external-link icon and take no external prop, leaving target and rel to the caller? Recommended: yes.
       6. (Component rules, CR-9) Does Attribution keep its own .pn-Attribution :any-link rule in this change, with a separate follow-up deciding whether its links move to Link? Recommended: yes, as a follow-up.
+  - stage: brief
+    at: 2026-10-25T08:15:43.776Z
+    direction: LinkButton's spec (docs/components/link-button.md, Do and don't) still says to use 'a plain <a>' inside a sentence. Once Link ships, that row should name Link.
+  - stage: brief
+    at: 2026-10-25T08:15:43.776Z
+    direction: LinkButton leaves className and style in rest and lets mergeProps merge them, but the contract's Root rule says every prop the props type declares is taken out of rest. Either the contract allows props that mergeProps merges, or LinkButton catches up. Link's spec takes them out (CR-1).
