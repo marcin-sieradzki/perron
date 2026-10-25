@@ -21,7 +21,9 @@ export const decode = (s: string) =>
  * @example attribute('<svg viewBox="0 0 24 24" width="24">', 'viewBox') // '0 0 24 24'
  */
 export function attribute(markup: string, name: string) {
-  const value = markup.match(/<[^>]*>/)?.[0].match(new RegExp(`\\s${name}="([^"]*)"`))?.[1]
+  const value = markup
+    .match(/<[^>]*>/)?.[0]
+    .match(new RegExp(`\\s${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}="([^"]*)"`))?.[1]
   return value === undefined ? undefined : decode(value)
 }
 
