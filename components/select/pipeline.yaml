@@ -1,0 +1,104 @@
+# Written by npm run factory; never by hand.
+component: Select
+layer: component
+deferred:
+  at: 2026-10-25T05:33:08.882Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-25T05:46:03.147Z
+    ended: 2026-10-25T05:47:29.658Z
+  build:
+    runs: 4
+    status: done
+    started: 2026-10-25T06:35:21.492Z
+    begun: c09cbf61093a251d493aa01c1bee325b0db29bdec3f81a078d6539d16fdbb008
+    spec: 14f3a38b5b98da7f16b540a78143abe7dd3463007ae2c5a13ece9e8eb47a59a2
+    ended: 2026-10-25T06:40:07.023Z
+  review:
+    rounds: 4
+    sentBack: 0
+    findings:
+      p1: 0
+      p2: 0
+      p3: 4
+    status: done
+    started: 2026-10-25T06:57:04.347Z
+    ended: 2026-10-25T07:00:53.206Z
+  docs:
+    status: done
+    started: 2026-10-25T07:01:04.617Z
+    ended: 2026-10-25T07:05:32.885Z
+notes:
+  - stage: brief
+    at: 2026-10-25T05:44:48.986Z
+    questions: 16 questions, see docs/components/select.md [PENDING] lines
+  - stage: brief
+    at: 2026-10-25T05:47:29.659Z
+    direction: size.input's description says "Search field", but the Select trigger and every Fields member use it. Settle the description through the design-tokens skill.
+  - stage: brief
+    at: 2026-10-25T05:47:29.659Z
+    direction: Select is the first to compose the SelectedMark shared part and the tick, so its build adds packages/perron/src/parts/SelectedMark and check.svg. Combobox and Menu then reuse them.
+  - stage: brief
+    at: 2026-10-25T05:47:29.659Z
+    direction: Field's label must be a non-native <div> (nativeLabel false) for button controls such as Select, and later Combobox's trigger, while text controls keep a native <label>. Field could take this as a prop of its own rather than each dependent passing slotProps.label.
+  - stage: brief
+    at: 2026-10-25T05:47:29.659Z
+    direction: Select's rows take real DOM focus and so show perron.css's ring beside the highlight fill, while SearchField's rows use virtual focus and show only the fill. The contract's Rows family could say how a keyboard-focused row looks in both cases.
+  - stage: brief
+    at: 2026-10-25T05:47:29.659Z
+    direction: The Disabled story will need axe's color-contrast exception for color.text.tertiary, as Field's does. Every disabled field will keep needing it unless one rule is settled in .storybook/preview.ts.
+  - stage: brief
+    at: 2026-10-25T05:47:29.659Z
+    direction: "Select answers Field's open Direction on optional versus required: it takes both as separate props and derives neither. TextField and the other Field dependents should take the same answer."
+  - stage: brief
+    at: 2026-10-25T05:47:29.659Z
+    direction: The row's tick shows at icon.size.325 while the trigger's chevron shows at icon.size.400, so the open field mixes two icon sizes. Design QA should check that the tick holds its weight beside typography.label in a size.target-min row.
+  - stage: build
+    at: 2026-10-25T06:05:10.002Z
+    direction: A placeholder drawn as text (Select's Value, later Combobox's) is checked by axe where a native input's placeholder is not. The tertiary placeholder the contract decides needs one exception in .storybook/preview.ts, beside the disabled-text one the brief raised.
+  - stage: build
+    at: 2026-10-25T06:05:10.002Z
+    direction: Base UI does not mark a required field invalid until its value has changed, and skips `validate` while the native check fails. Every Field dependent that sets `required` meets this, so the contract's Forms rule could say so.
+  - stage: build
+    at: 2026-10-25T06:05:10.002Z
+    direction: A Select opened by a press or by defaultOpen with nothing chosen gives focus to the popup and highlights no row. Select draws no ring on the popup. Combobox and Menu popups that take focus could follow the same rule in the Popups family.
+  - stage: build
+    at: 2026-10-25T06:05:10.002Z
+    direction: SelectedMark sets no colour of its own and inherits the row's ink, so forced colours' HighlightText reaches the tick. Menu.RadioItemIndicator and Combobox.ItemIndicator should keep that rather than set color.text.primary on the part.
+  - stage: build
+    at: 2026-10-25T06:05:10.002Z
+    direction: Select declares JSDoc of its own for `required` and `readOnly`, while Checkbox and Switch inherit Base UI's wording for the same props. The Inputs family could settle on one wording.
+  - stage: build
+    at: 2026-10-25T06:05:10.002Z
+    direction: "Typing Field's slotProps.label through Base UI's mergeProps needs a cast: mergeProps types the ref as HTMLElement, while Field's slot takes a label's ref. A `nativeLabel` prop on Field, as the brief proposed, would remove it."
+  - stage: build
+    at: 2026-10-25T06:05:10.002Z
+    questions: "1. Placeholder contrast: axe colour-contrast fails the text placeholder (color.text.tertiary, 4.0:1) in the contract story Root, which renders Default's args. Recommended: one rule in .storybook/preview.ts skipping colour-contrast on [data-placeholder]; alternative: draw the placeholder in color.text.secondary. 2. Validation story: Base UI 1.9.0 marks a required field invalid only after its value changed and skips validate while the native check fails. Recommended (built): the Validation story drops required, its validate alone asks for a choice, and its play mounts a required copy to show aria-required and the hidden input's required."
+  - stage: build
+    at: 2026-10-25T06:10:29.349Z
+    direction: Now that Default shows "Metro" chosen, Filled looks the same at rest. Only its play test (typing "b" on the closed trigger) sets it apart, so Filled could be dropped, or folded into Default's play, in a later spec revision.
+  - stage: build
+    at: 2026-10-25T06:10:29.349Z
+    direction: Factory runs in parallel share one scratchpad folder, so a log with a fixed name such as check.log can be overwritten by another worktree's run. The audit skills' rendering guide could tell each run to name its scratch files after its component.
+  - stage: build
+    at: 2026-10-25T06:27:07.661Z
+    direction: Playwright's emulated forced colours draw GrayText as a dark red (rgb(96, 0, 0)), not the grey Windows uses, so forced-colour screenshots in the audit skills show the right contrast between system colours but not their true hues. design-qa/rendering.md could warn about this.
+  - stage: build
+    at: 2026-10-25T06:27:07.661Z
+    direction: CR-5 now lists which Select parts are merged and which are spread as they are. The list must change whenever Select starts or stops setting props on a part, so the contract could ask specs to state the rule rather than list the parts.
+  - stage: build
+    at: 2026-10-25T06:40:07.023Z
+    direction: A caller that filters `items` gets `onChange` with 'none' when the chosen option drops out, because Base UI resets the value to the first value or to `null`. Combobox will meet the same reset, so the Inputs family could say how a dependent describes it.
+  - stage: build
+    at: 2026-10-25T06:40:07.023Z
+    direction: The brief chose the overlay docs frame height (360px) without measuring the tallest open story. The contract's Stories rule could ask the spec to size the frame from its tallest open overlay, or the audit skills could render each overlay story at the frame's height.
+  - stage: review
+    at: 2026-10-25T06:46:53.245Z
+    unblocked: '3 review rounds found a P1 or a P2; the last: review round 3 found 1 P2 (components/select/review.md)'
+  - stage: docs
+    at: 2026-10-25T07:05:32.885Z
+    direction: 'Overlay stories on a docs page sit in iframes (docs.story.inline: false) that load only when scrolled into view, so a full-page screenshot taken without scrolling shows them as empty frames. component-docs step 4 or design-qa/rendering.md could say to scroll each story frame into view before the screenshot.'
+  - stage: docs
+    at: 2026-10-25T07:05:32.885Z
+    direction: On the docs page, Hover and Focus render the same as each other, the placeholder field at rest, because their plays don't run there; with Filled matching Default, four of the fifteen examples are near duplicates. The contract's Stories rule could say whether state stories that only a play sets apart belong on the docs page.

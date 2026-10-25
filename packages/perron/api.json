@@ -2061,6 +2061,130 @@
       }
     }
   },
+  "Select": {
+    "extends": [
+      "Omit< FieldProps, 'children' | 'slotProps' | 'onChange' | 'defaultValue' >"
+    ],
+    "props": {
+      "defaultOpen": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "defaultValue": {
+        "optional": true,
+        "type": [
+          "null",
+          "string"
+        ]
+      },
+      "description": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "error": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "hiddenLabel": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "items": {
+        "optional": false,
+        "type": [
+          "readonly SelectGroup[]",
+          "readonly SelectItem[]"
+        ]
+      },
+      "label": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "onChange": {
+        "optional": true,
+        "type": [
+          "(event: Event, value: null | string, details: SelectRootChangeEventDetails) => void"
+        ]
+      },
+      "onClose": {
+        "optional": true,
+        "type": [
+          "(event: Event, reason: SelectRootChangeEventReason, details: SelectRootOpenChangeEventDetails) => void"
+        ]
+      },
+      "onOpen": {
+        "optional": true,
+        "type": [
+          "(event: Event, details: SelectRootOpenChangeEventDetails) => void"
+        ]
+      },
+      "open": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "optional": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "optionalLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "placeholder": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "readOnly": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "required": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ label?: FieldLabelProps | undefined; description?: FieldDescriptionProps | undefined; error?: FieldErrorProps | undefined; trigger?: SelectTriggerProps | undefined; value?: SelectValueProps | undefined; icon?: SelectIconProps | undefined; portal?: SelectPortalProps | undefined; positioner?: Omit<SelectPositionerProps, \"alignItemWithTrigger\"> | undefined; popup?: SelectPopupProps | undefined; list?: SelectListProps | undefined; group?: SelectGroupProps | undefined; groupLabel?: SelectGroupLabelProps | undefined; separator?: SelectSeparatorProps | undefined; item?: SelectItemProps | undefined; itemText?: SelectItemTextProps | undefined; itemIndicator?: SelectItemIndicatorProps | undefined; }"
+        ]
+      },
+      "value": {
+        "optional": true,
+        "type": [
+          "null",
+          "string"
+        ]
+      }
+    }
+  },
   "SeverityLabel": {
     "extends": [
       "Omit< useRender.ComponentProps<'span', SeverityLabelState>, 'children' | 'ref' >"
