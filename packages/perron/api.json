@@ -1326,6 +1326,54 @@
       }
     }
   },
+  "Tag": {
+    "extends": [
+      "Omit< useRender.ComponentProps<'span'>, 'children' | 'className' | 'style' | 'ref' >"
+    ],
+    "props": {
+      "children": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "color": {
+        "optional": true,
+        "type": [
+          "\"danger\"",
+          "\"info\"",
+          "\"neutral\"",
+          "\"success\"",
+          "\"warning\""
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLSpanElement>"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "variant": {
+        "optional": true,
+        "type": [
+          "\"dashed\"",
+          "\"filled\""
+        ]
+      }
+    }
+  },
   "Text": {
     "extends": [
       "Omit<HTMLAttributes<HTMLElement>, 'color' | 'children' | 'className' | 'style'>",
