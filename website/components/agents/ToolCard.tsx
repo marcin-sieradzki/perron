@@ -1,8 +1,15 @@
 // One tool of the MCP server, as the server lists it: its name, title, description and inputs, and
-// beside them the example call and the server's answer, cut for the page with a note saying how
-// much. A tool with no example yet shows its input schema instead.
+// beside them the example call and the server's answer, set to read and cut for the page with a
+// note saying how much, its raw text behind "Show the raw answer". A tool with no example yet
+// shows its input schema instead.
 import { Markdown } from '@/components/site/Markdown.tsx'
-import { excerpt, type Tool } from '../../lib/mcp.ts'
+import {
+  answerMarkdown,
+  answerTokens,
+  excerpt,
+  type AnswerToken,
+  type Tool,
+} from '../../lib/mcp.ts'
 import './agents.css'
 
 /** Where the server's descriptions are written, which a relative link in one starts from. */
@@ -14,12 +21,77 @@ export const toolAnchor = (name: string) => name.replaceAll('_', '-')
 const count = (n: number) => n.toLocaleString('en-GB')
 const plural = (n: number, one: string, many: string) => `${count(n)} ${n === 1 ? one : many}`
 
+/** `list_tokens`' answer as a table: each token with its value in each theme, a colour painted. */
+function TokenTable({ tokens }: { tokens: AnswerToken[] }) {
+  const themes = [...new Set(tokens.flatMap((t) => Object.keys(t.values)))]
+  const themed = themes.length > 1
+  return (
+    <div className="scroll-x">
+      <table className="agents-tokens">
+        <thead>
+          <tr>
+            <th scope="col">Token</th>
+            {themes.map((theme) => (
+              <th key={theme} scope="col">
+                {themed ? theme.charAt(0).toUpperCase() + theme.slice(1) : 'Value'}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {tokens.map((t) => (
+            <tr key={t.name}>
+              <th scope="row">{t.name}</th>
+              {themes.map((theme) => {
+                const value = t.values[theme]
+                return (
+                  <td key={theme}>
+                    {value ? (
+                      <span className="agents-token-value">
+                        {t.type === 'color' ? (
+                          <span
+                            className="agents-swatch"
+                            {...(themed ? { 'data-theme': theme } : {})}
+                            style={{ background: `var(${t.cssVar})` }}
+                          />
+                        ) : null}
+                        {value.alias ? value.alias.replace(/^palette\./, '') : value.css}
+                      </span>
+                    ) : (
+                      '—'
+                    )}
+                  </td>
+                )
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+/**
+ * The server's answer, set to read: a token table or the markdown it is, with the exact text the
+ * agent receives one click away.
+ */
 function Answer({ text, isError }: { text: string; isError: boolean }) {
   const cut = excerpt(text)
+  const tokens = isError ? undefined : answerTokens(cut.text)
   return (
     <div className="agents-tool-call-body">
       {isError ? <p className="agents-tool-error">The server answers with an error:</p> : null}
-      <pre className="agents-tool-answer">{cut.text}</pre>
+      {tokens ? (
+        <TokenTable tokens={tokens} />
+      ) : (
+        <div className="agents-tool-reading">
+          <Markdown source={answerMarkdown(cut.text)} path={SERVER} />
+        </div>
+      )}
+      <details className="agents-tool-raw">
+        <summary>Show the raw answer</summary>
+        <pre className="agents-tool-answer">{cut.text}</pre>
+      </details>
       {cut.cutChars ? (
         <p className="agents-tool-cut">
           Cut for this page: {plural(cut.cutLines, 'more line', 'more lines')},{' '}
