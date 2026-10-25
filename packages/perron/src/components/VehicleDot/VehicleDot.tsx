@@ -40,8 +40,8 @@ export interface VehicleDotProps extends Omit<useRender.ComponentProps<'span'>, 
    */
   line: 'm1' | 'm2' | 'm3' | 'm4' | 'a' | 'b' | 'c' | 'e' | 'f' | 'h' | 'bus' | 'regional'
   /**
-   * The glyph box, the icon size of the text beside it: `small` beside caption text, `medium`
-   * beside label text, `large` beside a panel title. Set on the root as `data-size`.
+   * The glyph box, at the icon size for where it sits: `small` beside caption and label text;
+   * `medium` inside controls and rows; `large` beside a panel title. Set on the root as `data-size`.
    */
   size?: 'small' | 'medium' | 'large'
   /**

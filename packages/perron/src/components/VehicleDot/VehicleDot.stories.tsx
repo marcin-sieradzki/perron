@@ -46,8 +46,18 @@ const LINES: { line: Line; token: string; name: string }[] = [
 
 /** Each size, its icon-size token, and the text it sits beside (the spec's Props). */
 const SIZES: { size: Size; token: string; text: string; role: string }[] = [
-  { size: 'small', token: 'icon-size-325', text: 'Small, beside a caption', role: 'caption' },
-  { size: 'medium', token: 'icon-size-400', text: 'Medium, beside a label', role: 'label' },
+  {
+    size: 'small',
+    token: 'icon-size-325',
+    text: 'Small, beside a caption or label',
+    role: 'caption',
+  },
+  {
+    size: 'medium',
+    token: 'icon-size-400',
+    text: 'Medium, inside a control or row',
+    role: 'label',
+  },
   {
     size: 'large',
     token: 'icon-size-450',
@@ -649,9 +659,9 @@ const SHAPES: Record<Variant, (root: Element, ink: string) => Promise<unknown>> 
 }
 
 /**
- * The five states on M1 at medium, beside their words. Its first render, which the docs page and
- * the visual stage show, is in normal colours: the forced-colours look exists only while its play
- * test applies the sheet (CR-11).
+ * The five states on M1 at medium, beside their words. Its first render, which the docs page, the
+ * visual stage and the audits show, is in normal colours: the forced-colours look exists only while
+ * its play test applies the sheet (CR-11).
  */
 export const ForcedColours: Story = {
   render: (args) => <States line={args.line} size="medium" />,
