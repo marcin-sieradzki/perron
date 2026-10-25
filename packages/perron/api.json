@@ -668,6 +668,37 @@
       }
     }
   },
+  "Section": {
+    "extends": [
+      "Omit< useRender.ComponentProps<'section'>, 'title' | 'children' >"
+    ],
+    "props": {
+      "action": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ header?: ComponentProps<\"div\", {}, HTMLProps> | undefined; title?: ComponentProps<\"h3\", {}, HTMLProps> | undefined; action?: ComponentProps<\"div\", {}, HTMLProps> | undefined; content?: ComponentProps<\"div\", {}, HTMLProps> | undefined; }"
+        ]
+      },
+      "title": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      }
+    }
+  },
   "SeverityLabel": {
     "extends": [
       "Omit< useRender.ComponentProps<'span', SeverityLabelState>, 'children' | 'ref' >"
