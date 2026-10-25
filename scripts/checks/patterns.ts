@@ -11,8 +11,11 @@ const SRC = `${PACKAGE}/src`
 
 /** Packages a pattern may import at runtime: React, and the package's own barrel. */
 const PACKAGES = new Set(['react', '@mylder/perron'])
-/** Files of the package a pattern may import besides components and parts, without extension. */
-const FILES = new Set([`${SRC}/index`, `${SRC}/PerronProvider`])
+/**
+ * Files of the package a pattern may import besides components and parts, without extension: the
+ * shared helpers that read no Base UI among them.
+ */
+const FILES = new Set([`${SRC}/index`, `${SRC}/PerronProvider`, `${SRC}/internal/nodes`])
 
 /** Each module `text` imports or re-exports, with its line and whether only its types are used. */
 function imports(file: string, text: string) {

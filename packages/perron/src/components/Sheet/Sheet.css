@@ -146,6 +146,8 @@
   padding-block-end: var(--perron-space-400);
   font: var(--perron-typography-body);
   letter-spacing: var(--perron-typography-body-tracking);
+  /* A long Danish word in the caller's text breaks inside the panel rather than scrolling it sideways. */
+  overflow-wrap: anywhere;
 }
 
 /* The caller's first and last blocks lose their outer margins, so the body starts space.300 below

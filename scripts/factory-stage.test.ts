@@ -123,6 +123,15 @@ describe('withFix, for a stage the factory sent back', () => {
       })
       expect(withFix({ stage: 'build', name: 'Chip', fix: 'given' }, root).fix).toBe('given')
       expect(withFix({ stage: 'review', name: 'Chip' }, root).fix).toBeUndefined()
+
+      // after begin, as the factory skill's step 4 runs it, the fix comes from the running stage
+      write(
+        'components/chip/pipeline.yaml',
+        `component: Chip\nlayer: component\ndeferred:\n  at: x\nstages:\n  brief:\n    status: done\n  build:\n    status: running\n    started: x\n    fix: 'docs failed: Chip.tsx:4 has no JSDoc'\n`,
+      )
+      expect(withFix({ stage: 'build', name: 'Chip' }, root).fix).toBe(
+        'docs failed: Chip.tsx:4 has no JSDoc',
+      )
     } finally {
       rmSync(root, { recursive: true })
     }

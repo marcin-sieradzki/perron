@@ -161,6 +161,19 @@ const media = (params: string) =>
     .replace(/\s*:\s*/g, ': ')
     .trim()
 
+/**
+ * A declaration that decides what a word longer than its line does: it breaks (`overflow-wrap` or
+ * `word-break`), or the text stays on one line (`white-space: nowrap`, a choice its spec names).
+ */
+const LONG_WORD =
+  /^(overflow-wrap|word-wrap):\s*(anywhere|break-word)|^word-break:\s*(break-all|break-word)|^white-space:\s*(nowrap|pre)\b/i
+
+/** The first `pn-` class of a selector, and its root's: `pn-Button-label` has `pn-Button`. */
+const pnClass = (sel: string) => {
+  const m = /\.(pn-[A-Za-z0-9]+)(-[A-Za-z0-9]+)?/.exec(sel)
+  return m ? { own: `${m[1]}${m[2] ?? ''}`, root: m[1] } : undefined
+}
+
 /** A selector with its whitespace collapsed, so two spellings of one selector compare equal. */
 const selector = (text: string) => text.replace(/\s+/g, ' ').trim()
 
@@ -230,6 +243,32 @@ export function cssProblems(
       rule.walkDecls(/^animation(-name|-iteration-count)?$/i, (d) => {
         if (d.parent?.type === 'rule') stopped.add(selector((d.parent as Rule).selector))
       })
+  })
+  // the plain classes whose rule decides long words, for the parts that inherit it (CSS, "Long words")
+  const decided = new Set<string>()
+  const decides = (rule: Rule) =>
+    rule.nodes.some((n) => n.type === 'decl' && LONG_WORD.test(`${n.prop}: ${n.value}`))
+  root.walkRules((rule: Rule) => {
+    if (decides(rule))
+      for (const sel of rule.selectors)
+        if (/^\.pn-[A-Za-z0-9-]+$/.test(sel.trim())) decided.add(sel.trim().slice(1))
+  })
+  root.walkRules((rule: Rule) => {
+    const typeset = rule.nodes.find(
+      (n): n is Declaration =>
+        n.type === 'decl' &&
+        n.prop.toLowerCase() === 'font' &&
+        vars(n.value).some((v) => tokens.typography.has(v.name)),
+    )
+    if (typeset && !decides(rule))
+      for (const sel of rule.selectors) {
+        const cls = pnClass(sel)
+        if (cls && !decided.has(cls.own) && !decided.has(cls.root))
+          report(
+            typeset,
+            `${selector(sel)} sets a typography role but not what a long word does: overflow-wrap: anywhere to break it, or white-space: nowrap to keep it on one line, on this rule or on .${cls.own === cls.root ? cls.own : `${cls.own} or .${cls.root}`} (${CONTRACT}, "CSS")`,
+          )
+      }
   })
   root.walkRules((rule: Rule) => {
     if (/data-theme/.test(rule.selector))
