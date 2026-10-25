@@ -55,6 +55,15 @@ const SIZES: { size: Size; token: string; text: string; role: string }[] = [
   },
 ]
 
+/** The prop that overrides each state's word. */
+const LABELS = {
+  live: 'liveLabel',
+  ageing: 'ageingLabel',
+  estimated: 'estimatedLabel',
+  'timetable-only': 'timetableOnlyLabel',
+  'no-signal': 'noSignalLabel',
+} as const satisfies Record<Variant, keyof VehicleDotProps>
+
 const NO_SIGNAL = '--perron-color-data-state-no-signal'
 
 const row: CSSProperties = {
@@ -206,12 +215,77 @@ export const Live: Story = {
         await expect(within(host).queryByRole('img')).toBeNull()
       })
     })
-    await step('liveLabel names it', async () => {
-      await mounted(canvasElement, <VehicleDot line="m1" liveLabel="Realtid" />, async (host) => {
-        await waitFor(() =>
-          expect(within(host).getByRole('img', { name: 'Realtid' })).toBeVisible(),
-        )
+    await step('with variant and size left out, a live dot at medium (CR-7)', async () => {
+      await mounted(canvasElement, <VehicleDot line="m1" />, async (host) => {
+        const plain = await waitFor(() => within(host).getByRole('img', { name: 'Live' }))
+        await expect(plain).toHaveAttribute('data-variant', 'live')
+        await expect(plain).toHaveAttribute('data-size', 'medium')
+        await expect(plain).toHaveAttribute('data-line', 'm1')
+        const side = Number.parseFloat(rendered('icon-size-400', 'width'))
+        const box = plain.getBoundingClientRect()
+        await expect(box.width).toBeCloseTo(side, 3)
+        await expect(box.height).toBeCloseTo(side, 3)
+        const style = getComputedStyle(dotOf(plain))
+        await expect(style.fill).toBe(lineColour('m1'))
+        await expect(style.fillOpacity).toBe('1')
+        await expect(style.stroke).toBe('none')
       })
+    })
+    await step('each *Label names its own state', async () => {
+      await mounted(
+        canvasElement,
+        <>
+          {STATES.map(({ variant }) => (
+            <VehicleDot
+              key={variant}
+              variant={variant}
+              line="m1"
+              {...{ [LABELS[variant]]: `Own ${variant}` }}
+            />
+          ))}
+        </>,
+        async (host) => {
+          for (const { variant } of STATES) {
+            const own = await waitFor(() =>
+              within(host).getByRole('img', { name: `Own ${variant}` }),
+            )
+            await expect(own).toHaveAttribute('data-variant', variant)
+          }
+          await expect(within(host).getAllByRole('img')).toHaveLength(STATES.length)
+        },
+      )
+    })
+    await step('className follows pn-VehicleDot on the root', async () => {
+      await mounted(canvasElement, <VehicleDot line="m1" className="caller" />, async (host) => {
+        const own = await waitFor(() => parts(host).root)
+        await expect(own.className).toBe('pn-VehicleDot caller')
+      })
+    })
+    await step('render swaps the element and keeps the class, data and glyph', async () => {
+      await mounted(
+        canvasElement,
+        <VehicleDot
+          line="m2"
+          variant="estimated"
+          size="large"
+          className="caller"
+          render={<i data-testid="swapped" />}
+        />,
+        async (host) => {
+          const swapped = await waitFor(() => within(host).getByTestId('swapped'))
+          await expect(swapped.tagName).toBe('I')
+          await expect(swapped.className).toBe('pn-VehicleDot caller')
+          await expect(swapped).toHaveAttribute('role', 'img')
+          await expect(swapped).toHaveAccessibleName('Estimated')
+          await expect(swapped).toHaveAttribute('data-variant', 'estimated')
+          await expect(swapped).toHaveAttribute('data-line', 'm2')
+          await expect(swapped).toHaveAttribute('data-size', 'large')
+          const glyph = swapped.querySelector(':scope > svg.pn-VehicleDot-glyph')!
+          await expect(glyph).toHaveAttribute('aria-hidden', 'true')
+          await expect(glyph.querySelector('circle.pn-VehicleDot-dot')).not.toBeNull()
+          await expect(getComputedStyle(dotOf(swapped)).stroke).toBe(lineColour('m2'))
+        },
+      )
     })
   },
 }
@@ -232,9 +306,25 @@ export const NoSignal: Story = {
   args: { variant: 'no-signal' },
   play: async ({ canvasElement, step }) => {
     const root = within(canvasElement).getByRole('img', { name: 'No signal' })
-    await step('grey on the meta line, and cut', async () => {
-      await expect(getComputedStyle(parts(canvasElement).dot).fill).toBe(colour(NO_SIGNAL))
+    await step('grey on the meta line, cut, and never a ring (CR-8)', async () => {
+      const style = getComputedStyle(parts(canvasElement).dot)
+      await expect(style.fill).toBe(colour(NO_SIGNAL))
+      await expect(style.stroke).toBe('none')
       await expectCut(root)
+    })
+    await step('the cut is not mirrored in right-to-left text (CR-8)', async () => {
+      await mounted(
+        canvasElement,
+        <div dir="rtl">
+          <VehicleDot variant="no-signal" line="m1" />
+        </div>,
+        async (host) => {
+          const { root: rtl } = await waitFor(() => parts(host))
+          await expect(getComputedStyle(rtl).direction).toBe('rtl')
+          await expectCut(rtl)
+          await expect(getComputedStyle(rtl).maskImage).toBe(getComputedStyle(root).maskImage)
+        },
+      )
     })
     for (const { line, name } of LINES)
       await step(`grey on ${name}`, async () => {
@@ -245,6 +335,7 @@ export const NoSignal: Story = {
             const { root: other, dot } = await waitFor(() => parts(host))
             await expect(other).toHaveAttribute('data-line', line)
             await expect(getComputedStyle(dot).fill).toBe(colour(NO_SIGNAL))
+            await expect(getComputedStyle(dot).stroke).toBe('none')
             await expectCut(other)
           },
         )
@@ -423,7 +514,11 @@ function shape(root: Element) {
   ].join(', ')
 }
 
-/** The five states on M1, beside their words, as forced colours draw them in the play test. */
+/**
+ * The five states on M1 at medium, beside their words. Its first render, which the docs page and
+ * the visual stage show, is in normal colours: the forced-colours look exists only while its play
+ * test applies the sheet (CR-11).
+ */
 export const ForcedColours: Story = {
   render: (args) => <States line={args.line} size="medium" />,
   play: async ({ canvasElement, step }) => {

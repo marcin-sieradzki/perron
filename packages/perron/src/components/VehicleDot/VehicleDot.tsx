@@ -45,27 +45,27 @@ export interface VehicleDotProps extends Omit<useRender.ComponentProps<'span'>, 
    */
   size?: 'small' | 'medium' | 'large'
   /**
-   * Overrides "Live"
+   * Overrides "Live", heard as the dot's name when `variant='live'`
    * @default The locale's
    */
   liveLabel?: string
   /**
-   * Overrides "Ageing"
+   * Overrides "Ageing", heard as the dot's name when `variant='ageing'`
    * @default The locale's
    */
   ageingLabel?: string
   /**
-   * Overrides "Estimated"
+   * Overrides "Estimated", heard as the dot's name when `variant='estimated'`
    * @default The locale's
    */
   estimatedLabel?: string
   /**
-   * Overrides "Timetable only"
+   * Overrides "Timetable only", heard as the dot's name when `variant='timetable-only'`
    * @default The locale's
    */
   timetableOnlyLabel?: string
   /**
-   * Overrides "No signal"
+   * Overrides "No signal", heard as the dot's name when `variant='no-signal'`
    * @default The locale's
    */
   noSignalLabel?: string

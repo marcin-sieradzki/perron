@@ -9,20 +9,20 @@ stages:
     started: 2026-10-25T11:58:22.025Z
     ended: 2026-10-25T11:59:34.967Z
   build:
-    runs: 1
-    failing: review round 1 found 3 P2 (components/vehicle-dot/review.md)
+    runs: 2
+    status: done
+    started: 2026-10-25T12:11:43.449Z
+    begun: 5a1582d8792e3a89534ce3be0381c39f6fa395ea126990a06866413d50e066d6
+    spec: 5c5672f1560b2d5ed9f9a53254424f584370b98e348705566749f8099aa31a17
+    ended: 2026-10-25T12:14:56.486Z
   review:
-    status: failed
-    started: 2026-10-25T12:07:00.711Z
     rounds: 1
+    sentBack: 1
+    reviewed: 12834ee2c1ac8ca406635af516a9ec067df1ec58
     findings:
       p1: 0
       p2: 3
       p3: 3
-    reviewed: 12834ee2c1ac8ca406635af516a9ec067df1ec58
-    sentBack: 1
-    ended: 2026-10-25T12:11:33.752Z
-    failing: review round 1 found 3 P2 (components/vehicle-dot/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T11:57:53.820Z
