@@ -5,10 +5,9 @@ deferred:
   at: 2026-10-25T01:49:02.924Z
 stages:
   brief:
-    status: pending
-    started: 2026-10-25T01:49:08.104Z
-    ended: 2026-10-25T01:58:32.188Z
-    pending: 8
+    status: done
+    started: 2026-10-25T01:59:06.340Z
+    ended: 2026-10-25T02:00:24.926Z
 notes:
   - stage: brief
     at: 2026-10-25T01:58:32.189Z
@@ -36,3 +35,6 @@ notes:
       6. (Tokens) Needs a token for the plot's height. Recommended: none; use `aspect-ratio: 3`, which gives 107 px at 320 px wide and 115 px in the overview sheet. No size.* token gives a chart height, and a ratio keeps the curve's shape at every width.
       7. (Tokens) Needs a token for the width of a chart's line. Recommended: border.width.050 (2 px), with 'the line of a chart' added to its use through the design-tokens skill, so the series stands out from the 1 px gridline and baseline.
       8. (Tokens) Needs a typography role for the value tip. Recommended: typography.data with its tracking twin, in place of the Tooltips row's typography.label-sm, since the tip holds only a time and a figure and the data roles keep figures tabular.
+  - stage: brief
+    at: 2026-10-25T02:00:24.927Z
+    direction: border.width.050's description names only the focus ring and a control's selected state. The chart's line now reads it too, so the build adds 'the line of a chart' to that description through the design-tokens skill (CR-11).
