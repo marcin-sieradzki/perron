@@ -13,14 +13,16 @@ import type { Locale } from '../../locale/index.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
 import {
   colour,
+  edge,
+  fieldPart,
   lines,
   mounted,
   onHover,
   pressedAfterHover,
   rendered,
-  resolve,
   stateFill,
 } from '../../testing/stories.ts'
+import { Button } from '../Button/Button.tsx'
 import { NumberField } from './NumberField.tsx'
 import type { NumberFieldProps } from './NumberField.tsx'
 
@@ -70,13 +72,6 @@ const buttonIn = (scope: HTMLElement, name: string) =>
 /** The box round `input`: Base UI's group. */
 const groupOf = (input: HTMLElement) => input.closest<HTMLElement>('.pn-NumberField-group')!
 
-/** One of Field's parts in `scope`, by its class, or null when it isn't rendered. */
-const part = (scope: Element, name: 'field' | 'label' | 'description' | 'error') =>
-  scope.querySelector<HTMLElement>(name === 'field' ? '.pn-Field' : `.pn-Field-${name}`)
-
-/** A colour token as it renders on an edge, to compare with an element's `border-color`. */
-const edge = (token: string) => resolve('borderColor', `var(--perron-color-${token})`)
-
 /** The second argument of each call to a handler: the number it was given. */
 const values = (handler: unknown) => mock(handler).mock.calls.map((call) => call[1])
 
@@ -95,11 +90,11 @@ export const Default: Story = {
       const root = input.closest('.pn-NumberField')
       await expect(root).not.toBeNull()
       await expect(root!.parentElement).toHaveClass('pn-Field', 'pn-NumberField-field')
-      await expect(part(canvasElement, 'label')).toHaveClass(
+      await expect(fieldPart(canvasElement, 'label')).toHaveClass(
         'pn-Field-label',
         'pn-NumberField-label',
       )
-      await expect(part(canvasElement, 'description')).toHaveClass(
+      await expect(fieldPart(canvasElement, 'description')).toHaveClass(
         'pn-Field-description',
         'pn-NumberField-description',
       )
@@ -118,7 +113,7 @@ export const Default: Story = {
       }
     })
     await step('pressing the label focuses the input', async () => {
-      await userEvent.click(part(canvasElement, 'label')!)
+      await userEvent.click(fieldPart(canvasElement, 'label')!)
       await expect(input).toHaveFocus()
       input.blur()
     })
@@ -178,19 +173,19 @@ export const Disabled: Story = {
     const group = groupOf(input)
     const buttons = [buttonIn(canvasElement, 'Decrease'), buttonIn(canvasElement, 'Increase')]
     await expect(input).toBeDisabled()
-    for (const element of [group, input, part(canvasElement, 'label')!])
+    for (const element of [group, input, fieldPart(canvasElement, 'label')!])
       await expect(element).toHaveAttribute('data-disabled')
     await userEvent.tab()
     await expect(input).not.toHaveFocus()
     const tertiary = colour('--perron-color-text-tertiary')
     await expect(getComputedStyle(input).color).toBe(tertiary)
-    await expect(getComputedStyle(part(canvasElement, 'label')!).color).toBe(tertiary)
-    await expect(getComputedStyle(part(canvasElement, 'description')!).color).toBe(tertiary)
+    await expect(getComputedStyle(fieldPart(canvasElement, 'label')!).color).toBe(tertiary)
+    await expect(getComputedStyle(fieldPart(canvasElement, 'description')!).color).toBe(tertiary)
     for (const button of buttons) {
       await expect(button).toHaveAttribute('aria-disabled', 'true')
       await expect(getComputedStyle(button.querySelector('svg')!).color).toBe(tertiary)
     }
-    await expect(getComputedStyle(group).borderColor).toBe(edge('border-control'))
+    await expect(getComputedStyle(group).borderColor).toBe(edge('color-border-control'))
     await expect(getComputedStyle(group).backgroundColor).toBe(
       colour('--perron-color-surface-raised'),
     )
@@ -209,12 +204,12 @@ export const Invalid: Story = {
   play: async ({ canvasElement }) => {
     const input = inputIn(canvasElement)
     const group = groupOf(input)
-    const description = part(canvasElement, 'description')!
-    const error = part(canvasElement, 'error')!
+    const description = fieldPart(canvasElement, 'description')!
+    const error = fieldPart(canvasElement, 'error')!
     await expect(error).toHaveClass('pn-Field-error', 'pn-NumberField-error')
     await expect(input).toHaveAttribute('aria-invalid', 'true')
     await expect(group).toHaveAttribute('data-invalid')
-    await expect(getComputedStyle(group).borderColor).toBe(edge('status-danger'))
+    await expect(getComputedStyle(group).borderColor).toBe(edge('color-status-danger'))
     // the help first, then the error
     await waitFor(() =>
       expect(input.getAttribute('aria-describedby')).toBe(`${description.id} ${error.id}`),
@@ -326,7 +321,7 @@ export const Bounds: Story = {
   },
 }
 
-/** The box holding 8, with `largeStep` 5: the arrow keys, Shift, Home and End step it. */
+/** The box holding 8, with `largeStep` 5: the arrow keys, Shift, Alt, Home and End step it. */
 export const Keyboard: Story = {
   args: { largeStep: 5 },
   play: async ({ args, canvasElement }) => {
@@ -340,12 +335,15 @@ export const Keyboard: Story = {
       ['{Shift>}{ArrowUp}{/Shift}', '13'],
       ['{End}', '20'],
       ['{Home}', '1'],
+      // Alt steps by smallStep, 0.1 by default
+      ['{Alt>}{ArrowUp}{/Alt}', '1.1'],
+      ['{Alt>}{ArrowDown}{/Alt}', '1'],
     ] as const
     for (const [keys, shown] of steps) {
       await userEvent.keyboard(keys)
       await expect(input).toHaveValue(shown)
     }
-    await expect(values(args.onChange)).toEqual([9, 8, 13, 20, 1])
+    await expect(values(args.onChange)).toEqual([9, 8, 13, 20, 1, 1.1, 1])
     await expect(new Set(reasons(args.onChange))).toEqual(new Set(['keyboard']))
     await userEvent.tab({ shift: true })
     await expect(document.activeElement).toBe(start)
@@ -490,7 +488,7 @@ export const HiddenLabel: Story = {
     a11y: { options: { rules: { 'label-title-only': { enabled: false } } } },
   },
   play: async ({ canvasElement }) => {
-    const label = part(canvasElement, 'label')!
+    const label = fieldPart(canvasElement, 'label')!
     await expect(label.tagName).toBe('SPAN')
     await expect(label.getBoundingClientRect().width).toBeLessThanOrEqual(1)
     await expect(inputIn(canvasElement)).toHaveAccessibleName(LABEL)
@@ -521,7 +519,7 @@ export const ReadOnly: Story = {
       await expect(onHover(button, 'background-color')).toBe('')
     }
     await expect(getComputedStyle(input).color).toBe(colour('--perron-color-text-primary'))
-    await expect(getComputedStyle(group).borderColor).toBe(edge('border-control'))
+    await expect(getComputedStyle(group).borderColor).toBe(edge('color-border-control'))
     await expect(getComputedStyle(group).backgroundColor).toBe(
       colour('--perron-color-surface-raised'),
     )
@@ -581,22 +579,40 @@ export const Controlled: Story = {
   },
 }
 
-/** With `name` "departures", inside a native `<form>`. */
+/** The story's submit handler: it keeps the number the form submits and stays on the page. */
+const onSubmit = fn((event: { preventDefault: () => void; currentTarget: HTMLFormElement }) => {
+  event.preventDefault()
+  return new FormData(event.currentTarget).get('departures')
+})
+
+/** With `name` "departures", inside a native `<form>` with a submit button. */
 export const InForm: Story = {
   args: { name: 'departures' },
   decorators: [
     (Story) => (
-      <form onSubmit={(event) => event.preventDefault()}>
+      <form onSubmit={onSubmit} style={{ display: 'grid', gap: 'var(--perron-space-400)' }}>
         <Story />
+        {/* the button at the start, the field as wide as the others */}
+        <div>
+          <Button type="submit">Save</Button>
+        </div>
       </form>
     ),
   ],
   play: async ({ canvasElement }) => {
+    onSubmit.mockClear()
     const form = canvasElement.querySelector('form')!
+    const input = inputIn(canvasElement)
     await expect(new FormData(form).get('departures')).toBe('8')
     await userEvent.click(buttonIn(canvasElement, 'Increase'))
     await waitFor(() => expect(new FormData(form).get('departures')).toBe('9'))
-    inputIn(canvasElement).blur()
+    // Enter in the input clicks the form's submit button, and the form submits the number
+    await expect(input).toHaveFocus()
+    await userEvent.keyboard('{Enter}')
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1))
+    await expect(onSubmit.mock.results[0].value).toBe('9')
+    await expect(input).toHaveValue('9')
+    input.blur()
   },
 }
 
@@ -619,7 +635,7 @@ export const Validation: Story = {
     const group = groupOf(input)
     const start = document.activeElement
     await step('the field is valid at first, with no error', async () => {
-      await expect(part(canvasElement, 'error')).toBeNull()
+      await expect(fieldPart(canvasElement, 'error')).toBeNull()
       await expect(input).not.toHaveAttribute('aria-invalid')
     })
     // Base UI marks an empty required field invalid only once its value has changed
@@ -631,10 +647,10 @@ export const Validation: Story = {
         await userEvent.keyboard('8')
         await userEvent.clear(input)
         await userEvent.tab()
-        await waitFor(() => expect(part(canvasElement, 'error')).not.toBeNull())
-        await expect(part(canvasElement, 'error')!.textContent!.trim()).not.toBe('')
+        await waitFor(() => expect(fieldPart(canvasElement, 'error')).not.toBeNull())
+        await expect(fieldPart(canvasElement, 'error')!.textContent!.trim()).not.toBe('')
         await expect(input).toHaveAttribute('aria-invalid', 'true')
-        await expect(getComputedStyle(group).borderColor).toBe(edge('status-danger'))
+        await expect(getComputedStyle(group).borderColor).toBe(edge('color-status-danger'))
       },
     )
     await step('typing 8, then Tab out, removes it', async () => {
@@ -642,9 +658,9 @@ export const Validation: Story = {
       await expect(input).toHaveFocus()
       await userEvent.keyboard('8')
       await userEvent.tab()
-      await waitFor(() => expect(part(canvasElement, 'error')).toBeNull())
+      await waitFor(() => expect(fieldPart(canvasElement, 'error')).toBeNull())
       await expect(input).not.toHaveAttribute('aria-invalid')
-      await expect(getComputedStyle(group).borderColor).toBe(edge('border-control'))
+      await expect(getComputedStyle(group).borderColor).toBe(edge('color-border-control'))
       await expect(document.activeElement).toBe(start)
     })
   },
@@ -662,10 +678,10 @@ export const LongWords: Story = {
     defaultValue: 1e35,
   },
   play: async ({ canvasElement }) => {
-    const frame = part(canvasElement, 'field')!
+    const frame = fieldPart(canvasElement, 'field')!
     const bounds = frame.getBoundingClientRect()
     for (const name of ['label', 'description', 'error'] as const) {
-      const element = part(canvasElement, name)!
+      const element = fieldPart(canvasElement, name)!
       await expect(lines(element)).toBeGreaterThan(1.5)
       await expect(element.getBoundingClientRect().right).toBeLessThanOrEqual(bounds.right + 0.5)
       await expect(element.scrollWidth).toBeLessThanOrEqual(element.clientWidth)

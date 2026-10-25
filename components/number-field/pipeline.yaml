@@ -9,8 +9,12 @@ stages:
     started: 2026-10-25T06:46:40.740Z
     ended: 2026-10-25T06:48:00.020Z
   build:
-    runs: 2
-    failing: "docs failed: Shared tooling: scripts/lib/docgen.ts:95, in propDoc, checker.getNonNullableType(checker.getTypeOfSymbolAtLocation(member, at)) strips null as well as the optional | undefined, so the docs page's PropsTable shows NumberField's inherited value as number where the spec (docs/components/number-field.md:82) and Base UI's NumberField.Root.Props give number | null. The build cannot fix it: the contract keeps inherited members as Base UI declares them. docgen should drop only undefined (filter the union's undefined member, or strip a trailing ' | undefined' from typeToString as the ROOT_PROPS branch at lines 176-179 does), with a docgen.test.ts case for an inherited T | null member. Otherwise the docs stage was green: page shape, stable entry, gates docs and npm run check."
+    runs: 3
+    status: done
+    started: 2026-10-25T08:00:11.450Z
+    begun: 0274832f7d1de38b584ff78f4260d4107e8c35c5ac0f82606cea81c44d8d86d5
+    spec: 8bb8d69e1a69baf5550e583868fd8c61dbb607d4b51023fc9bfab2bd9595dde7
+    ended: 2026-10-25T08:05:10.092Z
   review:
     rounds: 2
     sentBack: 1
@@ -19,11 +23,7 @@ stages:
       p2: 0
       p3: 7
   docs:
-    status: failed
-    started: 2026-10-25T07:16:22.131Z
     failures: 1
-    ended: 2026-10-25T07:19:58.200Z
-    failing: "Shared tooling: scripts/lib/docgen.ts:95, in propDoc, checker.getNonNullableType(checker.getTypeOfSymbolAtLocation(member, at)) strips null as well as the optional | undefined, so the docs page's PropsTable shows NumberField's inherited value as number where the spec (docs/components/number-field.md:82) and Base UI's NumberField.Root.Props give number | null. The build cannot fix it: the contract keeps inherited members as Base UI declares them. docgen should drop only undefined (filter the union's undefined member, or strip a trailing ' | undefined' from typeToString as the ROOT_PROPS branch at lines 176-179 does), with a docgen.test.ts case for an inherited T | null member. Otherwise the docs stage was green: page shape, stable entry, gates docs and npm run check."
 notes:
   - stage: brief
     at: 2026-10-25T06:46:08.247Z
@@ -73,3 +73,6 @@ notes:
   - stage: docs
     at: 2026-10-25T07:19:58.201Z
     direction: "The docs tooling has never shown an inherited nullable prop before: NumberField's value is the first inherited T | null row in any spec, so no stable component's page has tested this path of docgen.ts."
+  - stage: build
+    at: 2026-10-25T08:05:10.092Z
+    direction: Base UI's hidden <input type="number"> counts as a second field for implicit form submission, so Enter submits a form holding a NumberField only when the form has a submit button; a form with a lone NumberField and no button is not submitted, unlike a lone TextField. The contract's Forms section could say so.
