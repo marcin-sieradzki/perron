@@ -3,7 +3,7 @@
 import { createRef } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { expect, userEvent } from 'storybook/test'
+import { expect, fn, userEvent } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { dictionaries, type Locale } from '../../locale/index.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
@@ -55,17 +55,17 @@ export const Danger: Story = {
   },
 }
 
-/** A count to know about: "Planned works 2" on the info tint. */
+/** A count of diversions, which the foundations give the info intent: "Diversions 2". */
 export const Info: Story = {
   args: { color: 'info', children: 2 },
-  render: after('Planned works'),
+  render: after('Diversions'),
 }
 
 /** The default intent, a plain tally: "12" on the inset surface. */
 export const Neutral: Story = {
-  args: { color: 'neutral', children: '12' },
+  args: { color: 'neutral', children: '12', onClick: fn() },
   render: (args) => <Count {...args} ref={neutralRef} />,
-  play: async ({ canvasElement }) => {
+  play: async ({ args, canvasElement }) => {
     const root = rootIn(canvasElement)
     await expect(root.tagName).toBe('SPAN')
     await expect(root).toHaveClass('pn-Count')
@@ -75,6 +75,9 @@ export const Neutral: Story = {
     const style = getComputedStyle(root)
     await expect(style.fontVariantNumeric).toBe('tabular-nums')
     await expect(style.whiteSpace).toBe('nowrap')
+    // CR-8: the caller's handler reaches the root and fires
+    await userEvent.click(root)
+    await expect(args.onClick).toHaveBeenCalledOnce()
     // CR-8: nothing in it takes focus
     await userEvent.tab()
     await expect(root.contains(document.activeElement)).toBe(false)
@@ -82,7 +85,7 @@ export const Neutral: Story = {
   },
 }
 
-/** `0` is a count, and shows (CR-4): "Delays 0", the good news. */
+/** `0` is a count, and shows (CR-4): "Delays 0", the good news of a line running normally. */
 export const Success: Story = {
   args: { color: 'success', children: 0 },
   render: after('Delays'),
@@ -93,12 +96,14 @@ export const Success: Story = {
   },
 }
 
-/** A single digit sits in a circle, the min-width matching the height: "Diversions 5". */
+/**
+ * A count of vehicles whose reports are ageing, a partial live picture, which the foundations give
+ * the warning intent: "Ageing 5". A single digit sits in a circle, the min-width matching the height.
+ */
 export const Warning: Story = {
   args: { color: 'warning', children: 5 },
-  render: after('Diversions'),
+  render: after('Ageing'),
   play: async ({ canvasElement }) => {
-    await document.fonts.ready
     const { width, height } = rootIn(canvasElement).getBoundingClientRect()
     await expect(Math.abs(width - height)).toBeLessThan(1)
   },

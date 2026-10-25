@@ -1,7 +1,7 @@
 // Count: a small pill holding how many there are, such as the "3" after "Delays" in a filter chip,
 // set in tabular figures on an inset or tinted surface. No Base UI component has behaviour for it,
 // so the root renders through useRender. Spec: docs/components/count.md.
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode, Ref } from 'react'
 import { mergeProps } from '@base-ui/react/merge-props'
 import { useRender } from '@base-ui/react/use-render'
 import { known } from '../../internal/nodes.ts'
@@ -9,7 +9,10 @@ import { UnknownValue } from '../../internal/UnknownValue.tsx'
 import { useOwnedStrings } from '../../PerronProvider.tsx'
 import './Count.css'
 
-export interface CountProps extends Omit<useRender.ComponentProps<'span'>, 'children' | 'color'> {
+export interface CountProps extends Omit<
+  useRender.ComponentProps<'span'>,
+  'children' | 'color' | 'ref'
+> {
   /**
    * The intent: what the count means. `neutral` is a plain tally, such as lines on a tab; the
    * status intents tint the pill for a count of good or bad news, such as `danger` for lines with
@@ -28,6 +31,12 @@ export interface CountProps extends Omit<useRender.ComponentProps<'span'>, 'chil
    * @default The locale's
    */
   unknownLabel?: string
+  /** Joined after `pn-Count` on the root */
+  className?: string
+  /** Reaches the root */
+  style?: CSSProperties
+  /** Reaches the root element */
+  ref?: Ref<HTMLSpanElement>
 }
 
 /**

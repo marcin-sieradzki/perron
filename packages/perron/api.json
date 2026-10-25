@@ -115,13 +115,19 @@
   },
   "Count": {
     "extends": [
-      "Omit<useRender.ComponentProps<'span'>, 'children' | 'color'>"
+      "Omit< useRender.ComponentProps<'span'>, 'children' | 'color' | 'ref' >"
     ],
     "props": {
       "children": {
         "optional": true,
         "type": [
           "ReactNode"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
         ]
       },
       "color": {
@@ -132,6 +138,18 @@
           "\"neutral\"",
           "\"success\"",
           "\"warning\""
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLSpanElement>"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
         ]
       },
       "unknownLabel": {
