@@ -99,6 +99,14 @@ const STOP_ON: Record<string, string> = {
   regional: 'Høje Taastrup',
 }
 
+/**
+ * Shorter content for a preview drawn many times side by side, such as a spec page's variants by
+ * states, so its five state columns fit beside each other as Button.dc.html sets them.
+ */
+export const compactProps: Record<string, PreviewProps> = {
+  Button: { children: 'Show line' },
+}
+
 export const componentPreviews: Previews = {
   // Actions
   Button: drawn(Button, { children: 'Show departures' }),
@@ -338,14 +346,14 @@ export const componentPreviews: Previews = {
     defaultValue: ['shapes'],
     children: [
       <AccordionItem key="shapes" value="shapes" title="What the dot shapes mean">
-        A circle is a bus, a square is a tram and a diamond is a train.
+        The shape says how sure we are about where a vehicle is. A solid dot is live, a fainter dot
+        is ageing, a ring is estimated and a dashed ring is timetable only.
       </AccordionItem>,
       <AccordionItem key="freshness" value="freshness" title="How fresh the data is">
-        Positions update every few seconds. A pale dot hasn&apos;t reported for over a minute.
+        A live dot has a GPS report under a minute old. A report 1 to 5 minutes old makes it ageing.
       </AccordionItem>,
-      <AccordionItem key="missing" value="missing" title="Why a vehicle can be missing">
-        Some vehicles don&apos;t send their position. Their departures still show on the stop&apos;s
-        list.
+      <AccordionItem key="silent" value="silent" title="When a vehicle goes silent">
+        After 5 minutes without a report, a vehicle turns grey and stays where it was last seen.
       </AccordionItem>,
     ],
   }),

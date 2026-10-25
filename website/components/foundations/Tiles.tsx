@@ -6,6 +6,8 @@ import NextLink from 'next/link'
 import type { CSSProperties, ReactNode } from 'react'
 import { LineBadge, type LineBadgeProps } from '@/components/perron'
 import type { FoundationPage } from '@/lib/foundations.ts'
+import { firstTable } from '@/lib/markdown.ts'
+import { entryByName } from '@/lib/registry.ts'
 import { cssVar } from '@/lib/tokens.ts'
 import {
   contrastSegments,
@@ -13,6 +15,7 @@ import {
   introOf,
   leafOf,
   plain,
+  proseOf,
   quoted,
   rowOf,
   rowsUnder,
@@ -25,9 +28,9 @@ import {
   words,
   type TokenRow,
 } from './data.ts'
+import { PULSE_GROWTH } from '../map/map-data.ts'
 import { MapFrame } from './MapFrame.tsx'
 import { Rich } from './Rich.tsx'
-import '../map/map.css'
 
 type Style = CSSProperties & Record<`--${string}`, string>
 
@@ -326,7 +329,9 @@ function MotionTile({ page }: { page: FoundationPage }) {
               cy="13"
               r="5"
               className="fd-pulse-ring"
-              style={{ '--fd-duration': cssValue(pulse) } as Style}
+              style={
+                { '--fd-duration': cssValue(pulse), '--fd-growth': String(PULSE_GROWTH) } as Style
+              }
             />
           </svg>
           <span className="fd-motion-names">
@@ -492,56 +497,29 @@ const proseBullets = (page: FoundationPage) =>
       .matchAll(/^- (.+)$/gm),
   ].map((m) => m[1])
 
-/** The data states, in the order the Data states page's table and every legend list them. */
-const STATES = ['live', 'ageing', 'estimated', 'timetable', 'no-signal'] as const
+/** The entry that draws each state's dot. Until it is stable, the tile names the states in words. */
+const DOT = 'VehicleDot'
 
 function DataStatesTile({ page }: { page: FoundationPage }) {
-  const table = proseRows(page)
-  const px = (name: string) => Number.parseFloat(valueOf(rowOf(page, name)))
-  // each shape keeps the dot's outer size: a ring is pulled in by its inset
-  const inset: Record<(typeof STATES)[number], number> = {
-    live: 0,
-    'no-signal': 0,
-    ageing: px('vehicle-dot.ageing.stroke-inset'),
-    estimated: px('vehicle-dot.estimated.stroke-inset'),
-    timetable: px('vehicle-dot.timetable.stroke-inset'),
-  }
-  const radius = 10 - px('vehicle-dot.inset')
+  const { rows } = firstTable(proseOf(page))
+  const dot = entryByName(DOT)
+  // with no dots drawn, the page's rule about writing the words beside them would read oddly here
+  const caption =
+    dot && dot.status !== 'stable'
+      ? `Each state's dot shape comes with \`${DOT}\`, still in design.`
+      : firstSentence(proseBullets(page)[0] ?? '')
   return (
-    <Tile page={page} glass caption={firstSentence(proseBullets(page)[0] ?? '')}>
+    <Tile page={page} glass caption={caption}>
       <span className="fd-states">
-        {STATES.map((state, i) => (
-          <span key={state} className="fd-state">
-            <svg viewBox="0 0 20 20" className="fd-state-dot" aria-hidden="true">
-              <circle
-                cx="10"
-                cy="10"
-                r={radius - inset[state]}
-                className={`map-dot map-dot-${state}`}
-              />
-            </svg>
-            <span className="fd-state-name">{table[i]?.[0]}</span>
-            <span className="fd-state-means">{table[i]?.[2]}</span>
+        {rows.map((r) => (
+          <span key={r.State} className="fd-state">
+            <span className="fd-state-name">{r.State}</span>
+            <span className="fd-state-means">{r.Means}</span>
           </span>
         ))}
       </span>
     </Tile>
   )
-}
-
-/** The body rows of the first markdown table in a page's prose, as cells. */
-function proseRows(page: FoundationPage) {
-  const prose = page.segments.find((s) => s.kind === 'prose')
-  const lines = prose?.kind === 'prose' ? prose.markdown.split('\n') : []
-  return lines
-    .filter((l) => l.startsWith('|') && !/^\|\s*-/.test(l))
-    .slice(1)
-    .map((l) =>
-      l
-        .slice(1, -1)
-        .split('|')
-        .map((c) => c.trim()),
-    )
 }
 
 function MapTile({ page }: { page: FoundationPage }) {

@@ -61,8 +61,8 @@ export function TokenPreview({ row }: { row: TokenRow }) {
       return <EasingCurve css={valueOf(row)} />
     case 'strokeStyle':
       return (
-        <svg className="fd-dash" viewBox="0 0 20 20" aria-hidden="true">
-          <circle cx="10" cy="10" r="8" style={{ strokeDasharray: value }} />
+        <svg className="fd-dash" aria-hidden="true">
+          <line x1="0" y1="50%" x2="100%" y2="50%" style={{ strokeDasharray: value }} />
         </svg>
       )
     case 'number':
@@ -99,8 +99,6 @@ export function TokenPreview({ row }: { row: TokenRow }) {
             <PackageIcon name="search" />
           </span>
         )
-      if (name.startsWith('map.dot-radius.'))
-        return <span className="fd-dot" style={{ '--fd-radius': value } as Style} />
       if (name.startsWith('map.track-spacing.'))
         return <span className="fd-tracks" style={{ rowGap: value }} />
       if (name === 'effect.glass-blur') return <span className="fd-glass-chip" />

@@ -715,22 +715,19 @@
   stroke-width: var(--perron-vehicle-dot-timetable-stroke-width);
   transform-box: fill-box;
   transform-origin: center;
-  opacity: 0;
+  visibility: hidden;
 }
 
-/* a report pulses once: hovering the tile shows one */
+/* a report pulses once: hovering the tile shows one, the ring growing as far as the map's
+   (--fd-growth is the map's PULSE_GROWTH) and fading out as it goes */
 .fd-tile:is(:hover, :focus-visible) .fd-pulse-ring {
-  animation: fd-pulse var(--fd-duration) var(--perron-easing-standard);
+  visibility: visible;
+  animation: fd-pulse var(--fd-duration) var(--perron-easing-standard) forwards;
 }
 
 @keyframes fd-pulse {
-  from {
-    transform: scale(1);
-    opacity: 0.9;
-  }
-
   to {
-    transform: scale(2.8);
+    transform: scale(var(--fd-growth));
     opacity: 0;
   }
 }
@@ -900,7 +897,7 @@
   letter-spacing: var(--perron-typography-data-tracking);
 }
 
-/* Data states */
+/* Data states, in words: VehicleDot, which draws their shapes, is still in design */
 
 .fd-states {
   display: flex;
@@ -910,15 +907,8 @@
 
 .fd-state {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: var(--perron-space-300);
-  --map-line: var(--perron-color-transit-line-m3);
-}
-
-.fd-state-dot {
-  flex: none;
-  inline-size: var(--perron-space-500);
-  block-size: var(--perron-space-500);
 }
 
 .fd-state-name {
@@ -1215,15 +1205,16 @@
   stroke-width: var(--perron-border-width-050);
 }
 
+/* a dash as a dashed stroke, in ink: drawn as a ring it would be a vehicle dot, VehicleDot's to draw */
 .fd-dash {
   flex: none;
-  inline-size: var(--perron-space-500);
-  block-size: var(--perron-space-500);
+  inline-size: var(--fd-unit);
+  block-size: var(--perron-space-200);
+  overflow: visible;
 }
 
-.fd-dash circle {
-  fill: none;
-  stroke: var(--perron-color-transit-line-m3);
+.fd-dash line {
+  stroke: var(--perron-color-text-primary);
   stroke-width: var(--perron-vehicle-dot-timetable-stroke-width);
 }
 
@@ -1288,14 +1279,6 @@
 .fd-icon-size {
   display: inline-flex;
   color: var(--perron-color-text-primary);
-}
-
-.fd-dot {
-  flex: none;
-  inline-size: calc(var(--fd-radius) * 2);
-  block-size: calc(var(--fd-radius) * 2);
-  border-radius: var(--perron-radius-full);
-  background: var(--perron-color-transit-line-a);
 }
 
 .fd-tracks {
@@ -1475,6 +1458,7 @@
 @media (prefers-reduced-motion: reduce) {
   /* a loop's duration stays in its token under reduced motion, so the tile's pulse stops here */
   .fd-tile:is(:hover, :focus-visible) .fd-pulse-ring {
+    visibility: hidden;
     animation: none;
   }
 

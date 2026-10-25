@@ -80,24 +80,6 @@
   margin-block-start: var(--perron-space-200);
 }
 
-/* Get started, the screen's one main action: LinkButton in the brand colours of a solid brand
-   Button (docs/components/button.md), as LinkButton has no brand colour of its own */
-.home-start.pn-LinkButton[data-variant='solid'] {
-  border-color: var(--perron-color-border-brand);
-  background-color: var(--perron-color-surface-brand);
-  color: var(--perron-color-text-on-color-dark);
-}
-
-@media (hover: hover) {
-  .home-start.pn-LinkButton[data-variant='solid']:hover {
-    background-color: var(--perron-color-surface-brand-hover);
-  }
-}
-
-.home-start.pn-LinkButton[data-variant='solid']:active {
-  background-color: var(--perron-color-surface-brand-pressed);
-}
-
 .home-mcp {
   display: flex;
   flex-wrap: wrap;
@@ -189,10 +171,43 @@
   color: var(--perron-color-text-secondary);
 }
 
+/* each link a target in both directions, even a short name such as "Tag" */
 .home-panel-links > * {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   min-block-size: var(--perron-size-target-min);
+  min-inline-size: var(--perron-size-target-min);
+}
+
+/* sentences in a panel: a list of the site's own, as FactList's values are set for figures */
+.home-facts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-200);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.home-fact {
+  display: flex;
+  align-items: baseline;
+  gap: var(--perron-space-300);
+}
+
+.home-fact-name {
+  flex: none;
+  inline-size: calc(var(--perron-space-800) * 3 + var(--perron-space-200));
+  font: var(--perron-typography-label-sm);
+  letter-spacing: var(--perron-typography-label-sm-tracking);
+}
+
+.home-fact-text {
+  min-inline-size: 0;
+  font: var(--perron-typography-caption);
+  letter-spacing: var(--perron-typography-caption-tracking);
+  color: var(--perron-color-text-secondary);
 }
 
 .home-row {

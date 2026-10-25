@@ -24,7 +24,9 @@ const CONTENTS = 'docs/foundations/README.md'
 /** The first component in the step's code: the one the Button spec's own examples name. */
 const FIRST = `import { Button } from '@mylder/perron'
 
-;<Button>Show departures</Button>`
+export function StopActions() {
+  return <Button>Show departures</Button>
+}`
 
 const STEPS = [
   { id: 'install', label: 'Install and load Perron' },

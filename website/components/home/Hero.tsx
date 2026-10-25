@@ -1,5 +1,6 @@
 // The hero over the full map: the version, the title and lead, what Perron holds today, Get started
-// as the screen's one brand-yellow action, Browse components, and the MCP server's command.
+// and Browse components, and the MCP server's command. Get started is a solid LinkButton: a link
+// takes no brand colour (docs/components/link-button.md), so the hero has no brand yellow.
 import NextLink from 'next/link'
 import { LinkButton } from '@/components/perron'
 import { PackageIcon } from '@/components/site/PackageIcon.tsx'
@@ -45,9 +46,7 @@ export function Hero({ figures }: { figures: HomeFigures }) {
       </ul>
 
       <div className="home-actions">
-        <LinkButton className="home-start" render={<NextLink href="/get-started" />}>
-          Get started
-        </LinkButton>
+        <LinkButton render={<NextLink href="/get-started" />}>Get started</LinkButton>
         <LinkButton variant="outline" render={<NextLink href="/components" />}>
           Browse components
         </LinkButton>
