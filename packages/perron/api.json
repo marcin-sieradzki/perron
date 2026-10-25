@@ -128,7 +128,7 @@
   },
   "Checkbox": {
     "extends": [
-      "Omit< BaseCheckbox.Root.Props, 'onCheckedChange' | 'onChange' | 'parent' | 'children' | 'className' | 'style' | 'ref' >"
+      "Omit< BaseCheckbox.Root.Props, 'onCheckedChange' | 'onChange' | 'children' | 'className' | 'style' | 'ref' >"
     ],
     "props": {
       "children": {
@@ -159,6 +159,86 @@
         "optional": true,
         "type": [
           "{ indicator?: Omit<CheckboxIndicatorProps, \"keepMounted\" | \"render\"> | undefined; }"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      }
+    }
+  },
+  "CheckboxGroup": {
+    "extends": [
+      "Omit< BaseCheckboxGroup.Props, 'onValueChange' | 'onChange' | 'disabled' | 'children' | 'className' | 'style' | 'ref' >",
+      "Pick< BaseField.Root.Props, | 'invalid' | 'validate' | 'validationMode' | 'validationDebounceTime' | 'dirty' | 'touched' | 'actionsRef' >"
+    ],
+    "props": {
+      "children": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "description": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "disabled": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "error": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "hiddenLabel": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "label": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "name": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "onChange": {
+        "optional": true,
+        "type": [
+          "(event: Event, value: string[], details: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) => void"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLElement>"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ legend?: FieldsetLegendProps | undefined; description?: FieldDescriptionProps | undefined; error?: FieldErrorProps | undefined; }"
         ]
       },
       "style": {
@@ -1981,6 +2061,130 @@
       }
     }
   },
+  "Select": {
+    "extends": [
+      "Omit< FieldProps, 'children' | 'slotProps' | 'onChange' | 'defaultValue' >"
+    ],
+    "props": {
+      "defaultOpen": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "defaultValue": {
+        "optional": true,
+        "type": [
+          "null",
+          "string"
+        ]
+      },
+      "description": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "error": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "hiddenLabel": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "items": {
+        "optional": false,
+        "type": [
+          "readonly SelectGroup[]",
+          "readonly SelectItem[]"
+        ]
+      },
+      "label": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "onChange": {
+        "optional": true,
+        "type": [
+          "(event: Event, value: null | string, details: SelectRootChangeEventDetails) => void"
+        ]
+      },
+      "onClose": {
+        "optional": true,
+        "type": [
+          "(event: Event, reason: SelectRootChangeEventReason, details: SelectRootOpenChangeEventDetails) => void"
+        ]
+      },
+      "onOpen": {
+        "optional": true,
+        "type": [
+          "(event: Event, details: SelectRootOpenChangeEventDetails) => void"
+        ]
+      },
+      "open": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "optional": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "optionalLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "placeholder": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "readOnly": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "required": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ label?: FieldLabelProps | undefined; description?: FieldDescriptionProps | undefined; error?: FieldErrorProps | undefined; trigger?: SelectTriggerProps | undefined; value?: SelectValueProps | undefined; icon?: SelectIconProps | undefined; portal?: SelectPortalProps | undefined; positioner?: Omit<SelectPositionerProps, \"alignItemWithTrigger\"> | undefined; popup?: SelectPopupProps | undefined; list?: SelectListProps | undefined; group?: SelectGroupProps | undefined; groupLabel?: SelectGroupLabelProps | undefined; separator?: SelectSeparatorProps | undefined; item?: SelectItemProps | undefined; itemText?: SelectItemTextProps | undefined; itemIndicator?: SelectItemIndicatorProps | undefined; }"
+        ]
+      },
+      "value": {
+        "optional": true,
+        "type": [
+          "null",
+          "string"
+        ]
+      }
+    }
+  },
   "SeverityLabel": {
     "extends": [
       "Omit< useRender.ComponentProps<'span', SeverityLabelState>, 'children' | 'ref' >"
@@ -2595,6 +2799,110 @@
           "\"label-sm\"",
           "\"overline\"",
           "\"stat\""
+        ]
+      }
+    }
+  },
+  "TextArea": {
+    "extends": [
+      "Omit< ComponentPropsWithoutRef<'textarea'>, | 'onChange' | 'value' | 'defaultValue' | 'disabled' | 'children' | 'dangerouslySetInnerHTML' | 'className' | 'style' >",
+      "Pick<BaseField.Control.Props, 'className' | 'style'>"
+    ],
+    "props": {
+      "defaultValue": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "description": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "disabled": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "error": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "hiddenLabel": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "label": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "name": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "onChange": {
+        "optional": true,
+        "type": [
+          "(event: ChangeEvent<HTMLTextAreaElement, Element>) => void"
+        ]
+      },
+      "optional": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "optionalLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "placeholder": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLTextAreaElement>"
+        ]
+      },
+      "required": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "rows": {
+        "optional": true,
+        "type": [
+          "number"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ field?: Omit<FieldRootProps, \"children\" | \"disabled\" | \"name\"> | undefined; label?: FieldLabelProps | undefined; description?: FieldDescriptionProps | undefined; error?: FieldErrorProps | undefined; }"
+        ]
+      },
+      "value": {
+        "optional": true,
+        "type": [
+          "string"
         ]
       }
     }
