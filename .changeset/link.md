@@ -2,4 +2,4 @@
 '@mylder/perron': minor
 ---
 
-Adds `Link`. The contract in the docs data now names `RouterLink`, the story helper that stands in for a router's link component, among its shared helpers.
+Adds `Link`. The contract in the docs data now names three story helpers among its shared helpers: `RouterLink`, which stands in for a router's link component, and `expectFollows` and `expectFocusRing`, the keyboard and focus-ring checks Link and LinkButton share.

@@ -166,7 +166,7 @@ The `pointer-feedback` check ([Checks](#checks)) holds the CSS to this: every ho
 
 - a box of the Fields family, which a press focuses, so the focus ring and the text cursor answer it, or opens, as Select's list does at once;
 - a row in a popup, a menu's row: its highlight answers the pointer and the keys alike, it keeps the default cursor, and a press chooses it on release;
-- a link inside running text, which keeps the browser's pointer and, as text links do, takes no pressed look.
+- a link inside another component's running text, such as Attribution's credits, which keeps the browser's pointer and takes no pressed look; Link, the library's text link, takes both.
 
 ## CSS
 
