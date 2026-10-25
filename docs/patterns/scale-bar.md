@@ -2,7 +2,7 @@
 
 The map's scale: a short bar on glass at the bottom right of the map, with the ground distance its length spans written above it, such as "300 m" or "2 km", which shortens and lengthens as the map zooms.
 
-The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the [contract](../components/README.md) and its Patterns section, the [foundations](../foundations/README.md), [content design](../content-design.md), the tokens and the specs of what it composes, [Surface](../components/surface.md), and the neighbours it sits beside, [Attribution](../components/attribution.md) and [MapControls](../components/map-controls.md). `packages/perron/components.json` gives ScaleBar no `baseUiParts` and no `dependsOn`. The extracted prototype is not reachable from this branch, so nothing here rests on it. What the foundations already say of the scale is that it sits at the bottom right with the map controls ([Layout](../foundations/layout.md#page-shell)) and stacks with them, the legend and the attribution at `z-index.map-controls` ([Layout](../foundations/layout.md#stacking)).
+The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the [contract](../components/README.md) and its Patterns section, the [foundations](../foundations/README.md), [content design](../content-design.md), the tokens and the specs of what it composes, [Surface](../components/surface.md), and the neighbours it sits beside, [Attribution](../components/attribution.md) and [MapControls](../components/map-controls.md). `packages/perron/components.json` gives ScaleBar no `baseUiParts`, and its `dependsOn`, empty today, gains `Surface` with the build (CR-1). The extracted prototype is not reachable from this branch, so nothing here rests on it. What the foundations already say of the scale is that it sits at the bottom right with the map controls ([Layout](../foundations/layout.md#page-shell)) and stacks with them, the legend and the attribution at `z-index.map-controls` ([Layout](../foundations/layout.md#stacking)).
 
 ## Anatomy
 
@@ -125,7 +125,7 @@ What axe won't catch, from the contract, each with how this component meets it:
 
 ## Owned strings
 
-Every word ScaleBar shows or announces is its own: the caller gives a number, never a word. `unknown` is reused from `packages/perron/src/locale/en.ts`; the other three are new keys, with the Danish, Swedish and Norwegian written in the locale files.
+Every word ScaleBar shows or announces is its own: the caller gives a number, never a word. `unknown` is reused from `packages/perron/src/locale/en.ts`; the other three are new keys, which the build adds to all four locale files, with the Danish, Swedish and Norwegian below.
 
 The new keys read `scale` "Scale", `metersUnit` "m" and `kilometersUnit` "km", with the units written as the SI symbols in every locale. Content design writes a space before units, "4 min", "45 km/h", so the distance reads "300 m" and "2 km", the symbols every Nordic locale writes the same; the keys follow `minutesUnit`, Delay's unit after a figure; "Scale" names what the distance measures for a reader who can't see the bar, and is "Målestok", "Skala" and "Målestokk" in the others; symbols, unlike "metres" and "kilometres", need no singular and plural for "1 km" and "2 km".
 
