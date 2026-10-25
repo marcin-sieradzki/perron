@@ -4,12 +4,10 @@
 import type { ReactNode } from 'react'
 import { mergeProps } from '@base-ui/react/merge-props'
 import { useRender } from '@base-ui/react/use-render'
-import { VisuallyHidden } from '../../parts/VisuallyHidden/VisuallyHidden.tsx'
+import { known } from '../../internal/nodes.ts'
+import { UnknownValue } from '../../internal/UnknownValue.tsx'
 import { useOwnedStrings } from '../../PerronProvider.tsx'
 import './Count.css'
-
-/** U+2014, the dash content design writes for unknown (CR-5). */
-const UNKNOWN = '—'
 
 export interface CountProps extends Omit<useRender.ComponentProps<'span'>, 'children' | 'color'> {
   /**
@@ -33,26 +31,6 @@ export interface CountProps extends Omit<useRender.ComponentProps<'span'>, 'chil
 }
 
 /**
- * Whether a count says something: `null`, `undefined`, a boolean, `''`, a number that is not
- * finite, and an array of only such values say nothing; `0` and `'0'` are counts (CR-4).
- */
-const known = (node: ReactNode): boolean =>
-  Array.isArray(node)
-    ? node.some(known)
-    : node != null &&
-      typeof node !== 'boolean' &&
-      node !== '' &&
-      (typeof node !== 'number' || Number.isFinite(node))
-
-/** The "—" for the eye and the words for the ear, each in its own text run (CR-5). */
-const unknownCount = (label: string) => (
-  <>
-    <span aria-hidden="true">{UNKNOWN}</span>
-    <VisuallyHidden>{label}</VisuallyHidden>
-  </>
-)
-
-/**
  * How many there are, in a small pill after the words that say what is counted, such as
  * "Delays 3". With no count it shows "—" and says "Unknown".
  */
@@ -74,7 +52,8 @@ export function Count({
     className: 'pn-Count',
     'data-color': color,
     'data-unknown': unknown ? '' : undefined,
-    children: unknown ? unknownCount(strings.unknown) : children,
+    // CR-4 and CR-5: a count that says nothing shows "—" for the eye and the words for the ear
+    children: unknown ? <UnknownValue label={strings.unknown} /> : children,
   }
   return useRender({
     defaultTagName: 'span',

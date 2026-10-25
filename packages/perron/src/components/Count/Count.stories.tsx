@@ -31,19 +31,34 @@ function heard(element: Element) {
   return copy.textContent!.replace(/\s+/g, ' ').trim()
 }
 
+/**
+ * A status story's render: the caller's words, then the pill, so the tint is never the only sign
+ * (CR-9). The args stay Count's alone, so the subject story still renders the subject alone.
+ */
+const after =
+  (words: string): Story['render'] =>
+  (args) => (
+    <>
+      {words} <Count {...args} />
+    </>
+  )
+
 /** The ref the Neutral story hands Count, to prove it reaches the root. */
 const neutralRef = createRef<HTMLSpanElement>()
 
-/** The subject story: a count of bad news, "3" on the danger tint. */
+/** The subject story: a count of bad news, "Delays 3" on the danger tint. */
 export const Danger: Story = {
   args: { color: 'danger', children: 3 },
+  render: after('Delays'),
   play: async ({ canvasElement }) => {
     await expect(rootIn(canvasElement)).toHaveAttribute('data-color', 'danger')
   },
 }
 
+/** A count to know about: "Planned works 2" on the info tint. */
 export const Info: Story = {
   args: { color: 'info', children: 2 },
+  render: after('Planned works'),
 }
 
 /** The default intent, a plain tally: "12" on the inset surface. */
@@ -67,9 +82,10 @@ export const Neutral: Story = {
   },
 }
 
-/** `0` is a count, and shows (CR-4). */
+/** `0` is a count, and shows (CR-4): "Delays 0", the good news. */
 export const Success: Story = {
   args: { color: 'success', children: 0 },
+  render: after('Delays'),
   play: async ({ canvasElement }) => {
     const root = rootIn(canvasElement)
     await expect(root).toHaveTextContent(/^0$/)
@@ -77,9 +93,10 @@ export const Success: Story = {
   },
 }
 
-/** A single digit sits in a circle: the min-width matches the height. */
+/** A single digit sits in a circle, the min-width matching the height: "Diversions 5". */
 export const Warning: Story = {
   args: { color: 'warning', children: 5 },
+  render: after('Diversions'),
   play: async ({ canvasElement }) => {
     await document.fonts.ready
     const { width, height } = rootIn(canvasElement).getBoundingClientRect()
