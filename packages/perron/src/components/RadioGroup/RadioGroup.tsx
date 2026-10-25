@@ -83,17 +83,17 @@ export interface RadioGroupProps extends Omit<
   /** The group's `Radio`s, in reading order, below the label. */
   children?: ReactNode
   /**
-   * Reach the root, the `<div role="radiogroup">`. `className` is merged after `pn-RadioGroup` and
+   * Reaches the root, the `<div role="radiogroup">`. `className` is merged after `pn-RadioGroup` and
    * Fieldset's `pn-Fieldset`.
    */
   className?: string
   /**
-   * Reach the root, the `<div role="radiogroup">`. `className` is merged after `pn-RadioGroup` and
+   * Reaches the root, the `<div role="radiogroup">`. `className` is merged after `pn-RadioGroup` and
    * Fieldset's `pn-Fieldset`.
    */
   style?: CSSProperties
   /**
-   * Reach the root, the `<div role="radiogroup">`. `className` is merged after `pn-RadioGroup` and
+   * Reaches the root, the `<div role="radiogroup">`. `className` is merged after `pn-RadioGroup` and
    * Fieldset's `pn-Fieldset`.
    */
   ref?: Ref<HTMLDivElement>
