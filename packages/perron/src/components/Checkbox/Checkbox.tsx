@@ -11,7 +11,7 @@ import './Checkbox.css'
 
 export interface CheckboxProps extends Omit<
   BaseCheckbox.Root.Props,
-  'onCheckedChange' | 'onChange' | 'parent' | 'children' | 'className' | 'style' | 'ref'
+  'onCheckedChange' | 'onChange' | 'children' | 'className' | 'style' | 'ref'
 > {
   /**
    * Called when a click or Space ticks or unticks the checkbox, with the new state as `value`;
