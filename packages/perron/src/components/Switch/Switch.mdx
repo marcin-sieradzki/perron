@@ -1,0 +1,19 @@
+import { Meta, Stories, Title } from '@storybook/addon-docs/blocks'
+import { PropsTable } from '../../../../../storybook/blocks/PropsTable.tsx'
+import { SpecProse } from '../../../../../storybook/blocks/SpecProse.tsx'
+import * as SwitchStories from './Switch.stories.tsx'
+
+<Meta of={SwitchStories} />
+
+<Title />
+
+<SpecProse path="docs/components/switch.md" intro />
+
+<Stories title="Examples" />
+
+<PropsTable of={SwitchStories} />
+
+<SpecProse
+  path="docs/components/switch.md"
+  sections={['Keyboard and ARIA', 'Owned strings', "Do and don't"]}
+/>

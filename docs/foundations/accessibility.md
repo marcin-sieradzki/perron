@@ -66,11 +66,11 @@ Perron targets [WCAG 2.2](https://www.w3.org/TR/WCAG22/) level AA. Part of it th
 ## Rules
 
 - **Focus.** Every interactive element shows the ring on `:focus-visible`: a `focus.width` solid outline in `color.border.focus`, `focus.offset` away from the element. `perron.css` sets it for the whole page. Never remove an outline without drawing the ring another way.
-- **Targets (2.5.8).** Anything people press is at least `size.target-min` square, or has that much room around it. Perron's controls are larger: the smallest, a small button, is `size.button-sm`.
+- **Targets (2.5.8).** Anything people press is at least `size.target-min` square, or has that much room around it. Perron's smallest control, a switch's track, is `size.target-min` tall and wider than that; the rest are larger, a small button `size.button-sm`.
 - **Colour never alone (1.4.1).** A status colour comes with a word or an icon, a data state with its name next to the dot, a line colour with the line's name.
 - **Hover (1.4.13).** Anything shown on hover is also reachable by selecting the item, because touch and keyboard users never see hover. A hover card stays while the pointer is over it and closes with Esc.
 - **Keys.** Esc closes the topmost thing first: a dialog, then a detail panel, then a highlight. + and − zoom, arrow keys pan.
-- **State in words.** Toggles say their state in words as well as in looks ("Follow" / "Following"). One primary action per panel.
+- **State in words.** A toggle whose label is an action and its only word says its state in words as well as in looks ("Follow" / "Following"). A control whose label names a setting or a filter keeps that label, and its role tells the ear the state: a switch's `role="switch"` says on or off, a filter chip's `aria-pressed` says pressed. The eye gets more than a hue: a switch's thumb moves as its track fills, and a chip's fill turns to ink. One primary action per panel.
 - **Moving things.** Loops (the follow blink and the report and selection pulses) stop in their component when the system asks for less motion. The tokens only shorten transitions.
 
 <!-- tokens: focus.* size.target-min -->

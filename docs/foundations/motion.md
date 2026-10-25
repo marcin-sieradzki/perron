@@ -1,10 +1,10 @@
 # Motion
 
-Motion explains a change of place. The sheet slides, the camera eases to a selection, and meters ease to new values. Vehicles glide between reports instead of jumping.
+Motion explains a change of place. The sheet slides, the camera eases to a selection, a switch's thumb slides to its other end, and meters ease to new values. Vehicles glide between reports instead of jumping.
 
 ## Durations
 
-- **Transitions** move something from one place or value to another, once: `duration.sheet`, `duration.meter`, `duration.camera` and `duration.follow`.
+- **Transitions** move something from one place or value to another, once: `duration.sheet`, `duration.meter`, `duration.camera`, `duration.follow` and `duration.switch`. A control pressed many times in a row, such as a switch, takes the short `duration.switch`, so the change keeps up with the hand.
 - **Loops** repeat while something is true. A new report pulses once around its vehicle (`duration.report-pulse`), a ring pulses around the selected vehicle (`duration.selection-pulse`), and the follow indicator blinks while the camera follows (`duration.blink`).
 
 <!-- tokens: duration.* -->
@@ -15,6 +15,7 @@ Motion explains a change of place. The sheet slides, the camera eases to a selec
 | `duration.meter`           | `800ms`  | `0.01ms`       | Meter fill change                                     |
 | `duration.camera`          | `750ms`  | `0.01ms`       | Map camera fly-to                                     |
 | `duration.follow`          | `500ms`  | `0.01ms`       | Camera fly-to when following starts                   |
+| `duration.switch`          | `150ms`  | `0.01ms`       | Switch thumb slide and track fill                     |
 | `duration.blink`           | `1400ms` |                | Recording dot blink while following                   |
 | `duration.report-pulse`    | `1100ms` |                | Ring that expands when a vehicle reports its position |
 | `duration.selection-pulse` | `1600ms` |                | Ring around the selected vehicle                      |
@@ -27,10 +28,10 @@ The sheet has its own curve, which settles slowly so a long slide doesn't stop a
 
 <!-- tokens: easing.* -->
 
-| Token             | Value                              | Use               |
-| ----------------- | ---------------------------------- | ----------------- |
-| `easing.sheet`    | `cubic-bezier(0.2, 0.8, 0.2, 1)`   | Bottom sheet      |
-| `easing.standard` | `cubic-bezier(0.25, 0.1, 0.25, 1)` | CSS ease (meters) |
+| Token             | Value                              | Use                           |
+| ----------------- | ---------------------------------- | ----------------------------- |
+| `easing.sheet`    | `cubic-bezier(0.2, 0.8, 0.2, 1)`   | Bottom sheet                  |
+| `easing.standard` | `cubic-bezier(0.25, 0.1, 0.25, 1)` | CSS ease (meters, the switch) |
 
 <!-- /tokens -->
 

@@ -993,6 +993,14 @@
       },
       "$description": "Camera fly-to when following starts"
     },
+    "switch": {
+      "$type": "duration",
+      "$value": {
+        "value": 150,
+        "unit": "ms"
+      },
+      "$description": "Switch thumb slide and track fill"
+    },
     "blink": {
       "$type": "duration",
       "$value": {
@@ -1026,7 +1034,7 @@
     },
     "standard": {
       "$value": [0.25, 0.1, 0.25, 1],
-      "$description": "CSS ease (meters)"
+      "$description": "CSS ease (meters, the switch)"
     }
   },
   "z-index": {
