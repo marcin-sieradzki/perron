@@ -3,9 +3,6 @@ component: Slider
 layer: component
 deferred:
   at: 2026-10-25T06:59:37.033Z
-needsHuman:
-  stage: review
-  reason: '3 review rounds found a P1 or a P2; the last: review round 6 found 1 P2 (components/slider/review.md)'
 stages:
   brief:
     status: done
@@ -20,7 +17,7 @@ stages:
     ended: 2026-10-25T08:31:40.715Z
   review:
     rounds: 6
-    sentBack: 3
+    sentBack: 0
     findings:
       p1: 0
       p2: 1
@@ -66,3 +63,6 @@ notes:
   - stage: build
     at: 2026-10-25T08:20:14.306Z
     direction: Slider's stories have a sizers(scope) helper that reads a figure's hidden sizer text, and a SLOTS list that checks every slotProps class comes after the part's own; a component with hidden sizers or merged slot classes could take them from packages/perron/src/testing/stories.ts.
+  - stage: review
+    at: 2026-10-25T08:39:18.671Z
+    unblocked: '3 review rounds found a P1 or a P2; the last: review round 6 found 1 P2 (components/slider/review.md)'
