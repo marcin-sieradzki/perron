@@ -9,20 +9,20 @@ stages:
     started: 2026-10-25T12:38:42.851Z
     ended: 2026-10-25T12:39:52.829Z
   build:
-    runs: 1
-    failing: review round 1 found 2 P2 (components/vehicle-dot-label/review.md)
+    runs: 2
+    status: done
+    started: 2026-10-25T12:56:07.788Z
+    begun: 668db7fd05ab060a1cb5a5e9948db93f517c387718b74ad294ffc84e92985bd4
+    spec: 284193da1b780cd7f52048539359490d81862b8962cfabd8c3f387a29a4098d5
+    ended: 2026-10-25T13:00:31.368Z
   review:
-    status: failed
-    started: 2026-10-25T12:50:50.870Z
     rounds: 1
+    sentBack: 1
+    reviewed: 5a7e51054bea22560721fe24d9a6142733835094
     findings:
       p1: 0
       p2: 2
       p3: 1
-    reviewed: 5a7e51054bea22560721fe24d9a6142733835094
-    sentBack: 1
-    ended: 2026-10-25T12:56:02.471Z
-    failing: review round 1 found 2 P2 (components/vehicle-dot-label/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T12:38:27.446Z
@@ -40,3 +40,6 @@ notes:
   - stage: build
     at: 2026-10-25T12:50:42.485Z
     direction: "In Chromium, giving the label `min-inline-size: 0` makes the inline-grid's min-content the dot alone. A row that wraps (flex-wrap: wrap) still keeps whole words, which a play test checks. A row that never wraps, or an auto-layout table cell squeezed below the word, breaks the word letter by letter, so break-word buys nothing over anywhere there. VehicleTable and ReportStrip, both built on VehicleDotLabel, should give the state column a minimum width or let their row wrap. Otherwise the label needs a layout whose narrowest is its longest word, which this grid cannot pair with wrapping inside a narrow container."
+  - stage: build
+    at: 2026-10-25T13:00:31.368Z
+    direction: "The brief's note that SeverityLabel and VehicleDotLabel share one layout no longer holds: VehicleDotLabel now uses Tag's padding layout. SeverityLabel keeps its inline grid with overflow-wrap: anywhere, which lets a row that never wraps, or an auto-layout table cell, squeeze its name to a letter a line. If SeverityLabel moved to the same padding layout with break-word, the two would share one layout again, and that layout would be the candidate for a shared part."

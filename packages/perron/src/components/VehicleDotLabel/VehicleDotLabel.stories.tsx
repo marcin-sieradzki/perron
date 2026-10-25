@@ -1,6 +1,7 @@
 // VehicleDotLabel's stories: one per data state, and a long word wrapping in a narrow container,
 // each with a play test that reads the accessibility tree (docs/components/vehicle-dot-label.md).
 import { createRef } from 'react'
+import type { ReactNode } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, getRoles, isInaccessible, userEvent, waitFor, within } from 'storybook/test'
 import { VehicleDotLabel } from './VehicleDotLabel.tsx'
@@ -29,6 +30,41 @@ const STATES: { variant: Variant; word: string }[] = [
 
 /** A Danish compound longer than a narrow column, for the long-word checks. */
 const COMPOUND = 'regionaltogsforbindelserne'
+
+/**
+ * Three places too narrow for two labels on one line, each of which must leave a label's longest
+ * word whole: a row that wraps, a row that never wraps, and an auto-layout table cell beside longer
+ * text (CR-5).
+ */
+const WHOLE_WORD_HOLDERS: [string, (labels: ReactNode) => ReactNode][] = [
+  [
+    'in a row that wraps',
+    (labels) => (
+      <div style={{ display: 'flex', flexWrap: 'wrap', columnGap: 8, inlineSize: 120 }}>
+        {labels}
+      </div>
+    ),
+  ],
+  [
+    'in a row that never wraps',
+    (labels) => <div style={{ display: 'flex', columnGap: 8, inlineSize: 120 }}>{labels}</div>,
+  ],
+  [
+    'in an auto-layout table cell beside longer text',
+    (labels) => (
+      <table style={{ inlineSize: 120 }}>
+        <tbody>
+          <tr>
+            <td>{labels}</td>
+            <td style={typography('body')}>
+              A much longer cell of text beside the label, which takes the row's width
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    ),
+  ],
+]
 
 /** The prop that overrides each state's word. */
 const LABELS = {
@@ -376,41 +412,32 @@ export const Wrapping: Story = {
       await expect(centre).toBeLessThan(word.top + line)
       await expect(Math.abs(centre - (word.top + line / 2))).toBeLessThanOrEqual(1)
     })
-    await step('in a row that wraps, each label keeps the compound whole (CR-5)', async () => {
-      await mounted(
-        canvasElement,
-        <>
-          <span data-testid="whole" style={{ ...typography('label-sm'), whiteSpace: 'nowrap' }}>
-            {COMPOUND}
-          </span>
-          <div style={{ display: 'flex', flexWrap: 'wrap', columnGap: 8, inlineSize: 240 }}>
-            {(['live', 'no-signal'] as const).map((variant) => (
-              <VehicleDotLabel
-                key={variant}
-                line="m1"
-                variant={variant}
-                liveLabel={COMPOUND}
-                noSignalLabel={COMPOUND}
-              />
-            ))}
-          </div>
-        </>,
-        async (host) => {
-          const whole = await waitFor(() => within(host).getByTestId('whole'))
-          const words = [...host.querySelectorAll('.pn-VehicleDotLabel-label')]
-          await expect(words).toHaveLength(2)
-          // the row wraps, and each word stays on one line, whole
-          await expect(words[1].getBoundingClientRect().top).toBeGreaterThan(
-            words[0].getBoundingClientRect().bottom - 1,
-          )
-          for (const word of words) {
-            await expect(lines(word)).toBeLessThan(1.5)
-            await expect(word.getBoundingClientRect().width).toBeGreaterThanOrEqual(
-              whole.getBoundingClientRect().width - 0.5,
-            )
-          }
-        },
+    for (const [where, holder] of WHOLE_WORD_HOLDERS)
+      await step(`${where}, each label keeps its longest word whole (CR-5)`, () =>
+        mounted(
+          canvasElement,
+          <>
+            <span data-testid="whole" style={{ ...typography('label-sm'), whiteSpace: 'nowrap' }}>
+              Timetable
+            </span>
+            {holder(
+              <>
+                <VehicleDotLabel line="m1" variant="timetable-only" />
+                <VehicleDotLabel line="m2" variant="timetable-only" />
+              </>,
+            )}
+          </>,
+          async (host) => {
+            const whole = await waitFor(() => within(host).getByTestId('whole'))
+            const words = [...host.querySelectorAll('.pn-VehicleDotLabel-label')]
+            await expect(words).toHaveLength(2)
+            // "Timetable" never breaks, however narrow its row or cell
+            for (const word of words)
+              await expect(word.getBoundingClientRect().width).toBeGreaterThanOrEqual(
+                whole.getBoundingClientRect().width - 0.5,
+              )
+          },
+        ),
       )
-    })
   },
 }
