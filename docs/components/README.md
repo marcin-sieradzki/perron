@@ -248,6 +248,7 @@ Each of these is written once, in its file, and a component, pattern or story im
 | `stateFill`                      | `packages/perron/src/testing/stories.ts`        | The background a state's rules give an element last, as written                                                             |
 | `frames`                         | `packages/perron/src/testing/stories.ts`        | Resolves after a number of animation frames, for a check that something has not changed                                     |
 | `byTestId`                       | `packages/perron/src/testing/stories.ts`        | The element with a `data-testid`, once it has rendered                                                                      |
+| `lines`                          | `packages/perron/src/testing/stories.ts`        | How many lines tall an element is, in its own line height, to show a long word wraps                                        |
 | `heardMarkup`                    | `packages/perron/src/testing/markup.ts`         | `heard` for a unit test: what a screen reader reads of server-rendered markup, with no DOM                                  |
 | `attribute`, `attr`              | `packages/perron/src/testing/markup.ts`         | One attribute's value in the first tag of server-rendered markup, its character references read back                        |
 
