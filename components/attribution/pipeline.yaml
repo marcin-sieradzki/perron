@@ -1,0 +1,6 @@
+# Written by npm run factory; never by hand.
+component: Attribution
+layer: component
+deferred:
+  at: 2026-10-25T00:58:17.210Z
+stages: {}
