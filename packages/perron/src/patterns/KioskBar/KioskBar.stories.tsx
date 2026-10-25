@@ -103,6 +103,9 @@ export const Default: Story = {
     // CR-3: brand, figures, clock, in the DOM
     await expect(root.children).toHaveLength(3)
     await expect(root.children[0]).toHaveClass('pn-Brand', 'pn-KioskBar-brand')
+    // the mark beside the wordmark, named "Mylder"
+    await expect(root.children[0]).toHaveAttribute('data-variant', 'full')
+    await expect(heard(root.children[0])).toBe('Mylder')
     await expect(root.children[1]).toBe(canvas.getByRole('list'))
     await expect(root.children[2]).toBe(time)
     // CR-8: no live region, no focus
@@ -147,7 +150,6 @@ export const NoStats: Story = {
     await expect(time).toHaveTextContent(/^23:59$/)
     await expect(root.lastElementChild).toBe(time)
     // CR-3: the clock ends the row, at the end of the root's content box
-    await document.fonts.ready
     const style = getComputedStyle(root)
     const end =
       root.getBoundingClientRect().right -
@@ -169,8 +171,6 @@ export const Narrow: Story = {
     ),
   ],
   play: async ({ canvasElement }) => {
-    // measure in the library's own fonts, not a fallback that wraps differently
-    await document.fonts.ready
     const root = rootIn(canvasElement)
     const container = root.parentElement!.getBoundingClientRect()
     const box = root.getBoundingClientRect()

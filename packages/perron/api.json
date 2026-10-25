@@ -496,13 +496,13 @@
       "slotProps": {
         "optional": true,
         "type": [
-          "{ brand?: Omit<BrandProps, \"brandNameLabel\"> | undefined; stats?: DetailedHTMLProps<HTMLAttributes<HTMLUListElement>, HTMLUListElement> | undefined; stat?: Omit<StatProps, \"label\" | \"children\" | \"render\" | \"unknownLabel\"> | undefined; time?: DetailedHTMLProps<TimeHTMLAttributes<HTMLTimeElement>, HTMLTimeElement> | undefined; }"
+          "{ brand?: Omit<BrandProps, \"render\" | \"brandNameLabel\"> | undefined; stats?: DetailedHTMLProps<HTMLAttributes<HTMLUListElement>, HTMLUListElement> | undefined; stat?: Omit<StatProps, \"label\" | \"children\" | \"render\" | \"unknownLabel\"> | undefined; time?: DetailedHTMLProps<TimeHTMLAttributes<HTMLTimeElement>, HTMLTimeElement> | undefined; }"
         ]
       },
       "stats": {
         "optional": true,
         "type": [
-          "KioskBarStat[]"
+          "readonly KioskBarStat[]"
         ]
       },
       "style": {

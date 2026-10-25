@@ -31,7 +31,7 @@ export interface KioskBarProps extends Omit<ComponentPropsWithRef<'div'>, 'child
    * The key figures, in the order they show: each one's label and figure. Left out or empty, the
    * bar shows the brand and the clock alone.
    */
-  stats?: KioskBarStat[]
+  stats?: ReadonlyArray<KioskBarStat>
   /**
    * Overrides "Mylder", the brand name; given to the Brand
    * @default The locale's
@@ -54,7 +54,7 @@ export interface KioskBarProps extends Omit<ComponentPropsWithRef<'div'>, 'child
      * Props for the `brand` part, the Brand: its `variant`, `'mark'` where the bar is tight, and a
      * `className`
      */
-    brand?: Omit<BrandProps, 'brandNameLabel'>
+    brand?: Omit<BrandProps, 'brandNameLabel' | 'render'>
     /** Props for the `stats` part, the list */
     stats?: ComponentPropsWithRef<'ul'>
     /** Props for every `stat` part, each Stat: a `className`, or its own `slotProps` */
