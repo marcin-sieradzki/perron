@@ -5,10 +5,9 @@ deferred:
   at: 2026-10-25T04:38:23.793Z
 stages:
   brief:
-    status: failed
-    started: 2026-10-25T04:45:45.182Z
-    ended: 2026-10-25T04:48:13.402Z
-    failing: the spec still has the placeholder <key>
+    status: done
+    started: 2026-10-25T04:48:22.948Z
+    ended: 2026-10-25T04:49:27.022Z
 notes:
   - stage: brief
     at: 2026-10-25T04:45:40.176Z
