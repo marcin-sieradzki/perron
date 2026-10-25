@@ -12,7 +12,8 @@
   color: inherit;
   /* one class beats an app's a { text-decoration: none }; the underline takes currentColor */
   text-decoration-line: underline;
-  /* the hover and pressed layers and the focus ring, rounded on every line the link runs over */
+  /* the hover and pressed layers, rounded on every line the link runs over; the focus ring stays
+     one outline round the whole run (CR-4) */
   border-radius: var(--perron-radius-xs);
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;

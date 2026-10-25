@@ -9,6 +9,7 @@ import { Text } from '../Text/Text.tsx'
 import {
   colour,
   heard,
+  mounted,
   pressedAfterHover,
   resolve,
   RouterLink,
@@ -171,7 +172,7 @@ export const Wrapping: Story = {
   ),
   play: async ({ canvasElement }) => {
     const link = linkIn(canvasElement)
-    // over more than one line, each with its own rounded layer and ring (CR-4)
+    // over more than one line, each with its own rounded layer (CR-4)
     await expect(link.getClientRects().length).toBeGreaterThan(1)
     await expect(getComputedStyle(link).getPropertyValue('box-decoration-break')).toBe('clone')
     // inside its column: nothing overflows it
@@ -196,6 +197,67 @@ export const NewTab: Story = {
     await expect(link).toHaveAccessibleName('Rejseplanen')
     await expect(link.childElementCount).toBe(0)
     await expect(link.textContent).toBe('Rejseplanen')
+  },
+}
+
+/** A file to save: "Download the Nørreport timetable", with the caller's `download`. */
+export const Download: Story = {
+  args: {
+    children: 'Download the Nørreport timetable',
+    href: '/timetables/norreport.pdf',
+    download: 'norreport-timetable.pdf',
+  },
+  play: async ({ canvasElement }) => {
+    const link = linkIn(canvasElement)
+    // `download` reaches the <a> as given, and Link adds no target or rel of its own (CR-10)
+    await expect(link).toHaveAttribute('download', 'norreport-timetable.pdf')
+    await expect(link).toHaveAttribute('href', '/timetables/norreport.pdf')
+    await expect(link).not.toHaveAttribute('target')
+    await expect(link).not.toHaveAttribute('rel')
+    await expect(link).toHaveAccessibleName('Download the Nørreport timetable')
+  },
+}
+
+/**
+ * The link's words given as an element, a Danish name marked with its language, in a sentence;
+ * its play renders them as a list of strings and elements too.
+ */
+export const RichContent: Story = {
+  args: { children: <span lang="da">Rejseplanen</span>, href: REJSEPLANEN },
+  render: (args) => (
+    <Text variant="body">
+      Departures from <Link {...args} />, updated every 30 s.
+    </Text>
+  ),
+  play: async ({ canvasElement, step }) => {
+    await step('an element renders inside the link, and names it', async () => {
+      const link = within(canvasElement).getByRole('link', { name: 'Rejseplanen' })
+      const words = link.querySelector('span[lang="da"]')
+      await expect(words).toHaveTextContent(/^Rejseplanen$/)
+      await expect(words).toBeVisible()
+      await expect(heard(link.closest('.pn-Text')!)).toBe(
+        'Departures from Rejseplanen, updated every 30 s.',
+      )
+    })
+    await step('a list of strings and elements renders whole, and names it', async () => {
+      await mounted(
+        canvasElement,
+        <Link href="/departures">
+          {[
+            'Departures from ',
+            <span key="stop" lang="da">
+              Nørreport
+            </span>,
+          ]}
+        </Link>,
+        async (host) => {
+          const link = await within(host).findByRole('link', { name: 'Departures from Nørreport' })
+          await expect(link).toHaveClass('pn-Link')
+          await expect(link.querySelector('span[lang="da"]')).toHaveTextContent(/^Nørreport$/)
+          await expect(link).toBeVisible()
+        },
+      )
+    })
   },
 }
 
