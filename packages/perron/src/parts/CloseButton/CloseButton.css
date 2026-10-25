@@ -19,12 +19,12 @@
 
 @media (hover: hover) {
   .pn-CloseButton:hover {
-    background: var(--perron-color-surface-hover);
+    background-color: var(--perron-color-surface-hover);
     color: var(--perron-color-text-primary);
   }
 }
 
 .pn-CloseButton:active,
 .pn-CloseButton[data-pressed] {
-  background: var(--perron-color-surface-selected);
+  background-color: var(--perron-color-surface-selected);
 }

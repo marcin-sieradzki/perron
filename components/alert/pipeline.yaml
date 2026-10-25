@@ -1,0 +1,83 @@
+# Written by npm run factory; never by hand.
+component: Alert
+layer: component
+deferred:
+  at: 2026-10-25T07:20:14.474Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-25T07:28:39.007Z
+    ended: 2026-10-25T07:30:10.698Z
+  build:
+    runs: 4
+    status: done
+    started: 2026-10-25T08:10:07.435Z
+    begun: 2a4c46a444f641d61719d80425f7ea5998801f8fe48860e3c002b23ade22f71b
+    spec: 2a4c46a444f641d61719d80425f7ea5998801f8fe48860e3c002b23ade22f71b
+    ended: 2026-10-25T08:11:49.271Z
+  review:
+    rounds: 4
+    sentBack: 0
+    findings:
+      p1: 0
+      p2: 0
+      p3: 7
+    status: done
+    started: 2026-10-25T08:12:27.763Z
+    ended: 2026-10-25T08:16:12.200Z
+  docs:
+    status: done
+    started: 2026-10-25T08:16:51.256Z
+    ended: 2026-10-25T08:19:13.089Z
+notes:
+  - stage: brief
+    at: 2026-10-25T07:28:35.814Z
+    direction: The contract's Families table has no row for messages. Alert and Toast should share one 'Messages' treatment (tinted intent surface, transparent hairline edge, radius.lg, ink text, intent-coloured icon) as a family row, so Toast joins it instead of copying Alert's token rows.
+  - stage: brief
+    at: 2026-10-25T07:28:35.814Z
+    direction: The build's contrast tables measure status text on its own tint, but not color.text.primary, color.text.secondary or color.border.control on the status tints and on color.surface.inset. Alert puts ink text, the close icon and an outline Button's edge there, and border.control is only 3.0:1 at its lowest (light inset, dark success), so those pairs should join the contrast markers in accessibility.md.
+  - stage: brief
+    at: 2026-10-25T07:28:35.814Z
+    direction: 'The icon set has no naming rule for one glyph drawn at two grid sizes: info is the 18 px drawing, and Alert needs a 14 px one, recommended as info-circle after check-circle. icons.md should say how such twins are named.'
+  - stage: brief
+    at: 2026-10-25T07:28:35.814Z
+    direction: The contract's onClose(event, reason, details) assumes Base UI's change details, so a component with no Base UI root (Alert, and later any inline dismissible) has to invent a details shape. The contract could name one shared shape, such as { reason, event }, for components without a Base UI root.
+  - stage: brief
+    at: 2026-10-25T07:28:35.814Z
+    questions: "1. (Anatomy) Title renders as a p by default, a heading via slotProps.title.render? Recommended: yes, as EmptyState. 2. (Anatomy) Intent icons on the 14 px grid at icon.size.325: check-circle, warning, plus new info-circle and exclamation-circle under a Feedback category? Recommended: yes. 3. (Anatomy) Intent icon in a new shared part IntentIcon under src/parts/? Recommended: yes, Toast needs it next. 4. (Props) color 'neutral' | 'info' | 'success' | 'warning' | 'danger', default neutral on color.surface.inset with no icon? Recommended: yes (answered in the family's order neutral, success, warning, danger, info). 5. (Props) Close button only when onClose is given; onClose(event, 'close-press', { reason, event }); Alert never hides itself? Recommended: yes. 6. (Tokens) The look the Tokens table gives (tinted surface, transparent hairline, radius.lg, ink text, intent icon)? Recommended: yes. 7. (Keyboard and ARIA) role=status by default for every color, overridable to alert, never alert by default? Recommended: yes. 8. (Keyboard and ARIA) No hidden intent word? Recommended: yes, as Tag and EmptyState."
+  - stage: brief
+    at: 2026-10-25T07:30:10.698Z
+    direction: "The contract sets no order for a color-only component's stories: Tag lists them in the union's order and Meter and Alert alphabetically, so the docs pages put the same intents in different orders. The contract's Stories section could fix one order."
+  - stage: brief
+    at: 2026-10-25T07:30:10.698Z
+    direction: The contract's Shared parts table lists only Base UI parts in CloseButton's 'Composed in' column. A component that composes a shared part without a Base UI root, such as Alert, has no stated way to be listed there.
+  - stage: build
+    at: 2026-10-25T07:44:18.733Z
+    direction: warning.svg's dot is a circle of r .3 with the 1.6 stroke inherited, and Chromium renders it as a ring at high pixel density. signal-off draws its dot as a stroke-less disc, and the two new icons now do too. warning.svg could be redrawn the same way, which would change SeverityLabel's and IntentIcon's copies.
+  - stage: build
+    at: 2026-10-25T07:44:18.733Z
+    direction: IntentIcon owns only info-circle and exclamation-circle, because NormalService inlines check-circle and SeverityLabel inlines warning. If IntentIcon should be the one drawing of every intent icon, NormalService could compose IntentIcon with color='success'. SeverityLabel draws warning in a transit colour, so it would still keep its own copy.
+  - stage: build
+    at: 2026-10-25T07:44:18.733Z
+    direction: The contract's Customising section says 'the component's own props last', but Base UI's mergeProps runs the rightmost handler first. A component's own handler merged last therefore runs before the caller's and can't be stopped by it. The contract could say which order handlers run, and that a caller-first handler (Base UI's convention, with preventBaseUIHandler) is merged first.
+  - stage: build
+    at: 2026-10-25T07:44:18.733Z
+    direction: The shared-parts gate reads a part's icons only in the singular form '`x` icon'. A plural such as 'the `a` and `b` icons' is silently left unchecked, so the contract row has to name each icon on its own.
+  - stage: build
+    at: 2026-10-25T07:44:18.733Z
+    direction: "A state fill written as the shorthand `background: var(--…)` reads as empty to stateFill and pressedAfterHover, because a var() shorthand's longhands serialize empty. component-css could require background-color for hover and pressed fills, so the pointer-feedback play tests can always read them."
+  - stage: build
+    at: 2026-10-25T07:44:18.733Z
+    direction: Alert's icon part is one line of body-sm tall (19.5 px), but a title's line is heading-sm (18.2 px), so with a title the icon sits about 0.65 px below the title line's centre. It is under a pixel, but Toast will inherit it; the icon could take the first line's role when a title is present.
+  - stage: build
+    at: 2026-10-25T07:55:26.833Z
+    direction: CR-6 lets a caller's close onClick call event.preventBaseUIHandler(), but slotProps.close is typed with React's button props, so that method isn't in the caller's type without a cast. The contract could say how a close slot's handler is typed on a component with no Base UI root.
+  - stage: build
+    at: 2026-10-25T07:55:26.833Z
+    direction: "The shared-parts gate's copiedStoryHelpers only catches copies declared as top-level functions. A helper's body copied inline into a play test passes unflagged: Alert's Info story copied expectNoFocus's tab and shift-tab inline."
+  - stage: review
+    at: 2026-10-25T08:10:02.106Z
+    unblocked: '3 review rounds found a P1 or a P2; the last: review round 3 found 1 P2 (components/alert/review.md)'
+  - stage: docs
+    at: 2026-10-25T08:19:13.089Z
+    direction: "The PropsTable block always describes a slot as 'Props for the <part> part'. Two slots lose the guidance their JSDoc carries: slotProps.title's 'Its render makes the title a heading: render: <h3 />', and slotProps.close's 'all but disabled ... Its onClick runs before onClose'. The slots table could add any JSDoc beyond that fixed opening sentence."
