@@ -1171,6 +1171,57 @@
       }
     }
   },
+  "Tabs": {
+    "extends": [
+      "Inherited< BaseTabs.Root.Props, 'value' | 'defaultValue' | 'onValueChange' | 'orientation' | 'onChange' >"
+    ],
+    "props": {
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "defaultValue": {
+        "optional": true,
+        "type": [
+          "null",
+          "string"
+        ]
+      },
+      "onChange": {
+        "optional": true,
+        "type": [
+          "(event: Event, value: string | null, details: TabsRootChangeEventDetails) => void"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "value": {
+        "optional": true,
+        "type": [
+          "null",
+          "string"
+        ]
+      }
+    }
+  },
   "Text": {
     "extends": [
       "Omit<HTMLAttributes<HTMLElement>, 'color' | 'children' | 'className' | 'style'>",
