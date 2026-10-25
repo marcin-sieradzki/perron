@@ -1,10 +1,12 @@
 // PerronProvider sets the locale for the components inside it, useOwnedStrings gives a component
 // its owned strings in that locale, with any *Label props laid over them, and useLocale gives it the
 // locale itself, such as for formatting a number. It also holds the one Tooltip.Provider of the app,
-// so every Perron tooltip inside shares Base UI's delay group (docs/components/tooltip.md, CR-1).
+// so every Perron tooltip inside shares Base UI's delay group (docs/components/tooltip.md, CR-1),
+// and the one list of toasts with the region that shows them (docs/components/toast.md, CR-2).
 import { Tooltip } from '@base-ui/react/tooltip'
 import { createContext, useContext } from 'react'
 import type { ReactNode } from 'react'
+import { ToastHost } from './components/Toast/ToastRegion.tsx'
 import { dictionaries } from './locale/index.ts'
 import type { Locale, OwnedStrings } from './locale/index.ts'
 
@@ -16,18 +18,30 @@ export interface PerronProviderProps {
    * numbers are written, such as a meter's "82 %" in Danish.
    */
   locale?: Locale
+  /**
+   * Overrides "Notifications", the name of the region that holds the toasts
+   * @default The locale's
+   */
+  notificationsLabel?: string
   children?: ReactNode
 }
 
 /**
- * Sets the locale of the Perron components inside it, and groups their tooltips, so once one is
- * open the next opens at once. Without a provider, they speak English and each tooltip waits its
- * full delay.
+ * Sets the locale of the Perron components inside it, groups their tooltips, so once one is open
+ * the next opens at once, and renders the one region at the bottom of the screen where their
+ * toasts stack. Without a provider, they speak English, each tooltip waits its full delay and each
+ * toast brings a region of its own.
  */
-export function PerronProvider({ locale = 'en', children }: PerronProviderProps) {
+export function PerronProvider({
+  locale = 'en',
+  notificationsLabel,
+  children,
+}: PerronProviderProps) {
   return (
     <LocaleContext.Provider value={locale}>
-      <Tooltip.Provider>{children}</Tooltip.Provider>
+      <Tooltip.Provider>
+        <ToastHost notificationsLabel={notificationsLabel}>{children}</ToastHost>
+      </Tooltip.Provider>
     </LocaleContext.Provider>
   )
 }

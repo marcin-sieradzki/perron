@@ -85,6 +85,8 @@ export const en = {
    * is not known.
    */
   inProgress: 'In progress',
+  /** The region at the bottom of the screen that holds the toasts. */
+  notifications: 'Notifications',
 }
 
 /** The name of one owned string. */

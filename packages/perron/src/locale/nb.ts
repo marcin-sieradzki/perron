@@ -41,4 +41,5 @@ export const nb: OwnedStrings = {
   noMatches: 'Ingen treff',
   optional: '(valgfritt)',
   inProgress: 'Pågår',
+  notifications: 'Varsler',
 }

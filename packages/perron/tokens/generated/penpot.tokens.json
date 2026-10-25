@@ -836,6 +836,11 @@
         "$value": "364px",
         "$description": "Detail panel width on desktop"
       },
+      "toast-width": {
+        "$type": "sizing",
+        "$value": "360px",
+        "$description": "Toast width on wide screens"
+      },
       "sheet-peek": {
         "$type": "sizing",
         "$value": "182px",

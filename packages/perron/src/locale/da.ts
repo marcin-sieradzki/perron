@@ -41,4 +41,5 @@ export const da: OwnedStrings = {
   noMatches: 'Ingen resultater',
   optional: '(valgfrit)',
   inProgress: 'I gang',
+  notifications: 'Notifikationer',
 }

@@ -41,4 +41,5 @@ export const sv: OwnedStrings = {
   noMatches: 'Inga träffar',
   optional: '(valfritt)',
   inProgress: 'Pågår',
+  notifications: 'Aviseringar',
 }

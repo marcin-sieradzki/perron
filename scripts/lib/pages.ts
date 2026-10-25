@@ -43,6 +43,7 @@ export const PAGES = [
   'docs/components/alert.md',
   'docs/components/empty-state.md',
   'docs/components/progress.md',
+  'docs/components/toast.md',
   'docs/components/checkbox.md',
   'docs/components/checkbox-group.md',
   'docs/components/field.md',
