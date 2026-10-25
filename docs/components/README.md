@@ -203,6 +203,7 @@ Members of a family share one treatment, in Penpot and in CSS. A new member join
 
 - Text: rows and buttons in `typography.label`, a row's second line in `typography.caption` with `color.text.secondary`, fields in `typography.body`, tooltips in `typography.label-sm`. A placeholder and anything disabled is `color.text.tertiary`.
 - Height: a field is `size.input` tall. A row is at least `size.target-min`.
+- Glass: a component or pattern whose own element floats over the map as glass composes Surface with `variant='glass'`, as KioskBar does, and its CSS sets only what its spec changes, such as the radius or the padding; it never writes the fill, the `backdrop-filter` and the shadow again. A Base UI popup or panel, whose element Base UI renders, writes its row's treatment in its own CSS.
 
 ## Shared parts
 
