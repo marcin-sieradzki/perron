@@ -1,5 +1,6 @@
-// The lint bans the imports Perron must not make: MUI at runtime, Base UI's old package name and
-// Base UI's internals. Each fixture is ignored by the real lint run, so here oxlint lints it alone.
+// The lint bans the imports Perron must not make: MUI at runtime, Base UI's old package name,
+// Base UI's internals, and in src/ the generated tokens.ts, outside the package build's rootDir.
+// Each fixture is ignored by the real lint run, so here oxlint lints it alone.
 import { execFileSync } from 'node:child_process'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
@@ -28,6 +29,14 @@ describe('the restricted imports lint', () => {
       expect(lint(file)).toEqual({ failed: true, rules: ['eslint(no-restricted-imports)'] })
     },
   )
+
+  it('fails an import of tokens.ts in src/, by its path or by the package export', () => {
+    const file = '../../src/fixtures/restricted-imports/generated-tokens.ts'
+    expect(lint(file)).toEqual({
+      failed: true,
+      rules: ['eslint(no-restricted-imports)', 'eslint(no-restricted-imports)'],
+    })
+  })
 
   it('lets a type-only import from MUI through', () => {
     expect(lint('mui-type-only.ts')).toEqual({ failed: false, rules: [] })

@@ -7,19 +7,11 @@ import { mergeProps } from '@base-ui/react/merge-props'
 import { useId } from 'react'
 import type { CSSProperties, ReactElement, ReactNode, Ref } from 'react'
 import { useOwnedStrings } from '../../PerronProvider.tsx'
+import { given, withClass } from '../../internal/nodes.ts'
 import { CloseButton } from '../../parts/CloseButton/CloseButton.tsx'
 import './Dialog.css'
 
 type ChangeDetails = BaseDialog.Root.ChangeEventDetails
-
-/**
- * Whether a node renders anything: `null`, `undefined`, a boolean, `''` and an array of only such
- * values render nothing, so their part is left out, as in EmptyState.
- */
-const rendersSomething = (node: ReactNode): boolean =>
-  Array.isArray(node)
-    ? node.some(rendersSomething)
-    : node != null && typeof node !== 'boolean' && node !== ''
 
 export interface DialogProps extends Omit<
   BaseDialog.Popup.Props,
@@ -98,20 +90,6 @@ export interface DialogProps extends Omit<
     close?: Omit<BaseDialog.Close.Props, 'disabled'>
   }
 }
-
-/**
- * Base UI's `className`: a string, or a function of the part's state. `mergeProps` joins strings
- * only, so each part's class is set after the merge, by `withClass`.
- */
-type ClassName<State> = string | ((state: State) => string | undefined) | undefined
-
-/** The part's own class first, then the caller's, whether the caller's is a string or a function. */
-function withClass<State>(own: string, theirs: ClassName<State>): ClassName<State> {
-  if (typeof theirs === 'function') return (state) => join(own, theirs(state))
-  return join(own, theirs)
-}
-
-const join = (own: string, theirs: string | undefined) => (theirs ? `${own} ${theirs}` : own)
 
 /** A modal panel that asks one question or gives help, over the map and a scrim. */
 export function Dialog({
@@ -195,7 +173,7 @@ export function Dialog({
               className={withClass('pn-Dialog-close', slotProps?.close?.className)}
             />
           </div>
-          {rendersSomething(description) ? (
+          {given(description) ? (
             <BaseDialog.Description
               {...mergeProps<typeof BaseDialog.Description>(slotProps?.description, undefined)}
               className={withClass('pn-Dialog-description', slotProps?.description?.className)}
@@ -203,8 +181,8 @@ export function Dialog({
               {description}
             </BaseDialog.Description>
           ) : null}
-          {rendersSomething(children) ? <div className="pn-Dialog-content">{children}</div> : null}
-          {rendersSomething(actions) ? <div className="pn-Dialog-actions">{actions}</div> : null}
+          {given(children) ? <div className="pn-Dialog-content">{children}</div> : null}
+          {given(actions) ? <div className="pn-Dialog-actions">{actions}</div> : null}
         </BaseDialog.Popup>
       </BaseDialog.Portal>
     </BaseDialog.Root>

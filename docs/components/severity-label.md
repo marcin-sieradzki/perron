@@ -81,7 +81,7 @@ Every `color.transit.severity.*` token reaches 4.5:1 on `color.surface.default`,
 
 ## Keyboard and ARIA
 
-SeverityLabel is text: it takes no focus, and no key does anything. A caller who makes it a link or button through `render` brings that element's own keys and must give it a target of `size.target-min`.
+SeverityLabel is text: it takes no focus, and no key does anything. `render` swaps its element for another text element, never a link or button: it is smaller than `size.target-min`, so the control is the card around it, as [Do and don't](#do-and-dont) says.
 
 | Key  | Does                                       | From   |
 | ---- | ------------------------------------------ | ------ |
