@@ -467,5 +467,8 @@ export async function expectVehicleDotShape(
       await expect(style.strokeDasharray).toBe(
         rendered('vehicle-dot-timetable-dash', 'stroke-dasharray'),
       )
+      break
+    default:
+      variant satisfies never
   }
 }

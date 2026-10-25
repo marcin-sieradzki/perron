@@ -15,14 +15,14 @@ import './VehicleDotLegend.css'
  * it (CR-1). No prop picks, hides or reorders them.
  */
 const STATES = [
-  { variant: 'live', word: 'live' },
-  { variant: 'ageing', word: 'ageing' },
-  { variant: 'estimated', word: 'estimated' },
-  { variant: 'timetable-only', word: 'timetableOnly' },
-  { variant: 'no-signal', word: 'noSignal' },
+  { variant: 'live', labelKey: 'live' },
+  { variant: 'ageing', labelKey: 'ageing' },
+  { variant: 'estimated', labelKey: 'estimated' },
+  { variant: 'timetable-only', labelKey: 'timetableOnly' },
+  { variant: 'no-signal', labelKey: 'noSignal' },
 ] as const satisfies readonly {
   variant: NonNullable<VehicleDotProps['variant']>
-  word: OwnedStringKey
+  labelKey: OwnedStringKey
 }[]
 
 export interface VehicleDotLegendProps extends Omit<useRender.ComponentProps<'ul'>, 'children'> {
@@ -85,7 +85,7 @@ export function VehicleDotLegend({
     className: 'pn-VehicleDotLegend',
     // CR-1, CR-2: the five items, each a hidden dot then its word; line='m1' is VehicleDot's
     // required line, whose colour the legend's CSS replaces with its own ink (CR-3)
-    children: STATES.map(({ variant, word }) => (
+    children: STATES.map(({ variant, labelKey }) => (
       <li key={variant} className="pn-VehicleDotLegend-item">
         <VehicleDot
           variant={variant}
@@ -94,7 +94,7 @@ export function VehicleDotLegend({
           aria-hidden
           className="pn-VehicleDotLegend-dot"
         />
-        <span className="pn-VehicleDotLegend-label">{strings[word]}</span>
+        <span className="pn-VehicleDotLegend-label">{strings[labelKey]}</span>
       </li>
     )),
   }

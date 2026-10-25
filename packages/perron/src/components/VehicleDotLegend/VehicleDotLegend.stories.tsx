@@ -146,6 +146,7 @@ export const Default: Story = {
         await expect(getComputedStyle(item).columnGap).toBe(rendered('space-100', 'column-gap'))
     })
     await step('Tab passes the legend by (CR-4)', async () => {
+      await expect(list).not.toHaveAttribute('tabindex')
       await expect(list.querySelector('[tabindex]')).toBeNull()
       await mounted(
         canvasElement,
