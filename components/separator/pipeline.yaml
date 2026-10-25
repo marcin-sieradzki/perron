@@ -3,4 +3,25 @@ component: Separator
 layer: component
 deferred:
   at: 2026-10-25T07:31:46.377Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-25T07:31:50.842Z
+    ended: 2026-10-25T07:36:06.914Z
+notes:
+  - stage: brief
+    at: 2026-10-25T07:36:06.915Z
+    direction: The local `type Inherited<P, own>` helper is copied in Tabs.tsx, Toolbar.tsx and SegmentedControl.tsx, and Separator would be a fourth copy. Consider adding it to the contract's Shared helpers table.
+  - stage: brief
+    at: 2026-10-25T07:36:06.915Z
+    direction: Separator spacing is used inconsistently. ToolbarSeparator's space.100 margin insets the line along its length (margin-block on a vertical line), while Select's space.100 margin spaces it from the rows across its length. If Separator takes no margin, a later pass could align these two.
+  - stage: brief
+    at: 2026-10-25T07:36:06.915Z
+    direction: The Toolbar spec's ToolbarSeparator (and Toolbar) Props rows name the Base UI prop (orientation, render) in the Base UI prop column, where the template now asks inherited rows to read 'inherited'.
+  - stage: brief
+    at: 2026-10-25T07:36:06.915Z
+    questions: |-
+      1. (Props) Does Separator ship one look, with no variant, color, size or inset prop? Recommended: yes.
+      2. (Props) Is Separator always announced as a separator, with no decorative prop that swaps its role for none? Recommended: yes.
+      3. (Tokens) Does Separator take no margin of its own, so the space on either side comes from its container's gap or padding? Recommended: yes.
+      4. (Component rules, CR-8) Do ToolbarSeparator, Select's separator and Menu's (once built) keep their own Base UI parts rather than later render Separator? Recommended: yes, with no follow-up.
