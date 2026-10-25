@@ -3,4 +3,32 @@ component: Popover
 layer: component
 deferred:
   at: 2026-10-25T05:15:09.275Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-25T05:15:14.023Z
+    ended: 2026-10-25T05:21:08.075Z
+    pending: 10
+notes:
+  - stage: brief
+    at: 2026-10-25T05:21:08.076Z
+    direction: The Popups family pads space.100 so menu rows can nest inside it. A popover holds text, so it takes space.400 (question 6). The family's row may need a separate padding for popups that hold text rather than rows.
+  - stage: brief
+    at: 2026-10-25T05:21:08.076Z
+    direction: Popover is the second component to read the positioner's sideOffset and collisionPadding from tokens. The reader becomes a shared helper, and the build touches MapTooltip to import it (question 5).
+  - stage: brief
+    at: 2026-10-25T05:21:08.076Z
+    direction: No ROADMAP line names Popover. Its registry entry, in the Overlays category, was the only source for its parts.
+  - stage: brief
+    at: 2026-10-25T05:21:08.076Z
+    questions: |-
+      1. (Anatomy) One component in Dialog's shape (title, description, children, trigger props; every Base UI part inside; popup as root; no actions prop)? Recommended: yes.
+      2. (Anatomy) Leave out Popover.Arrow, removing it from the entry's baseUiParts? Recommended: yes.
+      3. (Props) title required, as in Dialog? Recommended: yes.
+      4. (Props) Always non-modal, leaving out modal, actionsRef, handle, onOpenChangeComplete, triggerId, defaultTriggerId? Recommended: yes.
+      5. (Props) Positioner keeps side bottom / align center, sideOffset space.200 and collisionPadding size.panel-gap read in script, via a shared positionerOffsets helper in internal/tokens.ts moved from MapTooltip and listed in the contract's Shared helpers? Recommended: yes.
+      6. (Tokens) Popup padded space.400, parts space.200 apart, instead of the Popups family's space.100? Recommended: yes.
+      7. (Tokens) Title heading-sm, description body-sm in text.secondary, content body? Recommended: yes.
+      8. (Tokens) Width follows content, capped at min(320px raw under perron-allow, --available-width); height capped at --available-height and scrolls? Recommended: yes.
+      9. (Tokens) On data-anchor-hidden the popover keeps its rest look rather than hide? Recommended: yes.
+      10. (CR-6) Close button always rendered, as in Dialog? Recommended: yes.
