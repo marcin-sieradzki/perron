@@ -21,6 +21,8 @@ export default defineConfig({
             '.storybook/*.test.ts',
             'penpot/*.test.ts',
             'packages/**/*.test.{ts,tsx}',
+            'website/lib/**/*.test.ts',
+            'website/components/**/*.test.ts',
           ],
           // it builds a Storybook and drives Chromium, so it runs with the fixtures
           exclude: [...configDefaults.exclude, 'scripts/visual.test.ts'],

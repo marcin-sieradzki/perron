@@ -5,7 +5,8 @@
   "description": "The Perron repository: the @mylder/perron and @mylder/perron-mcp packages, the token build, Storybook and the docs.",
   "type": "module",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "website"
   ],
   "scripts": {
     "tokens": "node scripts/build-tokens.ts",
