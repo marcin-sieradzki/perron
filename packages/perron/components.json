@@ -57,7 +57,7 @@
     "name": "Kbd",
     "layer": "component",
     "category": "Display",
-    "status": "building",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/Kbd",
     "dependsOn": []
