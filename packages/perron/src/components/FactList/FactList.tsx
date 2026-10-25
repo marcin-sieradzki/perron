@@ -4,12 +4,11 @@
 import type { CSSProperties, Key, ReactNode, Ref } from 'react'
 import { mergeProps } from '@base-ui/react/merge-props'
 import { useRender } from '@base-ui/react/use-render'
-import { VisuallyHidden } from '../../parts/VisuallyHidden/VisuallyHidden.tsx'
 import { useOwnedStrings } from '../../PerronProvider.tsx'
+import { known } from '../../internal/nodes.ts'
+import { UnknownValue } from '../../internal/UnknownValue.tsx'
+import { usePart } from '../../internal/use-part.ts'
 import './FactList.css'
-
-/** U+2014, the dash content design writes for unknown (CR-5). */
-const UNKNOWN = '—'
 
 /** One fact: its name and what it is. */
 export interface FactListItem {
@@ -55,42 +54,6 @@ export interface FactListProps extends Omit<useRender.ComponentProps<'dl'>, 'chi
   ref?: Ref<HTMLDListElement>
 }
 
-/**
- * Whether a value says something: `null`, `undefined`, a boolean, `''`, a number that is not
- * finite, and an array of only such values say nothing; `0` and `'0'` are values (CR-4).
- */
-const known = (node: ReactNode): boolean =>
-  Array.isArray(node)
-    ? node.some(known)
-    : node != null &&
-      typeof node !== 'boolean' &&
-      node !== '' &&
-      (typeof node !== 'number' || Number.isFinite(node))
-
-type PartTag = 'div' | 'dt' | 'dd'
-
-/**
- * One inner part: its `slotProps` value merged with the part's own props, its own last, so its
- * class, `data-unknown` and children stay while the caller's `className` joins and its `render`
- * swaps the element (CR-7).
- */
-function usePart(
-  defaultTagName: PartTag,
-  slot: useRender.ComponentProps<PartTag> | undefined,
-  own: useRender.ElementProps<PartTag> & { 'data-unknown'?: string },
-) {
-  const { render, ...props } = slot ?? {}
-  // dt, dd and div all take HTMLElement's props, so one merge serves the three
-  return useRender({
-    defaultTagName,
-    render,
-    props: mergeProps<'div'>(
-      props as useRender.ElementProps<'div'>,
-      own as useRender.ElementProps<'div'>,
-    ),
-  })
-}
-
 interface FactProps {
   fact: FactListItem
   slotProps: FactListProps['slotProps']
@@ -111,14 +74,7 @@ function Fact({ fact, slotProps, unknownLabel }: FactProps) {
     className: 'pn-FactList-value',
     'data-unknown': dataUnknown,
     // The "—" for the eye, and the words for the ear in their own text run (CR-5, CR-6)
-    children: unknown ? (
-      <>
-        <span aria-hidden="true">{UNKNOWN}</span>
-        <VisuallyHidden>{unknownLabel}</VisuallyHidden>
-      </>
-    ) : (
-      fact.value
-    ),
+    children: unknown ? <UnknownValue label={unknownLabel} /> : fact.value,
   })
   return usePart('div', slotProps?.item, {
     className: 'pn-FactList-item',

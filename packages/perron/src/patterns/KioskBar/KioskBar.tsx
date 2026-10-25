@@ -8,6 +8,7 @@ import type { BrandProps } from '../../components/Brand/Brand.tsx'
 import { Stat } from '../../components/Stat/Stat.tsx'
 import type { StatProps } from '../../components/Stat/Stat.tsx'
 import { Surface } from '../../components/Surface/Surface.tsx'
+import { classes } from '../../internal/nodes.ts'
 import './KioskBar.css'
 
 /** One key figure, as KioskBar's `stats` takes it. */
@@ -63,12 +64,6 @@ export interface KioskBarProps extends Omit<ComponentPropsWithRef<'div'>, 'child
     time?: ComponentPropsWithRef<'time'>
   }
 }
-
-/**
- * The part's own class first, then the caller's: joined, not replaced. A pattern cannot import
- * Base UI's `mergeProps`, so the merge is written here (CR-7).
- */
-const classes = (own: string, caller: string | undefined) => (caller ? `${own} ${caller}` : own)
 
 /**
  * The bar a kiosk display shows over the map: the Mylder brand, a few key figures about the

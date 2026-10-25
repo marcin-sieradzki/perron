@@ -1,5 +1,6 @@
 // The shared-parts rule: each part in the contract's "Shared parts" table is drawn once, in its
-// own folder, so its class, its icon and its declarations appear nowhere else in the source. In
+// own folder, so its class, its icon and its declarations appear nowhere else in the source; and
+// each helper in its "Shared helpers" table is declared once, in its file. In
 // CSS and MDX a declaration is matched as text; in TS and TSX only as a style object's key with a
 // string value, such as `clipPath: 'inset(50%)'`, so a variable named `clip` is no declaration.
 import { existsSync, readFileSync } from 'node:fs'
@@ -166,9 +167,70 @@ export function partProblems(
   return excuse(problems.sort(byFileLine), RULE, (f) => texts.get(f) ?? '')
 }
 
+/** One row of the contract's helpers table: the name, and its file from `packages/perron/src/`. */
+export interface Helper {
+  name: string
+  file: string
+}
+
+/** The helpers the contract lists, from the table under its "Shared helpers" heading. */
+export function readHelpers(contract: string): Helper[] {
+  return tableRows(section(contract, 'Shared helpers')).map((cells) => ({
+    name: codeSpans(cells[0])[0],
+    file: codeSpans(cells[1])[0].replace(`${PACKAGE}/src/`, ''),
+  }))
+}
+
+/** The names a file declares at its top level, with the offset of each. */
+function topLevelNames(file: string, text: string) {
+  const source = ts.createSourceFile(file, text, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
+  const out: { name: string; offset: number }[] = []
+  for (const statement of source.statements) {
+    if (ts.isVariableStatement(statement))
+      for (const d of statement.declarationList.declarations) {
+        if (ts.isIdentifier(d.name)) out.push({ name: d.name.text, offset: d.getStart(source) })
+      }
+    else if (
+      (ts.isFunctionDeclaration(statement) || ts.isClassDeclaration(statement)) &&
+      statement.name
+    )
+      out.push({ name: statement.name.text, offset: statement.name.getStart(source) })
+  }
+  return out
+}
+
+/**
+ * The problems of the code under `src` (a path from `root`): every shared helper declared at the
+ * top level of a file other than its own, where an import of it belongs.
+ */
+export function helperProblems(
+  root: string,
+  src: string,
+  helpers = readHelpers(readFileSync(join(root, CONTRACT), 'utf8')),
+): Problem[] {
+  const byName = new Map(helpers.map((h) => [h.name, h.file]))
+  const texts = new Map<string, string>()
+  const problems: Problem[] = []
+  for (const file of walk(root, src, (n) => /\.tsx?$/.test(n) && !/\.test\.tsx?$/.test(n))) {
+    const text = readFileSync(join(root, file), 'utf8')
+    texts.set(file, text)
+    for (const { name, offset } of topLevelNames(file, text)) {
+      const home = byName.get(name)
+      if (!home || file === `${src}/${home}`) continue
+      problems.push({
+        file,
+        line: text.slice(0, offset).split('\n').length,
+        message: `declares ${name}, a shared helper; import it from ${PACKAGE}/src/${home} (${CONTRACT}, "Shared helpers")`,
+      })
+    }
+  }
+  return excuse(problems.sort(byFileLine), RULE, (f) => texts.get(f) ?? '')
+}
+
 export default {
   rule: RULE,
   run(root) {
-    return partProblems(root, `${PACKAGE}/src`)
+    const src = `${PACKAGE}/src`
+    return [...partProblems(root, src), ...helperProblems(root, src)].sort(byFileLine)
   },
 } satisfies Check

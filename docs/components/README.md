@@ -202,7 +202,7 @@ Members of a family share one treatment, in Penpot and in CSS. A new member join
 
 ## Shared parts
 
-Each of these is drawn once, in its own folder, `packages/perron/src/parts/<Part>/` (`<Part>.tsx` and `<Part>.css`). A component composes the part; it never draws its own. Parts are internal: not registered, not exported. A new shared part joins this table first.
+Each of these is drawn once, in its own folder, `packages/perron/src/parts/<Part>/` (`<Part>.tsx` and `<Part>.css`). A component composes the part; it never draws its own. Parts are internal: not registered, not exported. A new shared part joins this table first, and so does a part a second component needs, which moves here from the first one's folder. Two branches that add the same part keep `main`'s copy when they merge `main` in, and change the part there for both.
 
 | Part                | Draws                                       | Composed in                                                                 | Only its folder holds                                       |
 | ------------------- | ------------------------------------------- | --------------------------------------------------------------------------- | ----------------------------------------------------------- |
@@ -213,6 +213,19 @@ Each of these is drawn once, in its own folder, `packages/perron/src/parts/<Part
 
 - `CloseButton`'s label is the owned string for "Close", overridden by the component's `closeLabel`.
 - The tick is not in `packages/perron/icons/` yet. The first part that needs it adds it, following [Icons](../foundations/icons.md).
+
+## Shared helpers
+
+Each of these is written once, in its file, and a component, pattern or story imports it from there; no other file in `packages/perron/src/` declares its name at the top level. Helpers are internal: no barrel exports them. A helper a second component needs joins this table first.
+
+| Helper         | File                                            | Does                                                                                             |
+| -------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `given`        | `packages/perron/src/internal/nodes.ts`         | Whether a node renders something, so a part given nothing is left out                            |
+| `known`        | `packages/perron/src/internal/nodes.ts`         | Whether a value says something, so one that says nothing shows `UnknownValue`                    |
+| `classes`      | `packages/perron/src/internal/nodes.ts`         | A part's own class first, then the caller's                                                      |
+| `usePart`      | `packages/perron/src/internal/use-part.ts`      | One inner part, from its `slotProps` value merged under the part's own props; it reads Base UI   |
+| `UnknownValue` | `packages/perron/src/internal/UnknownValue.tsx` | A value no one knows: "—" for the eye, the caller's or the locale's word for the ear             |
+| `typography`   | `packages/perron/src/testing/stories.ts`        | The style of one typography role with its `-tracking` twin and no margin, for a story's own text |
 
 ## What axe won't catch
 
@@ -253,7 +266,7 @@ The rest of the WCAG 2.2 AA target is on [Accessibility](../foundations/accessib
 A pattern is a piece of a Mylder screen, such as a departure row. It follows this contract, with three differences:
 
 - Its files are in `packages/perron/src/patterns/<Name>/`, in the same four shapes, its stories are titled `Patterns/<Name>`, and its spec is `docs/patterns/<name>.md`.
-- Its code imports only Perron's components and parts, `PerronProvider`, React and the files of its own folder, never `@base-ui/react`. A type-only import from another package is fine, and its stories and tests are not its code.
+- Its code imports only Perron's components and parts, `PerronProvider`, the helpers of `packages/perron/src/internal/nodes.ts`, React and the files of its own folder, never `@base-ui/react`. A type-only import from another package is fine, and its stories and tests are not its code.
 - It takes Mylder's domain props, such as a departure or a line, and its CSS reads the pattern row of [Token families](#token-families).
 
 It is exported from `@mylder/perron/patterns`.
@@ -273,7 +286,7 @@ In Markdown it is an HTML comment holding `perron-allow(paths): reason`, at the 
 | `component-css`     | A [CSS](#css) rule broken: a raw value, a `var()` fallback, a `--perron-*` name no token defines, a token outside its layer's [families](#token-families), a query outside [Media queries](#media-queries), a loop that never stops, a typography role with no long-word rule                                                                                                   |
 | `props`             | A `<Name>Props`, or any other `*Props` its `<Name>.tsx` exports for a compound component's parts, read with the TypeScript compiler, outside the [Props](#props) table's types, with a [name from other libraries](#names-from-other-libraries), an `is`, `has` or `should` boolean, a member without JSDoc, or a `render` it declares itself rather than inherits from Base UI |
 | `patterns`          | A [pattern](#patterns) importing anything but Perron components and parts                                                                                                                                                                                                                                                                                                       |
-| `shared-parts`      | A [shared part](#shared-parts)'s class, icon or declarations outside its folder                                                                                                                                                                                                                                                                                                 |
+| `shared-parts`      | A [shared part](#shared-parts)'s class, icon or declarations outside its folder, or a [shared helper](#shared-helpers) declared outside its file                                                                                                                                                                                                                                |
 | `docs`              | A registered entry without its spec from `building` on, its `<Name>.mdx` from `stable` on (see [Files](#files)), code from which the docs page's docgen reads no props, a member without a spec Props row or a row without a member, or a prop whose default it reads otherwise than the spec gives                                                                             |
 | `api-compatibility` | A `stable` or `deprecated` entry's props API shrinking against the last release tag (see [Change](#change))                                                                                                                                                                                                                                                                     |
 | `paths`             | A path a doc or skill names, in a link or a code span, that does not exist                                                                                                                                                                                                                                                                                                      |

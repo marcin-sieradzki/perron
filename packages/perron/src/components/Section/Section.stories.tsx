@@ -1,17 +1,11 @@
 // Section's stories: one per row of the spec's Stories table (docs/components/section.md), with the
 // design deferred, each on a raised Surface as a section sits in a panel, and their play tests.
-import type { CSSProperties } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, userEvent, within } from 'storybook/test'
 import { LinkButton } from '../LinkButton/LinkButton.tsx'
 import { Surface } from '../Surface/Surface.tsx'
 import { Section } from './Section.tsx'
-
-const typography = (role: string): CSSProperties => ({
-  font: `var(--perron-typography-${role})`,
-  letterSpacing: `var(--perron-typography-${role}-tracking)`,
-  margin: 0,
-})
+import { typography } from '../../testing/stories.ts'
 
 /** The caller's content: three departures in a list, each row one string. */
 const departures = (
