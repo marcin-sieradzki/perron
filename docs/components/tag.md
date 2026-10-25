@@ -121,6 +121,7 @@ No owned strings: every word comes from the caller, as `children`.
 - **CR-6.** Tag never cuts its words off: it sits on one line wherever it fits, and when its container is narrower than it, at 320 px or at 200% zoom, it wraps inside itself, a word longer than the line breaking within it, and stays inside the container ([Accessibility](../foundations/accessibility.md#what-a-person-checks), zoom and reflow). It sets no `white-space: nowrap` and no `text-overflow`.
 - **CR-7.** Tag is not interactive: no `tabIndex` and no handler of its own. The caller's handlers and attributes reach the root unchanged.
 - **CR-8.** The source text is the caller's, in sentence case, as [Content design](../content-design.md) asks; the capitals come only from `text-transform`, so the DOM and the accessibility tree hold the sentence-case words.
+- **CR-9.** Tag's own props are only those [Props](#props) gives: `children` is required in the type, `color` has no `brand`, and there is no `size`, `startIcon` or `slotProps`. Its one geometry is the [Tokens](#tokens) table's, so a tag sits beside a `size.badge` LineBadge without making the row taller.
 
 ## Stories
 
