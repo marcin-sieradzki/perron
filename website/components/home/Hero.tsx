@@ -2,11 +2,9 @@
 // as the screen's one brand-yellow action, Browse components, and the MCP server's command.
 import NextLink from 'next/link'
 import { LinkButton } from '@/components/perron'
-import { PackageIcon } from '@/components/site/PackageIcon.tsx'
 import { PageHeader } from '@/components/site/PageHeader.tsx'
 import { CopyCommand } from './CopyCommand.tsx'
 import type { HomeFigures } from './figures.ts'
-import { CopyIcon } from './icons.tsx'
 
 interface Count {
   value: number
@@ -55,11 +53,7 @@ export function Hero({ figures }: { figures: HomeFigures }) {
 
       <div className="home-mcp">
         <p className="home-mcp-label">Working with a coding agent? Add the Perron MCP server:</p>
-        <CopyCommand
-          command={figures.mcpCommand}
-          copyIcon={<CopyIcon />}
-          doneIcon={<PackageIcon name="tick" />}
-        />
+        <CopyCommand command={figures.mcpCommand} />
       </div>
     </section>
   )
