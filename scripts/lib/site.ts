@@ -1,4 +1,4 @@
-// The files the docs site serves beside Storybook, for agents: a Markdown twin of every page at its
+// The files the docs site serves beside its pages, for agents: a Markdown twin of every page at its
 // path in the repo, `llms.txt` with one line per page, and an `AGENTS.md` for apps that install
 // Perron. The twins keep their repo paths, so their links to each other and to the package's icons
 // and logos work unchanged on the site.
@@ -29,7 +29,7 @@ function section(path: string, markdown: string, heading: string) {
   return (end < 0 ? body : body.slice(0, end)).trim()
 }
 
-/** Every file the site adds to the Storybook build, keyed by path inside the site. */
+/** Every file the site adds beside the website and Storybook, keyed by path inside the site. */
 export function buildSite(root: string) {
   const out: Record<string, string> = {}
   const read = (path: string) => readFileSync(join(root, path), 'utf8')
@@ -53,7 +53,7 @@ export function buildSite(root: string) {
 
   out['llms.txt'] = `# Perron
 
-> Perron is the design system of Mylder, published on npm as \`@mylder/perron\`: design tokens, fonts, icons and the Mylder mark, with one page of rules per foundation and the contract its components follow. Each link is the Markdown twin of a page in the Storybook at ${SITE}.
+> Perron is the design system of Mylder, published on npm as \`@mylder/perron\`: design tokens, fonts, icons and the Mylder mark, with one page of rules per foundation and the contract its components follow. Each link is the Markdown twin of a page of the docs site at ${SITE}.
 
 ${list('##')}
 
@@ -80,7 +80,7 @@ Every word on screen follows [Content design](${SITE}docs/content-design.md).
 
 ## Where to look
 
-Read the page for each choice before you make it: a colour, a type role, a space, an icon. Each link is Markdown; the same pages, drawn live, are in the [Storybook](${SITE}).
+Read the page for each choice before you make it: a colour, a type role, a space, an icon. Each link is Markdown; the same pages, drawn live, are on the [docs site](${SITE}) and in the [Storybook](${SITE}storybook/).
 
 ${list('###')}
 `

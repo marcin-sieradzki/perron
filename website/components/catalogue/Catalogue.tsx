@@ -6,6 +6,7 @@
 // drawn from the server.
 import { Fragment, useState, type ReactNode } from 'react'
 import { EmptyState, Separator, TextField } from '@mylder/perron'
+import NextLink from 'next/link'
 import './catalogue.css'
 
 export interface CatalogueSection {
@@ -87,14 +88,26 @@ export function Catalogue({ intro, sections, more, searchIcon }: CatalogueProps)
         </nav>
         <Separator />
         <nav aria-label="More" className="catalogue-nav">
-          {more.map((link) => (
-            <a key={link.href} href={link.href} className="catalogue-nav-link hover">
-              {link.label}
-              {link.count === undefined ? null : (
-                <span className="catalogue-nav-count">{link.count}</span>
-              )}
-            </a>
-          ))}
+          {more.map((link) => {
+            const label = (
+              <>
+                {link.label}
+                {link.count === undefined ? null : (
+                  <span className="catalogue-nav-count">{link.count}</span>
+                )}
+              </>
+            )
+            // a route of the site goes through NextLink, which adds the base path
+            return link.href.startsWith('/') ? (
+              <NextLink key={link.href} href={link.href} className="catalogue-nav-link hover">
+                {label}
+              </NextLink>
+            ) : (
+              <a key={link.href} href={link.href} className="catalogue-nav-link hover">
+                {label}
+              </a>
+            )
+          })}
         </nav>
       </aside>
 

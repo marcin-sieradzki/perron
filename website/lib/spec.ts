@@ -439,10 +439,10 @@ export function agentCalls(entry: Pick<RegistryEntry, 'name' | 'baseUiParts'>) {
     : [`search_docs({ query: "${entry.name}" })`]
 }
 
-/** The published Storybook: the repository's GitHub Pages site. */
+/** The published Storybook: under storybook/ on the repository's GitHub Pages site. */
 export const STORYBOOK_URL = REPO_URL.replace(
   /^https:\/\/github\.com\/([^/]+)\/([^/]+)$/,
-  'https://$1.github.io/$2/',
+  'https://$1.github.io/$2/storybook/',
 )
 
 /** The entry's docs page in the published Storybook, from its stories' title, or undefined. */

@@ -9,3 +9,4 @@ packages/perron/api.json
 website/mockups
 website/.next
 website/next-env.d.ts
+website/out
