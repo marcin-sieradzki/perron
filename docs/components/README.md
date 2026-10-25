@@ -241,6 +241,7 @@ Each of these is written once, in its file, and a component, pattern or story im
 | `closed`                         | `packages/perron/src/testing/stories.ts`        | Resolves once no dialog is open, for a story of Dialog, Sheet or a pattern on them                                 |
 | `byTestId`                       | `packages/perron/src/testing/stories.ts`        | The element with a `data-testid`, once it has rendered                                                             |
 | `heardMarkup`                    | `packages/perron/src/testing/markup.ts`         | `heard` for a unit test: what a screen reader reads of server-rendered markup, with no DOM                         |
+| `attribute`, `attr`              | `packages/perron/src/testing/markup.ts`         | One attribute's value in the first tag of server-rendered markup, its character references read back               |
 
 ## What axe won't catch
 
