@@ -39,7 +39,7 @@ export interface AlertProps extends Omit<
   title?: ReactNode
   /**
    * What is happening and how sure we are, in plain sentences: "Trains between Flintholm and Ny
-   * Ellebjerg run slower than planned."
+   * Ellebjerg run slower than planned. We don't know yet when the fault will be fixed."
    */
   children?: ReactNode
   /**
@@ -75,8 +75,11 @@ export interface AlertProps extends Omit<
     description?: useRender.ComponentProps<'div'>
     /** Props for the `action` part */
     action?: useRender.ComponentProps<'div'>
-    /** Props for the `close` part, the `CloseButton`; its `onClick` runs before `onClose` */
-    close?: Omit<ComponentPropsWithRef<'button'>, 'children'>
+    /**
+     * Props for the `close` part, the `CloseButton`, all but `disabled`: the close button is never
+     * disabled. Its `onClick` runs before `onClose`
+     */
+    close?: Omit<ComponentPropsWithRef<'button'>, 'children' | 'disabled'>
   }
 }
 

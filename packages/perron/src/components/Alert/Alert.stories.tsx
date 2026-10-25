@@ -10,6 +10,7 @@ import calendar from '../../../icons/calendar.svg?raw'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
 import {
+  expectNoFocus,
   heard,
   icon,
   lines,
@@ -178,9 +179,7 @@ export const Info: Story = {
     await expect(root.children).toHaveLength(2)
     await expect(part(root, 'content')!.children).toHaveLength(1)
     const before = document.activeElement
-    await userEvent.tab()
-    await expect(root).not.toContainElement(document.activeElement as HTMLElement)
-    await userEvent.tab({ shift: true })
+    await expectNoFocus(root)
     await expect(document.activeElement).toBe(before)
   },
 }
@@ -262,12 +261,13 @@ export const Success: Story = {
   },
 }
 
-/** A title and the sentence, in the warning intent, with no close button. */
+/** A title and the sentences, in the warning intent, with no close button. */
 export const Warning: Story = {
   args: {
     color: 'warning',
     title: 'Signal fault at Danshøj',
-    children: 'Trains between Flintholm and Ny Ellebjerg run slower than planned.',
+    children:
+      "Trains between Flintholm and Ny Ellebjerg run slower than planned. We don't know yet when the fault will be fixed.",
   },
   play: async ({ args, canvasElement, step }) => {
     const root = rootIn(canvasElement)

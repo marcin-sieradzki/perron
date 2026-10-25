@@ -9,19 +9,19 @@ stages:
     started: 2026-10-25T07:28:39.007Z
     ended: 2026-10-25T07:30:10.698Z
   build:
-    runs: 1
-    failing: review round 1 found 2 P2 (components/alert/review.md)
+    runs: 2
+    status: done
+    started: 2026-10-25T07:51:47.847Z
+    begun: 54b24fe041c898d041fc7d036e977d99d8b53c145476973fcfb4151b0c64dffd
+    spec: f3d911ee7095ce133317e8606586bac2e4300e6a97aded35735e2ea5e31185d6
+    ended: 2026-10-25T07:55:26.833Z
   review:
-    status: failed
-    started: 2026-10-25T07:45:19.666Z
     rounds: 1
+    sentBack: 1
     findings:
       p1: 0
       p2: 2
       p3: 6
-    sentBack: 1
-    ended: 2026-10-25T07:51:42.466Z
-    failing: review round 1 found 2 P2 (components/alert/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T07:28:35.814Z
@@ -62,3 +62,9 @@ notes:
   - stage: build
     at: 2026-10-25T07:44:18.733Z
     direction: Alert's icon part is one line of body-sm tall (19.5 px), but a title's line is heading-sm (18.2 px), so with a title the icon sits about 0.65 px below the title line's centre. It is under a pixel, but Toast will inherit it; the icon could take the first line's role when a title is present.
+  - stage: build
+    at: 2026-10-25T07:55:26.833Z
+    direction: CR-6 lets a caller's close onClick call event.preventBaseUIHandler(), but slotProps.close is typed with React's button props, so that method isn't in the caller's type without a cast. The contract could say how a close slot's handler is typed on a component with no Base UI root.
+  - stage: build
+    at: 2026-10-25T07:55:26.833Z
+    direction: "The shared-parts gate's copiedStoryHelpers only catches copies declared as top-level functions. A helper's body copied inline into a play test passes unflagged: Alert's Info story copied expectNoFocus's tab and shift-tab inline."
