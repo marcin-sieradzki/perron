@@ -632,7 +632,7 @@
     "name": "AlertDialog",
     "layer": "component",
     "category": "Overlays",
-    "status": "building",
+    "status": "stable",
     "baseUiParts": [
       "AlertDialog.Root",
       "AlertDialog.Trigger",

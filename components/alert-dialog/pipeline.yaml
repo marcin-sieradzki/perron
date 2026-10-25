@@ -25,6 +25,10 @@ stages:
     status: done
     started: 2026-10-25T07:53:30.213Z
     ended: 2026-10-25T07:56:23.184Z
+  docs:
+    status: done
+    started: 2026-10-25T07:56:33.617Z
+    ended: 2026-10-25T07:59:47.698Z
 notes:
   - stage: brief
     at: 2026-10-25T07:14:18.875Z
@@ -74,3 +78,9 @@ notes:
   - stage: build
     at: 2026-10-25T07:53:26.597Z
     direction: After a backdrop press, Shift+Tab reaches every tabbable page control before the portal, not only the trigger, and Enter on one runs its onClick behind the still-open modal; a CR that sends focus back to Cancel after a backdrop press would close this and the trigger-press exit together, probably as a Panels-family rule.
+  - stage: docs
+    at: 2026-10-25T07:59:47.698Z
+    direction: The docs page's Slots table prints each slot as 'Props for the <part> part', dropping the JSDoc's examples (nativeButton={false}, render={<h1 />}, the portal's container); the PropsTable block may want to keep the JSDoc after its first sentence.
+  - stage: docs
+    at: 2026-10-25T07:59:47.698Z
+    direction: The component-docs skill names the docs page components-<name>--docs with <name> in kebab-case, but Storybook's id for Components/AlertDialog is components-alertdialog--docs, so for a multi-word name the skill's id doesn't exist.

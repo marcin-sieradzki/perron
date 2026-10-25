@@ -1,4 +1,83 @@
 {
+  "AlertDialog": {
+    "extends": [
+      "Omit< BaseAlertDialog.Popup.Props, 'children' | 'title' | 'className' | 'style' | 'ref' >"
+    ],
+    "props": {
+      "actions": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "defaultOpen": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "description": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "onClose": {
+        "optional": true,
+        "type": [
+          "(event: Event, reason: DialogRootChangeEventReason, details: AlertDialogRootChangeEventDetails) => void"
+        ]
+      },
+      "onOpen": {
+        "optional": true,
+        "type": [
+          "(event: Event, details: AlertDialogRootChangeEventDetails) => void"
+        ]
+      },
+      "open": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ trigger?: Props<unknown> | undefined; portal?: DialogPortalProps | undefined; backdrop?: DialogBackdropProps | undefined; title?: DialogTitleProps | undefined; description?: DialogDescriptionProps | undefined; }"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "title": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "trigger": {
+        "optional": true,
+        "type": [
+          "ReactElement<unknown, JSXElementConstructor<any> | string>"
+        ]
+      }
+    }
+  },
   "Attribution": {
     "extends": [
       "Omit<useRender.ComponentProps<'small'>, 'children'>"
