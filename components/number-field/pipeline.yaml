@@ -9,8 +9,12 @@ stages:
     started: 2026-10-25T06:46:40.740Z
     ended: 2026-10-25T06:48:00.020Z
   build:
-    runs: 4
-    failing: review round 4 found 1 P2 (components/number-field/review.md)
+    runs: 5
+    status: done
+    started: 2026-10-25T08:24:27.780Z
+    begun: 3fb16b516d4e94cd8aa9c23cd70eec97e2d096c09892f89b05f2ebcde067eb45
+    spec: 916143d73b50bbcf7b4fd765969d8523e14108913e6e03a7fd5b0b004ffa81c5
+    ended: 2026-10-25T08:30:00.697Z
   review:
     rounds: 4
     sentBack: 0
@@ -75,3 +79,6 @@ notes:
   - stage: review
     at: 2026-10-25T08:24:27.312Z
     unblocked: '3 review rounds found a P1 or a P2; the last: review round 4 found 1 P2 (components/number-field/review.md)'
+  - stage: build
+    at: 2026-10-25T08:30:00.697Z
+    direction: 'With a format that rounds (such as maximumFractionDigits: 0), Base UI rounds the value as the person types: typing "2.6" calls onChange with 3 while the box still shows "2.6", and only leaving rewrites the text and commits, so the ''input-blur'' reason for rounding arises only for a value set from outside, such as a controlled 2.6.'

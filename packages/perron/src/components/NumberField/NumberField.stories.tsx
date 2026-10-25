@@ -15,6 +15,7 @@ import {
   colour,
   edge,
   fieldPart,
+  frames,
   lines,
   mounted,
   onHover,
@@ -113,11 +114,21 @@ export const Default: Story = {
       }
     })
     const root = input.closest<HTMLElement>('.pn-NumberField')!
-    await step('pressing the label focuses the input', async () => {
-      await expect(root).not.toHaveAttribute('data-touched')
+    const group = groupOf(input)
+    await step('at first the field is filled, not focused and not touched', async () => {
+      for (const element of [root, group]) {
+        await expect(element).toHaveAttribute('data-filled')
+        await expect(element).not.toHaveAttribute('data-focused')
+        await expect(element).not.toHaveAttribute('data-touched')
+      }
+    })
+    await step('pressing the label focuses the input, and marks the field focused', async () => {
       await userEvent.click(fieldPart(canvasElement, 'label')!)
       await expect(input).toHaveFocus()
+      for (const element of [root, group]) await expect(element).toHaveAttribute('data-focused')
       input.blur()
+      for (const element of [root, group])
+        await waitFor(() => expect(element).not.toHaveAttribute('data-focused'))
     })
     await step('Tab focuses the input, Shift+Tab moves focus back out', async () => {
       await userEvent.tab()
@@ -127,7 +138,7 @@ export const Default: Story = {
     })
     await step('leaving the input marks the field touched', async () => {
       await expect(root).toHaveAttribute('data-touched')
-      await expect(groupOf(input)).toHaveAttribute('data-touched')
+      await expect(group).toHaveAttribute('data-touched')
     })
   },
 }
@@ -235,11 +246,14 @@ export const Empty: Story = {
     await expect(hint.color).toBe(colour('--perron-color-text-tertiary'))
     await expect(hint.opacity).toBe('1')
     await expect(input).toHaveAccessibleName(LABEL)
+    // an empty box is not filled
+    await expect(groupOf(input)).not.toHaveAttribute('data-filled')
     const start = document.activeElement
     await userEvent.tab()
     await userEvent.keyboard('{ArrowUp}')
     await expect(input).toHaveValue('1')
     await expect(values(args.onChange)).toEqual([1])
+    await expect(groupOf(input)).toHaveAttribute('data-filled')
     await userEvent.tab({ shift: true })
     await expect(document.activeElement).toBe(start)
   },
@@ -343,7 +357,9 @@ export const Bounds: Story = {
       await expect(atBound).toHaveAttribute('aria-disabled', 'true')
       await expect(atBound).toHaveAttribute('data-disabled')
       await expect(getComputedStyle(atBound.querySelector('svg')!).color).toBe(tertiary)
+      // no hover and no pressed look on a button that can't step (CR-15)
       await expect(onHover(atBound, 'background-color')).toBe('')
+      await expect(stateFill(atBound, ':active')).toBe('')
       await userEvent.click(atBound, { pointerEventsCheck: 0 })
       await expect(inputIn(field, name)).toHaveValue(value)
       await expect(buttonIn(field, other)).not.toHaveAttribute('aria-disabled', 'true')
@@ -357,6 +373,9 @@ export const Bounds: Story = {
 /** The label of a second field the plays mount beside the story's. */
 const UNBOUNDED = 'Stops to skip'
 
+/** The label of a field whose `onChange` cancels every change. */
+const HELD = 'Departures held'
+
 /** The box holding 8, with `largeStep` 5: the arrow keys, Shift, Alt, Home and End step it. */
 export const Keyboard: Story = {
   args: { largeStep: 5 },
@@ -369,8 +388,13 @@ export const Keyboard: Story = {
       ['{ArrowUp}', '9'],
       ['{ArrowDown}', '8'],
       ['{Shift>}{ArrowUp}{/Shift}', '13'],
+      ['{Shift>}{ArrowDown}{/Shift}', '8'],
       ['{End}', '20'],
+      // at max, ArrowUp is clamped: the number stays, and no handler is called
+      ['{ArrowUp}', '20'],
       ['{Home}', '1'],
+      // at min, the same for ArrowDown
+      ['{ArrowDown}', '1'],
       // Alt steps by smallStep, 0.1 by default
       ['{Alt>}{ArrowUp}{/Alt}', '1.1'],
       ['{Alt>}{ArrowDown}{/Alt}', '1'],
@@ -379,10 +403,10 @@ export const Keyboard: Story = {
       await userEvent.keyboard(keys)
       await expect(input).toHaveValue(shown)
     }
-    await expect(values(args.onChange)).toEqual([9, 8, 13, 20, 1, 1.1, 1])
+    await expect(values(args.onChange)).toEqual([9, 8, 13, 8, 20, 1, 1.1, 1])
     await expect(new Set(reasons(args.onChange))).toEqual(new Set(['keyboard']))
     // each key step is a settled number, committed as it lands
-    await expect(values(args.onChangeCommitted)).toEqual([9, 8, 13, 20, 1, 1.1, 1])
+    await expect(values(args.onChangeCommitted)).toEqual([9, 8, 13, 8, 20, 1, 1.1, 1])
     await expect(new Set(reasons(args.onChangeCommitted))).toEqual(new Set(['keyboard']))
     await userEvent.tab({ shift: true })
     await expect(document.activeElement).toBe(start)
@@ -402,7 +426,40 @@ export const Keyboard: Story = {
         await expect(unbounded.selectionStart).toBe(unbounded.value.length)
         await expect(unbounded).toHaveValue('1,500')
         await expect(args.onChange).not.toHaveBeenCalled()
+        // with no min, a minus sign is typed; a second decimal point is not
+        await userEvent.type(unbounded, '-1.5.', {
+          initialSelectionStart: 0,
+          initialSelectionEnd: unbounded.value.length,
+        })
+        await expect(unbounded).toHaveValue('-1.5')
+        await expect(values(args.onChange).at(-1)).toBe(-1.5)
         unbounded.blur()
+      },
+    )
+    // details.cancel() keeps the number as it was (CR-4)
+    const cancelled = fn()
+    const committed = fn()
+    await mounted(
+      canvasElement,
+      <PerronProvider locale="en">
+        <NumberField
+          label={HELD}
+          defaultValue={8}
+          onChange={(_event, value, details) => {
+            cancelled(value)
+            details.cancel()
+          }}
+          onChangeCommitted={committed}
+        />
+      </PerronProvider>,
+      async (host) => {
+        const held = await waitFor(() => inputIn(host, HELD))
+        await userEvent.click(held)
+        await userEvent.keyboard('{ArrowUp}')
+        await expect(cancelled).toHaveBeenCalledWith(9)
+        await expect(held).toHaveValue('8')
+        await expect(committed).not.toHaveBeenCalled()
+        held.blur()
       },
     )
   },
@@ -434,8 +491,38 @@ export const Typing: Story = {
     await expect(mock(args.onChange)).toHaveBeenCalledTimes(3)
     await userEvent.tab()
     await expect(input).toHaveValue('20')
+    // the typed 25 is clamped as the box is left
+    await expect(values(args.onChange)).toEqual([18, 2, 20, 20])
+    await expect(reasons(args.onChange).at(-1)).toBe('input-blur')
     await expect(values(args.onChangeCommitted).at(-1)).toBe(20)
+    await expect(reasons(args.onChangeCommitted).at(-1)).toBe('input-blur')
     await expect(document.activeElement).toBe(start)
+    // a format that rounds: leaving writes the rounded number and commits it
+    mock(args.onChange).mockClear()
+    mock(args.onChangeCommitted).mockClear()
+    await mounted(
+      canvasElement,
+      <PerronProvider locale="en">
+        <NumberField
+          {...args}
+          label={UNBOUNDED}
+          defaultValue={undefined}
+          format={{ maximumFractionDigits: 0 }}
+        />
+      </PerronProvider>,
+      async (host) => {
+        const rounded = await waitFor(() => inputIn(host, UNBOUNDED))
+        // the number is rounded as it is typed, the text only once the box is left
+        await userEvent.type(rounded, '2.6')
+        await expect(rounded).toHaveValue('2.6')
+        await expect(values(args.onChange).at(-1)).toBe(3)
+        await expect(args.onChangeCommitted).not.toHaveBeenCalled()
+        rounded.blur()
+        await waitFor(() => expect(rounded).toHaveValue('3'))
+        await expect(values(args.onChangeCommitted)).toEqual([3])
+        await expect(reasons(args.onChangeCommitted)).toEqual(['input-blur'])
+      },
+    )
   },
 }
 
@@ -613,6 +700,16 @@ export const Danish: Story = {
       await expect(input).toHaveValue('1.600')
       await userEvent.tab({ shift: true })
     })
+    await step('a typed "2.000" is read in Danish, as 2000', async () => {
+      await userEvent.type(input, '2.000', {
+        initialSelectionStart: 0,
+        initialSelectionEnd: input.value.length,
+      })
+      await expect(values(args.onChange).at(-1)).toBe(2000)
+      await userEvent.tab()
+      await expect(input).toHaveValue('2.000')
+      await expect(values(args.onChangeCommitted).at(-1)).toBe(2000)
+    })
     await step('a given locale writes the number in its own way', async () => {
       await mounted(
         canvasElement,
@@ -671,7 +768,12 @@ export const HiddenLabel: Story = {
     const label = fieldPart(canvasElement, 'label')!
     await expect(label.tagName).toBe('SPAN')
     await expect(label.getBoundingClientRect().width).toBeLessThanOrEqual(1)
-    await expect(inputIn(canvasElement)).toHaveAccessibleName(LABEL)
+    const input = inputIn(canvasElement)
+    await expect(input).toHaveAccessibleName(LABEL)
+    // a press on the hidden label focuses the input, through Base UI's own handler
+    await userEvent.click(label)
+    await expect(input).toHaveFocus()
+    input.blur()
   },
 }
 
@@ -696,7 +798,9 @@ export const ReadOnly: Story = {
       await expect(button).toHaveAttribute('aria-disabled', 'true')
       await expect(button).toHaveAttribute('data-readonly')
       await expect(getComputedStyle(button.querySelector('svg')!).color).toBe(tertiary)
+      // no hover and no pressed look on a button that can't step (CR-15)
       await expect(onHover(button, 'background-color')).toBe('')
+      await expect(stateFill(button, ':active')).toBe('')
     }
     await expect(getComputedStyle(input).color).toBe(colour('--perron-color-text-primary'))
     await expect(getComputedStyle(group).borderColor).toBe(edge('color-border-control'))
@@ -705,6 +809,12 @@ export const ReadOnly: Story = {
     )
     await userEvent.tab({ shift: true })
     await expect(input).not.toHaveFocus()
+    // leaving a read-only field only marks it touched
+    await expect(input.closest('.pn-NumberField')).toHaveAttribute('data-touched')
+    await expect(group).toHaveAttribute('data-touched')
+    await expect(input).toHaveValue('8')
+    await expect(args.onChange).not.toHaveBeenCalled()
+    await expect(args.onChangeCommitted).not.toHaveBeenCalled()
   },
 }
 
@@ -793,6 +903,24 @@ export const InForm: Story = {
     await expect(onSubmit.mock.results[0].value).toBe('9')
     await expect(input).toHaveValue('9')
     input.blur()
+    // a form with no submit button isn't submitted on Enter: the hidden input is a second field
+    const unsent = fn((event: { preventDefault: () => void }) => event.preventDefault())
+    await mounted(
+      canvasElement,
+      <PerronProvider locale="en">
+        <form onSubmit={unsent}>
+          <NumberField label={UNBOUNDED} name="stops" defaultValue={8} />
+        </form>
+      </PerronProvider>,
+      async (host) => {
+        const lone = await waitFor(() => inputIn(host, UNBOUNDED))
+        await userEvent.click(lone)
+        await userEvent.keyboard('{Enter}')
+        await frames(2)
+        await expect(unsent).not.toHaveBeenCalled()
+        lone.blur()
+      },
+    )
   },
 }
 
