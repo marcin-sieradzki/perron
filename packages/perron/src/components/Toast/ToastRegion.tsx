@@ -51,7 +51,10 @@ export function ToastHost({ notificationsLabel, children }: ToastHostProps) {
   )
 }
 
-/** The region: every toast in the list, newest first, in the list's order (CR-2, CR-8). */
+/**
+ * The region: every toast in the list, newest first, in the list's order (CR-2, CR-8); a toast with
+ * no `data`, added through Base UI's own manager rather than by a Toast, is skipped.
+ */
 function ToastRegion({ notificationsLabel }: { notificationsLabel?: string }) {
   // CR-3: the locale's word, never Base UI's English one
   const strings = useOwnedStrings({ notifications: notificationsLabel })
@@ -59,17 +62,22 @@ function ToastRegion({ notificationsLabel }: { notificationsLabel?: string }) {
   return (
     <BaseToast.Portal className="pn-Toast-portal">
       <BaseToast.Viewport className="pn-Toast-viewport" aria-label={strings.notifications}>
-        {toasts.map((toast) => (
-          <ToastItem key={toast.id} toast={toast} />
-        ))}
+        {toasts.map((toast) =>
+          toast.data ? <ToastItem key={toast.id} toast={toast} data={toast.data} /> : null,
+        )}
       </BaseToast.Viewport>
     </BaseToast.Portal>
   )
 }
 
 /** One toast from the list, drawn from its Toast's props as Alert draws itself (CR-1). */
-function ToastItem({ toast }: { toast: BaseToast.Root.ToastObject<ToastData> }) {
-  const { view, record } = toast.data!
+function ToastItem({
+  toast,
+  data: { view, record },
+}: {
+  toast: BaseToast.Root.ToastObject<ToastData>
+  data: ToastData
+}) {
   const {
     color = 'neutral',
     title,
@@ -131,7 +139,9 @@ function ToastItem({ toast }: { toast: BaseToast.Root.ToastObject<ToastData> }) 
     transform: undefined,
   })
 
+  // the caller's `render` wins over the part's own tag, so a title can be a heading (CR-12)
   const { render: titleRender, ...titleProps } = slotProps?.title ?? {}
+  const { render: descriptionRender, ...descriptionProps } = slotProps?.description ?? {}
 
   return (
     <BaseToast.Root
@@ -157,11 +167,9 @@ function ToastItem({ toast }: { toast: BaseToast.Root.ToastObject<ToastData> }) 
         ) : null}
         {given(children) ? (
           <BaseToast.Description
-            {...mergeProps<typeof BaseToast.Description>(slotProps?.description, {
-              id: descriptionId,
-              render: <div />,
-            })}
-            className={withClass('pn-Toast-description', slotProps?.description?.className)}
+            {...mergeProps<typeof BaseToast.Description>(descriptionProps, { id: descriptionId })}
+            render={descriptionRender ?? <div />}
+            className={withClass('pn-Toast-description', descriptionProps.className)}
           >
             {children}
           </BaseToast.Description>

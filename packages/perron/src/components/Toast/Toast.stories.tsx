@@ -2,7 +2,7 @@
 // design deferred, named as the `color` values, and Stack. Each opens its toast at first render by
 // `defaultOpen`, beside a trigger that shows it again, inside a PerronProvider whose region at the
 // bottom of the frame holds it; behaviour that needs a toast that hides itself is mounted beside the
-// story in its play (CR-14).
+// story in its play (CR-14). Each play ends at rest: every toast closed, and focus where it found it.
 import { Toast as BaseToast } from '@base-ui/react/toast'
 import { useEffect, useState } from 'react'
 import type { RefObject } from 'react'
@@ -15,6 +15,7 @@ import {
   byTestId,
   closed,
   colour,
+  frames,
   heard,
   icon,
   lines,
@@ -88,19 +89,35 @@ function Shown({ trigger, ...args }: ToastProps & { trigger: string }) {
   )
 }
 
+/** What a play changes on a Toast it drives: its props, and whether it is still mounted. */
+type Change = Partial<ToastProps> & { unmounted?: boolean }
+
 /**
- * A Toast whose `open` the play sets through `setOpen`, mounted beside a story with `mounted`, so
- * a step can turn it off after it closed itself, or while it is shown.
+ * A Toast, open, whose props the play changes through `drive`, mounted beside a story with
+ * `mounted`: so a step can turn it off after it closed itself or while it is shown, re-render it
+ * with new props, or unmount it, while the region around it stays.
  */
-function Controlled({
-  setOpen,
+function Driven({
+  drive,
   ...props
-}: ToastProps & { setOpen: RefObject<((open: boolean) => void) | null> }) {
-  const [open, set] = useState(true)
+}: ToastProps & { drive: RefObject<((change: Change) => void) | null> }) {
+  const [{ unmounted, ...changed }, set] = useState<Change>({})
   useEffect(() => {
-    setOpen.current = set
-  }, [setOpen])
-  return <Toast {...props} open={open} />
+    drive.current = (change) => set((was) => ({ ...was, ...change }))
+  }, [drive])
+  return unmounted ? null : <Toast open {...props} {...changed} />
+}
+
+/** A `drive` for `Driven`, which the play calls once the toast has mounted. */
+const driver = (): RefObject<((change: Change) => void) | null> => ({ current: null })
+
+/** Adds a toast through Base UI's own manager, with no `data`, as no Toast adds one. */
+function RawToast({ title }: { title: string }) {
+  const { add } = BaseToast.useToastManager()
+  useEffect(() => {
+    add({ title, timeout: 0 })
+  }, [add, title])
+  return null
 }
 
 /** Reads every toast's timeout in the list of the PerronProvider around it, into `found`. */
@@ -134,6 +151,57 @@ const lastClose = (onClose: ToastProps['onClose']) => mocked(onClose!).mock.last
 /** Waits `ms` milliseconds, for a timer to run or not. */
 const after = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
+/**
+ * Ends a play at rest: every toast closed, and focus back on `before`, the element that held it
+ * when the play began.
+ */
+async function atRest(before: Element | null) {
+  await closed()
+  if (document.activeElement !== before) (document.activeElement as HTMLElement | null)?.blur()
+  if (before instanceof HTMLElement && before !== document.body) before.focus()
+  await expect(document.activeElement).toBe(before)
+}
+
+/** Closes the open toast named `name` with a press of its close button. */
+const pressClose = async (name: string) =>
+  userEvent.click(within(await toastNamed(name)).getByRole('button', { name: 'Close' }))
+
+/**
+ * Presses the pointer on `target`, drags it `distance` px down in steps, and lets go: past Base
+ * UI's 40 px, a swipe that dismisses, when it starts where a swipe can.
+ */
+async function dragDown(target: Element, distance: number) {
+  const box = target.getBoundingClientRect()
+  const start = { clientX: box.left + box.width / 2, clientY: box.top + box.height / 2 }
+  await userEvent.pointer([
+    { keys: '[MouseLeft>]', target, coords: start },
+    // Base UI takes the first move as the swipe's start, so the drag runs `distance` px past it
+    { target, coords: { ...start, clientY: start.clientY + 1 } },
+    { target, coords: { ...start, clientY: start.clientY + 1 + distance / 2 } },
+    { target, coords: { ...start, clientY: start.clientY + 1 + distance } },
+    { keys: '[/MouseLeft]', target },
+  ])
+}
+
+/**
+ * Where a `.pn-Toast` in a state stands, from its place at rest, and its opacity: a fixed probe
+ * with `attributes` and Base UI's swipe variables at `swipe`, measured as soon as it renders, so no
+ * transition runs, and removed after (CR-11).
+ */
+function placed(attributes: Record<string, string>, swipe = { x: 0, y: 0 }) {
+  const probe = document.createElement('div')
+  probe.className = 'pn-Toast'
+  Object.assign(probe.style, { position: 'fixed', top: '0', left: '0', width: '100px' })
+  probe.style.setProperty('--toast-swipe-movement-x', `${swipe.x}px`)
+  probe.style.setProperty('--toast-swipe-movement-y', `${swipe.y}px`)
+  for (const [name, value] of Object.entries(attributes)) probe.setAttribute(name, value)
+  document.body.append(probe)
+  const { left, top, width, height } = probe.getBoundingClientRect()
+  const { opacity } = getComputedStyle(probe)
+  probe.remove()
+  return { x: left, y: top, width, height, opacity }
+}
+
 /** Whether a stylesheet rule with `attribute` in its selector matching `element` sets no transition. */
 const stillWhile = (element: Element, attribute: string) =>
   Array.from(document.styleSheets).some((sheet) =>
@@ -146,6 +214,88 @@ const stillWhile = (element: Element, attribute: string) =>
     ),
   )
 
+/**
+ * An action of two controls, a Button and a link, as an array. The link goes nowhere when pressed,
+ * so a drag that ends on it leaves the story's page where it is.
+ */
+const undoAndHistory = [
+  <Button key="undo" size="small" variant="outline" color="neutral">
+    Undo
+  </Button>,
+  <a key="history" href="#history" onClick={(event) => event.preventDefault()}>
+    See history
+  </a>,
+]
+
+/** Holds when the `action` part holds the Button "Undo" and the link "See history", in order. */
+async function expectUndoAndHistory(root: HTMLElement) {
+  const action = partOf(root, 'action')!
+  await expect(Array.from(action.children)).toEqual([
+    within(action).getByRole('button', { name: 'Undo' }),
+    within(action).getByRole('link', { name: 'See history' }),
+  ])
+}
+
+/**
+ * The shapes `title`, `children`, `icon` and `action` take, a string, an element and an array
+ * each, paired so three renders show every one, with a check of what each part then holds. Each
+ * toast is named "Link copied" and described by "Paste it anywhere.".
+ */
+const SHAPES: { props: Partial<ToastProps>; check: (root: HTMLElement) => Promise<void> }[] = [
+  // an element title, a string sentence, a string icon and a string action
+  {
+    props: {
+      title: <span>{LINK_COPIED}</span>,
+      children: 'Paste it anywhere.',
+      icon: '✓',
+      action: 'Undo with Ctrl+Z',
+    },
+    check: async (root) => {
+      await expect(partOf(root, 'title')!.innerHTML).toBe(`<span>${LINK_COPIED}</span>`)
+      await expect(partOf(root, 'description')!.innerHTML).toBe('Paste it anywhere.')
+      await expect(partOf(root, 'icon')!.innerHTML).toBe('✓')
+      await expect(partOf(root, 'action')!.innerHTML).toBe('Undo with Ctrl+Z')
+    },
+  },
+  // an array title, an element sentence, an element icon and an element action
+  {
+    props: {
+      title: ['Link', ' copied'],
+      children: <strong>Paste it anywhere.</strong>,
+      icon: icon(calendar),
+      action: small('Undo'),
+    },
+    check: async (root) => {
+      await expect(partOf(root, 'title')!.innerHTML).toBe(LINK_COPIED)
+      await expect(partOf(root, 'description')!.innerHTML).toBe(
+        '<strong>Paste it anywhere.</strong>',
+      )
+      await expect(partOf(root, 'icon')!.querySelector('svg.perron-icon')).not.toBeNull()
+      const action = partOf(root, 'action')!
+      await expect(Array.from(action.children)).toEqual([
+        within(action).getByRole('button', { name: 'Undo' }),
+      ])
+    },
+  },
+  // a string title, an array sentence, an array icon and an array action
+  {
+    props: {
+      title: LINK_COPIED,
+      children: ['Paste it ', <strong key="where">anywhere</strong>, '.'],
+      icon: ['✓', '✓'],
+      action: undoAndHistory,
+    },
+    check: async (root) => {
+      await expect(partOf(root, 'title')!.innerHTML).toBe(LINK_COPIED)
+      await expect(partOf(root, 'description')!.innerHTML).toBe(
+        'Paste it <strong>anywhere</strong>.',
+      )
+      await expect(partOf(root, 'icon')!.innerHTML).toBe('✓✓')
+      await expectUndoAndHistory(root)
+    },
+  },
+]
+
 /** Every part: the icon, the title, the sentence, the action and the close button. The subject. */
 export const Danger: Story = {
   args: {
@@ -156,6 +306,7 @@ export const Danger: Story = {
   },
   render: (args) => <Shown {...args} trigger="Copy link" />,
   play: async ({ args, canvasElement, step }) => {
+    const before = document.activeElement
     const trigger = triggerIn(canvasElement, 'Copy link')
     const words = [DANGER_TITLE, DANGER_SENTENCE, 'Try again']
 
@@ -296,8 +447,7 @@ export const Danger: Story = {
       )
     })
 
-    await closed()
-    trigger.blur()
+    await atRest(before)
   },
 }
 
@@ -306,6 +456,7 @@ export const Info: Story = {
   args: { color: 'info', children: NIGHT_BUSES },
   render: (args) => <Shown {...args} trigger="Show night buses" />,
   play: async ({ args, canvasElement, step }) => {
+    const before = document.activeElement
     const root = await toastNamed(NIGHT_BUSES)
 
     await step(
@@ -323,16 +474,83 @@ export const Info: Story = {
       const ref: RefObject<HTMLDivElement | null> = { current: null }
       await mounted(
         canvasElement,
-        <Toast {...args} ref={ref} data-testid="toast-alone" />,
+        <Toast {...args} ref={ref} className="caller" data-testid="toast-alone" />,
         async () => {
           const alone = await byTestId('toast-alone')
           await expect(ref.current).toBe(alone)
+          await expect(alone).toHaveClass('pn-Toast caller', { exact: true })
           const own = alone.closest('.pn-Toast-viewport')
           await expect(own).toHaveAttribute('role', 'region')
           await expect(own).toHaveAccessibleName('Notifications')
           await expect(own).not.toContainElement(root)
         },
       )
+    })
+
+    await step(
+      'an open Toast re-rendered with a new title and color updates its toast (CR-5)',
+      async () => {
+        const drive = driver()
+        await mounted(
+          canvasElement,
+          <PerronProvider>
+            <Driven color="info" drive={drive}>
+              Buses are on time.
+            </Driven>
+          </PerronProvider>,
+          async () => {
+            const shown = await toastNamed('Buses are on time.')
+            drive.current!({ title: DELAYED, color: 'warning' })
+            await waitFor(() => expect(shown).toHaveAccessibleName(DELAYED))
+            await expect(shown).toHaveAttribute('data-color', 'warning')
+            await expect(shown).toHaveAccessibleDescription('Buses are on time.')
+            const own = shown.closest<HTMLElement>('.pn-Toast-viewport')!
+            await expect(within(own).getAllByRole('dialog')).toEqual([shown])
+          },
+        )
+      },
+    )
+
+    await step(
+      'a Toast unmounted while open takes its toast away, calling no onClose (CR-5)',
+      async () => {
+        const onClose = fn()
+        const drive = driver()
+        await mounted(
+          canvasElement,
+          <PerronProvider>
+            <Driven title="Unmounted" onClose={onClose} drive={drive} />
+          </PerronProvider>,
+          async () => {
+            await toastNamed('Unmounted')
+            drive.current!({ unmounted: true })
+            await waitFor(() =>
+              expect(screen.queryByRole('dialog', { name: 'Unmounted' })).toBeNull(),
+            )
+            await expect(onClose).not.toHaveBeenCalled()
+          },
+        )
+      },
+    )
+
+    await step('a toast added with no data, not by a Toast, is skipped (CR-2)', async () => {
+      await mounted(
+        canvasElement,
+        <PerronProvider notificationsLabel="Raw">
+          <RawToast title="Added raw" />
+        </PerronProvider>,
+        async () => {
+          const raw = await region('Raw')
+          await frames(2)
+          await expect(within(raw).queryAllByRole('dialog')).toEqual([])
+        },
+      )
+    })
+
+    await step('its close button closes it, and the play ends at rest', async () => {
+      await pressClose(NIGHT_BUSES)
+      await expect(lastClose(args.onClose)[1]).toBe('close-press')
+      await atRest(before)
     })
   },
 }
@@ -346,6 +564,7 @@ export const Neutral: Story = {
   },
   render: (args) => <Shown {...args} trigger="Clear filters" />,
   play: async ({ args, canvasElement, step }) => {
+    const before = document.activeElement
     const root = await toastNamed('Filters cleared')
 
     await step('it is neutral, with no icon part', async () => {
@@ -407,6 +626,34 @@ export const Neutral: Story = {
         },
       )
     })
+
+    await step("a drag that starts on the action's button or link swipes nothing", async () => {
+      const onClose = fn()
+      await mounted(
+        canvasElement,
+        <Toast defaultOpen title="Not swiped" action={undoAndHistory} onClose={onClose} />,
+        async () => {
+          const shown = await toastNamed('Not swiped')
+          for (const control of [
+            within(shown).getByRole('button', { name: 'Undo' }),
+            within(shown).getByRole('link', { name: 'See history' }),
+          ]) {
+            await dragDown(control, 60)
+            await frames(2)
+            await expect(shown).not.toHaveAttribute('data-swiping')
+            await expect(shown).not.toHaveAttribute('data-swipe-direction')
+            await expect(onClose).not.toHaveBeenCalled()
+            await expect(await toastNamed('Not swiped')).toBe(shown)
+          }
+        },
+      )
+    })
+
+    await step('its close button closes it, and the play ends at rest', async () => {
+      await pressClose('Filters cleared')
+      await expect(lastClose(args.onClose)[1]).toBe('close-press')
+      await atRest(before)
+    })
   },
 }
 
@@ -422,8 +669,10 @@ export const Stack: Story = {
       <Shown {...args} defaultOpen={false} title="Filters cleared" trigger="Clear filters" />
     </div>
   ),
-  play: async ({ canvasElement, step }) => {
+  play: async ({ args, canvasElement, step }) => {
+    const before = document.activeElement
     const order = [DELAYED, NIGHT_BUSES, LINK_COPIED]
+    const copyLink = triggerIn(canvasElement, 'Copy link')
     const notifications = await region()
     // each toast's name, from the part its aria-labelledby points at
     const names = () =>
@@ -439,7 +688,7 @@ export const Stack: Story = {
     })
 
     await step('Tab from the region walks them in that order', async () => {
-      triggerIn(canvasElement, 'Copy link').focus()
+      copyLink.focus()
       await userEvent.keyboard('{F6}')
       await waitFor(() => expect(notifications).toHaveFocus())
       for (const name of order) {
@@ -450,7 +699,27 @@ export const Stack: Story = {
         await expect(within(root).getByRole('button', { name: 'Close' })).toHaveFocus()
       }
       await userEvent.tab()
-      await waitFor(() => expect(triggerIn(canvasElement, 'Copy link')).toHaveFocus())
+      await waitFor(() => expect(copyLink).toHaveFocus())
+    })
+
+    await step('Shift+Tab walks them back, close button, toast, the toast before', async () => {
+      await userEvent.keyboard('{F6}')
+      await waitFor(() => expect(notifications).toHaveFocus())
+      const roots = await Promise.all(order.map(toastNamed))
+      const stops = roots.flatMap((root) => [
+        root,
+        within(root).getByRole('button', { name: 'Close' }),
+      ])
+      for (const stop of stops) {
+        await userEvent.tab()
+        await waitFor(() => expect(stop).toHaveFocus())
+      }
+      for (const stop of [...stops].reverse().slice(1)) {
+        await userEvent.tab({ shift: true })
+        await waitFor(() => expect(stop).toHaveFocus())
+      }
+      copyLink.focus()
+      copyLink.blur()
     })
 
     await step('a fourth stands at the top; the oldest is limited, inert and hidden', async () => {
@@ -485,6 +754,24 @@ export const Stack: Story = {
       }
     })
 
+    await step(
+      'it enters and leaves from 100% below, faded, and on past a swipe (CR-11)',
+      async () => {
+        const rest = placed({})
+        await expect(rest).toMatchObject({ x: 0, y: 0, opacity: '1' })
+        const { width, height } = rest
+        for (const state of ['data-starting-style', 'data-ending-style']) {
+          await expect(placed({ [state]: '' })).toMatchObject({ x: 0, y: height, opacity: '0' })
+        }
+        const swiped = (direction: string, x: number, y: number) =>
+          placed({ 'data-ending-style': '', 'data-swipe-direction': direction }, { x, y })
+        await expect(swiped('down', 0, 30)).toMatchObject({ x: 0, y: 30 + height, opacity: '0' })
+        await expect(swiped('up', 0, -30)).toMatchObject({ x: 0, y: -30 - height, opacity: '0' })
+        await expect(swiped('right', 30, 0)).toMatchObject({ x: 30 + width, y: 0, opacity: '0' })
+        await expect(swiped('left', -30, 0)).toMatchObject({ x: -30 - width, y: 0, opacity: '0' })
+      },
+    )
+
     await step('reduced motion takes duration.toast to 0.01 ms (CR-11)', async () => {
       const reduced = Array.from(document.styleSheets)
         .flatMap((sheet) => Array.from(sheet.cssRules))
@@ -517,6 +804,40 @@ export const Stack: Story = {
       await expect(root).toBeInTheDocument()
       await expect(names()).toEqual(order)
     })
+
+    await step(
+      'a closed toast hands focus to the next, or the one before, or back past F6',
+      async () => {
+        const [delayed, nightBuses, linkCopied] = await Promise.all(order.map(toastNamed))
+        copyLink.focus()
+        await userEvent.keyboard('{F6}')
+        for (const stop of [delayed, nightBuses, linkCopied]) {
+          await userEvent.tab()
+          await waitFor(() => expect(stop).toHaveFocus())
+          if (stop !== linkCopied) await userEvent.tab()
+        }
+        await userEvent.tab()
+        await expect(within(linkCopied).getByRole('button', { name: 'Close' })).toHaveFocus()
+        // the last: Enter on its close button hands focus to the toast before it
+        await userEvent.keyboard('{Enter}')
+        await waitFor(() => expect(nightBuses).toHaveFocus())
+        await expect(lastClose(args.onClose)[1]).toBe('close-press')
+        await waitFor(() => expect(names()).toEqual([DELAYED, NIGHT_BUSES]))
+        // the first: Escape hands focus to the next
+        await userEvent.tab({ shift: true })
+        await userEvent.tab({ shift: true })
+        await waitFor(() => expect(delayed).toHaveFocus())
+        await userEvent.keyboard('{Escape}')
+        await waitFor(() => expect(nightBuses).toHaveFocus())
+        await expect(lastClose(args.onClose)[1]).toBe('escape-key')
+        // the only one: Escape hands focus back to where it was before F6
+        await userEvent.keyboard('{Escape}')
+        await waitFor(() => expect(copyLink).toHaveFocus())
+        await expect(args.onClose).toHaveBeenCalledTimes(4)
+      },
+    )
+
+    await atRest(before)
   },
 }
 
@@ -525,6 +846,7 @@ export const Success: Story = {
   args: { color: 'success', title: LINK_COPIED },
   render: (args) => <Shown {...args} trigger="Copy link" />,
   play: async ({ args, canvasElement, step }) => {
+    const before = document.activeElement
     const trigger = triggerIn(canvasElement, 'Copy link')
 
     await step('it is success, and Space on "Close" closes it with close-press', async () => {
@@ -553,10 +875,10 @@ export const Success: Story = {
 
     await step('it closes itself with timeout, and open false calls onClose no more', async () => {
       const onClose = fn()
-      const setOpen: RefObject<((open: boolean) => void) | null> = { current: null }
+      const drive = driver()
       await mounted(
         canvasElement,
-        <Controlled title="Leaves" autoHideDuration={300} onClose={onClose} setOpen={setOpen} />,
+        <Driven title="Leaves" autoHideDuration={300} onClose={onClose} drive={drive} />,
         async () => {
           await toastNamed('Leaves')
           await waitFor(() => expect(onClose).toHaveBeenCalledTimes(1))
@@ -566,7 +888,7 @@ export const Success: Story = {
           await expect(event.type).toBe('timeout')
           await expect(details).toEqual({ reason: 'timeout', event })
           await closed()
-          setOpen.current!(false)
+          drive.current!({ open: false })
           await after(50)
           await expect(onClose).toHaveBeenCalledTimes(1)
         },
@@ -612,6 +934,23 @@ export const Success: Story = {
       )
     })
 
+    await step('it stays while the window is in the background, and leaves after', async () => {
+      const onClose = fn()
+      await mounted(
+        canvasElement,
+        <Toast defaultOpen title="Backgrounded" autoHideDuration={300} onClose={onClose} />,
+        async () => {
+          await toastNamed('Backgrounded')
+          window.dispatchEvent(new FocusEvent('blur'))
+          await after(600)
+          await expect(onClose).not.toHaveBeenCalled()
+          window.dispatchEvent(new FocusEvent('focus'))
+          await waitFor(() => expect(onClose).toHaveBeenCalledTimes(1))
+          await expect(onClose.mock.lastCall![1]).toBe('timeout')
+        },
+      )
+    })
+
     await step('dragged down 60 px, it closes with swipe', async () => {
       const onClose = fn()
       await mounted(
@@ -619,43 +958,37 @@ export const Success: Story = {
         <Toast defaultOpen title="Swiped" onClose={onClose} />,
         async () => {
           const root = await toastNamed('Swiped')
-          const box = root.getBoundingClientRect()
-          const start = { clientX: box.left + 8, clientY: box.top + box.height / 2 }
-          await userEvent.pointer([
-            { keys: '[MouseLeft>]', target: root, coords: start },
-            // Base UI takes the first move as the swipe's start, so the drag runs 60 px past it
-            { target: root, coords: { ...start, clientY: start.clientY + 1 } },
-            { target: root, coords: { ...start, clientY: start.clientY + 31 } },
-            { target: root, coords: { ...start, clientY: start.clientY + 61 } },
-            { keys: '[/MouseLeft]', target: root },
-          ])
+          await dragDown(partOf(root, 'title')!, 60)
           await waitFor(() => expect(onClose).toHaveBeenCalledTimes(1))
           const [event, reason] = onClose.mock.lastCall!
           await expect(reason).toBe('swipe')
           await expect(event).toBeInstanceOf(PointerEvent)
           await expect(root).toHaveAttribute('data-swipe-direction', 'down')
+          await expect(root).toHaveAttribute('data-ending-style')
         },
       )
     })
 
     await step('open false closes a shown toast without calling onClose', async () => {
       const onClose = fn()
-      const setOpen: RefObject<((open: boolean) => void) | null> = { current: null }
+      const drive = driver()
       await mounted(
         canvasElement,
-        <Controlled title="Turned off" onClose={onClose} setOpen={setOpen} />,
+        <Driven title="Turned off" onClose={onClose} drive={drive} />,
         async () => {
           await toastNamed('Turned off')
-          setOpen.current!(false)
+          drive.current!({ open: false })
           await closed()
           await expect(onClose).not.toHaveBeenCalled()
-          setOpen.current!(true)
+          drive.current!({ open: true })
           await toastNamed('Turned off')
-          setOpen.current!(false)
+          drive.current!({ open: false })
           await closed()
         },
       )
     })
+
+    await atRest(before)
   },
 }
 
@@ -668,6 +1001,7 @@ export const Warning: Story = {
   },
   render: (args) => <Shown {...args} trigger="Show delays" />,
   play: async ({ args, canvasElement, step }) => {
+    const before = document.activeElement
     await expect(await toastNamed(DELAYED)).toHaveAttribute('data-color', 'warning')
 
     await step('a long Danish word wraps inside the toast (CR-10)', async () => {
@@ -685,6 +1019,64 @@ export const Warning: Story = {
         await expect(close.top).toBeLessThan(box.top + box.height / 2)
         await expect(root.scrollWidth).toBeLessThanOrEqual(root.clientWidth)
       })
+    })
+
+    await step(
+      'every shape of title, children, icon and action renders, in every color',
+      async () => {
+        const colors = ['neutral', 'success', 'warning', 'danger', 'info'] as const
+        for (const color of colors) {
+          for (const { props, check } of SHAPES) {
+            await mounted(
+              canvasElement,
+              <Toast defaultOpen color={color} {...props} />,
+              async () => {
+                const root = await toastNamed(LINK_COPIED)
+                await expect(root).toHaveAttribute('data-color', color)
+                await expect(root).toHaveAccessibleDescription('Paste it anywhere.')
+                await expect(partOf(root, 'icon')).toHaveAttribute('aria-hidden', 'true')
+                await check(root)
+              },
+            )
+          }
+        }
+      },
+    )
+
+    await step('icon={null} and icon={false} render no icon part', async () => {
+      for (const none of [null, false]) {
+        await mounted(
+          canvasElement,
+          <Toast {...args} title={LINK_COPIED} icon={none} />,
+          async () => {
+            await expect(partOf(await toastNamed(LINK_COPIED), 'icon')).toBeNull()
+          },
+        )
+      }
+    })
+
+    await step('slotProps render the title as a heading and the sentence as a p', async () => {
+      await mounted(
+        canvasElement,
+        <Toast
+          {...args}
+          title={LINK_COPIED}
+          slotProps={{ title: { render: <h3 /> }, description: { render: <p /> } }}
+        />,
+        async () => {
+          const root = await toastNamed(LINK_COPIED)
+          const heading = within(root).getByRole('heading', { level: 3, name: LINK_COPIED })
+          await expect(heading).toHaveClass('pn-Toast-title')
+          await expect(partOf(root, 'description')!.tagName).toBe('P')
+          await expect(root).toHaveAccessibleDescription('Positions are up to 2 min old.')
+        },
+      )
+    })
+
+    await step('its close button closes it, and the play ends at rest', async () => {
+      await pressClose(DELAYED)
+      await expect(lastClose(args.onClose)[1]).toBe('close-press')
+      await atRest(before)
     })
   },
 }

@@ -9,20 +9,20 @@ stages:
     started: 2026-10-25T08:51:16.685Z
     ended: 2026-10-25T08:53:13.129Z
   build:
-    runs: 1
-    failing: review round 1 found 2 P2 (components/toast/review.md)
+    runs: 2
+    status: done
+    started: 2026-10-25T09:20:21.934Z
+    begun: b18a53ecfd5d3bd85f1e70b020ebd52e4f76bb73a4dac228b12ef143e1b53c95
+    spec: b7a155aefb262b39ca1463f99b8fad9cef666678914b2c7e7568fb548d4122ec
+    ended: 2026-10-25T09:29:43.772Z
   review:
-    status: failed
-    started: 2026-10-25T09:10:52.364Z
     rounds: 1
+    sentBack: 1
+    reviewed: ddba1205f663c47e6701a77b98b1d1d3f6204350
     findings:
       p1: 0
       p2: 2
       p3: 6
-    reviewed: ddba1205f663c47e6701a77b98b1d1d3f6204350
-    sentBack: 1
-    ended: 2026-10-25T09:20:15.656Z
-    failing: review round 1 found 2 P2 (components/toast/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T08:49:45.449Z
@@ -87,3 +87,15 @@ notes:
   - stage: build
     at: 2026-10-25T09:10:13.304Z
     direction: The timer behaviours (timeout, pause on hover, pause on focus) are tested in real time with 300ms and 600ms waits, so the Success story takes about 3.5s in `npm run test:stories`. A fake-timer helper would need to join the contract's Shared helpers if later timed components test the same way.
+  - stage: build
+    at: 2026-10-25T09:29:43.772Z
+    direction: "A play that presses a real `<a href>` (Toast's link action) must stop its navigation with preventDefault: a hash navigation in the story's frame closed vitest's browser connection and failed the whole file. A shared story helper or a contract line could save later stories with link actions from this."
+  - stage: build
+    at: 2026-10-25T09:29:43.772Z
+    direction: CR-11's starting and ending positions are checked on a probe `.pn-Toast` placed outside the region, because Base UI keeps `data-starting-style` for a single frame. The test proves the CSS rules, not a live toast's transition.
+  - stage: build
+    at: 2026-10-25T09:29:43.772Z
+    direction: Base UI hands focus to the toast before a closed one when it was the last, a step the spec's Keyboard row, Base UI paragraph and focus checklist line didn't name. The spec now says so, and Stack tests it.
+  - stage: build
+    at: 2026-10-25T09:29:43.772Z
+    direction: Toast and Alert let a caller's `slotProps.title.render` and `slotProps.description.render` win over the part's own tag, an exception to the contract's rule that a component's own props are merged last. CR-12 now says so; the contract's Customising section doesn't.
