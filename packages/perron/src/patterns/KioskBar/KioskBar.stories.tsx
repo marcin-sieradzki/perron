@@ -34,14 +34,14 @@ const overTheMap: Decorator = (Story) => (
 )
 
 /** Three key figures about the network, as a kiosk shows them. */
-const STATS: KioskBarStat[] = [
+const STATS: ReadonlyArray<KioskBarStat> = [
   { label: 'Vehicles on the map', figure: '1 204' },
   { label: 'Reporting live', figure: '1 046' },
   { label: 'Average delay', figure: '2 min' },
 ]
 
 /** The same figures with "Average delay" given no figure. */
-const UNKNOWN_DELAY: KioskBarStat[] = [STATS[0], STATS[1], { label: 'Average delay' }]
+const UNKNOWN_DELAY: ReadonlyArray<KioskBarStat> = [STATS[0], STATS[1], { label: 'Average delay' }]
 
 const meta = {
   title: 'Patterns/KioskBar',

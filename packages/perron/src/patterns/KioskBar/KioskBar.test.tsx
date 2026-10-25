@@ -14,7 +14,7 @@ const STATS: ReadonlyArray<KioskBarStat> = [
   { label: 'Disruptions', figure: '3' },
 ]
 
-/** The class of each of the root's parts, in the order they render. */
+/** Which of the root's parts are present, in the anatomy's order (presence only: the Default story checks the order). */
 const parts = (markup: string) =>
   ['brand', 'stats', 'time'].filter((part) => markup.includes(`pn-KioskBar-${part}"`))
 
