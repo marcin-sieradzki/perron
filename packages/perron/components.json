@@ -305,7 +305,7 @@
     "name": "MapTooltip",
     "layer": "component",
     "category": "Overlays",
-    "status": "building",
+    "status": "stable",
     "baseUiParts": ["Tooltip.Root", "Tooltip.Portal", "Tooltip.Positioner", "Tooltip.Popup"],
     "penpotPath": "Components/MapTooltip",
     "dependsOn": []
