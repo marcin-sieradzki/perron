@@ -917,6 +917,59 @@
       }
     }
   },
+  "MapTooltip": {
+    "extends": [
+      "Omit<Tooltip.Popup.Props, 'children' | 'ref'>"
+    ],
+    "props": {
+      "anchorEl": {
+        "optional": false,
+        "type": [
+          "() => Element | VirtualElement | null",
+          "Element",
+          "RefObject<Element | null>",
+          "VirtualElement",
+          "null"
+        ]
+      },
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "defaultOpen": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "onClose": {
+        "optional": true,
+        "type": [
+          "(event: Event | MouseEvent | PointerEvent | TouchEvent | KeyboardEvent | FocusEvent, reason: TooltipRootChangeEventReason, details: TooltipRootChangeEventDetails) => void"
+        ]
+      },
+      "open": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ portal?: TooltipPortalProps | undefined; positioner?: TooltipPositionerProps | undefined; }"
+        ]
+      }
+    }
+  },
   "Section": {
     "extends": [
       "Omit< useRender.ComponentProps<'section'>, 'title' | 'children' >"
