@@ -632,7 +632,7 @@
     "name": "AlertDialog",
     "layer": "component",
     "category": "Overlays",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [
       "AlertDialog.Root",
       "AlertDialog.Trigger",
@@ -640,11 +640,10 @@
       "AlertDialog.Backdrop",
       "AlertDialog.Popup",
       "AlertDialog.Title",
-      "AlertDialog.Description",
-      "AlertDialog.Close"
+      "AlertDialog.Description"
     ],
     "penpotPath": "Components/AlertDialog",
-    "dependsOn": ["Button"]
+    "dependsOn": []
   },
   {
     "name": "Alert",

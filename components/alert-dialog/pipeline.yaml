@@ -1,0 +1,86 @@
+# Written by npm run factory; never by hand.
+component: AlertDialog
+layer: component
+deferred:
+  at: 2026-10-25T07:07:47.613Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-25T07:14:23.056Z
+    ended: 2026-10-25T07:18:21.088Z
+  build:
+    runs: 4
+    status: done
+    started: 2026-10-25T07:50:52.057Z
+    begun: 263e612ac39118b6197a98dfeb885bf2c9f972168ab63e9c323059997647af99
+    spec: 7981054a6136ff9b5a39f6448c481b7b5af264a96ae9c0515a378fdc5fd5250d
+    ended: 2026-10-25T07:53:26.597Z
+  review:
+    rounds: 4
+    sentBack: 0
+    findings:
+      p1: 0
+      p2: 0
+      p3: 3
+    status: done
+    started: 2026-10-25T07:53:30.213Z
+    ended: 2026-10-25T07:56:23.184Z
+  docs:
+    status: done
+    started: 2026-10-25T07:56:33.617Z
+    ended: 2026-10-25T07:59:47.698Z
+notes:
+  - stage: brief
+    at: 2026-10-25T07:14:18.875Z
+    direction: No ROADMAP line names AlertDialog, or any of the 20 other components registered with it in commit eb95ff6, so a deferred brief has only the registry entry to show what Mylder wants it for.
+  - stage: brief
+    at: 2026-10-25T07:14:18.875Z
+    direction: Dialog's `Actions` story ("Clear all filters?" with Cancel and Clear filters) and its Do row "Use a dialog for a question that must be answered" describe an alert dialog's job. Once AlertDialog ships, the Dialog spec and its stories should send that case to AlertDialog.
+  - stage: brief
+    at: 2026-10-25T07:14:18.875Z
+    direction: With AlertDialog, the Panels popup treatment and the raw 440 px measure are written in two components' CSS under two allowances. A third member would justify a `size.dialog-width` token or a shared panel part.
+  - stage: brief
+    at: 2026-10-25T07:14:18.875Z
+    direction: The contract keys slotProps by Base UI part, and doesn't say how to key a Base UI part rendered twice (relevant if a future alert dialog renders Cancel and its action both through AlertDialog.Close).
+  - stage: brief
+    at: 2026-10-25T07:14:18.875Z
+    questions: "1. (Anatomy) Does the alert dialog leave out a close button beside the title, leaving Cancel and Esc as its ways out? Recommended: yes, no close button. 2. (Props) Does AlertDialog take its confirming button as `action`, one required ReactElement rendered through AlertDialog.Close, rather than Dialog's `actions`? Recommended: yes, `action`. Answered instead: no, Dialog's `actions` (the caller's Buttons, Cancel first, closed by `open`), for one shape across the family. 3. (Props) Is `description` required? Recommended: yes. 4. (Props) Does AlertDialog leave out `children`? Recommended: yes. 5. (Tokens) Is the popup as wide as Dialog's, at most 440 px under a perron-allow(component-css) comment? Recommended: yes. 6. (Tokens) Do nested and starting/ending states keep the rest look, as Dialog's? Recommended: yes. 7. (Owned strings) Does AlertDialog own a new key `cancel` with `cancelLabel`? Recommended: yes. Answered instead: no key, since Cancel is the caller's in `actions` (follows from 2)."
+  - stage: brief
+    at: 2026-10-25T07:18:21.089Z
+    direction: The registry entry for AlertDialog lists `AlertDialog.Close` in `baseUiParts` and Button in `dependsOn`, but with no close button and the caller's `actions` closed through `open`, the component renders neither; Button is used only by the stories.
+  - stage: brief
+    at: 2026-10-25T07:18:21.089Z
+    direction: AlertDialog's `actions` has Dialog's type but is required where Dialog's is optional, because with no close button a button in it is the only way out for touch screen readers; an `api-consistency` audit should treat this as intended.
+  - stage: brief
+    at: 2026-10-25T07:18:21.089Z
+    direction: Because the actions close the alert dialog only through `open`, an uncontrolled AlertDialog (trigger or `defaultOpen` alone) closes only with Esc, so every real use is controlled; a recipe for a controlled confirm may be worth adding for the Panels family.
+  - stage: build
+    at: 2026-10-25T07:25:18.094Z
+    direction: After a mouse press on the backdrop, Base UI moves focus to <body>, and the next Tab lands on the last action (the confirming one), not Cancel, so a stray Tab then Enter after a backdrop press acts; either accept Base UI's behaviour or add a CR that sends focus back to Cancel.
+  - stage: build
+    at: 2026-10-25T07:25:18.094Z
+    direction: "A position: fixed popup sizes to the viewport, so a narrow-width overlay story (LongWords) portals into a contained story div through slotProps.portal.container; the contract's Stories section has no recipe for this, and every Panels member will need one."
+  - stage: build
+    at: 2026-10-25T07:25:18.094Z
+    direction: "With overflow-wrap: anywhere, a Danish compound in heading-lg breaks mid-word with no hyphen at 320 px; hyphens: auto with the locale's lang would read better, a contract-wide Long words choice."
+  - stage: build
+    at: 2026-10-25T07:36:47.427Z
+    direction: "After a backdrop press, Shift+Tab moves focus out of the popup onto the aria-hidden but focusable trigger, and Enter or Space there closes the alert dialog with reason 'trigger-press': a keyboard user can leave a modal alert dialog without answering it (adds to review P3-1)."
+  - stage: build
+    at: 2026-10-25T07:36:47.427Z
+    direction: Dialog's CR-3 also says every slotProps value is merged with mergeProps, but Dialog.tsx spreads portal, backdrop, title and description as they are; it needs the same rewrite AlertDialog's CR-3 got.
+  - stage: build
+    at: 2026-10-25T07:46:33.826Z
+    direction: user-event's Tab starts from the start of <body> after a backdrop press, not where the press landed as a real browser does, so a play test can't prove the Keyboard row's 'Tab lands on the confirming action, Shift+Tab on the trigger'; proving it needs a real-browser keyboard in shared test tooling.
+  - stage: review
+    at: 2026-10-25T07:50:51.657Z
+    unblocked: '3 review rounds found a P1 or a P2; the last: review round 3 found 1 P2 (components/alert-dialog/review.md)'
+  - stage: build
+    at: 2026-10-25T07:53:26.597Z
+    direction: After a backdrop press, Shift+Tab reaches every tabbable page control before the portal, not only the trigger, and Enter on one runs its onClick behind the still-open modal; a CR that sends focus back to Cancel after a backdrop press would close this and the trigger-press exit together, probably as a Panels-family rule.
+  - stage: docs
+    at: 2026-10-25T07:59:47.698Z
+    direction: The docs page's Slots table prints each slot as 'Props for the <part> part', dropping the JSDoc's examples (nativeButton={false}, render={<h1 />}, the portal's container); the PropsTable block may want to keep the JSDoc after its first sentence.
+  - stage: docs
+    at: 2026-10-25T07:59:47.698Z
+    direction: The component-docs skill names the docs page components-<name>--docs with <name> in kebab-case, but Storybook's id for Components/AlertDialog is components-alertdialog--docs, so for a multi-word name the skill's id doesn't exist.
