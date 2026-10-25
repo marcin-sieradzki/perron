@@ -3,21 +3,18 @@ component: Checkbox
 layer: component
 deferred:
   at: 2026-10-25T04:38:49.708Z
-needsHuman:
-  stage: build
-  reason: "build failed: npm run check, at npm run test (unit): scripts/checks/shared-parts.test.ts:26 pins the contract's CheckboxIndicator row's icons as ['tick']; the build added 'the dash icon' to that row per CR-5, so the shared-tooling test fails. The spec is revised: CR-5 no longer edits the contract's Shared parts row, so revert that row to name the tick icon alone (keep the dash icon in the part's folder and the updated note below the table) and re-run npm run check."
 stages:
   brief:
     status: done
     started: 2026-10-25T04:49:41.402Z
     ended: 2026-10-25T04:51:23.451Z
   build:
-    status: failed
-    started: 2026-10-25T04:51:28.570Z
-    runs: 1
-    spec: affb6979436a85f98bf027b8aaf355bfd864e26396aa97ef1db2f04722731191
-    ended: 2026-10-25T05:03:26.917Z
-    failing: "npm run check, at npm run test (unit): scripts/checks/shared-parts.test.ts:26 pins the contract's CheckboxIndicator row's icons as ['tick']; the build added 'the dash icon' to that row per CR-5, so the shared-tooling test fails. The spec is revised: CR-5 no longer edits the contract's Shared parts row, so revert that row to name the tick icon alone (keep the dash icon in the part's folder and the updated note below the table) and re-run npm run check."
+    runs: 2
+    respecs: 1
+    status: done
+    started: 2026-10-25T05:03:54.588Z
+    spec: f47eb28bc27fe7ca173226e12e2428695ab64d4cb78f910359a0240de9fd5eee
+    ended: 2026-10-25T05:05:43.895Z
 notes:
   - stage: brief
     at: 2026-10-25T04:49:06.599Z
@@ -70,3 +67,6 @@ notes:
   - stage: build
     at: 2026-10-25T05:03:26.918Z
     direction: shared-parts.test.ts pins the contract's Shared parts table, so a component that adds an icon to its own part's row (CheckboxIndicator's dash) can't land without editing shared tooling; the dash stays out of the row and out of the gate until the maintainer adds it.
+  - stage: build
+    at: 2026-10-25T05:03:54.587Z
+    unblocked: "build failed: npm run check, at npm run test (unit): scripts/checks/shared-parts.test.ts:26 pins the contract's CheckboxIndicator row's icons as ['tick']; the build added 'the dash icon' to that row per CR-5, so the shared-tooling test fails. The spec is revised: CR-5 no longer edits the contract's Shared parts row, so revert that row to name the tick icon alone (keep the dash icon in the part's folder and the updated note below the table) and re-run npm run check.; rerun once because the spec changed since that run ended"

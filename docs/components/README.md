@@ -212,7 +212,7 @@ Each of these is drawn once, in its own folder, `packages/perron/src/parts/<Part
 | Part                | Draws                                       | Composed in                                                                          | Only its folder holds                                       |
 | ------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------ | ----------------------------------------------------------- |
 | `VisuallyHidden`    | Text for screen readers only                | Any component with a word the eye gets from an icon or a shape                       | `pn-VisuallyHidden`, and `clip-path: inset(50%)` or `clip:` |
-| `CheckboxIndicator` | A checkbox's box, with its tick or dash     | `Checkbox.Indicator`, `Menu.CheckboxItemIndicator`                                   | `pn-CheckboxIndicator`, the tick icon and the dash icon     |
+| `CheckboxIndicator` | A checkbox's box, with its tick or dash     | `Checkbox.Indicator`, `Menu.CheckboxItemIndicator`                                   | `pn-CheckboxIndicator`, and the tick icon                   |
 | `SelectedMark`      | The tick beside a chosen option             | `Select.ItemIndicator`, `Combobox.ItemIndicator`, `Menu.RadioItemIndicator`          | `pn-SelectedMark`, and the tick icon                        |
 | `CloseButton`       | The icon button that closes what it sits in | `Dialog.Close`, `Popover.Close`, `Drawer.Close`, `Toast.Close`, `Autocomplete.Clear` | `pn-CloseButton`, and the `close` icon                      |
 
