@@ -75,7 +75,7 @@ All variants:
 | `root`, small          | rest  | `gap`                       | `space.150`                                                                                                                      |
 | `root`                 | rest  | `border-radius`             | `radius.md`                                                                                                                      |
 | `root`                 | rest  | `border-width`              | `border.width.025`                                                                                                               |
-| `root`                 | rest  | `cursor`                    | none: the `pointer` every `<a href>` has, so no rule sets it                                                                     |
+| `root`                 | rest  | `cursor`                    | none: the keyword `pointer`, as every `<a href>` has, set so a `render` element without one keeps it                             |
 | `root`                 | rest  | `text-decoration`           | none: the keyword `none`, since the shape marks the link (CR-6)                                                                  |
 | `label`                | rest  | `font`, `letter-spacing`    | `typography.label`, with its tracking twin                                                                                       |
 | `startIcon`, `endIcon` | rest  | `--perron-icon-size`        | `icon.size.400`                                                                                                                  |

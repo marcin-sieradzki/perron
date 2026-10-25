@@ -11,7 +11,9 @@ import {
   fill,
   mounted,
   onHover,
+  pressedAfterHover,
   resolve,
+  stateFill,
   stateRules,
   typography,
 } from '../../testing/stories.ts'
@@ -103,6 +105,16 @@ export const Hover: Story = {
     // the edge stays the control edge: no hover rule sets it
     await expect(stateRules(root).every((s) => !s.getPropertyValue('border-color'))).toBe(true)
     await expect(style.borderColor).toBe(edge('color-border-control'))
+    await expect(
+      stateRules(root, ':active')
+        .map((s) => s.getPropertyValue('background-image'))
+        .filter((value) => value !== 'none')
+        .join('')
+        .replace(/\s+/g, ''),
+    ).toBe(
+      'linear-gradient(var(--perron-color-surface-selected),var(--perron-color-surface-selected))',
+    )
+    await expect(pressedAfterHover(root)).toBe(true)
   },
 }
 
@@ -138,6 +150,8 @@ export const Checked: Story = {
       'var(--perron-color-surface-inverse-hover)',
     )
     await expect(onHover(root, 'border-color')).toBe('var(--perron-color-surface-inverse-hover)')
+    await expect(stateFill(root, ':active')).toBe('var(--perron-color-surface-inverse-pressed)')
+    await expect(pressedAfterHover(root)).toBe(true)
     // CR-5, CR-6: the thumb sits space.400 further along than an off switch's, at the same size
     const travel = parseFloat(resolve('blockSize', 'var(--perron-space-400)'))
     const on = thumb.getBoundingClientRect()

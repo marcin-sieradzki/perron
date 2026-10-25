@@ -43,8 +43,8 @@
     background-color var(--perron-duration-switch) var(--perron-easing-standard);
 }
 
-/* off: the hover layer the Fields lay over their fill, inside (hover: hover); the press outside
-   it, so a touch press shows. Never on a disabled or a read-only switch (CR-7, CR-8). */
+/* off: the hover layer the Fields lay over their fill, inside (hover: hover); the press, a denser
+   layer, outside it, so a touch press shows. Never on a disabled or a read-only switch (CR-7, CR-8). */
 
 @media (hover: hover) {
   .pn-Switch:not([data-checked], [data-disabled], [data-readonly]):hover {
@@ -57,8 +57,8 @@
 
 .pn-Switch:not([data-checked], [data-disabled], [data-readonly]):active {
   background-image: linear-gradient(
-    var(--perron-color-surface-hover),
-    var(--perron-color-surface-hover)
+    var(--perron-color-surface-selected),
+    var(--perron-color-surface-selected)
   );
 }
 
@@ -82,8 +82,8 @@
 }
 
 .pn-Switch[data-checked]:not([data-disabled], [data-readonly]):active {
-  border-color: var(--perron-color-surface-inverse-hover);
-  background-color: var(--perron-color-surface-inverse-hover);
+  border-color: var(--perron-color-surface-inverse-pressed);
+  background-color: var(--perron-color-surface-inverse-pressed);
 }
 
 /* disabled and read-only keep the default cursor (CR-9) */

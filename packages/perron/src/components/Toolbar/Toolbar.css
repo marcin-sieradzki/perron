@@ -70,6 +70,7 @@
   background-color: transparent;
   color: var(--perron-color-text-primary);
   white-space: nowrap;
+  cursor: pointer;
 }
 
 /* Square both ways, so a vertical toolbar's stretch can't widen it beside a labelled button. */
@@ -97,7 +98,7 @@
   color: var(--perron-color-text-on-color-dark);
 }
 
-/* Hover and pressed skip a disabled button, which stays focusable with no native disabled (CR-6). */
+/* Hover, and pressed a step past it, skip a disabled button, which stays focusable with no native disabled (CR-6). */
 @media (hover: hover) {
   .pn-ToolbarButton[data-color='neutral']:hover:not([data-disabled]) {
     background-color: var(--perron-color-surface-hover);
@@ -109,15 +110,16 @@
 }
 
 .pn-ToolbarButton[data-color='neutral']:active:not([data-disabled]) {
-  background-color: var(--perron-color-surface-hover);
+  background-color: var(--perron-color-surface-selected);
 }
 
 .pn-ToolbarButton[data-color='brand']:active:not([data-disabled]) {
-  background-color: var(--perron-color-surface-brand-hover);
+  background-color: var(--perron-color-surface-brand-pressed);
 }
 
 .pn-ToolbarButton[data-disabled] {
   color: var(--perron-color-text-tertiary);
+  cursor: default;
 }
 
 /* A yellow that can't be pressed doesn't mark the main action: disabled is a fill and a colour. */
