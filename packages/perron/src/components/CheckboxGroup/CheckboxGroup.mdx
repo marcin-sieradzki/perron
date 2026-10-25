@@ -1,0 +1,19 @@
+import { Meta, Stories, Title } from '@storybook/addon-docs/blocks'
+import { PropsTable } from '../../../../../storybook/blocks/PropsTable.tsx'
+import { SpecProse } from '../../../../../storybook/blocks/SpecProse.tsx'
+import * as CheckboxGroupStories from './CheckboxGroup.stories.tsx'
+
+<Meta of={CheckboxGroupStories} />
+
+<Title />
+
+<SpecProse path="docs/components/checkbox-group.md" intro />
+
+<Stories title="Examples" />
+
+<PropsTable of={CheckboxGroupStories} />
+
+<SpecProse
+  path="docs/components/checkbox-group.md"
+  sections={['Keyboard and ARIA', 'Owned strings', "Do and don't"]}
+/>

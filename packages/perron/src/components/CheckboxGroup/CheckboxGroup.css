@@ -1,0 +1,45 @@
+/* CheckboxGroup, from docs/components/checkbox-group.md. The root is Fieldset's column, its reset
+   and its one space.200 gap, on pn-Fieldset; the checkboxes draw their own looks, the invalid edge
+   and the disabled look among them. This file sets only the column's alignment and the help and
+   error under Field's tokens, on the group's own classes (CR-6, CR-7). Nothing moves: the error
+   appears and goes at once. */
+
+/* CR-6: each checkbox, the legend, the description and the error keep their own width, at the
+   group's start edge, up to the group's width, where they wrap. No gap, background, size or
+   overflow of its own, so a focused checkbox's ring is never cut. */
+.pn-CheckboxGroup {
+  align-items: flex-start;
+}
+
+/* CR-7: Field's help, a word longer than its line breaking inside the group's width */
+.pn-CheckboxGroup-description {
+  margin: 0;
+  font: var(--perron-typography-body-sm);
+  letter-spacing: var(--perron-typography-body-sm-tracking);
+  color: var(--perron-color-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+/* CR-7: Field's error, mounted only while the group is invalid */
+.pn-CheckboxGroup-error {
+  margin: 0;
+  font: var(--perron-typography-body-sm);
+  letter-spacing: var(--perron-typography-body-sm-tracking);
+  color: var(--perron-color-text-danger);
+  overflow-wrap: anywhere;
+}
+
+/* Base UI's list of several messages, its bullets inside the group's edge. An element selector, a
+   named exception to "one class, then attributes" (checkbox-group.md, CR-7, as field.md's CR-13):
+   Base UI renders the <ul> with no class and no slotProps key, so no class can reach it. */
+.pn-CheckboxGroup-error ul {
+  margin: 0;
+  padding-inline-start: var(--perron-space-400);
+}
+
+/* CR-7, CR-9: disabled is a colour, never an opacity; a caller's error stays shown on a disabled
+   group */
+.pn-CheckboxGroup-description[data-disabled],
+.pn-CheckboxGroup-error[data-disabled] {
+  color: var(--perron-color-text-tertiary);
+}
