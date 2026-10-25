@@ -85,9 +85,12 @@ export function stateRules(element: Element, pseudo: ':hover' | ':active' | ':vi
   const found: CSSStyleDeclaration[] = []
   const visit = (rules: CSSRuleList, inQuery: boolean) => {
     for (const rule of Array.from(rules))
-      if (rule instanceof CSSMediaRule)
-        visit(rule.cssRules, inQuery || rule.conditionText.includes('(hover: hover)'))
-      else if (
+      if (rule instanceof CSSMediaRule) {
+        // forced colours' rules replace the theme's, so they speak for no state's tokens
+        const query = rule.conditionText.replace(/\s+/g, ' ')
+        if (!holds(query, '(forced-colors: active)'))
+          visit(rule.cssRules, inQuery || holds(query, '(hover: hover)'))
+      } else if (
         rule instanceof CSSStyleRule &&
         (pseudo !== ':hover' || inQuery) &&
         rule.selectorText.includes(pseudo) &&
@@ -146,7 +149,10 @@ export function onHover(element: Element, property: string) {
   let value = ''
   for (const sheet of Array.from(document.styleSheets))
     for (const rule of Array.from(sheet.cssRules))
-      if (rule instanceof CSSMediaRule && rule.conditionText.includes('hover: hover'))
+      if (
+        rule instanceof CSSMediaRule &&
+        holds(rule.conditionText.replace(/\s+/g, ' '), '(hover: hover)')
+      )
         for (const inner of Array.from(rule.cssRules))
           if (
             inner instanceof CSSStyleRule &&

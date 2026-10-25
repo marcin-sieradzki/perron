@@ -45,10 +45,10 @@ const paintsOf = (rule: Rule) => {
       } else if (
         /^(border(-(block|inline|top|right|bottom|left)(-(start|end))?)?|outline)$/.test(prop)
       )
-        // a shorthand's colour: its var(), hex or keyword, else the whole value
+        // a shorthand's colour: its last var(), hex or keyword, as the width and style come first
         out.set(
           `${prop}-color`,
-          /var\([^)]*\)|#[\da-f]+\b|\b(transparent|currentcolor)\b/i.exec(value)?.[0] ?? value,
+          value.match(/var\([^)]*\)|#[\da-f]+\b|\b(transparent|currentcolor)\b/gi)?.at(-1) ?? value,
         )
       else out.set(prop, value)
     }

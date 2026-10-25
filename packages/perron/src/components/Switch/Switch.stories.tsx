@@ -11,6 +11,7 @@ import {
   onHover,
   pressedAfterHover,
   resolve,
+  stateFill,
   stateRules,
   typography,
 } from '../../testing/stories.ts'
@@ -153,13 +154,7 @@ export const Checked: Story = {
       'var(--perron-color-surface-inverse-hover)',
     )
     await expect(onHover(root, 'border-color')).toBe('var(--perron-color-surface-inverse-hover)')
-    // the forced-colours rules after it set a system colour, so the theme's press is read alone
-    await expect(
-      stateRules(root, ':active').some(
-        (s) =>
-          s.getPropertyValue('background-color') === 'var(--perron-color-surface-inverse-pressed)',
-      ),
-    ).toBe(true)
+    await expect(stateFill(root, ':active')).toBe('var(--perron-color-surface-inverse-pressed)')
     await expect(pressedAfterHover(root)).toBe(true)
     // CR-5, CR-6: the thumb sits space.400 further along than an off switch's, at the same size
     const travel = parseFloat(resolve('blockSize', 'var(--perron-space-400)'))

@@ -140,13 +140,7 @@ export const Selected: Story = {
       resolve('backgroundColor', 'var(--perron-color-surface-inverse)'),
     )
     await expect(stateFill(root)).toBe('var(--perron-color-surface-inverse-hover)')
-    // the forced-colours rules after it set a system colour, so the theme's press is read alone
-    await expect(
-      stateRules(root, ':active').some(
-        (s) =>
-          s.getPropertyValue('background-color') === 'var(--perron-color-surface-inverse-pressed)',
-      ),
-    ).toBe(true)
+    await expect(stateFill(root, ':active')).toBe('var(--perron-color-surface-inverse-pressed)')
     await expect(pressedAfterHover(root)).toBe(true)
     // CR-5: on and off share one box
     const on = root.getBoundingClientRect()

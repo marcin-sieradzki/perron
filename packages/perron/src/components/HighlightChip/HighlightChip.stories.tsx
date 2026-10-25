@@ -11,6 +11,7 @@ import {
   onHover,
   pressedAfterHover,
   rendered,
+  stateFill,
   stateRules,
 } from '../../testing/stories.ts'
 import { HighlightChip } from './HighlightChip.tsx'
@@ -236,13 +237,7 @@ export const SelectedHover: Story = {
       'var(--perron-color-surface-inverse-hover)',
     )
     await expect(onHover(chip, 'background-image')).toBe('none')
-    // the forced-colours rules after it set a system colour, so the theme's press is read alone
-    await expect(
-      stateRules(chip, ':active').some(
-        (s) =>
-          s.getPropertyValue('background-color') === 'var(--perron-color-surface-inverse-pressed)',
-      ),
-    ).toBe(true)
+    await expect(stateFill(chip, ':active')).toBe('var(--perron-color-surface-inverse-pressed)')
     await expect(pressedAfterHover(chip)).toBe(true)
   },
 }

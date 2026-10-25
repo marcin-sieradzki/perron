@@ -13,9 +13,10 @@ import {
   lines,
   mounted,
   onHover,
-  rendered,
   pressedAfterHover,
+  rendered,
   resolve,
+  stateFill,
   stateRules,
   typography,
 } from '../../testing/stories.ts'
@@ -213,13 +214,7 @@ export const RadioHover: Story = {
         .replace(/\s+/g, ''),
     ).toBe(PRESSED_LAYER)
     await expect(pressedAfterHover(light)).toBe(true)
-    // the forced-colours rules after it set a system colour, so the theme's press is read alone
-    await expect(
-      stateRules(system, ':active').some(
-        (s) =>
-          s.getPropertyValue('background-color') === 'var(--perron-color-surface-inverse-pressed)',
-      ),
-    ).toBe(true)
+    await expect(stateFill(system, ':active')).toBe('var(--perron-color-surface-inverse-pressed)')
   },
 }
 

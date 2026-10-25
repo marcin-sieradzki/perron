@@ -161,6 +161,12 @@ describe('pointer-feedback', () => {
 @media (hover: hover) { .pn-X:hover { border-color: var(--a); } }
 .pn-X:active { border: 1px solid var(--a); }`),
     ).toEqual([expect.stringMatching(/paints only what its hover rule already paints/)])
+    expect(
+      lint(`${BASE}
+@media (hover: hover) { .pn-X:hover { border: var(--w) solid var(--a); } }
+.pn-X:active { border: var(--w) solid var(--b); }
+@media (not (hover)) { .pn-X[data-y]:hover { color: var(--a); } }`),
+    ).toEqual([expect.stringMatching(/hovers outside @media/)])
   })
 
   it('fails a hover outside (hover: hover)', () => {
