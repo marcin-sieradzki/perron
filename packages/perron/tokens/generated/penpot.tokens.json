@@ -814,12 +814,17 @@
       "meter-track": {
         "$type": "sizing",
         "$value": "6px",
-        "$description": "Height of a meter's track"
+        "$description": "Height of a meter's and a progress bar's track"
       },
       "checkbox": {
         "$type": "sizing",
         "$value": "16px",
         "$description": "The box of a checkbox, and of a menu's checkbox item"
+      },
+      "dialog-width": {
+        "$type": "sizing",
+        "$value": "440px",
+        "$description": "Widest a dialog or alert dialog gets: about 60 characters of body a line"
       },
       "sheet-width": {
         "$type": "sizing",

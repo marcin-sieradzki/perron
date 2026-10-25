@@ -43,4 +43,5 @@ export const sv: OwnedStrings = {
   increase: 'Öka',
   decrease: 'Minska',
   numberField: 'Sifferfält',
+  inProgress: 'Pågår',
 }

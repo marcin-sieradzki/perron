@@ -43,4 +43,5 @@ export const nb: OwnedStrings = {
   increase: 'Øk',
   decrease: 'Reduser',
   numberField: 'Tallfelt',
+  inProgress: 'Pågår',
 }

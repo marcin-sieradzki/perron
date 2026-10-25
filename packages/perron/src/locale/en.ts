@@ -86,6 +86,11 @@ export const en = {
   decrease: 'Decrease',
   /** A number field's input: heard in place of its role, after its name, never seen. */
   numberField: 'Number field',
+  /**
+   * Progress: heard after the task's name, in place of the figure, while how far the task has got
+   * is not known.
+   */
+  inProgress: 'In progress',
 }
 
 /** The name of one owned string. */
