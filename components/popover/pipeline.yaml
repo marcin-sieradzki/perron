@@ -9,19 +9,20 @@ stages:
     started: 2026-10-25T05:21:42.336Z
     ended: 2026-10-25T05:22:49.000Z
   build:
-    runs: 1
-    failing: review round 1 found 2 P2 (components/popover/review.md)
+    runs: 2
+    status: pending
+    started: 2026-10-25T05:36:43.208Z
+    spec: afbc42b88f47b8e5fddcc30cdd6dc547058048a372292ab89a59cd7b2af88401
+    asked: 1
+    ended: 2026-10-25T05:40:02.727Z
+    failing: "1. (Base UI parts and Props, the positioner's defaults; popover.md:47, CR-14, the LongContent row; review P2-1) When the popup has no room above or below its trigger, keep Base UI's default fallbackAxisSide 'end' (moves to the side), or default collisionAvoidance to { fallbackAxisSide: 'none' } so it stays above or below and scrolls, with slotProps.positioner.collisionAvoidance still overriding it? Recommended: default to 'none', as Base UI's DROPDOWN_COLLISION_AVOIDANCE does for popups capped at --available-height."
   review:
-    status: failed
-    started: 2026-10-25T05:30:21.023Z
     rounds: 1
+    sentBack: 1
     findings:
       p1: 0
       p2: 2
       p3: 3
-    sentBack: 1
-    ended: 2026-10-25T05:36:37.649Z
-    failing: review round 1 found 2 P2 (components/popover/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T05:21:08.076Z
@@ -54,3 +55,9 @@ notes:
   - stage: build
     at: 2026-10-25T05:30:02.531Z
     direction: "The Overlays family types the first argument of onOpen and onClose two ways: Dialog and Popover use Event, Sheet uses ChangeDetails['event']. Choose one form for the family."
+  - stage: build
+    at: 2026-10-25T05:40:02.728Z
+    direction: A ToolbarButton given disabled itself and passed as Popover's trigger looks disabled and does not open, but Popover.Trigger leaves aria-disabled="false" on it, so it is announced as enabled; only slotProps.trigger.disabled disables it correctly. Popover could forward a disabled prop on the trigger element to Popover.Trigger, so both ways work; for now the Do and don't row steers callers to slotProps.trigger.disabled.
+  - stage: build
+    at: 2026-10-25T05:40:02.728Z
+    questions: "1. (Base UI parts and Props, the positioner's defaults; popover.md:47, CR-14, the LongContent row; review P2-1) When the popup has no room above or below its trigger, keep Base UI's default fallbackAxisSide 'end' (moves to the side), or default collisionAvoidance to { fallbackAxisSide: 'none' } so it stays above or below and scrolls, with slotProps.positioner.collisionAvoidance still overriding it? Recommended: default to 'none', as Base UI's DROPDOWN_COLLISION_AVOIDANCE does for popups capped at --available-height."
