@@ -4,7 +4,7 @@
 // Both files are server modules: they import Perron from '@/components/perron' (a client
 // boundary), and a preview that needs state or handlers is a 'use client' component of its own.
 import type { ReactNode } from 'react'
-import { componentPreviews } from './components.tsx'
+import { compactProps, componentPreviews } from './components.tsx'
 import { patternPreviews } from './patterns.tsx'
 
 /** Props a page passes a preview to pick a variant or state, such as `{ variant: 'outline' }`. */
@@ -24,6 +24,10 @@ function find(name: string): Preview | undefined {
 
 /** Whether an entry has a preview yet. */
 export const hasPreview = (name: string) => find(name) !== undefined
+
+/** The props that draw an entry's preview small enough to repeat in a row, or none. */
+export const compactPreviewProps = (name: string): PreviewProps =>
+  Object.hasOwn(compactProps, name) ? compactProps[name] : {}
 
 /** The preview of the entry named `name`, drawn with `props`, or null when it has none. */
 export function getPreview(name: string, props?: PreviewProps): ReactNode | null {

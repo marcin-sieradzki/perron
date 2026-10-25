@@ -51,9 +51,13 @@ export function SpecPage({ entry }: { entry: RegistryEntry }) {
   const spec = specPropsTable(markdown, entry.name)
   const styles = drawn && api ? entryStateStyles(entry, `.${SCOPE}`) : undefined
   const matrix = api && styles ? stateMatrix(api, spec, styles) : undefined
-  const sizes = api && drawn ? unionValues(api, 'size', spec) : []
+  // the default size first, as Button.dc.html sets Medium before Small
+  const defaultSize = bareDefault(spec, 'size')
+  const sizes = (api && drawn ? unionValues(api, 'size', spec) : []).sort(
+    (a, b) => Number(b === defaultSize) - Number(a === defaultSize),
+  )
   const sizeRows = sizes.length
-    ? sizeSpecs(readShippedCss(entry), entry.name, sizes, bareDefault(spec, 'size'))
+    ? sizeSpecs(readShippedCss(entry), entry.name, sizes, defaultSize)
     : []
   const icons =
     api && drawn ? (['startIcon', 'endIcon'] as const).filter((p) => p in api.props) : []

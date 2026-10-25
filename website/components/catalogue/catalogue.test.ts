@@ -1,7 +1,7 @@
 // The components index's groups against the real registry.
 import { describe, expect, it } from 'vitest'
-import { entriesOf } from '../../lib/registry.ts'
-import { catalogueGroups } from './catalogue.ts'
+import { byCategory, entriesOf, routedEntries } from '../../lib/registry.ts'
+import { catalogueGroups, inCatalogueOrder } from './catalogue.ts'
 
 describe('catalogueGroups', () => {
   const groups = catalogueGroups()
@@ -38,5 +38,15 @@ describe('catalogueGroups', () => {
     const ids = groups.map((g) => g.id)
     expect(new Set(ids).size).toBe(ids.length)
     for (const id of ids) expect(id).toMatch(/^[a-z0-9-]+$/)
+  })
+})
+
+describe('inCatalogueOrder', () => {
+  it("orders a spec page's list by category as the index does", () => {
+    const index = catalogueGroups().map((g) => g.category)
+    const aside = inCatalogueOrder(byCategory(routedEntries('component'))).map((g) => g.category)
+    const shared = aside.filter((c) => index.includes(c))
+    expect(shared.length).toBeGreaterThan(1)
+    expect(shared).toEqual(index.filter((c) => shared.includes(c)))
   })
 })

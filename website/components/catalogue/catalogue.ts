@@ -31,6 +31,13 @@ const rank = (category: string) => {
   return at < 0 ? ORDER.length : at
 }
 
+/**
+ * Groups with a `category` in the index's order, so every list of components runs the same way; a
+ * stable sort keeps the given order among categories the mockup lacks, such as the patterns'.
+ */
+export const inCatalogueOrder = <T extends { category: string }>(groups: T[]) =>
+  [...groups].sort((a, b) => rank(a.category) - rank(b.category))
+
 /** The component layer by category; entries past designing but not yet stable are left out. */
 export function catalogueGroups(): CatalogueGroup[] {
   const groups = new Map<string, CatalogueGroup>()
@@ -45,6 +52,5 @@ export function catalogueGroups(): CatalogueGroup[] {
     group[entry.status === 'stable' ? 'stable' : 'designing'].push(entry)
     groups.set(entry.category, group)
   }
-  // a stable sort keeps the registry's first-appearance order among categories the mockup lacks
-  return [...groups.values()].sort((a, b) => rank(a.category) - rank(b.category))
+  return inCatalogueOrder([...groups.values()])
 }

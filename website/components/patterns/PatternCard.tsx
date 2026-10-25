@@ -20,8 +20,13 @@ const STAGES: Record<string, 'map' | 'panel'> = {
   StopTimeline: 'panel',
 }
 
-/** What a card lays over a preview's sample data so it fits the card's stage. */
+/**
+ * What a card lays over a preview's sample data so it fits the card's stage. DetailPanel opens on
+ * a station, short enough for the stage, and so it is not a second "M1 Vanløse" panel beside the
+ * map screen's.
+ */
 const CARD_PROPS: Record<string, PreviewProps> = {
+  DetailPanel: { variant: 'stop' },
   KioskBar: { stats: KIOSK.stats.slice(1, 2) },
   StopTimeline: { stops: STOG_TRIP.stops.slice(0, 4) },
 }

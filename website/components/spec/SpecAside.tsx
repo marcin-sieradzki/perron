@@ -1,13 +1,14 @@
-// The list beside a spec page: every entry of its layer with a page, grouped by category, the
-// page's own entry marked as the current page.
+// The list beside a spec page: every entry of its layer with a page, grouped by category in the
+// components index's order, the page's own entry marked as the current page.
 import NextLink from 'next/link'
 import { byCategory, routedEntries, type RegistryEntry } from '../../lib/registry.ts'
+import { inCatalogueOrder } from '../catalogue/catalogue.ts'
 
 export function SpecAside({ entry }: { entry: RegistryEntry }) {
   const label = entry.layer === 'pattern' ? 'Patterns' : 'Components'
   return (
     <nav aria-label={label} className="spec-aside glass">
-      {byCategory(routedEntries(entry.layer)).map(({ category, entries }) => (
+      {inCatalogueOrder(byCategory(routedEntries(entry.layer))).map(({ category, entries }) => (
         <div key={category} className="spec-aside-list">
           <span className="spec-overline spec-aside-group">{category}</span>
           {entries.map((e) => (
