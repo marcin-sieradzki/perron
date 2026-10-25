@@ -1,0 +1,19 @@
+import { Meta, Stories, Title } from '@storybook/addon-docs/blocks'
+import { PropsTable } from '../../../../../storybook/blocks/PropsTable.tsx'
+import { SpecProse } from '../../../../../storybook/blocks/SpecProse.tsx'
+import * as VehicleDotStories from './VehicleDot.stories.tsx'
+
+<Meta of={VehicleDotStories} />
+
+<Title />
+
+<SpecProse path="docs/components/vehicle-dot.md" intro />
+
+<Stories title="Examples" />
+
+<PropsTable of={VehicleDotStories} />
+
+<SpecProse
+  path="docs/components/vehicle-dot.md"
+  sections={['Keyboard and ARIA', 'Owned strings', "Do and don't"]}
+/>

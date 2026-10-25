@@ -26,6 +26,10 @@ stages:
     status: done
     started: 2026-10-25T12:15:00.064Z
     ended: 2026-10-25T12:17:04.353Z
+  docs:
+    status: done
+    started: 2026-10-25T12:17:11.945Z
+    ended: 2026-10-25T12:20:03.397Z
 notes:
   - stage: brief
     at: 2026-10-25T11:57:53.820Z
@@ -51,3 +55,6 @@ notes:
   - stage: build
     at: 2026-10-25T12:06:51.367Z
     direction: In the Lines story's table, each cell's dot is a named img, so a screen reader hears the state word in the column header and again from the dot. VehicleDotLegend is the place to decide whether its dots pass aria-hidden beside their words.
+  - stage: docs
+    at: 2026-10-25T12:20:03.397Z
+    direction: In dark theme, the ageing dot (line colour at vehicle-dot.ageing.fill-opacity) is barely visible on the dark surface for darker lines such as M1, E and H, and only its rim separates it from the background. The maintainer may want to check whether ageing's fill-opacity or rim needs a dark-theme value.
