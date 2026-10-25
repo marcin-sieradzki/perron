@@ -14,13 +14,12 @@ stages:
     started: 2026-10-25T00:38:51.376Z
     ended: 2026-10-25T00:42:28.318Z
   review:
-    rounds: 2
+    rounds: 3
     sentBack: 0
     findings:
-      p1: 1
+      p1: 0
       p2: 0
       p3: 2
-    status: failed
-    started: 2026-10-25T00:42:32.699Z
-    ended: 2026-10-25T00:44:59.517Z
-    failing: review round 2 found 1 P1 (components/count/review.md)
+    status: done
+    started: 2026-10-25T00:45:46.951Z
+    ended: 2026-10-25T00:48:21.628Z
