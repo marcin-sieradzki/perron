@@ -1,0 +1,6 @@
+# Written by npm run factory; never by hand.
+component: TextArea
+layer: component
+deferred:
+  at: 2026-10-25T06:19:12.657Z
+stages: {}
