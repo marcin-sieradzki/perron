@@ -77,20 +77,16 @@ export function withFix(args: Record<string, unknown>, root: string): Record<str
 const ESCAPES = new Set(['"', '\\', '/', 'b', 'f', 'n', 'r', 't', 'u'])
 
 /**
- * An agent's reply as the stage's result: the one JSON object in it, from its first `{` to its
- * last `}`, so prose or a code fence around it is left out. Inside its strings, a backslash JSON
- * doesn't allow, such as the `\`` a reviewer writes before a Markdown backtick, stands for the
- * character after it, and a raw line break for `\n`, so the review's words come through unchanged.
+ * `text` as JSON, or, when JSON refuses it, with its strings mended: a backslash JSON doesn't allow,
+ * such as the `\`` a reviewer writes before a Markdown backtick, stands for the character after
+ * it, and a raw line break for `\n`, so the review's words come through unchanged. A text that
+ * still fails throws JSON.parse's own error.
  */
-export function parseResult(reply: string): Record<string, unknown> {
-  const start = reply.indexOf('{')
-  const end = reply.lastIndexOf('}')
-  if (start < 0 || end < start) throw new Error('the reply holds no JSON object')
-  const text = reply.slice(start, end + 1)
+function lenient(text: string): unknown {
   try {
     return JSON.parse(text)
   } catch {
-    // mend the strings and parse again; a reply that still fails throws JSON.parse's own error
+    // mend the strings and parse again
   }
   let mended = ''
   let inString = false
@@ -109,6 +105,55 @@ export function parseResult(reply: string): Record<string, unknown> {
     } else mended += c === '\n' ? '\\n' : c === '\r' ? '' : c === '\t' ? '\\t' : c
   }
   return JSON.parse(mended)
+}
+
+/**
+ * The text from the `{` at `start` to the `}` that closes it, braces inside strings left out, or
+ * nothing when none closes it.
+ */
+function closed(reply: string, start: number) {
+  let depth = 0
+  let inString = false
+  for (let i = start; i < reply.length; i++) {
+    const c = reply[i]
+    if (inString) {
+      if (c === '\\') i++
+      else if (c === '"') inString = false
+    } else if (c === '"') inString = true
+    else if (c === '{') depth++
+    else if (c === '}' && --depth === 0) return reply.slice(start, i + 1)
+  }
+  return undefined
+}
+
+const isObject = (v: unknown): v is Record<string, unknown> =>
+  typeof v === 'object' && v !== null && !Array.isArray(v)
+
+/**
+ * An agent's reply as the stage's result. Its candidates, in order: each fenced `json` block, then
+ * each object from a `{` to the `}` that closes it, so a brace in the prose before or after the
+ * JSON, or inside a string of it, is left out. The first that parses (see `lenient`) and holds the
+ * stage's `outcome` is the result; with none, the text from the first `{` to the last `}`.
+ */
+export function parseResult(reply: string): Record<string, unknown> {
+  const first = reply.indexOf('{')
+  const last = reply.lastIndexOf('}')
+  if (first < 0 || last < first) throw new Error('the reply holds no JSON object')
+  const fenced = [...reply.matchAll(/^```json[ \t]*\n([\s\S]*?)\n```[ \t]*$/gm)].map((m) => m[1])
+  const starts = [...reply.matchAll(/\{/g)].map((m) => m.index)
+  for (const text of [...fenced, ...starts]) {
+    const candidate = typeof text === 'number' ? closed(reply, text) : text
+    if (!candidate) continue
+    try {
+      const value = lenient(candidate)
+      if (isObject(value) && 'outcome' in value) return value
+    } catch {
+      // not the result: try the next
+    }
+  }
+  const value = lenient(reply.slice(first, last + 1))
+  if (!isObject(value)) throw new Error('the reply holds no JSON object')
+  return value
 }
 
 /**
