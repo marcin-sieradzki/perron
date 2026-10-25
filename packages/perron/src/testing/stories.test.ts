@@ -72,6 +72,7 @@ describe('fillOf', () => {
 
   it('gives none for no fill, or for a shorthand that draws a layer', () => {
     expect(fillOf(declared({ color: 'red' }))).toBe('')
+    expect(fillOf(declared({ background: 'none' }))).toBe('')
     expect(fillOf(declared({ background: 'linear-gradient(var(--a), var(--a))' }))).toBe('')
   })
 })

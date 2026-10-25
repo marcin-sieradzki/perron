@@ -173,7 +173,8 @@ export function pressedAfterHover(element: Element) {
 /**
  * The fill a rule's declarations give, as written: its `background-color`, or else the colour of
  * its `background` shorthand, whose longhands the CSSOM leaves empty when the shorthand holds a
- * `var()`; '' for none, or for a shorthand that draws a gradient or an image.
+ * `var()`; '' for none, for a shorthand with no colour (`background: none`), or for one that
+ * draws a gradient or an image.
  */
 export function fillOf(style: Pick<CSSStyleDeclaration, 'getPropertyValue'>) {
   const color = style.getPropertyValue('background-color').trim()
@@ -184,7 +185,7 @@ export function fillOf(style: Pick<CSSStyleDeclaration, 'getPropertyValue'>) {
   const colours = short.match(
     /var\((?:[^()]|\([^()]*\))*\)|#[\da-f]+\b|\b(?:rgba?|hsla?|oklch|oklab|color-mix)\((?:[^()]|\([^()]*\))*\)|\b(?:transparent|currentcolor)\b/gi,
   )
-  return colours?.at(-1) ?? short
+  return colours?.at(-1) ?? ''
 }
 
 /** The background a state's rules give `element` last, as written, or '' when none sets one. */
