@@ -356,7 +356,13 @@ export const OnPhone: Story = {
       const header = part(dialog, 'DetailPanel-header')
       const content = part(dialog, 'DetailPanel-content')
       await waitFor(() => expect(content.scrollHeight).toBeGreaterThan(content.clientHeight))
-      const top = header.getBoundingClientRect().top
+      // The sheet may still be moving to its snap point: read the top once two polls agree.
+      let top = Number.NaN
+      await waitFor(() => {
+        const previous = top
+        top = header.getBoundingClientRect().top
+        expect(top).toBe(previous)
+      })
       content.scrollTop = content.scrollHeight
       await waitFor(() => expect(content.scrollTop).toBeGreaterThan(0))
       await expect(header.getBoundingClientRect().top).toBe(top)

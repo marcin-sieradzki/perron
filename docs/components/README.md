@@ -229,6 +229,8 @@ Each of these is written once, in its file, and a component, pattern or story im
 | `known`                          | `packages/perron/src/internal/nodes.ts`         | Whether a value says something, so one that says nothing shows `UnknownValue`                                      |
 | `classes`                        | `packages/perron/src/internal/nodes.ts`         | A part's own class first, then the caller's                                                                        |
 | `withClass`                      | `packages/perron/src/internal/nodes.ts`         | `classes` for a Base UI part whose caller's `className` may be a function of its state                             |
+| `setRef`                         | `packages/perron/src/internal/nodes.ts`         | Points a ref, a callback or an object, at a node, and returns what undoes it when the node goes                    |
+| `joinRefs`                       | `packages/perron/src/internal/nodes.ts`         | One callback ref that sets a part's own ref and the caller's, since `mergeProps` merges no refs                    |
 | `tokenValue`                     | `packages/perron/src/internal/tokens.ts`        | A token's value in script, from its custom property on the document root, for a prop Base UI takes as a value      |
 | `usePart`                        | `packages/perron/src/internal/use-part.ts`      | One inner part, from its `slotProps` value merged under the part's own props; it reads Base UI                     |
 | `UnknownValue`                   | `packages/perron/src/internal/UnknownValue.tsx` | A value no one knows: "—" for the eye, the caller's or the locale's word for the ear                               |
