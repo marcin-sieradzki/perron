@@ -1,0 +1,59 @@
+# Written by npm run factory; never by hand.
+component: CheckboxGroup
+layer: component
+deferred:
+  at: 2026-10-25T06:02:11.177Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-25T06:12:49.113Z
+    ended: 2026-10-25T06:17:43.791Z
+  build:
+    runs: 3
+    status: done
+    started: 2026-10-25T06:46:34.268Z
+    begun: 3f59c239ca7e7807d6cc56c381d1d301a40fedc12dd0840f7dc42ca06c22c6a8
+    spec: 0452bbbe594f4de8aa0adbc68d3090d39dcc198391d3442e50c5e6efc9fa1ec5
+    ended: 2026-10-25T06:48:08.135Z
+  review:
+    rounds: 3
+    sentBack: 2
+    findings:
+      p1: 0
+      p2: 0
+      p3: 6
+    status: done
+    started: 2026-10-25T06:48:12.308Z
+    ended: 2026-10-25T06:53:14.893Z
+  docs:
+    status: done
+    started: 2026-10-25T06:53:24.415Z
+    ended: 2026-10-25T06:56:20.298Z
+notes:
+  - stage: brief
+    at: 2026-10-25T06:11:06.788Z
+    direction: The description and error look (typography.body-sm, color.text.secondary / color.text.danger, Base UI's ul exception) is now written twice, in Field and in CheckboxGroup, and RadioGroup will need it a third time; it could become a shared part in docs/components/README.md's Shared parts table.
+  - stage: brief
+    at: 2026-10-25T06:11:06.788Z
+    direction: Perron's Field always renders a required label, so it cannot frame a group named by a legend; Field may want a mode for a control that names itself, or the help and error frame should be separated from the label.
+  - stage: brief
+    at: 2026-10-25T06:11:06.788Z
+    direction: Checkbox's parent and CheckboxGroup's allValues are both left out, so the library has no select-all pattern yet; the first Mylder screen that needs one should add the pair together.
+  - stage: brief
+    at: 2026-10-25T06:11:06.788Z
+    direction: Base UI puts the group's description and error in every checkbox's aria-describedby as well as the group's, so a screen reader may read the help once per box; check with a real screen reader once the build lands.
+  - stage: brief
+    at: 2026-10-25T06:17:43.792Z
+    direction: A parent checkbox sits in the group's flat column, level with the boxes it controls, because Fieldset's CR-2 allows no wrapper and the contract's 'one class, then attributes' selector rule allows no sibling selector to indent them. If Mylder wants children indented under their parent, as Base UI's demo draws them, one of those two rules needs a named exception.
+  - stage: brief
+    at: 2026-10-25T06:17:43.792Z
+    direction: "The earlier note that the library has no select-all pattern is now out of date: this spec adds CheckboxGroup's allValues and Checkbox's parent together, as that note suggested the first screen needing one should."
+  - stage: build
+    at: 2026-10-25T06:28:01.027Z
+    direction: "The group family types ref two ways: Fieldset and CheckboxGroup use Ref<HTMLElement>, Field and RadioGroup use Ref<HTMLDivElement>; since Base UI's Field.Root types its ref for a <div>, CheckboxGroup casts the ref it hands to Field.Root. The family could settle on one type."
+  - stage: build
+    at: 2026-10-25T06:28:01.027Z
+    direction: Fieldset's spec (docs/components/fieldset.md, lines 24 and 143) still says a group's description and error come through a Field round it, as CheckboxGroup and RadioGroup do; CheckboxGroup renders its own Base UI Field.Root and a caller can't wrap one round it, so Fieldset's lines could name that composition instead.
+  - stage: docs
+    at: 2026-10-25T06:56:20.298Z
+    direction: "At the LongWords story's 120 px width, the description's overflow-wrap: anywhere breaks hovedstadsområdet one letter from its end; hyphens: auto under the locale's lang could break Danish words at syllables instead, but it would need to change for the whole family (Field, CheckboxGroup, RadioGroup)."
