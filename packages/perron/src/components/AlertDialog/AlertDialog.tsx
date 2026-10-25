@@ -1,8 +1,8 @@
 // AlertDialog: a modal question over the map and a scrim, on Base UI's AlertDialog, that one of its
-// actions or Esc answers. It moves focus to the first action, Cancel, wraps Tab inside the popup while
-// focus is in it, and on close gives focus back to the button that opened it. One component that takes its words and controls
-// as props and renders every Base UI part itself, the popup as its root. The spec is
-// docs/components/alert-dialog.md.
+// actions or Esc answers. It moves focus to the first action, Cancel, wraps Tab inside the popup
+// while focus is in it, and on close gives focus back to the button that opened it. One component
+// that takes its words and controls as props and renders every Base UI part itself, the popup as
+// its root. The spec is docs/components/alert-dialog.md.
 import { AlertDialog as BaseAlertDialog } from '@base-ui/react/alert-dialog'
 import { mergeProps } from '@base-ui/react/merge-props'
 import { useId } from 'react'
