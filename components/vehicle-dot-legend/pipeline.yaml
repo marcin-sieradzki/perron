@@ -8,6 +8,13 @@ stages:
     status: done
     started: 2026-10-25T12:39:50.219Z
     ended: 2026-10-25T12:40:55.008Z
+  build:
+    status: done
+    started: 2026-10-25T12:40:58.520Z
+    runs: 1
+    begun: 57293e98cb63d6c60d5fe50e6792c33f7cbb1e1afe3dff04a703d52cc6c5e55e
+    spec: 57293e98cb63d6c60d5fe50e6792c33f7cbb1e1afe3dff04a703d52cc6c5e55e
+    ended: 2026-10-25T12:48:05.689Z
 notes:
   - stage: brief
     at: 2026-10-25T12:39:30.929Z
@@ -26,3 +33,9 @@ notes:
       3. (Props) Does the legend show only each state's dot and word, with no vehicle count, no description and no title? Recommended: yes.
       4. (Tokens) Are the words and the dots one ink, color.text.primary, with the legend passing VehicleDot line='m1' and overriding its colour with .pn-VehicleDotLegend-dot[data-line][data-variant] { color: inherit }, CanvasText in forced colours? Recommended: yes.
       5. (Tokens) Is the space space.100 between a dot and its word, space.300 between items and space.100 between wrapped rows? Recommended: yes.
+  - stage: build
+    at: 2026-10-25T12:48:05.689Z
+    direction: 'The legend''s <ul> has list-style: none, and Safari with VoiceOver drops the list role from such a list unless it has role="list". StopTimeline, KioskBar, DisruptionCard and DayProfileChart do the same, and the spec allows no ARIA here. Options: accept it library-wide, or add role="list" to every unstyled list as a contract rule.'
+  - stage: build
+    at: 2026-10-25T12:48:05.689Z
+    direction: VehicleDot always writes its aria-label from the locale, even when aria-hidden. If a caller passes a *Label to the legend, each hidden dot keeps the locale's word while the visible word changes. Nothing hears the dot, but to keep the two in step the legend could pass the overrides to its dots, or VehicleDot could leave out aria-label when it is aria-hidden.

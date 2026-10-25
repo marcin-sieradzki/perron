@@ -9,6 +9,7 @@ import type { VehicleDotProps } from './VehicleDot.tsx'
 import {
   colour,
   expectNoFocus,
+  forcedColourSheet,
   mounted,
   rendered,
   resolve,
@@ -572,29 +573,6 @@ export const Lines: Story = {
   },
 }
 
-/**
- * Every `(forced-colors: active)` rule for VehicleDot in the document's sheets, unwrapped into a
- * sheet of its own: a play test cannot turn forced colours on, so it adopts these (CR-11).
- */
-function forcedColourSheet() {
-  const found: string[] = []
-  const visit = (rules: CSSRuleList, forced: boolean) => {
-    for (const rule of Array.from(rules))
-      if (rule instanceof CSSMediaRule)
-        visit(rule.cssRules, forced || rule.conditionText.includes('forced-colors: active'))
-      else if (
-        forced &&
-        rule instanceof CSSStyleRule &&
-        rule.selectorText.includes('.pn-VehicleDot')
-      )
-        found.push(rule.cssText)
-  }
-  for (const sheet of Array.from(document.styleSheets)) visit(sheet.cssRules, false)
-  const sheet = new CSSStyleSheet()
-  sheet.replaceSync(found.join('\n'))
-  return sheet
-}
-
 /** A dot's shape without its colour: its fill and opacity, its rim and dash, and its cut. */
 function shape(root: Element) {
   const style = getComputedStyle(dotOf(root))
@@ -666,7 +644,7 @@ const SHAPES: Record<Variant, (root: Element, ink: string) => Promise<unknown>> 
 export const ForcedColours: Story = {
   render: (args) => <States line={args.line} size="medium" />,
   play: async ({ canvasElement, step }) => {
-    const sheet = forcedColourSheet()
+    const sheet = forcedColourSheet('pn-VehicleDot')
     await expect(
       sheet.cssRules.length,
       'VehicleDot rules in (forced-colors: active)',

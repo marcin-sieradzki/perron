@@ -371,3 +371,30 @@ export const expectFocusRing = (canvas: HTMLElement, element: HTMLElement) =>
     await userEvent.tab({ shift: true })
     await expect(before).toHaveFocus()
   })
+
+/**
+ * Every `(forced-colors: active)` rule in the document's sheets whose selector names one of
+ * `classes`, such as `'pn-VehicleDot'`, or one of its parts' (`.pn-VehicleDot` and
+ * `.pn-VehicleDot-dot`, never `.pn-VehicleDotLegend`), unwrapped into a sheet of its own, in source
+ * order. A play test cannot
+ * turn forced colours on, so it adopts this sheet while it runs and takes it off after.
+ */
+export function forcedColourSheet(...classes: string[]) {
+  const names = classes.map((name) => new RegExp(`\\.${name}(?!\\w)`))
+  const found: string[] = []
+  const visit = (rules: CSSRuleList, forced: boolean) => {
+    for (const rule of Array.from(rules))
+      if (rule instanceof CSSMediaRule)
+        visit(rule.cssRules, forced || holds(rule.conditionText, FORCED_COLORS))
+      else if (
+        forced &&
+        rule instanceof CSSStyleRule &&
+        names.some((name) => name.test(rule.selectorText))
+      )
+        found.push(rule.cssText)
+  }
+  for (const sheet of Array.from(document.styleSheets)) visit(sheet.cssRules, false)
+  const sheet = new CSSStyleSheet()
+  sheet.replaceSync(found.join('\n'))
+  return sheet
+}
