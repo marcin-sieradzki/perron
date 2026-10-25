@@ -3,4 +3,55 @@ component: Toast
 layer: component
 deferred:
   at: 2026-10-25T08:35:01.279Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-25T08:35:08.807Z
+    ended: 2026-10-25T08:49:45.449Z
+    pending: 15
+notes:
+  - stage: brief
+    at: 2026-10-25T08:49:45.449Z
+    direction: "Toast is the first component that renders under PerronProvider's region rather than where it is written: the action sees only the contexts above PerronProvider, such as a router's, so PerronProvider must sit inside them."
+  - stage: brief
+    at: 2026-10-25T08:49:45.449Z
+    direction: "Politeness differs between siblings: Alert takes `role` (status by default, alert when the caller passes it), while Toast leaves out Base UI's `priority`. Every toast is polite, because Base UI's 'high' sets aria-hidden on a focusable root, which axe's aria-hidden-focus rule fails."
+  - stage: brief
+    at: 2026-10-25T08:49:45.449Z
+    direction: "`autoHideDuration` (MUI) over Base UI's `timeout` is a new prop name later timed components will copy; onClose's reason 'timeout' mixes MUI's word into Base UI's reason vocabulary."
+  - stage: brief
+    at: 2026-10-25T08:49:45.449Z
+    direction: 'Close-button rule differs from Alert: Alert shows it only when onClose is given, while Toast always renders it, since a toast closes itself.'
+  - stage: brief
+    at: 2026-10-25T08:49:45.449Z
+    direction: PerronProvider gains its first `*Label` prop (`notificationsLabel`) and its first rendered DOM, an always-present empty 'Notifications' region in every app that uses it. This changes what @mylder/perron ships and needs a changeset.
+  - stage: brief
+    at: 2026-10-25T08:49:45.449Z
+    direction: 'Two new tokens are proposed: size.toast-width and duration.toast.'
+  - stage: brief
+    at: 2026-10-25T08:49:45.449Z
+    direction: Base UI's Toast.Close sets aria-hidden on a focusable button while the stack is collapsed, which fails axe's aria-hidden-focus rule under the library's error-mode stories. Any future Base UI part with the same pattern needs the same override.
+  - stage: brief
+    at: 2026-10-25T08:49:45.449Z
+    direction: The registry's baseUiParts for Toast lists Toast.Action, which the spec doesn't use; the build should edit the entry if question 4 is accepted.
+  - stage: brief
+    at: 2026-10-25T08:49:45.449Z
+    direction: Toast's toast list must be read through Toast.useToastManager in an internal child, never Toast.createToastManager. Toast.Provider subscribes to a created manager only after its children's effects, so a toast open at first render would be lost.
+  - stage: brief
+    at: 2026-10-25T08:49:45.449Z
+    questions: |-
+      1. (Anatomy) Is Toast declarative, `<Toast open onClose color title …>`, which adds itself to Base UI's toast list when `open` turns true, rather than an imperative `useToast().add()` beside a region the caller places? Recommended: yes. The contract's open/defaultOpen/onClose and overlay stories then hold, and every option becomes a prop the docs table and gates check.
+      2. (Anatomy) Does PerronProvider hold the app's one Toast.Provider and render the one region (Toast.Portal > Toast.Viewport), as it does Tooltip.Provider, with a Toast that has no provider around it rendering its own? Recommended: yes. Toasts must stack in one place, and a region already on the page announces reliably. The fallback lets the contract story render Toast alone.
+      3. (Anatomy) Does Toast leave `portal` and `viewport` out of `slotProps`, an exception to the contract's Customising rule? Recommended: yes. The region is shared, so a prop on one toast would restyle every other's region.
+      4. (Anatomy) Is the action part a `div` holding the caller's `action`, as Alert's is, with Toast.Action unused and dropped from the entry's baseUiParts? Recommended: yes. Toast.Action renders its own button, so a Perron Button inside it would nest a button in a button.
+      5. (Props) Is the auto-hide time `autoHideDuration: number | null` (MUI's name and type, mapped to Base UI's `timeout`, null as 0)? Recommended: yes.
+      6. (Props) Is `autoHideDuration`'s default 5000, and null when an `action` is given, so an action toast stays until closed? Recommended: yes, because of WCAG 2.2.1. JSDoc `@default 5000, or null with an action`.
+      7. (Props) Does a Toast show each time `open` turns true and leave on false without calling onClose? Once it closes itself, does it call onClose and stay closed until `open` goes false and then true again? Recommended: yes.
+      8. (Props) Is onClose(event, reason, details) called with 'close-press' | 'escape-key' | 'swipe' (Base UI's names) or 'timeout' (MUI's)? details would be `{ reason, event }`, with `new Event('timeout')` for the timer. This is an exception to the State and events rule, since Base UI gives no details. Recommended: yes.
+      9. (Tokens) Do toasts stand in one full column, newest at the top, rather than Base UI's collapsed pile? Recommended: yes.
+      10. (Tokens) Does the column sit at the bottom of the screen, centred, size.panel-gap from the edge? Recommended: yes.
+      11. (Tokens) Needs a token for the column's width. Recommended: a new `size.toast-width` of 360px, through the design-tokens skill.
+      12. (Tokens) Do toasts slide and fade in and out on a new `duration.toast` of 200ms with easing.standard, which reduced motion takes to 0.01ms? Recommended: yes, through the design-tokens skill. No existing duration token fits.
+      13. (Keyboard and ARIA) With no `title`, is the toast named by its description (aria-labelledby set to the description, no aria-describedby)? Recommended: yes. Otherwise axe's aria-dialog-name rule fails.
+      14. (Keyboard and ARIA) Is the close button never aria-hidden (`aria-hidden={false}` set after Base UI's, which hides it while the region is collapsed)? Recommended: yes. Otherwise axe's aria-hidden-focus rule fails, and screen-reader users cannot find the close button.
+      15. (Owned strings) Is the region's name a new owned key `notifications` ("Notifications"), overridden by a new `notificationsLabel` prop on PerronProvider rather than on Toast? This is an exception to the Words rule's per-component override. Recommended: yes. Base UI's viewport hard-codes English "Notifications", and the region is shared.
