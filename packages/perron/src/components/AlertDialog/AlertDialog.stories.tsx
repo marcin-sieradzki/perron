@@ -99,7 +99,8 @@ export const Default: Story = {
       await expect(args.onClose).not.toHaveBeenCalled()
     })
     await step('the trigger, still focusable behind the scrim, closes it on Space', async () => {
-      // the browser's Shift+Tab after a press on the backdrop lands on the trigger; user-event's Tab
+      // the browser's Shift+Tab after a press on the backdrop lands on the trigger, the story's only
+      // tabbable element before the portal; user-event's Tab
       // starts from the start of <body> rather than from the press, so the step moves focus there itself
       trigger.focus()
       await expect(trigger).toHaveFocus()

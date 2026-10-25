@@ -9,8 +9,12 @@ stages:
     started: 2026-10-25T07:14:23.056Z
     ended: 2026-10-25T07:18:21.088Z
   build:
-    runs: 3
-    failing: review round 3 found 1 P2 (components/alert-dialog/review.md)
+    runs: 4
+    status: done
+    started: 2026-10-25T07:50:52.057Z
+    begun: 263e612ac39118b6197a98dfeb885bf2c9f972168ab63e9c323059997647af99
+    spec: 7981054a6136ff9b5a39f6448c481b7b5af264a96ae9c0515a378fdc5fd5250d
+    ended: 2026-10-25T07:53:26.597Z
   review:
     rounds: 3
     sentBack: 0
@@ -64,3 +68,6 @@ notes:
   - stage: review
     at: 2026-10-25T07:50:51.657Z
     unblocked: '3 review rounds found a P1 or a P2; the last: review round 3 found 1 P2 (components/alert-dialog/review.md)'
+  - stage: build
+    at: 2026-10-25T07:53:26.597Z
+    direction: After a backdrop press, Shift+Tab reaches every tabbable page control before the portal, not only the trigger, and Enter on one runs its onClick behind the still-open modal; a CR that sends focus back to Cancel after a backdrop press would close this and the trigger-press exit together, probably as a Panels-family rule.

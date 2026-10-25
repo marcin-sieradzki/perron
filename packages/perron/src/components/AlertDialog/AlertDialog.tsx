@@ -47,8 +47,8 @@ export interface AlertDialogProps extends Omit<
   /**
    * Whether the alert dialog is open at first, when `open` is left out. Uncontrolled, its actions cannot
    * close it, since they close it through `open`: it closes by Esc, or by Enter or Space on the trigger,
-   * reached by Shift+Tab after a press on the backdrop, so an alert dialog whose actions must close it
-   * is controlled with `open` instead.
+   * which Shift+Tab reaches after a press on the backdrop among the page's other tabbable elements
+   * before the portal, so an alert dialog whose actions must close it is controlled with `open` instead.
    * @default false
    */
   defaultOpen?: boolean
@@ -59,9 +59,9 @@ export interface AlertDialogProps extends Omit<
   onOpen?: (event: Event, details: BaseAlertDialog.Root.ChangeEventDetails) => void
   /**
    * Called when the alert dialog asks to close, by Esc, with `reason` `'escape-key'`, or by Enter or
-   * Space on the trigger, reached by Shift+Tab after a press on the backdrop, with `'trigger-press'`;
-   * `details.cancel()` keeps it open. A button in `actions` closes it through `open` and calls no
-   * `onClose`.
+   * Space on the trigger, which Shift+Tab reaches after a press on the backdrop among the page's other
+   * tabbable elements before the portal, with `'trigger-press'`; `details.cancel()` keeps it open. A
+   * button in `actions` closes it through `open` and calls no `onClose`.
    */
   onClose?: (
     event: Event,
