@@ -628,7 +628,7 @@ export const LongDestination: Story = {
               for (const cell of root.querySelectorAll('.pn-VehicleTable-destinationCell')) {
                 await expect(cell.getBoundingClientRect().width).toBeGreaterThanOrEqual(least - 0.5)
                 // "Lufthavnen", "Københavns" and "Kokkedal" stay whole; only a word wider than
-                // the column breaks inside it
+                // the column's content box, its least width less the start padding, breaks inside it
                 await expectWholeWords(cell, ['Lufthavnsterminalen'])
               }
               if (vehicles === VEHICLES) {

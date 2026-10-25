@@ -66,8 +66,10 @@
 
 /* over a <th>'s bold and centring; the one cell that sets a width, and only a least one: the
    automatic table layout gives each column its content's width wherever the table has room, a
-   state's word on one line, and where it hasn't, the other columns give up width before this one,
-   so below a table about 310 px wide a state's word wraps even beside a short destination (CR-8) */
+   state's word on one line, and where it hasn't, shares the width above the least widths by how
+   much more each column wants: among short destinations the position column alone gives way, so
+   below a table about 310 px wide a state's word wraps, and beside a long destination this column
+   takes most of the spare width, so a state's word wraps even at the panel's width (CR-8) */
 .pn-VehicleTable-destinationCell {
   font: var(--perron-typography-label);
   letter-spacing: var(--perron-typography-label-tracking);
@@ -76,7 +78,8 @@
   /* CR-8: the column's least width, 96 px, a measure only this CSS reads, so the automatic layout
      takes width from the other columns before it breaks a word such as "Lufthavnen" */
   min-inline-size: calc(4 * var(--perron-space-600));
-  /* CR-8: only a word longer than that least width breaks inside it, never past the table's edge */
+  /* CR-8: only a word longer than the 84 px that least width leaves inside the start padding
+     breaks inside it, never past the table's edge */
   overflow-wrap: anywhere;
 }
 
