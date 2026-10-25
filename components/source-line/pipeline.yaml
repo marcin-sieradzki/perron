@@ -1,0 +1,25 @@
+# Written by npm run factory; never by hand.
+component: SourceLine
+layer: pattern
+deferred:
+  at: 2026-10-25T17:46:59.950Z
+stages:
+  brief:
+    status: pending
+    started: 2026-10-25T17:47:14.117Z
+    ended: 2026-10-25T17:53:46.108Z
+    pending: 7
+notes:
+  - stage: brief
+    at: 2026-10-25T17:53:46.108Z
+    direction: Rejseplanen's terms ask for the source and the update time on every screen, so SourceLine names each source with its own time and never one blended 'last updated'; TopBar's status line ('Updated 08:14:05', paused), still unspecified, should compose or match it.
+  - stage: brief
+    at: 2026-10-25T17:53:46.108Z
+    questions: |-
+      1. Anatomy: Is the root a Text in typography.caption at emphasis='secondary', rendered as a <p>, holding the sources inline in reading order? Recommended: yes.
+      2. Anatomy: Are two sources joined in the one line by a '·', each with its own name, 'updated' and time, and is the '·' between a name and 'updated' kept as the ticket writes it, read by the ear, not aria-hidden? Recommended: yes.
+      3. Props: Does the line take its sources as one required `sources` array of one or two SourceLineSource objects { name, time, outOfDate? }, and its paused state as a `paused` boolean? Recommended: yes.
+      4. Props: Is each source's `time` required, with no unknown time? Recommended: yes; a panel with no data yet is DataStatePanel's loading or error status.
+      5. Tokens: Is each time set in typography.data with tabular figures, and the rest of the line in Text's typography.caption? Recommended: yes.
+      6. Tokens: Is 'Paused' in color.text.primary and 'may be out of date' in color.text.warning, with the rest in color.text.secondary, and no icon? Recommended: yes.
+      7. Keyboard and ARIA: Is the line no live region, its times changing in place without an announcement? Recommended: yes.
