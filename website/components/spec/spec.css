@@ -1,0 +1,723 @@
+/* A spec page, from Button.dc.html and Phone-Button.dc.html: the components list, the page and its
+   "On this page" links side by side, wrapping as the window narrows; each section a glass panel
+   over the map. Under breakpoint.phone the page is one opaque sheet over the map's strip. */
+
+.spec {
+  /* the columns' starting widths, which wrap below the window's width */
+  --spec-aside: calc(var(--perron-space-800) * 6.25);
+  --spec-main: calc(var(--perron-space-800) * 17.5);
+  --spec-content: calc(var(--perron-space-800) * 16.25);
+  --spec-toc: calc(var(--perron-space-800) * 5);
+  /* the framed map's height, and its share above a phone's bottom sheet */
+  --spec-context-height: calc(var(--perron-space-800) * 9.375);
+  --spec-context-map: calc(var(--perron-space-800) * 3);
+}
+
+/* Columns. wrap-reverse puts a wrapped list under the page, and the "On this page" links above it */
+
+.spec-layout,
+.spec-main {
+  display: flex;
+  flex-wrap: wrap-reverse;
+  align-items: start;
+  gap: var(--perron-space-800);
+}
+
+.spec-main {
+  flex: 999 1 var(--spec-main);
+  min-inline-size: 0;
+}
+
+.spec-content {
+  flex: 999 1 var(--spec-content);
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-800);
+}
+
+.spec-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-400);
+  scroll-margin-block-start: var(--perron-space-800);
+}
+
+.spec-heading {
+  margin: 0;
+  font: var(--perron-typography-heading-md);
+  letter-spacing: var(--perron-typography-heading-md-tracking);
+}
+
+.spec-panel {
+  border-radius: var(--perron-radius-xl);
+}
+
+.spec-padded {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-400);
+  padding: var(--perron-space-500);
+}
+
+.spec-note {
+  margin: 0;
+  max-inline-size: var(--site-measure);
+  font: var(--perron-typography-body-sm);
+  letter-spacing: var(--perron-typography-body-sm-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.spec-overline {
+  font: var(--perron-typography-overline);
+  letter-spacing: var(--perron-typography-overline-tracking);
+  text-transform: uppercase;
+  color: var(--perron-color-text-tertiary);
+}
+
+.spec-code {
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: var(--perron-space-200) var(--perron-space-300);
+  border-radius: var(--perron-radius-md);
+  background: var(--perron-color-surface-inset);
+  font: var(--perron-typography-data);
+  letter-spacing: var(--perron-typography-data-tracking);
+}
+
+/* The components list */
+
+.spec-aside {
+  flex: 1 1 var(--spec-aside);
+  max-inline-size: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-100);
+  padding: var(--perron-space-300);
+  border-radius: var(--perron-radius-xl);
+}
+
+.spec-aside-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-100);
+}
+
+.spec-aside-group {
+  padding: var(--perron-space-300) var(--perron-space-300) var(--perron-space-100);
+}
+
+.spec-aside-list:first-child .spec-aside-group {
+  padding-block-start: var(--perron-space-200);
+}
+
+.spec-aside-link {
+  display: flex;
+  align-items: center;
+  min-block-size: var(--perron-size-button-sm);
+  padding-inline: var(--perron-space-300);
+  border-radius: var(--perron-radius-md);
+  font: var(--perron-typography-body-sm);
+  letter-spacing: var(--perron-typography-body-sm-tracking);
+  color: var(--perron-color-text-secondary);
+  text-decoration: none;
+}
+
+.spec-aside-link[aria-current='page'] {
+  background: var(--perron-color-surface-selected);
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+  color: var(--perron-color-text-primary);
+}
+
+/* "On this page" */
+
+.spec-toc {
+  flex: 1 1 var(--spec-toc);
+  order: 1;
+  position: sticky;
+  inset-block-start: var(--perron-space-800);
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-050);
+  padding-block-start: var(--perron-space-200);
+}
+
+.spec-toc .spec-overline {
+  padding: 0 var(--perron-space-300) var(--perron-space-150);
+}
+
+.spec-toc-link {
+  padding: var(--perron-space-150) var(--perron-space-300);
+  border-inline-start: var(--perron-border-width-050) solid var(--perron-color-border-subtle);
+  font: var(--perron-typography-label-sm);
+  letter-spacing: var(--perron-typography-label-sm-tracking);
+  color: var(--perron-color-text-secondary);
+  text-decoration: none;
+}
+
+.spec-toc-select,
+.spec-pages {
+  display: none;
+}
+
+/* The header */
+
+.spec-breadcrumb {
+  font: var(--perron-typography-label-sm);
+  letter-spacing: var(--perron-typography-label-sm-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.spec-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--perron-space-300);
+}
+
+.spec-action {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--perron-size-button-sm);
+  padding-inline: var(--perron-space-300);
+  border-radius: var(--perron-radius-md);
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+  color: var(--perron-color-text-primary);
+  text-decoration: none;
+}
+
+.spec-designing {
+  margin: 0;
+  font: var(--perron-typography-body);
+  letter-spacing: var(--perron-typography-body-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.spec-designing code {
+  font: var(--perron-typography-data);
+  letter-spacing: var(--perron-typography-data-tracking);
+  color: var(--perron-color-text-primary);
+}
+
+/* In context: a framed map with the component in a sheet over it */
+
+.spec-context {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  min-block-size: var(--spec-context-height);
+  padding: var(--perron-space-400);
+  border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+  border-radius: var(--perron-radius-xl);
+  overflow: hidden;
+  background: var(--perron-color-map-land);
+}
+
+/* the drawing at the city centre, with no veil: the frame is all map */
+.spec-context .map-drawing {
+  translate: 0 -36%;
+}
+
+.spec-context .map-veil {
+  display: none;
+}
+
+.spec-sheet {
+  position: relative;
+  align-self: stretch;
+  inline-size: min(var(--perron-size-detail-width), 100%);
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-300);
+  padding: var(--perron-space-400);
+  border-radius: var(--perron-radius-xl);
+}
+
+.spec-sheet-free {
+  position: relative;
+  max-inline-size: 100%;
+}
+
+.spec-sheet-handle {
+  display: none;
+}
+
+.spec-station {
+  display: flex;
+  align-items: center;
+  gap: var(--perron-space-300);
+  margin: 0;
+  font: var(--perron-typography-heading-md);
+  letter-spacing: var(--perron-typography-heading-md-tracking);
+}
+
+/* the map's own station marker, as map.css draws it */
+.spec-station-dot {
+  flex: none;
+  inline-size: var(--perron-icon-size-325);
+  block-size: var(--perron-icon-size-325);
+  border: var(--perron-border-width-050) solid var(--perron-color-text-primary);
+  border-radius: var(--perron-radius-full);
+  background: var(--perron-color-surface-raised);
+}
+
+.spec-sheet-text {
+  margin: 0;
+  flex: 1;
+  font: var(--perron-typography-body-sm);
+  letter-spacing: var(--perron-typography-body-sm-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.spec-sheet-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--perron-space-200);
+}
+
+/* the main action takes the row's room, as a sheet's does */
+.spec-sheet-action {
+  display: flex;
+}
+
+.spec-sheet-action > * {
+  flex: 1;
+}
+
+.spec-sheet-actions > :first-child:not(:only-child) {
+  flex: 1;
+}
+
+/* Variants and states. Each cell is inert: a specimen, not a control, so it takes no pointer, no
+   focus and no real :hover; its state comes from the attribute the state styles key on. */
+
+.spec-matrix {
+  inline-size: 100%;
+  min-inline-size: max-content;
+  border-collapse: collapse;
+}
+
+.spec-matrix :is(th, td) {
+  padding: var(--perron-space-300) var(--perron-space-200);
+  text-align: center;
+  vertical-align: middle;
+}
+
+.spec-matrix thead th {
+  padding-block: var(--perron-space-500) 0;
+}
+
+.spec-matrix :is(th, td):first-child {
+  padding-inline-start: var(--perron-space-500);
+  text-align: start;
+}
+
+.spec-matrix :is(th, td):last-child {
+  padding-inline-end: var(--perron-space-500);
+}
+
+.spec-matrix tbody tr:last-child > * {
+  padding-block-end: var(--perron-space-500);
+}
+
+.spec-row-label {
+  font: var(--perron-typography-label-sm);
+  letter-spacing: var(--perron-typography-label-sm-tracking);
+  color: var(--perron-color-text-secondary);
+  white-space: nowrap;
+}
+
+.spec-cell {
+  display: inline-flex;
+  justify-content: center;
+  text-align: start;
+}
+
+.spec-picker {
+  display: none;
+}
+
+/* a pattern is a panel's width: its states run down the page, as on a phone */
+.spec-stacked .spec-states-table {
+  display: none;
+}
+
+.spec-stacked .spec-picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-300);
+}
+
+.spec-picker-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-200);
+}
+
+.spec-picker-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow: hidden;
+  border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+  border-radius: var(--perron-radius-lg);
+  background: var(--perron-color-surface-raised);
+}
+
+.spec-picker-list li {
+  min-block-size: var(--perron-size-vehicle-row);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--perron-space-300);
+  padding: var(--perron-space-200) var(--perron-space-400);
+}
+
+.spec-picker-list li + li {
+  border-block-start: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+}
+
+/* Sizes and icons */
+
+.spec-pair {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(100%, calc(var(--perron-space-800) * 8.125)), 1fr)
+  );
+  gap: var(--perron-space-400);
+}
+
+.spec-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--perron-space-600);
+}
+
+.spec-row-tight {
+  gap: var(--perron-space-300);
+  align-items: center;
+}
+
+.spec-sample {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--perron-space-200);
+}
+
+.spec-sample-name {
+  font: var(--perron-typography-label-sm);
+  letter-spacing: var(--perron-typography-label-sm-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.spec-sample-token {
+  font: var(--perron-typography-data-sm);
+  letter-spacing: var(--perron-typography-data-sm-tracking);
+  color: var(--perron-color-text-tertiary);
+}
+
+.spec-caption {
+  margin: 0;
+  font: var(--perron-typography-caption);
+  letter-spacing: var(--perron-typography-caption-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+/* Props, in MUI's columns */
+
+.spec-props {
+  inline-size: 100%;
+  min-inline-size: calc(var(--perron-space-800) * 20);
+  border-collapse: collapse;
+  text-align: start;
+}
+
+.spec-props th {
+  padding: var(--perron-space-400);
+  text-align: start;
+}
+
+.spec-props td {
+  padding: var(--perron-space-300) var(--perron-space-400);
+  border-block-start: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+  vertical-align: top;
+  font: var(--perron-typography-data);
+  letter-spacing: var(--perron-typography-data-tracking);
+}
+
+.spec-props .spec-prop-name {
+  white-space: nowrap;
+}
+
+.spec-prop-type {
+  color: var(--perron-color-text-info);
+}
+
+.spec-prop-default {
+  color: var(--perron-color-text-secondary);
+}
+
+/* shares of the table, so a long type wraps rather than squeezing the description */
+.spec-props .spec-prop-type {
+  inline-size: 30%;
+  overflow-wrap: anywhere;
+}
+
+.spec-props .spec-prop-default {
+  inline-size: 15%;
+}
+
+.spec-props .spec-prop-description {
+  inline-size: 40%;
+  font: var(--perron-typography-body-sm);
+  letter-spacing: var(--perron-typography-body-sm-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.spec-props code,
+.spec-props-list code {
+  font: inherit;
+}
+
+.spec-prop-description code {
+  font: var(--perron-typography-data);
+  letter-spacing: var(--perron-typography-data-tracking);
+  color: var(--perron-color-text-primary);
+}
+
+.spec-required {
+  color: var(--perron-color-text-danger);
+}
+
+.spec-props-list {
+  display: none;
+}
+
+/* The install strip */
+
+.spec-install {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--perron-space-400);
+  padding: var(--perron-space-500);
+}
+
+.spec-install-part {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-150);
+}
+
+.spec-install-label {
+  margin: 0;
+  font: var(--perron-typography-heading-sm);
+  letter-spacing: var(--perron-typography-heading-sm-tracking);
+}
+
+/* The spec's prose sections: section headings in the page's heading role */
+
+.spec-prose .markdown h3 {
+  font: var(--perron-typography-heading-sm);
+  letter-spacing: var(--perron-typography-heading-sm-tracking);
+}
+
+/* Previous and next */
+
+.spec-page-link {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-050);
+  padding: var(--perron-space-200) var(--perron-space-300);
+  border-radius: var(--perron-radius-lg);
+  color: inherit;
+  text-decoration: none;
+}
+
+.spec-page-link:last-child {
+  align-items: flex-end;
+  margin-inline-start: auto;
+}
+
+.spec-page-link-dir {
+  font: var(--perron-typography-caption);
+  letter-spacing: var(--perron-typography-caption-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.spec-page-link-name {
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+}
+
+/* Under breakpoint.phone (760px; media queries can't read the token): the page is one opaque
+   sheet over the map's strip, with no list beside it; "On this page" is a select, the states a
+   picked row, the props a list, and every panel opaque, so no text sits on the moving map. */
+@media (max-width: 759.98px) {
+  .spec {
+    margin-block-start: var(--perron-space-800);
+    padding: var(--perron-space-400) var(--perron-space-400) var(--perron-space-800);
+    border-radius: var(--perron-radius-xl) var(--perron-radius-xl) 0 0;
+    background: var(--perron-color-surface-default);
+    box-shadow: var(--perron-shadow-panel);
+  }
+
+  .spec-aside,
+  .spec-toc,
+  .spec-actions {
+    display: none;
+  }
+
+  .spec-content {
+    gap: var(--perron-space-800);
+  }
+
+  .spec-section {
+    gap: var(--perron-space-300);
+  }
+
+  .spec-toc-select {
+    display: block;
+  }
+
+  .spec-panel {
+    border-radius: var(--perron-radius-lg);
+    background: var(--perron-color-surface-raised);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .spec-padded {
+    padding: var(--perron-space-400);
+  }
+
+  .spec-context {
+    align-items: flex-end;
+    padding: var(--spec-context-map) 0 0;
+  }
+
+  .spec-sheet {
+    inline-size: 100%;
+    align-self: auto;
+    gap: var(--perron-space-300);
+    padding: var(--perron-space-200) var(--perron-space-400) var(--perron-space-400);
+    border: 0;
+    border-radius: var(--perron-radius-xl) var(--perron-radius-xl) 0 0;
+    background: var(--perron-color-surface-default);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .spec-sheet-handle {
+    display: block;
+    align-self: center;
+    inline-size: var(--perron-space-800);
+    block-size: var(--perron-space-100);
+    border-radius: var(--perron-radius-full);
+    background: var(--perron-color-border-strong);
+  }
+
+  .spec-sheet-actions {
+    flex-direction: column;
+  }
+
+  .spec-states-table {
+    display: none;
+  }
+
+  .spec-picker {
+    display: flex;
+    flex-direction: column;
+    gap: var(--perron-space-300);
+  }
+
+  .spec-picker-controls {
+    display: flex;
+    flex-direction: column;
+    gap: var(--perron-space-200);
+  }
+
+  .spec-picker-controls .pn-SegmentedControl {
+    inline-size: 100%;
+  }
+
+  .spec-picker-controls .pn-Segment {
+    max-inline-size: none;
+  }
+
+  .spec-props-table {
+    display: none;
+  }
+
+  .spec-props-list {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  .spec-props-list > div {
+    display: flex;
+    flex-direction: column;
+    gap: var(--perron-space-100);
+    padding: var(--perron-space-300) var(--perron-space-400);
+  }
+
+  .spec-props-list > div + div {
+    border-block-start: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+  }
+
+  .spec-props-list dt {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--perron-space-100) var(--perron-space-300);
+  }
+
+  .spec-props-list dt > code {
+    font: var(--perron-typography-data-lg);
+    letter-spacing: var(--perron-typography-data-lg-tracking);
+  }
+
+  .spec-props-list dt > span {
+    font: var(--perron-typography-data-sm);
+    letter-spacing: var(--perron-typography-data-sm-tracking);
+    color: var(--perron-color-text-secondary);
+  }
+
+  .spec-props-list dd {
+    margin: 0;
+    font: var(--perron-typography-body-sm);
+    letter-spacing: var(--perron-typography-body-sm-tracking);
+    color: var(--perron-color-text-secondary);
+  }
+
+  .spec-install {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0;
+    border: 0;
+    background: none;
+  }
+
+  .spec-pages {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--perron-space-300);
+    padding-block-start: var(--perron-space-300);
+    border-block-start: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+  }
+}
