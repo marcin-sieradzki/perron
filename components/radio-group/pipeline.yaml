@@ -3,9 +3,6 @@ component: RadioGroup
 layer: component
 deferred:
   at: 2026-10-25T05:22:58.444Z
-needsHuman:
-  stage: review
-  reason: '2 review rounds found a P1 or a P2, the last a P1: review round 2 found 1 P1 (components/radio-group/review.md)'
 stages:
   brief:
     status: done
@@ -19,7 +16,7 @@ stages:
     ended: 2026-10-25T06:11:08.209Z
   review:
     rounds: 2
-    sentBack: 2
+    sentBack: 0
     findings:
       p1: 1
       p2: 0
@@ -102,3 +99,6 @@ notes:
   - stage: build
     at: 2026-10-25T06:11:08.210Z
     direction: Fieldset's spec (docs/components/fieldset.md:22,141) still says RadioGroup takes its description and error through a Field round it, which RadioGroup's CR-12 forbids for Perron's Field (review P3-5).
+  - stage: review
+    at: 2026-10-25T06:18:59.346Z
+    unblocked: '2 review rounds found a P1 or a P2, the last a P1: review round 2 found 1 P1 (components/radio-group/review.md)'
