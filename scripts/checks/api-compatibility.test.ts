@@ -236,7 +236,8 @@ describe('api-compatibility', () => {
     warn.mockRestore()
   })
 
+  // a CI runner's margin over vitest's 5 s, as shared-parts' and docs' have
   it('passes on the repo', () => {
     expect(check.run(root)).toEqual([])
-  })
+  }, 15_000)
 })

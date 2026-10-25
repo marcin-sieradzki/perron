@@ -285,7 +285,8 @@ ${pair}`),
     ).toEqual([])
   })
 
+  // a CI runner's margin over vitest's 5 s, as shared-parts' and docs' have
   it('finds nothing in the repo', () => {
     expect(check.run(root)).toEqual([])
-  })
+  }, 15_000)
 })
