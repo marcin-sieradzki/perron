@@ -5,6 +5,7 @@ import { mergeProps } from '@base-ui/react/merge-props'
 import { Tooltip } from '@base-ui/react/tooltip'
 import type { ReactNode, Ref } from 'react'
 import { withClass } from '../../internal/nodes.ts'
+import { tokenValue } from '../../internal/tokens.ts'
 import './MapTooltip.css'
 
 type ChangeDetails = Tooltip.Root.ChangeEventDetails
@@ -25,11 +26,10 @@ let offsets: Offsets | undefined
  * they can be read.
  */
 function defaultOffsets(): Offsets {
-  if (offsets === undefined && typeof document !== 'undefined') {
-    const root = getComputedStyle(document.documentElement)
-    const px = (property: string) => {
-      const value = root.getPropertyValue(property).trim()
-      return value.endsWith('px') ? Number.parseFloat(value) : Number.NaN
+  if (offsets === undefined) {
+    const px = (property: `--perron-${string}`) => {
+      const value = tokenValue(property)
+      return value?.endsWith('px') ? Number.parseFloat(value) : Number.NaN
     }
     const read = {
       sideOffset: px('--perron-space-200'),
