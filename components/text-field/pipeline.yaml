@@ -1,0 +1,6 @@
+# Written by npm run factory; never by hand.
+component: TextField
+layer: component
+deferred:
+  at: 2026-10-25T05:32:54.763Z
+stages: {}
