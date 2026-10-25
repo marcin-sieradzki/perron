@@ -1,0 +1,6 @@
+# Written by npm run factory; never by hand.
+component: HighlightChip
+layer: component
+deferred:
+  at: 2026-10-25T01:16:43.640Z
+stages: {}
