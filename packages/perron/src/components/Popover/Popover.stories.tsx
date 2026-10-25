@@ -234,7 +234,7 @@ export const TitleOnly: Story = {
   },
 }
 
-/** Content taller than the frame and a long Danish word in the title: the popup scrolls and wraps. */
+/** Content taller than the room below the trigger, and a long Danish word in the title. */
 export const LongContent: Story = {
   args: {
     title: LONG_TITLE,
@@ -249,6 +249,12 @@ export const LongContent: Story = {
   play: async ({ canvasElement, step }) => {
     const trigger = triggerIn(canvasElement)
     const popup = await popover(LONG_TITLE)
+    await step('it stays below the trigger rather than move beside it', async () => {
+      await expect(popup).toHaveAttribute('data-side', 'bottom')
+      await expect(popup.getBoundingClientRect().top).toBeGreaterThanOrEqual(
+        trigger.getBoundingClientRect().bottom,
+      )
+    })
     await step('the popup fits the room Base UI gives it, and scrolls', async () => {
       const positioner = popup.parentElement as HTMLElement
       const available = Number.parseFloat(

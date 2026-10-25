@@ -9,13 +9,11 @@ stages:
     started: 2026-10-25T05:21:42.336Z
     ended: 2026-10-25T05:22:49.000Z
   build:
-    runs: 2
-    status: pending
-    started: 2026-10-25T05:36:43.208Z
-    spec: afbc42b88f47b8e5fddcc30cdd6dc547058048a372292ab89a59cd7b2af88401
-    asked: 1
-    ended: 2026-10-25T05:40:02.727Z
-    failing: "1. (Base UI parts and Props, the positioner's defaults; popover.md:47, CR-14, the LongContent row; review P2-1) When the popup has no room above or below its trigger, keep Base UI's default fallbackAxisSide 'end' (moves to the side), or default collisionAvoidance to { fallbackAxisSide: 'none' } so it stays above or below and scrolls, with slotProps.positioner.collisionAvoidance still overriding it? Recommended: default to 'none', as Base UI's DROPDOWN_COLLISION_AVOIDANCE does for popups capped at --available-height."
+    runs: 3
+    status: done
+    started: 2026-10-25T05:40:09.145Z
+    spec: 4ce44614ce38e14ccd92004e9e9279900c910df1bf9e535cfd04e7fe84a44629
+    ended: 2026-10-25T05:44:37.978Z
   review:
     rounds: 1
     sentBack: 1

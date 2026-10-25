@@ -15,6 +15,12 @@ import './Popover.css'
 
 type ChangeDetails = BasePopover.Root.ChangeEventDetails
 
+// CR-7: the popup flips between below and above its trigger, never to its side, and scrolls inside
+// --available-height when neither has room for it, as Base UI's menus and select lists do
+const COLLISION_AVOIDANCE: BasePopover.Positioner.Props['collisionAvoidance'] = {
+  fallbackAxisSide: 'none',
+}
+
 export interface PopoverProps extends Omit<
   BasePopover.Popup.Props,
   'children' | 'title' | 'className' | 'style' | 'ref'
@@ -80,8 +86,8 @@ export interface PopoverProps extends Omit<
     /** Props for the `portal` part, such as its `container`. */
     portal?: BasePopover.Portal.Props
     /**
-     * Props for the `positioner` part, such as `side`, `align` or `anchor`. Its `sideOffset` and
-     * `collisionPadding` replace Popover's defaults.
+     * Props for the `positioner` part, such as `side`, `align` or `anchor`. Its `sideOffset`,
+     * `collisionPadding` and `collisionAvoidance` replace Popover's defaults.
      */
     positioner?: BasePopover.Positioner.Props
     /** Props for the `title` part, such as `render={<h3 />}` for another heading level. */
@@ -153,10 +159,11 @@ export function Popover({
         className={withClass('pn-Popover-portal', slotProps?.portal?.className)}
       >
         <BasePopover.Positioner
-          // CR-7: the caller's props, then the token defaults where it gives none
+          // CR-7: the caller's props, then Popover's defaults where it gives none
           {...mergeProps<typeof BasePopover.Positioner>(positioner, {
             sideOffset: positioner?.sideOffset ?? defaults.sideOffset,
             collisionPadding: positioner?.collisionPadding ?? defaults.collisionPadding,
+            collisionAvoidance: positioner?.collisionAvoidance ?? COLLISION_AVOIDANCE,
           })}
           className={withClass('pn-Popover-positioner', positioner?.className)}
         >
