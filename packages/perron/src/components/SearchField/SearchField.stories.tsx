@@ -8,7 +8,7 @@ import { expect, fireEvent, fn, screen, userEvent, waitFor, within } from 'story
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { dictionaries } from '../../locale/index.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
-import { heard, mounted } from '../../testing/stories.ts'
+import { colour, heard, mounted } from '../../testing/stories.ts'
 import { LineBadge } from '../LineBadge/LineBadge.tsx'
 import { StationIcon } from '../StationIcon/StationIcon.tsx'
 import { SearchField } from './SearchField.tsx'
@@ -64,7 +64,7 @@ type Story = StoryObj<typeof meta>
 
 /** The field's input, the combobox, in the story's canvas. */
 const inputIn = (canvasElement: HTMLElement, name = LABEL) =>
-  within(canvasElement).getByRole('combobox', { name })
+  within(canvasElement).getByRole<HTMLInputElement>('combobox', { name })
 
 /** The open list, found through `screen`: it portals outside the canvas. */
 const listbox = () => screen.findByRole('listbox')
@@ -73,8 +73,14 @@ const listbox = () => screen.findByRole('listbox')
 const popup = async () => (await listbox()).closest('.pn-SearchField-popup') as HTMLElement
 
 /** Resolves once no list is in the document. */
-const closed = () =>
+const listClosed = () =>
   waitFor(() => expect(document.querySelector('.pn-SearchField-popup')).toBeNull())
+
+/**
+ * The screen-reader-only Dismiss controls Base UI 1.9.0 adds while the list is open, one before the
+ * input and one after the popup, named in its own English (spec, Keyboard and ARIA).
+ */
+const dismissControls = () => document.querySelectorAll('[role="button"][aria-label="Dismiss"]')
 
 /** The id of the option the input's `aria-activedescendant` names, as its text. */
 const highlighted = (input: HTMLElement) => {
@@ -84,14 +90,11 @@ const highlighted = (input: HTMLElement) => {
     : null
 }
 
-/** A value as it renders, through a probe that reads it as `property`. */
-function resolve(
-  property: 'backgroundColor' | 'outlineColor' | 'outlineWidth' | 'outlineOffset',
-  value: string,
-) {
+/** A length token as it renders, through a probe that reads it as an outline's width or offset. */
+function outline(property: 'outlineWidth' | 'outlineOffset', token: `--perron-${string}`) {
   const probe = document.createElement('span')
   probe.style.outlineStyle = 'solid'
-  probe.style[property] = value
+  probe.style[property] = `var(${token})`
   document.body.append(probe)
   const rendered = getComputedStyle(probe)[property]
   probe.remove()
@@ -151,7 +154,7 @@ export const Hover: Story = {
     await expect(images.at(-1)).toContain('var(--perron-color-surface-hover)')
     await expect(images.at(-1)).toContain('linear-gradient')
     await expect(getComputedStyle(group).backgroundColor).toBe(
-      resolve('backgroundColor', 'var(--perron-color-surface-raised)'),
+      colour('--perron-color-surface-raised'),
     )
   },
 }
@@ -166,11 +169,9 @@ export const Focus: Story = {
     await expect(input.matches(':focus-visible')).toBe(true)
     const ring = getComputedStyle(group)
     await expect(ring.outlineStyle).toBe('solid')
-    await expect(ring.outlineColor).toBe(
-      resolve('outlineColor', 'var(--perron-color-border-focus)'),
-    )
-    await expect(ring.outlineWidth).toBe(resolve('outlineWidth', 'var(--perron-focus-width)'))
-    await expect(ring.outlineOffset).toBe(resolve('outlineOffset', 'var(--perron-focus-offset)'))
+    await expect(ring.outlineColor).toBe(colour('--perron-color-border-focus'))
+    await expect(ring.outlineWidth).toBe(outline('outlineWidth', '--perron-focus-width'))
+    await expect(ring.outlineOffset).toBe(outline('outlineOffset', '--perron-focus-offset'))
     await expect(getComputedStyle(input).outlineStyle).toBe('none')
     await userEvent.tab({ shift: true })
     await expect(input).not.toHaveFocus()
@@ -187,6 +188,20 @@ export const Open: Story = {
       await expect(list).toHaveAccessibleName(LABEL)
       await expect(within(list).getAllByRole('option')).toHaveLength(3)
       expectOwnedStrings((await popup()).outerHTML, 'en', CALLER)
+    })
+    await step('Base UI’s known exceptions hold while the list is open', async () => {
+      // two screen-reader-only Dismiss controls, Base UI's own English, outside the popup
+      await expect(dismissControls()).toHaveLength(2)
+      // its modal focus manager hides the label and the clear button; the input keeps its name
+      await expect(canvasElement.querySelector('.pn-SearchField-label')).toHaveAttribute(
+        'aria-hidden',
+        'true',
+      )
+      await expect(canvasElement.querySelector('.pn-SearchField-clear')).toHaveAttribute(
+        'aria-hidden',
+        'true',
+      )
+      await expect(input).toHaveAccessibleName(LABEL)
     })
     await step('ArrowDown moves the highlight, focus staying on the input', async () => {
       input.focus()
@@ -211,8 +226,12 @@ export const Open: Story = {
         'item-press',
         expect.anything(),
       )
-      await closed()
+      await listClosed()
       await expect(input).toHaveFocus()
+      await expect(dismissControls()).toHaveLength(0)
+      await expect(canvasElement.querySelector('.pn-SearchField-label')).not.toHaveAttribute(
+        'aria-hidden',
+      )
       input.blur()
     })
   },
@@ -264,7 +283,7 @@ export const Filled: Story = {
       await userEvent.type(input, '5C')
       await listbox()
       await userEvent.keyboard('{Escape}')
-      await closed()
+      await listClosed()
       await expect(input).toHaveValue('5C')
       await userEvent.keyboard('{Escape}')
       await expect(input).toHaveValue('')
@@ -341,7 +360,7 @@ export const NoMatches: Story = {
         'escape-key',
         expect.anything(),
       )
-      await closed()
+      await listClosed()
       input.blur()
     })
   },
@@ -361,7 +380,7 @@ export const HiddenLabel: Story = {
     await userEvent.keyboard('{ArrowDown}')
     await expect(await listbox()).toHaveAccessibleName(LABEL)
     await userEvent.keyboard('{Escape}')
-    await closed()
+    await listClosed()
     input.blur()
   },
 }
@@ -409,7 +428,7 @@ export const WithMarks: Story = {
     const input = inputIn(canvasElement)
     input.focus()
     await userEvent.keyboard('{Escape}')
-    await closed()
+    await listClosed()
     input.blur()
   },
 }
@@ -423,7 +442,7 @@ export const CallerFilter: Story = {
     const input = inputIn(canvasElement)
     input.focus()
     await userEvent.keyboard('{Escape}')
-    await closed()
+    await listClosed()
     input.blur()
   },
 }
@@ -481,7 +500,7 @@ export const Controlled: Story = {
         'escape-key',
         expect.anything(),
       )
-      await closed()
+      await listClosed()
     })
     await step('a press outside calls onClose with outside-press', async () => {
       await userEvent.keyboard('{ArrowDown}')
@@ -499,7 +518,7 @@ export const Controlled: Story = {
           expect.anything(),
         ),
       )
-      await closed()
+      await listClosed()
       await expect(input).toHaveFocus()
     })
   },
@@ -546,7 +565,7 @@ export const LongWords: Story = {
     const input = inputIn(canvasElement, `Søg ${COMPOUND}`)
     input.focus()
     await userEvent.keyboard('{Escape}')
-    await closed()
+    await listClosed()
     input.blur()
   },
 }

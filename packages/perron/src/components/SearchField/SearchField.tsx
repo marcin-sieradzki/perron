@@ -7,7 +7,7 @@ import { Field } from '@base-ui/react/field'
 import { mergeProps } from '@base-ui/react/merge-props'
 import { useId } from 'react'
 import type { MouseEvent, ReactNode, Ref } from 'react'
-import { classes, given } from '../../internal/nodes.ts'
+import { given, withClass } from '../../internal/nodes.ts'
 import { CloseButton } from '../../parts/CloseButton/CloseButton.tsx'
 import { VisuallyHidden } from '../../parts/VisuallyHidden/VisuallyHidden.tsx'
 import { useOwnedStrings } from '../../PerronProvider.tsx'
@@ -97,7 +97,8 @@ export interface SearchFieldProps extends Omit<
   onOpen?: (event: Event, details: OpenDetails) => void
   /**
    * Called when the list asks to close: `reason` is `'escape-key'`, `'outside-press'`,
-   * `'focus-out'`, `'item-press'` or `'input-clear'`; `details.cancel()` keeps it open.
+   * `'focus-out'`, `'item-press'`, `'input-clear'` or `'close-press'`; `details.cancel()` keeps
+   * it open.
    */
   onClose?: (
     event: Event,
@@ -144,18 +145,6 @@ export interface SearchFieldProps extends Omit<
     /** Props for every `item` part, each suggestion's row. Its `onClick` runs before `onItemSelect`. */
     item?: Autocomplete.Item.Props
   }
-}
-
-/**
- * Base UI's `className`: a string, or a function of the part's state. `mergeProps` joins strings
- * only, and puts the rightmost first, so each part's class is set after the merge (CR-5).
- */
-type ClassName<State> = string | ((state: State) => string | undefined) | undefined
-
-/** The part's own class first, then the caller's, whether the caller's is a string or a function. */
-function withClass<State>(own: string, theirs: ClassName<State>): ClassName<State> {
-  if (typeof theirs === 'function') return (state) => classes(own, theirs(state))
-  return classes(own, theirs)
 }
 
 /** `search` from packages/perron/icons/, hidden from screen readers: the label names the field (CR-7). */

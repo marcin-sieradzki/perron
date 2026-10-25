@@ -9,11 +9,11 @@ stages:
     started: 2026-10-25T01:41:44.227Z
     ended: 2026-10-25T01:43:26.113Z
   build:
-    status: pending
-    started: 2026-10-25T01:43:31.170Z
-    runs: 1
-    ended: 2026-10-25T01:56:49.829Z
-    failing: '1. (Keyboard and ARIA, What axe won''t catch; Owned strings) While the list is open, Base UI 1.9.0 adds two screen-reader-only span role="button" aria-label="Dismiss" controls (from ComboboxInput and ComboboxPopup), hard-coded English, and its modal focus manager sets aria-hidden on the label and the clear button. (a) keep Base UI''s behaviour, name them in the spec as known exceptions, assert them in a story, and add a Direction asking Base UI for a label prop; (b) hide them with CSS; (c) relabel them with a new owned string. Recommended: (a).'
+    runs: 2
+    status: done
+    started: 2026-10-25T01:57:20.396Z
+    spec: 69228ece73d00c5f8c31182272a47a38d95b0d9a794a81b9a6c4c3057cc7e1cc
+    ended: 2026-10-25T02:02:58.866Z
 notes:
   - stage: brief
     at: 2026-10-25T01:40:53.602Z
@@ -88,3 +88,12 @@ notes:
   - stage: build
     at: 2026-10-25T01:56:49.830Z
     questions: '1. (Keyboard and ARIA, What axe won''t catch; Owned strings) While the list is open, Base UI 1.9.0 adds two screen-reader-only span role="button" aria-label="Dismiss" controls (from ComboboxInput and ComboboxPopup), hard-coded English, and its modal focus manager sets aria-hidden on the label and the clear button. (a) keep Base UI''s behaviour, name them in the spec as known exceptions, assert them in a story, and add a Direction asking Base UI for a label prop; (b) hide them with CSS; (c) relabel them with a new owned string. Recommended: (a).'
+  - stage: build
+    at: 2026-10-25T02:02:58.866Z
+    direction: Base UI 1.9.0's ComboboxInternalDismissButton hard-codes aria-label="Dismiss" on two screen-reader-only controls while an Autocomplete or Combobox list is open, so no owned string or *Label prop can translate them. Ask Base UI for a label prop (or a localisation hook) on Autocomplete.Input and Autocomplete.Popup; once it lands, SearchField gains a dismissLabel owned string.
+  - stage: build
+    at: 2026-10-25T02:02:58.866Z
+    direction: "Base UI's modal focus manager sets aria-hidden on the field's label and clear button while the list is open; the input stays named through aria-labelledby. Also part of the Base UI request: an option to keep a field's own label and controls exposed."
+  - stage: build
+    at: 2026-10-25T02:02:58.866Z
+    direction: The shared closed story helper waits only for a dialog; SearchField keeps a local listClosed for its popup list. When a second popup-list component needs it, it could join the Shared helpers table.
