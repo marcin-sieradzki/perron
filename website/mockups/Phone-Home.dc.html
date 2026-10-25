@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Perron, over the map: phone home</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="perron-tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@600;700&amp;family=JetBrains+Mono:wght@500;600&amp;family=Schibsted+Grotesk:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:inherit}
+</style>
+</helmet>
+<div data-theme="{{theme}}" style="position: relative; min-height: 100vh; overflow: hidden; background: var(--perron-color-surface-default); color: var(--perron-color-text-primary); font: var(--perron-typography-body); -webkit-font-smoothing: antialiased">
+
+  <!-- The live map: a phone screen's top half -->
+  <div aria-hidden="true" style="position: absolute; inset: 0 0 auto 0; height: 380px; background: var(--perron-color-map-land); overflow: hidden">
+    <svg width="100%" height="100%" viewBox="0 0 390 380" preserveAspectRatio="xMidYMid slice" style="display: block">
+      <path d="M330 -10 C320 80 345 160 335 240 C325 300 350 350 345 390 L400 390 L400 -10 Z" style="fill: var(--perron-color-map-water)"></path>
+      <ellipse cx="205" cy="52" rx="52" ry="26" style="fill: var(--perron-color-map-park)"></ellipse>
+      <ellipse cx="60" cy="150" rx="34" ry="24" style="fill: var(--perron-color-map-park)"></ellipse>
+      <g style="fill: none; stroke: var(--perron-color-map-street); stroke-width: 4; stroke-linecap: round">
+        <path d="M300 300 L-10 200"></path><path d="M300 300 L200 -10"></path><path d="M60 -10 C100 120 130 260 140 390"></path>
+      </g>
+      <g style="fill: none; stroke-linecap: round; opacity: 0.78">
+        <path d="M-10 250 C80 262 170 280 250 270 C300 264 340 290 400 330" style="stroke: var(--perron-color-transit-line-m1); stroke-width: 3.2"></path>
+        <path d="M-10 254 C80 266 170 284 250 274 C298 268 338 294 398 334" style="stroke: var(--perron-color-transit-line-m2); stroke-width: 3.2"></path>
+        <path d="M325 180 C325 235 283 275 230 275 C177 275 135 235 135 180 C135 125 177 85 230 85 C283 85 325 125 325 180 Z" style="stroke: var(--perron-color-transit-line-m3); stroke-width: 3.2"></path>
+        <path d="M360 -10 C330 60 300 120 250 180 C200 240 120 300 -10 340" style="stroke: var(--perron-color-transit-line-a); stroke-width: 2.5"></path>
+        <path d="M150 -10 C140 60 130 110 110 160 C90 210 60 260 20 390" style="stroke: var(--perron-color-transit-line-f); stroke-width: 2.5"></path>
+      </g>
+      <g style="fill: var(--perron-color-surface-raised); stroke: var(--perron-color-text-primary); stroke-width: 1.6">
+        <circle cx="250" cy="180" r="5"></circle>
+        <circle cx="230" cy="272" r="5"></circle>
+      </g>
+        <g class="pn-moving">
+          <g><animateMotion dur="26s" begin="-4s" repeatCount="indefinite" calcMode="linear" keyPoints="0;0.3;0.3;0.62;0.62;1" keyTimes="0;0.28;0.34;0.62;0.68;1" path="M-10 250 C80 262 170 280 250 270 C300 264 340 290 400 330"></animateMotion><circle r="4.6" style="fill: none; stroke: var(--perron-color-transit-line-m1); stroke-width: 1.4"><animate attributeName="r" values="4.6;14;14" keyTimes="0;0.1375;1" dur="8s" begin="2s" repeatCount="indefinite"></animate><animate attributeName="opacity" values="0.9;0;0" keyTimes="0;0.1375;1" dur="8s" begin="2s" repeatCount="indefinite"></animate></circle><circle r="4.6" style="fill: var(--perron-color-transit-line-m1); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+          <g><animateMotion dur="30s" begin="-17s" repeatCount="indefinite" calcMode="linear" keyPoints="1;0.7;0.7;0.38;0.38;0" keyTimes="0;0.28;0.34;0.62;0.68;1" path="M-10 254 C80 266 170 284 250 274 C298 268 338 294 398 334"></animateMotion><circle r="4.6" style="fill: var(--perron-color-transit-line-m2); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+          <g><animateMotion dur="36s" begin="0s" repeatCount="indefinite" path="M325 180 C325 235 283 275 230 275 C177 275 135 235 135 180 C135 125 177 85 230 85 C283 85 325 125 325 180 Z"></animateMotion><circle r="4.6" style="fill: var(--perron-color-transit-line-m3); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+          <g><animateMotion dur="36s" begin="-18s" repeatCount="indefinite" path="M325 180 C325 235 283 275 230 275 C177 275 135 235 135 180 C135 125 177 85 230 85 C283 85 325 125 325 180 Z"></animateMotion><circle r="4.6" style="fill: var(--perron-color-transit-line-m3); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+          <g><animateMotion dur="36s" begin="-9s" repeatCount="indefinite" calcMode="linear" keyPoints="1;0" keyTimes="0;1" path="M325 180 C325 235 283 275 230 275 C177 275 135 235 135 180 C135 125 177 85 230 85 C283 85 325 125 325 180 Z"></animateMotion><circle r="3.7" style="fill: none; stroke: var(--perron-color-transit-line-m3); stroke-width: 1.8"></circle></g>
+          <g><animateMotion dur="28s" begin="-11s" repeatCount="indefinite" path="M360 -10 C330 60 300 120 250 180 C200 240 120 300 -10 340"></animateMotion><circle r="4.8" style="fill: none; stroke: var(--perron-color-transit-line-a); stroke-width: 1.4"><animate attributeName="r" values="4.8;14;14" keyTimes="0;0.1375;1" dur="8s" begin="5s" repeatCount="indefinite"></animate><animate attributeName="opacity" values="0.9;0;0" keyTimes="0;0.1375;1" dur="8s" begin="5s" repeatCount="indefinite"></animate></circle><circle r="4.8" style="fill: var(--perron-color-transit-line-a); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+          <g><animateMotion dur="30s" begin="-6s" repeatCount="indefinite" calcMode="linear" keyPoints="1;0" keyTimes="0;1" path="M150 -10 C140 60 130 110 110 160 C90 210 60 260 20 390"></animateMotion><circle r="4.8" style="fill: var(--perron-color-transit-line-f); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+          <g><animateMotion dur="40s" begin="-8s" repeatCount="indefinite" calcMode="linear" keyPoints="1;0" keyTimes="0;1" path="M300 300 L-10 200"></animateMotion><circle r="3.3" style="fill: var(--perron-color-transit-mode-bus); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+          <g><animateMotion dur="34s" begin="-20s" repeatCount="indefinite" path="M300 300 L200 -10"></animateMotion><circle r="3.3" style="fill: var(--perron-color-transit-mode-bus); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+          <g><animateMotion dur="48s" begin="-12s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;1;0;0" keyTimes="0;0.46;0.5;0.96;1" path="M60 -10 C100 120 130 260 140 390"></animateMotion><circle r="3.3" style="fill: none; stroke: var(--perron-color-transit-mode-bus); stroke-width: 1.6; stroke-dasharray: 2.1 1.7"></circle></g>
+        </g>
+        <g class="pn-still">
+          <g><animateMotion dur="26s" begin="-4s" repeatCount="indefinite" calcMode="discrete" keyPoints="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" path="M-10 250 C80 262 170 280 250 270 C300 264 340 290 400 330"></animateMotion><circle r="4.6" style="fill: var(--perron-color-transit-line-m1); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+          <g><animateMotion dur="30s" begin="-17s" repeatCount="indefinite" calcMode="discrete" keyPoints="1;0.9;0.8;0.7;0.6;0.5;0.4;0.3;0.2;0.1" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" path="M-10 254 C80 266 170 284 250 274 C298 268 338 294 398 334"></animateMotion><circle r="4.6" style="fill: var(--perron-color-transit-line-m2); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+          <g><animateMotion dur="36s" begin="0s" repeatCount="indefinite" calcMode="discrete" keyPoints="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" path="M325 180 C325 235 283 275 230 275 C177 275 135 235 135 180 C135 125 177 85 230 85 C283 85 325 125 325 180 Z"></animateMotion><circle r="4.6" style="fill: var(--perron-color-transit-line-m3); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+          <g><animateMotion dur="36s" begin="-18s" repeatCount="indefinite" calcMode="discrete" keyPoints="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" path="M325 180 C325 235 283 275 230 275 C177 275 135 235 135 180 C135 125 177 85 230 85 C283 85 325 125 325 180 Z"></animateMotion><circle r="4.6" style="fill: var(--perron-color-transit-line-m3); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+          <g><animateMotion dur="36s" begin="-9s" repeatCount="indefinite" calcMode="discrete" keyPoints="1;0.9;0.8;0.7;0.6;0.5;0.4;0.3;0.2;0.1" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" path="M325 180 C325 235 283 275 230 275 C177 275 135 235 135 180 C135 125 177 85 230 85 C283 85 325 125 325 180 Z"></animateMotion><circle r="3.7" style="fill: none; stroke: var(--perron-color-transit-line-m3); stroke-width: 1.8"></circle></g>
+          <g><animateMotion dur="28s" begin="-11s" repeatCount="indefinite" calcMode="discrete" keyPoints="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" path="M360 -10 C330 60 300 120 250 180 C200 240 120 300 -10 340"></animateMotion><circle r="4.8" style="fill: var(--perron-color-transit-line-a); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+          <g><animateMotion dur="30s" begin="-6s" repeatCount="indefinite" calcMode="discrete" keyPoints="1;0.9;0.8;0.7;0.6;0.5;0.4;0.3;0.2;0.1" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" path="M150 -10 C140 60 130 110 110 160 C90 210 60 260 20 390"></animateMotion><circle r="4.8" style="fill: var(--perron-color-transit-line-f); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+          <g><animateMotion dur="40s" begin="-8s" repeatCount="indefinite" calcMode="discrete" keyPoints="1;0.9;0.8;0.7;0.6;0.5;0.4;0.3;0.2;0.1" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" path="M300 300 L-10 200"></animateMotion><circle r="3.3" style="fill: var(--perron-color-transit-mode-bus); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+          <g><animateMotion dur="34s" begin="-20s" repeatCount="indefinite" calcMode="discrete" keyPoints="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" path="M300 300 L200 -10"></animateMotion><circle r="3.3" style="fill: var(--perron-color-transit-mode-bus); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+          <g><animateMotion dur="48s" begin="-12s" repeatCount="indefinite" calcMode="discrete" keyPoints="0;0.2;0.4;0.6;0.8;1;0.8;0.6;0.4;0.2" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" path="M60 -10 C100 120 130 260 140 390"></animateMotion><circle r="3.3" style="fill: none; stroke: var(--perron-color-transit-mode-bus); stroke-width: 1.6; stroke-dasharray: 2.1 1.7"></circle></g>
+        </g>
+        <circle cx="72" cy="300" r="3.3" style="fill: var(--perron-color-data-state-no-signal); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle>
+    </svg>
+  </div>
+
+  <!-- Top bar: two glass groups, size.top-bar-phone tall -->
+  <header style="position: relative; z-index: 3; padding: 12px 16px 0; display: flex; align-items: center; justify-content: space-between; gap: 8px">
+    <a href="Phone-Home.dc.html" class="pn-glass" style="height: 42px; box-sizing: border-box; padding: 0 14px 0 12px; display: inline-flex; align-items: center; gap: 8px; border-radius: 9999px; background: var(--perron-color-surface-overlay); border: 1px solid var(--perron-color-border-subtle); box-shadow: var(--perron-shadow-panel); color: inherit; text-decoration: none">
+      <svg width="27" height="19" viewBox="0 0 27 19" aria-hidden="true"><circle cx="5.5" cy="12.5" r="4.3" style="fill: var(--perron-color-transit-mode-bus)"></circle><circle cx="13.5" cy="5.5" r="4.3" style="fill: var(--perron-color-transit-line-a)"></circle><circle cx="21.5" cy="12.5" r="3.6" style="fill: none; stroke: var(--perron-color-text-primary); stroke-width: 1.7"></circle></svg>
+      <span style="font: var(--perron-typography-heading-md); font-weight: 700; letter-spacing: var(--perron-typography-heading-md-tracking)">Perron</span>
+    </a>
+    <div role="toolbar" aria-label="Site" class="pn-glass" style="height: 42px; box-sizing: border-box; padding: 3px; display: inline-flex; align-items: center; gap: 2px; border-radius: 9999px; background: var(--perron-color-surface-overlay); border: 1px solid var(--perron-color-border-subtle); box-shadow: var(--perron-shadow-panel)">
+      <button type="button" aria-label="Search the docs" class="pn-hover" style="width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 9999px; background: transparent; color: var(--perron-color-text-primary); cursor: pointer"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" style="fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round"><circle cx="7" cy="7" r="4.6"></circle><path d="m10.5 10.5 3.2 3.2"></path></svg></button>
+      <button type="button" aria-label="Switch theme" class="pn-hover" style="width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 9999px; background: transparent; color: var(--perron-color-text-primary); cursor: pointer"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" style="fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round"><path d="M13.2 9.6A5.6 5.6 0 0 1 6.4 2.8a5.6 5.6 0 1 0 6.8 6.8Z"></path></svg></button>
+      <button type="button" aria-label="Open the menu" aria-haspopup="dialog" onClick="{{openMenu}}" class="pn-hover" style="height: 34px; padding: 0 12px; display: inline-flex; align-items: center; gap: 6px; border: 0; border-radius: 9999px; background: transparent; color: var(--perron-color-text-primary); font: var(--perron-typography-label); cursor: pointer"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" style="fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round"><path d="M3 5h10M3 8h10M3 11h10"></path></svg>Menu</button>
+    </div>
+  </header>
+
+  <!-- The page: an opaque sheet over the map, so text never sits on moving map -->
+  <main style="position: relative; z-index: 1; margin-top: 238px; border-radius: 16px 16px 0 0; background: var(--perron-color-surface-default); box-shadow: var(--perron-shadow-panel); padding: 8px 16px 40px; display: flex; flex-direction: column; gap: 32px">
+    <span aria-hidden="true" style="align-self: center; width: 36px; height: 4px; border-radius: 9999px; background: var(--perron-color-border-strong)"></span>
+
+    <section aria-label="About Perron" style="display: flex; flex-direction: column; gap: 16px">
+      <span style="font: var(--perron-typography-overline); letter-spacing: var(--perron-typography-overline-tracking); text-transform: uppercase; color: var(--perron-color-text-secondary)">Mylder's design system, version 0.2.0</span>
+      <h1 class="pn-title" style="margin: 0; text-wrap: balance">Everything that floats over the map</h1>
+      <p style="margin: 0; font: var(--perron-typography-body); color: var(--perron-color-text-secondary)">Perron is the set of tokens, components, patterns and words behind Mylder, a live map of Copenhagen's buses, S-tog, metro and trains, and how sure we are about each of them.</p>
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <a href="#" class="pn-brand-btn" style="height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; box-sizing: border-box; background: var(--perron-color-surface-brand); border: 1px solid var(--perron-color-border-brand); color: var(--perron-color-text-on-color-dark); font: var(--perron-typography-label); text-decoration: none">Get started</a>
+        <a href="Components.dc.html" class="pn-hover" style="height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; box-sizing: border-box; border: 1px solid var(--perron-color-border-control); color: var(--perron-color-text-primary); font: var(--perron-typography-label); text-decoration: none">Browse components</a>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <span style="font: var(--perron-typography-body-sm); color: var(--perron-color-text-secondary)">Working with a coding agent? Add the Perron MCP server:</span>
+        <span style="display: flex; align-items: center; gap: 4px; padding: 4px 4px 4px 10px; border-radius: 8px; background: var(--perron-color-surface-inset)">
+          <code style="flex: 1; min-width: 0; overflow-x: auto; white-space: nowrap; font: var(--perron-typography-data)">npx -y @mylder/perron-mcp</code>
+          <button type="button" aria-label="Copy the command" class="pn-hover" style="flex: none; width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 6px; background: transparent; color: var(--perron-color-text-secondary); cursor: pointer"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" style="fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linejoin: round"><rect x="4.5" y="4.5" width="7.5" height="7.5" rx="1.4"></rect><path d="M9.5 4.5V3.4c0-.8-.6-1.4-1.4-1.4H3.4C2.6 2 2 2.6 2 3.4v4.7c0 .8.6 1.4 1.4 1.4h1.1"></path></svg></button>
+        </span>
+      </div>
+    </section>
+
+    <section aria-label="What Perron holds today" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1px; border-radius: 12px; overflow: hidden; background: var(--perron-color-border-subtle); border: 1px solid var(--perron-color-border-subtle)">
+      <sc-for list="{{stats}}" as="s" hint-placeholder-count="4">
+        <div style="padding: 14px; background: var(--perron-color-surface-default); display: flex; flex-direction: column; gap: 2px">
+          <span style="font: var(--perron-typography-stat); letter-spacing: var(--perron-typography-stat-tracking); font-variant-numeric: tabular-nums">{{s.value}}</span>
+          <span style="font: var(--perron-typography-label-sm); color: var(--perron-color-text-secondary)">{{s.label}}</span>
+        </div>
+      </sc-for>
+    </section>
+
+    <section aria-labelledby="explore" style="display: flex; flex-direction: column; gap: 8px">
+      <h2 id="explore" style="margin: 0; font: var(--perron-typography-overline); letter-spacing: var(--perron-typography-overline-tracking); text-transform: uppercase; color: var(--perron-color-text-secondary)">Explore</h2>
+      <nav aria-label="Sections" style="display: flex; flex-direction: column; border-radius: 12px; background: var(--perron-color-surface-raised); border: 1px solid var(--perron-color-border-subtle); overflow: hidden">
+        <sc-for list="{{sections}}" as="x" hint-placeholder-count="5">
+          <a href="{{x.href}}" class="pn-hover" style="min-height: 56px; box-sizing: border-box; padding: 10px 12px 10px 14px; display: flex; align-items: center; gap: 12px; border-top: 1px solid var(--perron-color-border-subtle); color: inherit; text-decoration: none">
+            <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+              <span style="font: var(--perron-typography-heading-sm)">{{x.label}}</span>
+              <span style="font: var(--perron-typography-caption); color: var(--perron-color-text-secondary)">{{x.hint}}</span>
+            </span>
+            <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" style="flex: none; fill: none; stroke: var(--perron-color-text-secondary); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transform: rotate(-90deg)"><path d="m4 6 4 4 4-4"></path></svg>
+          </a>
+        </sc-for>
+      </nav>
+    </section>
+
+    <section aria-labelledby="example" style="display: flex; flex-direction: column; gap: 8px">
+      <h2 id="example" style="margin: 0; font: var(--perron-typography-overline); letter-spacing: var(--perron-typography-overline-tracking); text-transform: uppercase; color: var(--perron-color-text-secondary)">Built with Perron</h2>
+      <article style="padding: 14px; border-radius: 12px; background: var(--perron-color-surface-raised); border: 1px solid var(--perron-color-border-subtle); display: flex; flex-direction: column; gap: 12px">
+        <div style="display: flex; align-items: center; gap: 10px">
+          <span style="width: 14px; height: 14px; box-sizing: border-box; border-radius: 9999px; border: 2px solid var(--perron-color-text-primary); background: var(--perron-color-surface-raised)"></span>
+          <span style="display: flex; flex-direction: column; gap: 2px"><span style="font: var(--perron-typography-heading-md); letter-spacing: var(--perron-typography-heading-md-tracking)">Nørreport St.</span><span style="font: var(--perron-typography-caption); color: var(--perron-color-text-secondary)">Metro, S-tog and bus</span></span>
+        </div>
+        <div role="radiogroup" aria-label="Show departures by mode" style="display: flex; padding: 2px; gap: 2px; border-radius: 10px; background: var(--perron-color-surface-inset)">
+          <span role="radio" aria-checked="true" style="flex: 1; height: 32px; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; background: var(--perron-color-surface-raised); box-shadow: var(--perron-shadow-thumb); font: var(--perron-typography-label)">All</span>
+          <span role="radio" aria-checked="false" style="flex: 1; height: 32px; display: inline-flex; align-items: center; justify-content: center; font: var(--perron-typography-label); color: var(--perron-color-text-secondary)">Metro</span>
+          <span role="radio" aria-checked="false" style="flex: 1; height: 32px; display: inline-flex; align-items: center; justify-content: center; font: var(--perron-typography-label); color: var(--perron-color-text-secondary)">S-tog</span>
+          <span role="radio" aria-checked="false" style="flex: 1; height: 32px; display: inline-flex; align-items: center; justify-content: center; font: var(--perron-typography-label); color: var(--perron-color-text-secondary)">Bus</span>
+        </div>
+        <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column">
+          <li style="display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--perron-color-border-subtle)"><span style="min-width: 22px; height: 22px; padding: 0 6px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; background: var(--perron-color-transit-line-m1); color: var(--perron-color-transit-line-on-m1); font: var(--perron-typography-badge); letter-spacing: var(--perron-typography-badge-tracking)">M1</span><span style="flex: 1; min-width: 0; font: var(--perron-typography-label)">Vestamager</span><span style="font: var(--perron-typography-data); color: var(--perron-color-text-success)">On time</span><span style="min-width: 48px; text-align: right; font: var(--perron-typography-data-lg)">2 min</span></li>
+          <li style="display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--perron-color-border-subtle)"><span style="min-width: 22px; height: 22px; padding: 0 6px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; background: var(--perron-color-transit-line-a); color: var(--perron-color-transit-line-on-a); font: var(--perron-typography-badge); letter-spacing: var(--perron-typography-badge-tracking)">A</span><span style="flex: 1; min-width: 0; font: var(--perron-typography-label)">Hundige</span><span style="font: var(--perron-typography-data); color: var(--perron-color-text-info)">−1 min</span><span style="min-width: 48px; text-align: right; font: var(--perron-typography-data-lg)">Now</span></li>
+          <li style="display: flex; align-items: center; gap: 10px; padding: 10px 0"><span style="min-width: 22px; height: 22px; padding: 0 6px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; background: var(--perron-color-transit-mode-bus); color: var(--perron-color-text-on-color-dark); font: var(--perron-typography-badge); letter-spacing: var(--perron-typography-badge-tracking)">5C</span><span style="flex: 1; min-width: 0; font: var(--perron-typography-label)">Husum Torv</span><span style="font: var(--perron-typography-data); color: var(--perron-color-text-primary)">+2 min</span><span style="min-width: 48px; text-align: right; font: var(--perron-typography-data-lg)">~9 min</span></li>
+        </ul>
+        <span style="display: flex; flex-wrap: wrap; gap: 4px 12px; font: var(--perron-typography-label-sm); color: var(--perron-color-text-secondary)"><a href="#" class="pn-link">DetailHeader</a><a href="#" class="pn-link">SegmentedControl</a><a href="#" class="pn-link">LineBadge</a><a href="#" class="pn-link">Delay</a></span>
+      </article>
+    </section>
+
+    <footer style="display: flex; flex-direction: column; gap: 12px; padding-top: 16px; border-top: 1px solid var(--perron-color-border-subtle)">
+      <span style="font: var(--perron-typography-caption); color: var(--perron-color-text-secondary)">Perron is open source under the MIT licence.</span>
+      <span style="display: flex; flex-wrap: wrap; gap: 4px 16px; font: var(--perron-typography-label)"><a href="#" class="pn-link" style="padding: 4px 0">GitHub</a><a href="#" class="pn-link" style="padding: 4px 0">npm</a><a href="#" class="pn-link" style="padding: 4px 0">Storybook</a><a href="#" class="pn-link" style="padding: 4px 0">Penpot library</a></span>
+    </footer>
+  </main>
+
+  <!-- Menu: a bottom sheet over a scrim, inside the first phone screen -->
+  <sc-if value="{{menuOpen}}" hint-placeholder-val="{{false}}">
+    <div style="position: absolute; z-index: 10; inset: 0 0 auto 0; height: 844px">
+      <div onClick="{{closeMenu}}" style="position: absolute; inset: 0; background: var(--perron-color-scrim)"></div>
+      <div role="dialog" aria-modal="true" aria-labelledby="menu-title" style="position: absolute; left: 0; right: 0; bottom: 0; box-sizing: border-box; padding: 8px 16px 24px; border-radius: 16px 16px 0 0; background: var(--perron-color-surface-default); box-shadow: var(--perron-shadow-panel); display: flex; flex-direction: column; gap: 8px">
+        <span aria-hidden="true" style="align-self: center; width: 36px; height: 4px; border-radius: 9999px; background: var(--perron-color-border-strong)"></span>
+        <div style="display: flex; align-items: center; justify-content: space-between">
+          <h2 id="menu-title" style="margin: 0; font: var(--perron-typography-heading-md); letter-spacing: var(--perron-typography-heading-md-tracking)">Menu</h2>
+          <button type="button" aria-label="Close the menu" onClick="{{closeMenu}}" class="pn-hover" style="width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--perron-color-border-control); border-radius: 8px; background: transparent; color: var(--perron-color-text-primary); cursor: pointer"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" style="fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round"><path d="m4 4 8 8M12 4l-8 8"></path></svg></button>
+        </div>
+        <nav aria-label="Sections" style="display: flex; flex-direction: column">
+          <a href="#" class="pn-hover" style="min-height: 48px; padding: 0 10px; display: flex; align-items: center; border-radius: 8px; font: var(--perron-typography-label); text-decoration: none">Get started</a>
+          <sc-for list="{{sections}}" as="x" hint-placeholder-count="5">
+            <a href="{{x.href}}" class="pn-hover" style="min-height: 48px; padding: 0 10px; display: flex; align-items: center; justify-content: space-between; border-radius: 8px; font: var(--perron-typography-label); text-decoration: none">{{x.label}} <span style="font: var(--perron-typography-data-sm); color: var(--perron-color-text-secondary)">{{x.count}}</span></a>
+          </sc-for>
+          <a href="#" class="pn-hover" style="min-height: 48px; padding: 0 10px; display: flex; align-items: center; border-radius: 8px; font: var(--perron-typography-label); text-decoration: none">GitHub</a>
+        </nav>
+        <span style="font: var(--perron-typography-caption); color: var(--perron-color-text-secondary)">Keys: <kbd style="font: var(--perron-typography-data-sm); padding: 0 4px; border-radius: 4px; border: 1px solid var(--perron-color-border-strong); background: var(--perron-color-surface-raised)">Esc</kbd> closes the menu.</span>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":390,"height":2200}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { menu: false };
+  }
+  renderVals() {
+    return {
+      theme: this.props.theme ?? 'dark',
+      menuOpen: this.state.menu,
+      openMenu: () => this.setState({ menu: true }),
+      closeMenu: () => this.setState({ menu: false }),
+      stats: [
+        { value: '41', label: 'Stable components' },
+        { value: '8', label: 'Patterns' },
+        { value: '256', label: 'Tokens' },
+        { value: '4', label: 'Languages' }
+      ],
+      sections: [
+        { label: 'Foundations', hint: 'Colour, type, space, motion and the mark', href: 'Foundations.dc.html', count: '12' },
+        { label: 'Components', hint: '41 stable, 13 in design', href: 'Components.dc.html', count: '41' },
+        { label: 'Patterns', hint: 'Screen pieces built from components', href: 'Patterns.dc.html', count: '8' },
+        { label: 'Content design', hint: 'Voice, numbers and the words for every state', href: '#', count: '' },
+        { label: 'Agents', hint: 'The MCP server and its three tools', href: 'Agents.dc.html', count: '3' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

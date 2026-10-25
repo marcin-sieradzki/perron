@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Perron, over the map: phone Button</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="perron-tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@600;700&amp;family=JetBrains+Mono:wght@500;600&amp;family=Schibsted+Grotesk:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:inherit}
+</style>
+</helmet>
+<div data-theme="{{theme}}" style="position: relative; min-height: 100vh; overflow: hidden; background: var(--perron-color-surface-default); color: var(--perron-color-text-primary); font: var(--perron-typography-body); -webkit-font-smoothing: antialiased">
+
+  <!-- The live map: a phone screen's top half -->
+  <div aria-hidden="true" style="position: absolute; inset: 0 0 auto 0; height: 190px; background: var(--perron-color-map-land); overflow: hidden">
+    <svg width="100%" height="100%" viewBox="0 0 390 380" preserveAspectRatio="xMidYMin slice" style="display: block">
+      <path d="M330 -10 C320 80 345 160 335 240 C325 300 350 350 345 390 L400 390 L400 -10 Z" style="fill: var(--perron-color-map-water)"></path>
+      <ellipse cx="205" cy="52" rx="52" ry="26" style="fill: var(--perron-color-map-park)"></ellipse>
+      <ellipse cx="60" cy="150" rx="34" ry="24" style="fill: var(--perron-color-map-park)"></ellipse>
+      <g style="fill: none; stroke: var(--perron-color-map-street); stroke-width: 4; stroke-linecap: round">
+        <path d="M300 300 L-10 200"></path><path d="M300 300 L200 -10"></path><path d="M60 -10 C100 120 130 260 140 390"></path>
+      </g>
+      <g style="fill: none; stroke-linecap: round; opacity: 0.78">
+        <path d="M-10 250 C80 262 170 280 250 270 C300 264 340 290 400 330" style="stroke: var(--perron-color-transit-line-m1); stroke-width: 3.2"></path>
+        <path d="M-10 254 C80 266 170 284 250 274 C298 268 338 294 398 334" style="stroke: var(--perron-color-transit-line-m2); stroke-width: 3.2"></path>
+        <path d="M325 180 C325 235 283 275 230 275 C177 275 135 235 135 180 C135 125 177 85 230 85 C283 85 325 125 325 180 Z" style="stroke: var(--perron-color-transit-line-m3); stroke-width: 3.2"></path>
+        <path d="M360 -10 C330 60 300 120 250 180 C200 240 120 300 -10 340" style="stroke: var(--perron-color-transit-line-a); stroke-width: 2.5"></path>
+        <path d="M150 -10 C140 60 130 110 110 160 C90 210 60 260 20 390" style="stroke: var(--perron-color-transit-line-f); stroke-width: 2.5"></path>
+      </g>
+      <g style="fill: var(--perron-color-surface-raised); stroke: var(--perron-color-text-primary); stroke-width: 1.6">
+        <circle cx="250" cy="180" r="5"></circle>
+        <circle cx="230" cy="272" r="5"></circle>
+      </g>
+        <g class="pn-moving">
+          <g><animateMotion dur="26s" begin="-4s" repeatCount="indefinite" calcMode="linear" keyPoints="0;0.3;0.3;0.62;0.62;1" keyTimes="0;0.28;0.34;0.62;0.68;1" path="M-10 250 C80 262 170 280 250 270 C300 264 340 290 400 330"></animateMotion><circle r="4.6" style="fill: none; stroke: var(--perron-color-transit-line-m1); stroke-width: 1.4"><animate attributeName="r" values="4.6;14;14" keyTimes="0;0.1375;1" dur="8s" begin="2s" repeatCount="indefinite"></animate><animate attributeName="opacity" values="0.9;0;0" keyTimes="0;0.1375;1" dur="8s" begin="2s" repeatCount="indefinite"></animate></circle><circle r="4.6" style="fill: var(--perron-color-transit-line-m1); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+          <g><animateMotion dur="30s" begin="-17s" repeatCount="indefinite" calcMode="linear" keyPoints="1;0.7;0.7;0.38;0.38;0" keyTimes="0;0.28;0.34;0.62;0.68;1" path="M-10 254 C80 266 170 284 250 274 C298 268 338 294 398 334"></animateMotion><circle r="4.6" style="fill: var(--perron-color-transit-line-m2); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+          <g><animateMotion dur="36s" begin="0s" repeatCount="indefinite" path="M325 180 C325 235 283 275 230 275 C177 275 135 235 135 180 C135 125 177 85 230 85 C283 85 325 125 325 180 Z"></animateMotion><circle r="4.6" style="fill: var(--perron-color-transit-line-m3); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+          <g><animateMotion dur="36s" begin="-18s" repeatCount="indefinite" path="M325 180 C325 235 283 275 230 275 C177 275 135 235 135 180 C135 125 177 85 230 85 C283 85 325 125 325 180 Z"></animateMotion><circle r="4.6" style="fill: var(--perron-color-transit-line-m3); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+          <g><animateMotion dur="36s" begin="-9s" repeatCount="indefinite" calcMode="linear" keyPoints="1;0" keyTimes="0;1" path="M325 180 C325 235 283 275 230 275 C177 275 135 235 135 180 C135 125 177 85 230 85 C283 85 325 125 325 180 Z"></animateMotion><circle r="3.7" style="fill: none; stroke: var(--perron-color-transit-line-m3); stroke-width: 1.8"></circle></g>
+          <g><animateMotion dur="28s" begin="-11s" repeatCount="indefinite" path="M360 -10 C330 60 300 120 250 180 C200 240 120 300 -10 340"></animateMotion><circle r="4.8" style="fill: none; stroke: var(--perron-color-transit-line-a); stroke-width: 1.4"><animate attributeName="r" values="4.8;14;14" keyTimes="0;0.1375;1" dur="8s" begin="5s" repeatCount="indefinite"></animate><animate attributeName="opacity" values="0.9;0;0" keyTimes="0;0.1375;1" dur="8s" begin="5s" repeatCount="indefinite"></animate></circle><circle r="4.8" style="fill: var(--perron-color-transit-line-a); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+          <g><animateMotion dur="30s" begin="-6s" repeatCount="indefinite" calcMode="linear" keyPoints="1;0" keyTimes="0;1" path="M150 -10 C140 60 130 110 110 160 C90 210 60 260 20 390"></animateMotion><circle r="4.8" style="fill: var(--perron-color-transit-line-f); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+          <g><animateMotion dur="40s" begin="-8s" repeatCount="indefinite" calcMode="linear" keyPoints="1;0" keyTimes="0;1" path="M300 300 L-10 200"></animateMotion><circle r="3.3" style="fill: var(--perron-color-transit-mode-bus); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+          <g><animateMotion dur="34s" begin="-20s" repeatCount="indefinite" path="M300 300 L200 -10"></animateMotion><circle r="3.3" style="fill: var(--perron-color-transit-mode-bus); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+          <g><animateMotion dur="48s" begin="-12s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;1;0;0" keyTimes="0;0.46;0.5;0.96;1" path="M60 -10 C100 120 130 260 140 390"></animateMotion><circle r="3.3" style="fill: none; stroke: var(--perron-color-transit-mode-bus); stroke-width: 1.6; stroke-dasharray: 2.1 1.7"></circle></g>
+        </g>
+        <g class="pn-still">
+          <g><animateMotion dur="26s" begin="-4s" repeatCount="indefinite" calcMode="discrete" keyPoints="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" path="M-10 250 C80 262 170 280 250 270 C300 264 340 290 400 330"></animateMotion><circle r="4.6" style="fill: var(--perron-color-transit-line-m1); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+          <g><animateMotion dur="30s" begin="-17s" repeatCount="indefinite" calcMode="discrete" keyPoints="1;0.9;0.8;0.7;0.6;0.5;0.4;0.3;0.2;0.1" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" path="M-10 254 C80 266 170 284 250 274 C298 268 338 294 398 334"></animateMotion><circle r="4.6" style="fill: var(--perron-color-transit-line-m2); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+          <g><animateMotion dur="36s" begin="0s" repeatCount="indefinite" calcMode="discrete" keyPoints="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" path="M325 180 C325 235 283 275 230 275 C177 275 135 235 135 180 C135 125 177 85 230 85 C283 85 325 125 325 180 Z"></animateMotion><circle r="4.6" style="fill: var(--perron-color-transit-line-m3); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+          <g><animateMotion dur="36s" begin="-18s" repeatCount="indefinite" calcMode="discrete" keyPoints="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" path="M325 180 C325 235 283 275 230 275 C177 275 135 235 135 180 C135 125 177 85 230 85 C283 85 325 125 325 180 Z"></animateMotion><circle r="4.6" style="fill: var(--perron-color-transit-line-m3); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+          <g><animateMotion dur="36s" begin="-9s" repeatCount="indefinite" calcMode="discrete" keyPoints="1;0.9;0.8;0.7;0.6;0.5;0.4;0.3;0.2;0.1" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" path="M325 180 C325 235 283 275 230 275 C177 275 135 235 135 180 C135 125 177 85 230 85 C283 85 325 125 325 180 Z"></animateMotion><circle r="3.7" style="fill: none; stroke: var(--perron-color-transit-line-m3); stroke-width: 1.8"></circle></g>
+          <g><animateMotion dur="28s" begin="-11s" repeatCount="indefinite" calcMode="discrete" keyPoints="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" path="M360 -10 C330 60 300 120 250 180 C200 240 120 300 -10 340"></animateMotion><circle r="4.8" style="fill: var(--perron-color-transit-line-a); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+          <g><animateMotion dur="30s" begin="-6s" repeatCount="indefinite" calcMode="discrete" keyPoints="1;0.9;0.8;0.7;0.6;0.5;0.4;0.3;0.2;0.1" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" path="M150 -10 C140 60 130 110 110 160 C90 210 60 260 20 390"></animateMotion><circle r="4.8" style="fill: var(--perron-color-transit-line-f); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+          <g><animateMotion dur="40s" begin="-8s" repeatCount="indefinite" calcMode="discrete" keyPoints="1;0.9;0.8;0.7;0.6;0.5;0.4;0.3;0.2;0.1" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" path="M300 300 L-10 200"></animateMotion><circle r="3.3" style="fill: var(--perron-color-transit-mode-bus); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+          <g><animateMotion dur="34s" begin="-20s" repeatCount="indefinite" calcMode="discrete" keyPoints="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" path="M300 300 L200 -10"></animateMotion><circle r="3.3" style="fill: var(--perron-color-transit-mode-bus); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+          <g><animateMotion dur="48s" begin="-12s" repeatCount="indefinite" calcMode="discrete" keyPoints="0;0.2;0.4;0.6;0.8;1;0.8;0.6;0.4;0.2" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" path="M60 -10 C100 120 130 260 140 390"></animateMotion><circle r="3.3" style="fill: none; stroke: var(--perron-color-transit-mode-bus); stroke-width: 1.6; stroke-dasharray: 2.1 1.7"></circle></g>
+        </g>
+        <circle cx="72" cy="300" r="3.3" style="fill: var(--perron-color-data-state-no-signal); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle>
+    </svg>
+  </div>
+
+  <!-- Top bar: two glass groups, size.top-bar-phone tall -->
+  <header style="position: relative; z-index: 3; padding: 12px 16px 0; display: flex; align-items: center; justify-content: space-between; gap: 8px">
+    <a href="Phone-Home.dc.html" class="pn-glass" style="height: 42px; box-sizing: border-box; padding: 0 14px 0 12px; display: inline-flex; align-items: center; gap: 8px; border-radius: 9999px; background: var(--perron-color-surface-overlay); border: 1px solid var(--perron-color-border-subtle); box-shadow: var(--perron-shadow-panel); color: inherit; text-decoration: none">
+      <svg width="27" height="19" viewBox="0 0 27 19" aria-hidden="true"><circle cx="5.5" cy="12.5" r="4.3" style="fill: var(--perron-color-transit-mode-bus)"></circle><circle cx="13.5" cy="5.5" r="4.3" style="fill: var(--perron-color-transit-line-a)"></circle><circle cx="21.5" cy="12.5" r="3.6" style="fill: none; stroke: var(--perron-color-text-primary); stroke-width: 1.7"></circle></svg>
+      <span style="font: var(--perron-typography-heading-md); font-weight: 700; letter-spacing: var(--perron-typography-heading-md-tracking)">Perron</span>
+    </a>
+    <div role="toolbar" aria-label="Site" class="pn-glass" style="height: 42px; box-sizing: border-box; padding: 3px; display: inline-flex; align-items: center; gap: 2px; border-radius: 9999px; background: var(--perron-color-surface-overlay); border: 1px solid var(--perron-color-border-subtle); box-shadow: var(--perron-shadow-panel)">
+      <button type="button" aria-label="Search the docs" class="pn-hover" style="width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 9999px; background: transparent; color: var(--perron-color-text-primary); cursor: pointer"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" style="fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round"><circle cx="7" cy="7" r="4.6"></circle><path d="m10.5 10.5 3.2 3.2"></path></svg></button>
+      <button type="button" aria-label="Switch theme" class="pn-hover" style="width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 9999px; background: transparent; color: var(--perron-color-text-primary); cursor: pointer"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" style="fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round"><path d="M13.2 9.6A5.6 5.6 0 0 1 6.4 2.8a5.6 5.6 0 1 0 6.8 6.8Z"></path></svg></button>
+      <button type="button" aria-label="Open the menu" aria-haspopup="dialog" class="pn-hover" style="height: 34px; padding: 0 12px; display: inline-flex; align-items: center; gap: 6px; border: 0; border-radius: 9999px; background: transparent; color: var(--perron-color-text-primary); font: var(--perron-typography-label); cursor: pointer"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" style="fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round"><path d="M3 5h10M3 8h10M3 11h10"></path></svg>Menu</button>
+    </div>
+  </header>
+
+  <main style="position: relative; z-index: 1; margin-top: 70px; border-radius: 16px 16px 0 0; background: var(--perron-color-surface-default); box-shadow: var(--perron-shadow-panel); padding: 16px 16px 40px; display: flex; flex-direction: column; gap: 32px">
+
+    <div style="display: flex; flex-direction: column; gap: 12px">
+      <nav aria-label="Breadcrumb" style="font: var(--perron-typography-label-sm); color: var(--perron-color-text-secondary)"><a href="Components.dc.html" class="pn-link" style="display: inline-block; padding: 4px 0">Components</a> <span aria-hidden="true">/</span> Actions</nav>
+      <div style="display: flex; align-items: center; gap: 10px">
+        <h1 class="pn-title" style="margin: 0">Button</h1>
+        <span style="font: var(--perron-typography-overline); letter-spacing: var(--perron-typography-overline-tracking); text-transform: uppercase; padding: 2px 8px; border-radius: 9999px; background: var(--perron-color-surface-success); color: var(--perron-color-text-success)">Stable</span>
+      </div>
+      <p style="margin: 0; font: var(--perron-typography-heading-sm)">Runs one action on the screen it sits on.</p>
+      <p style="margin: 0; font: var(--perron-typography-body); color: var(--perron-color-text-secondary)"><code style="font: var(--perron-typography-data); color: var(--perron-color-text-primary)">variant</code> is how much it stands out, and <code style="font: var(--perron-typography-data); color: var(--perron-color-text-primary)">color</code> is the intent: neutral ink for every action but the main one, brand yellow for the one main action of a screen.</p>
+      <label style="display: flex; flex-direction: column; gap: 6px">
+        <span style="font: var(--perron-typography-label)">On this page</span>
+        <span style="height: 38px; box-sizing: border-box; padding: 0 10px 0 12px; display: flex; align-items: center; justify-content: space-between; border-radius: 8px; border: 1px solid var(--perron-color-border-control); background: var(--perron-color-surface-raised); font: var(--perron-typography-body)">Variants and states <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" style="fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path d="m4 6 4 4 4-4"></path></svg></span>
+      </label>
+    </div>
+
+    <section aria-label="Button in context" style="position: relative; height: 300px; border-radius: 16px; overflow: hidden; border: 1px solid var(--perron-color-border-subtle); background: var(--perron-color-map-land)">
+      <svg width="100%" height="100%" viewBox="0 0 360 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="position: absolute; inset: 0">
+        <path d="M290 0 C280 80 300 160 288 300 L360 300 L360 0 Z" style="fill: var(--perron-color-map-water)"></path>
+        <g style="fill: none; stroke: var(--perron-color-map-street); stroke-width: 5; stroke-linecap: round"><path d="M0 60 L360 140"></path><path d="M120 0 L210 300"></path></g>
+        <path d="M0 120 C100 130 200 110 290 60" style="fill: none; stroke: var(--perron-color-transit-line-m3); stroke-width: 3.2; stroke-linecap: round; opacity: 0.78"></path>
+        <circle cx="168" cy="118" r="6" style="fill: var(--perron-color-surface-raised); stroke: var(--perron-color-text-primary); stroke-width: 2"></circle>
+      </svg>
+      <div style="position: absolute; left: 0; right: 0; bottom: 0; box-sizing: border-box; padding: 8px 14px 14px; border-radius: 16px 16px 0 0; background: var(--perron-color-surface-default); box-shadow: var(--perron-shadow-panel); display: flex; flex-direction: column; gap: 10px">
+        <span aria-hidden="true" style="align-self: center; width: 36px; height: 4px; border-radius: 9999px; background: var(--perron-color-border-strong)"></span>
+        <span style="display: flex; align-items: center; gap: 10px"><span style="width: 14px; height: 14px; box-sizing: border-box; border-radius: 9999px; border: 2px solid var(--perron-color-text-primary); background: var(--perron-color-surface-raised)"></span><span style="font: var(--perron-typography-heading-md); letter-spacing: var(--perron-typography-heading-md-tracking)">Kongens Nytorv</span></span>
+        <span style="font: var(--perron-typography-body-sm); color: var(--perron-color-text-secondary)">Metro M1, M2 and M3. Next departure in 2 min.</span>
+        <span style="height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; box-sizing: border-box; border: 1px solid var(--perron-color-border-brand); background: var(--perron-color-surface-brand); color: var(--perron-color-text-on-color-dark); font: var(--perron-typography-label)">Show departures</span>
+        <span style="height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; box-sizing: border-box; border: 1px solid var(--perron-color-border-control); font: var(--perron-typography-label)">Share</span>
+      </div>
+    </section>
+    <p style="margin: -20px 0 0; font: var(--perron-typography-caption); color: var(--perron-color-text-secondary)">On a phone the detail panel is an opaque bottom sheet, and its main action fills the width.</p>
+
+    <section id="states" style="display: flex; flex-direction: column; gap: 12px">
+      <h2 style="margin: 0; font: var(--perron-typography-heading-md); letter-spacing: var(--perron-typography-heading-md-tracking)">Variants and states</h2>
+      <div style="display: flex; flex-direction: column; gap: 8px">
+      <div role="radiogroup" aria-label="Variant" style="flex: 1; display: flex; padding: 2px; gap: 2px; border-radius: 10px; background: var(--perron-color-surface-inset)">
+        <sc-for list="{{variants}}" as="o" hint-placeholder-count="2">
+          <sc-if value="{{o.on}}" hint-placeholder-val="{{false}}">
+            <button type="button" role="radio" aria-checked="true" onClick="{{o.pick}}" style="flex: 1; height: 32px; border: 0; border-radius: 8px; background: var(--perron-color-surface-raised); box-shadow: var(--perron-shadow-thumb); color: var(--perron-color-text-primary); font: var(--perron-typography-label); cursor: pointer">{{o.label}}</button>
+          </sc-if>
+          <sc-if value="{{o.off}}" hint-placeholder-val="{{true}}">
+            <button type="button" role="radio" aria-checked="false" onClick="{{o.pick}}" style="flex: 1; height: 32px; border: 0; border-radius: 8px; background: transparent; color: var(--perron-color-text-secondary); font: var(--perron-typography-label); cursor: pointer">{{o.label}}</button>
+          </sc-if>
+        </sc-for>
+      </div>
+      <div role="radiogroup" aria-label="Colour" style="flex: 1; display: flex; padding: 2px; gap: 2px; border-radius: 10px; background: var(--perron-color-surface-inset)">
+        <sc-for list="{{colors}}" as="o" hint-placeholder-count="2">
+          <sc-if value="{{o.on}}" hint-placeholder-val="{{false}}">
+            <button type="button" role="radio" aria-checked="true" onClick="{{o.pick}}" style="flex: 1; height: 32px; border: 0; border-radius: 8px; background: var(--perron-color-surface-raised); box-shadow: var(--perron-shadow-thumb); color: var(--perron-color-text-primary); font: var(--perron-typography-label); cursor: pointer">{{o.label}}</button>
+          </sc-if>
+          <sc-if value="{{o.off}}" hint-placeholder-val="{{true}}">
+            <button type="button" role="radio" aria-checked="false" onClick="{{o.pick}}" style="flex: 1; height: 32px; border: 0; border-radius: 8px; background: transparent; color: var(--perron-color-text-secondary); font: var(--perron-typography-label); cursor: pointer">{{o.label}}</button>
+          </sc-if>
+        </sc-for>
+      </div>
+      </div>
+      <ul style="list-style: none; margin: 0; padding: 0; border-radius: 12px; background: var(--perron-color-surface-raised); border: 1px solid var(--perron-color-border-subtle); overflow: hidden">
+        <sc-if value="{{is.solid_neutral}}" hint-placeholder-val="{{true}}">
+          <li style="min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 14px; border-top: 1px solid var(--perron-color-border-subtle)">
+            <span style="font: var(--perron-typography-label-sm); color: var(--perron-color-text-secondary)">Rest</span>
+            <span style="height: 36px; padding: 0 16px; box-sizing: border-box; display: inline-flex; align-items: center; border-radius: 8px; font: var(--perron-typography-label); background: var(--perron-color-surface-inverse); color: var(--perron-color-text-inverse)">Show line</span>
+          </li>
+          <li style="min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 14px; border-top: 1px solid var(--perron-color-border-subtle)">
+            <span style="font: var(--perron-typography-label-sm); color: var(--perron-color-text-secondary)">Hover</span>
+            <span style="height: 36px; padding: 0 16px; box-sizing: border-box; display: inline-flex; align-items: center; border-radius: 8px; font: var(--perron-typography-label); background: var(--perron-color-surface-inverse-hover); color: var(--perron-color-text-inverse)">Show line</span>
+          </li>
+          <li style="min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 14px; border-top: 1px solid var(--perron-color-border-subtle)">
+            <span style="font: var(--perron-typography-label-sm); color: var(--perron-color-text-secondary)">Pressed</span>
+            <span style="height: 36px; padding: 0 16px; box-sizing: border-box; display: inline-flex; align-items: center; border-radius: 8px; font: var(--perron-typography-label); background: var(--perron-color-surface-inverse-pressed); color: var(--perron-color-text-inverse)">Show line</span>
+          </li>
+          <li style="min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 14px; border-top: 1px solid var(--perron-color-border-subtle)">
+            <span style="font: var(--perron-typography-label-sm); color: var(--perron-color-text-secondary)">Focus</span>
+            <span style="height: 36px; padding: 0 16px; box-sizing: border-box; display: inline-flex; align-items: center; border-radius: 8px; font: var(--perron-typography-label); background: var(--perron-color-surface-inverse); color: var(--perron-color-text-inverse); outline: 2px solid var(--perron-color-border-focus); outline-offset: 2px">Show line</span>
+          </li>
+          <li style="min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 14px; border-top: 1px solid var(--perron-color-border-subtle)">
+            <span style="font: var(--perron-typography-label-sm); color: var(--perron-color-text-secondary)">Disabled</span>
+            <span style="height: 36px; padding: 0 16px; box-sizing: border-box; display: inline-flex; align-items: center; border-radius: 8px; font: var(--perron-typography-label); background: var(--perron-color-surface-inset); color: var(--perron-color-text-tertiary)">Show line</span>
+          </li>
+        </sc-if>
+        <sc-if value="{{is.solid_brand}}" hint-placeholder-val="{{false}}">
+          <li style="min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 14px; border-top: 1px solid var(--perron-color-border-subtle)">
+            <span style="font: var(--perron-typography-label-sm); color: var(--perron-color-text-secondary)">Rest</span>
+            <span style="height: 36px; padding: 0 16px; box-sizing: border-box; display: inline-flex; align-items: center; border-radius: 8px; font: var(--perron-typography-label); border: 1px solid var(--perron-color-border-brand); background: var(--perron-color-surface-brand); color: var(--perron-color-text-on-color-dark)">Show line</span>
+          </li>
+          <li style="min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 14px; border-top: 1px solid var(--perron-color-border-subtle)">
+            <span style="font: var(--perron-typography-label-sm); color: var(--perron-color-text-secondary)">Hover</span>
+            <span style="height: 36px; padding: 0 16px; box-sizing: border-box; display: inline-flex; align-items: center; border-radius: 8px; font: var(--perron-typography-label); border: 1px solid var(--perron-color-border-brand); background: var(--perron-color-surface-brand-hover); color: var(--perron-color-text-on-color-dark)">Show line</span>
+          </li>
+          <li style="min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 14px; border-top: 1px solid var(--perron-color-border-subtle)">
+            <span style="font: var(--perron-typography-label-sm); color: var(--perron-color-text-secondary)">Pressed</span>
+            <span style="height: 36px; padding: 0 16px; box-sizing: border-box; display: inline-flex; align-items: center; border-radius: 8px; font: var(--perron-typography-label); border: 1px solid var(--perron-color-border-brand); background: var(--perron-color-surface-brand-pressed); color: var(--perron-color-text-on-color-dark)">Show line</span>
+          </li>
+          <li style="min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 14px; border-top: 1px solid var(--perron-color-border-subtle)">
+            <span style="font: var(--perron-typography-label-sm); color: var(--perron-color-text-secondary)">Focus</span>
+            <span style="height: 36px; padding: 0 16px; box-sizing: border-box; display: inline-flex; align-items: center; border-radius: 8px; font: var(--perron-typography-label); border: 1px solid var(--perron-color-border-brand); background: var(--perron-color-surface-brand); color: var(--perron-color-text-on-color-dark); outline: 2px solid var(--perron-color-border-focus); outline-offset: 2px">Show line</span>
+          </li>
+          <li style="min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 14px; border-top: 1px solid var(--perron-color-border-subtle)">
+            <span style="font: var(--perron-typography-label-sm); color: var(--perron-color-text-secondary)">Disabled</span>
+            <span style="height: 36px; padding: 0 16px; box-sizing: border-box; display: inline-flex; align-items: center; border-radius: 8px; font: var(--perron-typography-label); background: var(--perron-color-surface-inset); color: var(--perron-color-text-tertiary)">Show line</span>
+          </li>
+        </sc-if>
+        <sc-if value="{{is.outline_neutral}}" hint-placeholder-val="{{false}}">
+          <li style="min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 14px; border-top: 1px solid var(--perron-color-border-subtle)">
+            <span style="font: var(--perron-typography-label-sm); color: var(--perron-color-text-secondary)">Rest</span>
+            <span style="height: 36px; padding: 0 16px; box-sizing: border-box; display: inline-flex; align-items: center; border-radius: 8px; font: var(--perron-typography-label); border: 1px solid var(--perron-color-border-control)">Show line</span>
+          </li>
+          <li style="min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 14px; border-top: 1px solid var(--perron-color-border-subtle)">
+            <span style="font: var(--perron-typography-label-sm); color: var(--perron-color-text-secondary)">Hover</span>
+            <span style="height: 36px; padding: 0 16px; box-sizing: border-box; display: inline-flex; align-items: center; border-radius: 8px; font: var(--perron-typography-label); border: 1px solid var(--perron-color-border-control); background: var(--perron-color-surface-hover)">Show line</span>
+          </li>
+          <li style="min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 14px; border-top: 1px solid var(--perron-color-border-subtle)">
+            <span style="font: var(--perron-typography-label-sm); color: var(--perron-color-text-secondary)">Pressed</span>
+            <span style="height: 36px; padding: 0 16px; box-sizing: border-box; display: inline-flex; align-items: center; border-radius: 8px; font: var(--perron-typography-label); border: 1px solid var(--perron-color-border-control); background: var(--perron-color-surface-selected)">Show line</span>
+          </li>
+          <li style="min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 14px; border-top: 1px solid var(--perron-color-border-subtle)">
+            <span style="font: var(--perron-typography-label-sm); color: var(--perron-color-text-secondary)">Focus</span>
+            <span style="height: 36px; padding: 0 16px; box-sizing: border-box; display: inline-flex; align-items: center; border-radius: 8px; font: var(--perron-typography-label); border: 1px solid var(--perron-color-border-control); outline: 2px solid var(--perron-color-border-focus); outline-offset: 2px">Show line</span>
+          </li>
+          <li style="min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 14px; border-top: 1px solid var(--perron-color-border-subtle)">
+            <span style="font: var(--perron-typography-label-sm); color: var(--perron-color-text-secondary)">Disabled</span>
+            <span style="height: 36px; padding: 0 16px; box-sizing: border-box; display: inline-flex; align-items: center; border-radius: 8px; font: var(--perron-typography-label); border: 1px solid var(--perron-color-border-subtle); color: var(--perron-color-text-tertiary)">Show line</span>
+          </li>
+        </sc-if>
+        <sc-if value="{{is.outline_brand}}" hint-placeholder-val="{{false}}">
+          <li style="min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 14px; border-top: 1px solid var(--perron-color-border-subtle)">
+            <span style="font: var(--perron-typography-label-sm); color: var(--perron-color-text-secondary)">Rest</span>
+            <span style="height: 36px; padding: 0 16px; box-sizing: border-box; display: inline-flex; align-items: center; border-radius: 8px; font: var(--perron-typography-label); border: 1px solid var(--perron-color-border-brand); color: var(--perron-color-text-brand)">Show line</span>
+          </li>
+          <li style="min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 14px; border-top: 1px solid var(--perron-color-border-subtle)">
+            <span style="font: var(--perron-typography-label-sm); color: var(--perron-color-text-secondary)">Hover</span>
+            <span style="height: 36px; padding: 0 16px; box-sizing: border-box; display: inline-flex; align-items: center; border-radius: 8px; font: var(--perron-typography-label); border: 1px solid var(--perron-color-border-brand); background: var(--perron-color-surface-hover); color: var(--perron-color-text-brand)">Show line</span>
+          </li>
+          <li style="min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 14px; border-top: 1px solid var(--perron-color-border-subtle)">
+            <span style="font: var(--perron-typography-label-sm); color: var(--perron-color-text-secondary)">Pressed</span>
+            <span style="height: 36px; padding: 0 16px; box-sizing: border-box; display: inline-flex; align-items: center; border-radius: 8px; font: var(--perron-typography-label); border: 1px solid var(--perron-color-border-brand); background: var(--perron-color-surface-selected); color: var(--perron-color-text-brand)">Show line</span>
+          </li>
+          <li style="min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 14px; border-top: 1px solid var(--perron-color-border-subtle)">
+            <span style="font: var(--perron-typography-label-sm); color: var(--perron-color-text-secondary)">Focus</span>
+            <span style="height: 36px; padding: 0 16px; box-sizing: border-box; display: inline-flex; align-items: center; border-radius: 8px; font: var(--perron-typography-label); border: 1px solid var(--perron-color-border-brand); color: var(--perron-color-text-brand); outline: 2px solid var(--perron-color-border-focus); outline-offset: 2px">Show line</span>
+          </li>
+          <li style="min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 14px; border-top: 1px solid var(--perron-color-border-subtle)">
+            <span style="font: var(--perron-typography-label-sm); color: var(--perron-color-text-secondary)">Disabled</span>
+            <span style="height: 36px; padding: 0 16px; box-sizing: border-box; display: inline-flex; align-items: center; border-radius: 8px; font: var(--perron-typography-label); border: 1px solid var(--perron-color-border-subtle); color: var(--perron-color-text-tertiary)">Show line</span>
+          </li>
+        </sc-if>
+      </ul>
+      <p style="margin: 0; font: var(--perron-typography-caption); color: var(--perron-color-text-secondary)">Disabled brand looks the same as disabled neutral. Use brand once per screen.</p>
+    </section>
+
+    <section id="sizes" style="display: flex; flex-direction: column; gap: 12px">
+      <h2 style="margin: 0; font: var(--perron-typography-heading-md); letter-spacing: var(--perron-typography-heading-md-tracking)">Sizes</h2>
+      <div style="display: flex; align-items: flex-end; gap: 16px; padding: 16px; border-radius: 12px; background: var(--perron-color-surface-raised); border: 1px solid var(--perron-color-border-subtle)">
+        <span style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px"><span style="height: 30px; padding: 0 12px; display: inline-flex; align-items: center; border-radius: 8px; background: var(--perron-color-surface-inverse); color: var(--perron-color-text-inverse); font: var(--perron-typography-label)">Show line</span><span style="font: var(--perron-typography-data-sm); color: var(--perron-color-text-secondary)">small, 30 px</span></span>
+        <span style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px"><span style="height: 36px; padding: 0 16px; display: inline-flex; align-items: center; border-radius: 8px; background: var(--perron-color-surface-inverse); color: var(--perron-color-text-inverse); font: var(--perron-typography-label)">Show line</span><span style="font: var(--perron-typography-data-sm); color: var(--perron-color-text-secondary)">medium, 36 px</span></span>
+      </div>
+    </section>
+
+    <section id="props" style="display: flex; flex-direction: column; gap: 12px">
+      <h2 style="margin: 0; font: var(--perron-typography-heading-md); letter-spacing: var(--perron-typography-heading-md-tracking)">Props</h2>
+      <dl style="margin: 0; display: flex; flex-direction: column; border-radius: 12px; background: var(--perron-color-surface-raised); border: 1px solid var(--perron-color-border-subtle); overflow: hidden">
+        <sc-for list="{{props}}" as="p" hint-placeholder-count="7">
+          <div style="padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; border-top: 1px solid var(--perron-color-border-subtle)">
+            <dt style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px"><code style="font: var(--perron-typography-data-lg)">{{p.name}}</code><span style="font: var(--perron-typography-data-sm); color: var(--perron-color-text-secondary)">{{p.type}}, default {{p.def}}</span></dt>
+            <dd style="margin: 0; font: var(--perron-typography-body-sm); color: var(--perron-color-text-secondary)">{{p.desc}}</dd>
+          </div>
+        </sc-for>
+      </dl>
+    </section>
+
+    <section aria-label="Install" style="display: flex; flex-direction: column; gap: 10px">
+      <span style="font: var(--perron-typography-heading-sm)">Use it</span>
+      <code style="display: block; overflow-x: auto; white-space: nowrap; padding: 10px 12px; border-radius: 8px; background: var(--perron-color-surface-inset); font: var(--perron-typography-data)">import { Button } from '@mylder/perron'</code>
+      <span style="font: var(--perron-typography-heading-sm)">Ask your agent</span>
+      <code style="display: block; overflow-x: auto; white-space: nowrap; padding: 10px 12px; border-radius: 8px; background: var(--perron-color-surface-inset); font: var(--perron-typography-data)">get_reference({ library: "base-ui", component: "Button" })</code>
+    </section>
+
+    <nav aria-label="Pages" style="display: flex; justify-content: space-between; gap: 12px; padding-top: 12px; border-top: 1px solid var(--perron-color-border-subtle)">
+      <a href="Components.dc.html" class="pn-hover" style="padding: 8px 10px; border-radius: 10px; display: flex; flex-direction: column; gap: 2px; text-decoration: none"><span style="font: var(--perron-typography-caption); color: var(--perron-color-text-secondary)">Previous</span><span style="font: var(--perron-typography-label)">Components</span></a>
+      <a href="#" class="pn-hover" style="padding: 8px 10px; border-radius: 10px; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; text-decoration: none"><span style="font: var(--perron-typography-caption); color: var(--perron-color-text-secondary)">Next</span><span style="font: var(--perron-typography-label)">IconButton</span></a>
+    </nav>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":390,"height":2500}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { variant: 'solid', color: 'neutral' };
+  }
+  renderVals() {
+    const { variant, color } = this.state;
+    const opt = (key, id, label) => ({ label, on: this.state[key] === id, off: this.state[key] !== id, pick: () => this.setState({ [key]: id }) });
+    return {
+      theme: this.props.theme ?? 'dark',
+      variants: [opt('variant', 'solid', 'Solid'), opt('variant', 'outline', 'Outline')],
+      colors: [opt('color', 'neutral', 'Neutral'), opt('color', 'brand', 'Brand')],
+      is: {
+        solid_neutral: variant === 'solid' && color === 'neutral',
+        solid_brand: variant === 'solid' && color === 'brand',
+        outline_neutral: variant === 'outline' && color === 'neutral',
+        outline_brand: variant === 'outline' && color === 'brand'
+      },
+      props: [
+        { name: 'variant', type: "'solid' | 'outline'", def: "'solid'", desc: 'How much it stands out: solid for the action a panel is for, outline for the actions beside it.' },
+        { name: 'color', type: "'neutral' | 'brand'", def: "'neutral'", desc: 'Neutral is ink, for every action but the main one; brand is the brand yellow, for the one main action of a screen.' },
+        { name: 'size', type: "'small' | 'medium'", def: "'medium'", desc: 'Medium is size.button; small is size.button-sm, for dense rows and panels.' },
+        { name: 'disabled', type: 'boolean', def: 'false', desc: 'Ignores the pointer and the keys, and leaves the tab order unless focusableWhenDisabled is set.' },
+        { name: 'fullWidth', type: 'boolean', def: 'false', desc: "Fills its container, such as a bottom sheet's main action." },
+        { name: 'startIcon', type: 'ReactNode', def: '—', desc: 'An icon before the words, in reading order. Hidden from screen readers.' },
+        { name: 'endIcon', type: 'ReactNode', def: '—', desc: 'An icon after the words, in reading order. Hidden from screen readers.' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
