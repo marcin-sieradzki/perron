@@ -1043,7 +1043,7 @@ export const InForm: Story = {
       </form>
     ),
   ],
-  play: async ({ canvasElement }) => {
+  play: async ({ args, canvasElement }) => {
     onSubmit.mockClear()
     const form = canvasElement.querySelector('form')!
     const input = inputIn(canvasElement)
@@ -1057,6 +1057,19 @@ export const InForm: Story = {
     await expect(onSubmit.mock.results[0].value).toBe('9')
     await expect(input).toHaveValue('9')
     input.blur()
+    // a browser autofill sets Base UI's hidden input, as the browser does, through the native
+    // value setter and an `input` event; the box shows the number and onChange gets it
+    mock(args.onChange).mockClear()
+    mock(args.onChangeCommitted).mockClear()
+    const hidden = form.querySelector<HTMLInputElement>('input[type="number"][name="departures"]')!
+    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!.call(hidden, '15')
+    hidden.dispatchEvent(new Event('input', { bubbles: true }))
+    await waitFor(() => expect(input).toHaveValue('15'))
+    await expect(values(args.onChange)).toEqual([15])
+    await expect(reasons(args.onChange)).toEqual(['none'])
+    await expect(new FormData(form).get('departures')).toBe('15')
+    await frames(2)
+    await expect(args.onChangeCommitted).not.toHaveBeenCalled()
     // a form with no submit button isn't submitted on Enter: the hidden input is a second field
     const unsent = fn((event: { preventDefault: () => void }) => event.preventDefault())
     await mounted(

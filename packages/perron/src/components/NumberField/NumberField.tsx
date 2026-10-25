@@ -61,7 +61,8 @@ export interface NumberFieldProps extends Omit<
    * `'input-change'`), clears the box (`'input-clear'`, `value` `null`), leaves it and the number
    * is clamped or rounded (`'input-blur'`), pastes (`'input-paste'`), steps it with the keys
    * (`'keyboard'`), presses a button (`'increment-press'`, `'decrement-press'`) or turns the wheel
-   * (`'wheel'`). `event` is `details.event`, and `details.cancel()` keeps the number as it was.
+   * (`'wheel'`), or the browser autofills Base UI's hidden input (`'none'`). `event` is
+   * `details.event`, and `details.cancel()` keeps the number as it was.
    */
   onChange?: (
     event: Event,

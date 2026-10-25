@@ -9,20 +9,20 @@ stages:
     started: 2026-10-25T06:46:40.740Z
     ended: 2026-10-25T06:48:00.020Z
   build:
-    runs: 6
-    failing: review round 6 found 3 P2 (components/number-field/review.md)
+    runs: 7
+    status: done
+    started: 2026-10-25T08:50:48.711Z
+    begun: b8a863527b14ed3e9f10b665b31b4720b107fd760d154d60a0c725d8084168e4
+    spec: 53916eaead0a957cea8e5ad74a85c8d75a6d53a1a16999d907085b4dc92e30a7
+    ended: 2026-10-25T08:54:05.101Z
   review:
     rounds: 6
     sentBack: 2
+    reviewed: 0f01db7516a82b539a3fd7eb53b2932f52799f63
     findings:
       p1: 0
       p2: 3
       p3: 11
-    status: failed
-    started: 2026-10-25T08:43:38.388Z
-    reviewed: 0f01db7516a82b539a3fd7eb53b2932f52799f63
-    ended: 2026-10-25T08:50:44.269Z
-    failing: review round 6 found 3 P2 (components/number-field/review.md)
   docs:
     failures: 1
 notes:
@@ -86,3 +86,6 @@ notes:
   - stage: build
     at: 2026-10-25T08:43:04.603Z
     direction: 'Base UI checks a paste with parseFloat, so letters pasted after a leading digit are let in: pasting "two" with the caret after the 1 in "18" leaves "1two8" in the box and sets the value to 1. Decide whether NumberField should refuse a paste holding characters it wouldn''t let a person type.'
+  - stage: build
+    at: 2026-10-25T08:54:05.101Z
+    direction: An autofill of Base UI's hidden input calls onChange with the reason 'none' but never onChangeCommitted, so a caller who saves on onChangeCommitted, as the spec's Do row advises, misses an autofilled number the person never touches.
