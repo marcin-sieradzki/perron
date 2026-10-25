@@ -13,13 +13,13 @@ The loop's state is `components/<name>/pipeline.yaml`, and `npm run factory`, wh
 
 `npm run factory -- <command> <Name>`, each with `--json` for a parsed answer:
 
-| Command                                                                     | Does                                                                                  |
-| --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `next <Name>`                                                               | Says the stage to run, or the gate it waits at and why. Never writes.                 |
-| `begin <Name> <stage>`                                                      | Records the stage as running, or refuses with the reason (exit 1)                     |
-| `end <Name> <stage> <done\|failed\|pending> [--failing …] [--direction …]…` | Checks the stage's gate from the files, records the result and its notes, prints next |
-| `approve <Name>`                                                            | Records the maintainer's design approval, tied to the current read-back               |
-| `defer <Name>`                                                              | Takes design and visual out of the loop until a design run begins                     |
+| Command                                                                     | Does                                                                                   |
+| --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `next <Name>`                                                               | Says the stage to run, or the gate it waits at and why. Never writes.                  |
+| `begin <Name> <stage>`                                                      | Records the stage as running, or refuses with the reason (exit 1)                      |
+| `end <Name> <stage> <done\|failed\|pending> [--failing …] [--direction …]…` | Checks the stage's gate from the files, records the result and its notes, prints next  |
+| `approve <Name>`                                                            | Records the maintainer's design approval, tied to the current read-back                |
+| `defer <Name>`                                                              | Takes design and visual out of the loop until a design run begins                      |
 | `unblock <Name>`                                                            | Clears `needs-human` once the maintainer has fixed what stopped the loop, and notes it |
 
 ## Stages
