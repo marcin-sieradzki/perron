@@ -24,6 +24,10 @@ stages:
     status: done
     started: 2026-10-25T02:42:32.568Z
     ended: 2026-10-25T02:45:40.560Z
+  docs:
+    status: done
+    started: 2026-10-25T02:46:18.562Z
+    ended: 2026-10-25T02:49:08.560Z
 notes:
   - stage: brief
     at: 2026-10-25T01:58:32.189Z
@@ -89,3 +93,9 @@ notes:
   - stage: build
     at: 2026-10-25T02:34:45.908Z
     direction: Pressing Escape over a hover tip while focus is elsewhere clears the tip and still passes the key to whatever has focus, so a detail panel that listens on the document closes in the same press. The foundations' rule 'Esc closes the topmost thing first' could decide whether a hover tip should take that press for itself.
+  - stage: docs
+    at: 2026-10-25T02:49:08.561Z
+    direction: The slots table writes every slot's description as "Props for the `<part>` part", so the page leaves out the spec's note on slotProps.plot that "its handlers run before the pattern's own". PropsTable could keep the JSDoc after the part name.
+  - stage: docs
+    at: 2026-10-25T02:49:08.561Z
+    direction: In the docs page's Unknown Hours example, the lone known count at 12:00 is barely visible in both themes (review P3-3, now on the public page).

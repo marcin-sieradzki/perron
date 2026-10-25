@@ -1,0 +1,19 @@
+import { Meta, Stories, Title } from '@storybook/addon-docs/blocks'
+import { PropsTable } from '../../../../../storybook/blocks/PropsTable.tsx'
+import { SpecProse } from '../../../../../storybook/blocks/SpecProse.tsx'
+import * as DayProfileChartStories from './DayProfileChart.stories.tsx'
+
+<Meta of={DayProfileChartStories} />
+
+<Title />
+
+<SpecProse path="docs/patterns/day-profile-chart.md" intro />
+
+<Stories title="Examples" />
+
+<PropsTable of={DayProfileChartStories} />
+
+<SpecProse
+  path="docs/patterns/day-profile-chart.md"
+  sections={['Keyboard and ARIA', 'Owned strings', "Do and don't"]}
+/>

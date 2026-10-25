@@ -404,7 +404,7 @@
     "name": "DayProfileChart",
     "layer": "pattern",
     "category": "Data",
-    "status": "building",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Patterns/DayProfileChart",
     "dependsOn": []
