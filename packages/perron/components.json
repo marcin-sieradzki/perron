@@ -395,7 +395,7 @@
     "name": "VehicleTable",
     "layer": "pattern",
     "category": "Data",
-    "status": "designing",
+    "status": "building",
     "baseUiParts": [],
     "penpotPath": "Patterns/VehicleTable",
     "dependsOn": ["LineBadge", "Delay", "VehicleDotLabel"]

@@ -62,6 +62,14 @@ export const en = {
   nextStop: 'Next stop',
   /** A stop timeline: heard after the name of a stop the vehicle has passed. */
   passed: 'Passed',
+  /** A vehicle table: the header of the column of each vehicle's line. */
+  lineColumn: 'Line',
+  /** A vehicle table: the header of the column of where each vehicle is going. */
+  destinationColumn: 'Destination',
+  /** A vehicle table: the header of the column of how fresh each vehicle's position is, its data state. */
+  positionColumn: 'Position',
+  /** A vehicle table: the header of the column of how late each vehicle runs. */
+  delayColumn: 'Delay',
   /** The map's bar of zoom and centre buttons: the toolbar's name. */
   mapControls: 'Map controls',
   /** The map's button that zooms in by one step. */

@@ -8,6 +8,15 @@ stages:
     status: done
     started: 2026-10-25T13:25:13.975Z
     ended: 2026-10-25T13:27:10.436Z
+  build:
+    status: pending
+    started: 2026-10-25T13:27:13.850Z
+    runs: 1
+    begun: 1adb821fff2be185e16936eb52e9201e0a34fbfd5df864a47ddc35cd793b2793
+    spec: 1adb821fff2be185e16936eb52e9201e0a34fbfd5df864a47ddc35cd793b2793
+    asked: 1
+    ended: 2026-10-25T13:36:30.389Z
+    failing: "1. (Tokens, the destinationCell `inline-size` row, and CR-8) The `inline-size: 100%` on destinationCell makes the browser give the line, position and delay columns only their narrowest width, not their natural one. So in the Default story, at panel width (332 px table), 'Timetable only' wraps onto two lines even though the destination column has about 60 px to spare. That works against CR-8's 'the line, position and delay columns size to their content'. Recommended: drop `inline-size: 100%` from destinationCell and leave the browser's automatic table layout to share out the spare width. 'Timetable only' then stays on one line wherever it fits, and at 320 px the long destination still wraps with `overflow-wrap: anywhere`. Rewrite the Tokens row and CR-8 to say so. The cost: the spare width goes mostly to the delay column, so the gap between Position and Delay grows on wide panels. The alternative is to keep 100% and accept that the state's word wraps at every width."
 notes:
   - stage: brief
     at: 2026-10-25T13:25:09.831Z
@@ -44,3 +53,9 @@ notes:
   - stage: brief
     at: 2026-10-25T13:27:10.436Z
     direction: DepartureRow on main shows the data state with VehicleDot and words of its own, while VehicleTable composes VehicleDotLabel. A design run could check that the two read the same, side by side.
+  - stage: build
+    at: 2026-10-25T13:36:30.389Z
+    direction: "Rows are centred vertically (vertical-align: middle). As a result, Delay's figures, set in typography.data, sit about 1 px below the label baseline of the destination and the state's word. A row whose destination wraps centres its badge, state and delay on the whole destination block. DepartureRow instead aligns its parts on the baseline of the first line. A design run should choose one alignment for both patterns. Baseline alignment in a 52 px row would push the content to the top of the row."
+  - stage: build
+    at: 2026-10-25T13:36:30.389Z
+    questions: "1. (Tokens, the destinationCell `inline-size` row, and CR-8) The `inline-size: 100%` on destinationCell makes the browser give the line, position and delay columns only their narrowest width, not their natural one. So in the Default story, at panel width (332 px table), 'Timetable only' wraps onto two lines even though the destination column has about 60 px to spare. That works against CR-8's 'the line, position and delay columns size to their content'. Recommended: drop `inline-size: 100%` from destinationCell and leave the browser's automatic table layout to share out the spare width. 'Timetable only' then stays on one line wherever it fits, and at 320 px the long destination still wraps with `overflow-wrap: anywhere`. Rewrite the Tokens row and CR-8 to say so. The cost: the spare width goes mostly to the delay column, so the gap between Position and Delay grows on wide panels. The alternative is to keep 100% and accept that the state's word wraps at every width."

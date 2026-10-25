@@ -1,0 +1,82 @@
+/* VehicleTable: a native table of four columns, Line, Destination, Position and Delay, at rest only
+   (CR-7): no fill, no radius, no hover; rows divided by a hairline (docs/patterns/vehicle-table.md).
+   No rule sets `display` on the table or its parts, so none loses its role (CR-1). */
+.pn-VehicleTable {
+  /* CR-8: as wide as its container, with the browser's automatic table layout */
+  inline-size: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* the divider under the header row */
+.pn-VehicleTable-headerRow {
+  border-block-end: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+}
+
+.pn-VehicleTable-headerCell {
+  padding-block: var(--perron-space-200);
+  padding-inline: var(--perron-space-300) 0;
+  font: var(--perron-typography-label-sm);
+  letter-spacing: var(--perron-typography-label-sm-tracking);
+  color: var(--perron-color-text-secondary);
+  /* over a <th>'s centring; a header that wraps keeps its last line on the divider */
+  text-align: start;
+  vertical-align: bottom;
+  /* CR-8: a long translated header breaks only a word longer than its column, and a column sized to
+     its content keeps whole words */
+  overflow-wrap: break-word;
+}
+
+/* the first column flush with the table's start edge */
+.pn-VehicleTable-headerCell[data-column='line'] {
+  padding-inline-start: 0;
+}
+
+/* delays are figures compared down a column, so they line up at its end */
+.pn-VehicleTable-headerCell[data-column='delay'] {
+  text-align: end;
+}
+
+/* CR-8: a table row's height is its least height, so a row grows only when its destination wraps */
+.pn-VehicleTable-row {
+  height: var(--perron-size-vehicle-row);
+}
+
+/* between rows, and none after the last: the panel around the table draws its own edge */
+.pn-VehicleTable-row:not(:last-child) {
+  border-block-end: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+}
+
+.pn-VehicleTable-lineCell,
+.pn-VehicleTable-destinationCell,
+.pn-VehicleTable-positionCell,
+.pn-VehicleTable-delayCell {
+  padding-block: var(--perron-space-200);
+  padding-inline: var(--perron-space-300) 0;
+  vertical-align: middle;
+}
+
+/* the badge keeps its own font; the cell is flush with the table's start edge, and over a <th>'s
+   centring, and the badge never wraps from it */
+.pn-VehicleTable-lineCell {
+  padding-inline-start: 0;
+  text-align: start;
+  white-space: nowrap;
+}
+
+/* the destination's column takes the width the others leave (CR-8); over a <th>'s bold and
+   centring */
+.pn-VehicleTable-destinationCell {
+  inline-size: 100%;
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+  color: var(--perron-color-text-primary);
+  text-align: start;
+  /* CR-8: its column takes the table's spare width, so a word longer than it breaks anywhere */
+  overflow-wrap: anywhere;
+}
+
+/* Delay keeps its own type and colour; only its place is set here */
+.pn-VehicleTable-delayCell {
+  text-align: end;
+}
