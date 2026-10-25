@@ -14,7 +14,7 @@ export interface DataStatePanelProps extends Omit<ComponentPropsWithRef<'div'>, 
   /**
    * Where the data view's data stands: `ready` shows `children`; `loading` says "Loading" while
    * there is no data yet; `empty` says the data came back with nothing in it; `error` says it
-   * could not be loaded. Not a Prik data state
+   * could not be loaded. Not a vehicle-dot data state
    * @default 'ready'
    */
   status?: 'ready' | 'loading' | 'empty' | 'error'

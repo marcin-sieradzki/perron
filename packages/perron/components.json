@@ -90,31 +90,31 @@
     "dependsOn": []
   },
   {
-    "name": "Prik",
+    "name": "VehicleDot",
     "layer": "component",
     "category": "Transit",
     "status": "designing",
     "baseUiParts": [],
-    "penpotPath": "Components/Prik",
+    "penpotPath": "Components/VehicleDot",
     "dependsOn": []
   },
   {
-    "name": "PrikLabel",
+    "name": "VehicleDotLabel",
     "layer": "component",
     "category": "Transit",
     "status": "designing",
     "baseUiParts": [],
-    "penpotPath": "Components/PrikLabel",
-    "dependsOn": ["Prik"]
+    "penpotPath": "Components/VehicleDotLabel",
+    "dependsOn": ["VehicleDot"]
   },
   {
-    "name": "PrikLegend",
+    "name": "VehicleDotLegend",
     "layer": "component",
     "category": "Transit",
     "status": "designing",
     "baseUiParts": [],
-    "penpotPath": "Components/PrikLegend",
-    "dependsOn": ["Prik"]
+    "penpotPath": "Components/VehicleDotLegend",
+    "dependsOn": ["VehicleDot"]
   },
   {
     "name": "LineBadge",
@@ -335,7 +335,7 @@
     "status": "designing",
     "baseUiParts": [],
     "penpotPath": "Patterns/DepartureRow",
-    "dependsOn": ["LineBadge", "Delay", "Prik"]
+    "dependsOn": ["LineBadge", "Delay", "VehicleDot"]
   },
   {
     "name": "DetailHeader",
@@ -389,7 +389,7 @@
     "status": "designing",
     "baseUiParts": [],
     "penpotPath": "Patterns/ReportStrip",
-    "dependsOn": ["PrikLabel"]
+    "dependsOn": ["VehicleDotLabel"]
   },
   {
     "name": "VehicleTable",
@@ -398,7 +398,7 @@
     "status": "designing",
     "baseUiParts": [],
     "penpotPath": "Patterns/VehicleTable",
-    "dependsOn": ["LineBadge", "Delay", "PrikLabel"]
+    "dependsOn": ["LineBadge", "Delay", "VehicleDotLabel"]
   },
   {
     "name": "DayProfileChart",

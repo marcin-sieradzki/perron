@@ -186,7 +186,7 @@ Delay and disruption colours point at the status text colours. When each is used
 
 | Token                        | Light                      | Dark                       | Use                                                        |
 | ---------------------------- | -------------------------- | -------------------------- | ---------------------------------------------------------- |
-| `color.data-state.no-signal` | `#9AA4A9`                  | `#5F6B71`                  | Prik fill when a vehicle has been silent for 5+ min        |
+| `color.data-state.no-signal` | `#9AA4A9`                  | `#5F6B71`                  | Vehicle dot fill when a vehicle has been silent for 5+ min |
 | `color.data-state.halo`      | `#EDEFEB` (color.map.land) | `#151B1E` (color.map.land) | Map only: ring under each dot                              |
 | `color.data-state.outline`   | `rgba(18, 24, 27, 0.45)`   | `rgba(0, 0, 0, 0)`         | Map only: outline around light line colours on a light map |
 

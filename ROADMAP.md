@@ -316,7 +316,7 @@ After the design step, three agent contexts run in sequence, rather than as an a
 Rebuild the components extracted from the Mylder prototype, each through the factory, in the order their dependencies allow. Use the old code only as a reference for behaviour and for how Mylder uses it. Each wave ends with a release that Mylder adopts.
 
 - [ ] **Wave 1, actions and primitives:** IconButton, LinkButton, Text, VisuallyHidden, Surface, Section, Kbd, Tag, Count, EmptyState.
-- [ ] **Wave 2, Mylder's vocabulary:** Prik, PrikLabel, PrikLegend, LineBadge, StationIcon, Delay, SeverityLabel, Stat, FactList, NormalService, Attribution, Brand.
+- [ ] **Wave 2, Mylder's vocabulary:** VehicleDot, VehicleDotLabel, VehicleDotLegend, LineBadge, StationIcon, Delay, SeverityLabel, Stat, FactList, NormalService, Attribution, Brand.
 - [ ] **Wave 3, interactive, on Base UI:**
   - SegmentedControl (ToggleGroup);
   - Tabs;

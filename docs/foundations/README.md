@@ -31,10 +31,10 @@ Each page gives the rules for one foundation, then its tokens or files. The tabl
 
 Two more pages hold what only a live map needs:
 
-| Page                          | What it covers                                       |
-| ----------------------------- | ---------------------------------------------------- |
-| [Data states](data-states.md) | The five Prik states, delays and kinds of disruption |
-| [Map](map.md)                 | Line widths, dot sizes and dimming on the map canvas |
+| Page                          | What it covers                                              |
+| ----------------------------- | ----------------------------------------------------------- |
+| [Data states](data-states.md) | The five vehicle dot states, delays and kinds of disruption |
+| [Map](map.md)                 | Line widths, dot sizes and dimming on the map canvas        |
 
 ## Using the tokens
 
