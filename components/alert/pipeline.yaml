@@ -3,4 +3,24 @@ component: Alert
 layer: component
 deferred:
   at: 2026-10-25T07:20:14.474Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-25T07:20:18.438Z
+    ended: 2026-10-25T07:28:35.814Z
+notes:
+  - stage: brief
+    at: 2026-10-25T07:28:35.814Z
+    direction: The contract's Families table has no row for messages. Alert and Toast should share one 'Messages' treatment (tinted intent surface, transparent hairline edge, radius.lg, ink text, intent-coloured icon) as a family row, so Toast joins it instead of copying Alert's token rows.
+  - stage: brief
+    at: 2026-10-25T07:28:35.814Z
+    direction: The build's contrast tables measure status text on its own tint, but not color.text.primary, color.text.secondary or color.border.control on the status tints and on color.surface.inset. Alert puts ink text, the close icon and an outline Button's edge there, and border.control is only 3.0:1 at its lowest (light inset, dark success), so those pairs should join the contrast markers in accessibility.md.
+  - stage: brief
+    at: 2026-10-25T07:28:35.814Z
+    direction: 'The icon set has no naming rule for one glyph drawn at two grid sizes: info is the 18 px drawing, and Alert needs a 14 px one, recommended as info-circle after check-circle. icons.md should say how such twins are named.'
+  - stage: brief
+    at: 2026-10-25T07:28:35.814Z
+    direction: The contract's onClose(event, reason, details) assumes Base UI's change details, so a component with no Base UI root (Alert, and later any inline dismissible) has to invent a details shape. The contract could name one shared shape, such as { reason, event }, for components without a Base UI root.
+  - stage: brief
+    at: 2026-10-25T07:28:35.814Z
+    questions: "1. (Anatomy) Title renders as a p by default, a heading via slotProps.title.render? Recommended: yes, as EmptyState. 2. (Anatomy) Intent icons on the 14 px grid at icon.size.325: check-circle, warning, plus new info-circle and exclamation-circle under a Feedback category? Recommended: yes. 3. (Anatomy) Intent icon in a new shared part IntentIcon under src/parts/? Recommended: yes, Toast needs it next. 4. (Props) color 'neutral' | 'info' | 'success' | 'warning' | 'danger', default neutral on color.surface.inset with no icon? Recommended: yes (answered in the family's order neutral, success, warning, danger, info). 5. (Props) Close button only when onClose is given; onClose(event, 'close-press', { reason, event }); Alert never hides itself? Recommended: yes. 6. (Tokens) The look the Tokens table gives (tinted surface, transparent hairline, radius.lg, ink text, intent icon)? Recommended: yes. 7. (Keyboard and ARIA) role=status by default for every color, overridable to alert, never alert by default? Recommended: yes. 8. (Keyboard and ARIA) No hidden intent word? Recommended: yes, as Tag and EmptyState."
