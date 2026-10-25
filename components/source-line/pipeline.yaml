@@ -9,14 +9,12 @@ stages:
     started: 2026-10-25T17:54:16.088Z
     ended: 2026-10-25T17:54:26.277Z
   build:
-    runs: 6
-    status: failed
-    started: 2026-10-25T19:27:34.212Z
-    begun: 2b4731e87a1d71164af06b1b9f33134b9cdff01bef76c550d5c0c6b18b5250fc
+    runs: 7
+    status: done
+    started: 2026-10-25T19:38:34.184Z
+    begun: fce4fbc427325e3fef3231fe1379d1a3dc98cf31e8d960910988d5f83f81dc8e
     spec: fce4fbc427325e3fef3231fe1379d1a3dc98cf31e8d960910988d5f83f81dc8e
-    ended: 2026-10-25T19:28:10.016Z
-    failing: 'npm run check failed:  / > perron@0.0.0 tokens:check / > node scripts/build-tokens.ts --check /  / packages/perron/data/docs.json is out of date. Run npm run tokens.'
-    acted: 'build failed: npm run check failed:  / > perron@0.0.0 tokens:check / > node scripts/build-tokens.ts --check /  / packages/perron/data/docs.json is out of date. Run npm run tokens.'
+    ended: 2026-10-25T19:41:51.115Z
   review:
     rounds: 4
     sentBack: 4
