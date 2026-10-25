@@ -221,14 +221,16 @@ Members of a family share one treatment, in Penpot and in CSS. A new member join
 
 Each of these is drawn once, in its own folder, `packages/perron/src/parts/<Part>/` (`<Part>.tsx` and `<Part>.css`). A component composes the part; it never draws its own. Parts are internal: not registered, not exported. A new shared part joins this table first, and so does a part a second component needs, which moves here from the first one's folder. Two branches that add the same part keep `main`'s copy when they merge `main` in, and change the part there for both.
 
-| Part                | Draws                                       | Composed in                                                                          | Only its folder holds                                       |
-| ------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------ | ----------------------------------------------------------- |
-| `VisuallyHidden`    | Text for screen readers only                | Any component with a word the eye gets from an icon or a shape                       | `pn-VisuallyHidden`, and `clip-path: inset(50%)` or `clip:` |
-| `CheckboxIndicator` | A checkbox's box, with its tick or dash     | `Checkbox.Indicator`, `Menu.CheckboxItemIndicator`                                   | `pn-CheckboxIndicator`, and the tick icon                   |
-| `SelectedMark`      | The tick beside a chosen option             | `Select.ItemIndicator`, `Combobox.ItemIndicator`, `Menu.RadioItemIndicator`          | `pn-SelectedMark`, and the tick icon                        |
-| `CloseButton`       | The icon button that closes what it sits in | `Dialog.Close`, `Popover.Close`, `Drawer.Close`, `Toast.Close`, `Autocomplete.Clear` | `pn-CloseButton`, and the `close` icon                      |
+| Part                | Draws                                         | Composed in                                                                                           | Only its folder holds                                                     |
+| ------------------- | --------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `VisuallyHidden`    | Text for screen readers only                  | Any component with a word the eye gets from an icon or a shape                                        | `pn-VisuallyHidden`, and `clip-path: inset(50%)` or `clip:`               |
+| `CheckboxIndicator` | A checkbox's box, with its tick or dash       | `Checkbox.Indicator`, `Menu.CheckboxItemIndicator`                                                    | `pn-CheckboxIndicator`, and the tick icon                                 |
+| `SelectedMark`      | The tick beside a chosen option               | `Select.ItemIndicator`, `Combobox.ItemIndicator`, `Menu.RadioItemIndicator`                           | `pn-SelectedMark`, and the tick icon                                      |
+| `CloseButton`       | The icon button that closes what it sits in   | `Dialog.Close`, `Popover.Close`, `Drawer.Close`, `Toast.Close`, `Autocomplete.Clear`, Alert's `close` | `pn-CloseButton`, and the `close` icon                                    |
+| `IntentIcon`        | A status intent's icon, or none for `neutral` | Alert's `icon`, and Toast's                                                                           | `pn-IntentIcon`, the `info-circle` icon and the `exclamation-circle` icon |
 
 - `CloseButton`'s label is the owned string for "Close", overridden by the component's `closeLabel`.
+- `IntentIcon` draws `check-circle` for `success`, `warning` for `warning`, `exclamation-circle` for `danger` and `info-circle` for `info`, in `currentColor` at the `--perron-icon-size` the element around it sets. Only the two drawn for it are its own: SeverityLabel and NormalService draw `warning` and `check-circle` too.
 - The tick and the dash are in `packages/perron/icons/`, added with `CheckboxIndicator` following [Icons](../foundations/icons.md).
 
 ## Shared helpers
@@ -270,6 +272,7 @@ Each of these is written once, in its file, and a component, pattern or story im
 | `heardMarkup`                    | `packages/perron/src/testing/markup.ts`         | `heard` for a unit test: what a screen reader reads of server-rendered markup, with no DOM                                                               |
 | `attribute`, `attr`              | `packages/perron/src/testing/markup.ts`         | One attribute's value in the first tag of server-rendered markup, its character references read back                                                     |
 | `openingTag`                     | `packages/perron/src/testing/markup.ts`         | The opening tag of the first element in server-rendered markup whose first class is the one given, for `attribute`                                       |
+| `drawing`                        | `packages/perron/src/testing/markup.ts`         | An svg's drawing, its attributes and its children's, less what an inlined icon adds or leaves out, to compare it with its file                           |
 
 ## What axe won't catch
 

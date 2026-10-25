@@ -1,0 +1,108 @@
+/* Alert: a row of the icon, the content and the close button on the intent's tinted surface, with a
+   transparent hairline edge. The alert is not interactive, so every row of
+   docs/components/alert.md's Tokens table is at rest; the close button keeps the CloseButton part's
+   states, and the action's controls their own. */
+.pn-Alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--perron-space-200);
+  padding-block: var(--perron-space-300);
+  padding-inline: var(--perron-space-400);
+  border-radius: var(--perron-radius-lg);
+  /* CR-10: a transparent edge, which forced colours paint, so the alert keeps its edge there */
+  border: var(--perron-border-width-025) solid transparent;
+  color: var(--perron-color-text-primary);
+  font: var(--perron-typography-body-sm);
+  letter-spacing: var(--perron-typography-body-sm-tracking);
+  /* CR-9: a long word wraps, so the alert fits a 320 px screen */
+  overflow-wrap: anywhere;
+}
+
+.pn-Alert[data-color='neutral'] {
+  background: var(--perron-color-surface-inset);
+}
+
+.pn-Alert[data-color='success'] {
+  background: var(--perron-color-surface-success);
+}
+
+.pn-Alert[data-color='warning'] {
+  background: var(--perron-color-surface-warning);
+}
+
+.pn-Alert[data-color='danger'] {
+  background: var(--perron-color-surface-danger);
+}
+
+.pn-Alert[data-color='info'] {
+  background: var(--perron-color-surface-info);
+}
+
+/* The icon sits on the middle of the first line: the part is one line of the root's typography
+   tall, and centres the icon in it. CR-1: the colour sits on the part, the intent's mark colour
+   (color.status.*) from the contract's Intents table, and the icon draws in currentColor. */
+.pn-Alert-icon {
+  --perron-icon-size: var(--perron-icon-size-325);
+
+  display: flex;
+  flex: none;
+  align-items: center;
+  block-size: 1lh;
+}
+
+.pn-Alert[data-color='neutral'] .pn-Alert-icon {
+  color: var(--perron-color-text-primary);
+}
+
+.pn-Alert[data-color='success'] .pn-Alert-icon {
+  color: var(--perron-color-status-success);
+}
+
+.pn-Alert[data-color='warning'] .pn-Alert-icon {
+  color: var(--perron-color-status-warning);
+}
+
+.pn-Alert[data-color='danger'] .pn-Alert-icon {
+  color: var(--perron-color-status-danger);
+}
+
+.pn-Alert[data-color='info'] .pn-Alert-icon {
+  color: var(--perron-color-status-info);
+}
+
+/* The content takes the row's free width; min-inline-size 0 lets a long word wrap rather than
+   widen the row (CR-9). */
+.pn-Alert-content {
+  display: flex;
+  flex: 1 1 0%;
+  flex-direction: column;
+  gap: var(--perron-space-100);
+  min-inline-size: 0;
+}
+
+.pn-Alert-title {
+  margin: 0;
+  font: var(--perron-typography-heading-sm);
+  letter-spacing: var(--perron-typography-heading-sm-tracking);
+  overflow-wrap: anywhere;
+}
+
+.pn-Alert-description {
+  font: var(--perron-typography-body-sm);
+  letter-spacing: var(--perron-typography-body-sm-tracking);
+  overflow-wrap: anywhere;
+}
+
+.pn-Alert-action {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--perron-space-200);
+  margin-block-start: var(--perron-space-200);
+}
+
+/* CR-6: the CloseButton part draws the button; Alert pulls it up, down and to the end, so it sits
+   on the first line without making a one-line alert taller. */
+.pn-Alert-close {
+  margin-block: calc(-1 * var(--perron-space-200));
+  margin-inline-end: calc(-1 * var(--perron-space-200));
+}
