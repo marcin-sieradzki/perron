@@ -1,5 +1,5 @@
 // One stage of the component loop, run in a fresh context. The `factory` skill starts it with
-// `{ stage, name }`, plus `round` for review, `answers` for a rerun after the stage's questions, and
+// `{ stage, name }`, plus `round` for review (and `since`, the commit the round before reviewed), `answers` for a rerun after the stage's questions, and
 // `fix` for a rerun after a send-back or a failed run (the `fix` that `npm run factory -- next`
 // gives: the reason, with a review's P1 and P2 findings word for word), then records the outcome with `npm run factory -- end`, the only writer of the pipeline file.
 // Each stage reads its own skill, or for review runs as the component-reviewer agent, so it never
@@ -56,8 +56,10 @@ const REVIEW = {
   required: ['review'],
 }
 
-const { stage, name, round, answers, fix, dir, port } = args ?? {}
-const answered = answers ? ` The maintainer answered your last run's questions: ${answers}` : ''
+const { stage, name, round, since, answers, fix, dir, port } = args ?? {}
+const answered = answers
+  ? ` Answers to your last run's questions (the maintainer's, or in an unattended run their recommended answers): ${answers}`
+  : ''
 const rerun = fix
   ? ` This run is a rerun, and its first work is what the factory names here, each at the file and line it gives, before the skill's other steps:\n${fix}\n`
   : ''
@@ -77,7 +79,11 @@ const label = `${stage}:${name}`
 
 if (stage === 'review') {
   const result = await agent(
-    `${worktreeNote}Review ${name}, round ${round ?? 1}. Return review.md's whole text as \`review\`.`,
+    `${worktreeNote}Review ${name}, round ${round ?? 1}.` +
+      (since
+        ? ` The round before reviewed commit ${since}: in this round a new P1 or P2 sits on a line \`git diff ${since}\` changes in the branch's own files, or is a regression that change causes; a gap in code that round already read is a P3 (your Steps, "Later rounds").`
+        : '') +
+      ` Return review.md's whole text as \`review\`.`,
     { label, phase: 'Stage', agentType: 'component-reviewer', schema: REVIEW },
   )
   return (

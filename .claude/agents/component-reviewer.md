@@ -20,6 +20,17 @@ Judge from three inputs only, so the review is independent of how the build reas
 
 The round is the one the prompt gives; without one, it is one more than the round in an existing `components/<name>/review.md`, or 1.
 
+## Later rounds
+
+Round 1 is where every gap is listed. From round 2 on, the review is **scoped** to the fix: the commit the round before reviewed is the one the prompt gives, or `reviewed` under `stages.review` in `pipeline.yaml`, and `git diff <that commit>` over the branch's own files (the ones `git diff $(git merge-base HEAD origin/main)` lists, so `main`'s merged changes stay out) is what changed since. A P1 or P2 in a later round is one of these:
+
+- a finding on a line that diff changes, the spec's lines included;
+- a regression: something the round before could see working, broken by that diff;
+- a P1 or P2 of the round before that the fix left standing, at its line;
+- a red gate, which stays P1 whatever line it names.
+
+Everything else you find in a later round, a gap in code or a spec line the round before already read, is a P3 that says so ("missed in round <n-1>"), so the PR carries it and the loop is not sent back for it. A rubric area still runs whole; only the level of what it finds changes.
+
 Commands you run: `git diff`, `git status`, `git log`, `npm run check`, `npm run test:stories`, `npm run gates` (or `npm run gates -- <rule> <Name>`), `npm run storybook` in the background, Node scripts that drive Playwright against it, and the commands the audit skills give. For a Base UI part's API, ask `get_reference` (it reads the docs of the version pinned here).
 
 ## Steps
@@ -44,9 +55,9 @@ Each audit skill reports in [`format.md`](../skills/design-qa/format.md), whose 
    - **A leaked Base UI name**: `onValueChange` or `onOpenChange` in the props type, or an import from outside `@base-ui/react/<component>`.
    - **A redeclared Base UI prop**: `<Name>Props` declaring again a member it would inherit from Base UI, such as `render`, so Perron's JSDoc replaces Base UI's. The spec's Props row for that member, reading `inherited` under Base UI prop, is the contract's [Props](../../docs/components/README.md#props) rule kept: the row documents the inherited member, and the `docs` gate needs it.
 5. **Owned strings and docs**: the [`content-audit`](../skills/content-audit/SKILL.md) skill on `<Name>`: its owned strings in all four locales, the words in its code, spec and stories, and every JSDoc comment on `<Name>Props`.
-6. **The spec against the code**: every row of the spec's Props, Base UI parts, Tokens, Keyboard and ARIA and Stories tables, every `CR-n` and the prose beside them, read against the code, the CSS and the stories, and against Base UI's own source under `node_modules/@base-ui/react/` where the line says what Base UI does (where focus goes, which reasons an event gives). Every round reads the whole spec, not only the lines the last fix touched, and reports every disagreement it finds in that round: each one left for a later round costs a build run. A fix that landed in the wrong section, or that one line now says and another still denies, is a finding at that line.
+6. **The spec against the code**: every row of the spec's Props, Base UI parts, Tokens, Keyboard and ARIA and Stories tables, every `CR-n` and the prose beside them, read against the code, the CSS and the stories, and against Base UI's own source under `node_modules/@base-ui/react/` where the line says what Base UI does (where focus goes, which reasons an event gives). Every round reads the whole spec, not only the lines the last fix touched, and reports every disagreement it finds in that round, at the level [Later rounds](#later-rounds) gives it: each one left for a later round costs a build run. A fix that landed in the wrong section, or that one line now says and another still denies, is a finding at that line.
 
-7. **Test coverage**, a checklist built whole in every round, the first included: one line per row of the spec's Keyboard table (each key, on each part it names), per behaviour a Stories row's `play` cell promises, per `CR-n` a person can see or hear (a dismissal and its `reason`, a pointer moving the highlight, focus returning), and per Base UI behaviour the spec says the component keeps; each line ticked by the `play` step that proves it, a key pressed or an event's `reason` checked. Every unticked line goes into one finding at the Stories table, listing them all, so no later round finds a gap this round could have listed.
+7. **Test coverage**, a checklist built whole in every round, the first included: one line per row of the spec's Keyboard table (each key, on each part it names), per behaviour a Stories row's `play` cell promises, per `CR-n` a person can see or hear (a dismissal and its `reason`, a pointer moving the highlight, focus returning), and per Base UI behaviour the spec says the component keeps; each line ticked by the `play` step that proves it, a key pressed or an event's `reason` checked. Every unticked line goes into one finding at the Stories table, listing them all, so no later round finds a gap this round could have listed. In a later round, a line whose behaviour the round before could already see is a P3 (see [Later rounds](#later-rounds)); a line a changed line adds or breaks keeps its level.
 
 ## Levels
 
