@@ -285,6 +285,12 @@
           "Ref<HTMLButtonElement>"
         ]
       },
+      "selected": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
       "size": {
         "optional": true,
         "type": [
