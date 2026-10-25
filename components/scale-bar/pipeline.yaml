@@ -9,20 +9,19 @@ stages:
     started: 2026-10-25T02:11:40.278Z
     ended: 2026-10-25T02:13:13.236Z
   build:
-    runs: 2
+    runs: 3
     asked: 1
-    failing: review round 1 found 4 P2 (components/scale-bar/review.md)
+    status: done
+    started: 2026-10-25T02:33:42.377Z
+    spec: 850570599adbc1cd9622a87a7b8bd3db79f677bb9caeb27a1de5a95a8241af54
+    ended: 2026-10-25T02:36:14.416Z
   review:
-    status: failed
-    started: 2026-10-25T02:27:16.600Z
     rounds: 1
+    sentBack: 1
     findings:
       p1: 0
       p2: 4
       p3: 5
-    sentBack: 1
-    ended: 2026-10-25T02:33:36.464Z
-    failing: review round 1 found 4 P2 (components/scale-bar/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T02:11:34.911Z

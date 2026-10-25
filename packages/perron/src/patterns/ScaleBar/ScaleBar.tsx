@@ -101,7 +101,11 @@ export function ScaleBar({
     // "pn-Surface pn-ScaleBar <caller's>". CR-8: nothing placed
     <Surface {...rest} ref={rootRef} variant="glass" className={classes('pn-ScaleBar', className)}>
       {/* CR-10: the caller's label props under the pattern's own class and words */}
-      <span {...labelProps} className={classes('pn-ScaleBar-label', labelProps?.className)}>
+      <span
+        {...labelProps}
+        className={classes('pn-ScaleBar-label', labelProps?.className)}
+        dangerouslySetInnerHTML={undefined}
+      >
         <VisuallyHidden>{strings.scale}</VisuallyHidden>{' '}
         {unknown ? (
           // CR-7: "—" for the eye, "Unknown" for the ear
@@ -120,14 +124,18 @@ export function ScaleBar({
           )
         )}
       </span>
-      {/* CR-5: the bar's length is the one inline style, the distance's share, over the caller's */}
+      {/* CR-5: the bar's length is the one inline style, the distance's share, over the caller's.
+          CR-10: its children are the pattern's, none, so nothing a caller gives renders inside it */}
       {scale && (
         <span
           {...barProps}
           className={classes('pn-ScaleBar-bar', barProps?.className)}
           style={{ ...barProps?.style, inlineSize: `${scale.share * 100}%` }}
           aria-hidden="true"
-        />
+          dangerouslySetInnerHTML={undefined}
+        >
+          {null}
+        </span>
       )}
     </Surface>
   )

@@ -142,4 +142,17 @@ describe('ScaleBar', () => {
     expect(markup).toContain('class="pn-Surface pn-ScaleBar corner"')
     expect(markup).toMatch(/<span class="pn-ScaleBar-label figure" id="scale">/)
   })
+
+  it('keeps the label’s words its own over the caller’s children and inner HTML (CR-10)', () => {
+    const markup = renderToStaticMarkup(
+      <ScaleBar
+        metersPerPixel={NaN}
+        slotProps={{
+          label: { children: 'caller', dangerouslySetInnerHTML: { __html: '<b>caller</b>' } },
+        }}
+      />,
+    )
+    expect(markup).not.toContain('caller')
+    expect(heardMarkup(markup)).toBe('Scale Unknown')
+  })
 })
