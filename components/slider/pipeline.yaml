@@ -1,0 +1,6 @@
+# Written by npm run factory; never by hand.
+component: Slider
+layer: component
+deferred:
+  at: 2026-10-25T06:59:37.033Z
+stages: {}
