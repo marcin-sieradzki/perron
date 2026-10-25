@@ -429,7 +429,7 @@
     "name": "KioskBar",
     "layer": "pattern",
     "category": "Shell",
-    "status": "building",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Patterns/KioskBar",
     "dependsOn": ["Brand", "Stat", "Surface"]
