@@ -1,12 +1,20 @@
 // Checkbox's stories: one per variant of the deferred design, named as the spec's Stories table
-// names them, then a ticked and disabled box, a read-only one, a controlled one, two in a form, a
-// long Danish label and a box with no label. Hover and focus render at rest; the visual check
+// names them, then a ticked and disabled box, a read-only one, a controlled one, two in a form, the
+// label's shapes, a long Danish label and a box with no label. Hover and focus render at rest; the visual check
 // drives them, and their play tests check them.
 import { Field } from '@base-ui/react/field'
 import { createRef, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
-import { colour, mounted, onHover, resolve, stateFill, stateRules } from '../../testing/stories.ts'
+import {
+  byTestId,
+  colour,
+  mounted,
+  onHover,
+  resolve,
+  stateFill,
+  stateRules,
+} from '../../testing/stories.ts'
 import { Button } from '../Button/Button.tsx'
 import { Checkbox, type CheckboxProps } from './Checkbox.tsx'
 
@@ -236,6 +244,9 @@ export const Invalid: Story = {
     await expect(root).toHaveAttribute('data-invalid')
     await expect(root).toHaveAttribute('aria-invalid', 'true')
     await expect(root).toHaveAttribute('aria-required', 'true')
+    // the hidden input Base UI renders beside the root says it too
+    const input = canvasElement.querySelector<HTMLInputElement>('input[type="checkbox"]')!
+    await expect(input).toHaveAttribute('aria-invalid', 'true')
     await expect(getComputedStyle(box(root)).borderColor).toBe(
       resolve('borderColor', 'var(--perron-color-status-danger)'),
     )
@@ -401,6 +412,78 @@ export const InForm: Story = {
     await expect(data().has('planned')).toBe(false)
     await expect(data().get('routes')).toBe('bus')
     ;(document.activeElement as HTMLElement | null)?.blur()
+  },
+}
+
+/** Each state a label's shape is shown in, with the props that set it and what the root says. */
+const SHAPE_STATES = [
+  { state: 'unticked', props: {}, checked: 'false', mark: null },
+  { state: 'ticked', props: { defaultChecked: true }, checked: 'true', mark: 'tick' },
+  { state: 'indeterminate', props: { indeterminate: true }, checked: 'mixed', mark: 'dash' },
+  { state: 'disabled', props: { disabled: true }, checked: 'false', mark: null },
+] as const
+
+/** Each label that renders nothing, by the test id of the box it is given to. */
+const NOTHING = { false: false, empty: '', list: [null, false] } as const
+
+/**
+ * The label as an element and as a list, unticked, ticked, indeterminate and disabled, then three
+ * boxes whose `children` render nothing.
+ */
+export const Shapes: Story = {
+  render: (args) => (
+    <div style={{ display: 'grid', justifyItems: 'start' }}>
+      {SHAPE_STATES.map(({ state, props }) => (
+        <Checkbox key={`element-${state}`} {...props} data-testid={`element-${state}`}>
+          <strong>Show planned works on the map</strong>
+        </Checkbox>
+      ))}
+      {SHAPE_STATES.map(({ state, props }) => (
+        <Checkbox key={`list-${state}`} {...props} data-testid={`list-${state}`}>
+          {['Show ', <strong key="bus">bus</strong>, ' routes']}
+        </Checkbox>
+      ))}
+      {Object.entries(NOTHING).map(([id, children]) => (
+        <Checkbox
+          key={id}
+          onChange={args.onChange}
+          data-testid={`nothing-${id}`}
+          aria-label="Show planned works on the map"
+        >
+          {children}
+        </Checkbox>
+      ))}
+    </div>
+  ),
+  play: async () => {
+    for (const [shape, name] of [
+      ['element', 'Show planned works on the map'],
+      ['list', 'Show bus routes'],
+    ]) {
+      for (const { state, checked, mark: drawn } of SHAPE_STATES) {
+        const root = await byTestId(`${shape}-${state}`)
+        await expect(root).toHaveRole('checkbox')
+        await expect(root).toHaveAccessibleName(name)
+        await expect(root).toHaveAttribute('aria-checked', checked)
+        if (state === 'disabled') await expect(root).toHaveAttribute('aria-disabled', 'true')
+        const label = root.querySelector('.pn-Checkbox-label')!
+        await expect(label).not.toBeNull()
+        await expect(label.querySelector('strong')).not.toBeNull()
+        await expect(label.textContent).toBe(name)
+        const svg = mark(root)
+        if (drawn === null) await expect(svg).toBeNull()
+        // the tick has height, the dash is a flat line
+        else if (drawn === 'tick')
+          await expect(svg!.querySelector('path')!.getBBox().height).toBeGreaterThan(0)
+        else await expect(svg!.querySelector('path')!.getBBox().height).toBe(0)
+      }
+    }
+    for (const id of Object.keys(NOTHING)) {
+      const root = await byTestId(`nothing-${id}`)
+      await expect(root.querySelector('.pn-Checkbox-label')).toBeNull()
+      await expect(root).toHaveAccessibleName('Show planned works on the map')
+      await expect(box(root)).not.toBeNull()
+    }
   },
 }
 

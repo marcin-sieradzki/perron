@@ -217,7 +217,7 @@ Each of these is drawn once, in its own folder, `packages/perron/src/parts/<Part
 | `CloseButton`       | The icon button that closes what it sits in | `Dialog.Close`, `Popover.Close`, `Drawer.Close`, `Toast.Close`, `Autocomplete.Clear` | `pn-CloseButton`, and the `close` icon                      |
 
 - `CloseButton`'s label is the owned string for "Close", overridden by the component's `closeLabel`.
-- The tick and the dash are in `packages/perron/icons/`, added with `CheckboxIndicator` following [Icons](../foundations/icons.md); `SelectedMark` draws the same tick.
+- The tick and the dash are in `packages/perron/icons/`, added with `CheckboxIndicator` following [Icons](../foundations/icons.md).
 
 ## Shared helpers
 
