@@ -1,13 +1,13 @@
 // MapControls' stories: the bar in each orientation, at each zoom limit, disabled, and with its
 // words overridden. The buttons' hover, focus and pressed looks are ToolbarButton's, storied on the
 // Toolbar page; these render at rest, and their play tests check the behaviour.
-import { createRoot } from 'react-dom/client'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { dictionaries } from '../../locale/index.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
+import { mounted } from '../../testing/stories.ts'
 import { MapControls } from './MapControls.tsx'
 
 const onZoomIn = fn()
@@ -220,15 +220,12 @@ export const CustomLabels: Story = {
     })
     await step('in Danish with no overrides, the Danish dictionary names them', async () => {
       const da = dictionaries.da
-      const host = document.createElement('div')
-      canvasElement.append(host)
-      const root = createRoot(host)
-      root.render(
+      const ui = (
         <PerronProvider locale="da">
           <MapControls />
-        </PerronProvider>,
+        </PerronProvider>
       )
-      try {
+      await mounted(canvasElement, ui, async (host) => {
         const bar = await waitFor(() => within(host).getByRole('toolbar'))
         await expect(bar).toHaveAccessibleName(da.mapControls)
         await expect(
@@ -237,10 +234,7 @@ export const CustomLabels: Story = {
             .map((b) => b.getAttribute('aria-label')),
         ).toEqual([da.zoomIn, da.zoomOut, da.centerMap])
         expectOwnedStrings(host.innerHTML, 'da')
-      } finally {
-        root.unmount()
-        host.remove()
-      }
+      })
     })
   },
 }
