@@ -3,4 +3,28 @@ component: Tooltip
 layer: component
 deferred:
   at: 2026-10-25T04:39:15.127Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-25T04:39:19.626Z
+    ended: 2026-10-25T04:46:00.237Z
+    pending: 5
+notes:
+  - stage: brief
+    at: 2026-10-25T04:46:00.238Z
+    direction: "Naming: Tooltip takes trigger plus children (Dialog, Sheet and MapTooltip's form) rather than MUI's title plus a child element. The next trigger-bound overlays, Popover and Menu, will copy this."
+  - stage: brief
+    at: 2026-10-25T04:46:00.238Z
+    direction: PerronProvider would render Tooltip.Provider, so Base UI's delay group covers the whole app; this is the first Base UI import in PerronProvider.
+  - stage: brief
+    at: 2026-10-25T04:46:00.238Z
+    direction: MapTooltip's defaultOffsets reading moves into a shared helper, positionerOffsets, in packages/perron/src/internal/tokens.ts. It joins the contract's Shared helpers table, and both MapTooltip and Tooltip import it.
+  - stage: brief
+    at: 2026-10-25T04:46:00.238Z
+    direction: "Tooltip.Arrow is to be taken out of the Tooltip entry's baseUiParts: the Tooltips family draws no arrow, so it matches MapTooltip."
+  - stage: brief
+    at: 2026-10-25T04:46:00.238Z
+    direction: Tooltip reuses MapTooltip's positioner defaults (sideOffset space.200, collisionPadding size.panel-gap), its padding (space.150 block, space.200 inline) and its immediate open and close with no transition, so the Tooltips family keeps one treatment. Base UI's 600 ms open delay stays, with no token.
+  - stage: brief
+    at: 2026-10-25T04:46:00.238Z
+    questions: "1. (Anatomy) Is Tooltip one component that takes its trigger as a required trigger ReactElement and its words as children, with the popup as its root, like Dialog's and Sheet's trigger and MapTooltip's children, rather than MUI's title for the words and children for the trigger? Recommended: yes. 2. (Anatomy) Does PerronProvider wrap its children in one Tooltip.Provider with Base UI's default delays, while Tooltip itself renders no provider? Recommended: yes. 3. (Props) Does Tooltip offer only open, defaultOpen, onOpen and onClose of Tooltip.Root's props, setting triggerId and defaultTriggerId itself, and leave out disabled, trackCursorAxis, disableHoverablePopup, actionsRef, handle and onOpenChangeComplete? Recommended: yes. 4. (Tokens) Does the trigger take no look of Tooltip's own on data-popup-open and data-trigger-disabled? Recommended: yes. 5. (Keyboard and ARIA) Does Tooltip add no ARIA of its own (no role=tooltip, no aria-describedby or aria-label on the trigger)? Recommended: yes."
