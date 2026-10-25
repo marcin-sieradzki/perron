@@ -50,6 +50,7 @@ export const PAGES = [
   'docs/components/segmented-control.md',
   'docs/components/select.md',
   'docs/components/switch.md',
+  'docs/components/text-field.md',
   'docs/components/section.md',
   'docs/components/surface.md',
   'docs/components/attribution.md',

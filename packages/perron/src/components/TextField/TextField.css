@@ -1,0 +1,48 @@
+/* TextField, from docs/components/text-field.md: the Fields family's box, drawn on the <input>
+   itself, which is the root (CR-6). The frame, its label, its help and its error are Field's, whose
+   CSS this file never writes again. Hover and invalid change the box at once, with no transition
+   (CR-8); the page's :focus-visible rule draws the ring round the input. */
+
+/* The box takes the frame's width (CR-11), one line of words that scrolls in it, as a native input
+   does (CR-7), centred in size.input by the input itself. */
+.pn-TextField {
+  box-sizing: border-box;
+  inline-size: 100%;
+  block-size: var(--perron-size-input);
+  margin: 0;
+  padding-block: 0;
+  padding-inline: var(--perron-space-300);
+  border: var(--perron-border-width-025) solid var(--perron-color-border-control);
+  border-radius: var(--perron-radius-md);
+  background-color: var(--perron-color-surface-raised);
+  font: var(--perron-typography-body);
+  letter-spacing: var(--perron-typography-body-tracking);
+  color: var(--perron-color-text-primary);
+  white-space: nowrap;
+}
+
+/* The hint's ink, at full strength: Firefox dims a placeholder on its own (CR-13). */
+.pn-TextField::placeholder {
+  color: var(--perron-color-text-tertiary);
+  opacity: 1;
+}
+
+/* The hover layer laid over the raised fill, as the Fields do. */
+@media (hover: hover) {
+  .pn-TextField:not([data-disabled]):hover {
+    background-image: linear-gradient(
+      var(--perron-color-surface-hover),
+      var(--perron-color-surface-hover)
+    );
+  }
+}
+
+/* Disabled is a colour, never an opacity; the box keeps its rest fill and edge. */
+.pn-TextField[data-disabled] {
+  color: var(--perron-color-text-tertiary);
+}
+
+/* The danger edge, never on a disabled box, whose error Field turns to the tertiary ink. */
+.pn-TextField[data-invalid]:not([data-disabled]) {
+  border-color: var(--perron-color-status-danger);
+}
