@@ -80,6 +80,11 @@ export const en = {
   noMatches: 'No matches',
   /** A field's label: after the words of a field the person may leave empty, as in "Stop name (optional)". */
   optional: '(optional)',
+  /**
+   * Progress: heard after the task's name, in place of the figure, while how far the task has got
+   * is not known.
+   */
+  inProgress: 'In progress',
 }
 
 /** The name of one owned string. */

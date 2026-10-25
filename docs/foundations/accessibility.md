@@ -71,7 +71,7 @@ Perron targets [WCAG 2.2](https://www.w3.org/TR/WCAG22/) level AA. Part of it th
 - **Hover (1.4.13).** Anything shown on hover is also reachable by selecting the item, because touch and keyboard users never see hover. A hover card stays while the pointer is over it and closes with Esc.
 - **Keys.** Esc closes the topmost thing first: a dialog, then a detail panel, then a highlight. + and − zoom, arrow keys pan.
 - **State in words.** A toggle whose label is an action and its only word says its state in words as well as in looks ("Follow" / "Following"). A control whose label names a setting or a filter keeps that label, and its role tells the ear the state: a switch's `role="switch"` says on or off, a filter chip's `aria-pressed` says pressed. The eye gets more than a hue: a switch's thumb moves as its track fills, and a chip's fill turns to ink. One primary action per panel.
-- **Moving things.** Loops (the follow blink and the report and selection pulses) stop in their component when the system asks for less motion. The tokens only shorten transitions.
+- **Moving things.** Loops (the follow blink, the report and selection pulses, and the progress bar's sweep) stop in their component when the system asks for less motion. The tokens only shorten transitions.
 
 <!-- tokens: focus.* size.target-min -->
 

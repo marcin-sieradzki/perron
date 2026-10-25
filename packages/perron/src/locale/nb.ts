@@ -40,4 +40,5 @@ export const nb: OwnedStrings = {
   kilometersUnit: 'km',
   noMatches: 'Ingen treff',
   optional: '(valgfritt)',
+  inProgress: 'Pågår',
 }
