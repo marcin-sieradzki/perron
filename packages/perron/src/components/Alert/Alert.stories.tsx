@@ -10,6 +10,7 @@ import calendar from '../../../icons/calendar.svg?raw'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
 import {
+  colour,
   expectNoFocus,
   heard,
   icon,
@@ -98,6 +99,12 @@ export const Danger: Story = {
       await expect(iconPart).toHaveAttribute('aria-hidden', 'true')
       await expect(iconPart.querySelector('svg')).toHaveAttribute('focusable', 'false')
       await expect(heard(root)).toBe([DANGER_TITLE, DANGER_SENTENCE, 'Try again', 'Close'].join(''))
+    })
+
+    await step("the icon draws in the intent's mark colour, color.status.danger", async () => {
+      await expect(getComputedStyle(part(root, 'icon')!).color).toBe(
+        colour('--perron-color-status-danger'),
+      )
     })
 
     const retry = canvas.getByRole('button', { name: 'Try again' })
@@ -240,6 +247,38 @@ export const Success: Story = {
         await expect(within(host).getByRole('button', { name: 'Send report' })).toHaveFocus()
         ;(document.activeElement as HTMLElement).blur()
       })
+    })
+
+    await step("the caller's slotProps.close.onClick runs before onClose (CR-6)", async () => {
+      const calls: string[] = []
+      await mounted(
+        canvasElement,
+        <Alert
+          {...args}
+          onClose={() => calls.push('onClose')}
+          slotProps={{ close: { onClick: () => calls.push('onClick') } }}
+        />,
+        async (host) => {
+          await userEvent.click(await within(host).findByRole('button', { name: 'Close' }))
+          await expect(calls).toEqual(['onClick', 'onClose'])
+        },
+      )
+    })
+
+    await step('preventBaseUIHandler() in that onClick stops onClose (CR-6)', async () => {
+      const onClose = fn()
+      // slotProps.close is typed with React's button props; mergeProps adds the method at runtime
+      type BaseUIClick = { preventBaseUIHandler: () => void }
+      const onClick = fn((event: unknown) => (event as BaseUIClick).preventBaseUIHandler())
+      await mounted(
+        canvasElement,
+        <Alert {...args} onClose={onClose} slotProps={{ close: { onClick } }} />,
+        async (host) => {
+          await userEvent.click(await within(host).findByRole('button', { name: 'Close' }))
+          await expect(onClick).toHaveBeenCalledTimes(1)
+          await expect(onClose).not.toHaveBeenCalled()
+        },
+      )
     })
 
     await step('closeLabel="Dismiss" names the close button', async () => {

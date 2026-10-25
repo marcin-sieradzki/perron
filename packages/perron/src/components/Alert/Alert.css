@@ -39,8 +39,8 @@
 }
 
 /* The icon sits on the middle of the first line: the part is one line of the root's typography
-   tall, and centres the icon in it. CR-1: the colour sits on the part, and the icon draws in
-   currentColor. */
+   tall, and centres the icon in it. CR-1: the colour sits on the part, the intent's mark colour
+   (color.status.*) from the contract's Intents table, and the icon draws in currentColor. */
 .pn-Alert-icon {
   --perron-icon-size: var(--perron-icon-size-325);
 
@@ -55,19 +55,19 @@
 }
 
 .pn-Alert[data-color='success'] .pn-Alert-icon {
-  color: var(--perron-color-text-success);
+  color: var(--perron-color-status-success);
 }
 
 .pn-Alert[data-color='warning'] .pn-Alert-icon {
-  color: var(--perron-color-text-warning);
+  color: var(--perron-color-status-warning);
 }
 
 .pn-Alert[data-color='danger'] .pn-Alert-icon {
-  color: var(--perron-color-text-danger);
+  color: var(--perron-color-status-danger);
 }
 
 .pn-Alert[data-color='info'] .pn-Alert-icon {
-  color: var(--perron-color-text-info);
+  color: var(--perron-color-status-info);
 }
 
 /* The content takes the row's free width; min-inline-size 0 lets a long word wrap rather than
