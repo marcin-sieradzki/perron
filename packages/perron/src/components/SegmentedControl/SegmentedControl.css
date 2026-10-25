@@ -17,8 +17,9 @@
 }
 
 /* Each segment grows from nothing to at most its label's width, the track's room shared out
-   evenly, so in a narrow track a short label keeps its whole width and the long ones wrap at their
-   spaces, where shrinking each in proportion to its label would break a short word mid-word. The
+   evenly, so in a narrow track a label narrower than its share keeps its whole width and a longer
+   one wraps, breaking a word only when the word is wider than the share, where shrinking each in
+   proportion to its label would break a short word mid-word. The
    block padding keeps a wrapped label's lines off the raised fill's edges; a one-line segment stays
    size.segment tall. */
 .pn-Segment {

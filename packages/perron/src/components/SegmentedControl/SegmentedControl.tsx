@@ -104,9 +104,9 @@ export interface SegmentProps extends Inherited<
   disabled?: boolean
   /** The label: a word or two that names the choice, in sentence case, such as "Metro". */
   children?: ReactNode
-  /** Reaches the root. Merged after `pn-Segment`. */
+  /** Reaches the segment's `<button>`. Merged after `pn-Segment`. */
   className?: string
-  /** Reaches the root. */
+  /** Reaches the segment's `<button>`. */
   style?: CSSProperties
   /** Reaches the root, the segment's `<button>`. */
   ref?: Ref<HTMLButtonElement>
