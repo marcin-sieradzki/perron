@@ -120,7 +120,7 @@ Deprecate, never remove. An old prop or value keeps working: the component maps 
 
 `packages/perron/api.json` is the props API of every `stable` or `deprecated` component: each member its props type declares, whether it is optional, its type, and what the type extends. `npm run api` writes it from the code, and `npm run check` fails while it is stale.
 
-Against `api.json` at the last release tag, `@mylder/perron@<version>`, the API only grows: a new optional prop, a prop made optional, a wider union, a new base. A prop removed, narrowed or made required, a new required prop, a base dropped or a component removed is a break.
+Against `api.json` at the last release tag, `@mylder/perron@<version>`, the API only grows: a new optional prop, a prop made optional, a wider union, a new base, an object type such as `slotProps` gaining optional members. A prop removed, narrowed or made required, a new required prop, a base dropped or a component removed is a break.
 
 ### Breaking changes
 
