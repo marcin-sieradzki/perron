@@ -9,18 +9,19 @@ stages:
     started: 2026-10-25T17:56:21.302Z
     ended: 2026-10-25T17:56:40.084Z
   build:
-    runs: 3
+    runs: 4
+    asked: 2
     status: pending
-    started: 2026-10-25T18:30:20.580Z
+    started: 2026-10-25T18:44:20.305Z
     fix: |-
       review round 1 found 2 P2 (components/data-state-key/review.md). Fix each of its P1 and P2 findings at the line it names:
       - **P2-1.** `docs/patterns/data-state-key.md:91` The Props prose tells an app that keeps the defaults to pass `tokens['vehicle-dot.live-threshold']` from `@mylder/perron/tokens.ts`, but that module has no `tokens` export. The number is `numeric['vehicle-dot.live-threshold']` (`60000`, `packages/perron/tokens/generated/tokens.ts:449`), and `base['vehicle-dot.live-threshold']` is the string `"60000ms"`, which the required `number` prop refuses. A caller who copies the spec's advice gets `undefined` or a type error, so the spec disagrees with the code it points to (rubric 6, the spec against the code). Name `numeric[…]` for both thresholds.
       - **P2-2.** `docs/patterns/data-state-key.md:235` Test coverage, one line unticked. CR-7 says "the figure and its unit are joined by the strings' no-break space, so they never part at a line's end", but only the minutes form is proven: `'2.5\u00A0min'` in English (`DataStateKey.stories.tsx:253`). No `play` step checks the U+00A0 in `secondsDuration` ("60 s", "90 s"), and the Thresholds checks at `DataStateKey.stories.tsx:504-524` compare through `heard`, which turns every `\s`, U+00A0 included, into a plain space. A plain space in `secondsDuration` in any locale would pass every story. Assert the U+00A0 in a seconds threshold's `textContent`, as line 253 does for minutes.
-    begun: c3b329a36c42b1fcfaf7194cd62da77e27d4d9ef13deb0d7b1ee73682e95aa00
     spec: 5a78e0cd9b895c24c942be3a0e865ff8179fe77f4ed014e57b09320fac04913c
-    asked: 1
-    ended: 2026-10-25T18:38:30.980Z
-    failing: '1. (Owned strings and CR-7, secondsDuration and minutesDuration) Any owned template "{x} min" makes the shared test owned-strings.test.tsx:125 fail, since the merged expectOwnedStrings lets a placeholder hold another filled template, so "Every 3 min min" reads as minutesDuration nested in itself. Drop the two duration templates and write a threshold as its figure, a no-break space and a unit word, as Delay writes "+3 min": reuse the existing key `minutesUnit` ("min", override `minutesUnitLabel`, Delay''s name) and add `secondsUnit` ("s" in all four locales, override `secondsUnitLabel`), with CR-7, Props, Owned strings and the stories following? Recommended: yes: it reuses the unit the dictionaries already hold (the review''s P3-5), keeps Delay''s names for the same words, needs no change to shared tooling, and the figure is the key''s own number, not a caller''s words, so the contract''s Words rule against joining an owned word to the caller''s does not bind it.'
+    ended: 2026-10-25T18:44:21.822Z
+    failing: |-
+      1. (Owned strings and CR-7) Keep the duration templates `secondsDuration: '{seconds}\u00A0s'` and `minutesDuration: '{minutes}\u00A0min'`, in place of run 3's answer (a unit word joined to the figure), which the merged expectOwnedStrings refuses in every locale, and leave the shared test's stray "Every 3 min min" for the maintainer to replace on the integration branch? Recommended: yes: the templates are the dictionary's own form for a figure and its unit, as `every: 'Every {count} min'`, they pass every story, and the test line is shared tooling the build may not edit.
+      2. (CR-7 and Keyboard and ARIA) A threshold that is not finite or is below 0: show "—" (aria-hidden) and say "Unknown" (or `unknownLabel`) in place of the whole sentence, rather than in place of the figure inside it? Recommended: yes: the merged expectOwnedStrings refuses a template split by an element, so UnknownValue inside a placeholder fails in every locale, and a sentence with its figure missing says less than "Unknown" does; the estimated and timetable-only sentences, which take no threshold, stand as they are.
   review:
     rounds: 1
     sentBack: 1
@@ -55,3 +56,11 @@ notes:
   - stage: build
     at: 2026-10-25T18:38:30.980Z
     questions: '1. (Owned strings and CR-7, secondsDuration and minutesDuration) Any owned template "{x} min" makes the shared test owned-strings.test.tsx:125 fail, since the merged expectOwnedStrings lets a placeholder hold another filled template, so "Every 3 min min" reads as minutesDuration nested in itself. Drop the two duration templates and write a threshold as its figure, a no-break space and a unit word, as Delay writes "+3 min": reuse the existing key `minutesUnit` ("min", override `minutesUnitLabel`, Delay''s name) and add `secondsUnit` ("s" in all four locales, override `secondsUnitLabel`), with CR-7, Props, Owned strings and the stories following? Recommended: yes: it reuses the unit the dictionaries already hold (the review''s P3-5), keeps Delay''s names for the same words, needs no change to shared tooling, and the figure is the key''s own number, not a caller''s words, so the contract''s Words rule against joining an owned word to the caller''s does not bind it.'
+  - stage: build
+    at: 2026-10-25T18:44:21.822Z
+    direction: The merged expectOwnedStrings refuses a template whose placeholder holds an element, such as UnknownValue or a caller's <time>, since the element splits the template into text runs no template matches whole; a component that fills a placeholder with a node cannot pass it.
+  - stage: build
+    at: 2026-10-25T18:44:21.822Z
+    questions: |-
+      1. (Owned strings and CR-7) Keep the duration templates `secondsDuration: '{seconds}\u00A0s'` and `minutesDuration: '{minutes}\u00A0min'`, in place of run 3's answer (a unit word joined to the figure), which the merged expectOwnedStrings refuses in every locale, and leave the shared test's stray "Every 3 min min" for the maintainer to replace on the integration branch? Recommended: yes: the templates are the dictionary's own form for a figure and its unit, as `every: 'Every {count} min'`, they pass every story, and the test line is shared tooling the build may not edit.
+      2. (CR-7 and Keyboard and ARIA) A threshold that is not finite or is below 0: show "—" (aria-hidden) and say "Unknown" (or `unknownLabel`) in place of the whole sentence, rather than in place of the figure inside it? Recommended: yes: the merged expectOwnedStrings refuses a template split by an element, so UnknownValue inside a placeholder fails in every locale, and a sentence with its figure missing says less than "Unknown" does; the estimated and timetable-only sentences, which take no threshold, stand as they are.
