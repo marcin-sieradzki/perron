@@ -1,0 +1,146 @@
+/* VehicleDot: one vehicle as a dot in its line's colour, drawn in the shape of its data state
+   (docs/components/vehicle-dot.md). The line sets the root's color once, and the dot draws in
+   currentColor, so one rule per line colours every state (CR-7). */
+.pn-VehicleDot {
+  display: inline-block;
+  flex: none;
+  inline-size: var(--perron-icon-size);
+  block-size: var(--perron-icon-size);
+  vertical-align: middle;
+}
+
+/* The glyph box is the icon size of the text beside it. */
+.pn-VehicleDot[data-size='small'] {
+  --perron-icon-size: var(--perron-icon-size-325);
+}
+
+.pn-VehicleDot[data-size='medium'] {
+  --perron-icon-size: var(--perron-icon-size-400);
+}
+
+.pn-VehicleDot[data-size='large'] {
+  --perron-icon-size: var(--perron-icon-size-450);
+}
+
+/* Line colours stay exact: never tinted or outlined. */
+.pn-VehicleDot[data-line='m1'] {
+  color: var(--perron-color-transit-line-m1);
+}
+
+.pn-VehicleDot[data-line='m2'] {
+  color: var(--perron-color-transit-line-m2);
+}
+
+.pn-VehicleDot[data-line='m3'] {
+  color: var(--perron-color-transit-line-m3);
+}
+
+.pn-VehicleDot[data-line='m4'] {
+  color: var(--perron-color-transit-line-m4);
+}
+
+.pn-VehicleDot[data-line='a'] {
+  color: var(--perron-color-transit-line-a);
+}
+
+.pn-VehicleDot[data-line='b'] {
+  color: var(--perron-color-transit-line-b);
+}
+
+.pn-VehicleDot[data-line='c'] {
+  color: var(--perron-color-transit-line-c);
+}
+
+.pn-VehicleDot[data-line='e'] {
+  color: var(--perron-color-transit-line-e);
+}
+
+.pn-VehicleDot[data-line='f'] {
+  color: var(--perron-color-transit-line-f);
+}
+
+.pn-VehicleDot[data-line='h'] {
+  color: var(--perron-color-transit-line-h);
+}
+
+.pn-VehicleDot[data-line='bus'] {
+  color: var(--perron-color-transit-mode-bus);
+}
+
+.pn-VehicleDot[data-line='regional'] {
+  color: var(--perron-color-transit-mode-regional);
+}
+
+/* No signal's cut: a gap cut-width wide from the top left of the glyph box to the bottom right,
+   through which the surface beneath shows. A "to bottom left" gradient's 50% line runs through
+   the other two corners. Not mirrored in right-to-left text: it is a mark (CR-8). */
+.pn-VehicleDot[data-variant='no-signal'] {
+  mask-image: linear-gradient(
+    to bottom left,
+    currentColor calc(50% - var(--perron-vehicle-dot-no-signal-cut-width) / 2),
+    transparent calc(50% - var(--perron-vehicle-dot-no-signal-cut-width) / 2),
+    transparent calc(50% + var(--perron-vehicle-dot-no-signal-cut-width) / 2),
+    currentColor calc(50% + var(--perron-vehicle-dot-no-signal-cut-width) / 2)
+  );
+}
+
+/* The glyph fills the root, as a block, so no baseline gap opens under it. */
+.pn-VehicleDot-glyph {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+/* On a square box r: 50% is half its side, so each radius keeps the dot inset inside the box, and
+   each stroke-inset pulls a rim in by about half its width: one outer size for every state (CR-1). */
+.pn-VehicleDot-dot {
+  cx: 50%;
+  cy: 50%;
+  r: calc(50% - var(--perron-vehicle-dot-inset));
+  fill: currentColor;
+}
+
+.pn-VehicleDot[data-variant='ageing'] .pn-VehicleDot-dot {
+  r: calc(50% - var(--perron-vehicle-dot-inset) - var(--perron-vehicle-dot-ageing-stroke-inset));
+  fill-opacity: var(--perron-vehicle-dot-ageing-fill-opacity);
+  stroke: currentColor;
+  stroke-width: var(--perron-vehicle-dot-ageing-stroke-width);
+}
+
+.pn-VehicleDot[data-variant='estimated'] .pn-VehicleDot-dot {
+  r: calc(50% - var(--perron-vehicle-dot-inset) - var(--perron-vehicle-dot-estimated-stroke-inset));
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--perron-vehicle-dot-estimated-stroke-width);
+}
+
+/* The dash as the token gives it, at every size (see the spec's Tokens notes). */
+.pn-VehicleDot[data-variant='timetable-only'] .pn-VehicleDot-dot {
+  r: calc(50% - var(--perron-vehicle-dot-inset) - var(--perron-vehicle-dot-timetable-stroke-inset));
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--perron-vehicle-dot-timetable-stroke-width);
+  stroke-dasharray: var(--perron-vehicle-dot-timetable-dash);
+}
+
+/* A silent vehicle is grey whatever its line, at live's radius (CR-7). */
+.pn-VehicleDot[data-variant='no-signal'] .pn-VehicleDot-dot {
+  fill: var(--perron-color-data-state-no-signal);
+}
+
+/* Forced colours keep each state's shape: the system's text colour for every line and state, with
+   the fills, opacity, rings and cut kept, and no signal's dot in that colour too, told apart by its
+   cut (CR-9). [data-line] matches the line rules' weight, so this colour wins over them. */
+@media (forced-colors: active) {
+  .pn-VehicleDot {
+    forced-color-adjust: none;
+  }
+
+  .pn-VehicleDot[data-line] {
+    color: CanvasText;
+  }
+
+  .pn-VehicleDot[data-variant='no-signal'] .pn-VehicleDot-dot {
+    fill: currentColor;
+  }
+}

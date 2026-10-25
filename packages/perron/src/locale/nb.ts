@@ -46,4 +46,5 @@ export const nb: OwnedStrings = {
   minimum: 'Minimum',
   maximum: 'Maksimum',
   inProgress: 'Pågår',
+  notifications: 'Varsler',
 }

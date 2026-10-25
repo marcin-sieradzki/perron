@@ -104,6 +104,16 @@ export interface StageState {
   reviewed?: string
   /** review: the latest round's findings by level */
   findings?: { p1: number; p2: number; p3: number }
+  /**
+   * review: the one round `unblock` granted past a cap; that round, or any after it, that finds a P1
+   * or a P2 stops the loop again
+   */
+  granted?: number
+  /**
+   * Set by `unblock` on a stage that reruns itself: the stop's reason, which the maintainer has
+   * acted on, so the rerun's `fix` is what fails now, never that reason again
+   */
+  acted?: string
   /** docs: failed runs; visual: failed reports */
   failures?: number
 }
@@ -118,7 +128,10 @@ export interface Note {
   at: string
   direction?: string
   questions?: string
-  /** The stop's reason; `unblock` resets that stage's cap, so the rounds after it start again */
+  /**
+   * The stop's reason. At a review cap `unblock` grants one more round (the stage's `granted`); at
+   * any other cap it resets the count, so the runs after it start again
+   */
   unblocked?: string
 }
 
@@ -499,6 +512,13 @@ function fixOf(p: Pipeline, failing: string, env: Env) {
   return `${failing}. Fix each of its P1 and P2 findings at the line it names:\n${blockingFindings(text)}`
 }
 
+/**
+ * The fix of a rerun after `unblock`: the stop's reason is the maintainer's, already acted on, so
+ * the rerun fixes only what fails now, never that reason or an earlier failure again.
+ */
+const actedOn = (stage: Stage, reason: string) =>
+  `${stage} stopped at needs-human (${reason}), and the maintainer has acted on it, so that reason is not this run's to fix. Fix only what fails now: run npm run check first and fix each failure at the line it names, then do the skill's other steps.`
+
 /** The fix of a brief run that carries the answers written in `spec` through it. */
 const carryAnswers = (spec: string) =>
   `The maintainer's answers are written in ${spec} in place of their [PENDING] lines: rewrite any still worded as a question or labelled, then carry each one into every section it touches (component-brief, "Run again"), and run its steps 3 to 5 again.`
@@ -593,7 +613,9 @@ export function next(p: Pipeline, env: Env): Next {
         : stage === stages[0]
           ? `the design is deferred`
           : `${stages[stages.indexOf(stage) - 1]} is done`
-    const fix = s.failing && fixOf(p, s.failing, env) + askedBefore(p, stage, env)
+    const fix = s.acted
+      ? actedOn(stage, s.acted)
+      : s.failing && fixOf(p, s.failing, env) + askedBefore(p, stage, env)
     return { run: stage, ...round, why, ...(fix && { fix }) }
   }
   return {
@@ -606,11 +628,19 @@ export function next(p: Pipeline, env: Env): Next {
 
 /** Keeps only a stage's counters, for a stage whose latest run no longer counts. */
 function counters(s: StageState = {}): StageState {
-  const { runs, asked, respecs, rounds, sentBack, reviewed, findings, failures } = s
+  const { runs, asked, respecs, rounds, sentBack, reviewed, findings, granted, failures } = s
   return Object.fromEntries(
-    Object.entries({ runs, asked, respecs, rounds, sentBack, reviewed, findings, failures }).filter(
-      ([, v]) => v !== undefined,
-    ),
+    Object.entries({
+      runs,
+      asked,
+      respecs,
+      rounds,
+      sentBack,
+      reviewed,
+      findings,
+      granted,
+      failures,
+    }).filter(([, v]) => v !== undefined),
   )
 }
 
@@ -706,8 +736,10 @@ export function defer(p: Pipeline, env: Env): Result {
 }
 
 /**
- * Clears a needs-human stop once the maintainer has acted, resetting the cap it hit, and notes the
- * stop, so the PR and a later review round see that the count started again there.
+ * Clears a needs-human stop once the maintainer has acted, and notes the stop for the PR and a later
+ * review round. A review cap gets exactly one more round (`granted`), whose P1 or P2 stops the loop
+ * again; any other cap starts its count again. A stage that reruns itself records the reason as
+ * `acted`, so `next` gives its rerun what fails now as its fix, not the reason the maintainer fixed.
  */
 export function unblock(p: Pipeline, env: Env, to?: Stage): Result {
   if (!p.needsHuman) return { ok: false, why: `${p.component} is not at needs-human` }
@@ -720,14 +752,14 @@ export function unblock(p: Pipeline, env: Env, to?: Stage): Result {
   const out = clone(p)
   ;(out.notes ??= []).push({ stage, at: env.now(), unblocked: out.needsHuman!.reason })
   const s = stageOf(out, stage)
-  if (stage === 'review') s.sentBack = 0
+  if (stage === 'review') s.granted = roundOf(s)
   // a review cap goes back to build with the cap round's findings as its fix, then review again;
   // `--to review` reviews again as it stands, once the maintainer has fixed the code by hand
   const capped = stage === 'review' && s.status === 'failed' && s.failing
   if (capped && to !== 'review') {
     sendBack(out, 'review', s.failing!)
     out.stages.review = counters(s)
-  }
+  } else if (s.status === 'failed') s.acted = out.needsHuman!.reason
   if (stage === 'docs' || stage === 'visual') s.failures = 0
   if (stage === 'build') {
     delete s.asked
@@ -881,6 +913,9 @@ export function end(
 ): Result {
   if (tooling && !(stage === 'docs' && outcome === 'failed'))
     return { ok: false, why: '--tooling is for a docs run that failed on shared tooling' }
+  // component-docs starts a shared-tooling failure "Shared tooling:", so it stops without the flag
+  if (stage === 'docs' && outcome === 'failed' && /^shared tooling\b/i.test(failing ?? ''))
+    tooling = true
   if (p.stages[stage]?.status !== 'running')
     return { ok: false, why: `${stage} is not running; begin it first` }
   const out = clone(p)
@@ -940,7 +975,12 @@ export function end(
       const levels = [found.p1 && `${found.p1} P1`, found.p2 && `${found.p2} P2`].filter(Boolean)
       const reason = `review round ${round} found ${levels.join(' and ')} (${files.review})`
       verdict = { outcome: 'failed', failing: reason }
-      if (found.p1 && s.sentBack >= CAPS.review)
+      if (s.granted && round >= s.granted)
+        out.needsHuman = {
+          stage,
+          reason: `review round ${round} found a P1 or a P2 after unblock granted one round past the cap (round ${s.granted}): ${reason}`,
+        }
+      else if (found.p1 && s.sentBack >= CAPS.review)
         out.needsHuman = {
           stage,
           reason: `${s.sentBack} review rounds found a P1 or a P2, the last a P1: ${reason}`,

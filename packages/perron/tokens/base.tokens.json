@@ -1030,6 +1030,14 @@
       },
       "$description": "Switch thumb slide and track fill"
     },
+    "toast": {
+      "$type": "duration",
+      "$value": {
+        "value": 200,
+        "unit": "ms"
+      },
+      "$description": "Toast slide and fade in and out"
+    },
     "blink": {
       "$type": "duration",
       "$value": {
@@ -1263,6 +1271,14 @@
       },
       "$description": "Detail panel width on desktop"
     },
+    "toast-width": {
+      "$type": "dimension",
+      "$value": {
+        "value": 360,
+        "unit": "px"
+      },
+      "$description": "Toast width on wide screens"
+    },
     "sheet-peek": {
       "$type": "dimension",
       "$value": {
@@ -1431,6 +1447,16 @@
           "lineCap": "butt"
         },
         "$description": "Dash and gap of the timetable-only ring"
+      }
+    },
+    "no-signal": {
+      "cut-width": {
+        "$type": "dimension",
+        "$value": {
+          "value": 1.6,
+          "unit": "px"
+        },
+        "$description": "Width of the diagonal cut, top left to bottom right, through a no-signal dot, the one shape no other state has"
       }
     },
     "live-threshold": {

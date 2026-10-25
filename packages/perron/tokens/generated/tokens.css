@@ -146,6 +146,7 @@
   --perron-duration-camera: 750ms;
   --perron-duration-follow: 500ms;
   --perron-duration-switch: 150ms;
+  --perron-duration-toast: 200ms;
   --perron-duration-blink: 1400ms;
   --perron-duration-report-pulse: 1100ms;
   --perron-duration-selection-pulse: 1600ms;
@@ -177,6 +178,7 @@
   --perron-size-dialog-width: 440px;
   --perron-size-sheet-width: 376px;
   --perron-size-detail-width: 364px;
+  --perron-size-toast-width: 360px;
   --perron-size-sheet-peek: 182px;
   --perron-size-vehicle-row: 52px;
   --perron-size-panel-gap: 12px;
@@ -199,6 +201,7 @@
   --perron-vehicle-dot-timetable-stroke-width: 1.6px;
   --perron-vehicle-dot-timetable-stroke-inset: 0.9px;
   --perron-vehicle-dot-timetable-dash: 2.1px 1.7px;
+  --perron-vehicle-dot-no-signal-cut-width: 1.6px;
   --perron-vehicle-dot-live-threshold: 60000ms;
   --perron-vehicle-dot-ageing-threshold: 300000ms;
   --perron-map-dot-radius-bus: 3.3px;
@@ -429,5 +432,6 @@
     --perron-duration-camera: 0.01ms;
     --perron-duration-follow: 0.01ms;
     --perron-duration-switch: 0.01ms;
+    --perron-duration-toast: 0.01ms;
   }
 }

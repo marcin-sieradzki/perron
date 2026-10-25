@@ -46,4 +46,5 @@ export const da: OwnedStrings = {
   minimum: 'Minimum',
   maximum: 'Maksimum',
   inProgress: 'I gang',
+  notifications: 'Notifikationer',
 }

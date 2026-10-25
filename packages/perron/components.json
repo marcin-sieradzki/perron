@@ -93,7 +93,7 @@
     "name": "VehicleDot",
     "layer": "component",
     "category": "Transit",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/VehicleDot",
     "dependsOn": []
@@ -661,7 +661,7 @@
     "name": "Toast",
     "layer": "component",
     "category": "Feedback",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [
       "Toast.Provider",
       "Toast.Portal",
@@ -670,7 +670,6 @@
       "Toast.Content",
       "Toast.Title",
       "Toast.Description",
-      "Toast.Action",
       "Toast.Close"
     ],
     "penpotPath": "Components/Toast",

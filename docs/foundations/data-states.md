@@ -1,39 +1,41 @@
 # Data states
 
-Every vehicle is a vehicle dot, drawn in its line colour in one of five states. The shapes are the system's signature: never reuse a ring or a dashed ring to mean anything else, and never draw a vehicle without its state.
+Every vehicle is a vehicle dot, drawn in its line colour in one of five states. The shapes are the system's signature: never reuse a ring, a dashed ring or a dot cut by a slash to mean anything else, and never draw a vehicle without its state.
 
-| State          | Shape         | Means                                                  |
-| -------------- | ------------- | ------------------------------------------------------ |
-| Live           | A solid dot   | A GPS report under a minute old                        |
-| Ageing         | A fainter dot | A report 1 to 5 minutes old                            |
-| Estimated      | A ring        | Placed from the timetable and the latest delay         |
-| Timetable only | A dashed ring | No real-time data at all                               |
-| No signal      | A grey dot    | Silent for over 5 minutes, left where it was last seen |
+| State          | Shape                     | Means                                                  |
+| -------------- | ------------------------- | ------------------------------------------------------ |
+| Live           | A solid dot               | A GPS report under a minute old                        |
+| Ageing         | A fainter dot             | A report 1 to 5 minutes old                            |
+| Estimated      | A ring                    | Placed from the timetable and the latest delay         |
+| Timetable only | A dashed ring             | No real-time data at all                               |
+| No signal      | A grey dot cut by a slash | Silent for over 5 minutes, left where it was last seen |
 
 - Always write the state in words next to the dot. Legends list all five states, in this order, even when one has no vehicles.
 - `color.data-state.no-signal` means a vehicle has gone silent. Use it for that alone.
+- No signal is the one state cut by a slash: a diagonal gap, `vehicle-dot.no-signal.cut-width` wide, from the top left of the dot to the bottom right, which shows the surface beneath. Live and no signal are both solid dots, so without the cut they would differ by colour alone, and they would look the same in forced colours, where Windows' contrast themes replace every colour. The cut takes ink away rather than adding it, so the map grows no busier, and it reads down to the smallest dot.
 - On the map, draw dots on a canvas, with a halo of `color.data-state.halo` and, for light line colours on the light map, a hairline of `color.data-state.outline`.
 
 ## Geometry
 
-The `vehicle-dot` tokens give the geometry of each shape at any size: insets, stroke widths, the dash, and the age thresholds between live, ageing and no signal.
+The `vehicle-dot` tokens give the geometry of each shape at any size: insets, stroke widths, the dash, the no-signal cut, and the age thresholds between live, ageing and no signal.
 
 <!-- tokens: vehicle-dot.* -->
 
-| Token                                | Value         | Use                                                                                        |
-| ------------------------------------ | ------------- | ------------------------------------------------------------------------------------------ |
-| `vehicle-dot.inset`                  | `2px`         | Gap between the glyph box and the circle edge                                              |
-| `vehicle-dot.halo`                   | `1.6px`       | Map only: land-coloured ring drawn under each dot                                          |
-| `vehicle-dot.live-threshold`         | `60000ms`     | Reports younger than this are live                                                         |
-| `vehicle-dot.ageing-threshold`       | `300000ms`    | Reports younger than this (and at least live-threshold old) are ageing; older is no signal |
-| `vehicle-dot.ageing.fill-opacity`    | `0.42`        | Fill strength of an ageing dot, so it reads fainter than live                              |
-| `vehicle-dot.ageing.stroke-width`    | `1.3px`       | Rim of an ageing dot                                                                       |
-| `vehicle-dot.ageing.stroke-inset`    | `0.6px`       | Pulls the ageing rim in so the dot keeps its outer size                                    |
-| `vehicle-dot.estimated.stroke-width` | `1.8px`       | Ring of an estimated dot                                                                   |
-| `vehicle-dot.estimated.stroke-inset` | `0.9px`       | Pulls the estimated ring in so the dot keeps its outer size                                |
-| `vehicle-dot.timetable.stroke-width` | `1.6px`       | Dashed ring of a timetable-only dot                                                        |
-| `vehicle-dot.timetable.stroke-inset` | `0.9px`       | Pulls the timetable ring in so the dot keeps its outer size                                |
-| `vehicle-dot.timetable.dash`         | `2.1px 1.7px` | Dash and gap of the timetable-only ring                                                    |
+| Token                                | Value         | Use                                                                                                            |
+| ------------------------------------ | ------------- | -------------------------------------------------------------------------------------------------------------- |
+| `vehicle-dot.inset`                  | `2px`         | Gap between the glyph box and the circle edge                                                                  |
+| `vehicle-dot.halo`                   | `1.6px`       | Map only: land-coloured ring drawn under each dot                                                              |
+| `vehicle-dot.live-threshold`         | `60000ms`     | Reports younger than this are live                                                                             |
+| `vehicle-dot.ageing-threshold`       | `300000ms`    | Reports younger than this (and at least live-threshold old) are ageing; older is no signal                     |
+| `vehicle-dot.ageing.fill-opacity`    | `0.42`        | Fill strength of an ageing dot, so it reads fainter than live                                                  |
+| `vehicle-dot.ageing.stroke-width`    | `1.3px`       | Rim of an ageing dot                                                                                           |
+| `vehicle-dot.ageing.stroke-inset`    | `0.6px`       | Pulls the ageing rim in so the dot keeps its outer size                                                        |
+| `vehicle-dot.estimated.stroke-width` | `1.8px`       | Ring of an estimated dot                                                                                       |
+| `vehicle-dot.estimated.stroke-inset` | `0.9px`       | Pulls the estimated ring in so the dot keeps its outer size                                                    |
+| `vehicle-dot.timetable.stroke-width` | `1.6px`       | Dashed ring of a timetable-only dot                                                                            |
+| `vehicle-dot.timetable.stroke-inset` | `0.9px`       | Pulls the timetable ring in so the dot keeps its outer size                                                    |
+| `vehicle-dot.timetable.dash`         | `2.1px 1.7px` | Dash and gap of the timetable-only ring                                                                        |
+| `vehicle-dot.no-signal.cut-width`    | `1.6px`       | Width of the diagonal cut, top left to bottom right, through a no-signal dot, the one shape no other state has |
 
 <!-- /tokens -->
 
