@@ -1,0 +1,73 @@
+/* Tag: a pill of one or two words in typography.overline's capitals, at rest only (CR-7). Both
+   variants draw the same hairline edge, so they share one box (CR-4), and the colour is set once on
+   the root (CR-3). */
+.pn-Tag {
+  display: inline-block;
+  box-sizing: border-box;
+  /* CR-6: the tag wraps inside itself and never runs past its container; break-word, not anywhere,
+     so its min-content width keeps whole words and a flex row never squeezes it to a glyph */
+  max-inline-size: 100%;
+  overflow-wrap: break-word;
+  padding-block: var(--perron-space-050);
+  padding-inline: var(--perron-space-200);
+  border-radius: var(--perron-radius-full);
+  border-width: var(--perron-border-width-025);
+  font: var(--perron-typography-overline);
+  letter-spacing: var(--perron-typography-overline-tracking);
+  /* CR-8: the capitals come only from here; the source text stays in sentence case */
+  text-transform: uppercase;
+}
+
+/* CR-4: a transparent edge, which Windows' contrast themes paint in the text colour, so the pill
+   keeps its shape when the fill is dropped */
+.pn-Tag[data-variant='filled'] {
+  border-style: solid;
+  border-color: transparent;
+}
+
+.pn-Tag[data-variant='filled'][data-color='neutral'] {
+  background: var(--perron-color-surface-inset);
+}
+
+.pn-Tag[data-variant='filled'][data-color='success'] {
+  background: var(--perron-color-surface-success);
+}
+
+.pn-Tag[data-variant='filled'][data-color='warning'] {
+  background: var(--perron-color-surface-warning);
+}
+
+.pn-Tag[data-variant='filled'][data-color='danger'] {
+  background: var(--perron-color-surface-danger);
+}
+
+.pn-Tag[data-variant='filled'][data-color='info'] {
+  background: var(--perron-color-surface-info);
+}
+
+/* a line that decorates: the words, not the edge, say what the tag marks */
+.pn-Tag[data-variant='dashed'] {
+  background: transparent;
+  border-style: dashed;
+  border-color: var(--perron-color-border-strong);
+}
+
+.pn-Tag[data-color='neutral'] {
+  color: var(--perron-color-text-primary);
+}
+
+.pn-Tag[data-color='success'] {
+  color: var(--perron-color-text-success);
+}
+
+.pn-Tag[data-color='warning'] {
+  color: var(--perron-color-text-warning);
+}
+
+.pn-Tag[data-color='danger'] {
+  color: var(--perron-color-text-danger);
+}
+
+.pn-Tag[data-color='info'] {
+  color: var(--perron-color-text-info);
+}
