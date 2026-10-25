@@ -6,7 +6,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import type { Locale } from '../../locale/index.ts'
-import { attribute } from '../../testing/markup.ts'
+import { attribute, openingTag } from '../../testing/markup.ts'
 import { Progress, type ProgressProps } from './Progress.tsx'
 
 const render = (props: Partial<ProgressProps> = {}, locale: Locale = 'en') =>
@@ -15,10 +15,6 @@ const render = (props: Partial<ProgressProps> = {}, locale: Locale = 'en') =>
       <Progress label="Exporting the report" value={45} {...props} />
     </PerronProvider>,
   )
-
-/** The opening tag of the first element whose class is `className`, or "" when there is none. */
-const part = (markup: string, className: string) =>
-  markup.match(new RegExp(`<[^>]*class="${className}[ "][^>]*>`))?.[0] ?? ''
 
 /** The text of the `value` part. */
 const figure = (markup: string) => markup.match(/class="pn-Progress-value"[^>]*>([^<]*)</)?.[1]
@@ -50,8 +46,8 @@ describe('Progress', () => {
   )('renders, %s, %s as the label', (status, value, _, label, shown) => {
     const markup = render({ value, label })
     expect(markup).toContain(`>${shown}</span>`)
-    expect(attribute(part(markup, 'pn-Progress'), `data-${status}`)).toBe('')
-    expect(attribute(part(markup, 'pn-Progress'), 'role')).toBe('progressbar')
+    expect(attribute(openingTag(markup, 'pn-Progress'), `data-${status}`)).toBe('')
+    expect(attribute(openingTag(markup, 'pn-Progress'), 'role')).toBe('progressbar')
   })
 
   it.each([
@@ -63,11 +59,13 @@ describe('Progress', () => {
     ['a fraction', 45.4, {}, '45.4', '45%', '45.4%', 'progressing'],
   ])('renders %s', (_, value, range, now, shown, width, status) => {
     const markup = render({ value, ...range })
-    expect(attribute(part(markup, 'pn-Progress'), 'aria-valuenow')).toBe(now)
-    expect(attribute(part(markup, 'pn-Progress'), 'aria-valuetext')).toBe(shown)
-    expect(attribute(part(markup, 'pn-Progress'), `data-${status}`)).toBe('')
+    expect(attribute(openingTag(markup, 'pn-Progress'), 'aria-valuenow')).toBe(now)
+    expect(attribute(openingTag(markup, 'pn-Progress'), 'aria-valuetext')).toBe(shown)
+    expect(attribute(openingTag(markup, 'pn-Progress'), `data-${status}`)).toBe('')
     expect(figure(markup)).toBe(shown)
-    expect(attribute(part(markup, 'pn-Progress-indicator'), 'style')).toContain(`width:${width}`)
+    expect(attribute(openingTag(markup, 'pn-Progress-indicator'), 'style')).toContain(
+      `width:${width}`,
+    )
   })
 
   it.each([
@@ -77,25 +75,25 @@ describe('Progress', () => {
     ['-Infinity', -Infinity],
   ])('sweeps and says "In progress" when the value is %s (CR-5)', (_, value) => {
     const markup = render({ value })
-    expect(attribute(part(markup, 'pn-Progress'), 'data-indeterminate')).toBe('')
-    expect(attribute(part(markup, 'pn-Progress-indicator'), 'data-indeterminate')).toBe('')
-    expect(attribute(part(markup, 'pn-Progress'), 'aria-valuetext')).toBe('In progress')
-    expect(attribute(part(markup, 'pn-Progress'), 'aria-valuenow')).toBeUndefined()
+    expect(attribute(openingTag(markup, 'pn-Progress'), 'data-indeterminate')).toBe('')
+    expect(attribute(openingTag(markup, 'pn-Progress-indicator'), 'data-indeterminate')).toBe('')
+    expect(attribute(openingTag(markup, 'pn-Progress'), 'aria-valuetext')).toBe('In progress')
+    expect(attribute(openingTag(markup, 'pn-Progress'), 'aria-valuenow')).toBeUndefined()
     expect(figure(markup)).toBe('')
-    expect(attribute(part(markup, 'pn-Progress-indicator'), 'style')).toBeUndefined()
+    expect(attribute(openingTag(markup, 'pn-Progress-indicator'), 'style')).toBeUndefined()
   })
 
   it('says the locale\'s "In progress", or inProgressLabel, over the caller\'s value text (CR-5)', () => {
-    expect(attribute(part(render({ value: null }, 'da'), 'pn-Progress'), 'aria-valuetext')).toBe(
-      'I gang',
-    )
+    expect(
+      attribute(openingTag(render({ value: null }, 'da'), 'pn-Progress'), 'aria-valuetext'),
+    ).toBe('I gang')
     const overridden = render({
       value: null,
       inProgressLabel: 'Working',
       'aria-valuetext': '45 percent',
       getAriaValueText: () => '45 percent',
     })
-    expect(attribute(part(overridden, 'pn-Progress'), 'aria-valuetext')).toBe('Working')
+    expect(attribute(openingTag(overridden, 'pn-Progress'), 'aria-valuetext')).toBe('Working')
   })
 
   it("formats in the PerronProvider's locale, and a caller's locale wins (CR-11)", () => {
@@ -112,9 +110,12 @@ describe('Progress', () => {
       getAriaValueText: (formatted) => `${formatted} of 12 files`,
     })
     expect(figure(counted)).toBe('3')
-    expect(attribute(part(counted, 'pn-Progress'), 'aria-valuetext')).toBe('3 of 12 files')
+    expect(attribute(openingTag(counted, 'pn-Progress'), 'aria-valuetext')).toBe('3 of 12 files')
     expect(
-      attribute(part(render({ 'aria-valuetext': 'Almost half' }), 'pn-Progress'), 'aria-valuetext'),
+      attribute(
+        openingTag(render({ 'aria-valuetext': 'Almost half' }), 'pn-Progress'),
+        'aria-valuetext',
+      ),
     ).toBe('Almost half')
   })
 
@@ -129,13 +130,19 @@ describe('Progress', () => {
         indicator: { className: 'indicator' },
       },
     })
-    expect(attribute(part(markup, 'pn-Progress'), 'class')).toBe('pn-Progress mine')
-    expect(attribute(part(markup, 'pn-Progress'), 'id')).toBe('export')
+    expect(attribute(openingTag(markup, 'pn-Progress'), 'class')).toBe('pn-Progress mine')
+    expect(attribute(openingTag(markup, 'pn-Progress'), 'id')).toBe('export')
     expect(markup).not.toMatch(/\s(?:label|value|locale|inProgressLabel|slotProps)=/)
-    expect(attribute(part(markup, 'pn-Progress-label'), 'class')).toBe('pn-Progress-label label')
-    expect(attribute(part(markup, 'pn-Progress-value'), 'class')).toBe('pn-Progress-value value')
-    expect(attribute(part(markup, 'pn-Progress-track'), 'class')).toBe('pn-Progress-track track')
-    expect(attribute(part(markup, 'pn-Progress-indicator'), 'class')).toBe(
+    expect(attribute(openingTag(markup, 'pn-Progress-label'), 'class')).toBe(
+      'pn-Progress-label label',
+    )
+    expect(attribute(openingTag(markup, 'pn-Progress-value'), 'class')).toBe(
+      'pn-Progress-value value',
+    )
+    expect(attribute(openingTag(markup, 'pn-Progress-track'), 'class')).toBe(
+      'pn-Progress-track track',
+    )
+    expect(attribute(openingTag(markup, 'pn-Progress-indicator'), 'class')).toBe(
       'pn-Progress-indicator indicator',
     )
     expect(markup).toContain('>≈ 45%</span>')
