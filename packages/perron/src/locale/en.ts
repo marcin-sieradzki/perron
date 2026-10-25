@@ -105,6 +105,11 @@ export const en = {
   nextStop: 'Next stop',
   /** A stop timeline: heard after the name of a stop the vehicle has passed. */
   passed: 'Passed',
+  /**
+   * A stop timeline: heard before a stop's expected time, which the eye reads from the "~" before
+   * it, as in "08:13, Expected 08:16".
+   */
+  expected: 'Expected',
   /** A vehicle table: the header of the column of each vehicle's line. */
   lineColumn: 'Line',
   /** A vehicle table: the header of the column of where each vehicle is going. */

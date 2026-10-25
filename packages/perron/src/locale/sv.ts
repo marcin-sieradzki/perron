@@ -43,6 +43,7 @@ export const sv: OwnedStrings = {
   rangeTo: 'till',
   nextStop: 'Nästa hållplats',
   passed: 'Passerad',
+  expected: 'Beräknad',
   lineColumn: 'Linje',
   destinationColumn: 'Destination',
   positionColumn: 'Position',

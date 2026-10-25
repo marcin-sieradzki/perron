@@ -43,6 +43,7 @@ export const nb: OwnedStrings = {
   rangeTo: 'til',
   nextStop: 'Neste stopp',
   passed: 'Passert',
+  expected: 'Forventet',
   lineColumn: 'Linje',
   destinationColumn: 'Destinasjon',
   positionColumn: 'Posisjon',

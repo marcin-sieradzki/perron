@@ -9,7 +9,7 @@ import { PerronProvider } from '../../PerronProvider.tsx'
 import { delayKnown, VEHICLE_STATES } from '../../internal/vehicle-states.ts'
 import { dictionaries, type Locale } from '../../locale/index.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
-import { colour, expectNoFocus, heard, lines, mounted } from '../../testing/stories.ts'
+import { colour, expectNoFocus, heard, lines, mounted, struck } from '../../testing/stories.ts'
 import { DepartureRow } from './DepartureRow.tsx'
 import type { DepartureRowProps } from './DepartureRow.tsx'
 
@@ -93,10 +93,6 @@ async function dotHiddenWordRead(row: HTMLElement, word: string) {
   await expect(isInaccessible(status)).toBe(false)
   await expect(within(row).getAllByText(word)).toHaveLength(1)
 }
-
-/** Whether `element` is struck through, as a cancelled row's countdown, interval and time are. */
-const struck = (element: Element) =>
-  getComputedStyle(element).textDecorationLine.includes('line-through')
 
 /** The attributes the root carries, sorted, for the check that no own prop reaches it (CR-2). */
 const rootAttributes = (element: ReactElement) => staticRow(element).getAttributeNames().sort()

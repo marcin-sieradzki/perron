@@ -43,6 +43,7 @@ export const da: OwnedStrings = {
   rangeTo: 'til',
   nextStop: 'Næste stop',
   passed: 'Passeret',
+  expected: 'Forventet',
   lineColumn: 'Linje',
   destinationColumn: 'Destination',
   positionColumn: 'Position',
