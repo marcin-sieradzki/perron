@@ -141,6 +141,7 @@
   --perron-duration-meter: 800ms;
   --perron-duration-camera: 750ms;
   --perron-duration-follow: 500ms;
+  --perron-duration-switch: 150ms;
   --perron-duration-blink: 1400ms;
   --perron-duration-report-pulse: 1100ms;
   --perron-duration-selection-pulse: 1600ms;
@@ -414,5 +415,6 @@
     --perron-duration-meter: 0.01ms;
     --perron-duration-camera: 0.01ms;
     --perron-duration-follow: 0.01ms;
+    --perron-duration-switch: 0.01ms;
   }
 }
