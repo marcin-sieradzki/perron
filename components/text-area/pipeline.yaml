@@ -1,0 +1,47 @@
+# Written by npm run factory; never by hand.
+component: TextArea
+layer: component
+deferred:
+  at: 2026-10-25T06:19:12.657Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-25T06:26:00.084Z
+    ended: 2026-10-25T06:26:58.903Z
+  build:
+    runs: 2
+    status: done
+    started: 2026-10-25T06:40:44.516Z
+    begun: 03c29ec275c902633f3aeb36e9e668ad0e7fa7bef31933d8cd5ad3dc310945c0
+    spec: 0b56198e28ee472716a8e476b5ce1d6ad6c3f66388fad7f00aa345c455195236
+    ended: 2026-10-25T06:42:34.790Z
+  review:
+    rounds: 2
+    sentBack: 1
+    findings:
+      p1: 0
+      p2: 0
+      p3: 4
+    status: done
+    started: 2026-10-25T06:42:47.902Z
+    ended: 2026-10-25T06:47:30.671Z
+  docs:
+    status: done
+    started: 2026-10-25T06:47:38.654Z
+    ended: 2026-10-25T06:50:28.146Z
+notes:
+  - stage: brief
+    at: 2026-10-25T06:25:56.009Z
+    direction: "Base UI 1.9.0 has no textarea in Field: Field.Control is typed and documented as an <input>. TextArea gets its <textarea> through render, and its props type comes from the textarea's attributes rather than Field.Control.Props. The sibling text boxes will meet the same mismatch."
+  - stage: brief
+    at: 2026-10-25T06:25:56.009Z
+    direction: size.input's token description says only 'Search field', but TextField uses it as the height of every field and TextArea as its minimum. The description could name the Fields family.
+  - stage: brief
+    at: 2026-10-25T06:25:56.009Z
+    direction: No token gives a multi-line box's block padding, so the spec derives it from size.input, 1lh and border.width.025. If more multi-line controls come, a field padding token may be worth adding through the design-tokens skill.
+  - stage: brief
+    at: 2026-10-25T06:25:56.009Z
+    direction: The resize grip and the textarea's scrollbar are the browser's own, unthemed in dark mode and below size.target-min. The spec relies on WCAG 2.5.8's user-agent exception. A drawn design should decide whether Mylder wants the native grip at all.
+  - stage: brief
+    at: 2026-10-25T06:25:56.009Z
+    questions: "1. Should TextAreaProps extend the textarea's own attributes (Omit<ComponentPropsWithoutRef<'textarea'>, 'onChange'|'value'|'defaultValue'|'disabled'|'children'|'dangerouslySetInnerHTML'|'className'|'style'>) with className and style from Pick<Field.Control.Props>, instead of Field.Control.Props as TextField does? Recommended: yes. 2. Should TextArea leave out Base UI's render, so the root is always the textarea? Recommended: yes. 3. Should rows be TextArea's own prop, a number defaulting to 3? Recommended: yes. 4. Should the box keep the height its rows give it, resized taller by the browser's grip, with no auto-grow (no field-sizing, minRows or maxRows)? Recommended: yes. 5. Should TextArea leave out a character count against maxLength? Recommended: yes. 6. Should the block padding be calc((size.input - 1lh - 2 * border.width.025) / 2)? Recommended: yes."

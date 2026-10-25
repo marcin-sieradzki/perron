@@ -1,0 +1,52 @@
+/* TextArea, from docs/components/text-area.md: the Fields family's box, drawn on the <textarea>
+   itself, which is the root (CR-6). The frame, its label, its help and its error are Field's, whose
+   CSS this file never writes again. Hover and invalid change the box at once, with no transition
+   (CR-8); the page's :focus-visible rule draws the ring round the textarea. */
+
+/* The box takes the frame's width (CR-11) and the height its rows and padding give it, never less
+   than a text field's; its words wrap, a word longer than its line breaks (CR-7), and they scroll
+   inside it, the person dragging it taller, never wider (CR-14). The block padding is half of what
+   size.input leaves round one line inside the edge, so one row is a text field's height. */
+.pn-TextArea {
+  box-sizing: border-box;
+  inline-size: 100%;
+  min-block-size: var(--perron-size-input);
+  margin: 0;
+  padding-block: calc((var(--perron-size-input) - 1lh - 2 * var(--perron-border-width-025)) / 2);
+  padding-inline: var(--perron-space-300);
+  border: var(--perron-border-width-025) solid var(--perron-color-border-control);
+  border-radius: var(--perron-radius-md);
+  background-color: var(--perron-color-surface-raised);
+  font: var(--perron-typography-body);
+  letter-spacing: var(--perron-typography-body-tracking);
+  color: var(--perron-color-text-primary);
+  overflow-wrap: anywhere;
+  resize: vertical;
+}
+
+/* The hint's ink, at full strength: Firefox dims a placeholder on its own (CR-13). */
+.pn-TextArea::placeholder {
+  color: var(--perron-color-text-tertiary);
+  opacity: 1;
+}
+
+/* The hover layer laid over the raised fill, as the Fields do. */
+@media (hover: hover) {
+  .pn-TextArea:not([data-disabled]):hover {
+    background-image: linear-gradient(
+      var(--perron-color-surface-hover),
+      var(--perron-color-surface-hover)
+    );
+  }
+}
+
+/* Disabled is a colour, never an opacity; the box keeps its rest fill and edge, and no grip. */
+.pn-TextArea[data-disabled] {
+  color: var(--perron-color-text-tertiary);
+  resize: none;
+}
+
+/* The danger edge, never on a disabled box, whose error Field turns to the tertiary ink. */
+.pn-TextArea[data-invalid]:not([data-disabled]) {
+  border-color: var(--perron-color-status-danger);
+}
