@@ -885,6 +885,61 @@
       }
     }
   },
+  "HighlightChip": {
+    "extends": [
+      "Omit< Toggle.Props, | 'pressed' | 'defaultPressed' | 'onPressedChange' | 'value' | 'onChange' | 'disabled' | 'className' | 'style' | 'children' | 'ref' >"
+    ],
+    "props": {
+      "children": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "defaultSelected": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "disabled": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "onChange": {
+        "optional": true,
+        "type": [
+          "(event: Event, value: boolean, details: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) => void"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLButtonElement>"
+        ]
+      },
+      "selected": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      }
+    }
+  },
   "IconButton": {
     "extends": [
       "Omit< BaseButton.Props, 'className' | 'style' | 'color' | 'children' | 'disabled' | 'ref' >"

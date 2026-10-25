@@ -1,0 +1,110 @@
+/* HighlightChip: a pill on the glass of a floating panel at rest, and on color.surface.inverse
+   while selected (docs/components/highlight-chip.md, Tokens). The selected state is read from
+   Base UI's [data-pressed] alone (CR-2). Every state changes colours only, at once: the edge is
+   drawn in every state, transparent while selected, so turning the chip on moves nothing (CR-4).
+   No position, z-index or margin: the screen that floats it over the map places it (CR-8). */
+
+/* At least size.control square; it wraps inside itself and grows taller rather than cut its
+   words off, and never runs past its container (CR-7). The words, and any badge or icon beside
+   them, take the root's colour. */
+.pn-HighlightChip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  max-inline-size: 100%;
+  min-block-size: var(--perron-size-control);
+  min-inline-size: var(--perron-size-control);
+  padding-block: var(--perron-space-100);
+  padding-inline: var(--perron-space-300);
+  gap: var(--perron-space-150);
+  border-width: var(--perron-border-width-025);
+  border-style: solid;
+  border-color: var(--perron-color-border-subtle);
+  border-radius: var(--perron-radius-full);
+  background-color: var(--perron-color-surface-overlay);
+  backdrop-filter: blur(var(--perron-effect-glass-blur))
+    saturate(var(--perron-effect-glass-saturate));
+  box-shadow: var(--perron-shadow-panel);
+  color: var(--perron-color-text-primary);
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+  overflow-wrap: anywhere;
+  text-align: center;
+  --perron-icon-size: var(--perron-icon-size-400);
+}
+
+/* Hover and the press lay the hover layer over the glass, never on a disabled chip (CR-6). */
+@media (hover: hover) {
+  .pn-HighlightChip:not([data-disabled]):hover {
+    background-image: linear-gradient(
+      var(--perron-color-surface-hover),
+      var(--perron-color-surface-hover)
+    );
+  }
+}
+
+.pn-HighlightChip:not([data-disabled]):active {
+  background-image: linear-gradient(
+    var(--perron-color-surface-hover),
+    var(--perron-color-surface-hover)
+  );
+}
+
+/* Selected: the inverse fill, the shadow kept and the edge transparent. */
+.pn-HighlightChip[data-pressed] {
+  border-color: transparent;
+  background-color: var(--perron-color-surface-inverse);
+  box-shadow: var(--perron-shadow-panel);
+  color: var(--perron-color-text-inverse);
+}
+
+@media (hover: hover) {
+  .pn-HighlightChip[data-pressed]:not([data-disabled]):hover {
+    background-color: var(--perron-color-surface-inverse-hover);
+    background-image: none;
+  }
+}
+
+.pn-HighlightChip[data-pressed]:not([data-disabled]):active {
+  background-color: var(--perron-color-surface-inverse-hover);
+  background-image: none;
+}
+
+/* Disabled is a colour, never an opacity. At rest it keeps its glass; selected it takes the inset
+   fill, so a highlight held on still shows. After the selected rules, which it ties. */
+.pn-HighlightChip[data-disabled] {
+  background-image: none;
+  color: var(--perron-color-text-tertiary);
+}
+
+.pn-HighlightChip[data-pressed][data-disabled] {
+  background-color: var(--perron-color-surface-inset);
+  color: var(--perron-color-text-tertiary);
+}
+
+/* Fills are dropped in forced colours: the selected chip opts out and is a system highlight, so it
+   still looks apart from one at rest, and a selected disabled one takes a GrayText fill with Canvas
+   words, as FilterChip and SegmentedControl do. Opted out, its focus ring would keep the token's
+   colour, so it takes a system colour too (CR-5). A disabled chip at rest needs no rule: the
+   browser greys a disabled button's words. */
+@media (forced-colors: active) {
+  /* :hover and :active too, at the hover rules' specificity and after them, so the theme's
+     inverse-hover never shows inside forced-color-adjust: none */
+  .pn-HighlightChip[data-pressed]:not([data-disabled]),
+  .pn-HighlightChip[data-pressed]:not([data-disabled]):is(:hover, :active) {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    color: HighlightText;
+  }
+
+  .pn-HighlightChip[data-pressed]:not([data-disabled]):focus-visible {
+    outline-color: CanvasText;
+  }
+
+  .pn-HighlightChip[data-pressed][data-disabled] {
+    forced-color-adjust: none;
+    background-color: GrayText;
+    color: Canvas;
+  }
+}
