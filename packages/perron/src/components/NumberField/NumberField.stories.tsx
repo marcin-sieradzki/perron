@@ -235,6 +235,9 @@ export const Invalid: Story = {
   },
 }
 
+/** The label of a field whose placeholder comes from `slotProps.input`. */
+const STOPS = 'Stops to show'
+
 /** No value, and the placeholder "Such as 8". */
 export const Empty: Story = {
   args: { defaultValue: undefined, placeholder: 'Such as 8' },
@@ -256,6 +259,17 @@ export const Empty: Story = {
     await expect(groupOf(input)).toHaveAttribute('data-filled')
     await userEvent.tab({ shift: true })
     await expect(document.activeElement).toBe(start)
+    // without placeholder, slotProps.input's own reaches the input
+    await mounted(
+      canvasElement,
+      <PerronProvider locale="en">
+        <NumberField label={STOPS} slotProps={{ input: { placeholder: 'Such as 3' } }} />
+      </PerronProvider>,
+      async (host) => {
+        const stops = await waitFor(() => inputIn(host, STOPS))
+        await expect(stops).toHaveAttribute('placeholder', 'Such as 3')
+      },
+    )
   },
 }
 

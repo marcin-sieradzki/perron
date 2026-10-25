@@ -243,7 +243,8 @@ export function NumberField({
         >
           <BaseNumberField.Input
             {...mergeProps<typeof BaseNumberField.Input>(slotProps?.input, {
-              placeholder,
+              // mergeProps copies an undefined value too, so the caller's own placeholder stays
+              placeholder: placeholder ?? slotProps?.input?.placeholder,
               'aria-roledescription': strings.numberField,
             })}
             className={withClass('pn-NumberField-input', slotProps?.input?.className)}
