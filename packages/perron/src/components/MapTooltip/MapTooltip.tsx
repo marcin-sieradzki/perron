@@ -50,7 +50,7 @@ export interface MapTooltipProps extends Omit<Tooltip.Popup.Props, 'children' | 
    * the point the map projects for a vehicle or stop, or an element. Pass a new one when the point
    * moves, so the card follows.
    */
-  anchor: Tooltip.Positioner.Props['anchor']
+  anchorEl: Tooltip.Positioner.Props['anchor']
   /**
    * Whether the card is shown. Set it while the pointer rests on what the card describes, and
    * clear it in `onClose`.
@@ -62,8 +62,8 @@ export interface MapTooltipProps extends Omit<Tooltip.Popup.Props, 'children' | 
    */
   defaultOpen?: boolean
   /**
-   * Called when Base UI asks to close the card: on Esc (`reason` is `'escape-key'`) or a press
-   * outside it (`'outside-press'`). `details` is Base UI's event details, unchanged.
+   * Called when the card asks to close: `reason` is `'escape-key'` on Esc or `'outside-press'` on a
+   * press outside it, and `details.cancel()` keeps it open.
    */
   onClose?: (
     event: ChangeDetails['event'],
@@ -101,7 +101,7 @@ const join = (own: string, theirs: string | undefined) => (theirs ? `${own} ${th
 /** The map's hover card: a few of the caller's words against a point on the map or an element. */
 export function MapTooltip({
   children,
-  anchor,
+  anchorEl,
   open,
   defaultOpen = false,
   onClose,
@@ -129,7 +129,7 @@ export function MapTooltip({
           {...mergeProps<typeof Tooltip.Positioner>(positioner, {
             sideOffset: positioner?.sideOffset ?? defaults.sideOffset,
             collisionPadding: positioner?.collisionPadding ?? defaults.collisionPadding,
-            anchor,
+            anchor: anchorEl,
           })}
           className={withClass('pn-MapTooltip-positioner', positioner?.className)}
         >
