@@ -431,7 +431,7 @@
     "name": "Field",
     "layer": "component",
     "category": "Inputs",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": ["Field.Root", "Field.Label", "Field.Description", "Field.Error"],
     "penpotPath": "Components/Field",
     "dependsOn": []
@@ -571,15 +571,14 @@
     "name": "Tooltip",
     "layer": "component",
     "category": "Overlays",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [
       "Tooltip.Provider",
       "Tooltip.Root",
       "Tooltip.Trigger",
       "Tooltip.Portal",
       "Tooltip.Positioner",
-      "Tooltip.Popup",
-      "Tooltip.Arrow"
+      "Tooltip.Popup"
     ],
     "penpotPath": "Components/Tooltip",
     "dependsOn": []

@@ -8,7 +8,7 @@ import { expect, fireEvent, fn, screen, userEvent, waitFor, within } from 'story
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { dictionaries } from '../../locale/index.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
-import { closed, colour, heard, mounted, onHover, rendered } from '../../testing/stories.ts'
+import { closed, colour, heard, lines, mounted, onHover, rendered } from '../../testing/stories.ts'
 import { LineBadge } from '../LineBadge/LineBadge.tsx'
 import { StationIcon } from '../StationIcon/StationIcon.tsx'
 import { SearchField } from './SearchField.tsx'
@@ -509,10 +509,6 @@ export const LongWords: Story = {
     defaultOpen: true,
   },
   play: async ({ canvasElement }) => {
-    const lines = (element: Element) => {
-      const { lineHeight } = getComputedStyle(element)
-      return element.getBoundingClientRect().height / Number.parseFloat(lineHeight)
-    }
     const field = canvasElement.querySelector('.pn-SearchField')!
     const label = canvasElement.querySelector('.pn-SearchField-label')!
     const group = canvasElement.querySelector('.pn-SearchField-inputGroup')!

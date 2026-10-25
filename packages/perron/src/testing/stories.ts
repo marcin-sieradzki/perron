@@ -168,3 +168,12 @@ export const byTestId = (id: string) =>
     expect(found).not.toBeNull()
     return found as HTMLElement
   })
+
+/** Resolves after the given number of frames, for a check that something has not changed. */
+export const frames = async (count: number) => {
+  for (let i = 0; i < count; i++) await new Promise(requestAnimationFrame)
+}
+
+/** How many lines tall `element` is, in its own line height. */
+export const lines = (element: Element) =>
+  element.getBoundingClientRect().height / Number.parseFloat(getComputedStyle(element).lineHeight)

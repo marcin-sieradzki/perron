@@ -818,6 +818,67 @@
       }
     }
   },
+  "Field": {
+    "extends": [
+      "Omit<BaseField.Root.Props, 'children' | 'ref'>"
+    ],
+    "props": {
+      "children": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "description": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "error": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "hiddenLabel": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "label": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "optional": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "optionalLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ label?: FieldLabelProps | undefined; description?: FieldDescriptionProps | undefined; error?: FieldErrorProps | undefined; }"
+        ]
+      }
+    }
+  },
   "Fieldset": {
     "extends": [
       "Omit< BaseFieldset.Root.Props, 'disabled' | 'children' | 'ref' >"
@@ -2359,6 +2420,61 @@
         "optional": true,
         "type": [
           "CSSProperties"
+        ]
+      }
+    }
+  },
+  "Tooltip": {
+    "extends": [
+      "Omit<BaseTooltip.Popup.Props, 'children' | 'ref'>"
+    ],
+    "props": {
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "defaultOpen": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "onClose": {
+        "optional": true,
+        "type": [
+          "(event: Event, reason: TooltipRootChangeEventReason, details: TooltipRootChangeEventDetails) => void"
+        ]
+      },
+      "onOpen": {
+        "optional": true,
+        "type": [
+          "(event: Event, details: TooltipRootChangeEventDetails) => void"
+        ]
+      },
+      "open": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ trigger?: Props<unknown> | undefined; portal?: TooltipPortalProps | undefined; positioner?: TooltipPositionerProps | undefined; }"
+        ]
+      },
+      "trigger": {
+        "optional": false,
+        "type": [
+          "ReactElement<unknown, JSXElementConstructor<any> | string>"
         ]
       }
     }

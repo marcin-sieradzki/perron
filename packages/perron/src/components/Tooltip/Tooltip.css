@@ -1,0 +1,35 @@
+/* Tooltip, from docs/components/tooltip.md. The Tooltips family's look and MapTooltip's, and nothing
+   more (CR-8), with no transition (CR-10); Base UI places the positioner (CR-2). The trigger keeps
+   its own component's look in every state (CR-12). */
+
+.pn-Tooltip-positioner {
+  z-index: var(--perron-z-index-dialog);
+}
+
+/* the popup labels a control the reader can no longer see (CR-7) */
+.pn-Tooltip-positioner[data-anchor-hidden] {
+  visibility: hidden;
+}
+
+/* a block: the caller's words flow as written and take its colour (CR-9); a box that sizes to its
+   content, so a long word breaks only where no whole word fits (CR-8) */
+.pn-Tooltip {
+  box-sizing: border-box;
+  max-inline-size: var(--available-width);
+  padding-block: var(--perron-space-150);
+  padding-inline: var(--perron-space-200);
+  border-radius: var(--perron-radius-md);
+  background-color: var(--perron-color-surface-inverse);
+  box-shadow: none;
+  color: var(--perron-color-text-inverse);
+  font: var(--perron-typography-label-sm);
+  letter-spacing: var(--perron-typography-label-sm-tracking);
+  overflow-wrap: break-word;
+}
+
+/* forced colours replace the inverse fill with Canvas; an outline keeps the size (CR-11) */
+@media (forced-colors: active) {
+  .pn-Tooltip {
+    outline: var(--perron-border-width-025) solid CanvasText;
+  }
+}

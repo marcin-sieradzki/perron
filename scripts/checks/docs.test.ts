@@ -80,7 +80,8 @@ describe('docs', () => {
     ])
   })
 
+  // the docgen of every component in the repo, which outruns the default 5 s on a CI runner
   it('passes on the repo', () => {
     expect(docs.run(join(here, '../..'))).toEqual([])
-  })
+  }, 30_000)
 })
