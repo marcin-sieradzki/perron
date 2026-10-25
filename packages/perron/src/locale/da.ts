@@ -42,4 +42,5 @@ export const da: OwnedStrings = {
   optional: '(valgfrit)',
   minimum: 'Minimum',
   maximum: 'Maksimum',
+  inProgress: 'I gang',
 }

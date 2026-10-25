@@ -42,4 +42,5 @@ export const sv: OwnedStrings = {
   optional: '(valfritt)',
   minimum: 'Minimum',
   maximum: 'Maximum',
+  inProgress: 'Pågår',
 }

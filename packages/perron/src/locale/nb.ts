@@ -42,4 +42,5 @@ export const nb: OwnedStrings = {
   optional: '(valgfritt)',
   minimum: 'Minimum',
   maximum: 'Maksimum',
+  inProgress: 'Pågår',
 }

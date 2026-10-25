@@ -14,7 +14,7 @@
         "value": 0.01,
         "unit": "ms"
       },
-      "$description": "Meter fill change"
+      "$description": "Meter and progress bar fill change"
     },
     "camera": {
       "$value": {

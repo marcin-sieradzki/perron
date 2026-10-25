@@ -84,6 +84,11 @@ export const en = {
   minimum: 'Minimum',
   /** A range slider: the name of its upper thumb, heard as "Maximum, slider, 12". */
   maximum: 'Maximum',
+  /**
+   * Progress: heard after the task's name, in place of the figure, while how far the task has got
+   * is not known.
+   */
+  inProgress: 'In progress',
 }
 
 /** The name of one owned string. */
