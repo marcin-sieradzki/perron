@@ -9,6 +9,7 @@ import type { LineBadgeProps } from '../../components/LineBadge/LineBadge.tsx'
 import { VehicleDotLabel } from '../../components/VehicleDotLabel/VehicleDotLabel.tsx'
 import { useOwnedStrings } from '../../PerronProvider.tsx'
 import { classes } from '../../internal/nodes.ts'
+import { delayKnown } from '../../internal/vehicle-states.ts'
 import type { VehicleState } from '../../internal/vehicle-states.ts'
 import './VehicleTable.css'
 
@@ -58,8 +59,7 @@ const COLUMNS = [
  * whatever `delay` holds, and unknown when `delay` is left out.
  */
 function minutesOf({ variant, delay }: VehicleTableVehicle): number | null {
-  if (variant === 'timetable-only' || variant === 'no-signal') return null
-  return delay ?? null
+  return delayKnown(variant) ? (delay ?? null) : null
 }
 
 export interface VehicleTableProps extends Omit<ComponentPropsWithRef<'table'>, 'children'> {

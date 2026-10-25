@@ -20,3 +20,11 @@ export const STATE_KEY = {
 
 /** The five data states, in the order Data states lists them. */
 export const VEHICLE_STATES = Object.keys(STATE_KEY) as VehicleState[]
+
+/**
+ * Whether a vehicle in `state` can know its delay: a timetable-only or no-signal vehicle reports
+ * no position, so its delay is unknown whatever a caller gives (DepartureRow's CR-5, VehicleTable's
+ * CR-4).
+ */
+export const delayKnown = (state: VehicleState) =>
+  state !== 'timetable-only' && state !== 'no-signal'

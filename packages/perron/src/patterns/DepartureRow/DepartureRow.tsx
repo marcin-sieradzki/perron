@@ -12,7 +12,7 @@ import type { VehicleDotProps } from '../../components/VehicleDot/VehicleDot.tsx
 import { useOwnedStrings } from '../../PerronProvider.tsx'
 import { UnknownValue } from '../../internal/UnknownValue.tsx'
 import { classes, given } from '../../internal/nodes.ts'
-import { STATE_KEY } from '../../internal/vehicle-states.ts'
+import { delayKnown, STATE_KEY } from '../../internal/vehicle-states.ts'
 import type { VehicleState } from '../../internal/vehicle-states.ts'
 import './DepartureRow.css'
 
@@ -209,7 +209,7 @@ export function DepartureRow({
   const estimate =
     variant === 'estimated' || variant === 'timetable-only' || variant === 'no-signal'
   // CR-5: these two states never know the delay
-  const delayUnknown = variant === 'timetable-only' || variant === 'no-signal'
+  const delayUnknown = !delayKnown(variant)
   const showsDelay = delayUnknown || delay !== undefined
   const showsTime = given(time)
 

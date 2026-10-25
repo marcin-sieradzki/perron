@@ -6,6 +6,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, isInaccessible, userEvent, waitFor, within } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
+import { delayKnown, VEHICLE_STATES } from '../../internal/vehicle-states.ts'
 import { dictionaries, type Locale } from '../../locale/index.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
 import { expectNoFocus, heard, lines, mounted } from '../../testing/stories.ts'
@@ -47,12 +48,6 @@ type Story = StoryObj<typeof meta>
 
 /** The parts of a row, in reading order. */
 const PARTS = ['badge', 'destination', 'status', 'countdown', 'time', 'delay'] as const
-
-/** The five data states, as `variant` takes them. */
-const VARIANTS = ['live', 'ageing', 'estimated', 'timetable-only', 'no-signal'] as const
-
-/** The states whose Delay is always unknown (CR-5). */
-const DELAY_UNKNOWN = new Set<string>(['timetable-only', 'no-signal'])
 
 /** One part of the row in `scope`, by its class, or null when it isn't rendered. */
 const part = (scope: Element, name: string) =>
@@ -271,7 +266,7 @@ export const Live: Story = {
         'timetable-only': ['timetableOnlyLabel', 'Timetable only'],
         'no-signal': ['noSignalLabel', 'No signal'],
       } as const
-      for (const variant of VARIANTS) {
+      for (const variant of VEHICLE_STATES) {
         const [label, word] = replaced[variant]
         const root = staticRow(<DepartureRow {...EVERY_PROP} variant={variant} />)
         await expect(heard(part(root, 'status')!)).toBe(EVERY_PROP[label])
@@ -349,7 +344,7 @@ export const Live: Story = {
 
     await step('delay a number, null and left out, in every variant (CR-5)', async () => {
       const { delay: _, ...withoutDelay } = args
-      for (const variant of VARIANTS)
+      for (const variant of VEHICLE_STATES)
         for (const delay of [3, null, undefined]) {
           const root = staticRow(
             <DepartureRow
@@ -359,11 +354,11 @@ export const Live: Story = {
             />,
           )
           const found = part(root, 'delay')
-          if (delay === undefined && !DELAY_UNKNOWN.has(variant)) {
+          if (delay === undefined && delayKnown(variant)) {
             await expect(found).toBeNull()
             continue
           }
-          const unknown = delay === null || DELAY_UNKNOWN.has(variant)
+          const unknown = delay === null || !delayKnown(variant)
           await expect(found).toHaveAttribute('data-delay', unknown ? 'unknown' : 'late')
           await expect(found!.querySelector('.pn-Delay-value')).toHaveTextContent(
             unknown ? '—' : '+3',

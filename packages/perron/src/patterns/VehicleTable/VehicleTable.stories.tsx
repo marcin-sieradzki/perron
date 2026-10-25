@@ -6,8 +6,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, isInaccessible, userEvent, waitFor, within } from 'storybook/test'
 import { Link } from '../../components/Link/Link.tsx'
-import { VEHICLE_STATES } from '../../internal/vehicle-states.ts'
-import type { VehicleState } from '../../internal/vehicle-states.ts'
+import { delayKnown, VEHICLE_STATES } from '../../internal/vehicle-states.ts'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
 import {
@@ -68,9 +67,6 @@ const VEHICLES: VehicleTableVehicle[] = [
     delay: 4,
   },
 ]
-
-/** The states whose delay is always unknown, whatever `delay` holds (CR-4). */
-const HIDES_DELAY: VehicleState[] = ['timetable-only', 'no-signal']
 
 /** The column headers, in order. */
 const HEADERS = ['Line', 'Destination', 'Position', 'Delay']
@@ -265,7 +261,7 @@ export const Default: Story = {
             for (const [index, row] of bodyRows(root).entries()) {
               const { variant, delay: minutes } = vehicles[index]
               const delay = row.querySelector('.pn-VehicleTable-delay')!
-              const shown = typeof minutes === 'number' && !HIDES_DELAY.includes(variant)
+              const shown = typeof minutes === 'number' && delayKnown(variant)
               if (shown) {
                 await expect(delay).toHaveAttribute('data-delay', 'late')
                 await expect(heard(delay)).toBe('3 min late')
