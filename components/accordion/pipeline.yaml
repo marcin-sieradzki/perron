@@ -9,12 +9,19 @@ stages:
     started: 2026-10-25T08:15:49.681Z
     ended: 2026-10-25T08:20:56.613Z
   build:
-    status: done
-    started: 2026-10-25T08:21:00.870Z
     runs: 1
-    begun: b5772140c159f2942eb54133be507062558b59011e8e53718e488600b993fb8b
-    spec: b5772140c159f2942eb54133be507062558b59011e8e53718e488600b993fb8b
-    ended: 2026-10-25T08:32:12.643Z
+    failing: review round 1 found 2 P2 (components/accordion/review.md)
+  review:
+    status: failed
+    started: 2026-10-25T08:33:10.246Z
+    rounds: 1
+    findings:
+      p1: 0
+      p2: 2
+      p3: 5
+    sentBack: 1
+    ended: 2026-10-25T08:40:37.670Z
+    failing: review round 1 found 2 P2 (components/accordion/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T08:15:45.377Z
