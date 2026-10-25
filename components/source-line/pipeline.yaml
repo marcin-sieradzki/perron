@@ -3,9 +3,6 @@ component: SourceLine
 layer: pattern
 deferred:
   at: 2026-10-25T17:46:59.950Z
-needsHuman:
-  stage: build
-  reason: 'build failed: npm run check failed:  / > perron@0.0.0 tokens:check / > node scripts/build-tokens.ts --check /  / packages/perron/data/docs.json is out of date. Run npm run tokens.'
 stages:
   brief:
     status: done
@@ -13,13 +10,13 @@ stages:
     ended: 2026-10-25T17:54:26.277Z
   build:
     runs: 6
-    respecs: 1
     status: failed
     started: 2026-10-25T19:27:34.212Z
     begun: 2b4731e87a1d71164af06b1b9f33134b9cdff01bef76c550d5c0c6b18b5250fc
     spec: fce4fbc427325e3fef3231fe1379d1a3dc98cf31e8d960910988d5f83f81dc8e
     ended: 2026-10-25T19:28:10.016Z
     failing: 'npm run check failed:  / > perron@0.0.0 tokens:check / > node scripts/build-tokens.ts --check /  / packages/perron/data/docs.json is out of date. Run npm run tokens.'
+    acted: 'build failed: npm run check failed:  / > perron@0.0.0 tokens:check / > node scripts/build-tokens.ts --check /  / packages/perron/data/docs.json is out of date. Run npm run tokens.'
   review:
     rounds: 4
     sentBack: 4
@@ -67,3 +64,6 @@ notes:
   - stage: build
     at: 2026-10-25T19:28:10.016Z
     direction: "Shared tooling gap for the retro: the review format check (scripts/lib/pipeline.ts) counts any prose after a level's 'None.' as part of that level, so a reviewer's round summary written under '## P3' fails the gate though the round has no P3; a summary has to sit under its own heading, such as '## Notes', which the component-reviewer agent's format doesn't yet say."
+  - stage: build
+    at: 2026-10-25T19:38:32.940Z
+    unblocked: 'build failed: npm run check failed:  / > perron@0.0.0 tokens:check / > node scripts/build-tokens.ts --check /  / packages/perron/data/docs.json is out of date. Run npm run tokens.'
