@@ -24,7 +24,7 @@ describe('readHomeFigures', () => {
       'Timetable only',
       'No signal',
     ])
-    expect(figures.dataStates[0].means).toBe('A GPS report under a minute old')
+    expect(figures.dataStates[0].means).toBe('A GPS report younger than the live threshold')
   })
 
   it('reads the languages, the lines, the themes and the versions', () => {

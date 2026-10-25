@@ -17,15 +17,15 @@ export const en = {
   previousPage: 'Previous page',
   /** Pagination: the button to the page after. */
   nextPage: 'Next page',
-  /** Data state: a GPS report under a minute old. */
+  /** Data state: a GPS report younger than the app's live threshold. */
   live: 'Live',
-  /** Data state: a report 1 to 5 minutes old. */
+  /** Data state: a report past the live threshold, under the ageing one. */
   ageing: 'Ageing',
   /** Data state: placed from the timetable and the latest delay. */
   estimated: 'Estimated',
   /** Data state: no real-time data at all. */
   timetableOnly: 'Timetable only',
-  /** Data state: silent for over 5 minutes. */
+  /** Data state: silent past the ageing threshold, moved on by the timetable. */
   noSignal: 'No signal',
   /** A line's delays: a heading, and the name of the delay kind of disruption. */
   delays: 'Delays',
