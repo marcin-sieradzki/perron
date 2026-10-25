@@ -4,6 +4,8 @@ import { staleInstall } from './installed.ts'
 const lock = {
   packages: {
     '': { version: '0.0.0' },
+    'packages/perron': { version: '0.2.1' },
+    'node_modules/@mylder/perron': {},
     'node_modules/next': { version: '15.5.0' },
     'node_modules/react': { version: '19.2.0' },
     'node_modules/@esbuild/linux-x64': { version: '0.25.0', optional: true },
@@ -17,6 +19,9 @@ describe('installed', () => {
       packages: {
         'node_modules/next': { version: '15.5.0' },
         'node_modules/react': { version: '19.2.0' },
+        'node_modules/@mylder/perron': {},
+        // a workspace's version, which `changeset version` bumps in the lockfile alone
+        'packages/perron': { version: '0.2.0' },
       },
     }
     expect(staleInstall(lock, installed)).toEqual([])
@@ -24,10 +29,18 @@ describe('installed', () => {
 
   it('names a package missing or at another version, as after a merge that changed the lockfile', () => {
     const installed = { packages: { 'node_modules/react': { version: '19.1.0' } } }
-    expect(staleInstall(lock, installed)).toEqual(['node_modules/next', 'node_modules/react'])
+    expect(staleInstall(lock, installed)).toEqual([
+      'node_modules/@mylder/perron',
+      'node_modules/next',
+      'node_modules/react',
+    ])
   })
 
   it('names every needed package when npm has recorded no install', () => {
-    expect(staleInstall(lock, undefined)).toEqual(['node_modules/next', 'node_modules/react'])
+    expect(staleInstall(lock, undefined)).toEqual([
+      'node_modules/@mylder/perron',
+      'node_modules/next',
+      'node_modules/react',
+    ])
   })
 })

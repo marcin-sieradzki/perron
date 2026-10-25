@@ -3,7 +3,10 @@
 // and the check would then fail far from the cause ("next: command not found"). npm records what
 // it installed in node_modules/.package-lock.json; a package the lockfile needs that is missing
 // there, or there at another version, means `npm ci` has to run again. Optional packages, such as
-// another platform's binaries, may be missing.
+// another platform's binaries, may be missing. A workspace's own folder, such as `packages/perron`,
+// is no install: `changeset version` bumps its version in the lockfile alone, and the release
+// workflow then runs the check, so only paths under node_modules count (a new workspace's link
+// there still does).
 // Usage: node scripts/installed.ts
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
@@ -17,7 +20,7 @@ export function staleInstall(lock: Lock, installed: Lock | undefined): string[] 
   const have = installed?.packages ?? {}
   return Object.entries(lock.packages ?? {})
     .filter(([path, entry]) => {
-      if (path === '') return false
+      if (!path.includes('node_modules/')) return false
       const got = have[path]
       if (!got) return !entry.optional && !entry.devOptional
       return got.version !== entry.version
