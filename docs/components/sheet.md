@@ -95,6 +95,7 @@ One row per part, state and property. A side sheet is `anchor` `left` or `right`
 | `root`     | rest, bottom sheet | `padding-block-end`                     | `calc()` of `--drawer-snap-point-offset` plus `--drawer-swipe-movement-y`; 0 while sliding in or out                     |
 | `root`     | open               | `transition-duration` of `transform`    | `duration.sheet`; while `[data-swiping]`, none; on release, `calc()` of `--drawer-swipe-strength` times `duration.sheet` |
 | `root`     | open               | `transition-timing-function`            | `easing.sheet`                                                                                                           |
+| `root`     | focus              | `outline`                               | `focus.width` solid `color.border.focus`, `focus.offset` away, as `perron.css` draws it                                  |
 | `backdrop` | rest               | `background`                            | `color.scrim`                                                                                                            |
 | `backdrop` | rest               | `z-index`                               | `z-index.dialog`                                                                                                         |
 | `backdrop` | open               | `transition-duration` of `opacity`      | `duration.sheet`                                                                                                         |
@@ -139,14 +140,13 @@ From the Base UI reference for each part. "From" says who does it: Base UI, or P
 | `Tab`, `Shift+Tab` | In a sheet that is not modal, moves on into the page; the sheet stays open                                                         | Base UI, with `disablePointerDismissal` set by Perron |
 | `Tab`, `Shift+Tab` | Stops on the body while it scrolls, and the arrow keys, `PageUp`, `PageDown`, `Home` and `End` scroll it                           | Perron, with `tabIndex` 0 while the body overflows    |
 
-| Element    | Role                 | Accessible name from                      | States announced                                                                        |
-| ---------- | -------------------- | ----------------------------------------- | --------------------------------------------------------------------------------------- |
-| `trigger`  | `button`             | The caller's element                      | `aria-expanded`, `aria-haspopup="dialog"`, with `aria-controls` naming the popup        |
-| `root`     | `dialog`             | `title`, through `aria-labelledby`        | While modal, everything outside it is `aria-hidden`                                     |
-| `root`     | focus                | `outline`                                 | `focus.width` solid `color.border.focus`, `focus.offset` away, as `perron.css` draws it |
-| `title`    | `heading`, level 2   | `title`                                   | None                                                                                    |
-| `close`    | `button`             | The owned `close` string, or `closeLabel` | None                                                                                    |
-| `backdrop` | None: presentational | None                                      | None                                                                                    |
+| Element    | Role                 | Accessible name from                      | States announced                                                                 |
+| ---------- | -------------------- | ----------------------------------------- | -------------------------------------------------------------------------------- |
+| `trigger`  | `button`             | The caller's element                      | `aria-expanded`, `aria-haspopup="dialog"`, with `aria-controls` naming the popup |
+| `root`     | `dialog`             | `title`, through `aria-labelledby`        | While modal, everything outside it is `aria-hidden`                              |
+| `title`    | `heading`, level 2   | `title`                                   | None                                                                             |
+| `close`    | `button`             | The owned `close` string, or `closeLabel` | None                                                                             |
+| `backdrop` | None: presentational | None                                      | None                                                                             |
 
 What axe won't catch, from the contract, each with how this component meets it:
 
