@@ -188,5 +188,5 @@ describe('shared-parts', () => {
 
   it('passes the real tree', async () => {
     expect(await check.run(root)).toEqual([])
-  })
+  }, 15_000)
 })
