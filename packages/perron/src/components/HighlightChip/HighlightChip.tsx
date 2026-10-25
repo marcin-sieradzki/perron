@@ -64,6 +64,7 @@ export function HighlightChip({
   disabled = false,
   children,
   className,
+  style,
   ref,
   ...rest
 }: HighlightChipProps) {
@@ -78,6 +79,7 @@ export function HighlightChip({
       onPressedChange={(next, details) => onChange?.(details.event, next, details)}
       disabled={disabled}
       className={classes('pn-HighlightChip', className)}
+      style={style}
     >
       {children}
     </Toggle>

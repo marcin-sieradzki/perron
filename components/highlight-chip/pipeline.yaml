@@ -9,19 +9,18 @@ stages:
     started: 2026-10-25T01:23:35.517Z
     ended: 2026-10-25T02:05:51.436Z
   build:
-    runs: 1
-    failing: review round 1 found 1 P1 and 5 P2 (components/highlight-chip/review.md)
+    runs: 2
+    status: done
+    started: 2026-10-25T02:19:49.460Z
+    spec: 1179e6419e68a5c957329229ebcac9c47d721c8e48aad0f4874a3d2d48e76876
+    ended: 2026-10-25T02:23:34.407Z
   review:
-    status: failed
-    started: 2026-10-25T02:14:21.185Z
     rounds: 1
+    sentBack: 1
     findings:
       p1: 1
       p2: 5
       p3: 3
-    sentBack: 1
-    ended: 2026-10-25T02:19:41.049Z
-    failing: review round 1 found 1 P1 and 5 P2 (components/highlight-chip/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T01:23:29.991Z
@@ -73,3 +72,6 @@ notes:
   - stage: build
     at: 2026-10-25T02:14:06.366Z
     direction: CR-5 and the selected border-color row were rewritten at build to match the accessibility foundation's forced-colours rule; confirm the wording.
+  - stage: build
+    at: 2026-10-25T02:23:34.408Z
+    direction: A disabled chip at rest gets no forced-colours rule and relies on the browser greying a disabled button's words; FilterChip and SegmentedControl set GrayText explicitly, so the three toggles could share one form.

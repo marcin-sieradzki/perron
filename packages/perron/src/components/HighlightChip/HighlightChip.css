@@ -84,22 +84,27 @@
 }
 
 /* Fills are dropped in forced colours: the selected chip opts out and is a system highlight, so it
-   still looks apart from one at rest, and a selected disabled one keeps the highlight with grey
-   words. Opted out, its focus ring would keep the token's colour, so it takes a system colour too
-   (CR-5). A disabled chip at rest needs no rule: the browser greys a disabled button's words. */
+   still looks apart from one at rest, and a selected disabled one takes a GrayText fill with Canvas
+   words, as FilterChip and SegmentedControl do. Opted out, its focus ring would keep the token's
+   colour, so it takes a system colour too (CR-5). A disabled chip at rest needs no rule: the
+   browser greys a disabled button's words. */
 @media (forced-colors: active) {
-  .pn-HighlightChip[data-pressed],
-  .pn-HighlightChip[data-pressed][data-disabled] {
+  /* :hover and :active too, at the hover rules' specificity and after them, so the theme's
+     inverse-hover never shows inside forced-color-adjust: none */
+  .pn-HighlightChip[data-pressed]:not([data-disabled]),
+  .pn-HighlightChip[data-pressed]:not([data-disabled]):is(:hover, :active) {
     forced-color-adjust: none;
     background-color: Highlight;
     color: HighlightText;
   }
 
-  .pn-HighlightChip[data-pressed]:focus-visible {
+  .pn-HighlightChip[data-pressed]:not([data-disabled]):focus-visible {
     outline-color: CanvasText;
   }
 
   .pn-HighlightChip[data-pressed][data-disabled] {
-    color: GrayText;
+    forced-color-adjust: none;
+    background-color: GrayText;
+    color: Canvas;
   }
 }
