@@ -1,0 +1,79 @@
+# Written by npm run factory; never by hand.
+component: Tooltip
+layer: component
+deferred:
+  at: 2026-10-25T04:39:15.127Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-25T04:46:25.148Z
+    ended: 2026-10-25T04:47:34.087Z
+  build:
+    runs: 2
+    status: done
+    started: 2026-10-25T05:11:47.330Z
+    spec: de53278ba45fa59d4a1c666d725d9e6d1bc3708907372e487442b8b9f4db527b
+    ended: 2026-10-25T05:16:04.578Z
+  review:
+    rounds: 2
+    findings:
+      p1: 0
+      p2: 0
+      p3: 3
+    status: done
+    started: 2026-10-25T05:16:08.550Z
+    ended: 2026-10-25T05:20:17.082Z
+  docs:
+    failures: 1
+    status: done
+    started: 2026-10-25T05:20:36.370Z
+    ended: 2026-10-25T05:27:14.539Z
+notes:
+  - stage: brief
+    at: 2026-10-25T04:46:00.238Z
+    direction: "Naming: Tooltip takes trigger plus children (Dialog, Sheet and MapTooltip's form) rather than MUI's title plus a child element. The next trigger-bound overlays, Popover and Menu, will copy this."
+  - stage: brief
+    at: 2026-10-25T04:46:00.238Z
+    direction: PerronProvider would render Tooltip.Provider, so Base UI's delay group covers the whole app; this is the first Base UI import in PerronProvider.
+  - stage: brief
+    at: 2026-10-25T04:46:00.238Z
+    direction: MapTooltip's defaultOffsets reading moves into a shared helper, positionerOffsets, in packages/perron/src/internal/tokens.ts. It joins the contract's Shared helpers table, and both MapTooltip and Tooltip import it.
+  - stage: brief
+    at: 2026-10-25T04:46:00.238Z
+    direction: "Tooltip.Arrow is to be taken out of the Tooltip entry's baseUiParts: the Tooltips family draws no arrow, so it matches MapTooltip."
+  - stage: brief
+    at: 2026-10-25T04:46:00.238Z
+    direction: Tooltip reuses MapTooltip's positioner defaults (sideOffset space.200, collisionPadding size.panel-gap), its padding (space.150 block, space.200 inline) and its immediate open and close with no transition, so the Tooltips family keeps one treatment. Base UI's 600 ms open delay stays, with no token.
+  - stage: brief
+    at: 2026-10-25T04:46:00.238Z
+    questions: "1. (Anatomy) Is Tooltip one component that takes its trigger as a required trigger ReactElement and its words as children, with the popup as its root, like Dialog's and Sheet's trigger and MapTooltip's children, rather than MUI's title for the words and children for the trigger? Recommended: yes. 2. (Anatomy) Does PerronProvider wrap its children in one Tooltip.Provider with Base UI's default delays, while Tooltip itself renders no provider? Recommended: yes. 3. (Props) Does Tooltip offer only open, defaultOpen, onOpen and onClose of Tooltip.Root's props, setting triggerId and defaultTriggerId itself, and leave out disabled, trackCursorAxis, disableHoverablePopup, actionsRef, handle and onOpenChangeComplete? Recommended: yes. 4. (Tokens) Does the trigger take no look of Tooltip's own on data-popup-open and data-trigger-disabled? Recommended: yes. 5. (Keyboard and ARIA) Does Tooltip add no ARIA of its own (no role=tooltip, no aria-describedby or aria-label on the trigger)? Recommended: yes."
+  - stage: build
+    at: 2026-10-25T04:59:58.823Z
+    direction: "Naming: Tooltip takes trigger plus children (the form of Dialog, Sheet and MapTooltip) rather than MUI's title plus a child element; Popover and Menu will copy this."
+  - stage: build
+    at: 2026-10-25T04:59:58.823Z
+    direction: PerronProvider now renders Tooltip.Provider, its first Base UI import, so Base UI's delay group covers the whole app; tooltips outside a PerronProvider each wait the full 600 ms.
+  - stage: build
+    at: 2026-10-25T04:59:58.823Z
+    direction: The shared positioner sideOffset (space.200) is measured from the trigger's box, so when the trigger has keyboard focus about 4 px is left between the popup and the focus ring (focus.offset plus focus.width). Should the family's offset clear the focus ring, or stay as it is in MapTooltip?
+  - stage: build
+    at: 2026-10-25T04:59:58.823Z
+    direction: Tooltip.Trigger.disabled is reachable only through slotProps.trigger.disabled; Tooltip has no top-level disabled prop, as the spec decides. A caller who wants to suppress the tooltip has to know to go through slotProps.
+  - stage: build
+    at: 2026-10-25T04:59:58.823Z
+    direction: MapTooltip's stories still declare a local pixels() probe, close to the shared rendered() helper; worth folding into rendered() in a later cleanup.
+  - stage: docs
+    at: 2026-10-25T05:11:41.352Z
+    direction: "onOpen and onClose show the file-local alias ChangeDetails in the docs props table ((event: Event, details: ChangeDetails) => void), a name the reader can't look up; api.json resolves it to TooltipRootChangeEventDetails. Dialog does the same, so the pattern is library-wide. The JSDoc could name Tooltip.Root.ChangeEventDetails, or PropsTable could resolve aliases."
+  - stage: docs
+    at: 2026-10-25T05:11:41.352Z
+    direction: PropsTable prints onClose's multi-line type with its source line breaks and trailing comma, and the internal import name BaseTooltip appears in the type and in the slots table (BaseTooltip.Trigger.Props). This is shared tooling, the maintainer's to change.
+  - stage: docs
+    at: 2026-10-25T05:27:14.540Z
+    direction: onOpen and onClose show the file-local alias ChangeDetails in the docs props table, a name the reader can't look up, while api.json resolves it to TooltipRootChangeEventDetails. Dialog's page does the same, so the JSDoc could name Tooltip.Root.ChangeEventDetails, or PropsTable could resolve aliases.
+  - stage: docs
+    at: 2026-10-25T05:27:14.540Z
+    direction: PropsTable prints onClose's multi-line type with its source line breaks and trailing comma. It also shows the internal import name BaseTooltip in that type and in the slots table (BaseTooltip.Trigger.Props). PropsTable is shared tooling, so the maintainer changes it.
+  - stage: docs
+    at: 2026-10-25T05:27:14.540Z
+    direction: "P3-1, carried from review: when the trigger has keyboard focus, the shared sideOffset of space.200 leaves only about 4 px between the popup and the focus ring. Should the Tooltips family's offset clear the focus ring, or keep MapTooltip's value?"

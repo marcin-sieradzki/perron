@@ -2466,5 +2466,60 @@
         ]
       }
     }
+  },
+  "Tooltip": {
+    "extends": [
+      "Omit<BaseTooltip.Popup.Props, 'children' | 'ref'>"
+    ],
+    "props": {
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "defaultOpen": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "onClose": {
+        "optional": true,
+        "type": [
+          "(event: Event, reason: TooltipRootChangeEventReason, details: TooltipRootChangeEventDetails) => void"
+        ]
+      },
+      "onOpen": {
+        "optional": true,
+        "type": [
+          "(event: Event, details: TooltipRootChangeEventDetails) => void"
+        ]
+      },
+      "open": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ trigger?: Props<unknown> | undefined; portal?: TooltipPortalProps | undefined; positioner?: TooltipPositionerProps | undefined; }"
+        ]
+      },
+      "trigger": {
+        "optional": false,
+        "type": [
+          "ReactElement<unknown, JSXElementConstructor<any> | string>"
+        ]
+      }
+    }
   }
 }
