@@ -21,7 +21,7 @@ The drawing is a `root` board, the glyph box, holding the `dot` and, on the `no-
 
 No inner part has a `slotProps` key: the contract keys `slotProps` by inner Base UI part, and VehicleDot has none. A caller restyles it through `className` on the root.
 
-[PENDING] Is the root a `<span role="img">` rendered through `useRender`, holding an `<svg>` with the one `<circle>`, so the `render` prop is inherited as on LineBadge, StationIcon and Delay, and a caller who writes the state in words beside the dot passes `aria-hidden` to the root? Recommended: yes; every merged Transit sibling renders its root as a `<span>` through `useRender` and inherits `render`, a `<span>` can carry `role="img"` and `aria-label`, and the `<svg>` inside is still needed for the timetable-only dash, which a CSS border can't draw from `vehicle-dot.timetable.dash`.
+The root is a `<span role="img">` rendered through `useRender`, holding an `<svg>` with the one `<circle>`, so the `render` prop is inherited as on LineBadge, StationIcon and Delay, and a caller who writes the state in words beside the dot passes `aria-hidden` to the root: every merged Transit sibling renders its root as a `<span>` through `useRender` and inherits `render`, a `<span>` can carry `role="img"` and `aria-label`, and the `<svg>` inside is still needed for the timetable-only dash, which a CSS border can't draw from `vehicle-dot.timetable.dash`.
 
 ## Base UI parts
 
@@ -54,9 +54,9 @@ In MUI's layout. Every prop here gets this description as its JSDoc. VehicleDot 
 
 `variant` is the contract's prop for the Penpot `variant` property, its default the first value; the contract gives `state` to CSS states, so the data state is never a prop named `state`. `size` is StationIcon's, the same three values at the same three icon sizes, since both are glyphs set beside text.
 
-[PENDING] Is `line` required, with no default, named and typed exactly as LineBadge's and StationIcon's `line`? Recommended: yes; a vehicle always has a line, a dot in a wrong default colour would name the wrong line, and one name and type across the three keeps the family consistent.
+`line` is required, with no default, named and typed exactly as LineBadge's and StationIcon's `line`: a vehicle always has a line, a dot in a wrong default colour would name the wrong line, and one name and type across the three keeps the family consistent.
 
-[PENDING] Does `size` map `small`, `medium` and `large` to `icon.size.325`, `icon.size.400` and `icon.size.450`, set as `--perron-icon-size` on the root, default `medium`? Recommended: yes; `vehicle-dot.inset` is the gap inside a glyph box, the icon steps are the glyph boxes the system has, and StationIcon already takes the same three for the same reason.
+`size` maps `small`, `medium` and `large` to `icon.size.325`, `icon.size.400` and `icon.size.450`, set as `--perron-icon-size` on the root, default `medium`: `vehicle-dot.inset` is the gap inside a glyph box, the icon steps are the glyph boxes the system has, and StationIcon already takes the same three for the same reason.
 
 ## Tokens
 
@@ -113,9 +113,9 @@ On a square box, `r: 50%` is half its side, so each radius keeps the dot `vehicl
 
 Not read: `vehicle-dot.halo`, `color.data-state.halo` and `color.data-state.outline` are for the map canvas alone, and `vehicle-dot.live-threshold` and `vehicle-dot.ageing-threshold` are for whoever decides the state (CR-3).
 
-[PENDING] Does VehicleDot leave out the `color.data-state.outline` hairline, so a light line colour (M2, F, bus) shows its ring or ageing rim without an outline on a light surface, and the grey of no signal (about 2.4:1 on the light surfaces) stays as the token gives it? Recommended: yes; the token's description keeps the outline to the map, the state's word always sits next to the dot (CR-5), so the dot is not the only place the state is told, and no signal's cut now tells it by shape as well; a wider outline is a change through the `design-tokens` skill if the drawing shows the faint rings need it.
+VehicleDot leaves out the `color.data-state.outline` hairline, so a light line colour (M2, F, bus) shows its ring or ageing rim without an outline on a light surface, and the grey of no signal (about 2.4:1 on the light surfaces) stays as the token gives it: the token's description keeps the outline to the map, the state's word always sits next to the dot (CR-5), so the dot is not the only place the state is told, and no signal's cut now tells it by shape as well; a wider outline is a change through the `design-tokens` skill if the drawing shows the faint rings need it.
 
-[PENDING] Does the timetable-only ring take `vehicle-dot.timetable.dash` as the token gives it, at every size, though at `medium` its 2.1 px dash and 1.7 px gap fit the 32 px ring about 8.4 times, so the last dash runs into the first? Recommended: yes; the build reads the token and adds no length of its own, and a dash that closes evenly at each size is a token change of its own, through the `design-tokens` skill, for the design run to decide.
+The timetable-only ring takes `vehicle-dot.timetable.dash` as the token gives it, at every size, though at `medium` its 2.1 px dash and 1.7 px gap fit the 32 px ring about 8.4 times, so the last dash runs into the first: the build reads the token and adds no length of its own, and a dash that closes evenly at each size is a token change of its own, through the `design-tokens` skill, for the design run to decide.
 
 ## Keyboard and ARIA
 
@@ -169,11 +169,11 @@ Every word VehicleDot announces is its own, and it shows none. All five keys exi
 - **CR-10.** The props type declares `variant`, `line`, `size` and the five `*Label` props, and each is taken out of the rest props before the merge, so none reaches the DOM; the root merges the rest props first and its own class, role, `aria-label` and data attributes after them, as LineBadge and StationIcon do with `mergeProps`.
 - **CR-11.** The `ForcedColours` story reads the stylesheets' `(forced-colors: active)` rules for `.pn-VehicleDot` and applies them as an adopted stylesheet while its `play` runs, since a play test cannot turn forced colours on, and takes the sheet off after, pass or fail.
 
-[PENDING] Is no signal's shape a dot cut by a diagonal slash, from the top left to the bottom right, `vehicle-dot.no-signal.cut-width` (1.6 px) wide, drawn as the root's mask (CR-8)? Recommended: yes; a cut reads at the smallest dot, the 9 px one at `small`, where a cross would leave four specks and a hollow square would read as a ring and change the dot's outline; it reuses neither ring nor dashed ring; a slash is the common sign for "off", as on a muted microphone or a lost connection; and a mask cuts it to whatever surface lies beneath, in a row, a panel or a legend, with no colour of its own.
+No signal's shape is a dot cut by a diagonal slash, from the top left to the bottom right, `vehicle-dot.no-signal.cut-width` (1.6 px) wide, drawn as the root's mask (CR-8): a cut reads at the smallest dot, the 9 px one at `small`, where a cross would leave four specks and a hollow square would read as a ring and change the dot's outline; it reuses neither ring nor dashed ring; a slash is the common sign for "off", as on a muted microphone or a lost connection; and a mask cuts it to whatever surface lies beneath, in a row, a panel or a legend, with no colour of its own.
 
-[PENDING] Does the cut show in every theme, not only in forced colours, so the [Data states](../foundations/data-states.md) table reads "A grey dot cut by a slash" for the map canvas too? Recommended: yes; the cut takes ink away rather than adding it, so the map grows no busier, and outside forced colours the grey alone leaves no signal close to an ageing regional train (`#232C31` at 0.42 over a light surface is about `#A3A6A8`, beside no signal's `#9AA4A9`), told apart only by the ageing rim; one shape everywhere keeps the legend and the map saying the same thing. The foundations are written to this answer.
+The cut shows in every theme, not only in forced colours, so the [Data states](../foundations/data-states.md) table reads "A grey dot cut by a slash" for the map canvas too: the cut takes ink away rather than adding it, so the map grows no busier, and outside forced colours the grey alone leaves no signal close to an ageing regional train (`#232C31` at 0.42 over a light surface is about `#A3A6A8`, beside no signal's `#9AA4A9`), told apart only by the ageing rim; one shape everywhere keeps the legend and the map saying the same thing.
 
-[PENDING] In forced colours, does no signal's dot fill with `CanvasText`, like every other state, rather than `GrayText` (CR-9)? Recommended: yes; the cut now carries the state, and `GrayText` can sit close to `Canvas` in a custom contrast theme, where a grey dot would fade, while the earlier draft's review measured `GrayText` against `CanvasText` at about 1.5:1, too close to tell apart.
+In forced colours, no signal's dot fills with `CanvasText`, like every other state, rather than `GrayText` (CR-9): the cut carries the state, and `GrayText` can sit close to `Canvas` in a custom contrast theme, where a grey dot would fade, while `GrayText` against `CanvasText` measures about 1.5:1, too close to tell apart.
 
 ## Stories
 
