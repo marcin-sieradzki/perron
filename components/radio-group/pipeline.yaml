@@ -1,0 +1,6 @@
+# Written by npm run factory; never by hand.
+component: RadioGroup
+layer: component
+deferred:
+  at: 2026-10-25T05:22:58.444Z
+stages: {}
