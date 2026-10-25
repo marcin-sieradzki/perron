@@ -1,5 +1,6 @@
 // VehicleDot's stories: one per data state, then every size, every line, and forced colours, each
 // with a play test that reads the accessibility tree and the drawing (docs/components/vehicle-dot.md).
+import { createRef } from 'react'
 import type { CSSProperties } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, isInaccessible, userEvent, waitFor, within } from 'storybook/test'
@@ -261,6 +262,63 @@ export const Live: Story = {
         await expect(own.className).toBe('pn-VehicleDot caller')
       })
     })
+    await step('ref and style reach the root', async () => {
+      const held = createRef<HTMLSpanElement>()
+      let called: HTMLSpanElement | null = null
+      const own = { marginInlineStart: '7px', opacity: 0.5 }
+      await mounted(
+        canvasElement,
+        <>
+          <VehicleDot line="m1" ref={held} style={own} data-testid="object" />
+          <VehicleDot
+            line="m1"
+            ref={(element) => {
+              called = element
+            }}
+            data-testid="callback"
+          />
+        </>,
+        async (host) => {
+          const object = await waitFor(() => within(host).getByTestId('object'))
+          await expect(held.current).toBe(object)
+          await expect(held.current).toHaveClass('pn-VehicleDot')
+          await expect(called).toBe(within(host).getByTestId('callback'))
+          await expect(object.style.marginInlineStart).toBe('7px')
+          await expect(getComputedStyle(object).marginInlineStart).toBe('7px')
+          await expect(getComputedStyle(object).opacity).toBe('0.5')
+        },
+      )
+    })
+    await step('its own props never reach the DOM (CR-10)', async () => {
+      await mounted(
+        canvasElement,
+        <VehicleDot
+          variant="ageing"
+          line="bus"
+          size="small"
+          liveLabel="Own live"
+          ageingLabel="Own ageing"
+          estimatedLabel="Own estimated"
+          timetableOnlyLabel="Own timetable only"
+          noSignalLabel="Own no signal"
+        />,
+        async (host) => {
+          const own = await waitFor(() => parts(host).root)
+          await expect(own.getAttributeNames().toSorted()).toEqual([
+            'aria-label',
+            'class',
+            'data-line',
+            'data-size',
+            'data-variant',
+            'role',
+          ])
+          await expect(own).toHaveAttribute('data-variant', 'ageing')
+          await expect(own).toHaveAttribute('data-line', 'bus')
+          await expect(own).toHaveAttribute('data-size', 'small')
+          await expect(own).toHaveAccessibleName('Own ageing')
+        },
+      )
+    })
     await step('render swaps the element and keeps the class, data and glyph', async () => {
       await mounted(
         canvasElement,
@@ -290,16 +348,27 @@ export const Live: Story = {
   },
 }
 
-/** The no-signal mask as it renders: the gradient, its stops a cut-width apart. */
-function expectCut(root: Element) {
-  const mask = getComputedStyle(root).maskImage
-  const half = Number.parseFloat(rendered('vehicle-dot-no-signal-cut-width', 'stroke-width')) / 2
-  return Promise.all([
-    expect(mask).toContain('linear-gradient'),
-    expect(mask).toContain(`50% - ${half}px`),
-    expect(mask).toContain(`50% + ${half}px`),
-  ])
+/**
+ * The no-signal cut as the spec draws it (CR-8), `width` wide: a gradient towards the bottom left,
+ * whose 50% line runs from the top left of the glyph box to the bottom right, opaque in the root's
+ * colour up to half a cut-width before it and from half a cut-width after it, transparent between.
+ */
+function cut(root: Element, width: string) {
+  const ink = getComputedStyle(root).color
+  return resolve(
+    'maskImage',
+    `linear-gradient(to bottom left, ${ink} calc(50% - ${width} / 2), transparent calc(50% - ${width} / 2), transparent calc(50% + ${width} / 2), ${ink} calc(50% + ${width} / 2))`,
+  )
 }
+
+/**
+ * The root's mask is exactly that cut, `vehicle-dot.no-signal.cut-width` wide unless `width` says
+ * otherwise: the other diagonal, a gap of another width or opaque stops in the gap all fail.
+ */
+const expectCut = (
+  root: Element,
+  width = rendered('vehicle-dot-no-signal-cut-width', 'stroke-width'),
+) => expect(getComputedStyle(root).maskImage).toBe(cut(root, width))
 
 /** A grey dot cut by a slash, whatever the line. */
 export const NoSignal: Story = {
@@ -323,6 +392,18 @@ export const NoSignal: Story = {
           await expect(getComputedStyle(rtl).direction).toBe('rtl')
           await expectCut(rtl)
           await expect(getComputedStyle(rtl).maskImage).toBe(getComputedStyle(root).maskImage)
+        },
+      )
+    })
+    await step('the gap is as wide as vehicle-dot.no-signal.cut-width says (CR-8)', async () => {
+      const wide = { '--perron-vehicle-dot-no-signal-cut-width': '4px' } as CSSProperties
+      await mounted(
+        canvasElement,
+        <VehicleDot variant="no-signal" line="m1" style={wide} />,
+        async (host) => {
+          const { root: other } = await waitFor(() => parts(host))
+          await expectCut(other, '4px')
+          await expect(getComputedStyle(other).maskImage).not.toBe(getComputedStyle(root).maskImage)
         },
       )
     })
@@ -514,6 +595,59 @@ function shape(root: Element) {
   ].join(', ')
 }
 
+/** Each state's own shape, drawn in `ink`: its fill and opacity, its rim and dash, and its cut. */
+const SHAPES: Record<Variant, (root: Element, ink: string) => Promise<unknown>> = {
+  live: async (root, ink) => {
+    const style = getComputedStyle(dotOf(root))
+    await expect(style.fill).toBe(ink)
+    await expect(style.fillOpacity).toBe('1')
+    await expect(style.stroke).toBe('none')
+    await expect(getComputedStyle(root).maskImage).toBe('none')
+  },
+  ageing: async (root, ink) => {
+    const style = getComputedStyle(dotOf(root))
+    await expect(style.fill).toBe(ink)
+    await expect(style.fillOpacity).toBe(
+      rendered('vehicle-dot-ageing-fill-opacity', 'fill-opacity'),
+    )
+    await expect(style.stroke).toBe(ink)
+    await expect(style.strokeWidth).toBe(
+      rendered('vehicle-dot-ageing-stroke-width', 'stroke-width'),
+    )
+    await expect(style.strokeDasharray).toBe('none')
+    await expect(getComputedStyle(root).maskImage).toBe('none')
+  },
+  estimated: async (root, ink) => {
+    const style = getComputedStyle(dotOf(root))
+    await expect(style.fill).toBe('none')
+    await expect(style.stroke).toBe(ink)
+    await expect(style.strokeWidth).toBe(
+      rendered('vehicle-dot-estimated-stroke-width', 'stroke-width'),
+    )
+    await expect(style.strokeDasharray).toBe('none')
+    await expect(getComputedStyle(root).maskImage).toBe('none')
+  },
+  'timetable-only': async (root, ink) => {
+    const style = getComputedStyle(dotOf(root))
+    await expect(style.fill).toBe('none')
+    await expect(style.stroke).toBe(ink)
+    await expect(style.strokeWidth).toBe(
+      rendered('vehicle-dot-timetable-stroke-width', 'stroke-width'),
+    )
+    await expect(style.strokeDasharray).toBe(
+      rendered('vehicle-dot-timetable-dash', 'stroke-dasharray'),
+    )
+    await expect(getComputedStyle(root).maskImage).toBe('none')
+  },
+  'no-signal': async (root, ink) => {
+    const style = getComputedStyle(dotOf(root))
+    await expect(style.fill).toBe(ink)
+    await expect(style.fillOpacity).toBe('1')
+    await expect(style.stroke).toBe('none')
+    await expectCut(root)
+  },
+}
+
 /**
  * The five states on M1 at medium, beside their words. Its first render, which the docs page and
  * the visual stage show, is in normal colours: the forced-colours look exists only while its play
@@ -538,8 +672,7 @@ export const ForcedColours: Story = {
           await expect(root).toHaveAttribute('data-variant', variant)
           await expect(getComputedStyle(root).forcedColorAdjust).toBe('none')
           await expect(getComputedStyle(root).color).toBe(text)
-          const style = getComputedStyle(dotOf(root))
-          await expect(style.fill === 'none' ? style.stroke : style.fill).toBe(text)
+          await SHAPES[variant](root, text)
         })
       await step('the five shapes differ; no signal is cut and live is not', async () => {
         const shapes = roots.map(shape)

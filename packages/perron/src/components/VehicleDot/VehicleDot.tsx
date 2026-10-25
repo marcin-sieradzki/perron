@@ -5,7 +5,7 @@ import type { CSSProperties, Ref } from 'react'
 import { mergeProps } from '@base-ui/react/merge-props'
 import { useRender } from '@base-ui/react/use-render'
 import { useOwnedStrings } from '../../PerronProvider.tsx'
-import type { OwnedStrings } from '../../locale/index.ts'
+import type { OwnedStringKey } from '../../locale/index.ts'
 import './VehicleDot.css'
 
 /** The owned string that names each data state (CR-6). */
@@ -15,7 +15,7 @@ const LABEL_KEY = {
   estimated: 'estimated',
   'timetable-only': 'timetableOnly',
   'no-signal': 'noSignal',
-} as const satisfies Record<NonNullable<VehicleDotProps['variant']>, keyof OwnedStrings>
+} as const satisfies Record<NonNullable<VehicleDotProps['variant']>, OwnedStringKey>
 
 /**
  * The glyph: an `<svg>` holding the one `<circle>`, drawn by the CSS for each state. The root
@@ -35,8 +35,8 @@ export interface VehicleDotProps extends Omit<useRender.ComponentProps<'span'>, 
   variant?: 'live' | 'ageing' | 'estimated' | 'timetable-only' | 'no-signal'
   /**
    * The vehicle's line, which gives the dot its colour: a metro line (`m1` to `m4`), an S-tog line
-   * (`a` to `h`), any bus (`bus`), or any regional or Øresund train (`regional`). Required; set on
-   * the root as `data-line`.
+   * (`a` to `h`), any bus (`bus`), or any regional or Øresund train (`regional`). Required, with
+   * no default; set on the root as `data-line`.
    */
   line: 'm1' | 'm2' | 'm3' | 'm4' | 'a' | 'b' | 'c' | 'e' | 'f' | 'h' | 'bus' | 'regional'
   /**
