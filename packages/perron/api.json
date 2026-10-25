@@ -128,7 +128,7 @@
   },
   "Checkbox": {
     "extends": [
-      "Omit< BaseCheckbox.Root.Props, 'onCheckedChange' | 'onChange' | 'parent' | 'children' | 'className' | 'style' | 'ref' >"
+      "Omit< BaseCheckbox.Root.Props, 'onCheckedChange' | 'onChange' | 'children' | 'className' | 'style' | 'ref' >"
     ],
     "props": {
       "children": {

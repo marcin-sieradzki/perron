@@ -503,8 +503,8 @@
     "name": "CheckboxGroup",
     "layer": "component",
     "category": "Inputs",
-    "status": "designing",
-    "baseUiParts": ["CheckboxGroup"],
+    "status": "building",
+    "baseUiParts": ["CheckboxGroup", "Field.Root", "Field.Description", "Field.Error"],
     "penpotPath": "Components/CheckboxGroup",
     "dependsOn": ["Checkbox", "Fieldset"]
   },
