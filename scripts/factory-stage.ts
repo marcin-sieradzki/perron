@@ -8,8 +8,13 @@
 // first gets `since` the same way: the commit the round before it reviewed.
 // With --prompt it prints the prompt alone, as raw text, to hand to the agent as it is; the agent
 // type is review's alone, `component-reviewer`.
+// With --result it reads the agent's reply from a file and prints its JSON, parsed past the prose,
+// fences and stray backslashes an agent leaves around it; with --review too, it writes the result's
+// `review` to that file, formatted by Prettier, as the factory skill's step 4 does.
 // Usage: node scripts/factory-stage.ts [--prompt] '{"stage":"build","name":"Chip","dir":"…","port":6011}'
-import { readFileSync } from 'node:fs'
+//        node scripts/factory-stage.ts --result <reply file> [--review components/<name>/review.md]
+import { readFileSync, writeFileSync } from 'node:fs'
+import { format, resolveConfig } from 'prettier'
 import { fixFor, loadPipeline, next, STAGES, type Env, type Stage } from './lib/pipeline.ts'
 
 export interface StageCall {
@@ -68,6 +73,55 @@ export function withFix(args: Record<string, unknown>, root: string): Record<str
   return { ...args, ...(fix && { fix }), ...(since && { since }) }
 }
 
+/** The escapes JSON allows after a backslash. */
+const ESCAPES = new Set(['"', '\\', '/', 'b', 'f', 'n', 'r', 't', 'u'])
+
+/**
+ * An agent's reply as the stage's result: the one JSON object in it, from its first `{` to its
+ * last `}`, so prose or a code fence around it is left out. Inside its strings, a backslash JSON
+ * doesn't allow, such as the `\`` a reviewer writes before a Markdown backtick, stands for the
+ * character after it, and a raw line break for `\n`, so the review's words come through unchanged.
+ */
+export function parseResult(reply: string): Record<string, unknown> {
+  const start = reply.indexOf('{')
+  const end = reply.lastIndexOf('}')
+  if (start < 0 || end < start) throw new Error('the reply holds no JSON object')
+  const text = reply.slice(start, end + 1)
+  try {
+    return JSON.parse(text)
+  } catch {
+    // mend the strings and parse again; a reply that still fails throws JSON.parse's own error
+  }
+  let mended = ''
+  let inString = false
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i]
+    if (!inString) {
+      if (c === '"') inString = true
+      mended += c
+    } else if (c === '\\') {
+      const after = text[i + 1] ?? ''
+      mended += ESCAPES.has(after) ? c + after : after === '\n' ? '\\n' : after
+      i++
+    } else if (c === '"') {
+      inString = false
+      mended += c
+    } else mended += c === '\n' ? '\\n' : c === '\r' ? '' : c === '\t' ? '\\t' : c
+  }
+  return JSON.parse(mended)
+}
+
+/**
+ * Writes a review round's result, its `review` text unchanged, to `file`, formatted as Prettier
+ * formats the repo's Markdown, so `npm run check` passes on it.
+ */
+export async function writeReview(result: Record<string, unknown>, file: string) {
+  if (typeof result.review !== 'string' || !result.review.trim())
+    throw new Error('the result holds no review text')
+  const config = (await resolveConfig(file)) ?? {}
+  writeFileSync(file, await format(result.review, { ...config, filepath: file }))
+}
+
 /** What the command prints for `call`: the JSON of the call, or with `prompt` its prompt alone. */
 export const printed = (call: StageCall, prompt = false) =>
   prompt ? `${call.prompt}\n` : `${JSON.stringify(call, null, 2)}\n`
@@ -75,6 +129,15 @@ export const printed = (call: StageCall, prompt = false) =>
 if (import.meta.url === `file://${process.argv[1]}`) {
   try {
     const argv = process.argv.slice(2)
+    const at = (flag: string) => (argv.includes(flag) ? argv[argv.indexOf(flag) + 1] : undefined)
+    const reply = at('--result')
+    if (reply !== undefined) {
+      const result = parseResult(readFileSync(reply, 'utf8'))
+      const review = at('--review')
+      if (review) await writeReview(result, review)
+      process.stdout.write(`${JSON.stringify(result, null, 2)}\n`)
+      process.exit(0)
+    }
     const prompt = argv.includes('--prompt')
     const args = JSON.parse(argv.find((a) => a !== '--prompt') ?? '{}')
     const call = await stageCall(withFix(args, typeof args.dir === 'string' ? args.dir : '.'))

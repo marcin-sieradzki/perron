@@ -186,14 +186,14 @@ describe('the factory dry run', () => {
 
     // brief: a [PENDING] question left stops it for the maintainer, whatever the stage says
     expect(stage('brief', () => brief('[PENDING] Is the count ever negative?\n')).out).toBe(
-      'ended brief: pending\nwait: pending-questions\nstage: brief\nwhy: the spec docs/components/tally.md has 1 [PENDING] question for the maintainer\n',
+      'ended brief: pending\nwait: pending-questions\nstage: brief\nwhy: the spec docs/components/tally.md has 1 [PENDING] question for the maintainer\ncommit: Tally: brief pending\n',
     )
     expect(run('begin Tally build').err).toBe('refused: build cannot begin: brief is not done\n')
     expect(stage('brief', () => brief()).out).toContain('ended brief: done\nrun: build')
 
     // build: the stage spends its three attempts inside one run, so a failed run stops the loop
     expect(stage('build', () => build(), 'failed', 'npm run check: 2 lint errors').out).toBe(
-      'ended build: failed: npm run check: 2 lint errors\nwait: needs-human\nstage: build\nwhy: build failed: npm run check: 2 lint errors\n',
+      'ended build: failed: npm run check: 2 lint errors\nwait: needs-human\nstage: build\nwhy: build failed: npm run check: 2 lint errors\ncommit: Tally: build failed\n',
     )
     expect(run('begin Tally build').err).toMatch(
       /build cannot begin: Tally waits at needs-human \(build\)/,
@@ -227,7 +227,7 @@ describe('the factory dry run', () => {
 
     // review round 1 finds a P1: back to build, for a fresh run
     expect(stage('review', () => review(1, 2)).out).toBe(
-      'ended review: failed, round 1: 2 P1, 0 P2, 0 P3: review round 1 found 2 P1 (components/tally/review.md)\nrun: build\nwhy: sent back: review round 1 found 2 P1 (components/tally/review.md)\nfix: review round 1 found 2 P1 (components/tally/review.md). Fix each of its P1 and P2 findings at the line it names:\n- **P1-1.** `Tally.tsx:1` Breaks the contract.\n- **P1-2.** `Tally.tsx:2` Breaks the contract.\n',
+      'ended review: failed, round 1: 2 P1, 0 P2, 0 P3: review round 1 found 2 P1 (components/tally/review.md)\nrun: build\nwhy: sent back: review round 1 found 2 P1 (components/tally/review.md)\nfix: review round 1 found 2 P1 (components/tally/review.md). Fix each of its P1 and P2 findings at the line it names:\n- **P1-1.** `Tally.tsx:1` Breaks the contract.\n- **P1-2.** `Tally.tsx:2` Breaks the contract.\ncommit: Tally: review failed, round 1: 2 P1, 0 P2, 0 P3\n',
     )
     stage('build', () => build())
     // round 2 is scoped to what changed since the commit round 1 read
@@ -239,13 +239,18 @@ describe('the factory dry run', () => {
     expect(stage('review', () => {}).out).toMatch(
       /ended review: failed: components\/tally\/review\.md is headed "# Review: Tally, round 1", not "# Review: Tally, round 2"/,
     )
-    expect(stage('review', () => review(2)).out).toContain(
-      'ended review: done, round 2: 0 P1, 0 P2, 0 P3\nrun: docs',
-    )
+    expect(run('begin Tally review').code).toBe(0)
+    review(2)
+    // the stage's commit message is the gate's outcome, never the run's claim, in --json too
+    expect(JSON.parse(run('end Tally review done --json').out)).toMatchObject({
+      said: 'ended review: done, round 2: 0 P1, 0 P2, 0 P3',
+      commit: 'Tally: review done, round 2: 0 P1, 0 P2, 0 P3',
+      next: { run: 'docs' },
+    })
 
     // docs: the entry must be stable, and the docs check pass; a failed docs run goes back to build
     expect(stage('docs', () => {}).out).toBe(
-      "ended docs: failed: Tally's entry is building, not stable\nrun: build\nwhy: sent back: docs failed: Tally's entry is building, not stable\n",
+      "ended docs: failed: Tally's entry is building, not stable\nrun: build\nwhy: sent back: docs failed: Tally's entry is building, not stable\ncommit: Tally: docs failed\n",
     )
     expect(run('begin Tally docs').err).toBe('refused: docs cannot begin: build is not done\n')
     stage('build', () => build())
@@ -263,7 +268,7 @@ describe('the factory dry run', () => {
     stage('review', () => review(4))
     stage('docs', () => {})
     expect(stage('visual', () => report(true)).out).toBe(
-      "ended visual: done\nwait: done\nwhy: every stage passed; Tally's PR is ready for the maintainer\n",
+      "ended visual: done\nwait: done\nwhy: every stage passed; Tally's PR is ready for the maintainer\ncommit: Tally: visual done\n",
     )
     expect(pipeline().stages).toMatchObject({
       review: { status: 'done', rounds: 4, sentBack: 1 },
@@ -283,7 +288,7 @@ describe('the factory dry run', () => {
   it('stops at pending-questions when the design asks the maintainer, and reruns design once answered', () => {
     const out = stage('design', () => {}, 'pending', 'no token holds a 3 px dot radius').out
     expect(out).toBe(
-      'ended design: pending: no token holds a 3 px dot radius\nwait: pending-questions\nstage: design\nwhy: no token holds a 3 px dot radius\n',
+      'ended design: pending: no token holds a 3 px dot radius\nwait: pending-questions\nstage: design\nwhy: no token holds a 3 px dot radius\ncommit: Tally: design pending\n',
     )
     expect(run('begin Tally brief').err).toBe('refused: brief cannot begin: design is not done\n')
     expect(stage('design', () => design()).out).toContain('wait: design-approval')
@@ -294,7 +299,7 @@ describe('the factory dry run', () => {
     const asked =
       '1. Tokens: the key grows its line by 0.59 px. Recommended: a negative margin-block.'
     expect(stage('build', () => build(), 'pending', asked).out).toBe(
-      `ended build: pending: ${asked}\nwait: pending-questions\nstage: build\nwhy: ${asked}\n`,
+      `ended build: pending: ${asked}\nwait: pending-questions\nstage: build\nwhy: ${asked}\ncommit: Tally: build pending\n`,
     )
     expect(pipeline().needsHuman).toBeUndefined()
     // the answers go to the rerun as `answers`; the build begins again and its gate holds as ever
@@ -327,7 +332,7 @@ describe('the factory dry run', () => {
       'wait: pending-questions',
     )
     expect(stage('build', () => build(), 'pending', asked(3)).out).toBe(
-      `ended build: pending: ${asked(3)}\nwait: needs-human\nstage: build\nwhy: 3 build runs in a row ended with questions; the last asked: ${asked(3)}\n`,
+      `ended build: pending: ${asked(3)}\nwait: needs-human\nstage: build\nwhy: 3 build runs in a row ended with questions; the last asked: ${asked(3)}\ncommit: Tally: build pending\n`,
     )
     expect(run('begin Tally build').err).toMatch(/waits at needs-human \(build\)/)
     expect(pipeline().stages.build).toMatchObject({ asked: 3, runs: 3 })
@@ -684,7 +689,7 @@ describe('the factory dry run', () => {
     stage('review', () => review(1))
     checks = [false]
     expect(stage('docs', () => build('stable')).out).toBe(
-      'ended docs: failed: npm run check failed: lint: Tally.tsx:3 no-unused-vars\nrun: build\nwhy: sent back: docs failed: npm run check failed: lint: Tally.tsx:3 no-unused-vars\n',
+      'ended docs: failed: npm run check failed: lint: Tally.tsx:3 no-unused-vars\nrun: build\nwhy: sent back: docs failed: npm run check failed: lint: Tally.tsx:3 no-unused-vars\ncommit: Tally: docs failed\n',
     )
   })
 
