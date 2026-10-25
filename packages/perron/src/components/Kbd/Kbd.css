@@ -9,6 +9,9 @@
      perron.css sets box-sizing: border-box */
   min-inline-size: calc(1lh + 2 * var(--perron-border-width-025));
   padding-block: 0;
+  /* the border paints outside the line's layout: only the key's 1lh of typography.data counts
+     toward the line, so a key never pushes a caption or body line apart (CR-3) */
+  margin-block: calc(-1 * var(--perron-border-width-025));
   padding-inline: var(--perron-space-100);
   background: var(--perron-color-surface-raised);
   border: var(--perron-border-width-025) solid var(--perron-color-border-strong);

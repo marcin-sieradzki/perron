@@ -69,6 +69,21 @@ export const InHelpText: Story = {
     // the sentence is read whole, in order, and the column is narrow enough to wrap it
     await expect(textOf(paragraph)).toBe('Keys: + and − zoom, arrows pan, Esc closes panels.')
     await expect(paragraph.getBoundingClientRect().height).toBeGreaterThan(lineHeight)
+    // no taller than the same paragraph with its keys as plain text, in the same column: each
+    // stand-in as wide as its key, so the sentence wraps at the same words
+    const plain = paragraph.cloneNode(true) as HTMLElement
+    const widths = keysIn(paragraph).map((key) => key.getBoundingClientRect().width)
+    keysIn(plain).forEach((key, i) => {
+      const standIn = document.createElement('span')
+      standIn.style.display = 'inline-block'
+      standIn.style.inlineSize = `${widths[i]}px`
+      standIn.textContent = key.textContent
+      key.replaceWith(standIn)
+    })
+    paragraph.after(plain)
+    const plainHeight = plain.getBoundingClientRect().height
+    plain.remove()
+    await expect(paragraph.getBoundingClientRect().height).toBeLessThanOrEqual(plainHeight)
     const keys = keysIn(canvasElement)
     await expect(keys.map(textOf)).toEqual(['+', '−', 'Esc'])
     for (const key of keys) {
