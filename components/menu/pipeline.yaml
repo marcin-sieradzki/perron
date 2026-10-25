@@ -16,16 +16,15 @@ stages:
     spec: 3a7200ba8aa388655f7be7f4c88714bcdf7c525bf6fb07453d222c9d4b5bc9bc
     ended: 2026-10-25T06:45:49.476Z
   review:
-    rounds: 3
+    rounds: 4
     sentBack: 0
     findings:
       p1: 0
-      p2: 1
+      p2: 0
       p3: 7
-    status: failed
-    started: 2026-10-25T06:46:28.930Z
-    ended: 2026-10-25T06:53:39.572Z
-    failing: review round 3 found 1 P2 (components/menu/review.md)
+    status: done
+    started: 2026-10-25T06:54:38.540Z
+    ended: 2026-10-25T06:59:01.816Z
 notes:
   - stage: brief
     at: 2026-10-25T05:50:01.967Z
