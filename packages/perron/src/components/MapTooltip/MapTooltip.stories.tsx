@@ -6,7 +6,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fireEvent, fn, mocked, screen, userEvent, waitFor, within } from 'storybook/test'
 import { dictionaries, type Locale } from '../../locale/index.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
-import { colour } from '../../testing/stories.ts'
+import { colour, frames } from '../../testing/stories.ts'
 import { Button } from '../Button/Button.tsx'
 import { MapTooltip } from './MapTooltip.tsx'
 
@@ -52,11 +52,6 @@ const card = () =>
 
 /** Resolves once no card is in the document. */
 const gone = () => waitFor(() => expect(document.querySelector('.pn-MapTooltip')).toBeNull())
-
-/** Resolves after the given number of frames, for a check that something has not changed. */
-const frames = async (count: number) => {
-  for (let i = 0; i < count; i++) await new Promise(requestAnimationFrame)
-}
 
 /** Resolves once the card sits centred over the point, `space.200` above it (CR-5). */
 const above = (popup: HTMLElement, point: { x: number; y: number }) =>

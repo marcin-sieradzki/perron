@@ -806,6 +806,11 @@
         "$value": "6px",
         "$description": "Height of a meter's track"
       },
+      "checkbox": {
+        "$type": "sizing",
+        "$value": "16px",
+        "$description": "The box of a checkbox, and of a menu's checkbox item"
+      },
       "sheet-width": {
         "$type": "sizing",
         "$value": "376px",
