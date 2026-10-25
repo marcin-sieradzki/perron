@@ -9,6 +9,7 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import {
   byTestId,
   colour,
+  lines,
   mounted,
   onHover,
   resolve,
@@ -503,7 +504,7 @@ export const LongLabel: Story = {
     const line = parseFloat(getComputedStyle(label).lineHeight)
     const text = label.getBoundingClientRect()
     // it wraps onto more than one line, and stays inside the container
-    await expect(text.height).toBeGreaterThan(line)
+    await expect(lines(label)).toBeGreaterThan(1)
     await expect(label.scrollWidth).toBe(label.clientWidth)
     const container = root.parentElement!
     await expect(container.scrollWidth).toBe(container.clientWidth)
