@@ -1,0 +1,47 @@
+/* FactList: names and values in two aligned columns, on its container's surface, with no fill,
+   border, radius, padding or shadow of its own. Every row of docs/components/fact-list.md's Tokens
+   table is at rest; an unknown value is rest with data-unknown on the value. CR-11: the root fills
+   its container as a block, and the grid's columns follow the writing direction. */
+.pn-FactList {
+  display: grid;
+  grid-template-columns: minmax(0, max-content) minmax(0, 1fr);
+  column-gap: var(--perron-space-300);
+  row-gap: var(--perron-space-200);
+  margin: 0;
+  padding: 0;
+}
+
+/* Each fact spans both columns and shares them, so every value lines up down one edge, and the
+   smaller name sits on its value's baseline. No divider between rows. */
+.pn-FactList-item {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  align-items: baseline;
+  margin: 0;
+  padding: 0;
+}
+
+/* Both columns wrap, so a long Danish name or a long value still fits 320 px */
+.pn-FactList-label {
+  margin: 0;
+  font: var(--perron-typography-label-sm);
+  letter-spacing: var(--perron-typography-label-sm-tracking);
+  color: var(--perron-color-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+/* The dd's inline indent reset; tabular figures keep an updating time or speed from shifting */
+.pn-FactList-value {
+  margin: 0;
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+  font-variant-numeric: tabular-nums;
+  color: var(--perron-color-text-primary);
+  overflow-wrap: anywhere;
+}
+
+/* CR-4, CR-5: the "—" an unknown value shows */
+.pn-FactList-value[data-unknown] {
+  color: var(--perron-color-text-tertiary);
+}
