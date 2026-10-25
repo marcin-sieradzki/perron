@@ -8,7 +8,7 @@ import { Popover as BasePopover } from '@base-ui/react/popover'
 import { useId } from 'react'
 import type { CSSProperties, ReactElement, ReactNode, Ref } from 'react'
 import { useOwnedStrings } from '../../PerronProvider.tsx'
-import { given, withClass } from '../../internal/nodes.ts'
+import { classes, given, withClass } from '../../internal/nodes.ts'
 import { positionerOffsets } from '../../internal/tokens.ts'
 import { CloseButton } from '../../parts/CloseButton/CloseButton.tsx'
 import './Popover.css'
@@ -171,7 +171,7 @@ export function Popover({
             {...rest}
             ref={ref}
             style={style}
-            className={className ? `pn-Popover ${className}` : 'pn-Popover'}
+            className={classes('pn-Popover', className)}
           >
             <div className="pn-Popover-header">
               <BasePopover.Title

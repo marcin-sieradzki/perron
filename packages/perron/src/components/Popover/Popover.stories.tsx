@@ -6,7 +6,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, screen, userEvent, waitFor, within } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
-import { byTestId, closed, mounted } from '../../testing/stories.ts'
+import { byTestId, closed, mounted, rendered } from '../../testing/stories.ts'
 import { Button } from '../Button/Button.tsx'
 import { Text } from '../Text/Text.tsx'
 import { Popover } from './Popover.tsx'
@@ -72,10 +72,6 @@ async function focusedClose(popup: HTMLElement, name = 'Close') {
   return close
 }
 
-/** A length token in pixels, as the document root gives it. */
-const px = (property: `--perron-${string}`) =>
-  Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue(property))
-
 /** The one variant: open, with a title, a description and a sentence of content, below its trigger. */
 export const Default: Story = {
   play: async ({ canvasElement, args, step }) => {
@@ -89,7 +85,9 @@ export const Default: Story = {
       const popup = await popover()
       await expect(popup).toHaveAttribute('data-side', 'bottom')
       const gap = popup.getBoundingClientRect().top - trigger.getBoundingClientRect().bottom
-      await expect(Math.abs(gap - px('--perron-space-200'))).toBeLessThanOrEqual(1)
+      await expect(
+        Math.abs(gap - Number.parseFloat(rendered('space-200', 'width'))),
+      ).toBeLessThanOrEqual(1)
     })
     await step('the close button has focus', async () => {
       await focusedClose(await popover())
