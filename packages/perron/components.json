@@ -237,7 +237,7 @@
     "name": "SearchField",
     "layer": "component",
     "category": "Inputs",
-    "status": "building",
+    "status": "stable",
     "baseUiParts": [
       "Field.Root",
       "Field.Label",

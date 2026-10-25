@@ -24,6 +24,10 @@ stages:
     status: done
     started: 2026-10-25T02:27:24.931Z
     ended: 2026-10-25T02:31:35.147Z
+  docs:
+    status: done
+    started: 2026-10-25T02:31:47.466Z
+    ended: 2026-10-25T02:35:42.626Z
 notes:
   - stage: brief
     at: 2026-10-25T01:40:53.602Z
@@ -113,3 +117,12 @@ notes:
   - stage: build
     at: 2026-10-25T02:15:59.608Z
     direction: onClose takes Base UI's whole ChangeEventReason type, which also allows reasons SearchField never sends (such as 'imperative-action'). A narrower union type for SearchField's close reasons would let a caller's switch statement be checked for missing cases.
+  - stage: docs
+    at: 2026-10-25T02:35:42.626Z
+    direction: 'The docs page renders each SearchField story in a lazy iframe (inline: false, 360px, CR-16); a full-page screenshot without scrolling shows CallerFilter, Controlled and LongWords as empty frames. The docs screenshot method in design-qa/rendering.md could scroll each docs-story iframe into view first.'
+  - stage: docs
+    at: 2026-10-25T02:35:42.626Z
+    direction: The props table shows onChange, onOpen and onClose with SearchField.tsx's private aliases ChangeDetails and OpenDetails rather than Autocomplete.Root.ChangeEventDetails and OpenChangeEventDetails, as Dialog, Sheet and MapTooltip do; the library could show the Base UI names instead.
+  - stage: docs
+    at: 2026-10-25T02:35:42.626Z
+    direction: onClose's type shows in the props table with its source line breaks and trailing comma, as Dialog's does; PropsTable could normalise a multi-line function type.
