@@ -4,76 +4,30 @@
 // the token files; the names picked here say which tokens a tile draws, never what they are.
 import {
   CONTENTS,
+  foundationGroups,
+  proseOf,
   readContents,
-  readFoundations,
   type FoundationPage,
   type Segment,
 } from '../../lib/foundations.ts'
-import { markdownHeadings, type Anchor, type Heading } from '../../lib/anchors.ts'
-import { firstParagraph, sectionBody, stripTitle, tables } from '../../lib/markdown.ts'
+import { sectionBody } from '../../lib/markdown.ts'
+
+// the groups, the prose and the body as the page draws it are the loader's, which the search reads
+export {
+  bodySegments,
+  foundationGroups,
+  introOf,
+  proseOf,
+  withoutIntro,
+  type FoundationGroup,
+} from '../../lib/foundations.ts'
 
 export type TokenSegment = Extract<Segment, { kind: 'tokens' }>
 export type ContrastSegment = Extract<Segment, { kind: 'contrast' }>
 export type TokenRow = TokenSegment['rows'][number]
 
-/** The order the sidebar, the tiles and the page-to-page links follow, as Foundations.dc.html does. */
-const ORDER = [
-  'semantic-colours',
-  'primitive-colours',
-  'typography',
-  'semantic-spacing',
-  'elevation',
-  'motion',
-  'icons',
-  'logos',
-  'layout',
-  'accessibility',
-]
-
-export interface FoundationGroup {
-  /** The group's heading, or undefined for the main list */
-  label?: string
-  pages: FoundationPage[]
-}
-
-/** The `[Page](page.md)` links of each table in the Contents page's "Pages" section, as slugs. */
-function contentsTables() {
-  const body = sectionBody(proseOf(readContents()), 'Pages') ?? ''
-  return tables(body).map((table) =>
-    table.rows.flatMap((row) =>
-      Object.values(row).flatMap((cell) =>
-        [...cell.matchAll(/\]\(([\w-]+)\.md\)/g)].map((m) => m[1]),
-      ),
-    ),
-  )
-}
-
-/**
- * The foundation pages in two groups: the main list, then the pages only a live map needs, which
- * the Contents page lists in a table of their own. A page neither table lists, such as Content
- * design, joins the main list at its end.
- */
-export function foundationGroups(): FoundationGroup[] {
-  const pages = readFoundations()
-  const live = contentsTables().slice(1).flat()
-  const rank = (p: FoundationPage) => {
-    const at = ORDER.indexOf(p.slug)
-    return at < 0 ? ORDER.length : at
-  }
-  const main = pages.filter((p) => !live.includes(p.slug)).sort((a, b) => rank(a) - rank(b))
-  const onMap = live.flatMap((slug) => pages.filter((p) => p.slug === slug))
-  return [{ pages: main }, ...(onMap.length ? [{ label: 'Only on a live map', pages: onMap }] : [])]
-}
-
 /** Every foundation page in the sidebar's order. */
 export const orderedFoundations = () => foundationGroups().flatMap((g) => g.pages)
-
-/** A page's prose segments joined, with its token and file tables taken out. */
-export const proseOf = (page: Pick<FoundationPage, 'segments'>) =>
-  page.segments.flatMap((s) => (s.kind === 'prose' ? [s.markdown] : [])).join('\n\n')
-
-/** The first paragraph under a page's title, as markdown: its lead. */
-export const introOf = (page: FoundationPage) => firstParagraph(proseOf(page))
 
 /** The text of the section headed `heading`, without the heading, or an empty string. */
 export const sectionOf = (page: FoundationPage, heading: string) =>
@@ -93,58 +47,6 @@ export function brandValues() {
 
 /** The Contents page's path, which its relative links start from. */
 export { CONTENTS }
-
-/** The first prose segment's markdown without the title and the intro the page header shows. */
-export function withoutIntro(markdown: string, intro: string) {
-  const body = stripTitle(markdown)
-  const [first, ...rest] = body.split(/\n\s*\n/)
-  return first?.trim().replace(/\s*\n\s*/g, ' ') === intro ? rest.join('\n\n') : body
-}
-
-/** A page's segments as its body draws them: the first prose without the title and the intro. */
-export function bodySegments(page: FoundationPage): Segment[] {
-  const intro = introOf(page)
-  return page.segments.map((segment, i) =>
-    i === 0 && segment.kind === 'prose'
-      ? { kind: 'prose', markdown: withoutIntro(segment.markdown, intro) }
-      : segment,
-  )
-}
-
-/** A gallery category's heading id: `fd-icons-Map`. */
-export const galleryId = (kind: 'icons' | 'logos', category: string) => `fd-${kind}-${category}`
-
-/**
- * The headings a page's body draws, each with its id: each prose segment's, as Markdown renders it,
- * and each gallery's categories.
- */
-export function bodyHeadings(page: FoundationPage): Heading[] {
-  return bodySegments(page).flatMap((s): Heading[] => {
-    if (s.kind === 'prose') return markdownHeadings(s.markdown)
-    if (s.kind === 'icons' || s.kind === 'logos')
-      return s.categories.map((c) => ({ level: 3, title: c.name, id: galleryId(s.kind, c.name) }))
-    return []
-  })
-}
-
-/** The Foundations index's sections that carry a name of their own. */
-export const INDEX_SECTIONS = {
-  brand: { id: 'the-brand', title: 'The brand' },
-  using: { id: 'using-the-tokens', title: 'Using the tokens' },
-} as const satisfies Record<string, Anchor>
-
-/** The heading id of the Foundations index's group after the main tiles, by its place. */
-export const groupId = (i: number) => `fd-group-${i}`
-
-/** The Foundations index's places, in order: the brand, each group past the main one, the tokens. */
-export function indexAnchors(): Anchor[] {
-  const [, ...more] = foundationGroups()
-  return [
-    INDEX_SECTIONS.brand,
-    ...more.map((g, i) => ({ title: g.label ?? '', id: groupId(i) })),
-    INDEX_SECTIONS.using,
-  ]
-}
 
 // Token rows
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { parseChangelog, readChangelogs, releaseAnchor, versionOf } from './changelog.ts'
+import { parseChangelog, readChangelogs, versionOf } from './changelog.ts'
 import { PACKAGES, readPackage } from './repo.ts'
 
 const log = `# @mylder/example
@@ -96,18 +96,24 @@ describe('parseChangelog', () => {
     ])
   })
 
+  it('folds dependency updates with a blank line before their versions, and lists no blank', () => {
+    const patch = parseChangelog(
+      '# x\n\n## 1.0.0\n\n### Patch Changes\n\n- Updated dependencies [abc1234]\n\n  - @mylder/perron@0.2.0\n- Updated dependencies [def5678]\n',
+      'x',
+    ).releases[0].groups[0].entries
+    expect(patch).toEqual([{ markdown: 'Updated dependencies\n- @mylder/perron@0.2.0' }])
+  })
+
   it('throws for a file with no # heading', () => {
     expect(() => parseChangelog('## 1.0.0', 'x.md')).toThrow('x.md has no # heading')
   })
 })
 
-describe('versionOf and releaseAnchor', () => {
-  it("reads a version heading's number and date, and anchors the version by its package", () => {
+describe('versionOf', () => {
+  it("reads a version heading's number and date", () => {
     expect(versionOf('0.2.0')).toEqual({ version: '0.2.0', date: undefined })
     expect(versionOf('1.2.0 (2026-10-25)')).toEqual({ version: '1.2.0', date: '2026-10-25' })
     expect(versionOf('1.2.0 - 2026-10-25')).toEqual({ version: '1.2.0', date: '2026-10-25' })
-    expect(releaseAnchor('@mylder/perron-mcp', '0.1.1')).toBe('perron-mcp-0-1-1')
-    expect(releaseAnchor('@mylder/perron', '0.2.0')).toBe('perron-0-2-0')
   })
 })
 

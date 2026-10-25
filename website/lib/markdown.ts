@@ -102,3 +102,80 @@ export function readDoc(path: string): Doc {
     markdown,
   }
 }
+
+/* Fenced code */
+
+/** A fence's opening line: up to three spaces, three or more backticks or tildes, an info string. */
+const FENCE_OPEN = /^ {0,3}(`{3,}|~{3,})(.*)$/
+/** A fence's closing line: the same run, as long or longer, and nothing after it. */
+const FENCE_CLOSE = /^ {0,3}(`{3,}|~{3,})\s*$/
+
+/** A run of whole lines of markdown, inside a fenced code block or outside every one. */
+export interface Span {
+  text: string
+  fenced: boolean
+}
+
+/**
+ * The markdown as runs of lines, each fenced code block a span of its own, fences included, as
+ * CommonMark reads them: a backtick fence's info string has no backtick (```` ```js``` ```` is
+ * inline code), and an unclosed fence runs to the end. Joined with line breaks, the spans are the
+ * markdown again.
+ */
+export function fenceSpans(markdown: string): Span[] {
+  const spans: Span[] = []
+  let lines: string[] = []
+  let fence = ''
+  const end = (fenced: boolean) => {
+    if (lines.length) spans.push({ text: lines.join('\n'), fenced })
+    lines = []
+  }
+  for (const line of markdown.split('\n')) {
+    if (!fence) {
+      const m = FENCE_OPEN.exec(line)
+      if (m && !(m[1][0] === '`' && m[2].includes('`'))) {
+        end(false)
+        fence = m[1]
+      }
+      lines.push(line)
+    } else {
+      lines.push(line)
+      const m = FENCE_CLOSE.exec(line)
+      if (m && m[1][0] === fence[0] && m[1].length >= fence.length) {
+        end(true)
+        fence = ''
+      }
+    }
+  }
+  end(Boolean(fence))
+  return spans
+}
+
+/** The markdown with `edit` applied to each span outside fenced code, the code left as it is. */
+export const outsideFences = (markdown: string, edit: (prose: string) => string) =>
+  fenceSpans(markdown)
+    .map((s) => (s.fenced ? s.text : edit(s.text)))
+    .join('\n')
+
+/* Character references */
+
+const NAMED: Record<string, string> = { amp: '&', quot: '"', apos: "'", lt: '<', gt: '>' }
+
+/**
+ * Text with its numeric character references decoded, `&#x27;` and `&#39;` as `'`, each character
+ * through `as`; with `named`, also the named ones HTML escapes with: `&amp;`, `&quot;`, `&apos;`,
+ * `&lt;` and `&gt;`.
+ */
+export function decodeEntities(
+  text: string,
+  { named = false, as = (c: string) => c }: { named?: boolean; as?: (c: string) => string } = {},
+) {
+  // one pass, so `&#38;amp;` reads `&amp;`, not `&`
+  return text.replace(
+    /&#x([0-9a-f]+);|&#(\d+);|&(amp|quot|apos|lt|gt);/gi,
+    (ref, hex?: string, dec?: string, name?: string) => {
+      if (name) return named ? NAMED[name.toLowerCase()] : ref
+      return as(String.fromCodePoint(hex ? Number.parseInt(hex, 16) : Number(dec)))
+    },
+  )
+}

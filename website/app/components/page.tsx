@@ -20,7 +20,6 @@ export default function ComponentsPage() {
     cards: g.stable.map((entry) => ({ name: entry.name, card: <CatalogueCard entry={entry} /> })),
     designing: g.designing.map((entry) => entry.name),
   }))
-  const total = sections.reduce((sum, s) => sum + s.cards.length, 0)
   const patterns = entriesOf('pattern').filter((e) => e.status === 'stable').length
 
   return (
@@ -33,7 +32,6 @@ export default function ComponentsPage() {
           />
         }
         sections={sections}
-        total={total}
         more={[
           { label: 'Patterns', href: '/patterns', count: patterns },
           { label: 'The contract', href: githubUrl('docs/components/README.md') },

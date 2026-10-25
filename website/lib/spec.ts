@@ -5,7 +5,7 @@
 import postcss, { type AtRule, type ChildNode, type Container, type Rule } from 'postcss'
 import { specProse } from '../../storybook/blocks/component-page.ts'
 import { folderOf, kebab, type Layer } from '../../scripts/lib/entry.ts'
-import { markdownHeadings, type Heading } from './anchors.ts'
+import { markdownHeadings, slug, type Heading } from './anchors.ts'
 import type { ComponentApi } from './api.ts'
 import { firstTable, sections } from './markdown.ts'
 import type { RegistryEntry } from './registry.ts'
@@ -42,17 +42,9 @@ export function specBody(markdown: string) {
   return rest.join('').trim()
 }
 
-/** A prose section's anchor: `Do and don't` as `do-and-dont`. */
-export const sectionAnchor = (heading: string) =>
-  heading
-    .toLowerCase()
-    .replace(/['’]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '')
-
 /** The prose sections a built entry's page shows after its props, each with its anchor. */
 export const proseSections = (markdown: string) =>
-  specSections(markdown, PROSE_SECTIONS).map((s) => ({ ...s, id: sectionAnchor(s.heading) }))
+  specSections(markdown, PROSE_SECTIONS).map((s) => ({ ...s, id: slug(s.heading) }))
 
 /**
  * The spec's headings its page draws, each with its id: a built entry's prose sections, or every

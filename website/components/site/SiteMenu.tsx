@@ -4,7 +4,7 @@
 // the client part beside it (SiteMenuSheet).
 import '../../app/phone.css'
 import { REPO_URL } from '../../lib/repo.ts'
-import type { SiteSection } from './sections.ts'
+import type { SiteSection } from '../../lib/sections.ts'
 import { SiteMenuSheet } from './SiteMenuSheet.tsx'
 
 export interface SiteMenuProps {

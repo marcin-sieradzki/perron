@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { KeyboardEvent, ReactNode } from 'react'
 import type { SearchEntry } from '../../lib/search-index.ts'
-import { SECTIONS } from './sections.ts'
+import { SECTIONS } from '../../lib/sections.ts'
 import { searchEntries } from './SiteSearchMatch.ts'
 
 export interface SiteSearchDialogProps {

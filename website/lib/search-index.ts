@@ -4,17 +4,19 @@
 // (SiteSearchMatch.ts). Each place's id comes from the same function or data its page renders
 // with (lib/anchors.ts and the ones it names), so a result never lands on an id the page lacks; the
 // build checks that against the built pages (scripts/check-anchors.ts).
-import { SECTIONS } from '../components/site/sections.ts'
-import { bodyHeadings, indexAnchors } from '../components/foundations/data.ts'
+import { SECTIONS } from './sections.ts'
 import {
   agentsAnchors,
+  bodyHeadings,
+  foundationsAnchors,
   GET_STARTED_STEPS,
   markdownHeadings,
+  releaseAnchor,
   type Anchor,
   type Heading,
 } from './anchors.ts'
-import { readChangelogs, releaseAnchor, versionOf } from './changelog.ts'
-import { readFoundations } from './foundations.ts'
+import { readChangelogs, versionOf } from './changelog.ts'
+import { bodySegments, foundationGroups, readFoundations } from './foundations.ts'
 import { loadTools } from './mcp.ts'
 import { routedEntries, type Layer } from './registry.ts'
 import { once, readRepoFile } from './repo.ts'
@@ -49,27 +51,32 @@ function pageEntries(title: string, href: string, section: string, anchors: Anch
   ] satisfies SearchEntry[]
 }
 
-/** The headings every spec has from docs/components/TEMPLATE.md, so none is a search result. */
+/** The headings every spec has from docs/components/TEMPLATE.md. */
 function templateHeadings() {
   return new Set(markdownHeadings(readRepoFile('docs/components/TEMPLATE.md')).map((h) => h.title))
 }
 
-/** Each spec page of a layer, by its name, with the headings it draws that are its own. */
-function specEntries(layer: Layer, section: string, skip: ReadonlySet<string>) {
-  return routedEntries(layer).flatMap((e) =>
-    pageEntries(
+/**
+ * Each spec page of a layer, by its name, with the sections it draws: a built entry's prose
+ * sections, such as Keyboard and ARIA, and an entry in design's own headings, without the
+ * template's that its whole spec repeats.
+ */
+function specEntries(layer: Layer, section: string, template: ReadonlySet<string>) {
+  return routedEntries(layer).flatMap((e) => {
+    const headings = scanned(specHeadings(e, readRepoFile(e.specPath)))
+    return pageEntries(
       e.name,
       e.route ?? '',
       section,
-      scanned(specHeadings(e, readRepoFile(e.specPath))).filter((h) => !skip.has(h.title)),
-    ),
-  )
+      e.built ? headings : headings.filter((h) => !template.has(h.title)),
+    )
+  })
 }
 
 /** Every route the site has, its title and its places, in the header's order of sections. */
 export async function buildSearchIndex(): Promise<SearchEntry[]> {
   const tools = await loadTools()
-  const skip = templateHeadings()
+  const template = templateHeadings()
   const [getStarted, foundations, components, patterns, agents, releases] = [
     '/get-started',
     '/foundations',
@@ -80,14 +87,19 @@ export async function buildSearchIndex(): Promise<SearchEntry[]> {
   ].map(sectionLabel)
   return [
     ...pageEntries(getStarted, '/get-started', getStarted, [...GET_STARTED_STEPS]),
-    ...pageEntries(foundations, '/foundations', foundations, indexAnchors()),
+    ...pageEntries(
+      foundations,
+      '/foundations',
+      foundations,
+      foundationsAnchors(foundationGroups()),
+    ),
     ...readFoundations().flatMap((p) =>
-      pageEntries(p.title, p.route, foundations, scanned(bodyHeadings(p))),
+      pageEntries(p.title, p.route, foundations, scanned(bodyHeadings(bodySegments(p)))),
     ),
     ...pageEntries(components, '/components', components),
-    ...specEntries('component', components, skip),
+    ...specEntries('component', components, template),
     ...pageEntries(patterns, '/patterns', patterns),
-    ...specEntries('pattern', patterns, skip),
+    ...specEntries('pattern', patterns, template),
     ...pageEntries(agents, '/agents', agents, agentsAnchors(tools.map((t) => t.name))),
     ...pageEntries(releases, '/releases', releases),
     // each version by its package's name and number, at its place on the one Release log page

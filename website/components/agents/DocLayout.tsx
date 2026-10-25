@@ -3,7 +3,7 @@
 // for both, and previous and next sections at the column's foot.
 import NextLink from 'next/link'
 import type { ReactNode } from 'react'
-import { SECTIONS } from '@/components/site/sections.ts'
+import { SECTIONS } from '@/lib/sections.ts'
 import './agents.css'
 
 export interface DocNavLink {

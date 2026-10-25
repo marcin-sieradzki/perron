@@ -223,6 +223,16 @@ describe('answerMarkdown', () => {
     expect(answerMarkdown(nested)).toBe(nested)
     expect(answerMarkdown('~~~\n## code\n~~~\n## Prose')).toBe('~~~\n## code\n~~~\n#### Prose')
   })
+
+  it('reads a backtick line with a backtick in its info string as inline code, not a fence', () => {
+    expect(answerMarkdown('```js``` is inline\n## Heading\n[x](./x.md)')).toBe(
+      '```js``` is inline\n#### Heading\nx',
+    )
+  })
+
+  it('reduces a relative link whose words wrap onto the next line', () => {
+    expect(answerMarkdown('See [the\ndocs](./x.md).')).toBe('See the\ndocs.')
+  })
 })
 
 describe('readSources', () => {

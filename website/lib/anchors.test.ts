@@ -1,9 +1,14 @@
 import { describe, expect, it } from 'vitest'
 import {
   agentsAnchors,
+  bodyHeadings,
   deadAnchors,
+  foundationsAnchors,
+  galleryId,
   idsIn,
   markdownHeadings,
+  releaseAnchor,
+  slug,
   toolAnchor,
   withoutLeadingTitle,
 } from './anchors.ts'
@@ -27,6 +32,51 @@ describe('markdownHeadings', () => {
       { level: 2, title: 'A', id: 'a' },
       { level: 2, title: 'A', id: 'a-1' },
     ])
+  })
+
+  it('finds a heading inside a list item or a quote too', () => {
+    expect(markdownHeadings('## Top\n\n- An item\n\n  ### In a list\n\n> ### In a quote')).toEqual([
+      { level: 2, title: 'Top', id: 'top' },
+      { level: 3, title: 'In a list', id: 'in-a-list' },
+      { level: 3, title: 'In a quote', id: 'in-a-quote' },
+    ])
+  })
+})
+
+describe('slug and the ids made with it', () => {
+  it("makes an id from words as Markdown's headings do", () => {
+    expect(slug("Do and don't")).toBe('do-and-dont')
+    expect(slug('Keyboard and ARIA')).toBe('keyboard-and-aria')
+  })
+
+  it("gives a gallery's category a clean id, whatever its words", () => {
+    expect(galleryId('icons', 'Map')).toBe('fd-icons-map')
+    expect(galleryId('logos', 'Public transport')).toBe('fd-logos-public-transport')
+  })
+
+  it("reads a foundation page's headings from its prose and its galleries", () => {
+    expect(
+      bodyHeadings([
+        { kind: 'prose', markdown: '## The set' },
+        { kind: 'icons', categories: [{ name: 'Public transport', items: [] }] },
+      ]),
+    ).toEqual([
+      { level: 2, title: 'The set', id: 'the-set' },
+      { level: 3, title: 'Public transport', id: 'fd-icons-public-transport' },
+    ])
+  })
+
+  it("lists the Foundations index's places, each group after the first by its place", () => {
+    expect(foundationsAnchors([{}, { label: 'Only on a live map' }]).map((a) => a.id)).toEqual([
+      'the-brand',
+      'fd-group-0',
+      'using-the-tokens',
+    ])
+  })
+
+  it('anchors a release by its package and version', () => {
+    expect(releaseAnchor('@mylder/perron-mcp', '0.1.1')).toBe('perron-mcp-0-1-1')
+    expect(releaseAnchor('@mylder/perron', '0.2.0')).toBe('perron-0-2-0')
   })
 })
 
@@ -52,12 +102,12 @@ describe('agentsAnchors', () => {
 describe('idsIn and deadAnchors', () => {
   const pages: Record<string, string> = {
     '/agents': '<section id="tools"><h3 id="list-tokens">list_tokens</h3></section>',
-    '/foundations': '<h2 id="do-and-don&#x27;t">Do</h2><p id="a&amp;b">',
+    '/foundations': '<h2 id="do-and-don&#x27;t">Do</h2><p id="a&amp;b"><p id="a b">',
   }
   const idsOf = (route: string) => (route in pages ? idsIn(pages[route]) : undefined)
 
   it('reads every id, its character references decoded', () => {
-    expect(idsIn(pages['/foundations'])).toEqual(new Set(["do-and-don't", 'a&b']))
+    expect(idsIn(pages['/foundations'])).toEqual(new Set(["do-and-don't", 'a&b', 'a b']))
   })
 
   it('finds the links whose page or id is missing', () => {
@@ -71,9 +121,12 @@ describe('idsIn and deadAnchors', () => {
           '/foundations#do-and-don%27t',
           '/releases',
           '/agents#100%',
+          '/foundations#a b',
+          '/foundations#a%20b',
+          '/foundations#a%20c',
         ],
         idsOf,
       ),
-    ).toEqual(['/agents#listtokens', '/releases', '/agents#100%'])
+    ).toEqual(['/agents#listtokens', '/releases', '/agents#100%', '/foundations#a%20c'])
   })
 })

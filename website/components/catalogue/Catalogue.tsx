@@ -28,8 +28,6 @@ export interface CatalogueProps {
   /** The page's header, above the sections */
   intro: ReactNode
   sections: CatalogueSection[]
-  /** How many stable components the index shows */
-  total: number
   /** Links to the rest of the system, under the categories */
   more: CatalogueLink[]
   /** The search icon, for the empty result */
@@ -54,7 +52,7 @@ function InDesign({ names, after }: { names: string[]; after: boolean }) {
   )
 }
 
-export function Catalogue({ intro, sections, total, more, searchIcon }: CatalogueProps) {
+export function Catalogue({ intro, sections, more, searchIcon }: CatalogueProps) {
   const [query, setQuery] = useState('')
   const words = query.trim().toLocaleLowerCase('en')
   const matches = (name: string) => name.toLocaleLowerCase('en').includes(words)
@@ -65,7 +63,7 @@ export function Catalogue({ intro, sections, total, more, searchIcon }: Catalogu
       designing: words ? s.designing.filter(matches) : s.designing,
     }))
     .filter((s) => s.cards.length > 0 || s.designing.length > 0)
-  const count = words ? shown.reduce((n, s) => n + s.cards.length, 0) : total
+  const count = shown.reduce((n, s) => n + s.cards.length, 0)
 
   return (
     <div className="catalogue">

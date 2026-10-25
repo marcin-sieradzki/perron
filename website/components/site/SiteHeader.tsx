@@ -5,7 +5,7 @@
 import NextLink from 'next/link'
 import { Brand } from '@/components/perron'
 import { REPO_URL } from '../../lib/repo.ts'
-import { SECTIONS } from './sections.ts'
+import { SECTIONS } from '../../lib/sections.ts'
 import { SiteMenu } from './SiteMenu.tsx'
 import { SiteNav } from './SiteNav.tsx'
 import { SiteSearch } from './SiteSearch.tsx'

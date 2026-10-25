@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { fold, searchEntries } from '../components/site/SiteSearchMatch.ts'
-import { SECTIONS } from '../components/site/sections.ts'
-import { readChangelogs, releaseAnchor, versionOf } from './changelog.ts'
+import { SECTIONS } from './sections.ts'
+import { releaseAnchor } from './anchors.ts'
+import { readChangelogs, versionOf } from './changelog.ts'
 import { readFoundations } from './foundations.ts'
 import { routedEntries } from './registry.ts'
 import { buildSearchIndex, type SearchEntry } from './search-index.ts'
@@ -41,7 +42,7 @@ describe('buildSearchIndex', () => {
     // a gallery's category, at its heading's id
     expect(index).toContainEqual({
       title: 'Map',
-      href: '/foundations/icons#fd-icons-Map',
+      href: '/foundations/icons#fd-icons-map',
       page: 'Icons',
       section: 'Foundations',
     })
@@ -67,11 +68,25 @@ describe('buildSearchIndex', () => {
     })
   })
 
-  it("leaves out a spec's headings its page does not draw, and the template's", () => {
+  it("has a built spec's prose sections, the ones its page draws after the props", () => {
+    for (const [title, id] of [
+      ['Keyboard and ARIA', 'keyboard-and-aria'],
+      ['Owned strings', 'owned-strings'],
+      ["Do and don't", 'do-and-dont'],
+    ])
+      expect(index).toContainEqual({
+        title,
+        href: `/components/button#${id}`,
+        page: 'Button',
+        section: 'Components',
+      })
+  })
+
+  it("leaves out a spec's headings its page does not draw", () => {
     const specs = index.filter((e) => /^\/(components|patterns)\/./.test(e.href) && e.page)
     const titles = specs.map((e) => e.title)
     expect(titles).not.toContain('Props')
-    expect(titles).not.toContain("Do and don't")
+    expect(titles).not.toContain('Anatomy')
     // a part's props table, which the page leaves out
     expect(titles).not.toContain('MenuItem')
     expect(index.map((e) => e.href)).not.toContain('/components/menu#menuitem')

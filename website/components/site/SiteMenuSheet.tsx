@@ -9,7 +9,7 @@ import NextLink from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useRef, useState, useSyncExternalStore } from 'react'
 import { MenuIcon, MoonIcon, SunIcon } from './icons.tsx'
-import { sectionOf, type SiteSection } from './sections.ts'
+import { sectionOf, type SiteSection } from '../../lib/sections.ts'
 import { applyTheme, currentTheme, DEFAULT_THEME, subscribeTheme } from './theme.ts'
 
 export interface SiteMenuSheetProps {

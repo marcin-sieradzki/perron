@@ -3,7 +3,7 @@
 // index through each page in the sidebar's order and on to the next section.
 import NextLink from 'next/link'
 import { Fragment } from 'react'
-import { SECTIONS } from '@/components/site/sections.ts'
+import { SECTIONS } from '@/lib/sections.ts'
 import { CurrentIntoView } from './CurrentIntoView.tsx'
 import { foundationGroups, orderedFoundations } from './data.ts'
 

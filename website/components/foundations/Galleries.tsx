@@ -2,9 +2,10 @@
 // them: each icon at its own size and at three times it, to read the strokes; each logo on the
 // ground of the theme it is drawn for.
 import type { CSSProperties } from 'react'
+import { galleryId } from '@/lib/anchors.ts'
 import { cssVar } from '@/lib/tokens.ts'
 import type { Segment } from '@/lib/foundations.ts'
-import { galleryId, spaced, words } from './data.ts'
+import { spaced, words } from './data.ts'
 
 type Icons = Extract<Segment, { kind: 'icons' }>['categories']
 type Logos = Extract<Segment, { kind: 'logos' }>['categories']

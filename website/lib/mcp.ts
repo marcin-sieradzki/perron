@@ -10,7 +10,7 @@ import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js'
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { packageDir } from '../../packages/mcp/src/resolve.ts'
 import type { TokenEntry } from '../../packages/mcp/src/tokens.ts'
-import { sections, stripTitle } from './markdown.ts'
+import { decodeEntities, outsideFences, sections, stripTitle } from './markdown.ts'
 import { once, readRepoFile, repoRoot } from './repo.ts'
 
 /** The MCP server's readme, which the setup comes from. */
@@ -216,9 +216,6 @@ export function answerTokens(text: string): AnswerToken[] | undefined {
   return tokens
 }
 
-/** A fence's opening or closing line: its run of backticks or tildes, then any info string. */
-const FENCE = /^\s{0,3}(`{3,}|~{3,})(.*)$/
-
 /**
  * A markdown answer made fit to render inside a tool's card: character references decoded (a
  * line break, which would end a table row, as a space), headings set below the card's own, and
@@ -226,23 +223,10 @@ const FENCE = /^\s{0,3}(`{3,}|~{3,})(.*)$/
  * block is code, so its lines keep their `#` and their brackets.
  */
 export function answerMarkdown(text: string) {
-  let fence = ''
-  return text
-    .replace(/&#x([0-9a-f]+);|&#(\d+);/gi, (_, hex: string, dec: string) => {
-      const c = String.fromCodePoint(hex ? Number.parseInt(hex, 16) : Number(dec))
-      return /[\n\r]/.test(c) ? ' ' : c
-    })
-    .split('\n')
-    .map((line) => {
-      const m = FENCE.exec(line)
-      if (!fence && m) fence = m[1]
-      else if (fence && m && m[1][0] === fence[0] && m[1].length >= fence.length && !m[2].trim())
-        fence = ''
-      else if (!fence)
-        return line.replace(/^#{1,6} /, '#### ').replace(/\[([^\]]+)\]\((?!https?:)[^)]*\)/g, '$1')
-      return line
-    })
-    .join('\n')
+  const decoded = decodeEntities(text, { as: (c) => (/[\n\r]/.test(c) ? ' ' : c) })
+  return outsideFences(decoded, (prose) =>
+    prose.replace(/^#{1,6} /gm, '#### ').replace(/\[([^\]]+)\]\((?!https?:)[^)]*\)/g, '$1'),
+  )
 }
 
 export interface Segment {

@@ -3,7 +3,7 @@
 // as ADR 0011 settles: Mylder has no top navigation for a package component to serve.
 import NextLink from 'next/link'
 import { usePathname } from 'next/navigation'
-import { sectionOf, type SiteSection } from './sections.ts'
+import { sectionOf, type SiteSection } from '../../lib/sections.ts'
 
 export function SiteNav({ sections }: { sections: readonly SiteSection[] }) {
   const active = sectionOf(usePathname())

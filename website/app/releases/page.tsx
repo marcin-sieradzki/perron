@@ -6,7 +6,9 @@ import { DocLayout } from '@/components/agents/DocLayout.tsx'
 import { Link } from '@/components/perron'
 import { Markdown } from '@/components/site/Markdown.tsx'
 import { PageHeader } from '@/components/site/PageHeader.tsx'
-import { readChangelogs, releaseAnchor, versionOf, type Changelog } from '../../lib/changelog.ts'
+import { releaseAnchor } from '../../lib/anchors.ts'
+import { readChangelogs, versionOf, type Changelog } from '../../lib/changelog.ts'
+import { outsideFences } from '../../lib/markdown.ts'
 import { REPO_URL } from '../../lib/repo.ts'
 
 export const metadata: Metadata = { title: 'Release log' }
@@ -16,10 +18,12 @@ const anchor = (log: Changelog, version: string) => releaseAnchor(log.name, vers
 
 /**
  * A dependency as changesets writes it, `@mylder/perron@0.2.0`, set as code, so the markdown
- * doesn't read it as an email address and link it.
+ * doesn't read it as an email address and link it. Fenced code is left as it is.
  */
 const packageSpecs = (markdown: string) =>
-  markdown.replace(/(?<![`\w])(@[\w-]+\/[\w.-]+@\d[\w.+-]*)/g, '`$1`')
+  outsideFences(markdown, (prose) =>
+    prose.replace(/(?<![`\w])(@[\w-]+\/[\w.-]+@\d[\w.+-]*)/g, '`$1`'),
+  )
 
 /** `Minor Changes`, as changesets writes it, in sentence case. */
 const sentenceCase = (s: string) => s.charAt(0) + s.slice(1).toLowerCase()

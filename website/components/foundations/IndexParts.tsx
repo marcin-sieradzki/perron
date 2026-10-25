@@ -2,9 +2,10 @@
 // token data: the token count beside the title, the brand's three values, and "Using the tokens"
 // with an example written in real custom property names.
 import { Markdown } from '@/components/site/Markdown.tsx'
+import { FOUNDATIONS_SECTIONS } from '@/lib/anchors.ts'
 import { PACKAGES, readPackage, readRepoJson } from '@/lib/repo.ts'
 import { cssVar, readResolvedTokens, readToken, tokenCount } from '@/lib/tokens.ts'
-import { brandValues, CONTENTS, INDEX_SECTIONS, usingTheTokens } from './data.ts'
+import { brandValues, CONTENTS, usingTheTokens } from './data.ts'
 import { Rich } from './Rich.tsx'
 
 /** The resolver that names the format the tokens follow. */
@@ -24,7 +25,7 @@ export function TokenMeta() {
 
 /** The brand's values, from the Contents page's "The brand". */
 export function BrandValues() {
-  const { brand } = INDEX_SECTIONS
+  const { brand } = FOUNDATIONS_SECTIONS
   return (
     <section id={brand.id} aria-label={brand.title} className="fd-brand">
       {brandValues().map((v) => (
@@ -48,7 +49,7 @@ function property(name: string) {
 /** The Contents page's "Using the tokens", with a stylesheet that uses three of them. */
 export function UsingTheTokens() {
   const { name } = readPackage(PACKAGES.perron)
-  const { using } = INDEX_SECTIONS
+  const { using } = FOUNDATIONS_SECTIONS
   return (
     <section id={using.id} aria-labelledby={`${using.id}-h`} className="fd-using glass">
       <div className="fd-using-text">

@@ -41,12 +41,20 @@ const DEPENDENCY_UPDATE = /^Updated dependencies(?: \[[0-9a-f, ]*\])?$/
 /**
  * A group's entries with changesets' "Updated dependencies" lines, one per commit, folded into one
  * at the place of the first, listing each dependency's new version once: `Updated dependencies`,
- * then `- @mylder/perron@0.2.0`. Other entries stay as they are, in order.
+ * then `- @mylder/perron@0.2.0`. Other entries stay as they are, in order. A blank line between an
+ * update and its versions is no version.
  */
 export function foldDependencyUpdates(entries: ChangelogEntry[]): ChangelogEntry[] {
   const updates = entries.filter((e) => DEPENDENCY_UPDATE.test(e.markdown.split('\n')[0]))
   if (!updates.length) return entries
-  const versions = new Set(updates.flatMap((e) => e.markdown.split('\n').slice(1)))
+  const versions = new Set(
+    updates.flatMap((e) =>
+      e.markdown
+        .split('\n')
+        .slice(1)
+        .filter((l) => l.trim()),
+    ),
+  )
   const folded: ChangelogEntry = { markdown: ['Updated dependencies', ...versions].join('\n') }
   return entries.flatMap((e) => (e === updates[0] ? [folded] : updates.includes(e) ? [] : [e]))
 }
@@ -94,13 +102,6 @@ export function versionOf(heading: string) {
   const m = /^(\S+?)\s*(?:[-–—(]\s*)?(\d{4}-\d{2}-\d{2})\)?$/.exec(heading)
   return m ? { version: m[1], date: m[2] } : { version: heading, date: undefined }
 }
-
-/**
- * The Release log's anchor for a package's version, `perron-mcp-0-1-1`: the page's ids and the
- * search's links both come from it.
- */
-export const releaseAnchor = (name: string, version: string) =>
-  `${name.replace(/^@mylder\//, '')}-${version}`.replace(/[^a-z0-9]+/gi, '-').toLowerCase()
 
 /** Both changelogs, the package's first. */
 export const readChangelogs = once(() => CHANGELOGS.map((p) => parseChangelog(readRepoFile(p), p)))
