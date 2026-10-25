@@ -1,0 +1,38 @@
+/* Attribution: the map's credits on glass with no edge and no shadow, so they recede behind the
+   map controls beside them, in the semantic tokens, which carry both themes (CR-5). The strip
+   sizes to its credits and its container (CR-3), places nothing (CR-6) and has no state of its
+   own (CR-2). */
+.pn-Attribution {
+  display: inline-block;
+  max-inline-size: 100%;
+  padding-block: var(--perron-space-050);
+  padding-inline: var(--perron-space-150);
+  background-color: var(--perron-color-surface-overlay);
+  backdrop-filter: blur(var(--perron-effect-glass-blur))
+    saturate(var(--perron-effect-glass-saturate));
+  border: none;
+  border-radius: var(--perron-radius-xs);
+  box-shadow: none;
+  color: var(--perron-color-text-secondary);
+  font: var(--perron-typography-caption);
+  letter-spacing: var(--perron-typography-caption-tracking);
+  /* a long word, a Danish compound or a source's name, breaks in a narrow corner (CR-3) */
+  overflow-wrap: break-word;
+}
+
+/* The caller's links: the credits' ink, underlined in every state, visited ones alike, with no
+   outline of their own, so the focus ring perron.css draws shows on :focus-visible (CR-4). */
+.pn-Attribution :any-link {
+  color: inherit;
+  text-decoration-line: underline;
+}
+
+@media (hover: hover) {
+  .pn-Attribution :any-link:hover {
+    color: var(--perron-color-text-primary);
+  }
+}
+
+/* Forced colours need no rule: Windows' contrast themes paint the fill Canvas at the overlay's
+   alpha and keep the blur, so the strip stays frosted glass in the theme's colour; its text is
+   CanvasText and its links LinkText, with their underline. */

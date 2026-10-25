@@ -174,7 +174,7 @@
     "name": "NormalService",
     "layer": "component",
     "category": "Transit",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/NormalService",
     "dependsOn": []
@@ -183,7 +183,7 @@
     "name": "Attribution",
     "layer": "component",
     "category": "Map",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/Attribution",
     "dependsOn": []
@@ -305,15 +305,8 @@
     "name": "MapTooltip",
     "layer": "component",
     "category": "Overlays",
-    "status": "designing",
-    "baseUiParts": [
-      "Tooltip.Provider",
-      "Tooltip.Root",
-      "Tooltip.Trigger",
-      "Tooltip.Portal",
-      "Tooltip.Positioner",
-      "Tooltip.Popup"
-    ],
+    "status": "stable",
+    "baseUiParts": ["Tooltip.Root", "Tooltip.Portal", "Tooltip.Positioner", "Tooltip.Popup"],
     "penpotPath": "Components/MapTooltip",
     "dependsOn": []
   },
