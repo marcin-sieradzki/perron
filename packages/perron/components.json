@@ -464,7 +464,7 @@
     "name": "TextArea",
     "layer": "component",
     "category": "Inputs",
-    "status": "designing",
+    "status": "building",
     "baseUiParts": [
       "Field.Root",
       "Field.Label",
