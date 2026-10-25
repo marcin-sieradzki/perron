@@ -651,6 +651,19 @@
       }
     }
   },
+  "Kbd": {
+    "extends": [
+      "Omit<useRender.ComponentProps<'kbd'>, 'children'>"
+    ],
+    "props": {
+      "children": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      }
+    }
+  },
   "KioskBar": {
     "extends": [
       "Omit<ComponentPropsWithRef<'div'>, 'children'>"

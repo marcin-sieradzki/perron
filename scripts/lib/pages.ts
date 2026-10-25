@@ -35,6 +35,7 @@ export const PAGES = [
   'docs/components/brand.md',
   'docs/components/count.md',
   'docs/components/fact-list.md',
+  'docs/components/kbd.md',
   'docs/components/stat.md',
   'docs/components/text.md',
   'docs/components/empty-state.md',
