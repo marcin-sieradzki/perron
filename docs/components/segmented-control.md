@@ -2,6 +2,8 @@
 
 A row of two to five segments on an inset track, one of them selected, that picks how one view shows its content, such as a stop's departures by mode.
 
+<!-- run notes -->
+
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the contract, the foundations, the tokens, the Base UI reference and the ROADMAP line that names it (`ROADMAP.md`, "Wave 3, interactive, on Base UI": "SegmentedControl (ToggleGroup)"). The extracted prototype component is not in any branch this run can reach. The foundations already name its look: [Elevation](../foundations/elevation.md#surfaces) puts the track on `color.surface.inset` and the selected segment on `color.surface.raised` with `shadow.thumb`, the only shadow outside a floating panel; [Layout](../foundations/layout.md) gives a segment `size.segment`; and [Semantic spacing](../foundations/semantic-spacing.md) gives segments `radius.md`.
 
 ## Anatomy

@@ -2,6 +2,8 @@
 
 A bar that shows where one measured value sits within a known range, with the words that name it and the figure it reaches, such as "Reporting live" at "82%", for the share of a network's vehicles that report their position.
 
+<!-- run notes -->
+
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the [contract](README.md), the [foundations](../foundations/README.md), [content design](../content-design.md), the tokens and the Base UI reference for `@base-ui/react` 1.9.0. Meter has nothing in `dependsOn`, and the extracted prototype is not reachable from this branch, so nothing here rests on it. The [Semantic colours](../foundations/semantic-colours.md#status) page gives the one meter Mylder already names, the live share, its thresholds, and [Motion](../foundations/motion.md) gives meters their fill change.
 
 ## Anatomy

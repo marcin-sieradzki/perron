@@ -13,9 +13,6 @@ import { VisuallyHidden } from '../../parts/VisuallyHidden/VisuallyHidden.tsx'
 import { useOwnedStrings } from '../../PerronProvider.tsx'
 import './SearchField.css'
 
-type ChangeDetails = Autocomplete.Root.ChangeEventDetails
-type OpenDetails = Autocomplete.Root.OpenChangeEventDetails
-
 /** One suggestion in the list: a line or a stop. */
 export interface SearchFieldItem {
   /** Identifies the item and keys its row, so two stops with the same name stay apart. */
@@ -81,7 +78,7 @@ export interface SearchFieldProps extends Omit<
    * filling them (`'item-press'`), by the clear button (`'clear-press'`), or by Esc with the list
    * closed (`'escape-key'`). `event` is `details.event`.
    */
-  onChange?: (event: Event, value: string, details: ChangeDetails) => void
+  onChange?: (event: Event, value: string, details: Autocomplete.Root.ChangeEventDetails) => void
   /** Whether the list of suggestions is shown, when the caller controls it. */
   open?: boolean
   /**
@@ -93,7 +90,7 @@ export interface SearchFieldProps extends Omit<
    * Called when the list asks to open: as the person types (`details.reason` `'input-change'`) or
    * presses an arrow key (`'list-navigation'`).
    */
-  onOpen?: (event: Event, details: OpenDetails) => void
+  onOpen?: (event: Event, details: Autocomplete.Root.OpenChangeEventDetails) => void
   /**
    * Called when the list asks to close: `reason` is `'escape-key'`, `'outside-press'`,
    * `'focus-out'`, `'item-press'`, `'input-clear'`, `'close-press'`, or `'none'` for Enter with no
@@ -102,7 +99,7 @@ export interface SearchFieldProps extends Omit<
   onClose?: (
     event: Event,
     reason: Autocomplete.Root.ChangeEventReason,
-    details: OpenDetails,
+    details: Autocomplete.Root.OpenChangeEventDetails,
   ) => void
   /**
    * Called when the person chooses a suggestion, with a press or with Enter on the highlighted
@@ -191,9 +188,9 @@ export function SearchField({
   const labelId = useId()
 
   // CR-4: Base UI's handlers become MUI's, here, and neither reaches the caller
-  const handleValueChange = (next: string, details: ChangeDetails) =>
+  const handleValueChange = (next: string, details: Autocomplete.Root.ChangeEventDetails) =>
     onChange?.(details.event, next, details)
-  const handleOpenChange = (next: boolean, details: OpenDetails) => {
+  const handleOpenChange = (next: boolean, details: Autocomplete.Root.OpenChangeEventDetails) => {
     if (next) onOpen?.(details.event, details)
     else onClose?.(details.event, details.reason, details)
   }
@@ -221,7 +218,7 @@ export function SearchField({
         onOpenChange={handleOpenChange}
       >
         <Autocomplete.InputGroup
-          {...mergeProps<typeof Autocomplete.InputGroup>(slotProps?.inputGroup, undefined)}
+          {...slotProps?.inputGroup}
           className={withClass('pn-SearchField-inputGroup', slotProps?.inputGroup?.className)}
         >
           {SEARCH_ICON}
@@ -244,20 +241,20 @@ export function SearchField({
           )}
         </Autocomplete.InputGroup>
         <Autocomplete.Portal
-          {...mergeProps<typeof Autocomplete.Portal>(slotProps?.portal, undefined)}
+          {...slotProps?.portal}
           className={withClass('pn-SearchField-portal', slotProps?.portal?.className)}
         >
           <Autocomplete.Positioner
-            {...mergeProps<typeof Autocomplete.Positioner>(slotProps?.positioner, undefined)}
+            {...slotProps?.positioner}
             className={withClass('pn-SearchField-positioner', slotProps?.positioner?.className)}
           >
             <Autocomplete.Popup
-              {...mergeProps<typeof Autocomplete.Popup>(slotProps?.popup, undefined)}
+              {...slotProps?.popup}
               className={withClass('pn-SearchField-popup', slotProps?.popup?.className)}
             >
               {/* CR-14: always rendered, a live region Base UI fills only while nothing matches */}
               <Autocomplete.Empty
-                {...mergeProps<typeof Autocomplete.Empty>(slotProps?.empty, undefined)}
+                {...slotProps?.empty}
                 className={withClass('pn-SearchField-empty', slotProps?.empty?.className)}
               >
                 {strings.noMatches}

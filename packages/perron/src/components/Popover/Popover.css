@@ -1,0 +1,72 @@
+/* Popover, from docs/components/popover.md: the Popups family's glass panel against its trigger,
+   padded for text rather than rows. Base UI places the positioner; the popover opens and closes at
+   once, with no transition (CR-10), and never redefines a token: it portals to <body> (CR-8). */
+
+/* everything in a portal paints at the dialog layer, so a dialog opened later covers it (CR-8) */
+.pn-Popover-positioner {
+  z-index: var(--perron-z-index-dialog);
+}
+
+/* The popup: as wide as its content up to its measure, as tall as the room Base UI leaves, and
+   scrolling as a whole, header included, when its content is taller (CR-8). */
+.pn-Popover {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-200);
+  /* perron-allow(component-css): the popover's measure, about 45 characters of body a line, which only this CSS reads (spec, Tokens) */
+  max-inline-size: min(320px, var(--available-width));
+  max-block-size: var(--available-height);
+  margin: 0;
+  padding: var(--perron-space-400);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  /* an edge as a border, kept by forced colours when they drop the glass and the shadow (CR-11) */
+  border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+  border-radius: var(--perron-radius-lg);
+  background-color: var(--perron-color-surface-overlay);
+  backdrop-filter: blur(var(--perron-effect-glass-blur))
+    saturate(var(--perron-effect-glass-saturate));
+  box-shadow: var(--perron-shadow-panel);
+  color: var(--perron-color-text-primary);
+}
+
+/* The title grows and the close button keeps its square, both at the start of the block axis (CR-9). */
+.pn-Popover-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--perron-space-200);
+}
+
+.pn-Popover-title {
+  flex: 1;
+  min-inline-size: 0;
+  margin: 0;
+  font: var(--perron-typography-heading-sm);
+  letter-spacing: var(--perron-typography-heading-sm-tracking);
+  color: var(--perron-color-text-primary);
+  overflow-wrap: anywhere;
+}
+
+/* Only the margins: the look and the states are the CloseButton part's (CR-12). Pulled up, down and
+   towards the end, so the square takes no more height than the title's first line and the icon
+   lines up with the padding's edge. */
+.pn-Popover-close {
+  margin-block: calc(-1 * var(--perron-space-200));
+  margin-inline-end: calc(-1 * var(--perron-space-200));
+}
+
+.pn-Popover-description {
+  margin: 0;
+  font: var(--perron-typography-body-sm);
+  letter-spacing: var(--perron-typography-body-sm-tracking);
+  color: var(--perron-color-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.pn-Popover-content {
+  font: var(--perron-typography-body);
+  letter-spacing: var(--perron-typography-body-tracking);
+  color: var(--perron-color-text-primary);
+  overflow-wrap: anywhere;
+}

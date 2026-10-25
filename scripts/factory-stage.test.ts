@@ -71,6 +71,9 @@ describe('factory-stage', () => {
   it('tells a stage where the factory records its outcome', async () => {
     const { calls } = await run({ stage: 'build', name: 'DatePicker' })
     expect(calls[0].prompt).toContain('components/date-picker/pipeline.yaml')
+    expect(calls[0].prompt).toContain(
+      'return in `direction` only the findings they do not already say',
+    )
   })
 
   it('refuses visual, which the factory runs without an agent, a stage the loop does not have, or no name', async () => {
@@ -138,6 +141,15 @@ describe('withFix, for a stage the factory sent back', () => {
       expect(withFix({ stage: 'build', name: 'Chip' }, root).fix).toBe(
         'docs failed: Chip.tsx:4 has no JSDoc',
       )
+
+      // a run sent back that asked first: its rerun with the answers still gets the fix
+      write(
+        'components/chip/pipeline.yaml',
+        `component: Chip\nlayer: component\ndeferred:\n  at: x\nstages:\n  brief:\n    status: done\n  build:\n    status: pending\n    failing: '1. Which gap? Recommended: space.100.'\n    fix: 'review round 1 found 1 P2'\n`,
+      )
+      expect(
+        withFix({ stage: 'build', name: 'Chip', answers: '1. space.100' }, root),
+      ).toMatchObject({ answers: '1. space.100', fix: 'review round 1 found 1 P2' })
     } finally {
       rmSync(root, { recursive: true })
     }

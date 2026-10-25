@@ -1,0 +1,11 @@
+[
+  {
+    "name": "Popup",
+    "layer": "component",
+    "category": "Overlays",
+    "status": "building",
+    "baseUiParts": [],
+    "penpotPath": "Components/Popup",
+    "dependsOn": []
+  }
+]

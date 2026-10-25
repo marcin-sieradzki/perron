@@ -1,0 +1,19 @@
+import { Meta, Stories, Title } from '@storybook/addon-docs/blocks'
+import { PropsTable } from '../../../../../storybook/blocks/PropsTable.tsx'
+import { SpecProse } from '../../../../../storybook/blocks/SpecProse.tsx'
+import * as PopoverStories from './Popover.stories.tsx'
+
+<Meta of={PopoverStories} />
+
+<Title />
+
+<SpecProse path="docs/components/popover.md" intro />
+
+<Stories title="Examples" />
+
+<PropsTable of={PopoverStories} />
+
+<SpecProse
+  path="docs/components/popover.md"
+  sections={['Keyboard and ARIA', 'Owned strings', "Do and don't"]}
+/>

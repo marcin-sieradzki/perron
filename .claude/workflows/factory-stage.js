@@ -39,7 +39,7 @@ const OUTCOME = {
       type: 'array',
       items: { type: 'string' },
       description:
-        'Every Direction finding of the run, one line each, for the PR; whatever the outcome',
+        "Every Direction finding of the run that the pipeline file's notes don't already hold, one line each, for the PR; whatever the outcome",
     },
   },
   required: ['outcome', 'summary'],
@@ -92,7 +92,8 @@ if (stage === 'review') {
 return await agent(
   `${worktreeNote}Read .claude/skills/${SKILLS[stage]}/SKILL.md and follow it for ${name}, to its Returns section. ` +
     'You run in a fresh context that the factory started: nobody answers questions mid-run, so return them. ' +
-    `Your outcome is recorded by the factory in components/${kebab}/pipeline.yaml, which it alone writes.` +
+    `Your outcome is recorded by the factory in components/${kebab}/pipeline.yaml, which it alone writes. ` +
+    'Its `notes` hold the Direction findings earlier runs returned: return in `direction` only the findings they do not already say.' +
     rerun +
     answered,
   { label, phase: 'Stage', schema: OUTCOME },

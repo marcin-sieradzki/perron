@@ -4,7 +4,7 @@ The page every component's spec starts from. The `component-brief` skill copies 
 
 How to fill it:
 
-- Replace this heading with the component's name, `# Button`, and this paragraph and list with one sentence on what the component is for.
+- Replace this heading with the component's name, `# Button`, and this paragraph and list with one sentence on what the component is for. The docs page opens with it. Write how the spec was made (the design deferred under ADR 0010, its sources, what the prototype or the ROADMAP gave) below it, after a `<!-- run notes -->` line: the docs page's intro stops above that line, and the spec page shows both.
 - Fill every `<…>` placeholder, and replace the example rows with the component's own.
 - Write a question the sources can't answer in place, as `[PENDING] <the question>`, and put it to the maintainer. Its answer replaces the whole line with the decision, a statement with its reason, and no "Answered" label. The spec is done when every section is filled and no `[PENDING]` is left.
 - Link only a page the docs site serves: the foundations, the guidelines, the contract and the other specs. Write any other repo path, such as an ADR (`docs/adr/0010-unattended-runs-with-design-deferred.md`), `penpot/README.md` or the read-back, as a code span, as the contract does; `scripts/lib/site.test.ts` fails on a link the site can't follow.

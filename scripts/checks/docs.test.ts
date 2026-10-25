@@ -80,8 +80,30 @@ describe('docs', () => {
     ])
   })
 
-  // the docgen of every component in the repo, which outruns the default 5 s on a CI runner
+  it('names an overlay no story opens by defaultOpen, an intro that shows run notes, and a private type', () => {
+    expect(docs.run(fixture('overlay'))).toEqual([
+      {
+        file: 'docs/components/popup.md',
+        line: 3,
+        message:
+          'Popup\'s docs page would open with run notes ("ADR 0010"): move how the spec was made below a `<!-- run notes -->` line after the intro\'s sentence (docs/components/TEMPLATE.md)',
+      },
+      {
+        file: 'packages/perron/src/components/Popup/Popup.stories.tsx',
+        message:
+          "Popup is an overlay, with open and defaultOpen, but no story opens it by defaultOpen, so its docs page and the visual stage show it closed: open each story by defaultOpen beside the trigger that opens it again (the contract's Stories), and give docs/components/popup.md's Stories rows the same",
+      },
+      {
+        file: 'packages/perron/src/components/Popup/Popup.tsx',
+        message:
+          "Popup's docs page would show the type of onOpen with Details, a type its file keeps to itself, which the reader can't look up: write the type it stands for, by Base UI's or Perron's public name",
+      },
+    ])
+  })
+
+  // the docgen of every component in the repo, through one compiler program (under a second on a
+  // laptop, where a program per component took 1.6 s); the margin is a CI runner's
   it('passes on the repo', () => {
     expect(docs.run(join(here, '../..'))).toEqual([])
-  }, 30_000)
+  }, 15_000)
 })

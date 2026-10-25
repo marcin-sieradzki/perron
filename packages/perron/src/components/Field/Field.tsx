@@ -111,7 +111,7 @@ export function Field({
       </BaseField.Label>
       {given(description) ? (
         <BaseField.Description
-          {...mergeProps<typeof BaseField.Description>(slotProps?.description, undefined)}
+          {...slotProps?.description}
           className={withClass('pn-Field-description', slotProps?.description?.className)}
         >
           {description}

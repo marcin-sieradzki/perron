@@ -3,12 +3,13 @@
 // with a stand-in for `agent` and prints the call that workflow would make: the agent type, when
 // it names one, and the prompt, ending with the JSON the agent returns, from the workflow's schema.
 // A rerun's `fix`, when the args leave it out, comes from `next` over the pipeline in `dir` (or the
-// current directory), before or after the stage's `begin`, so a send-back's build is told what to fix.
+// current directory), before or after the stage's `begin`, so a send-back's build is told what to fix,
+// with its `answers` too when the run that was sent back asked first.
 // With --prompt it prints the prompt alone, as raw text, to hand to the agent as it is; the agent
 // type is review's alone, `component-reviewer`.
 // Usage: node scripts/factory-stage.ts [--prompt] '{"stage":"build","name":"Chip","dir":"…","port":6011}'
 import { readFileSync } from 'node:fs'
-import { loadPipeline, next, type Env } from './lib/pipeline.ts'
+import { fixFor, loadPipeline, STAGES, type Env, type Stage } from './lib/pipeline.ts'
 
 export interface StageCall {
   /** The agent type to start, such as `component-reviewer`; none for a skill's stage */
@@ -50,14 +51,16 @@ export async function stageCall(args: Record<string, unknown>): Promise<StageCal
 
 /**
  * `args` with the `fix` that `next` gives for `stage` over the repo at `root`, when `stage` is what
- * comes next and the args give none.
+ * comes next and the args give none, `answers` or not: a rerun after the build's questions still
+ * makes the fix its asking run was given, such as a review's findings.
  */
 export function withFix(args: Record<string, unknown>, root: string): Record<string, unknown> {
   const { stage, name } = args
   if (args.fix || typeof name !== 'string' || !/^[A-Z][A-Za-z0-9]*$/.test(name)) return args
+  if (!STAGES.includes(stage as Stage)) return args
   const env: Env = { root, run: () => ({ ok: true, output: '' }), now: () => '' }
-  const n = next(loadPipeline(env, name), env)
-  return 'run' in n && n.run === stage && n.fix ? { ...args, fix: n.fix } : args
+  const fix = fixFor(loadPipeline(env, name), stage as Stage, env)
+  return fix ? { ...args, fix } : args
 }
 
 /** What the command prints for `call`: the JSON of the call, or with `prompt` its prompt alone. */
