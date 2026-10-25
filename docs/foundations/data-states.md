@@ -1,6 +1,6 @@
 # Data states
 
-Every vehicle is a Prik, drawn in its line colour in one of five states. The shapes are the system's signature: never reuse a ring or a dashed ring to mean anything else, and never draw a vehicle without its state.
+Every vehicle is a vehicle dot, drawn in its line colour in one of five states. The shapes are the system's signature: never reuse a ring or a dashed ring to mean anything else, and never draw a vehicle without its state.
 
 | State          | Shape         | Means                                                  |
 | -------------- | ------------- | ------------------------------------------------------ |
@@ -16,24 +16,24 @@ Every vehicle is a Prik, drawn in its line colour in one of five states. The sha
 
 ## Geometry
 
-The `prik` tokens give the geometry of each shape at any size: insets, stroke widths, the dash, and the age thresholds between live, ageing and no signal.
+The `vehicle-dot` tokens give the geometry of each shape at any size: insets, stroke widths, the dash, and the age thresholds between live, ageing and no signal.
 
-<!-- tokens: prik.* -->
+<!-- tokens: vehicle-dot.* -->
 
-| Token                         | Value         | Use                                                                                        |
-| ----------------------------- | ------------- | ------------------------------------------------------------------------------------------ |
-| `prik.inset`                  | `2px`         | Gap between the glyph box and the circle edge                                              |
-| `prik.halo`                   | `1.6px`       | Map only: land-coloured ring drawn under each dot                                          |
-| `prik.live-threshold`         | `60000ms`     | Reports younger than this are live                                                         |
-| `prik.ageing-threshold`       | `300000ms`    | Reports younger than this (and at least live-threshold old) are ageing; older is no signal |
-| `prik.ageing.fill-opacity`    | `0.42`        | Fill strength of an ageing dot, so it reads fainter than live                              |
-| `prik.ageing.stroke-width`    | `1.3px`       | Rim of an ageing dot                                                                       |
-| `prik.ageing.stroke-inset`    | `0.6px`       | Pulls the ageing rim in so the dot keeps its outer size                                    |
-| `prik.estimated.stroke-width` | `1.8px`       | Ring of an estimated dot                                                                   |
-| `prik.estimated.stroke-inset` | `0.9px`       | Pulls the estimated ring in so the dot keeps its outer size                                |
-| `prik.timetable.stroke-width` | `1.6px`       | Dashed ring of a timetable-only dot                                                        |
-| `prik.timetable.stroke-inset` | `0.9px`       | Pulls the timetable ring in so the dot keeps its outer size                                |
-| `prik.timetable.dash`         | `2.1px 1.7px` | Dash and gap of the timetable-only ring                                                    |
+| Token                                | Value         | Use                                                                                        |
+| ------------------------------------ | ------------- | ------------------------------------------------------------------------------------------ |
+| `vehicle-dot.inset`                  | `2px`         | Gap between the glyph box and the circle edge                                              |
+| `vehicle-dot.halo`                   | `1.6px`       | Map only: land-coloured ring drawn under each dot                                          |
+| `vehicle-dot.live-threshold`         | `60000ms`     | Reports younger than this are live                                                         |
+| `vehicle-dot.ageing-threshold`       | `300000ms`    | Reports younger than this (and at least live-threshold old) are ageing; older is no signal |
+| `vehicle-dot.ageing.fill-opacity`    | `0.42`        | Fill strength of an ageing dot, so it reads fainter than live                              |
+| `vehicle-dot.ageing.stroke-width`    | `1.3px`       | Rim of an ageing dot                                                                       |
+| `vehicle-dot.ageing.stroke-inset`    | `0.6px`       | Pulls the ageing rim in so the dot keeps its outer size                                    |
+| `vehicle-dot.estimated.stroke-width` | `1.8px`       | Ring of an estimated dot                                                                   |
+| `vehicle-dot.estimated.stroke-inset` | `0.9px`       | Pulls the estimated ring in so the dot keeps its outer size                                |
+| `vehicle-dot.timetable.stroke-width` | `1.6px`       | Dashed ring of a timetable-only dot                                                        |
+| `vehicle-dot.timetable.stroke-inset` | `0.9px`       | Pulls the timetable ring in so the dot keeps its outer size                                |
+| `vehicle-dot.timetable.dash`         | `2.1px 1.7px` | Dash and gap of the timetable-only ring                                                    |
 
 <!-- /tokens -->
 
@@ -41,7 +41,7 @@ The `prik` tokens give the geometry of each shape at any size: insets, stroke wi
 
 | Token                        | Light                      | Dark                       | Use                                                        |
 | ---------------------------- | -------------------------- | -------------------------- | ---------------------------------------------------------- |
-| `color.data-state.no-signal` | `#9AA4A9`                  | `#5F6B71`                  | Prik fill when a vehicle has been silent for 5+ min        |
+| `color.data-state.no-signal` | `#9AA4A9`                  | `#5F6B71`                  | Vehicle dot fill when a vehicle has been silent for 5+ min |
 | `color.data-state.halo`      | `#EDEFEB` (color.map.land) | `#151B1E` (color.map.land) | Map only: ring under each dot                              |
 | `color.data-state.outline`   | `rgba(18, 24, 27, 0.45)`   | `rgba(0, 0, 0, 0)`         | Map only: outline around light line colours on a light map |
 

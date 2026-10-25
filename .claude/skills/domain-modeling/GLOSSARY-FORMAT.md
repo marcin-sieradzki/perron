@@ -9,12 +9,12 @@
 
 ## Language
 
-**Prik**:
+**Vehicle dot**:
 {A one or two sentence description of the term}
 _Avoid_: Dot, marker
 
 **Data state**:
-How fresh a vehicle's position is, shown by the shape of its Prik. Rules on [Data states](foundations/data-states.md).
+How fresh a vehicle's position is, shown by the shape of its vehicle dot. Rules on [Data states](foundations/data-states.md).
 _Avoid_: Status, freshness
 
 **Theme pair**:
