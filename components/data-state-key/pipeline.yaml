@@ -3,22 +3,19 @@ component: DataStateKey
 layer: pattern
 deferred:
   at: 2026-10-25T17:49:32.921Z
-needsHuman:
-  stage: build
-  reason: 'build failed: npm run check failed:        |   ^ /      26|     const rows = propRows(gaugeArgTypes()) /      27|     const declared = rows.filter((r) => OWN.includes(r.name) || r.name… /  / ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯'
 stages:
   brief:
     status: done
     started: 2026-10-25T17:56:21.302Z
     ended: 2026-10-25T17:56:40.084Z
   build:
-    runs: 6
-    status: failed
-    started: 2026-10-25T19:02:03.791Z
-    begun: 19c18805c1aac4c46e45f4847f2c9b2f65919953508551c3ad0dff011e3903aa
+    runs: 7
+    respecs: 1
+    status: done
+    started: 2026-10-25T19:11:28.397Z
+    begun: 54b2692c4988282f2e3d4da607f8b267a7daf9dc8876f40cc402b5daeedb34e9
     spec: 54b2692c4988282f2e3d4da607f8b267a7daf9dc8876f40cc402b5daeedb34e9
-    ended: 2026-10-25T19:10:31.877Z
-    failing: 'npm run check failed:        |   ^ /      26|     const rows = propRows(gaugeArgTypes()) /      27|     const declared = rows.filter((r) => OWN.includes(r.name) || r.name… /  / ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯'
+    ended: 2026-10-25T19:14:31.545Z
   review:
     rounds: 2
     sentBack: 2
@@ -61,3 +58,6 @@ notes:
     questions: |-
       1. (Owned strings and CR-7) Keep the duration templates `secondsDuration: '{seconds}\u00A0s'` and `minutesDuration: '{minutes}\u00A0min'`, in place of run 3's answer (a unit word joined to the figure), which the merged expectOwnedStrings refuses in every locale, and leave the shared test's stray "Every 3 min min" for the maintainer to replace on the integration branch? Recommended: yes: the templates are the dictionary's own form for a figure and its unit, as `every: 'Every {count} min'`, they pass every story, and the test line is shared tooling the build may not edit.
       2. (CR-7 and Keyboard and ARIA) A threshold that is not finite or is below 0: show "—" (aria-hidden) and say "Unknown" (or `unknownLabel`) in place of the whole sentence, rather than in place of the figure inside it? Recommended: yes: the merged expectOwnedStrings refuses a template split by an element, so UnknownValue inside a placeholder fails in every locale, and a sentence with its figure missing says less than "Unknown" does; the estimated and timetable-only sentences, which take no threshold, stand as they are.
+  - stage: build
+    at: 2026-10-25T19:11:28.397Z
+    unblocked: 'build failed: npm run check failed:        |   ^ /      26|     const rows = propRows(gaugeArgTypes()) /      27|     const declared = rows.filter((r) => OWN.includes(r.name) || r.name… /  / ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯; rerun once because the spec changed since that run began'
