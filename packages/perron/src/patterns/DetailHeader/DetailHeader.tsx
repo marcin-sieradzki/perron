@@ -38,7 +38,10 @@ export interface DetailHeaderProps extends Omit<
   title: ReactNode
   /** One supporting line under the title, such as "Next stop: Nørreport St." or the lines a stop has. */
   subheader?: ReactNode
-  /** The panel's controls at the end of the row, such as its close button. */
+  /**
+   * The panel's own controls at the end of the row, such as a "Show on map" button. The panel's
+   * close button is DetailPanel's, from the Sheet, and needs no place here.
+   */
   action?: ReactNode
   /**
    * Props for each inner part, merged with the part's own, which win: the caller's class follows

@@ -22,3 +22,15 @@ export const known = (node: ReactNode): boolean =>
 /** A part's own class first, then the caller's: joined, never replaced. */
 export const classes = (own: string, caller: string | undefined) =>
   caller ? `${own} ${caller}` : own
+
+/**
+ * Base UI's `className`: a string, or a function of the part's state. `mergeProps` joins strings
+ * only, so a part whose caller may give a function sets its class after the merge, by `withClass`.
+ */
+export type ClassName<State> = string | ((state: State) => string | undefined) | undefined
+
+/** The part's own class first, then the caller's, whether the caller's is a string or a function. */
+export function withClass<State>(own: string, theirs: ClassName<State>): ClassName<State> {
+  if (typeof theirs === 'function') return (state) => classes(own, theirs(state))
+  return classes(own, theirs)
+}

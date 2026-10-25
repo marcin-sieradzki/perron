@@ -183,7 +183,7 @@
     "name": "Attribution",
     "layer": "component",
     "category": "Map",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/Attribution",
     "dependsOn": []
@@ -350,7 +350,7 @@
     "name": "DetailPanel",
     "layer": "pattern",
     "category": "Detail",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Patterns/DetailPanel",
     "dependsOn": ["Sheet", "DetailHeader"]

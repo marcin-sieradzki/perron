@@ -6,6 +6,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fireEvent, fn, mocked, screen, userEvent, waitFor, within } from 'storybook/test'
 import { dictionaries, type Locale } from '../../locale/index.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
+import { colour } from '../../testing/stories.ts'
 import { Button } from '../Button/Button.tsx'
 import { MapTooltip } from './MapTooltip.tsx'
 
@@ -50,7 +51,7 @@ const card = () =>
   })
 
 /** Resolves once no card is in the document. */
-const closed = () => waitFor(() => expect(document.querySelector('.pn-MapTooltip')).toBeNull())
+const gone = () => waitFor(() => expect(document.querySelector('.pn-MapTooltip')).toBeNull())
 
 /** Resolves after the given number of frames, for a check that something has not changed. */
 const frames = async (count: number) => {
@@ -73,16 +74,6 @@ function pixels(token: string) {
   const width = Number.parseFloat(getComputedStyle(probe).width)
   probe.remove()
   return width
-}
-
-/** A colour token as it renders, through a probe that reads it. */
-function colour(token: string) {
-  const probe = document.createElement('span')
-  probe.style.color = `var(${token})`
-  document.body.append(probe)
-  const rendered = getComputedStyle(probe).color
-  probe.remove()
-  return rendered
 }
 
 /** The card over a point, open from the first render, with one line of the caller's words. */
@@ -121,7 +112,7 @@ export const Default: Story = {
         'escape-key',
         expect.anything(),
       )
-      await closed()
+      await gone()
     })
   },
 }
@@ -171,7 +162,7 @@ export const Controlled: Story = {
         'escape-key',
         expect.anything(),
       )
-      await closed()
+      await gone()
       await expect(button).toHaveFocus()
     })
     await step('the button opens it again, and focus stays on the button', async () => {
@@ -193,7 +184,7 @@ export const Controlled: Story = {
           expect.anything(),
         ),
       )
-      await closed()
+      await gone()
       await expect(button).toHaveFocus()
       button.blur()
     })
@@ -224,7 +215,7 @@ export const Content: Story = {
     await expect(box.right).toBeLessThanOrEqual(window.innerWidth)
     await expect(box.bottom).toBeLessThanOrEqual(window.innerHeight)
     await userEvent.keyboard('{Escape}')
-    await closed()
+    await gone()
   },
 }
 
@@ -242,7 +233,7 @@ export const NearTopEdge: Story = {
     )
     await expect(screen.getByText(WORDS)).toBeVisible()
     await userEvent.keyboard('{Escape}')
-    await closed()
+    await gone()
   },
 }
 
@@ -307,7 +298,7 @@ export const MovingPoint: Story = {
       await above(popup, POINT)
     })
     await userEvent.keyboard('{Escape}')
-    await closed()
+    await gone()
     button.blur()
   },
 }
@@ -330,6 +321,6 @@ export const AnchorHidden: Story = {
       'escape-key',
       expect.anything(),
     )
-    await closed()
+    await gone()
   },
 }

@@ -19,8 +19,17 @@ const targets = Object.entries(pkg.exports as Record<string, string | Record<str
 let packed: { name: string; files: { path: string }[] }
 let files: string[]
 beforeAll(() => {
-  // The pack skips scripts to keep its output JSON, so build the way prepack would first.
-  execFileSync('npm', ['run', 'build', '-w', pkg.name], { cwd: join(dir, '../..') })
+  // The pack skips scripts to keep its output JSON, so build the way prepack would first. This is
+  // the package build in npm run check: a failure shows tsc's own errors, which it prints to stdout.
+  try {
+    execFileSync('npm', ['run', 'build', '-w', pkg.name], {
+      cwd: join(dir, '../..'),
+      encoding: 'utf8',
+    })
+  } catch (error) {
+    const { stdout = '', stderr = '' } = error as { stdout?: string; stderr?: string }
+    throw new Error(`npm run build -w ${pkg.name} failed:\n${stdout}${stderr}`, { cause: error })
+  }
   ;[packed] = JSON.parse(
     execFileSync('npm', ['pack', '--dry-run', '--json', '--ignore-scripts', '-w', pkg.name], {
       cwd: join(dir, '../..'),
