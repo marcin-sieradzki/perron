@@ -27,6 +27,9 @@ stages:
     ended: 2026-10-25T07:16:58.745Z
   docs:
     failures: 1
+    status: done
+    started: 2026-10-25T07:17:05.376Z
+    ended: 2026-10-25T07:21:20.900Z
 notes:
   - stage: brief
     at: 2026-10-25T05:50:01.967Z
@@ -77,3 +80,12 @@ notes:
   - stage: build
     at: 2026-10-25T07:10:02.512Z
     direction: Base UI marks id @ignore on most of its parts, and Storybook's JSDoc parser then drops the row, so each component that should show id declares it again (Menu does on six props types); scripts/lib/docgen.ts's propDoc could strip Base UI's @ignore from id for every component.
+  - stage: docs
+    at: 2026-10-25T07:21:20.901Z
+    direction: PropsTable flattens the Markdown list in Base UI's finalFocus JSDoc into one paragraph, so Menu's finalFocus row reads as run-on text; storybook/blocks/PropsTable.tsx could render JSDoc lists as lists for every component.
+  - stage: docs
+    at: 2026-10-25T07:21:20.901Z
+    direction: The page's slots rows say only 'Props for the <part> part', so slotProps.positioner's rule that its align, sideOffset and collisionPadding replace Menu's own (CR-9), and the trigger's nativeButton advice, appear only in the spec, not on the docs page.
+  - stage: docs
+    at: 2026-10-25T07:21:20.901Z
+    direction: "In the LongLabel story the Danish item label breaks mid-word with no hyphen, because of overflow-wrap: anywhere; hyphens: auto under the locale's lang would break it at a syllable."

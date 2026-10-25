@@ -1543,6 +1543,85 @@
       }
     }
   },
+  "Menu": {
+    "extends": [
+      "Inherited<BaseMenu.Popup.Props, 'id'>"
+    ],
+    "props": {
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "defaultOpen": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "disabled": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "id": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "onClose": {
+        "optional": true,
+        "type": [
+          "(event: Event, reason: MenuRootChangeEventReason, details: MenuRootChangeEventDetails) => void"
+        ]
+      },
+      "onOpen": {
+        "optional": true,
+        "type": [
+          "(event: Event, details: MenuRootChangeEventDetails) => void"
+        ]
+      },
+      "open": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ trigger?: Props<unknown> | undefined; portal?: MenuPortalProps | undefined; positioner?: MenuPositionerProps | undefined; }"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "trigger": {
+        "optional": false,
+        "type": [
+          "ReactElement<unknown, JSXElementConstructor<any> | string>"
+        ]
+      }
+    }
+  },
   "Meter": {
     "extends": [
       "Omit< BaseMeter.Root.Props, 'value' | 'children' | 'locale' | 'color' | 'className' | 'style' | 'ref' >"
