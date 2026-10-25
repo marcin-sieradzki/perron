@@ -118,7 +118,7 @@ const FIELD_KEYS = [
  * Splits `props` into the given `keys` and the rest. A key the caller left out stays out of both,
  * never set to `undefined` (CR-4).
  */
-function split<T extends object, K extends keyof T>(props: T, keys: readonly K[]) {
+function splitFieldProps<T extends object, K extends keyof T>(props: T, keys: readonly K[]) {
   const picked = {} as Pick<T, K>
   const others = { ...props }
   for (const key of keys) {
@@ -148,7 +148,7 @@ export function CheckboxGroup({
   ...rest
 }: CheckboxGroupProps) {
   // CR-3: the field's props go to Field.Root, the rest to Base UI's group, each only when given
-  const [field, group] = split(rest, FIELD_KEYS)
+  const [field, group] = splitFieldProps(rest, FIELD_KEYS)
   // CR-4: a given error marks the group invalid, unless the caller says otherwise, and shows at
   // once; left out, Base UI's own message shows when the group fails its `validate`
   const hasError = given(error)
