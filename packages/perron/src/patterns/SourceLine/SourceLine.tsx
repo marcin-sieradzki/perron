@@ -22,8 +22,8 @@ export interface SourceLineSource {
   time: string
   /**
    * Optional, `false` when left out. The app judges this source's data may be out of date, such as
-   * when its last refresh failed or its time is past the app's limit; the line adds "may be out of
-   * date" after its time, and never judges it from the time (CR-6)
+   * when its last refresh failed or its time is past the app's limit; the line says "updated
+   * 08:09:40, may be out of date" for it, and never judges it from the time (CR-6)
    */
   outOfDate?: boolean
 }

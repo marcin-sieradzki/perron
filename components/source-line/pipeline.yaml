@@ -9,9 +9,13 @@ stages:
     started: 2026-10-25T17:54:16.088Z
     ended: 2026-10-25T17:54:26.277Z
   build:
-    runs: 4
+    runs: 5
     respecs: 1
-    failing: review round 3 found 2 P2 (components/source-line/review.md)
+    status: done
+    started: 2026-10-25T19:13:28.373Z
+    begun: 1c5b2d9d756b857e7ce210f0e60d262e9a7a2442ee8043765b258bb57f3203bf
+    spec: 2b4731e87a1d71164af06b1b9f33134b9cdff01bef76c550d5c0c6b18b5250fc
+    ended: 2026-10-25T19:19:36.765Z
   review:
     rounds: 3
     sentBack: 3
@@ -47,3 +51,9 @@ notes:
   - stage: review
     at: 2026-10-25T19:13:18.813Z
     unblocked: '3 review rounds found a P1 or a P2; the last: review round 3 found 2 P2 (components/source-line/review.md)'
+  - stage: build
+    at: 2026-10-25T19:19:36.765Z
+    direction: "Shared tooling gap for the retro: expectOwnedStrings (packages/perron/src/testing/owned-strings.ts, wordsIn and filled) reads each text run between tags on its own, so it can't read an owned template whose placeholder is filled with an element, such as interpolate('updated {time}', { time: <time/> }), though interpolate supports that; SourceLine keeps its time as text in the phrase because of it, and gives up typography.data and tabular figures for the time."
+  - stage: build
+    at: 2026-10-25T19:19:36.765Z
+    direction: The whole out-of-date phrase, 'updated 08:09:40, may be out of date', is in color.text.warning, not only its last words as brief answer 6 had it, since one owned string can't be coloured in part without markup in the string; a design run should confirm it, with the caption face for the time.
