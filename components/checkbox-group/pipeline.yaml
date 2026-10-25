@@ -5,10 +5,9 @@ deferred:
   at: 2026-10-25T06:02:11.177Z
 stages:
   brief:
-    status: failed
-    started: 2026-10-25T06:02:16.373Z
-    ended: 2026-10-25T06:11:06.787Z
-    failing: the spec still has the placeholder <Name>; still has the placeholder <part>
+    status: done
+    started: 2026-10-25T06:12:49.113Z
+    ended: 2026-10-25T06:17:43.791Z
 notes:
   - stage: brief
     at: 2026-10-25T06:11:06.788Z
@@ -22,3 +21,9 @@ notes:
   - stage: brief
     at: 2026-10-25T06:11:06.788Z
     direction: Base UI puts the group's description and error in every checkbox's aria-describedby as well as the group's, so a screen reader may read the help once per box; check with a real screen reader once the build lands.
+  - stage: brief
+    at: 2026-10-25T06:17:43.792Z
+    direction: A parent checkbox sits in the group's flat column, level with the boxes it controls, because Fieldset's CR-2 allows no wrapper and the contract's 'one class, then attributes' selector rule allows no sibling selector to indent them. If Mylder wants children indented under their parent, as Base UI's demo draws them, one of those two rules needs a named exception.
+  - stage: brief
+    at: 2026-10-25T06:17:43.792Z
+    direction: "The earlier note that the library has no select-all pattern is now out of date: this spec adds CheckboxGroup's allValues and Checkbox's parent together, as that note suggested the first screen needing one should."
