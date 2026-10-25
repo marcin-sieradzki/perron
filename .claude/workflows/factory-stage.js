@@ -35,6 +35,12 @@ const OUTCOME = {
       type: 'string',
       description: 'With failed: the check or input that stopped it, and why',
     },
+    direction: {
+      type: 'array',
+      items: { type: 'string' },
+      description:
+        'Every Direction finding of the run, one line each, for the PR; whatever the outcome',
+    },
   },
   required: ['outcome', 'summary'],
 }

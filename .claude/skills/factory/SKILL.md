@@ -13,18 +13,18 @@ The loop's state is `components/<name>/pipeline.yaml`, and `npm run factory`, wh
 
 `npm run factory -- <command> <Name>`, each with `--json` for a parsed answer:
 
-| Command                                                    | Does                                                                     |
-| ---------------------------------------------------------- | ------------------------------------------------------------------------ |
-| `next <Name>`                                              | Says the stage to run, or the gate it waits at and why. Never writes.    |
-| `begin <Name> <stage>`                                     | Records the stage as running, or refuses with the reason (exit 1)        |
-| `end <Name> <stage> <done\|failed\|pending> [--failing …]` | Checks the stage's gate from the files, records the result, prints next  |
-| `approve <Name>`                                           | Records the maintainer's design approval, tied to the current read-back  |
-| `defer <Name>`                                             | Takes design and visual out of the loop until a design run begins        |
-| `unblock <Name>`                                           | Clears `needs-human` once the maintainer has fixed what stopped the loop |
+| Command                                                                     | Does                                                                                   |
+| --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `next <Name>`                                                               | Says the stage to run, or the gate it waits at and why. Never writes.                  |
+| `begin <Name> <stage>`                                                      | Records the stage as running, or refuses with the reason (exit 1)                      |
+| `end <Name> <stage> <done\|failed\|pending> [--failing …] [--direction …]…` | Checks the stage's gate from the files, records the result and its notes, prints next  |
+| `approve <Name>`                                                            | Records the maintainer's design approval, tied to the current read-back                |
+| `defer <Name>`                                                              | Takes design and visual out of the loop until a design run begins                      |
+| `unblock <Name>`                                                            | Clears `needs-human` once the maintainer has fixed what stopped the loop, and notes it |
 
 ## Stages
 
-Each stage but visual runs as the Claude Code workflow `factory-stage` ([`.claude/workflows/factory-stage.js`](../../workflows/factory-stage.js)), through the Workflow tool with `name: 'factory-stage'` and `args: { stage, name: '<Name>' }`. It returns `{ outcome, summary, questions?, failing? }`, and the review stage also returns `review`. Visual is one command, which you run yourself.
+Each stage but visual runs as the Claude Code workflow `factory-stage` ([`.claude/workflows/factory-stage.js`](../../workflows/factory-stage.js)), through the Workflow tool with `name: 'factory-stage'` and `args: { stage, name: '<Name>' }`. It returns `{ outcome, summary, questions?, failing?, direction? }`, and the review stage also returns `review`. Visual is one command, which you run yourself.
 
 **Without the Workflow tool** (a subagent has none, so every batch slot runs this way), run `node scripts/factory-stage.ts '<the same args as JSON>'`. It prints the one agent call the workflow would make: its `prompt`, which already ends with the JSON shape to return and, on a rerun, holds the `fix` that `next` gives, read from the pipeline in `dir` (`begin` keeps it, so step 4's order gives it); and an `agentType` for review. Start a fresh Agent with that prompt word for word, as that `subagent_type` when one is given, and parse the JSON it returns as the workflow's result. Done when you hold that JSON.
 
@@ -60,16 +60,16 @@ Each stage but visual runs as the Claude Code workflow `factory-stage` ([`.claud
 
    Done when the command or the workflow has given its outcome.
 
-5. **Record it.** `npm run factory -- end <Name> <stage> <outcome>`, the outcome the run returned, with `--failing "<the run's failing text, or its numbered questions>"` for `failed` and `pending`. Then commit the stage's files and the pipeline file together: `<Name>: <stage> <outcome>`, with the outcome `end` printed (`ended review: failed, …` on a P1 or a P2), which is the gate's, not the run's claim. Done when `end` has printed what comes next and the commit is made. Go back to step 2.
+5. **Record it.** `npm run factory -- end <Name> <stage> <outcome>`, the outcome the run returned, with `--failing "<the run's failing text, or its numbered questions>"` for `failed` and `pending`, and one `--direction "<finding>"` for each line of the run's `direction`. The design run's Direction findings, which it gives in its summary, go in the same way. `end` keeps them, and a `pending` run's questions, in the pipeline's `notes`, which no rerun voids. Then commit the stage's files and the pipeline file together: `<Name>: <stage> <outcome>`, with the outcome `end` printed (`ended review: failed, …` on a P1 or a P2), which is the gate's, not the run's claim. Done when `end` has printed what comes next and the commit is made. Go back to step 2.
 
-6. **Open the PR.** Push `component/<name>`, then open its PR with `gh pr create --base main --head component/<name> --title "<Name>" --body-file <file>`, ready for review. The body holds, in this order: a summary of the run, stage by stage; every Direction finding the stages reported; each P3 finding of the last round's `components/<name>/review.md`, marked closed when a later fix closed it, since review.md is the record of its round and stays as the reviewer wrote it; and the whole of `components/<name>/visual/report.md`. Tell the maintainer the PR's link; the maintainer merges it. Done when the PR is open and its link is sent.
+6. **Open the PR.** Push `component/<name>`, then open its PR with `gh pr create --base main --head component/<name> --title "<Name>" --body-file <file>`, ready for review. The body holds, in this order: a summary of the run, stage by stage, naming each `unblocked` note of `components/<name>/pipeline.yaml` (a cap the maintainer cleared); every `direction` note there, with its stage; each P3 finding of the last round's `components/<name>/review.md`, marked closed when a later fix closed it, since review.md is the record of its round and stays as the reviewer wrote it; and the whole of `components/<name>/visual/report.md`. Tell the maintainer the PR's link; the maintainer merges it. Done when the PR is open and its link is sent.
 
 ## Unattended runs
 
 When the maintainer asks for an unattended run, with the design deferred ([ADR 0010](../../../docs/adr/0010-unattended-runs-with-design-deferred.md)), the steps above change in four places, and nothing waits on the maintainer:
 
 - **Pre-flight.** Run `npm run factory -- defer <Name>` after step 1, unless `next` already says the design is deferred. A design waiting at `design-approval` that can't be deferred, because it was approved before, is left as `needs-human` is. A batch never begins a design stage.
-- **`pending-questions`.** Answer every question with its own recommended answer, exactly as the maintainer's "all recommended" would, and keep each one, with its section, for the PR's **Decisions to confirm**.
+- **`pending-questions`.** Answer every question with its own recommended answer, exactly as the maintainer's "all recommended" would. The PR's **Decisions to confirm** are the pipeline's `questions` notes, each answered by its recommendation, and any a later run changed.
 - **`needs-human`.** Push the branch, open the PR as a draft with the reason at the top, and go on to the next component whose `dependsOn` doesn't reach this one.
 - **The PR.** Step 6's body gains **Decisions to confirm** after the run summary and leaves out the visual report, since a deferred design has none; the merge below replaces step 6's hand-over. Then:
   1. Run the [`code-review`](../code-review/SKILL.md) skill on `component/<name>` against `main`, with the spec as its spec.
