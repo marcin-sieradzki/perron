@@ -59,7 +59,7 @@ const SAMPLES: Record<string, PreviewProps[]> = {
   ],
   SearchField: [{ hiddenLabel: true }],
   CheckboxGroup: [{ description: undefined }],
-  TextArea: [{ description: undefined, rows: 2 }],
+  TextArea: [{ description: undefined }],
   Slider: [{ description: undefined }],
   NumberField: [{ description: undefined }],
   Checkbox: [{ defaultChecked: true }],
