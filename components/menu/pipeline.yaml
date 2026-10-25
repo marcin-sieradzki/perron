@@ -8,6 +8,16 @@ stages:
     status: done
     started: 2026-10-25T05:51:06.415Z
     ended: 2026-10-25T05:54:23.935Z
+  build:
+    status: pending
+    started: 2026-10-25T05:54:28.226Z
+    runs: 1
+    spec: 5adba3e3accfdfbb9a442f1f78e9f1e8ff70f05fdb4d6fb939f392cca038b975
+    asked: 1
+    ended: 2026-10-25T06:09:34.175Z
+    failing: |-
+      1. Stories, LongLabel (CR-11): at 320 px 'Trafikinformationsoversigtssiden' fits on one line, so the wrap test can't pass. Recommended: keep the 320 px frame and the group label, and change the item to a longer compound such as 'Trafikinformationsoversigtssidesindstillinger', so the label wraps inside the popup.
+      2. Tokens (focusRing) and Keyboard and ARIA: Base UI focuses the popup itself on pointer open or first render, and perron.css draws its :focus-visible ring around the popup. Recommended: the menu and submenu popups draw no ring of their own (outline: none on .pn-Menu:focus-visible and .pn-MenuSubmenu-popup:focus-visible), written as a Tokens row; rows draw the ring.
 notes:
   - stage: brief
     at: 2026-10-25T05:50:01.967Z
@@ -23,3 +33,14 @@ notes:
       9. Is the CheckboxIndicator an icon.size.400 square, border.width.025 edge, radius.xs, with Switch's on and disabled tokens? Recommended: yes.
       10. Is the group label typography.overline in color.text.secondary, uppercase, space.200 at its sides, space.200 above and space.100 below? Recommended: yes.
       11. (CR-9) Does the popup open below its trigger, align start, sideOffset space.100, and a submenu at its row's end with alignOffset -(space.100 + border.width.025), read with tokenValue, slotProps.positioner winning? Recommended: yes.
+  - stage: build
+    at: 2026-10-25T06:09:34.176Z
+    direction: "The stories' start icons monitor and info are drawn on an 18 px grid for icon.size.450, but the spec shows them at icon.size.400 (16 px), where their 1.6 px stroke falls to about 1.4 px, under the 1.5 px floor in docs/foundations/icons.md: draw 16 px versions or give menu start icons icon.size.450."
+  - stage: build
+    at: 2026-10-25T06:09:34.176Z
+    direction: Base UI's typeahead reads a row's textContent untrimmed, and the shared icon story helper keeps its file's white space, so no typed letter matches; Menu's stories strip it locally (glyph), where packages/perron/src/testing/stories.ts's icon helper could trim it for every story.
+  - stage: build
+    at: 2026-10-25T06:09:34.176Z
+    questions: |-
+      1. Stories, LongLabel (CR-11): at 320 px 'Trafikinformationsoversigtssiden' fits on one line, so the wrap test can't pass. Recommended: keep the 320 px frame and the group label, and change the item to a longer compound such as 'Trafikinformationsoversigtssidesindstillinger', so the label wraps inside the popup.
+      2. Tokens (focusRing) and Keyboard and ARIA: Base UI focuses the popup itself on pointer open or first render, and perron.css draws its :focus-visible ring around the popup. Recommended: the menu and submenu popups draw no ring of their own (outline: none on .pn-Menu:focus-visible and .pn-MenuSubmenu-popup:focus-visible), written as a Tokens row; rows draw the ring.

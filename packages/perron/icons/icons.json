@@ -58,11 +58,15 @@
   "Controls": {
     "tick": {
       "size": "icon.size.325",
-      "use": "A ticked checkbox"
+      "use": "A ticked checkbox, and the chosen option in a list"
     },
     "dash": {
       "size": "icon.size.325",
       "use": "A checkbox that stands for a set partly ticked"
+    },
+    "chevron-right": {
+      "size": "icon.size.400",
+      "use": "A menu row that opens a submenu"
     }
   }
 }

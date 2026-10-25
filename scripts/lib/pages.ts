@@ -56,6 +56,7 @@ export const PAGES = [
   'docs/components/tabs.md',
   'docs/components/dialog.md',
   'docs/components/map-tooltip.md',
+  'docs/components/menu.md',
   'docs/components/sheet.md',
   'docs/components/tooltip.md',
   'docs/components/delay.md',

@@ -1,0 +1,11 @@
+/* The SelectedMark shared part, from docs/components/menu.md (CR-8): the tick icon at
+   icon.size.325, the step its 14 px grid is drawn for, in currentColor, so it takes the colour of
+   the row that holds it, and the row's system colour under forced colours (CR-13). */
+
+.pn-SelectedMark {
+  --perron-icon-size: var(--perron-icon-size-325);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: currentColor;
+}
