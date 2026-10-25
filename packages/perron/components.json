@@ -719,7 +719,7 @@
     "name": "Link",
     "layer": "component",
     "category": "Navigation",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/Link",
     "dependsOn": []

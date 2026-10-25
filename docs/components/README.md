@@ -166,7 +166,7 @@ The `pointer-feedback` check ([Checks](#checks)) holds the CSS to this: every ho
 
 - a box of the Fields family, which a press focuses, so the focus ring and the text cursor answer it, or opens, as Select's list does at once;
 - a row in a popup, a menu's row: its highlight answers the pointer and the keys alike, it keeps the default cursor, and a press chooses it on release;
-- a link inside running text, which keeps the browser's pointer and, as text links do, takes no pressed look.
+- a link inside another component's running text, such as Attribution's credits, which keeps the browser's pointer and takes no pressed look; Link, the library's text link, takes both.
 
 ## CSS
 
@@ -271,6 +271,9 @@ Each of these is written once, in its file, and a component, pattern or story im
 | `fieldPart`                      | `packages/perron/src/testing/stories.ts`        | One of Field's parts in a scope, by its class, for Field and the controls it frames                                                                                                                          |
 | `focusedClose`                   | `packages/perron/src/testing/stories.ts`        | An open popup's close button, once Base UI has moved focus to it                                                                                                                                             |
 | `expectNoFocus`                  | `packages/perron/src/testing/stories.ts`        | Tabs once, expects focus outside an element, and tabs back, for a part that takes no focus                                                                                                                   |
+| `expectFollows`, `follows`       | `packages/perron/src/testing/stories.ts`        | From a button placed before the story, Tab focuses a link, Enter fires its `onClick` once, Space fires nothing, and Shift+Tab lands back on the button                                                       |
+| `expectFocusRing`                | `packages/perron/src/testing/stories.ts`        | From a button placed before the story, Tab gives an element `:focus-visible` and the ring perron.css draws, and Shift+Tab lands back on the button                                                           |
+| `RouterLink`                     | `packages/perron/src/testing/stories.ts`        | A router's link component as a stand-in, for a `render` prop: an `<a>` with its own destination, `to`, as its `href`                                                                                         |
 | `frames`                         | `packages/perron/src/testing/stories.ts`        | Resolves after a number of animation frames, for a check that something has not changed                                                                                                                      |
 | `byTestId`                       | `packages/perron/src/testing/stories.ts`        | The element with a `data-testid`, once it has rendered                                                                                                                                                       |
 | `lines`                          | `packages/perron/src/testing/stories.ts`        | How many lines tall an element is, in its own line height, to show a long word wraps                                                                                                                         |

@@ -1,5 +1,5 @@
 // Helpers the stories share, written once here (docs/components/README.md, "Shared helpers").
-import { createElement, type CSSProperties, type ReactNode } from 'react'
+import { createElement, type ComponentProps, type CSSProperties, type ReactNode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { expect, screen, userEvent, waitFor, within } from 'storybook/test'
 import { holds, isPaint } from './pointer.ts'
@@ -216,6 +216,14 @@ export function colour(property: string) {
 }
 
 /**
+ * A router's link component as a stand-in, for a `render` prop: an `<a>` that brings its own
+ * destination, `to`, as its `href`, marked `data-router-link`, with the rest of its props, `ref`
+ * among them, on the `<a>`.
+ */
+export const RouterLink = ({ to, ...rest }: ComponentProps<'a'> & { to: string }) =>
+  createElement('a', { ...rest, href: to, 'data-router-link': '' })
+
+/**
  * Renders `ui` apart from the story, into a host appended to `parent`, runs `test` on the host,
  * and unmounts and removes the host after, whether `test` passes or throws.
  */
@@ -296,3 +304,54 @@ export async function expectNoFocus(root: HTMLElement) {
   await expect(root.contains(document.activeElement)).toBe(false)
   await userEvent.tab({ shift: true })
 }
+
+/**
+ * Runs `test` with a button placed just before `canvas` and focused, so the next Tab reaches the
+ * story's first focusable element and Shift+Tab from it lands back on the button; removes the
+ * button after, whether `test` passes or throws.
+ */
+async function fromButtonBefore(canvas: HTMLElement, test: (before: HTMLElement) => Promise<void>) {
+  const before = document.createElement('button')
+  before.textContent = 'Before the story'
+  canvas.before(before)
+  before.focus()
+  try {
+    await test(before)
+  } finally {
+    before.remove()
+  }
+}
+
+/**
+ * A link's keys, from a button placed before the story: Tab focuses `link`, Enter fires `onClick`
+ * once, Space fires nothing, and Shift+Tab moves focus back to the button, the element before it.
+ */
+export const expectFollows = (canvas: HTMLElement, link: HTMLElement, onClick: unknown) =>
+  fromButtonBefore(canvas, async (before) => {
+    await userEvent.tab()
+    await expect(link).toHaveFocus()
+    await userEvent.keyboard('{Enter}')
+    await expect(onClick).toHaveBeenCalledTimes(1)
+    await userEvent.keyboard(' ')
+    await expect(onClick).toHaveBeenCalledTimes(1)
+    await userEvent.tab({ shift: true })
+    await expect(before).toHaveFocus()
+  })
+
+/**
+ * From a button placed before the story, Tab gives `element` `:focus-visible` and the ring
+ * perron.css draws, and Shift+Tab moves focus back to the button, the element before it.
+ */
+export const expectFocusRing = (canvas: HTMLElement, element: HTMLElement) =>
+  fromButtonBefore(canvas, async (before) => {
+    await userEvent.tab()
+    await expect(element).toHaveFocus()
+    await expect(element.matches(':focus-visible')).toBe(true)
+    const ring = getComputedStyle(element)
+    await expect(ring.outlineStyle).toBe('solid')
+    await expect(ring.outlineColor).toBe(edge('color-border-focus'))
+    await expect(ring.outlineWidth).toBe(resolve('outlineWidth', 'var(--perron-focus-width)'))
+    await expect(ring.outlineOffset).toBe(resolve('outlineOffset', 'var(--perron-focus-offset)'))
+    await userEvent.tab({ shift: true })
+    await expect(before).toHaveFocus()
+  })
