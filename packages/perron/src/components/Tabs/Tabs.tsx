@@ -5,10 +5,8 @@
 import { mergeProps } from '@base-ui/react/merge-props'
 import { Tabs as BaseTabs } from '@base-ui/react/tabs'
 import type { CSSProperties, ReactNode, Ref } from 'react'
+import { classes } from '../../internal/nodes.ts'
 import './Tabs.css'
-
-/** `pn-<Name>` first, then the caller's class. */
-const classes = (own: string, given: string | undefined) => (given ? `${own} ${given}` : own)
 
 /**
  * What each of the four inherits from its Base UI part: every prop but `own`, the ones it declares

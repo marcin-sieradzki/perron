@@ -7,6 +7,7 @@ import type { ComponentPropsWithRef, CSSProperties, ReactNode, Ref } from 'react
 import { EmptyState } from '../../components/EmptyState/EmptyState.tsx'
 import type { EmptyStateProps } from '../../components/EmptyState/EmptyState.tsx'
 import { useOwnedStrings } from '../../PerronProvider.tsx'
+import { classes } from '../../internal/nodes.ts'
 import './DataStatePanel.css'
 
 export interface DataStatePanelProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
@@ -62,9 +63,6 @@ export interface DataStatePanelProps extends Omit<ComponentPropsWithRef<'div'>, 
 
 /** The owned string each status but ready shows as the EmptyState's title (CR-3). */
 const TITLE = { loading: 'loading', empty: 'noData', error: 'loadFailed' } as const
-
-/** A part's class, then the caller's: joined, not replaced, the part's first (CR-5). */
-const joinClass = (own: string, theirs: string | undefined) => (theirs ? `${own} ${theirs}` : own)
 
 /** Sets a ref the caller gave, a callback or an object, to `node`. */
 function setRef<T>(ref: Ref<T> | undefined, node: T | null) {
@@ -162,19 +160,19 @@ export function DataStatePanel({
   const explained = status === 'empty' || status === 'error'
 
   return (
-    <div {...rest} className={joinClass('pn-DataStatePanel', className)} data-status={status}>
+    <div {...rest} className={classes('pn-DataStatePanel', className)} data-status={status}>
       {/* CR-2: always rendered, first, a live region that announces each change of status */}
       <div
         {...messageSlot}
         ref={messageRef}
-        className={joinClass('pn-DataStatePanel-message', messageClass)}
+        className={classes('pn-DataStatePanel-message', messageClass)}
         role="status"
         tabIndex={-1}
       >
         {status !== 'ready' && (
           <EmptyState
             {...emptyStateSlot}
-            className={joinClass('pn-DataStatePanel-emptyState', emptyStateClass)}
+            className={classes('pn-DataStatePanel-emptyState', emptyStateClass)}
             title={strings[TITLE[status]]}
             action={explained ? action : undefined}
           >
