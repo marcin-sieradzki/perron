@@ -48,7 +48,7 @@
     "name": "Section",
     "layer": "component",
     "category": "Layout",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/Section",
     "dependsOn": []
