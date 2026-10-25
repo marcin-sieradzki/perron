@@ -33,6 +33,14 @@ const boxes = (disabledValue?: string) =>
     </Checkbox>
   ))
 
+/** A parent "All modes" first, then the three, under `allValues`. */
+const withParent = (disabledValue?: string): ReactNode => [
+  <Checkbox key="all" parent>
+    All modes
+  </Checkbox>,
+  ...boxes(disabledValue),
+]
+
 const meta = {
   title: 'Components/CheckboxGroup',
   component: CheckboxGroup,
@@ -282,9 +290,8 @@ export const HiddenLabel: Story = {
 }
 
 /**
- * A caller that keeps the list in its own `useState` and sets it from `onChange`, unless the
- * change was cancelled, with a line that lists the ticked values. The story's `onChange` spy
- * stands for the caller's own handler, and may call `details.cancel()`.
+ * A caller that keeps the list in its own `useState` and sets it from `onChange`, with a line that
+ * lists the ticked values. The story's `onChange` spy stands for the caller's own handler.
  */
 function ControlledGroup({ defaultValue, ...args }: CheckboxGroupProps) {
   const [value, setValue] = useState<string[]>(defaultValue ?? [])
@@ -295,7 +302,7 @@ function ControlledGroup({ defaultValue, ...args }: CheckboxGroupProps) {
         value={value}
         onChange={(event, next, details) => {
           args.onChange?.(event, next, details)
-          if (!details.isCanceled) setValue(next)
+          setValue(next)
         }}
       />
       <p
@@ -327,16 +334,6 @@ export const Controlled: Story = {
         'Ticked: bus, metro',
       )
     })
-    await step('an onChange that cancels keeps the list', async () => {
-      onChange.mockImplementationOnce((_event, _value, details) => details.cancel())
-      await userEvent.click(metro)
-      await expect(onChange).toHaveBeenLastCalledWith(
-        expect.any(Event),
-        ['bus'],
-        expect.objectContaining({ reason: 'none' }),
-      )
-      await expect(metro).toHaveAttribute('aria-checked', 'true')
-    })
     await step('the caller sets the list back to "Bus" alone', async () => {
       await userEvent.click(metro)
       await expect(metro).toHaveAttribute('aria-checked', 'false')
@@ -356,6 +353,37 @@ export const Controlled: Story = {
           await expect(ignored).toHaveBeenCalledTimes(1)
           await expect(box(other, 'Metro')).toHaveAttribute('aria-checked', 'false')
           await expect(ticked(other)).toEqual(['Bus'])
+          ;(document.activeElement as HTMLElement | null)?.blur()
+        },
+      )
+    })
+    await step("an uncontrolled group's onChange that cancels keeps the list", async () => {
+      const cancels = fn((_event: Event, _value: string[], details: { cancel: () => void }) =>
+        details.cancel(),
+      )
+      await mounted(
+        canvasElement,
+        <CheckboxGroup label="Lines" defaultValue={['bus']} allValues={ALL} onChange={cancels}>
+          {withParent()}
+        </CheckboxGroup>,
+        async (host) => {
+          const other = await waitFor(() => groupIn(host, 'Lines'))
+          await userEvent.click(box(other, 'Metro'))
+          await expect(cancels).toHaveBeenLastCalledWith(
+            expect.any(Event),
+            ['bus', 'metro'],
+            expect.objectContaining({ reason: 'none' }),
+          )
+          await expect(ticked(other)).toEqual(['Bus'])
+          await userEvent.click(box(other, 'All modes'))
+          await expect(cancels).toHaveBeenCalledTimes(2)
+          await expect(cancels).toHaveBeenLastCalledWith(
+            expect.any(Event),
+            ALL,
+            expect.objectContaining({ reason: 'none' }),
+          )
+          await expect(ticked(other)).toEqual(['Bus'])
+          await expect(box(other, 'All modes')).toHaveAttribute('aria-checked', 'mixed')
           ;(document.activeElement as HTMLElement | null)?.blur()
         },
       )
@@ -438,14 +466,6 @@ export const Validation: Story = {
     })
   },
 }
-
-/** A parent "All modes" first, then the three, under `allValues`. */
-const withParent = (disabledValue?: string): ReactNode => [
-  <Checkbox key="all" parent>
-    All modes
-  </Checkbox>,
-  ...boxes(disabledValue),
-]
 
 /** The group with a parent checkbox "All modes" that ticks or unticks the set. */
 export const SelectAll: Story = {
