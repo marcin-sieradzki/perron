@@ -526,6 +526,7 @@ export const Disabled: Story = {
           tertiary,
         )
         await expect(getComputedStyle(control).cursor).toBe('default')
+        await expect(getComputedStyle(thumb).cursor).toBe('default')
         // CR-12: the hover and pressed rules pass a disabled thumb by
         await expect(onHover(thumb, 'background-image')).toBe('')
         await expect(stateLayer(thumb, ':active')).toBe('')
