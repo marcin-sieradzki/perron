@@ -13,7 +13,7 @@
   letter-spacing: var(--perron-typography-label-sm-tracking);
   /* CR-8: each state's word stays whole on one line, and the row wraps between items instead. */
   white-space: nowrap;
-  /* CR-3: the legend's ink, for the words and the dots */
+  /* CR-3: the legend's ink, for the words and the dots, which have no line and so draw in it */
   color: var(--perron-color-text-primary);
 }
 
@@ -21,19 +21,4 @@
   display: flex;
   align-items: center;
   column-gap: var(--perron-space-100);
-}
-
-/* CR-3: every dot draws in the legend's ink in place of its line's colour. One class and two
-   attributes outweigh VehicleDot's line rules, one class and one attribute, in any load order.
-   No signal's circle keeps VehicleDot's own grey fill. */
-.pn-VehicleDotLegend-dot[data-line][data-variant] {
-  color: inherit;
-}
-
-/* CR-3: forced colours keep the system's text colour that VehicleDot's own rule gives every dot,
-   which the rule above would otherwise outweigh. */
-@media (forced-colors: active) {
-  .pn-VehicleDotLegend-dot[data-line][data-variant] {
-    color: CanvasText;
-  }
 }

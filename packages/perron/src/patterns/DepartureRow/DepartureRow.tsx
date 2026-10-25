@@ -12,19 +12,12 @@ import type { VehicleDotProps } from '../../components/VehicleDot/VehicleDot.tsx
 import { useOwnedStrings } from '../../PerronProvider.tsx'
 import { UnknownValue } from '../../internal/UnknownValue.tsx'
 import { classes, given } from '../../internal/nodes.ts'
+import { STATE_KEY } from '../../internal/vehicle-states.ts'
+import type { VehicleState } from '../../internal/vehicle-states.ts'
 import './DepartureRow.css'
 
 /** Under this many seconds, the countdown reads "Now" (CR-3). */
 const NOW_UNDER = 45
-
-/** The owned string that names each data state, the word beside the dot (CR-6). */
-const STATE_KEY = {
-  live: 'live',
-  ageing: 'ageing',
-  estimated: 'estimated',
-  'timetable-only': 'timetableOnly',
-  'no-signal': 'noSignal',
-} as const
 
 export interface DepartureRowProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
   /**
@@ -34,7 +27,7 @@ export interface DepartureRowProps extends Omit<ComponentPropsWithRef<'div'>, 'c
    * root as `data-variant`.
    * @default 'live'
    */
-  variant?: NonNullable<VehicleDotProps['variant']>
+  variant?: VehicleState
   /**
    * The departure's line, typed as LineBadge's and VehicleDot's `line`: the badge's colours and
    * the dot's.

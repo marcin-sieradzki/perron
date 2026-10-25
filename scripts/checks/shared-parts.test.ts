@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import check, {
   copiedStoryHelpers,
+  copiedTables,
   helperProblems,
   partProblems,
   readHelpers,
@@ -165,6 +166,24 @@ describe('shared-parts', () => {
     ])
     expect(problems[0].message).toMatch(/^declares tagOf, a helper part in .*Meter\.test\.tsx/)
     expect(problems[0].message).toContain('testing/markup.ts')
+  })
+
+  it('fails a copy of a shared table in another shape, and a table two components declare', () => {
+    const src = 'scripts/checks/fixtures/shared-parts/tables'
+    const helpers = [{ name: 'STATE_KEY', aliases: [], file: 'internal/states.ts' }]
+    const copies = helperProblems(root, src, helpers)
+    expect(copies.map((p) => [p.file.split('/').at(-1), p.line, p.message.split(';')[0]])).toEqual([
+      ['Dot.tsx', 3, 'declares LABELS, a copy of the shared helper STATE_KEY'],
+    ])
+    // a story's table, one holding more than literals, and one under four strings are no table
+    const tables = copiedTables(root, src, helpers)
+    expect(tables.map((p) => [p.file.split('/').at(-1), p.line])).toEqual([
+      ['Row.tsx', 3],
+      ['Strip.tsx', 1],
+    ])
+    expect(tables[0].message).toMatch(
+      /^declares KINDS, a table of the strings ORDER in .*Strip\.tsx holds too; write it once in packages\/perron\/src\/internal\//,
+    )
   })
 
   it('passes the real tree', async () => {

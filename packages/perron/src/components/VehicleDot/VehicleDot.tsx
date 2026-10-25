@@ -5,17 +5,9 @@ import type { CSSProperties, Ref } from 'react'
 import { mergeProps } from '@base-ui/react/merge-props'
 import { useRender } from '@base-ui/react/use-render'
 import { useOwnedStrings } from '../../PerronProvider.tsx'
-import type { OwnedStringKey } from '../../locale/index.ts'
+import { STATE_KEY } from '../../internal/vehicle-states.ts'
+import type { VehicleState } from '../../internal/vehicle-states.ts'
 import './VehicleDot.css'
-
-/** The owned string that names each data state (CR-6). */
-const LABEL_KEY = {
-  live: 'live',
-  ageing: 'ageing',
-  estimated: 'estimated',
-  'timetable-only': 'timetableOnly',
-  'no-signal': 'noSignal',
-} as const satisfies Record<NonNullable<VehicleDotProps['variant']>, OwnedStringKey>
 
 /**
  * The glyph: an `<svg>` holding the one `<circle>`, drawn by the CSS for each state. The root
@@ -32,7 +24,7 @@ export interface VehicleDotProps extends Omit<useRender.ComponentProps<'span'>, 
    * How fresh the vehicle's data is: a solid dot, a fainter dot, a ring, a dashed ring, or a grey
    * dot cut by a slash, as Data states names them. Set on the root as `data-variant`.
    */
-  variant?: 'live' | 'ageing' | 'estimated' | 'timetable-only' | 'no-signal'
+  variant?: VehicleState
   /**
    * The vehicle's line, which gives the dot its colour: a metro line (`m1` to `m4`), an S-tog line
    * (`a` to `h`), any bus (`bus`), or any regional or Øresund train (`regional`). Set on the root
@@ -105,7 +97,7 @@ export function VehicleDot({
   const own = {
     className: 'pn-VehicleDot',
     role: 'img',
-    'aria-label': strings[LABEL_KEY[variant]],
+    'aria-label': strings[STATE_KEY[variant]],
     'data-variant': variant,
     'data-line': line,
     'data-size': size,

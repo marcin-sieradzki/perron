@@ -804,7 +804,11 @@
       "variant": {
         "optional": true,
         "type": [
-          "NonNullable<\"ageing\" | \"estimated\" | \"live\" | \"no-signal\" | \"timetable-only\" | undefined>"
+          "\"ageing\"",
+          "\"estimated\"",
+          "\"live\"",
+          "\"no-signal\"",
+          "\"timetable-only\""
         ]
       }
     }
