@@ -24,6 +24,10 @@ stages:
     status: done
     started: 2026-10-25T06:01:24.673Z
     ended: 2026-10-25T06:07:15.911Z
+  docs:
+    status: done
+    started: 2026-10-25T06:08:38.876Z
+    ended: 2026-10-25T06:11:38.344Z
 notes:
   - stage: brief
     at: 2026-10-25T05:41:55.568Z
@@ -46,3 +50,6 @@ notes:
   - stage: build
     at: 2026-10-25T05:51:14.906Z
     direction: The TextField spec's root row says Chromium shows a password input as a protected textbox, while HTML's ARIA mapping gives it no role; check that this reading matches what the reviewer should hold.
+  - stage: docs
+    at: 2026-10-25T06:11:38.345Z
+    direction: On the docs page, the slots table replaces the JSDoc of slotProps.field and slotProps.error with the fixed line "Props for the <part> part", so readers lose that 'field' reaches Base UI's invalid, validate and validationMode and that 'error' takes match; the PropsTable block could show a slot's own JSDoc when it has one.
