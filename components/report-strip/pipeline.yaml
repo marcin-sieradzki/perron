@@ -9,12 +9,20 @@ stages:
     started: 2026-10-25T13:26:24.200Z
     ended: 2026-10-25T13:28:08.781Z
   build:
-    status: done
-    started: 2026-10-25T13:28:12.257Z
     runs: 1
-    begun: 6c58ebe63a2828d4b1f16de8c1699f5f69d2adf3402abf161cfe8e26ffbf6ee8
-    spec: 6c58ebe63a2828d4b1f16de8c1699f5f69d2adf3402abf161cfe8e26ffbf6ee8
-    ended: 2026-10-25T13:37:43.853Z
+    failing: review round 1 found 1 P1 and 1 P2 (components/report-strip/review.md)
+  review:
+    status: failed
+    started: 2026-10-25T13:39:07.009Z
+    rounds: 1
+    findings:
+      p1: 1
+      p2: 1
+      p3: 3
+    reviewed: 5e579468720660d38f0f8b0791582abfd3f74719
+    sentBack: 1
+    ended: 2026-10-25T13:43:54.978Z
+    failing: review round 1 found 1 P1 and 1 P2 (components/report-strip/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T13:25:54.965Z
