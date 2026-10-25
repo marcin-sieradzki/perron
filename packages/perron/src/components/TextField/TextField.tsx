@@ -11,7 +11,7 @@ import './TextField.css'
 
 export interface TextFieldProps extends Omit<
   BaseField.Control.Props,
-  'onValueChange' | 'ref' | 'disabled'
+  'onValueChange' | 'ref' | 'disabled' | 'children' | 'dangerouslySetInnerHTML'
 > {
   /**
    * Required. The field's name, in sentence case, such as "Stop name": shown above the box, and the
