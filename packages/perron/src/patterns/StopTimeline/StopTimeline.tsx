@@ -9,6 +9,8 @@ import { StationIcon } from '../../components/StationIcon/StationIcon.tsx'
 import type { StationIconProps } from '../../components/StationIcon/StationIcon.tsx'
 import { VisuallyHidden } from '../../parts/VisuallyHidden/VisuallyHidden.tsx'
 import { useOwnedStrings } from '../../PerronProvider.tsx'
+import { known } from '../../internal/nodes.ts'
+import { interpolate } from '../../internal/strings.ts'
 import './StopTimeline.css'
 
 /** One stop of a trip, as StopTimeline's `stops` takes it. */
@@ -93,10 +95,11 @@ export interface StopTimelineProps extends Omit<
    */
   cancelledLabel?: string
   /**
-   * Overrides "Expected", heard before a stop's expected time in place of its "~".
+   * Overrides "Expected {time}", heard in place of a stop's "~" and expected time, "Expected
+   * 08:16"; `{time}` is the expected time
    * @default The locale's
    */
-  expectedLabel?: string
+  expectedTimeLabel?: string
   /**
    * Overrides "min", the unit after each delay's figure; given to every Delay.
    * @default The locale's
@@ -142,7 +145,7 @@ export function StopTimeline({
   nextStopLabel,
   passedLabel,
   cancelledLabel,
-  expectedLabel,
+  expectedTimeLabel,
   minutesUnitLabel,
   minutesLateLabel,
   minutesEarlyLabel,
@@ -156,7 +159,7 @@ export function StopTimeline({
     nextStop: nextStopLabel,
     passed: passedLabel,
     cancelled: cancelledLabel,
-    expected: expectedLabel,
+    expectedTime: expectedTimeLabel,
   })
   // every Delay gets the five labels as StopTimeline was given them (CR-10)
   const delayLabels = {
@@ -224,13 +227,18 @@ export function StopTimeline({
                 {stop.time}
               </time>
             )}
-            {/* CR-15: the word tells the ear what the "~" tells the eye, and the time stays a
-                `<time>` of its own, its text the HH:MM given */}
-            {stop.expected !== undefined && (
+            {/* CR-15: the ear hears the locale's template filled with the time, which says what
+                the "~" tells the eye; the eye sees the "~" and the time, a `<time>` of its own, its
+                text the HH:MM given, both hidden from the ear, so the time is heard once */}
+            {known(stop.expected) && (
               <span className="pn-StopTimeline-expected" data-stop={place}>
-                <VisuallyHidden>{strings.expected}</VisuallyHidden>{' '}
+                <VisuallyHidden>
+                  {interpolate(strings.expectedTime, { time: stop.expected })}
+                </VisuallyHidden>
                 <span aria-hidden="true">~</span>
-                <time dateTime={stop.expected}>{stop.expected}</time>
+                <time dateTime={stop.expected} aria-hidden="true">
+                  {stop.expected}
+                </time>
               </span>
             )}
             {/* CR-14: a cancelled call runs no delay */}

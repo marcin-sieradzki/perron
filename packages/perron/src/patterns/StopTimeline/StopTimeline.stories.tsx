@@ -500,16 +500,18 @@ export const Expected: Story = {
         const time = part.querySelector('time')!
         await expect(time.textContent).toBe(expected)
         await expect(time).toHaveAttribute('datetime', expected)
+        await expect(time).toHaveAttribute('aria-hidden', 'true')
         await expect(part.textContent).toContain(`~${expected}`)
       }
       await expect(items[0].querySelector('.pn-StopTimeline-expected')).toBeNull()
       await expect(items[6].querySelector('.pn-StopTimeline-expected')).toBeNull()
     })
 
-    await step('"Expected" is heard, not seen, in place of the "~"', async () => {
+    await step('"Expected" and the time are heard, not seen, in place of the "~"', async () => {
       for (const [index, part] of parts.entries()) {
-        await expectHeardNotSeen(within(part).getByText('Expected'))
-        await expect(heard(part)).toBe(`Expected ${EXPECTED[index + 2].expected}`)
+        const spoken = `Expected ${EXPECTED[index + 2].expected}`
+        await expectHeardNotSeen(within(part).getByText(spoken))
+        await expect(heard(part)).toBe(spoken)
       }
     })
 
@@ -556,9 +558,19 @@ export const Expected: Story = {
       await expect(readOf(stops[0])).toBe('Sydhavn Expected 08:23')
     })
 
-    await step('expectedLabel replaces the word', async () => {
-      const { items: stops } = renderOff(<StopTimeline stops={EXPECTED} expectedLabel="Now due" />)
-      await expect(readOf(stops[3])).toBe('Nørreport 08:14 Now due 08:17 3 min late')
+    await step('an empty expected time renders no expected part', async () => {
+      const { items: stops } = renderOff(
+        <StopTimeline stops={[{ name: 'Sydhavn', time: '08:21', expected: '' }]} />,
+      )
+      await expect(stops[0].querySelector('.pn-StopTimeline-expected')).toBeNull()
+      await expect(readOf(stops[0])).toBe('Sydhavn 08:21')
+    })
+
+    await step('expectedTimeLabel replaces the words, filled alike', async () => {
+      const { items: stops } = renderOff(
+        <StopTimeline stops={EXPECTED} expectedTimeLabel="Due at {time}" />,
+      )
+      await expect(readOf(stops[3])).toBe('Nørreport 08:14 Due at 08:17 3 min late')
     })
 
     await step("in every locale, every word is the caller's or the dictionary's", () => {
