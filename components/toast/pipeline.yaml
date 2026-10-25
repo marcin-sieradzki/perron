@@ -9,12 +9,20 @@ stages:
     started: 2026-10-25T08:51:16.685Z
     ended: 2026-10-25T08:53:13.129Z
   build:
-    status: done
-    started: 2026-10-25T08:53:16.791Z
     runs: 1
-    begun: 2076bcc565def254239e25b555f42401e175575723227288e6fde05fbd078deb
-    spec: b18a53ecfd5d3bd85f1e70b020ebd52e4f76bb73a4dac228b12ef143e1b53c95
-    ended: 2026-10-25T09:10:13.304Z
+    failing: review round 1 found 2 P2 (components/toast/review.md)
+  review:
+    status: failed
+    started: 2026-10-25T09:10:52.364Z
+    rounds: 1
+    findings:
+      p1: 0
+      p2: 2
+      p3: 6
+    reviewed: ddba1205f663c47e6701a77b98b1d1d3f6204350
+    sentBack: 1
+    ended: 2026-10-25T09:20:15.656Z
+    failing: review round 1 found 2 P2 (components/toast/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T08:49:45.449Z
