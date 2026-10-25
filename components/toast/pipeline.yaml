@@ -1,0 +1,108 @@
+# Written by npm run factory; never by hand.
+component: Toast
+layer: component
+deferred:
+  at: 2026-10-25T08:35:01.279Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-25T08:51:16.685Z
+    ended: 2026-10-25T08:53:13.129Z
+  build:
+    runs: 2
+    status: done
+    started: 2026-10-25T09:20:21.934Z
+    begun: b18a53ecfd5d3bd85f1e70b020ebd52e4f76bb73a4dac228b12ef143e1b53c95
+    spec: b7a155aefb262b39ca1463f99b8fad9cef666678914b2c7e7568fb548d4122ec
+    ended: 2026-10-25T09:29:43.772Z
+  review:
+    rounds: 2
+    sentBack: 1
+    reviewed: 612a2435f8a7975edb7841bf31f6e7e78be9aba5
+    findings:
+      p1: 0
+      p2: 0
+      p3: 7
+    status: done
+    started: 2026-10-25T09:30:20.750Z
+    ended: 2026-10-25T09:35:23.143Z
+  docs:
+    status: done
+    started: 2026-10-25T09:35:31.553Z
+    ended: 2026-10-25T09:38:17.378Z
+notes:
+  - stage: brief
+    at: 2026-10-25T08:49:45.449Z
+    direction: "Toast is the first component that renders under PerronProvider's region rather than where it is written: the action sees only the contexts above PerronProvider, such as a router's, so PerronProvider must sit inside them."
+  - stage: brief
+    at: 2026-10-25T08:49:45.449Z
+    direction: "Politeness differs between siblings: Alert takes `role` (status by default, alert when the caller passes it), while Toast leaves out Base UI's `priority`. Every toast is polite, because Base UI's 'high' sets aria-hidden on a focusable root, which axe's aria-hidden-focus rule fails."
+  - stage: brief
+    at: 2026-10-25T08:49:45.449Z
+    direction: "`autoHideDuration` (MUI) over Base UI's `timeout` is a new prop name later timed components will copy; onClose's reason 'timeout' mixes MUI's word into Base UI's reason vocabulary."
+  - stage: brief
+    at: 2026-10-25T08:49:45.449Z
+    direction: 'Close-button rule differs from Alert: Alert shows it only when onClose is given, while Toast always renders it, since a toast closes itself.'
+  - stage: brief
+    at: 2026-10-25T08:49:45.449Z
+    direction: PerronProvider gains its first `*Label` prop (`notificationsLabel`) and its first rendered DOM, an always-present empty 'Notifications' region in every app that uses it. This changes what @mylder/perron ships and needs a changeset.
+  - stage: brief
+    at: 2026-10-25T08:49:45.449Z
+    direction: 'Two new tokens are proposed: size.toast-width and duration.toast.'
+  - stage: brief
+    at: 2026-10-25T08:49:45.449Z
+    direction: Base UI's Toast.Close sets aria-hidden on a focusable button while the stack is collapsed, which fails axe's aria-hidden-focus rule under the library's error-mode stories. Any future Base UI part with the same pattern needs the same override.
+  - stage: brief
+    at: 2026-10-25T08:49:45.449Z
+    direction: The registry's baseUiParts for Toast lists Toast.Action, which the spec doesn't use; the build should edit the entry if question 4 is accepted.
+  - stage: brief
+    at: 2026-10-25T08:49:45.449Z
+    direction: Toast's toast list must be read through Toast.useToastManager in an internal child, never Toast.createToastManager. Toast.Provider subscribes to a created manager only after its children's effects, so a toast open at first render would be lost.
+  - stage: brief
+    at: 2026-10-25T08:49:45.449Z
+    questions: |-
+      1. (Anatomy) Is Toast declarative, `<Toast open onClose color title …>`, which adds itself to Base UI's toast list when `open` turns true, rather than an imperative `useToast().add()` beside a region the caller places? Recommended: yes. The contract's open/defaultOpen/onClose and overlay stories then hold, and every option becomes a prop the docs table and gates check.
+      2. (Anatomy) Does PerronProvider hold the app's one Toast.Provider and render the one region (Toast.Portal > Toast.Viewport), as it does Tooltip.Provider, with a Toast that has no provider around it rendering its own? Recommended: yes. Toasts must stack in one place, and a region already on the page announces reliably. The fallback lets the contract story render Toast alone.
+      3. (Anatomy) Does Toast leave `portal` and `viewport` out of `slotProps`, an exception to the contract's Customising rule? Recommended: yes. The region is shared, so a prop on one toast would restyle every other's region.
+      4. (Anatomy) Is the action part a `div` holding the caller's `action`, as Alert's is, with Toast.Action unused and dropped from the entry's baseUiParts? Recommended: yes. Toast.Action renders its own button, so a Perron Button inside it would nest a button in a button.
+      5. (Props) Is the auto-hide time `autoHideDuration: number | null` (MUI's name and type, mapped to Base UI's `timeout`, null as 0)? Recommended: yes.
+      6. (Props) Is `autoHideDuration`'s default 5000, and null when an `action` is given, so an action toast stays until closed? Recommended: yes, because of WCAG 2.2.1. JSDoc `@default 5000, or null with an action`.
+      7. (Props) Does a Toast show each time `open` turns true and leave on false without calling onClose? Once it closes itself, does it call onClose and stay closed until `open` goes false and then true again? Recommended: yes.
+      8. (Props) Is onClose(event, reason, details) called with 'close-press' | 'escape-key' | 'swipe' (Base UI's names) or 'timeout' (MUI's)? details would be `{ reason, event }`, with `new Event('timeout')` for the timer. This is an exception to the State and events rule, since Base UI gives no details. Recommended: yes.
+      9. (Tokens) Do toasts stand in one full column, newest at the top, rather than Base UI's collapsed pile? Recommended: yes.
+      10. (Tokens) Does the column sit at the bottom of the screen, centred, size.panel-gap from the edge? Recommended: yes.
+      11. (Tokens) Needs a token for the column's width. Recommended: a new `size.toast-width` of 360px, through the design-tokens skill.
+      12. (Tokens) Do toasts slide and fade in and out on a new `duration.toast` of 200ms with easing.standard, which reduced motion takes to 0.01ms? Recommended: yes, through the design-tokens skill. No existing duration token fits.
+      13. (Keyboard and ARIA) With no `title`, is the toast named by its description (aria-labelledby set to the description, no aria-describedby)? Recommended: yes. Otherwise axe's aria-dialog-name rule fails.
+      14. (Keyboard and ARIA) Is the close button never aria-hidden (`aria-hidden={false}` set after Base UI's, which hides it while the region is collapsed)? Recommended: yes. Otherwise axe's aria-hidden-focus rule fails, and screen-reader users cannot find the close button.
+      15. (Owned strings) Is the region's name a new owned key `notifications` ("Notifications"), overridden by a new `notificationsLabel` prop on PerronProvider rather than on Toast? This is an exception to the Words rule's per-component override. Recommended: yes. Base UI's viewport hard-codes English "Notifications", and the region is shared.
+  - stage: brief
+    at: 2026-10-25T08:53:13.129Z
+    direction: Toast narrows Alert's `color` JSDoc. For Toast, `danger` means only 'something that failed', not 'or stops the task', because a failure that stops the task belongs in an AlertDialog. So Toast does not take Alert's words whole on that one prop, despite Alert's CR-12.
+  - stage: brief
+    at: 2026-10-25T08:53:13.129Z
+    direction: Toast's CSS copies Alert's values under `.pn-Toast…`, because a component's CSS reads no other component's classes. Any later change to Alert's look must be made in Toast.css as well, and no check links the two.
+  - stage: build
+    at: 2026-10-25T09:10:13.304Z
+    direction: PerronProvider.tsx now imports ToastRegion.tsx from Toast's folder, and ToastRegion.tsx imports useOwnedStrings from PerronProvider.tsx. This is the library's first import cycle between the provider and a component. It works because each side reads the other only at render; a top-level use on either side would break it.
+  - stage: build
+    at: 2026-10-25T09:10:13.304Z
+    direction: Base UI moves a swiped toast by an inline `transform` as well as the swipe variables, which would move Toast, positioned by `translate`, twice as far. Toast's root `style` sets `transform` to nothing after the caller's, so a caller's `style.transform` never applies to a Toast, and a Base UI upgrade that changes how the swipe moves a toast needs this checked again.
+  - stage: build
+    at: 2026-10-25T09:10:13.304Z
+    direction: Base UI counts a swipe from its first pointer move, not from the press, so the 40px dismiss threshold runs from that move. The Success story's play drags 61px to stay past it. A real touch drag needs slightly more travel than the spec's 'dragged down 60 px' suggests.
+  - stage: build
+    at: 2026-10-25T09:10:13.304Z
+    direction: The timer behaviours (timeout, pause on hover, pause on focus) are tested in real time with 300ms and 600ms waits, so the Success story takes about 3.5s in `npm run test:stories`. A fake-timer helper would need to join the contract's Shared helpers if later timed components test the same way.
+  - stage: build
+    at: 2026-10-25T09:29:43.772Z
+    direction: "A play that presses a real `<a href>` (Toast's link action) must stop its navigation with preventDefault: a hash navigation in the story's frame closed vitest's browser connection and failed the whole file. A shared story helper or a contract line could save later stories with link actions from this."
+  - stage: build
+    at: 2026-10-25T09:29:43.772Z
+    direction: CR-11's starting and ending positions are checked on a probe `.pn-Toast` placed outside the region, because Base UI keeps `data-starting-style` for a single frame. The test proves the CSS rules, not a live toast's transition.
+  - stage: build
+    at: 2026-10-25T09:29:43.772Z
+    direction: Base UI hands focus to the toast before a closed one when it was the last, a step the spec's Keyboard row, Base UI paragraph and focus checklist line didn't name. The spec now says so, and Stack tests it.
+  - stage: build
+    at: 2026-10-25T09:29:43.772Z
+    direction: Toast and Alert let a caller's `slotProps.title.render` and `slotProps.description.render` win over the part's own tag, an exception to the contract's rule that a component's own props are merged last. CR-12 now says so; the contract's Customising section doesn't.

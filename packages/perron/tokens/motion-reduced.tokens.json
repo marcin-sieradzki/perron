@@ -36,6 +36,13 @@
         "unit": "ms"
       },
       "$description": "Switch thumb slide and track fill"
+    },
+    "toast": {
+      "$value": {
+        "value": 0.01,
+        "unit": "ms"
+      },
+      "$description": "Toast slide and fade in and out"
     }
   }
 }

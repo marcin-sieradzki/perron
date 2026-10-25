@@ -46,4 +46,5 @@ export const sv: OwnedStrings = {
   minimum: 'Minimum',
   maximum: 'Maximum',
   inProgress: 'Pågår',
+  notifications: 'Aviseringar',
 }

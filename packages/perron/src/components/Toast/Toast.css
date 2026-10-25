@@ -1,0 +1,165 @@
+/* Toast: Alert's row of the icon, the content and the close button, on the intent's tinted surface
+   with the floating panel's shadow, in one column at the bottom of the screen. Every value of
+   Alert.css is written again here under .pn-Toast (CR-1): a component's CSS reads no other
+   component's classes. The rows are docs/components/toast.md's Tokens table. */
+
+/* CR-8: one flex column, centred at the bottom, the newest toast at the top, so the list's order,
+   the tab order and the order on screen agree. None of Base UI's pile is styled. */
+.pn-Toast-viewport {
+  position: fixed;
+  inset-block-end: var(--perron-size-panel-gap);
+  inset-inline: 0;
+  z-index: var(--perron-z-index-dialog);
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-200);
+  inline-size: min(var(--perron-size-toast-width), calc(100% - 2 * var(--perron-size-panel-gap)));
+  margin-inline: auto;
+}
+
+.pn-Toast {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--perron-space-200);
+  padding-block: var(--perron-space-300);
+  padding-inline: var(--perron-space-400);
+  border-radius: var(--perron-radius-lg);
+  /* Alert's CR-10: a transparent edge, which forced colours paint */
+  border: var(--perron-border-width-025) solid transparent;
+  box-shadow: var(--perron-shadow-panel);
+  color: var(--perron-color-text-primary);
+  font: var(--perron-typography-body-sm);
+  letter-spacing: var(--perron-typography-body-sm-tracking);
+  /* CR-10: a long word wraps, so the toast fits a 320 px screen */
+  overflow-wrap: anywhere;
+  /* CR-11: a swipe moves the toast with the pointer, by Base UI's variables */
+  translate: var(--toast-swipe-movement-x) var(--toast-swipe-movement-y);
+  transition:
+    translate var(--perron-duration-toast) var(--perron-easing-standard),
+    opacity var(--perron-duration-toast) var(--perron-easing-standard);
+}
+
+.pn-Toast[data-color='neutral'] {
+  background: var(--perron-color-surface-inset);
+}
+
+.pn-Toast[data-color='success'] {
+  background: var(--perron-color-surface-success);
+}
+
+.pn-Toast[data-color='warning'] {
+  background: var(--perron-color-surface-warning);
+}
+
+.pn-Toast[data-color='danger'] {
+  background: var(--perron-color-surface-danger);
+}
+
+.pn-Toast[data-color='info'] {
+  background: var(--perron-color-surface-info);
+}
+
+/* CR-11: the toast follows the pointer while it is swiped */
+.pn-Toast[data-swiping] {
+  transition: none;
+}
+
+/* CR-11: it slides up from below its place and fades in */
+.pn-Toast[data-starting-style] {
+  opacity: 0;
+  translate: 0 100%;
+}
+
+/* CR-11: it slides down and fades out, or on in its swipe's direction from where the swipe left it */
+.pn-Toast[data-ending-style] {
+  opacity: 0;
+  translate: 0 100%;
+}
+
+.pn-Toast[data-ending-style][data-swipe-direction='down'] {
+  translate: var(--toast-swipe-movement-x) calc(var(--toast-swipe-movement-y) + 100%);
+}
+
+.pn-Toast[data-ending-style][data-swipe-direction='up'] {
+  translate: var(--toast-swipe-movement-x) calc(var(--toast-swipe-movement-y) - 100%);
+}
+
+.pn-Toast[data-ending-style][data-swipe-direction='right'] {
+  translate: calc(var(--toast-swipe-movement-x) + 100%) var(--toast-swipe-movement-y);
+}
+
+.pn-Toast[data-ending-style][data-swipe-direction='left'] {
+  translate: calc(var(--toast-swipe-movement-x) - 100%) var(--toast-swipe-movement-y);
+}
+
+/* CR-8: a toast past Base UI's limit is hidden as well as inert */
+.pn-Toast[data-limited] {
+  display: none;
+}
+
+/* The icon sits on the middle of the first line, in the intent's mark colour (Alert's CR-1). */
+.pn-Toast-icon {
+  --perron-icon-size: var(--perron-icon-size-325);
+
+  display: flex;
+  flex: none;
+  align-items: center;
+  block-size: 1lh;
+}
+
+.pn-Toast[data-color='neutral'] .pn-Toast-icon {
+  color: var(--perron-color-text-primary);
+}
+
+.pn-Toast[data-color='success'] .pn-Toast-icon {
+  color: var(--perron-color-status-success);
+}
+
+.pn-Toast[data-color='warning'] .pn-Toast-icon {
+  color: var(--perron-color-status-warning);
+}
+
+.pn-Toast[data-color='danger'] .pn-Toast-icon {
+  color: var(--perron-color-status-danger);
+}
+
+.pn-Toast[data-color='info'] .pn-Toast-icon {
+  color: var(--perron-color-status-info);
+}
+
+/* The content takes the row's free width; min-inline-size 0 lets a long word wrap (CR-10). */
+.pn-Toast-content {
+  display: flex;
+  flex: 1 1 0%;
+  flex-direction: column;
+  gap: var(--perron-space-100);
+  min-inline-size: 0;
+}
+
+.pn-Toast-title {
+  margin: 0;
+  font: var(--perron-typography-heading-sm);
+  letter-spacing: var(--perron-typography-heading-sm-tracking);
+  overflow-wrap: anywhere;
+}
+
+.pn-Toast-description {
+  margin: 0;
+  font: var(--perron-typography-body-sm);
+  letter-spacing: var(--perron-typography-body-sm-tracking);
+  overflow-wrap: anywhere;
+}
+
+.pn-Toast-action {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--perron-space-200);
+  margin-block-start: var(--perron-space-200);
+}
+
+/* CR-7: the CloseButton part draws the button; Toast pulls it up, down and to the end, so it sits
+   on the first line without making a one-line toast taller. */
+.pn-Toast-close {
+  margin-block: calc(-1 * var(--perron-space-200));
+  margin-inline-end: calc(-1 * var(--perron-space-200));
+}
