@@ -9,8 +9,10 @@ stages:
     started: 2026-10-25T01:20:17.725Z
     ended: 2026-10-25T01:21:25.932Z
   build:
-    runs: 2
-    failing: review round 2 found 5 P2 (components/filter-chip/review.md)
+    runs: 3
+    status: done
+    started: 2026-10-25T01:47:25.277Z
+    ended: 2026-10-25T01:50:11.261Z
   review:
     rounds: 2
     sentBack: 2
@@ -18,10 +20,6 @@ stages:
       p1: 0
       p2: 5
       p3: 6
-    status: failed
-    started: 2026-10-25T01:41:59.985Z
-    ended: 2026-10-25T01:47:20.513Z
-    failing: review round 2 found 5 P2 (components/filter-chip/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T01:19:52.654Z
@@ -69,3 +67,6 @@ notes:
   - stage: build
     at: 2026-10-25T01:41:55.733Z
     direction: "Spec, Tokens (selected, disabled): outside forced colours, the disabled on chip's color.surface.inset fill is still the same colour as the Count's pill (review P3-5). This run did not change it."
+  - stage: build
+    at: 2026-10-25T01:50:11.262Z
+    direction: "Spec, Tokens (selected, disabled): outside forced colours, the disabled selected chip's color.surface.inset fill is still the same colour as the Count's pill, so the pill disappears and only the tertiary figure is left (review P3-5). This run did not change it."

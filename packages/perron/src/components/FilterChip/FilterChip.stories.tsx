@@ -241,7 +241,7 @@ export const SelectedDisabled: Story = {
 
 /**
  * A caller that keeps the state in its own `useState` and sets it from `onChange`, unless the
- * change was canceled: the story's `onChange` spy stands for the caller's own handler, and may call
+ * change was cancelled: the story's `onChange` spy stands for the caller's own handler, and may call
  * `details.cancel()`.
  */
 function ControlledChip(args: FilterChipProps) {
@@ -286,6 +286,29 @@ export const Controlled: Story = {
     )
     await expect(root).toHaveAttribute('aria-pressed', 'false')
     root.blur()
+    // a caller that ignores the change without cancelling it: `selected` stays false, and so does
+    // the chip, which follows `selected` rather than its own state
+    const ignored = fn()
+    await mounted(
+      canvasElement,
+      <FilterChip selected={false} onChange={ignored}>
+        Diversions
+      </FilterChip>,
+      async (host) => {
+        await waitFor(() => expect(host.querySelector('button')).not.toBeNull())
+        const off = host.querySelector('button')!
+        await userEvent.click(off)
+        await expect(ignored).toHaveBeenCalledTimes(1)
+        await expect(ignored).toHaveBeenLastCalledWith(
+          expect.any(Event),
+          true,
+          expect.objectContaining({ reason: 'none', isCanceled: false }),
+        )
+        await expect(off).toHaveAttribute('aria-pressed', 'false')
+        await expect(off).not.toHaveAttribute('data-pressed')
+        off.blur()
+      },
+    )
   },
 }
 
@@ -301,6 +324,18 @@ export const LabelOnly: Story = {
     const box = root.getBoundingClientRect()
     await expect(box.height).toBeGreaterThanOrEqual(min)
     await expect(box.width).toBeGreaterThanOrEqual(min)
+    // a count that is not a finite number renders nothing, as `undefined` does
+    for (const count of [Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])
+      await mounted(
+        canvasElement,
+        <FilterChip count={count}>Planned works</FilterChip>,
+        async (host) => {
+          await waitFor(() => expect(host.querySelector('button')).not.toBeNull())
+          const other = host.querySelector('button')!
+          await expect(other.querySelector('.pn-FilterChip-count')).toBeNull()
+          await expect(other).toHaveAccessibleName('Planned works')
+        },
+      )
   },
 }
 
