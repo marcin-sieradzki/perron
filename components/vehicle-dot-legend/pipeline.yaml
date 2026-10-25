@@ -1,0 +1,56 @@
+# Written by npm run factory; never by hand.
+component: VehicleDotLegend
+layer: component
+deferred:
+  at: 2026-10-25T12:33:26.470Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-25T12:39:50.219Z
+    ended: 2026-10-25T12:40:55.008Z
+  build:
+    runs: 2
+    status: done
+    started: 2026-10-25T12:53:52.567Z
+    begun: 57293e98cb63d6c60d5fe50e6792c33f7cbb1e1afe3dff04a703d52cc6c5e55e
+    spec: 9589d60ffba9f9b78cda1664a38029fcb6d3c1e62636f96de79805f6a3a426a5
+    ended: 2026-10-25T12:55:33.795Z
+  review:
+    rounds: 2
+    sentBack: 1
+    reviewed: 1f6d6caee00b1da004ebabd5e738fc02178bf1a6
+    findings:
+      p1: 0
+      p2: 0
+      p3: 3
+    status: done
+    started: 2026-10-25T12:55:39.680Z
+    ended: 2026-10-25T12:57:52.453Z
+  docs:
+    status: done
+    started: 2026-10-25T12:58:28.910Z
+    ended: 2026-10-25T13:00:57.976Z
+notes:
+  - stage: brief
+    at: 2026-10-25T12:39:30.929Z
+    direction: VehicleDot has no neutral ink colour and its line prop is required, so the legend has to pass a placeholder line='m1' and override its colour in CSS. An ink option on VehicleDot would remove this workaround for the legend, and likely for VehicleDotLabel too.
+  - stage: brief
+    at: 2026-10-25T12:39:30.929Z
+    direction: VehicleDot's stories declare forcedColourSheet locally, and the legend's ForcedColours story needs the same helper. Under the contract it must first move to packages/perron/src/testing/stories.ts, take the class to look for as an argument, and join the Shared helpers table (CR-9). The current helper also matches .pn-VehicleDotLegend by substring.
+  - stage: brief
+    at: 2026-10-25T12:39:30.929Z
+    direction: Typography gives typography.caption to 'legend descriptions', and Data states says legends list all five states 'even when one has no vehicles', which hints at counts. The recommended legend has neither, so the design run should either confirm that or add both as optional props.
+  - stage: brief
+    at: 2026-10-25T12:39:30.929Z
+    questions: |-
+      1. (Anatomy) Is the legend one layout, a single row of five items that wraps between items in a narrow container, with no variant, size, color or orientation prop? Recommended: yes.
+      2. (Anatomy) Does the legend draw no surface and place nothing itself, leaving the screen to put it on a glass Surface at the bottom centre, stacked at z-index.map-controls? Recommended: yes.
+      3. (Props) Does the legend show only each state's dot and word, with no vehicle count, no description and no title? Recommended: yes.
+      4. (Tokens) Are the words and the dots one ink, color.text.primary, with the legend passing VehicleDot line='m1' and overriding its colour with .pn-VehicleDotLegend-dot[data-line][data-variant] { color: inherit }, CanvasText in forced colours? Recommended: yes.
+      5. (Tokens) Is the space space.100 between a dot and its word, space.300 between items and space.100 between wrapped rows? Recommended: yes.
+  - stage: build
+    at: 2026-10-25T12:48:05.689Z
+    direction: 'The legend''s <ul> has list-style: none, and Safari with VoiceOver drops the list role from such a list unless it has role="list". StopTimeline, KioskBar, DisruptionCard and DayProfileChart do the same, and the spec allows no ARIA here. Options: accept it library-wide, or add role="list" to every unstyled list as a contract rule.'
+  - stage: build
+    at: 2026-10-25T12:48:05.689Z
+    direction: VehicleDot always writes its aria-label from the locale, even when aria-hidden. If a caller passes a *Label to the legend, each hidden dot keeps the locale's word while the visible word changes. Nothing hears the dot, but to keep the two in step the legend could pass the overrides to its dots, or VehicleDot could leave out aria-label when it is aria-hidden.

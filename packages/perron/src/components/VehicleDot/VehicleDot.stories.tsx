@@ -9,6 +9,9 @@ import type { VehicleDotProps } from './VehicleDot.tsx'
 import {
   colour,
   expectNoFocus,
+  expectVehicleDotCut,
+  expectVehicleDotShape,
+  forcedColourSheet,
   mounted,
   rendered,
   resolve,
@@ -358,28 +361,6 @@ export const Live: Story = {
   },
 }
 
-/**
- * The no-signal cut as the spec draws it (CR-8), `width` wide: a gradient towards the bottom left,
- * whose 50% line runs from the top left of the glyph box to the bottom right, opaque in the root's
- * colour up to half a cut-width before it and from half a cut-width after it, transparent between.
- */
-function cut(root: Element, width: string) {
-  const ink = getComputedStyle(root).color
-  return resolve(
-    'maskImage',
-    `linear-gradient(to bottom left, ${ink} calc(50% - ${width} / 2), transparent calc(50% - ${width} / 2), transparent calc(50% + ${width} / 2), ${ink} calc(50% + ${width} / 2))`,
-  )
-}
-
-/**
- * The root's mask is exactly that cut, `vehicle-dot.no-signal.cut-width` wide unless `width` says
- * otherwise: the other diagonal, a gap of another width or opaque stops in the gap all fail.
- */
-const expectCut = (
-  root: Element,
-  width = rendered('vehicle-dot-no-signal-cut-width', 'stroke-width'),
-) => expect(getComputedStyle(root).maskImage).toBe(cut(root, width))
-
 /** A grey dot cut by a slash, whatever the line. */
 export const NoSignal: Story = {
   args: { variant: 'no-signal' },
@@ -389,7 +370,7 @@ export const NoSignal: Story = {
       const style = getComputedStyle(parts(canvasElement).dot)
       await expect(style.fill).toBe(colour(NO_SIGNAL))
       await expect(style.stroke).toBe('none')
-      await expectCut(root)
+      await expectVehicleDotCut(root)
     })
     await step('the cut is not mirrored in right-to-left text (CR-8)', async () => {
       await mounted(
@@ -400,7 +381,7 @@ export const NoSignal: Story = {
         async (host) => {
           const { root: rtl } = await waitFor(() => parts(host))
           await expect(getComputedStyle(rtl).direction).toBe('rtl')
-          await expectCut(rtl)
+          await expectVehicleDotCut(rtl)
           await expect(getComputedStyle(rtl).maskImage).toBe(getComputedStyle(root).maskImage)
         },
       )
@@ -412,7 +393,7 @@ export const NoSignal: Story = {
         <VehicleDot variant="no-signal" line="m1" style={wide} />,
         async (host) => {
           const { root: other } = await waitFor(() => parts(host))
-          await expectCut(other, '4px')
+          await expectVehicleDotCut(other, '4px')
           await expect(getComputedStyle(other).maskImage).not.toBe(getComputedStyle(root).maskImage)
         },
       )
@@ -427,7 +408,7 @@ export const NoSignal: Story = {
             await expect(other).toHaveAttribute('data-line', line)
             await expect(getComputedStyle(dot).fill).toBe(colour(NO_SIGNAL))
             await expect(getComputedStyle(dot).stroke).toBe('none')
-            await expectCut(other)
+            await expectVehicleDotCut(other)
           },
         )
       })
@@ -572,29 +553,6 @@ export const Lines: Story = {
   },
 }
 
-/**
- * Every `(forced-colors: active)` rule for VehicleDot in the document's sheets, unwrapped into a
- * sheet of its own: a play test cannot turn forced colours on, so it adopts these (CR-11).
- */
-function forcedColourSheet() {
-  const found: string[] = []
-  const visit = (rules: CSSRuleList, forced: boolean) => {
-    for (const rule of Array.from(rules))
-      if (rule instanceof CSSMediaRule)
-        visit(rule.cssRules, forced || rule.conditionText.includes('forced-colors: active'))
-      else if (
-        forced &&
-        rule instanceof CSSStyleRule &&
-        rule.selectorText.includes('.pn-VehicleDot')
-      )
-        found.push(rule.cssText)
-  }
-  for (const sheet of Array.from(document.styleSheets)) visit(sheet.cssRules, false)
-  const sheet = new CSSStyleSheet()
-  sheet.replaceSync(found.join('\n'))
-  return sheet
-}
-
 /** A dot's shape without its colour: its fill and opacity, its rim and dash, and its cut. */
 function shape(root: Element) {
   const style = getComputedStyle(dotOf(root))
@@ -605,59 +563,6 @@ function shape(root: Element) {
   ].join(', ')
 }
 
-/** Each state's own shape, drawn in `ink`: its fill and opacity, its rim and dash, and its cut. */
-const SHAPES: Record<Variant, (root: Element, ink: string) => Promise<unknown>> = {
-  live: async (root, ink) => {
-    const style = getComputedStyle(dotOf(root))
-    await expect(style.fill).toBe(ink)
-    await expect(style.fillOpacity).toBe('1')
-    await expect(style.stroke).toBe('none')
-    await expect(getComputedStyle(root).maskImage).toBe('none')
-  },
-  ageing: async (root, ink) => {
-    const style = getComputedStyle(dotOf(root))
-    await expect(style.fill).toBe(ink)
-    await expect(style.fillOpacity).toBe(
-      rendered('vehicle-dot-ageing-fill-opacity', 'fill-opacity'),
-    )
-    await expect(style.stroke).toBe(ink)
-    await expect(style.strokeWidth).toBe(
-      rendered('vehicle-dot-ageing-stroke-width', 'stroke-width'),
-    )
-    await expect(style.strokeDasharray).toBe('none')
-    await expect(getComputedStyle(root).maskImage).toBe('none')
-  },
-  estimated: async (root, ink) => {
-    const style = getComputedStyle(dotOf(root))
-    await expect(style.fill).toBe('none')
-    await expect(style.stroke).toBe(ink)
-    await expect(style.strokeWidth).toBe(
-      rendered('vehicle-dot-estimated-stroke-width', 'stroke-width'),
-    )
-    await expect(style.strokeDasharray).toBe('none')
-    await expect(getComputedStyle(root).maskImage).toBe('none')
-  },
-  'timetable-only': async (root, ink) => {
-    const style = getComputedStyle(dotOf(root))
-    await expect(style.fill).toBe('none')
-    await expect(style.stroke).toBe(ink)
-    await expect(style.strokeWidth).toBe(
-      rendered('vehicle-dot-timetable-stroke-width', 'stroke-width'),
-    )
-    await expect(style.strokeDasharray).toBe(
-      rendered('vehicle-dot-timetable-dash', 'stroke-dasharray'),
-    )
-    await expect(getComputedStyle(root).maskImage).toBe('none')
-  },
-  'no-signal': async (root, ink) => {
-    const style = getComputedStyle(dotOf(root))
-    await expect(style.fill).toBe(ink)
-    await expect(style.fillOpacity).toBe('1')
-    await expect(style.stroke).toBe('none')
-    await expectCut(root)
-  },
-}
-
 /**
  * The five states on M1 at medium, beside their words. Its first render, which the docs page, the
  * visual stage and the audits show, is in normal colours: the forced-colours look exists only while
@@ -666,7 +571,7 @@ const SHAPES: Record<Variant, (root: Element, ink: string) => Promise<unknown>> 
 export const ForcedColours: Story = {
   render: (args) => <States line={args.line} size="medium" />,
   play: async ({ canvasElement, step }) => {
-    const sheet = forcedColourSheet()
+    const sheet = forcedColourSheet('pn-VehicleDot')
     await expect(
       sheet.cssRules.length,
       'VehicleDot rules in (forced-colors: active)',
@@ -682,7 +587,7 @@ export const ForcedColours: Story = {
           await expect(root).toHaveAttribute('data-variant', variant)
           await expect(getComputedStyle(root).forcedColorAdjust).toBe('none')
           await expect(getComputedStyle(root).color).toBe(text)
-          await SHAPES[variant](root, text)
+          await expectVehicleDotShape(root, variant, text)
         })
       await step('the five shapes differ; no signal is cut and live is not', async () => {
         const shapes = roots.map(shape)
