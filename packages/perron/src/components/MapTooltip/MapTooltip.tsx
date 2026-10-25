@@ -4,7 +4,7 @@
 import { mergeProps } from '@base-ui/react/merge-props'
 import { Tooltip } from '@base-ui/react/tooltip'
 import type { ReactNode, Ref } from 'react'
-import { classes } from '../../internal/nodes.ts'
+import { withClass } from '../../internal/nodes.ts'
 import './MapTooltip.css'
 
 type ChangeDetails = Tooltip.Root.ChangeEventDetails
@@ -83,18 +83,6 @@ export interface MapTooltipProps extends Omit<Tooltip.Popup.Props, 'children' | 
      */
     positioner?: Tooltip.Positioner.Props
   }
-}
-
-/**
- * Base UI's `className`: a string, or a function of the part's state. `mergeProps` joins strings
- * only, so each part's class is set after the merge, by `withClass`.
- */
-type ClassName<State> = string | ((state: State) => string | undefined) | undefined
-
-/** The part's own class first, then the caller's, whether the caller's is a string or a function. */
-function withClass<State>(own: string, theirs: ClassName<State>): ClassName<State> {
-  if (typeof theirs === 'function') return (state) => classes(own, theirs(state))
-  return classes(own, theirs)
 }
 
 /** The map's hover card: a few of the caller's words against a point on the map or an element. */
