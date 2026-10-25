@@ -692,7 +692,7 @@
     "name": "Separator",
     "layer": "component",
     "category": "Layout",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": ["Separator"],
     "penpotPath": "Components/Separator",
     "dependsOn": []
