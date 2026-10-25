@@ -3,4 +3,9 @@ component: MapTooltip
 layer: component
 deferred:
   at: 2026-10-25T00:10:58.185Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-25T00:11:02.371Z
+    ended: 2026-10-25T00:18:53.157Z
+    pending: 11
