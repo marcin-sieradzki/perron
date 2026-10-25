@@ -8,7 +8,7 @@ import { expect, fireEvent, fn, screen, userEvent, waitFor, within } from 'story
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { dictionaries } from '../../locale/index.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
-import { colour, heard, mounted } from '../../testing/stories.ts'
+import { colour, heard, mounted, onHover, rendered } from '../../testing/stories.ts'
 import { LineBadge } from '../LineBadge/LineBadge.tsx'
 import { StationIcon } from '../StationIcon/StationIcon.tsx'
 import { SearchField } from './SearchField.tsx'
@@ -90,40 +90,6 @@ const highlighted = (input: HTMLElement) => {
     : null
 }
 
-/** A length token as it renders, through a probe that reads it as an outline's width or offset. */
-function outline(property: 'outlineWidth' | 'outlineOffset', token: `--perron-${string}`) {
-  const probe = document.createElement('span')
-  probe.style.outlineStyle = 'solid'
-  probe.style[property] = `var(${token})`
-  document.body.append(probe)
-  const rendered = getComputedStyle(probe)[property]
-  probe.remove()
-  return rendered
-}
-
-/**
- * The declarations hovering `element` adds: each rule inside `(hover: hover)` whose selector,
- * without `:hover`, matches it. A script's events can't set `:hover`, so this reads the rule the
- * pointer triggers; the visual stage hovers for real.
- */
-function hoverRules(element: Element) {
-  const found: CSSStyleDeclaration[] = []
-  const visit = (rules: CSSRuleList, inQuery: boolean) => {
-    for (const rule of Array.from(rules))
-      if (rule instanceof CSSMediaRule)
-        visit(rule.cssRules, inQuery || rule.conditionText.includes('(hover: hover)'))
-      else if (
-        rule instanceof CSSStyleRule &&
-        inQuery &&
-        rule.selectorText.includes(':hover') &&
-        element.matches(rule.selectorText.replaceAll(':hover', ''))
-      )
-        found.push(rule.style)
-  }
-  for (const sheet of Array.from(document.styleSheets)) visit(sheet.cssRules, false)
-  return found
-}
-
 /** The subject story: the empty field, its label, icon and placeholder, the list closed. */
 export const Default: Story = {
   play: async ({ canvasElement, step }) => {
@@ -150,9 +116,9 @@ export const Default: Story = {
 export const Hover: Story = {
   play: async ({ canvasElement }) => {
     const group = canvasElement.querySelector('.pn-SearchField-inputGroup')!
-    const images = hoverRules(group).map((s) => s.getPropertyValue('background-image'))
-    await expect(images.at(-1)).toContain('var(--perron-color-surface-hover)')
-    await expect(images.at(-1)).toContain('linear-gradient')
+    const image = onHover(group, 'background-image')
+    await expect(image).toContain('var(--perron-color-surface-hover)')
+    await expect(image).toContain('linear-gradient')
     await expect(getComputedStyle(group).backgroundColor).toBe(
       colour('--perron-color-surface-raised'),
     )
@@ -170,8 +136,8 @@ export const Focus: Story = {
     const ring = getComputedStyle(group)
     await expect(ring.outlineStyle).toBe('solid')
     await expect(ring.outlineColor).toBe(colour('--perron-color-border-focus'))
-    await expect(ring.outlineWidth).toBe(outline('outlineWidth', '--perron-focus-width'))
-    await expect(ring.outlineOffset).toBe(outline('outlineOffset', '--perron-focus-offset'))
+    await expect(ring.outlineWidth).toBe(rendered('focus-width', 'outline-width'))
+    await expect(ring.outlineOffset).toBe(rendered('focus-offset', 'outline-offset'))
     await expect(getComputedStyle(input).outlineStyle).toBe('none')
     await userEvent.tab({ shift: true })
     await expect(input).not.toHaveFocus()
@@ -520,6 +486,7 @@ export const Controlled: Story = {
       )
       await listClosed()
       await expect(input).toHaveFocus()
+      input.blur()
     })
   },
 }

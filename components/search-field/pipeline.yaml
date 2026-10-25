@@ -9,19 +9,18 @@ stages:
     started: 2026-10-25T01:41:44.227Z
     ended: 2026-10-25T01:43:26.113Z
   build:
-    runs: 2
-    failing: review round 1 found 1 P1 and 4 P2 (components/search-field/review.md)
+    runs: 3
+    status: done
+    started: 2026-10-25T02:12:30.840Z
+    spec: 5e157b01ec63437b7fd2f81b2f53dde9c385375146500e663f3e2b9fb816bc9d
+    ended: 2026-10-25T02:15:59.607Z
   review:
-    status: failed
-    started: 2026-10-25T02:03:38.566Z
     rounds: 1
+    sentBack: 1
     findings:
       p1: 1
       p2: 4
       p3: 7
-    sentBack: 1
-    ended: 2026-10-25T02:12:23.556Z
-    failing: review round 1 found 1 P1 and 4 P2 (components/search-field/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T01:40:53.602Z
@@ -105,3 +104,9 @@ notes:
   - stage: build
     at: 2026-10-25T02:02:58.866Z
     direction: The shared closed story helper waits only for a dialog; SearchField keeps a local listClosed for its popup list. When a second popup-list component needs it, it could join the Shared helpers table.
+  - stage: build
+    at: 2026-10-25T02:15:59.608Z
+    direction: "The clear button can still look enabled while it is disabled: when a Base UI Fieldset around the field disables it, rather than SearchField's own disabled prop, Base UI still renders the CloseButton disabled with no disabled look (review P3-7). Leaving it out on Field's disabled state would need the field's context, not just its own prop."
+  - stage: build
+    at: 2026-10-25T02:15:59.608Z
+    direction: onClose takes Base UI's whole ChangeEventReason type, which also allows reasons SearchField never sends (such as 'imperative-action'). A narrower union type for SearchField's close reasons would let a caller's switch statement be checked for missing cases.

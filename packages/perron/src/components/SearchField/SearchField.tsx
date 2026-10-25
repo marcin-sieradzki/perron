@@ -97,8 +97,8 @@ export interface SearchFieldProps extends Omit<
   onOpen?: (event: Event, details: OpenDetails) => void
   /**
    * Called when the list asks to close: `reason` is `'escape-key'`, `'outside-press'`,
-   * `'focus-out'`, `'item-press'`, `'input-clear'` or `'close-press'`; `details.cancel()` keeps
-   * it open.
+   * `'focus-out'`, `'item-press'`, `'input-clear'`, `'close-press'`, or `'none'` for Enter with no
+   * row highlighted; `details.cancel()` keeps it open.
    */
   onClose?: (
     event: Event,
@@ -130,8 +130,8 @@ export interface SearchFieldProps extends Omit<
     inputGroup?: Autocomplete.InputGroup.Props
     /** Props for the `input` part, such as `autoFocus`. */
     input?: Autocomplete.Input.Props
-    /** Props for the `clear` part, the clear button. */
-    clear?: Autocomplete.Clear.Props
+    /** Props for the `clear` part, all but `disabled`: the clear button is never disabled. */
+    clear?: Omit<Autocomplete.Clear.Props, 'disabled'>
     /** Props for the `portal` part, such as its `container`. */
     portal?: Autocomplete.Portal.Props
     /** Props for the `positioner` part, such as `side` or `collisionPadding`. */
@@ -142,7 +142,7 @@ export interface SearchFieldProps extends Omit<
     empty?: Autocomplete.Empty.Props
     /** Props for the `list` part, the listbox. */
     list?: Autocomplete.List.Props
-    /** Props for every `item` part, each suggestion's row. Its `onClick` runs before `onItemSelect`. */
+    /** Props for every `item` part, each suggestion's row. Its `onClick` runs after `onItemSelect`. */
     item?: Autocomplete.Item.Props
   }
 }
@@ -272,13 +272,12 @@ export function SearchField({
                 {(item: SearchFieldItem) => (
                   <Autocomplete.Item
                     key={item.value}
-                    // CR-5: the caller's onClick runs first, then onItemSelect; the item's value
-                    // is SearchField's own, last
-                    {...mergeProps<typeof Autocomplete.Item>(
-                      { onClick: (event) => onItemSelect?.(event, item) },
-                      slotProps?.item,
-                      { value: item },
-                    )}
+                    // CR-5: SearchField's own props last, so onItemSelect runs first, then the
+                    // caller's onClick, which can't cancel it
+                    {...mergeProps<typeof Autocomplete.Item>(slotProps?.item, {
+                      value: item,
+                      onClick: (event) => onItemSelect?.(event, item),
+                    })}
                     className={withClass('pn-SearchField-item', slotProps?.item?.className)}
                   >
                     {given(item.startIcon) ? (
