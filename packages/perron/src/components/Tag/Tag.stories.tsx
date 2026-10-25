@@ -122,6 +122,36 @@ export const FilledNeutral: Story = {
         await waitFor(() => expect(tag.getBoundingClientRect().height).toBe(atRest))
       },
     )
+    await step(
+      'in a 320 px flex row beside a long text, the tag keeps "Night" whole (CR-6)',
+      async () => {
+        const row = document.createElement('div')
+        row.style.cssText = 'display: flex; gap: 8px; inline-size: 320px'
+        const text = document.createElement('span')
+        text.textContent = 'Nørreport St. via Rådhuspladsen, Hovedbanegården og Enghave Plads'
+        row.append(text)
+        canvasElement.append(row)
+        try {
+          await withTag(row, { children: 'Night bus' }, async (t) => {
+            // the first word's own width, measured on the tag's text node
+            const word = document.createRange()
+            word.setStart(t.firstChild!, 0)
+            word.setEnd(t.firstChild!, 'Night'.length)
+            const style = getComputedStyle(t)
+            const content =
+              t.getBoundingClientRect().width -
+              parseFloat(style.paddingInlineStart) -
+              parseFloat(style.paddingInlineEnd) -
+              parseFloat(style.borderInlineStartWidth) -
+              parseFloat(style.borderInlineEndWidth)
+            await expect(content).toBeGreaterThanOrEqual(word.getBoundingClientRect().width - 0.5)
+            await expect(word.getClientRects()).toHaveLength(1)
+          })
+        } finally {
+          row.remove()
+        }
+      },
+    )
   },
 }
 
@@ -149,12 +179,12 @@ export const FilledInfo: Story = {
   play: carries('filled', 'info', 'Extra departure'),
 }
 
-/** `variant='dashed'`, `color='neutral'`: "Night bus". */
+/** `variant='dashed'`, `color='neutral'`: "Night bus planned". */
 export const DashedNeutral: Story = {
-  args: { variant: 'dashed', color: 'neutral', children: 'Night bus' },
+  args: { variant: 'dashed', color: 'neutral', children: 'Night bus planned' },
   play: async (context) => {
     const { canvasElement, step } = context
-    await carries('dashed', 'neutral')!(context)
+    await carries('dashed', 'neutral', 'Night bus planned')!(context)
     const tag = tagIn(canvasElement)
     await step(
       'the edge is a dashed border.width.025 hairline, as filled draws (CR-4)',
@@ -167,7 +197,7 @@ export const DashedNeutral: Story = {
         await expect(dashed.borderTopWidth).toBe(hairline)
         await withTag(
           canvasElement,
-          { variant: 'filled', children: 'Night bus' },
+          { variant: 'filled', children: 'Night bus planned' },
           async (filled) => {
             const solid = getComputedStyle(filled)
             await expect(solid.borderTopStyle).toBe('solid')
@@ -182,26 +212,26 @@ export const DashedNeutral: Story = {
   },
 }
 
-/** `variant='dashed'`, `color='success'`: "Step-free". */
+/** `variant='dashed'`, `color='success'`: "Step-free expected". */
 export const DashedSuccess: Story = {
-  args: { variant: 'dashed', color: 'success', children: 'Step-free' },
-  play: carries('dashed', 'success'),
+  args: { variant: 'dashed', color: 'success', children: 'Step-free expected' },
+  play: carries('dashed', 'success', 'Step-free expected'),
 }
 
-/** `variant='dashed'`, `color='warning'`: "Replacement bus". */
+/** `variant='dashed'`, `color='warning'`: "Replacement bus planned". */
 export const DashedWarning: Story = {
-  args: { variant: 'dashed', color: 'warning', children: 'Replacement bus' },
-  play: carries('dashed', 'warning'),
+  args: { variant: 'dashed', color: 'warning', children: 'Replacement bus planned' },
+  play: carries('dashed', 'warning', 'Replacement bus planned'),
 }
 
-/** `variant='dashed'`, `color='danger'`: "Cancelled". */
+/** `variant='dashed'`, `color='danger'`: "Cancellation expected". */
 export const DashedDanger: Story = {
-  args: { variant: 'dashed', color: 'danger', children: 'Cancelled' },
-  play: carries('dashed', 'danger'),
+  args: { variant: 'dashed', color: 'danger', children: 'Cancellation expected' },
+  play: carries('dashed', 'danger', 'Cancellation expected'),
 }
 
-/** `variant='dashed'`, `color='info'`: "Extra departure". */
+/** `variant='dashed'`, `color='info'`: "Extra departure planned". */
 export const DashedInfo: Story = {
-  args: { variant: 'dashed', color: 'info', children: 'Extra departure' },
-  play: carries('dashed', 'info'),
+  args: { variant: 'dashed', color: 'info', children: 'Extra departure planned' },
+  play: carries('dashed', 'info', 'Extra departure planned'),
 }

@@ -4,9 +4,10 @@
 .pn-Tag {
   display: inline-block;
   box-sizing: border-box;
-  /* CR-6: the tag wraps inside itself and never runs past its container */
+  /* CR-6: the tag wraps inside itself and never runs past its container; break-word, not anywhere,
+     so its min-content width keeps whole words and a flex row never squeezes it to a glyph */
   max-inline-size: 100%;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
   padding-block: var(--perron-space-050);
   padding-inline: var(--perron-space-200);
   border-radius: var(--perron-radius-full);

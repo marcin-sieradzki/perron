@@ -22,8 +22,9 @@ export interface TagProps extends Omit<useRender.ComponentProps<'span'>, 'childr
    */
   color?: 'neutral' | 'success' | 'warning' | 'danger' | 'info'
   /**
-   * The words: one or two, written in sentence case, which the tag sets in capitals. A string, an
-   * element such as `<time>`, or a list of both.
+   * The words: one or two, and on a `dashed` tag a word more that says it is not confirmed, such
+   * as "Replacement bus planned"; written in sentence case, which the tag sets in capitals. A
+   * string, an element such as `<time>`, or a list of both.
    */
   children: ReactNode
 }
