@@ -312,6 +312,97 @@
       }
     }
   },
+  "Dialog": {
+    "extends": [
+      "Omit< BaseDialog.Popup.Props, 'children' | 'title' | 'className' | 'style' | 'ref' >"
+    ],
+    "props": {
+      "actions": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "closeLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "defaultOpen": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "description": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "onClose": {
+        "optional": true,
+        "type": [
+          "(event: Event, reason: DialogRootChangeEventReason, details: DialogRootChangeEventDetails) => void"
+        ]
+      },
+      "onOpen": {
+        "optional": true,
+        "type": [
+          "(event: Event, details: DialogRootChangeEventDetails) => void"
+        ]
+      },
+      "open": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ trigger?: Props<unknown> | undefined; portal?: DialogPortalProps | undefined; backdrop?: DialogBackdropProps | undefined; title?: DialogTitleProps | undefined; description?: DialogDescriptionProps | undefined; close?: Omit<DialogCloseProps, \"disabled\"> | undefined; }"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "title": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "trigger": {
+        "optional": true,
+        "type": [
+          "ReactElement<unknown, string | JSXElementConstructor<any>>"
+        ]
+      }
+    }
+  },
   "DisruptionCard": {
     "extends": [
       "Omit<SurfaceProps, 'variant' | 'children' | 'title'>"
@@ -843,6 +934,109 @@
       }
     }
   },
+  "Sheet": {
+    "extends": [
+      "Omit<Drawer.Popup.Props, 'children' | 'title'>"
+    ],
+    "props": {
+      "anchor": {
+        "optional": true,
+        "type": [
+          "\"bottom\"",
+          "\"left\"",
+          "\"right\""
+        ]
+      },
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "closeLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "defaultOpen": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "defaultSnapPoint": {
+        "optional": true,
+        "type": [
+          "null",
+          "number",
+          "string"
+        ]
+      },
+      "modal": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "onClose": {
+        "optional": true,
+        "type": [
+          "(event: Event | MouseEvent | PointerEvent | TouchEvent | KeyboardEvent | FocusEvent, reason: DrawerRootChangeEventReason, details: DrawerRootChangeEventDetails) => void"
+        ]
+      },
+      "onOpen": {
+        "optional": true,
+        "type": [
+          "(event: Event | MouseEvent | PointerEvent | TouchEvent | KeyboardEvent | FocusEvent, details: DrawerRootChangeEventDetails) => void"
+        ]
+      },
+      "onSnapPointChange": {
+        "optional": true,
+        "type": [
+          "(event: Event | MouseEvent | PointerEvent | TouchEvent | KeyboardEvent | FocusEvent, snapPoint: DrawerSnapPoint | null, details: DrawerRootSnapPointChangeEventDetails) => void"
+        ]
+      },
+      "open": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ trigger?: Props<unknown> | undefined; portal?: DrawerPortalProps | undefined; backdrop?: DrawerBackdropProps | undefined; viewport?: DrawerViewportProps | undefined; title?: DrawerTitleProps | undefined; close?: DrawerCloseProps | undefined; content?: DrawerContentProps | undefined; }"
+        ]
+      },
+      "snapPoint": {
+        "optional": true,
+        "type": [
+          "null",
+          "number",
+          "string"
+        ]
+      },
+      "snapPoints": {
+        "optional": true,
+        "type": [
+          "DrawerSnapPoint[]"
+        ]
+      },
+      "title": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "trigger": {
+        "optional": true,
+        "type": [
+          "ReactElement<unknown, string | JSXElementConstructor<any>>"
+        ]
+      }
+    }
+  },
   "Stat": {
     "extends": [
       "Omit<useRender.ComponentProps<'div'>, 'children'>"
@@ -1064,6 +1258,57 @@
           "\"inset\"",
           "\"opaque\"",
           "\"raised\""
+        ]
+      }
+    }
+  },
+  "Tabs": {
+    "extends": [
+      "Inherited< BaseTabs.Root.Props, 'value' | 'defaultValue' | 'onValueChange' | 'orientation' | 'onChange' >"
+    ],
+    "props": {
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "defaultValue": {
+        "optional": true,
+        "type": [
+          "null",
+          "string"
+        ]
+      },
+      "onChange": {
+        "optional": true,
+        "type": [
+          "(event: Event, value: string | null, details: TabsRootChangeEventDetails) => void"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "value": {
+        "optional": true,
+        "type": [
+          "null",
+          "string"
         ]
       }
     }
