@@ -3,4 +3,35 @@ component: VehicleTable
 layer: pattern
 deferred:
   at: 2026-10-25T13:17:35.632Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-25T13:17:39.739Z
+    ended: 2026-10-25T13:25:09.831Z
+notes:
+  - stage: brief
+    at: 2026-10-25T13:25:09.831Z
+    direction: "The rows can't be pressed or selected (CR-7): to open a vehicle, a caller passes a Perron Link as its destination. The table has no selected row for the vehicle open in the detail panel or followed on the map. The Rows family's selected look (color.surface.selected with SelectedMark) is a decision for the design run."
+  - stage: brief
+    at: 2026-10-25T13:25:09.831Z
+    direction: size.vehicle-row says a virtualised list relies on it, but no Perron part virtualises, and a pattern can import nothing to do so. The spec treats the token as a least row height and leaves windowing to the screen. The design run should decide whether a vehicle row is fixed at 52 px (with its destination truncated, which breaks reflow at 320 px) or grows with the text.
+  - stage: brief
+    at: 2026-10-25T13:25:09.831Z
+    direction: '"Position" as the name of the data-state column is new vocabulary. A line in docs/content-design.md naming that column once would keep it the same on every screen.'
+  - stage: brief
+    at: 2026-10-25T13:25:09.831Z
+    direction: Every row has two row headers, the line and the destination, so that each cell is heard with the vehicle it belongs to. Screen readers differ in whether they read both, so the accessibility audit should confirm this in VoiceOver and NVDA.
+  - stage: brief
+    at: 2026-10-25T13:25:09.831Z
+    direction: font.family.data lists 'data ages' among its uses, but the table has no 'since 08:02' column for a vehicle's last report. If the design wants one, it can join later as an optional field.
+  - stage: brief
+    at: 2026-10-25T13:25:09.831Z
+    questions: |-
+      1. (Anatomy) Is the table a native <table> of four columns (Line, Destination, Position, Delay) under a visible header row, with each row's line and destination cells as its row headers (<th scope="row">), and no column for a vehicle number, a data age or an action? Recommended: yes.
+      2. (Props) Does the table take its vehicles as one array, `vehicles: ReadonlyArray<VehicleTableVehicle>`, each with `id`, `line`, `lineName`, `destination`, `variant` and an optional `delay` (minutes, number | null, left out meaning unknown), with `variant` required so that no vehicle defaults to Live? Recommended: yes.
+      3. (Props) Does the table show the vehicles in the order given, with no sorting of its own, no sortable column headers and no aria-sort? Recommended: yes.
+      4. (Props) Does VehicleTable take no `slotProps`, and take the composed components' labels as its own top-level props (the five state labels, Delay's five, and its four column labels)? Recommended: yes.
+      5. (Props) Does the table own no accessible name, taking its name from the caller through `aria-labelledby` or `aria-label` on the root? Recommended: yes.
+      6. (Tokens) Is each row at least `size.vehicle-row` tall (the <tr>'s `height`, which a table row treats as a least height, so the row grows only when a long destination wraps), with no virtualisation in the pattern itself? Recommended: yes.
+      7. (Tokens) Are the header cells in typography.label-sm and color.text.secondary, the destination in typography.label and color.text.primary, and every cell space.200 above and below and space.300 from the cell before it, with the first column flush to the start edge? Is the delay column aligned to the end, with a border.width.025 color.border.subtle divider under the header and between rows but none after the last, and no fill, radius or hover? Recommended: yes.
+      8. (Owned strings) Does the table add four owned strings for its column headers, `lineColumn` "Line", `destinationColumn` "Destination", `positionColumn` "Position" and `delayColumn` "Delay" (overridden by `lineColumnLabel`, `destinationColumnLabel`, `positionColumnLabel` and `delayColumnLabel`), kept out of content design's table? Recommended: yes.
