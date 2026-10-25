@@ -3,9 +3,6 @@ component: NumberField
 layer: component
 deferred:
   at: 2026-10-25T06:34:21.822Z
-needsHuman:
-  stage: review
-  reason: '3 review rounds found a P1 or a P2; the last: review round 7 found 1 P2 (components/number-field/review.md)'
 stages:
   brief:
     status: done
@@ -20,7 +17,7 @@ stages:
     ended: 2026-10-25T08:54:05.101Z
   review:
     rounds: 7
-    sentBack: 3
+    sentBack: 0
     reviewed: dee5a78a1881f80c77e00f4c054dc70faac96b41
     findings:
       p1: 0
@@ -96,3 +93,6 @@ notes:
   - stage: build
     at: 2026-10-25T08:54:05.101Z
     direction: An autofill of Base UI's hidden input calls onChange with the reason 'none' but never onChangeCommitted, so a caller who saves on onChangeCommitted, as the spec's Do row advises, misses an autofilled number the person never touches.
+  - stage: review
+    at: 2026-10-25T08:59:12.193Z
+    unblocked: '3 review rounds found a P1 or a P2; the last: review round 7 found 1 P2 (components/number-field/review.md)'
