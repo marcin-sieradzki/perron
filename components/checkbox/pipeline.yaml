@@ -3,4 +3,31 @@ component: Checkbox
 layer: component
 deferred:
   at: 2026-10-25T04:38:49.708Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-25T04:38:54.630Z
+    ended: 2026-10-25T04:49:06.598Z
+    pending: 12
+notes:
+  - stage: brief
+    at: 2026-10-25T04:49:06.599Z
+    direction: No ROADMAP wave line names Checkbox or the other 20 components registered in eb95ff6, so the brief's only sources for scope were the contract's two mentions. A Phase 6 wave line for the form components would anchor future briefs.
+  - stage: brief
+    at: 2026-10-25T04:49:06.599Z
+    direction: The contract's Shared parts row for CheckboxIndicator names only the tick icon, though it says the part draws a dash too. Question 4 asks to add the dash icon to that row, so the shared-parts gate guards both icons.
+  - stage: brief
+    at: 2026-10-25T04:49:06.599Z
+    questions: |-
+      1. (Anatomy) Is the label the caller's `children`, rendered inside Base UI's `<span role="checkbox">` after the box, so the whole row is one control? Recommended: yes; a checkbox with no children takes its name from aria-label, aria-labelledby or a <label htmlFor>; links go beside the checkbox.
+      2. (Anatomy) Is the box drawn by the new CheckboxIndicator shared part in packages/perron/src/parts/, rendered through Checkbox.Indicator's render callback with keepMounted, passing a mark of 'tick', 'dash' or none? Recommended: yes.
+      3. (Tokens) Token for the box's side? Recommended: size.checkbox, a new 16px base token, "The box of a checkbox, and of a menu's checkbox item".
+      4. (Tokens) Are the tick and dash two new icons, tick and dash, on the 14 px grid with a 1.8 px round stroke at icon.size.325, under a new "Controls" category, with the contract's CheckboxIndicator row naming the dash icon too? Recommended: yes.
+      5. (Tokens) Unticked box takes the Fields family's treatment (surface.raised, border.width.025 in border.control, surface.hover overlay, radius.xs) and turns ink (surface.inverse, text.inverse mark, transparent edge, inverse-hover) when ticked or indeterminate? Recommended: yes.
+      6. (Tokens) Disabled drawn as FilterChip's disabled states (transparent + border.subtle unticked; surface.inset + text.tertiary mark ticked; label text.tertiary; no hover)? Recommended: yes.
+      7. (Tokens) Invalid inside Field.Root gives a status.danger edge, ticked or not? Recommended: yes.
+      8. (Tokens) Read-only keeps its rest look, no hover or press, default cursor? Recommended: yes.
+      9. (Tokens) Label in typography.body, text.primary, space.200 after the box, overflow-wrap: anywhere, root an inline flex row with max-inline-size 100%? Recommended: yes.
+      10. (Tokens) perron.css focus ring round box and label on a radius.xs root, root at least size.target-min, box centred on the first line? Recommended: yes.
+      11. (Props) No variant, color or size, and Base UI's parent left out for CheckboxGroup? Recommended: yes.
+      12. (Stories) CheckedDisabled and ReadOnly stories and a hover check in Checked's play, with no Penpot variant of their own? Recommended: yes.
