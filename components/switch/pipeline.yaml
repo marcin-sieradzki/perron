@@ -3,4 +3,30 @@ component: Switch
 layer: component
 deferred:
   at: 2026-10-25T04:39:00.902Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-25T04:39:05.981Z
+    ended: 2026-10-25T04:47:26.699Z
+notes:
+  - stage: brief
+    at: 2026-10-25T04:47:26.699Z
+    direction: No ROADMAP line names Switch. It reached the registry only through the 'Register 21 form…' commit, so the spec rests on the contract, the foundations, the tokens and Base UI alone.
+  - stage: brief
+    at: 2026-10-25T04:47:26.699Z
+    direction: Accessibility's 'Toggles say their state in words' rule reads as if it covers switches. The recommendation is that it applies to toggle buttons only; once answered, the foundation page could say so (question 10).
+  - stage: brief
+    at: 2026-10-25T04:47:26.699Z
+    direction: Elevation says only the selected segment casts a shadow, so the switch thumb uses none. A shadowed thumb would need shadow.thumb's description and the Shadows prose widened.
+  - stage: brief
+    at: 2026-10-25T04:47:26.699Z
+    direction: The spec uses color.surface.inverse as a border colour and color.text.tertiary and color.text.secondary as fills. Both are within the component token families, but outside the tokens' described uses.
+  - stage: brief
+    at: 2026-10-25T04:47:26.699Z
+    direction: "The Perron MCP's list_tokens lags the worktree: size.meter-track is missing from it. Token facts here were read from packages/perron/tokens/ instead."
+  - stage: brief
+    at: 2026-10-25T04:47:26.699Z
+    direction: The Invalid story imports Base UI's Field.Root directly, because Perron's Field is not built. It should move to Perron's Field once that ships.
+  - stage: brief
+    at: 2026-10-25T04:47:26.699Z
+    questions: "1. (Props) Is the switch's state checked, defaultChecked and onChange(event, checked, details), with value kept as the string a form submits when it is on? Recommended: yes. 2. (Props) Does the switch take no label of its own, so the caller names it with a <label>, a Field's label, or aria-label/aria-labelledby? Recommended: yes. 3. (Props) Does it come in one look, with no variant, size or color? Recommended: yes. 4. (Props) Does it pass value, uncheckedValue, form, inputRef, id, nativeButton and render through unchanged, and declare readOnly, required and name with Perron's own descriptions? Recommended: yes. 5. (Tokens) Is the track 40 x 24 px and the thumb 18 px, built with calc() from size.target-min, space.400, space.050 and border.width.025, with no new size token? Recommended: yes. 6. (Tokens) Off: color.surface.inset track, color.border.control edge, color.text.secondary thumb; on: color.surface.inverse track and edge, color.surface.raised thumb; hover/pressed lay color.surface.hover over off and turn on to color.surface.inverse-hover; no shadow? Recommended: yes. 7. (Tokens) Disabled off: inset track, color.border.subtle edge, color.text.tertiary thumb; disabled on: color.text.tertiary track and edge, color.surface.raised thumb; no hover/pressed? Recommended: yes. 8. (Tokens) Inside an invalid Field.Root (data-invalid) the edge turns color.status.danger, on and off, fills unchanged? Recommended: yes. 9. (Tokens) Add a new base token duration.switch of 150ms with a 0.01ms reduced-motion override through the design-tokens skill, read with easing.standard? Recommended: yes. 10. (Owned strings) No On/Off word, though Accessibility's 'State in words' rule asks toggles to say their state? Recommended: yes, no words. 11. (CR-8) A read-only switch looks as at rest, no hover or pressed layer, default cursor? Recommended: yes. 12. (Stories) The on state is the State value checked, story Checked, not selected? Recommended: yes."
