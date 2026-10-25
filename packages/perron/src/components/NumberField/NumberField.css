@@ -1,0 +1,139 @@
+/* NumberField, from docs/components/number-field.md: the Fields family's box, drawn on Base UI's
+   group, holding the input and the two stepper buttons. The frame, its label, its help and its
+   error are Field's, whose CSS this file never writes again. Every state changes at once, with no
+   transition (CR-11), and Base UI's hidden input is never styled (CR-16). */
+
+/* The root takes the frame's width (CR-12). */
+.pn-NumberField {
+  display: block;
+  min-inline-size: 0;
+}
+
+/* The box: the input, then the two buttons, in a row as wide as the frame (CR-7, CR-12). No gap:
+   the input's end padding is the space before the buttons, so a press there focuses it. */
+.pn-NumberField-group {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  inline-size: 100%;
+  block-size: var(--perron-size-input);
+  padding-inline-end: var(--perron-space-050);
+  border: var(--perron-border-width-025) solid var(--perron-color-border-control);
+  border-radius: var(--perron-radius-md);
+  background-color: var(--perron-color-surface-raised);
+}
+
+/* The hover layer laid over the raised fill, as the Fields do. */
+@media (hover: hover) {
+  /* perron-allow(pointer-feedback): a text box takes the focus ring and the text cursor on press, so it has no pressed look and no pointer */
+  .pn-NumberField-group:not([data-disabled]):hover {
+    background-image: linear-gradient(
+      var(--perron-color-surface-hover),
+      var(--perron-color-surface-hover)
+    );
+  }
+}
+
+/* The ring rings the whole box, never the bare input inside it (CR-7). */
+.pn-NumberField-group:has(.pn-NumberField-input:focus-visible) {
+  outline: var(--perron-focus-width) solid var(--perron-color-border-focus);
+  outline-offset: var(--perron-focus-offset);
+}
+
+/* The danger edge, never on a disabled box, whose error Field turns to the tertiary ink. */
+.pn-NumberField-group[data-invalid]:not([data-disabled]) {
+  border-color: var(--perron-color-status-danger);
+}
+
+/* Transparent inside the box, which draws the fill, the edge and the ring; one line of figures
+   that keep their widths as the number steps, and scroll, as a native input does (CR-10). It fills
+   the box from its start edge up to the buttons, top to bottom, so a press there lands on it and
+   focuses it; its start padding sets the number where the Fields' words start, and its end padding
+   is the space before the buttons. Only the strips round the buttons stay the box's own: the 1 px
+   above and below each, the space between them and the space after them. */
+.pn-NumberField-input {
+  flex: 1;
+  align-self: stretch;
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  padding-inline-start: var(--perron-space-300);
+  padding-inline-end: var(--perron-space-050);
+  border: 0;
+  background: transparent;
+  outline: none;
+  font: var(--perron-typography-body);
+  letter-spacing: var(--perron-typography-body-tracking);
+  font-variant-numeric: tabular-nums;
+  color: var(--perron-color-text-primary);
+  text-align: start;
+  white-space: nowrap;
+}
+
+/* The hint's ink, at full strength: Firefox dims a placeholder on its own (CR-14). */
+.pn-NumberField-input::placeholder {
+  color: var(--perron-color-text-tertiary);
+  opacity: 1;
+}
+
+/* Disabled is a colour, never an opacity; the box keeps its rest fill and edge. */
+.pn-NumberField-input[data-disabled] {
+  color: var(--perron-color-text-tertiary);
+}
+
+/* The stepper buttons: a size.control square at the box's end, its icon in the secondary ink. */
+.pn-NumberField-decrement,
+.pn-NumberField-increment {
+  --perron-icon-size: var(--perron-icon-size-400);
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  inline-size: var(--perron-size-control);
+  block-size: var(--perron-size-control);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--perron-radius-md);
+  background: transparent;
+  color: var(--perron-color-text-secondary);
+  cursor: pointer;
+}
+
+/* The space between the two buttons, which keeps them one pair. */
+.pn-NumberField-increment {
+  margin-inline-start: var(--perron-space-050);
+}
+
+/* Hover and pressed only while the button can step: not at a bound, read-only or disabled (CR-15). */
+@media (hover: hover) {
+  .pn-NumberField-decrement:not([data-disabled], [data-readonly]):hover,
+  .pn-NumberField-increment:not([data-disabled], [data-readonly]):hover {
+    background-color: var(--perron-color-surface-hover);
+    color: var(--perron-color-text-primary);
+  }
+}
+
+.pn-NumberField-decrement:not([data-disabled], [data-readonly]):active,
+.pn-NumberField-increment:not([data-disabled], [data-readonly]):active {
+  background-color: var(--perron-color-surface-selected);
+}
+
+/* A button that can't step: at its bound, read-only or disabled, its icon in the tertiary ink. */
+.pn-NumberField-decrement[data-disabled],
+.pn-NumberField-decrement[data-readonly],
+.pn-NumberField-increment[data-disabled],
+.pn-NumberField-increment[data-readonly] {
+  background-color: transparent;
+  color: var(--perron-color-text-tertiary);
+  cursor: default;
+}
+
+/* Forced colours drop the tertiary ink, so a button that can't step takes the system's (CR-15). */
+@media (forced-colors: active) {
+  .pn-NumberField-decrement[data-disabled],
+  .pn-NumberField-decrement[data-readonly],
+  .pn-NumberField-increment[data-disabled],
+  .pn-NumberField-increment[data-readonly] {
+    color: GrayText;
+  }
+}

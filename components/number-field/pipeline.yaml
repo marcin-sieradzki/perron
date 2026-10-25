@@ -1,0 +1,109 @@
+# Written by npm run factory; never by hand.
+component: NumberField
+layer: component
+deferred:
+  at: 2026-10-25T06:34:21.822Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-25T06:46:40.740Z
+    ended: 2026-10-25T06:48:00.020Z
+  build:
+    runs: 8
+    status: done
+    started: 2026-10-25T09:01:59.350Z
+    begun: b0eb39e20815030b2f74d36c6aa04083cf9dbc13a03b5e14348d7330ec8461c8
+    spec: 1b0a12b122a0564c1bde6f210c34d1f9d29e428813d4ce385584e38e69b2cf77
+    ended: 2026-10-25T09:05:20.282Z
+  review:
+    rounds: 9
+    sentBack: 1
+    reviewed: 92f0cf23c39c9140d0b4f102c71708a710ebba2b
+    findings:
+      p1: 0
+      p2: 0
+      p3: 12
+    status: done
+    started: 2026-10-25T09:05:57.840Z
+    ended: 2026-10-25T09:08:08.808Z
+  docs:
+    failures: 1
+    status: done
+    started: 2026-10-25T09:08:43.757Z
+    ended: 2026-10-25T09:12:22.607Z
+notes:
+  - stage: brief
+    at: 2026-10-25T06:46:08.247Z
+    direction: 'Base UI''s NumberField hard-codes English for the ear: aria-roledescription "Number field" on the input and aria-label "Increase"/"Decrease" on the buttons. expectOwnedStrings reads no aria-roledescription, so that word passes the owned-strings check unseen in every locale.'
+  - stage: brief
+    at: 2026-10-25T06:46:08.247Z
+    direction: Intl.NumberFormat writes negatives with a hyphen-minus in en and da but with U+2212 in sv and nb, while content design asks for the true minus sign. NumberField, like Meter, shows whatever Intl gives.
+  - stage: brief
+    at: 2026-10-25T06:46:08.247Z
+    direction: 'The description of size.input still reads "Search field", but it is now the height of every Fields family box: SearchField, TextField and NumberField.'
+  - stage: brief
+    at: 2026-10-25T06:46:08.247Z
+    direction: The plus and minus icons are filed under Map in icons.json, with uses "Zoom in" and "Zoom out". A second use inside a field suggests they belong with the controls.
+  - stage: brief
+    at: 2026-10-25T06:46:08.247Z
+    direction: NumberField's steppers repeat the CloseButton part's look in their own CSS (size.control square, secondary ink, hover surface, selected when pressed). A third icon button inside a field box would justify a shared field-button part.
+  - stage: brief
+    at: 2026-10-25T06:46:08.247Z
+    direction: The contract's State and events names no commit event. If onChangeCommitted is taken, it sets the precedent for Slider and belongs in the contract's table.
+  - stage: brief
+    at: 2026-10-25T06:46:08.247Z
+    direction: Base UI renders NumberField.Group as role="group" with no accessible name, so some screen readers announce an unnamed group around the input.
+  - stage: brief
+    at: 2026-10-25T06:46:08.247Z
+    questions: |-
+      1. (Anatomy) Is the root Base UI's NumberField.Root, with Field rendered round it as the frame and reached through slotProps.field, as TextField does it? Recommended: yes.
+      2. (Anatomy) Do both stepper buttons sit at the end of the box, decrement then increment, each a size.control square, with the number at the box's start? Recommended: yes.
+      3. (Anatomy) Do the buttons use the existing minus and plus icons (the map's zoom icons), with the build widening their use in packages/perron/icons/icons.json? Recommended: yes.
+      4. (Props) Does NumberField take Base UI's onValueCommitted as onChangeCommitted(event, value, details), MUI Slider's name in the contract's event shape? Recommended: yes.
+      5. (Props) Does NumberField declare placeholder and pass it to NumberField.Input, as TextField declares its own? Recommended: yes.
+      6. (Tokens) Does the input set font-variant-numeric: tabular-nums? Recommended: yes.
+      7. (Tokens) In a read-only field, are both button icons in color.text.tertiary with no hover and no pressed look, while the box and the number keep their rest look? Recommended: yes.
+      8. (Owned strings) Are the button names owned strings, keys increase and decrease, English "Increase" and "Decrease", set as each button's aria-label? Recommended: yes.
+      9. (Owned strings) Is the input's role description an owned string, key numberField, English "Number field", set as aria-roledescription, with the build adding aria-roledescription to the attributes owned-strings.ts reads? Recommended: yes.
+  - stage: build
+    at: 2026-10-25T07:00:05.669Z
+    direction: 'font-variant-numeric: tabular-nums (spec Tokens, answer 6) makes Schibsted Grotesk set the group separator and the decimal point a full figure wide, so the box reads "1 . 500" in Danish and "100 , 000" in English, spaced out next to the description''s "5.000". Keep it (digits still while a button is held) or drop it for proportional figures.'
+  - stage: build
+    at: 2026-10-25T07:00:05.669Z
+    direction: Base UI's Field flags valueMissing only after the value has changed, so leaving an empty, untouched required NumberField shows no error until the form is submitted; the Validation story types and clears first.
+  - stage: build
+    at: 2026-10-25T07:00:05.669Z
+    direction: A mouse press on a stepper moves focus to the input (Base UI's focusInput), and text inputs always match :focus-visible, so the box shows its focus ring after every button press, as TextField and SearchField do. Decide whether the ring should show on a pointer press.
+  - stage: build
+    at: 2026-10-25T07:00:05.669Z
+    direction: Inherited props keep Base UI's JSDoc per the contract, so NumberField's required, readOnly and name read differently from TextField's own JSDoc for the same props, against api-consistency's one-prop-one-description rule.
+  - stage: docs
+    at: 2026-10-25T07:19:58.201Z
+    direction: "The docs tooling has never shown an inherited nullable prop before: NumberField's value is the first inherited T | null row in any spec, so no stable component's page has tested this path of docgen.ts."
+  - stage: build
+    at: 2026-10-25T08:05:10.092Z
+    direction: Base UI's hidden <input type="number"> counts as a second field for implicit form submission, so Enter submits a form holding a NumberField only when the form has a submit button; a form with a lone NumberField and no button is not submitted, unlike a lone TextField. The contract's Forms section could say so.
+  - stage: review
+    at: 2026-10-25T08:24:27.312Z
+    unblocked: '3 review rounds found a P1 or a P2; the last: review round 4 found 1 P2 (components/number-field/review.md)'
+  - stage: build
+    at: 2026-10-25T08:30:00.697Z
+    direction: 'With a format that rounds (such as maximumFractionDigits: 0), Base UI rounds the value as the person types: typing "2.6" calls onChange with 3 while the box still shows "2.6", and only leaving rewrites the text and commits, so the ''input-blur'' reason for rounding arises only for a value set from outside, such as a controlled 2.6.'
+  - stage: build
+    at: 2026-10-25T08:43:04.603Z
+    direction: 'Base UI checks a paste with parseFloat, so letters pasted after a leading digit are let in: pasting "two" with the caret after the 1 in "18" leaves "1two8" in the box and sets the value to 1. Decide whether NumberField should refuse a paste holding characters it wouldn''t let a person type.'
+  - stage: build
+    at: 2026-10-25T08:54:05.101Z
+    direction: An autofill of Base UI's hidden input calls onChange with the reason 'none' but never onChangeCommitted, so a caller who saves on onChangeCommitted, as the spec's Do row advises, misses an autofilled number the person never touches.
+  - stage: review
+    at: 2026-10-25T08:59:12.193Z
+    unblocked: '3 review rounds found a P1 or a P2; the last: review round 7 found 1 P2 (components/number-field/review.md)'
+  - stage: build
+    at: 2026-10-25T09:05:20.282Z
+    direction: "SearchField sets cursor: text on its whole input group, so its strips round the icon and the clear button show a text cursor although a press there focuses nothing, while NumberField leaves the default cursor on its equivalent strips. The family could pick one rule for a box's dead strips."
+  - stage: docs
+    at: 2026-10-25T09:12:22.607Z
+    direction: The props table lists NumberField's inherited Base UI members in docgen's order (className, defaultValue, style, form, id, render, min, max, …), not the spec's (value, defaultValue, name, min, max, step, …), so the page and the spec's Props table read in different orders; PropsTable could sort inherited rows by the spec's order.
+  - stage: docs
+    at: 2026-10-25T09:12:22.607Z
+    direction: On the page, inherited render and inputRef show Base UI's expanded types (ReactElement<…> | ComponentRenderFn<…>, the callback-or-RefObject union) where the spec says Base UI's render and Ref<HTMLInputElement>; they agree but read longer.

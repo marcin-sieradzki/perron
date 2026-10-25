@@ -46,6 +46,7 @@ describe('expectOwnedStrings', () => {
     ['title', <abbr title="Kilometres per hour">km/h</abbr>, 'Kilometres per hour'],
     ['alt', <img alt="Bus" src="bus.svg" />, 'Bus'],
     ['aria-valuetext', <div role="meter" aria-valuenow={0} aria-valuetext="No data" />, 'No data'],
+    ['aria-roledescription', <input aria-roledescription="Counter" />, 'Counter'],
   ])('fails a hardcoded %s', (_, node, word) => {
     expect(() => expectOwnedStrings(render('en', node), 'en')).toThrow(`"${word}"`)
   })
@@ -54,6 +55,13 @@ describe('expectOwnedStrings', () => {
     expect(() => expectOwnedStrings(render('sv', <Pager>Avgångar</Pager>), 'sv')).toThrow(
       /"Avgångar"/,
     )
+  })
+
+  it("fails Base UI's English role description in another locale, and passes the dictionary's", () => {
+    const english = render('da', <input aria-roledescription="Number field" />)
+    expect(() => expectOwnedStrings(english, 'da')).toThrow(/"Number field"/)
+    const danish = render('da', <input aria-roledescription="Talfelt" />)
+    expect(() => expectOwnedStrings(danish, 'da')).not.toThrow()
   })
 
   it("fails another locale's word", () => {

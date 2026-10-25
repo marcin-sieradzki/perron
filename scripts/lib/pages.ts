@@ -49,6 +49,7 @@ export const PAGES = [
   'docs/components/fieldset.md',
   'docs/components/filter-chip.md',
   'docs/components/highlight-chip.md',
+  'docs/components/number-field.md',
   'docs/components/radio-group.md',
   'docs/components/search-field.md',
   'docs/components/segmented-control.md',
