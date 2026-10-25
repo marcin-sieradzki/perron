@@ -687,8 +687,20 @@
           "string"
         ]
       },
+      "cancelled": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "cancelledLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
       "countdown": {
-        "optional": false,
+        "optional": true,
         "type": [
           "number"
         ]
@@ -716,6 +728,19 @@
         "optional": true,
         "type": [
           "string"
+        ]
+      },
+      "everyLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "interval": {
+        "optional": true,
+        "type": [
+          "number",
+          "readonly [ number, number ]"
         ]
       },
       "line": {
@@ -783,10 +808,22 @@
           "string"
         ]
       },
+      "platform": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "rangeToLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
       "slotProps": {
         "optional": true,
         "type": [
-          "{ badge?: Omit<LineBadgeProps, \"children\" | \"line\" | \"size\"> | undefined; destination?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; status?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; dot?: Omit<VehicleDotProps, \"ageingLabel\" | \"estimatedLabel\" | \"line\" | \"liveLabel\" | \"noSignalLabel\" | \"size\" | \"timetableOnlyLabel\" | \"variant\"> | undefined; countdown?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; schedule?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; time?: DetailedHTMLProps<TimeHTMLAttributes<HTMLTimeElement>, HTMLTimeElement> | undefined; delay?: Omit<DelayProps, \"delayUnknownLabel\" | \"minutes\" | \"minutesEarlyLabel\" | \"minutesLateLabel\" | \"minutesUnitLabel\" | \"onTimeLabel\"> | undefined; }"
+          "{ badge?: Omit<LineBadgeProps, \"children\" | \"line\" | \"size\"> | undefined; destination?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; status?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; dot?: Omit<VehicleDotProps, \"ageingLabel\" | \"estimatedLabel\" | \"line\" | \"liveLabel\" | \"noSignalLabel\" | \"size\" | \"timetableOnlyLabel\" | \"variant\"> | undefined; platform?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; countdown?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; interval?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; schedule?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; time?: DetailedHTMLProps<TimeHTMLAttributes<HTMLTimeElement>, HTMLTimeElement> | undefined; delay?: Omit<DelayProps, \"delayUnknownLabel\" | \"minutes\" | \"minutesEarlyLabel\" | \"minutesLateLabel\" | \"minutesUnitLabel\" | \"onTimeLabel\"> | undefined; }"
         ]
       },
       "time": {

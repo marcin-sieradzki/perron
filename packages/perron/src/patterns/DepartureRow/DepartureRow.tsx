@@ -1,7 +1,8 @@
 'use client'
 // DepartureRow: one departure from a stop, as one row of the stop's list of departures: the line's
 // badge and where it goes, how fresh the vehicle's data is, and how soon it leaves, with its
-// timetabled time and how late it runs. A pattern: plain elements over LineBadge, VehicleDot and
+// timetabled time and how late it runs, or how often its line runs; a cancelled departure stays,
+// marked so, and a platform or track can join the second line. A pattern: plain elements over LineBadge, VehicleDot and
 // Delay, never Base UI (CR-1). Spec: docs/patterns/departure-row.md.
 import type { ComponentPropsWithRef, ReactNode } from 'react'
 import { Delay } from '../../components/Delay/Delay.tsx'
@@ -40,9 +41,29 @@ export interface DepartureRowProps extends Omit<ComponentPropsWithRef<'div'>, 'c
   destination: ReactNode
   /**
    * The seconds until the departure leaves, as expected now, delay included. Shown as whole
-   * minutes, "4 min", and as "Now" under 45 seconds; a number that isn't finite shows "—".
+   * minutes, "4 min", and as "Now" under 45 seconds; left out, or a number that isn't finite,
+   * shows "—". Not shown when `interval` is given.
    */
-  countdown: number
+  countdown?: number
+  /**
+   * The minutes between departures, for a line that runs to an interval rather than to clock
+   * times: one number, "Every 3 min", or a range, `[3, 4]`, "Every 3 to 4 min". Shown in place of
+   * the countdown, the time and the delay, which the row then leaves out; a number that isn't
+   * finite shows "—".
+   */
+  interval?: number | readonly [number, number]
+  /**
+   * The departure won't run. The row stays, "Cancelled" in place of the dot and the state's word,
+   * its countdown or interval and its time struck through, and no delay. Set on the root as
+   * `data-cancelled`.
+   * @default false
+   */
+  cancelled?: boolean
+  /**
+   * Where the departure leaves from at the stop, written whole by the caller as the operator
+   * gives it, "Track 4" or "Platform 2": shown after the state's word. Left out, no platform.
+   */
+  platform?: ReactNode
   /**
    * The timetabled time of the departure, 24-hour `HH:MM`, such as `'08:14'`, shown under the
    * countdown. Left out, the row shows no time.
@@ -60,10 +81,26 @@ export interface DepartureRowProps extends Omit<ComponentPropsWithRef<'div'>, 'c
    */
   nowLabel?: string
   /**
-   * Overrides "Unknown", heard in place of "—" when the countdown isn't a finite number
+   * Overrides "Unknown", heard in place of "—" when the countdown or the interval isn't a finite
+   * number
    * @default The locale's
    */
   unknownLabel?: string
+  /**
+   * Overrides "Cancelled", shown and heard in place of the state's word when `cancelled`
+   * @default The locale's
+   */
+  cancelledLabel?: string
+  /**
+   * Overrides "Every", before the interval's minutes, "Every 3 min"
+   * @default The locale's
+   */
+  everyLabel?: string
+  /**
+   * Overrides "to", between the two figures of an interval's range, "Every 3 to 4 min"
+   * @default The locale's
+   */
+  rangeToLabel?: string
   /**
    * Overrides "Live", the state's word when `variant='live'`
    * @default The locale's
@@ -90,7 +127,7 @@ export interface DepartureRowProps extends Omit<ComponentPropsWithRef<'div'>, 'c
    */
   noSignalLabel?: string
   /**
-   * Overrides "min", the unit after the countdown's figure and after the delay's
+   * Overrides "min", the unit after the countdown's figure, the interval's and the delay's
    * @default The locale's
    */
   minutesUnitLabel?: string
@@ -123,7 +160,7 @@ export interface DepartureRowProps extends Omit<ComponentPropsWithRef<'div'>, 'c
     badge?: Omit<LineBadgeProps, 'line' | 'children' | 'size'>
     /** Props for the `destination` part */
     destination?: ComponentPropsWithRef<'div'>
-    /** Props for the `status` part, the dot and the state's word */
+    /** Props for the `status` part, the dot and the state's word, or "Cancelled", and the platform */
     status?: ComponentPropsWithRef<'div'>
     /** Props for the `dot` part, the VehicleDot */
     dot?: Omit<
@@ -137,8 +174,12 @@ export interface DepartureRowProps extends Omit<ComponentPropsWithRef<'div'>, 'c
       | 'timetableOnlyLabel'
       | 'noSignalLabel'
     >
+    /** Props for the `platform` part */
+    platform?: ComponentPropsWithRef<'span'>
     /** Props for the `countdown` part */
     countdown?: ComponentPropsWithRef<'span'>
+    /** Props for the `interval` part */
+    interval?: ComponentPropsWithRef<'span'>
     /** Props for the `schedule` part, the time and the delay */
     schedule?: ComponentPropsWithRef<'div'>
     /** Props for the `time` part */
@@ -159,7 +200,7 @@ export interface DepartureRowProps extends Omit<ComponentPropsWithRef<'div'>, 'c
 /**
  * One departure from a stop, as one row of the stop's list: the line's badge and where it goes, how
  * fresh the vehicle's data is, and how soon it leaves, with its timetabled time and how late it
- * runs.
+ * runs, or how often its line runs.
  */
 export function DepartureRow({
   variant = 'live',
@@ -169,8 +210,14 @@ export function DepartureRow({
   countdown,
   time,
   delay,
+  interval,
+  cancelled = false,
+  platform,
   nowLabel,
   unknownLabel,
+  cancelledLabel,
+  everyLabel,
+  rangeToLabel,
   liveLabel,
   ageingLabel,
   estimatedLabel,
@@ -188,6 +235,9 @@ export function DepartureRow({
   const strings = useOwnedStrings({
     now: nowLabel,
     unknown: unknownLabel,
+    cancelled: cancelledLabel,
+    every: everyLabel,
+    rangeTo: rangeToLabel,
     live: liveLabel,
     ageing: ageingLabel,
     estimated: estimatedLabel,
@@ -200,7 +250,9 @@ export function DepartureRow({
     destination: destinationProps,
     status: statusProps,
     dot: dotProps,
+    platform: platformProps,
     countdown: countdownProps,
+    interval: intervalProps,
     schedule: scheduleProps,
     time: timeProps,
     delay: delayProps,
@@ -209,14 +261,17 @@ export function DepartureRow({
   // CR-4: a time worked out rather than reported is an estimate
   const estimate =
     variant === 'estimated' || variant === 'timetable-only' || variant === 'no-signal'
-  // CR-5: these two states never know the delay
+  // CR-14: an interval stands in for the countdown, the time and the delay
+  const runsToInterval = interval !== undefined
+  // CR-5: these two states never know the delay; CR-13: a cancelled departure runs no delay
   const delayUnknown = !delayKnown(variant)
-  const showsDelay = delayUnknown || delay !== undefined
-  const showsTime = given(time)
+  const showsDelay = !runsToInterval && !cancelled && (delayUnknown || delay !== undefined)
+  const showsTime = !runsToInterval && given(time)
 
   // CR-3: unknown, "Now" under 45 seconds, or whole minutes, the figure and the unit apart
   let shown: ReactNode
-  if (!Number.isFinite(countdown)) shown = <UnknownValue label={strings.unknown} />
+  if (countdown === undefined || !Number.isFinite(countdown))
+    shown = <UnknownValue label={strings.unknown} />
   else if (countdown < NOW_UNDER) shown = strings.now
   else
     shown = (
@@ -228,6 +283,30 @@ export function DepartureRow({
       </>
     )
 
+  // CR-14: "Every", the fewest minutes, "to" and the most when they differ, then the unit, each
+  // word a text run apart from the figures
+  let every: ReactNode
+  if (runsToInterval) {
+    const [first, last] = typeof interval === 'number' ? [interval, interval] : interval
+    const fewest = Math.round(Math.min(first, last))
+    const most = Math.round(Math.max(first, last))
+    every =
+      Number.isFinite(fewest) && Number.isFinite(most) ? (
+        <>
+          {strings.every} <span>{fewest}</span>
+          {most !== fewest && (
+            <>
+              {' '}
+              {strings.rangeTo} <span>{most}</span>
+            </>
+          )}{' '}
+          {strings.minutesUnit}
+        </>
+      ) : (
+        <UnknownValue label={strings.unknown} />
+      )
+  }
+
   // CR-7: each part's slotProps first, its own props last, so they win; classes join by hand
   return (
     <div
@@ -235,6 +314,8 @@ export function DepartureRow({
       className={classes('pn-DepartureRow', className)}
       // CR-2: always set, the default included
       data-variant={variant}
+      // CR-13: a bare attribute, only when cancelled
+      data-cancelled={cancelled ? '' : undefined}
     >
       <LineBadge
         {...badgeProps}
@@ -250,29 +331,59 @@ export function DepartureRow({
       >
         {destination}
       </div>
-      {/* CR-6: the dot is hidden, so the state is heard once, from the word beside it */}
+      {/* CR-6: the dot is hidden, so the state is heard once, from the word beside it; CR-13: a
+          cancelled departure has no vehicle to show, so "Cancelled" takes the dot's and the word's
+          place */}
       <div {...statusProps} className={classes('pn-DepartureRow-status', statusProps?.className)}>
-        <VehicleDot
-          {...dotProps}
-          className={classes('pn-DepartureRow-dot', dotProps?.className)}
-          variant={variant}
-          line={line}
-          size="small"
-          aria-hidden="true"
-          liveLabel={liveLabel}
-          ageingLabel={ageingLabel}
-          estimatedLabel={estimatedLabel}
-          timetableOnlyLabel={timetableOnlyLabel}
-          noSignalLabel={noSignalLabel}
-        />
-        {strings[STATE_KEY[variant]]}
+        {cancelled ? (
+          strings.cancelled
+        ) : (
+          <>
+            <VehicleDot
+              {...dotProps}
+              className={classes('pn-DepartureRow-dot', dotProps?.className)}
+              variant={variant}
+              line={line}
+              size="small"
+              aria-hidden="true"
+              liveLabel={liveLabel}
+              ageingLabel={ageingLabel}
+              estimatedLabel={estimatedLabel}
+              timetableOnlyLabel={timetableOnlyLabel}
+              noSignalLabel={noSignalLabel}
+            />
+            {strings[STATE_KEY[variant]]}
+          </>
+        )}
+        {/* CR-15: the caller's whole label, after the state's word and a text space, so the two
+            are read as two words; the flex row draws no space of its own */}
+        {given(platform) && (
+          <>
+            {' '}
+            <span
+              {...platformProps}
+              className={classes('pn-DepartureRow-platform', platformProps?.className)}
+            >
+              {platform}
+            </span>
+          </>
+        )}
       </div>
-      <span
-        {...countdownProps}
-        className={classes('pn-DepartureRow-countdown', countdownProps?.className)}
-      >
-        {shown}
-      </span>
+      {runsToInterval ? (
+        <span
+          {...intervalProps}
+          className={classes('pn-DepartureRow-interval', intervalProps?.className)}
+        >
+          {every}
+        </span>
+      ) : (
+        <span
+          {...countdownProps}
+          className={classes('pn-DepartureRow-countdown', countdownProps?.className)}
+        >
+          {shown}
+        </span>
+      )}
       {/* CR-10: the second line at the end only when it holds a time or a Delay */}
       {(showsTime || showsDelay) && (
         <div

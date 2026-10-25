@@ -63,6 +63,15 @@ export const en = {
    * seconds.
    */
   now: 'Now',
+  /**
+   * A departure, or a trip's stop, that won't be served: shown and announced in place of its data
+   * state, its times struck through.
+   */
+  cancelled: 'Cancelled',
+  /** A line that runs to an interval: before the minutes between departures, as in "Every 3 min". */
+  every: 'Every',
+  /** Between the two figures of a range, as in "Every 3 to 4 min". */
+  rangeTo: 'to',
   /** A stop timeline: under the stop the vehicle reaches next. */
   nextStop: 'Next stop',
   /** A stop timeline: heard after the name of a stop the vehicle has passed. */
