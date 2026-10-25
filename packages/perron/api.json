@@ -229,7 +229,7 @@
       "slotProps": {
         "optional": true,
         "type": [
-          "{ message?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; emptyState?: Omit<EmptyStateProps, \"title\" | \"children\" | \"action\"> | undefined; }"
+          "{ message?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; emptyState?: Omit<EmptyStateProps, \"action\" | \"children\" | \"title\"> | undefined; }"
         ]
       },
       "status": {
@@ -498,21 +498,21 @@
       "onClose": {
         "optional": true,
         "type": [
-          "(event: MouseEvent | Event | PointerEvent | TouchEvent | KeyboardEvent | FocusEvent, reason: DrawerRootChangeEventReason, details: DrawerRootChangeEventDetails) => void",
+          "(event: Event | FocusEvent | KeyboardEvent | MouseEvent | PointerEvent | TouchEvent, reason: DrawerRootChangeEventReason, details: DrawerRootChangeEventDetails) => void",
           "undefined"
         ]
       },
       "onOpen": {
         "optional": true,
         "type": [
-          "(event: MouseEvent | Event | PointerEvent | TouchEvent | KeyboardEvent | FocusEvent, details: DrawerRootChangeEventDetails) => void",
+          "(event: Event | FocusEvent | KeyboardEvent | MouseEvent | PointerEvent | TouchEvent, details: DrawerRootChangeEventDetails) => void",
           "undefined"
         ]
       },
       "onSnapPointChange": {
         "optional": true,
         "type": [
-          "(event: MouseEvent | Event | PointerEvent | TouchEvent | KeyboardEvent | FocusEvent, snapPoint: DrawerSnapPoint | null, details: DrawerRootSnapPointChangeEventDetails) => void",
+          "(event: Event | FocusEvent | KeyboardEvent | MouseEvent | PointerEvent | TouchEvent, snapPoint: DrawerSnapPoint | null, details: DrawerRootSnapPointChangeEventDetails) => void",
           "undefined"
         ]
       },
@@ -531,7 +531,7 @@
       "slotProps": {
         "optional": true,
         "type": [
-          "{ header?: Omit<DetailHeaderProps, \"title\" | \"line\" | \"action\" | \"variant\" | \"lineName\" | \"subheader\"> | undefined; trigger?: Props<unknown> | undefined; portal?: DrawerPortalProps | undefined; viewport?: DrawerViewportProps | undefined; close?: DrawerCloseProps | undefined; content?: DrawerContentProps | undefined; }"
+          "{ header?: Omit<DetailHeaderProps, \"action\" | \"line\" | \"lineName\" | \"subheader\" | \"title\" | \"variant\"> | undefined; trigger?: Props<unknown> | undefined; portal?: DrawerPortalProps | undefined; viewport?: DrawerViewportProps | undefined; close?: DrawerCloseProps | undefined; content?: DrawerContentProps | undefined; }"
         ]
       },
       "snapPoint": {
@@ -571,7 +571,7 @@
       "trigger": {
         "optional": true,
         "type": [
-          "ReactElement<unknown, string | JSXElementConstructor<any>>"
+          "ReactElement<unknown, JSXElementConstructor<any> | string>"
         ]
       },
       "variant": {
@@ -669,7 +669,7 @@
       "trigger": {
         "optional": true,
         "type": [
-          "ReactElement<unknown, string | JSXElementConstructor<any>>"
+          "ReactElement<unknown, JSXElementConstructor<any> | string>"
         ]
       }
     }
@@ -1036,7 +1036,7 @@
       "slotProps": {
         "optional": true,
         "type": [
-          "{ brand?: Omit<BrandProps, \"render\" | \"brandNameLabel\"> | undefined; stats?: DetailedHTMLProps<HTMLAttributes<HTMLUListElement>, HTMLUListElement> | undefined; stat?: Omit<StatProps, \"label\" | \"children\" | \"render\" | \"unknownLabel\"> | undefined; time?: DetailedHTMLProps<TimeHTMLAttributes<HTMLTimeElement>, HTMLTimeElement> | undefined; }"
+          "{ brand?: Omit<BrandProps, \"brandNameLabel\" | \"render\"> | undefined; stats?: DetailedHTMLProps<HTMLAttributes<HTMLUListElement>, HTMLUListElement> | undefined; stat?: Omit<StatProps, \"children\" | \"label\" | \"render\" | \"unknownLabel\"> | undefined; time?: DetailedHTMLProps<TimeHTMLAttributes<HTMLTimeElement>, HTMLTimeElement> | undefined; }"
         ]
       },
       "stats": {
@@ -1293,7 +1293,7 @@
       "onClose": {
         "optional": true,
         "type": [
-          "(event: MouseEvent | Event | PointerEvent | TouchEvent | KeyboardEvent | FocusEvent, reason: TooltipRootChangeEventReason, details: TooltipRootChangeEventDetails) => void"
+          "(event: Event | FocusEvent | KeyboardEvent | MouseEvent | PointerEvent | TouchEvent, reason: TooltipRootChangeEventReason, details: TooltipRootChangeEventDetails) => void"
         ]
       },
       "open": {
@@ -1752,19 +1752,19 @@
       "onClose": {
         "optional": true,
         "type": [
-          "(event: MouseEvent | Event | PointerEvent | TouchEvent | KeyboardEvent | FocusEvent, reason: DrawerRootChangeEventReason, details: DrawerRootChangeEventDetails) => void"
+          "(event: Event | FocusEvent | KeyboardEvent | MouseEvent | PointerEvent | TouchEvent, reason: DrawerRootChangeEventReason, details: DrawerRootChangeEventDetails) => void"
         ]
       },
       "onOpen": {
         "optional": true,
         "type": [
-          "(event: MouseEvent | Event | PointerEvent | TouchEvent | KeyboardEvent | FocusEvent, details: DrawerRootChangeEventDetails) => void"
+          "(event: Event | FocusEvent | KeyboardEvent | MouseEvent | PointerEvent | TouchEvent, details: DrawerRootChangeEventDetails) => void"
         ]
       },
       "onSnapPointChange": {
         "optional": true,
         "type": [
-          "(event: MouseEvent | Event | PointerEvent | TouchEvent | KeyboardEvent | FocusEvent, snapPoint: DrawerSnapPoint | null, details: DrawerRootSnapPointChangeEventDetails) => void"
+          "(event: Event | FocusEvent | KeyboardEvent | MouseEvent | PointerEvent | TouchEvent, snapPoint: DrawerSnapPoint | null, details: DrawerRootSnapPointChangeEventDetails) => void"
         ]
       },
       "open": {
@@ -1802,7 +1802,7 @@
       "trigger": {
         "optional": true,
         "type": [
-          "ReactElement<unknown, string | JSXElementConstructor<any>>"
+          "ReactElement<unknown, JSXElementConstructor<any> | string>"
         ]
       }
     }
@@ -2059,7 +2059,7 @@
       "onChange": {
         "optional": true,
         "type": [
-          "(event: Event, value: string | null, details: TabsRootChangeEventDetails) => void"
+          "(event: Event, value: null | string, details: TabsRootChangeEventDetails) => void"
         ]
       },
       "ref": {

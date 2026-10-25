@@ -1,7 +1,7 @@
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
-import { API, apiFiles, propsApi } from './api.ts'
+import { API, apiFiles, canonical, propsApi } from './api.ts'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const fixture = join(here, 'fixtures/api')
@@ -33,5 +33,26 @@ describe('propsApi', () => {
   it('needs the exported <Name>Props', () => {
     const file = 'packages/perron/src/components/Bare/Bare.tsx'
     expect(() => propsApi(fixture, [file])).toThrow(`${file} exports no BareProps`)
+  })
+})
+
+describe('canonical', () => {
+  it('sorts every union inside a type, so the order the program met its members never shows', () => {
+    expect(
+      canonical(
+        '(event: MouseEvent | Event | FocusEvent, snapPoint: SnapPoint | null, details: D) => void',
+      ),
+    ).toBe(
+      '(event: Event | FocusEvent | MouseEvent, snapPoint: SnapPoint | null, details: D) => void',
+    )
+    expect(canonical("Omit<P, 'title' | 'action'>")).toBe("Omit<P, 'action' | 'title'>")
+    expect(canonical('{ a?: "y" | "x" | undefined; }')).toBe('{ a?: "x" | "y" | undefined; }')
+    expect(canonical('MouseEvent<HTMLButtonElement, MouseEvent>')).toBe(
+      'MouseEvent<HTMLButtonElement, MouseEvent>',
+    )
+  })
+
+  it('keeps text that is not a type as it is', () => {
+    expect(canonical('a | (')).toBe('a | (')
   })
 })

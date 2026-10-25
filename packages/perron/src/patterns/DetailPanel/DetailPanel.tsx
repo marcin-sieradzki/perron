@@ -6,7 +6,6 @@ import { useId } from 'react'
 import type { ComponentPropsWithRef, CSSProperties, ReactElement, ReactNode, Ref } from 'react'
 import { Sheet } from '../../components/Sheet/Sheet.tsx'
 import type { SheetProps } from '../../components/Sheet/Sheet.tsx'
-// perron-allow(patterns): the registry's dependsOn names DetailHeader, a pattern, and CR-1 composes it; the contract does not yet say whether a pattern may compose another
 import { DetailHeader, type DetailHeaderProps } from '../DetailHeader/DetailHeader.tsx'
 import { classes, withClass } from '../../internal/nodes.ts'
 import './DetailPanel.css'

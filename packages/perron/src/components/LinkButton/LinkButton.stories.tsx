@@ -7,6 +7,7 @@ import { expect, fn, userEvent, within } from 'storybook/test'
 import plus from '../../../icons/plus.svg?raw'
 import search from '../../../icons/search.svg?raw'
 import { Button } from '../Button/Button.tsx'
+import { icon, resolve, stateFill, stateRules } from '../../testing/stories.ts'
 import { LinkButton } from './LinkButton.tsx'
 
 const LABEL = 'Back to the map'
@@ -30,62 +31,8 @@ export default meta
 type Story = StoryObj<typeof meta>
 type Play = NonNullable<Story['play']>
 
-/** An icon file from packages/perron/icons, inline, sized by `.perron-icon`. */
-const icon = (svg: string) => (
-  <span
-    style={{ display: 'contents' }}
-    dangerouslySetInnerHTML={{ __html: svg.replace('<svg ', '<svg class="perron-icon" ') }}
-  />
-)
-
 /** The link the story renders, by its role and name. */
 const linkIn = (canvas: HTMLElement) => within(canvas).getByRole('link', { name: LABEL })
-
-/** A value as it renders, through a probe that reads it as `property`. */
-function resolve(
-  property: 'backgroundColor' | 'borderColor' | 'outlineWidth' | 'outlineOffset',
-  value: string,
-) {
-  const probe = document.createElement('span')
-  probe.style.borderStyle = 'solid'
-  probe.style.outlineStyle = 'solid'
-  probe.style[property] = value
-  document.body.append(probe)
-  const rendered = getComputedStyle(probe)[property]
-  probe.remove()
-  return rendered
-}
-
-/**
- * The declarations a state adds to `element`: each rule whose selector holds `pseudo` and, without
- * it, matches the element; for `:hover`, only the rules inside `(hover: hover)`. A script's events
- * can't set `:hover`, `:active` or `:visited`, so this reads the rules the browser would apply; the
- * visual stage drives the states for real.
- */
-function stateRules(element: Element, pseudo: ':hover' | ':active' | ':visited') {
-  const found: CSSStyleDeclaration[] = []
-  const visit = (rules: CSSRuleList, inQuery: boolean) => {
-    for (const rule of Array.from(rules))
-      if (rule instanceof CSSMediaRule)
-        visit(rule.cssRules, inQuery || rule.conditionText.includes('(hover: hover)'))
-      else if (
-        rule instanceof CSSStyleRule &&
-        (pseudo !== ':hover' || inQuery) &&
-        rule.selectorText.includes(pseudo) &&
-        element.matches(rule.selectorText.replaceAll(pseudo, ''))
-      )
-        found.push(rule.style)
-  }
-  for (const sheet of Array.from(document.styleSheets)) visit(sheet.cssRules, false)
-  return found
-}
-
-/** The background a state's rules give `element` last, or '' when none sets one. */
-const stateFill = (element: Element, pseudo: ':hover' | ':active') =>
-  stateRules(element, pseudo)
-    .map((s) => s.getPropertyValue('background-color'))
-    .filter(Boolean)
-    .at(-1) ?? ''
 
 /**
  * Tab focuses the link, Enter fires `onClick` once, Space fires none, Shift+Tab returns focus. The

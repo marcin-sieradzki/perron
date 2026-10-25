@@ -1,9 +1,11 @@
-// The patterns rule: a pattern imports only Perron's components and parts, never Base UI, as the
-// contract's "Patterns" section says (docs/components/README.md).
-import { readFileSync } from 'node:fs'
+// The patterns rule: a pattern imports only Perron's components and parts, the patterns its
+// registry entry's dependsOn names, and the internal helpers that read no Base UI, never Base UI
+// itself, as the contract's "Patterns" section says (docs/components/README.md).
+import { existsSync, readFileSync, statSync } from 'node:fs'
 import { join, posix } from 'node:path'
 import ts from 'typescript'
 import { PACKAGE } from '../lib/paths.ts'
+import { readRegistry } from '../lib/registry.ts'
 import { byFileLine, excuse, walk, type Check, type Problem } from './lib.ts'
 
 const RULE = 'patterns'
@@ -11,11 +13,33 @@ const SRC = `${PACKAGE}/src`
 
 /** Packages a pattern may import at runtime: React, and the package's own barrel. */
 const PACKAGES = new Set(['react', '@mylder/perron'])
-/**
- * Files of the package a pattern may import besides components and parts, without extension: the
- * shared helpers that read no Base UI among them.
- */
-const FILES = new Set([`${SRC}/index`, `${SRC}/PerronProvider`, `${SRC}/internal/nodes`])
+/** Files of the package a pattern may import besides components, parts and helpers, without extension. */
+const FILES = new Set([`${SRC}/index`, `${SRC}/PerronProvider`])
+const INTERNAL = `${SRC}/internal/`
+const REPO = join(import.meta.dirname, '../..')
+
+/** What a pattern file is checked with: the patterns it may compose, and how a helper is read. */
+export interface PatternContext {
+  /** The patterns its registry entry's `dependsOn` names */
+  dependsOn?: string[]
+  /** A package file's text, by its path from the repo root; none when it is missing */
+  read?: (file: string) => string | undefined
+}
+
+/** A reader of the files under `root`: a file's text, or nothing when no file is there. */
+const reader = (root: string) => (file: string) => {
+  const path = join(root, file)
+  return existsSync(path) && statSync(path).isFile() ? readFileSync(path, 'utf8') : undefined
+}
+const fromRepo = reader(REPO)
+
+/** Whether the internal helper at `target` (no extension needed) imports Base UI itself. */
+function readsBaseUi(target: string, read: (file: string) => string | undefined) {
+  const text = [target, `${target}.ts`, `${target}.tsx`].map(read).find((t) => t !== undefined)
+  return (
+    text === undefined || imports(target, text).some(({ spec }) => spec.startsWith('@base-ui/'))
+  )
+}
 
 /** Each module `text` imports or re-exports, with its line and whether only its types are used. */
 function imports(file: string, text: string) {
@@ -61,7 +85,12 @@ function allTypes(
 }
 
 /** Why `spec`, imported by the pattern file `file` (a path from the repo root), is not allowed. */
-function breach(file: string, spec: string, typeOnly: boolean): string | undefined {
+function breach(
+  file: string,
+  spec: string,
+  typeOnly: boolean,
+  { dependsOn = [], read = fromRepo }: PatternContext,
+): string | undefined {
   if (spec === '@base-ui/react' || spec.startsWith('@base-ui/'))
     return `imports ${spec}; a pattern builds on Perron's components, never on Base UI`
   if (!spec.startsWith('.')) {
@@ -73,16 +102,31 @@ function breach(file: string, spec: string, typeOnly: boolean): string | undefin
     .split('/')
     .slice(0, SRC.split('/').length + 2)
     .join('/')
-  const allowed = [`${SRC}/components/`, `${SRC}/parts/`, `${own}/`]
+  const allowed = [
+    `${SRC}/components/`,
+    `${SRC}/parts/`,
+    `${own}/`,
+    ...dependsOn.map((name) => `${SRC}/patterns/${name}/`),
+  ]
   if (allowed.some((dir) => target.startsWith(dir))) return
   if (FILES.has(target.replace(/\.tsx?$/, ''))) return
-  return `imports ${spec} (${target}); a pattern imports only Perron components and parts and its own folder`
+  if (target.startsWith(INTERNAL))
+    return readsBaseUi(target, read)
+      ? `imports ${spec} (${target}), a helper that reads Base UI, which a pattern never does`
+      : undefined
+  if (target.startsWith(`${SRC}/patterns/`))
+    return `imports ${spec} (${target}), a pattern its registry entry's dependsOn does not name; add it there`
+  return `imports ${spec} (${target}); a pattern imports only Perron components and parts, the patterns it depends on, the internal helpers and its own folder`
 }
 
 /** The problems of one pattern file: each import that is not a Perron component, part or React. */
-export function importProblems(file: string, text: string): Problem[] {
+export function importProblems(
+  file: string,
+  text: string,
+  context: PatternContext = {},
+): Problem[] {
   const problems = imports(file, text).flatMap(({ spec, line, typeOnly }) => {
-    const message = breach(file, spec, typeOnly)
+    const message = breach(file, spec, typeOnly, context)
     return message ? [{ file, line, message }] : []
   })
   return excuse(problems, RULE, () => text)
@@ -95,8 +139,22 @@ const shipped = (name: string) =>
 export default {
   rule: RULE,
   run(root) {
+    const patterns = new Set(
+      readRegistry(root)
+        .filter((e) => e.layer === 'pattern')
+        .map((e) => e.name),
+    )
+    const dependsOn = new Map(
+      readRegistry(root).map((e) => [e.name, e.dependsOn.filter((d) => patterns.has(d))]),
+    )
+    const read = reader(root)
     return walk(root, `${SRC}/patterns`, shipped)
-      .flatMap((file) => importProblems(file, readFileSync(join(root, file), 'utf8')))
+      .flatMap((file) =>
+        importProblems(file, readFileSync(join(root, file), 'utf8'), {
+          dependsOn: dependsOn.get(file.split('/')[SRC.split('/').length + 1]) ?? [],
+          read,
+        }),
+      )
       .sort(byFileLine)
   },
 } satisfies Check

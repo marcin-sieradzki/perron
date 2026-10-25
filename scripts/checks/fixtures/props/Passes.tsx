@@ -41,6 +41,8 @@ export interface PassesProps extends Omit<
   name?: string
   /** Overrides the owned string for "Close" */
   closeLabel?: string
+  /** Whether the label is heard but not seen: a boolean, not an owned string's override */
+  hiddenLabel?: boolean
   /** The root element */
   ref?: Ref<HTMLButtonElement>
   /**

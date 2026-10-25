@@ -28,9 +28,39 @@ export const released = (e: Entry) => e.status === 'stable' || e.status === 'dep
 
 const text = (node: ts.Node) => node.getText().replace(/\s+/g, ' ')
 
+const printer = ts.createPrinter({ removeComments: true })
+
+/**
+ * A type's text with every union inside it in sorted order, its white space collapsed: the
+ * checker writes a nested union, such as a callback's `event`, in the order the program met its
+ * members, which another component's types can change. Text that does not parse as a type is
+ * kept as it is.
+ */
+export function canonical(type: string): string {
+  const source = ts.createSourceFile('type.ts', `type T = ${type}`, ts.ScriptTarget.Latest, true)
+  const [alias] = source.statements
+  const broken = (source as { parseDiagnostics?: unknown[] }).parseDiagnostics?.length
+  if (broken || source.statements.length !== 1 || !alias || !ts.isTypeAliasDeclaration(alias))
+    return type
+  const say = (node: ts.Node) =>
+    printer.printNode(ts.EmitHint.Unspecified, node, source).replace(/\s+/g, ' ')
+  const sorted: ts.TransformerFactory<ts.Node> = (context) => {
+    const visit = (node: ts.Node): ts.Node => {
+      const out = ts.visitEachChild(node, visit, context)
+      if (!ts.isUnionTypeNode(out)) return out
+      const types = [...out.types].sort((a, b) => (say(a) < say(b) ? -1 : say(a) > say(b) ? 1 : 0))
+      return context.factory.updateUnionTypeNode(out, context.factory.createNodeArray(types))
+    }
+    return (node) => ts.visitNode(node, visit) as ts.Node
+  }
+  const [out] = ts.transform(alias.type, [sorted]).transformed
+  return say(out).trim()
+}
+
 /** A type's union members as text: a library alias such as `ReactNode` stays whole. */
 function members(checker: ts.TypeChecker, type: ts.Type): string[] {
-  const say = (t: ts.Type) => checker.typeToString(t, undefined, ts.TypeFormatFlags.NoTruncation)
+  const say = (t: ts.Type) =>
+    canonical(checker.typeToString(t, undefined, ts.TypeFormatFlags.NoTruncation))
   const alias = type.aliasSymbol?.declarations?.[0]
   if ((alias && !inPackage(alias)) || !type.isUnion()) return [say(type)]
   const out = type.types.map(say)

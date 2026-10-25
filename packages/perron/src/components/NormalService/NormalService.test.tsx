@@ -11,7 +11,7 @@ import { heardMarkup } from '../../testing/markup.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
 import { NormalService } from './NormalService.tsx'
 
-const icon = readFileSync(
+const iconFile = readFileSync(
   join(dirname(fileURLToPath(import.meta.url)), '../../../icons/check-circle.svg'),
   'utf8',
 )
@@ -78,7 +78,7 @@ describe('NormalService', () => {
   it('inlines the check-circle file unchanged but for width and height, hidden from the ear', () => {
     const markup = renderToStaticMarkup(<NormalService />)
     const svg = markup.match(/<svg\b[\s\S]*<\/svg>/)![0]
-    expect(drawing(svg)).toEqual(drawing(icon))
+    expect(drawing(svg)).toEqual(drawing(iconFile))
     expect(svg).toMatch(/^<svg [^>]*class="perron-icon pn-NormalService-icon"/)
     expect(svg).toMatch(/^<svg [^>]*aria-hidden="true"/)
     expect(svg).toMatch(/^<svg [^>]*focusable="false"/)

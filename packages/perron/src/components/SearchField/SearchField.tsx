@@ -52,7 +52,6 @@ export interface SearchFieldProps extends Omit<
    * field's purpose plain, as in the top bar.
    * @default false
    */
-  // perron-allow(props): MUI's name for a field with no visible label, a boolean, not an owned string's override (spec, Props)
   hiddenLabel?: boolean
   /**
    * Words shown in the empty box, such as "Line or stop, such as 5C". They vanish as the person

@@ -1,7 +1,10 @@
 // The lint bans the imports Perron must not make: MUI at runtime, Base UI's old package name,
 // Base UI's internals, and in src/ the generated tokens.ts, outside the package build's rootDir.
-// Each fixture is ignored by the real lint run, so here oxlint lints it alone.
+// Each fixture is ignored by the real lint run, so here oxlint lints it alone. An override's rule
+// options replace the base's, never merge, so src's override repeats the base's patterns, and a
+// test holds the copy to the base.
 import { execFileSync } from 'node:child_process'
+import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 
@@ -40,5 +43,16 @@ describe('the restricted imports lint', () => {
 
   it('lets a type-only import from MUI through', () => {
     expect(lint('mui-type-only.ts')).toEqual({ failed: false, rules: [] })
+  })
+
+  it("keeps every base pattern in src's override, whose options replace the base's", () => {
+    type Rule = [string, { patterns: unknown[] }]
+    const config = JSON.parse(readFileSync(join(root, '.oxlintrc.json'), 'utf8')) as {
+      rules: Record<string, Rule>
+      overrides: { files: string[]; rules: Record<string, Rule> }[]
+    }
+    const base = config.rules['no-restricted-imports'][1].patterns
+    const src = config.overrides.find((o) => o.files.includes('packages/perron/src/**'))!
+    expect(src.rules['no-restricted-imports'][1].patterns.slice(0, base.length)).toEqual(base)
   })
 })
