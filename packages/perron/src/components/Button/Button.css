@@ -1,5 +1,6 @@
 /* Button, from docs/components/button.md. Every state changes colours only (CR-3), at once (CR-8),
-   and the colour is set on the root, which the label and the icons take (CR-6). */
+   and the colour is set on the root, which the label and the icons take (CR-6). Pressed is a step
+   past hover (CR-13), and the cursor is a pointer until the button is disabled (CR-14). */
 
 .pn-Button {
   display: inline-flex;
@@ -15,6 +16,7 @@
   border-radius: var(--perron-radius-md);
   white-space: nowrap;
   vertical-align: middle;
+  cursor: pointer;
 }
 
 .pn-Button[data-size='small'] {
@@ -54,7 +56,7 @@
 }
 
 .pn-Button[data-variant='solid'][data-color='neutral']:active:not([data-disabled]) {
-  background-color: var(--perron-color-surface-inverse-hover);
+  background-color: var(--perron-color-surface-inverse-pressed);
 }
 
 /* solid, brand: the edge stays at rest, on hover and pressed (CR-10) */
@@ -72,7 +74,7 @@
 }
 
 .pn-Button[data-variant='solid'][data-color='brand']:active:not([data-disabled]) {
-  background-color: var(--perron-color-surface-brand-hover);
+  background-color: var(--perron-color-surface-brand-pressed);
 }
 
 /* outline, neutral */
@@ -91,7 +93,7 @@
   color: var(--perron-color-text-brand);
 }
 
-/* outline, both colours: the hover layer every control shares */
+/* outline, both colours: the hover and pressed layers every quiet control shares */
 
 @media (hover: hover) {
   .pn-Button[data-variant='outline']:hover:not([data-disabled]) {
@@ -100,10 +102,15 @@
 }
 
 .pn-Button[data-variant='outline']:active:not([data-disabled]) {
-  background-color: var(--perron-color-surface-hover);
+  background-color: var(--perron-color-surface-selected);
 }
 
-/* disabled, both colours alike: a colour, never an opacity. After the colours, which it ties. */
+/* disabled, both colours alike: a colour, never an opacity, and the default cursor (CR-14). After
+   the colours, which it ties. */
+
+.pn-Button[data-disabled] {
+  cursor: default;
+}
 
 .pn-Button[data-variant='solid'][data-disabled] {
   border-color: transparent;

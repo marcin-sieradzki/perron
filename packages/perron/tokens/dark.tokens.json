@@ -77,7 +77,7 @@
           "alpha": 0.09,
           "hex": "#EBEEEB"
         },
-        "$description": "Selected row"
+        "$description": "Selected row; the pressed layer of a quiet or outline control, in place of color.surface.hover and denser"
       },
       "inverse": {
         "$value": "{color.text.primary}",
@@ -85,7 +85,11 @@
       },
       "inverse-hover": {
         "$value": "{palette.neutral.300}",
-        "$description": "Hover fill of a primary button, one step from color.surface.inverse"
+        "$description": "Hover fill of a primary button, a step from color.surface.inverse the eye sees"
+      },
+      "inverse-pressed": {
+        "$value": "{palette.neutral.400}",
+        "$description": "Pressed fill of a primary button, a step further from color.surface.inverse than its hover"
       },
       "success": {
         "$value": "{palette.green.900}",
@@ -109,7 +113,11 @@
       },
       "brand-hover": {
         "$value": "{palette.yellow.500}",
-        "$description": "Hover fill of a brand button, one step from color.surface.brand"
+        "$description": "Hover fill of a brand button, a step from color.surface.brand the eye sees"
+      },
+      "brand-pressed": {
+        "$value": "{palette.yellow.600}",
+        "$description": "Pressed fill of a brand button, a step further from color.surface.brand than its hover"
       },
       "brand-subtle": {
         "$value": "{palette.yellow.900}",
