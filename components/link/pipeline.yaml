@@ -3,4 +3,33 @@ component: Link
 layer: component
 deferred:
   at: 2026-10-25T08:08:16.724Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-25T08:08:20.795Z
+    ended: 2026-10-25T08:13:31.398Z
+notes:
+  - stage: brief
+    at: 2026-10-25T08:13:31.398Z
+    direction: docs/content-design.md has no rule on link text or on opening a new tab, so Link and LinkButton both rest on a statement in LinkButton's spec. A short rule there (name the destination, Mylder's own links stay in the same tab) would settle it for every link.
+  - stage: brief
+    at: 2026-10-25T08:13:31.398Z
+    direction: Attribution's .pn-Attribution :any-link rule has a hover colour step but no pressed step, so it doesn't meet the contract's Pointer feedback rule. The contract's catch-up list of components built before that rule doesn't name Attribution.
+  - stage: brief
+    at: 2026-10-25T08:13:31.398Z
+    direction: A Link placed inside Attribution today matches both Attribution's :any-link:hover colour rule and Link's own hover layer. They set different properties, so both show; the Attribution follow-up should pick one.
+  - stage: brief
+    at: 2026-10-25T08:13:31.398Z
+    direction: The Perron MCP's get_reference has no page for useRender, because Base UI 1.9.0's bundled docs have no use-render.md. Every component built on it (LinkButton, Attribution, Delay, Link) takes the hook's contract from node_modules types alone.
+  - stage: brief
+    at: 2026-10-25T08:13:31.398Z
+    direction: A typography.body line is 21 px, under size.target-min (24 px), so every standalone text link meets target size only by WCAG's spacing exception. The Targets rule in docs/foundations/accessibility.md could name the inline and spacing exceptions for text links.
+  - stage: brief
+    at: 2026-10-25T08:13:31.398Z
+    questions: |-
+      1. (Props) Does Link take no color, underline, variant or size prop, and no disabled, so it always wears the colour and type of the text it sits in, underlined? Recommended: yes.
+      2. (Tokens) Does Link keep the colour of the text around it in every state, :visited included, underlined in that colour in every state, as Attribution's links are? Recommended: yes.
+      3. (Tokens) Under Pointer feedback, does hover lay color.surface.hover behind the link and pressed color.surface.selected, with radius.xs corners and box-decoration-break: clone so each wrapped line is rounded? Recommended: yes.
+      4. (Keyboard and ARIA, target checklist line) Does Link add no padding or minimum height of its own, meeting WCAG 2.5.8 by the inline and spacing exceptions? Recommended: yes.
+      5. (Owned strings) Does Link, like LinkButton, own no 'Opens in a new tab' string, draw no external-link icon and take no external prop, leaving target and rel to the caller? Recommended: yes.
+      6. (Component rules, CR-9) Does Attribution keep its own .pn-Attribution :any-link rule in this change, with a separate follow-up deciding whether its links move to Link? Recommended: yes, as a follow-up.
