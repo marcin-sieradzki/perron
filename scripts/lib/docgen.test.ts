@@ -136,6 +136,21 @@ export function Press({ focusableWhenDisabled = true, nativeButton = false, ...r
     })
   })
 
+  it('keeps the null of an inherited `T | null` member, and drops the undefined of an optional one', () => {
+    const src = `
+import { NumberField as BaseNumberField } from '@base-ui/react/number-field'
+
+export interface CountProps extends Pick<BaseNumberField.Root.Props, 'value' | 'min'> {}
+
+export function Count(props: CountProps) {
+  return <BaseNumberField.Root {...props} />
+}
+`
+    const [doc] = componentDocs(src, FILE)
+    expect(doc.props?.value.tsType?.name).toBe('number | null')
+    expect(doc.props?.min.tsType?.name).toBe('number')
+  })
+
   it('writes a type react-docgen reads as unknown, such as a readonly array, as the compiler does', () => {
     const src = `
 interface Stop { name: string }
