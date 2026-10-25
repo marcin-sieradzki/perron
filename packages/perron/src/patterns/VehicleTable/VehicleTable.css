@@ -22,8 +22,8 @@
   /* over a <th>'s centring; a header that wraps keeps its last line on the divider */
   text-align: start;
   vertical-align: bottom;
-  /* CR-8: a long translated header breaks only a word longer than its column, and a column sized to
-     its content keeps whole words */
+  /* CR-8: a long translated header wraps at its spaces and keeps whole words: its longest word is
+     its column's least width */
   overflow-wrap: break-word;
 }
 
@@ -37,7 +37,7 @@
   text-align: end;
 }
 
-/* CR-8: a table row's height is its least height, so a row grows only when its destination wraps */
+/* CR-8: a table row's height is its least height, so a row grows only when its content is taller */
 .pn-VehicleTable-row {
   height: var(--perron-size-vehicle-row);
 }

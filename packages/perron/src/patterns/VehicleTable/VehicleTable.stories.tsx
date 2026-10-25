@@ -16,6 +16,7 @@ import {
   mounted,
   rendered,
   stateRules,
+  typography,
 } from '../../testing/stories.ts'
 import { VehicleTable } from './VehicleTable.tsx'
 import type { VehicleTableProps, VehicleTableVehicle } from './VehicleTable.tsx'
@@ -65,6 +66,12 @@ const VEHICLES: VehicleTableVehicle[] = [
     delay: 4,
   },
 ]
+
+/** The five data states, in the order Data states names them. */
+const VARIANTS = ['live', 'ageing', 'estimated', 'timetable-only', 'no-signal'] as const
+
+/** The states whose delay is always unknown, whatever `delay` holds (CR-4). */
+const HIDES_DELAY: VehicleTableVehicle['variant'][] = ['timetable-only', 'no-signal']
 
 /** The column headers, in order. */
 const HEADERS = ['Line', 'Destination', 'Position', 'Delay']
@@ -126,6 +133,21 @@ const tableIn = (host: HTMLElement) =>
     expect(table).not.toBeNull()
     return table!
   })
+
+/** Each word of `element`'s one text run sits on one line: it wraps at its spaces only. */
+async function expectWholeWords(element: Element) {
+  const text = element.firstChild!
+  let start = 0
+  for (const word of text.textContent!.split(' ')) {
+    const range = document.createRange()
+    range.setStart(text, start)
+    range.setEnd(text, start + word.length)
+    start += word.length + 1
+    await expect(new Set([...range.getClientRects()].map((box) => Math.round(box.top))).size).toBe(
+      1,
+    )
+  }
+}
 
 /** The text of the parts with class `part` in `root`, in order. */
 const textsOf = (root: Element, part: string) =>
@@ -213,6 +235,75 @@ export const Default: Story = {
       await expect(
         rows.slice(0, 3).map((row) => row.querySelector('.pn-Delay')!.getAttribute('data-delay')),
       ).toEqual(['on-time', 'late', 'early'])
+    })
+
+    await step(
+      'in every variant, a delay given, null or left out: a figure only where the state allows it (CR-4)',
+      async () => {
+        const given: Pick<VehicleTableVehicle, 'delay'>[] = [{ delay: 3 }, { delay: null }, {}]
+        const vehicles = VARIANTS.flatMap((variant) =>
+          given.map((delay, index): VehicleTableVehicle => ({
+            id: `${variant}-${index}`,
+            line: 'bus',
+            lineName: '5C',
+            destination: 'Husum Torv',
+            variant,
+            ...delay,
+          })),
+        )
+        await mounted(
+          canvasElement,
+          <VehicleTable vehicles={vehicles} aria-label="Delays" />,
+          async (host) => {
+            const root = await tableIn(host)
+            for (const [index, row] of bodyRows(root).entries()) {
+              const { variant, delay: minutes } = vehicles[index]
+              const delay = row.querySelector('.pn-VehicleTable-delay')!
+              const shown = typeof minutes === 'number' && !HIDES_DELAY.includes(variant)
+              if (shown) {
+                await expect(delay).toHaveAttribute('data-delay', 'late')
+                await expect(heard(delay)).toBe('3 min late')
+              } else {
+                await expect(delay).toHaveAttribute('data-delay', 'unknown')
+                await expect(delay.querySelector('.pn-Delay-value')).toHaveTextContent('—')
+                await expect(heard(delay)).toBe('Delay unknown')
+              }
+            }
+          },
+        )
+      },
+    )
+
+    await step('the table owns no name and is no live region (CR-5, CR-7)', async () => {
+      for (const part of [table, ...table.querySelectorAll('*')]) {
+        await expect(part).not.toHaveAttribute('aria-live')
+        await expect(['status', 'log', 'alert', 'marquee', 'timer']).not.toContain(
+          part.getAttribute('role'),
+        )
+      }
+      await mounted(canvasElement, <VehicleTable vehicles={VEHICLES} />, async (host) => {
+        const root = await tableIn(host)
+        await expect(root).toHaveAccessibleName('')
+        await expect(root).not.toHaveAttribute('aria-label')
+        await expect(root).not.toHaveAttribute('aria-labelledby')
+        await expect(root.querySelector('caption')).toBeNull()
+      })
+      // the caller names it from the heading above it
+      await mounted(
+        canvasElement,
+        <>
+          <h2 id="vehicle-table-heading" style={typography('heading-sm')}>
+            Vehicles on line 5C
+          </h2>
+          <VehicleTable vehicles={VEHICLES} aria-labelledby="vehicle-table-heading" />
+        </>,
+        async (host) => {
+          await tableIn(host)
+          await expect(
+            within(host).getByRole('table', { name: 'Vehicles on line 5C' }),
+          ).toBeInTheDocument()
+        },
+      )
     })
 
     await step('Tab passes the table by', async () => {
@@ -496,20 +587,9 @@ export const LongDestination: Story = {
             await expect(box.left).toBeGreaterThanOrEqual(cell.left - 0.5)
             await expect(box.right).toBeLessThanOrEqual(cell.right + 0.5)
           }
-        // a state's word wraps only at its spaces: each word's boxes start on one top
-        for (const label of table.querySelectorAll('.pn-VehicleDotLabel-label')) {
-          const text = label.firstChild!
-          let start = 0
-          for (const word of text.textContent!.split(' ')) {
-            const range = document.createRange()
-            range.setStart(text, start)
-            range.setEnd(text, start + word.length)
-            start += word.length + 1
-            await expect(
-              new Set([...range.getClientRects()].map((box) => Math.round(box.top))).size,
-            ).toBe(1)
-          }
-        }
+        // a state's word wraps only at its spaces
+        for (const label of table.querySelectorAll('.pn-VehicleDotLabel-label'))
+          await expectWholeWords(label)
         // the badges and the delays keep to one line: every box of theirs starts on the same top
         for (const node of table.querySelectorAll('.pn-VehicleTable-badge, .pn-VehicleTable-delay'))
           await expect(
@@ -517,5 +597,27 @@ export const LongDestination: Story = {
           ).toBe(1)
       },
     )
+
+    await step('a long header wraps at its spaces and keeps whole words (CR-8)', async () => {
+      await mounted(
+        canvasElement,
+        <div style={{ inlineSize: 320, maxInlineSize: '100%' }}>
+          <VehicleTable
+            vehicles={VEHICLES}
+            aria-label="Long header"
+            delayColumnLabel="Minutes behind the timetable"
+          />
+        </div>,
+        async (host) => {
+          const root = await tableIn(host)
+          const header = root.querySelector('[data-column="delay"]')!
+          await expect(lines(header)).toBeGreaterThan(1.5)
+          await expectWholeWords(header)
+          await expect(root.getBoundingClientRect().width).toBeLessThanOrEqual(
+            root.parentElement!.getBoundingClientRect().width + 0.5,
+          )
+        },
+      )
+    })
   },
 }
