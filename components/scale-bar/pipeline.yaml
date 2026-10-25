@@ -3,4 +3,21 @@ component: ScaleBar
 layer: pattern
 deferred:
   at: 2026-10-25T02:03:49.659Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-25T02:03:53.935Z
+    ended: 2026-10-25T02:11:34.911Z
+notes:
+  - stage: brief
+    at: 2026-10-25T02:11:34.911Z
+    direction: The scale's glass keeps Surface's edge and shadow to match the MapControls toolbar beside it, while Attribution in the same corner is an edgeless, shadowless strip at radius.xs. When the design is drawn, decide whether the bottom-right cluster should share one treatment.
+  - stage: brief
+    at: 2026-10-25T02:11:34.911Z
+    direction: The label and the bar share one ink, color.text.secondary, so the scale reads quieter than the map controls. The intents table would give a neutral mark color.text.primary, so check it in the drawing.
+  - stage: brief
+    at: 2026-10-25T02:11:34.911Z
+    direction: The root keeps a fixed 96 px content box and the bar grows from 50% to 100% of it, so the glass box doesn't change width on zoom, unlike MapLibre's control, which resizes to fit its bar.
+  - stage: brief
+    at: 2026-10-25T02:11:34.911Z
+    questions: "1. Does the root compose Surface's glass variant (Surface joins dependsOn), changing only radius to radius.md and padding to space.100 block / space.200 inline, keeping the subtle edge and shadow.panel? Recommended: yes. 2. Does ScaleBar take metersPerPixel and pick the round distance and bar length itself, rather than taking distance and length? Recommended: yes. 3. Metric units only (m under 1 km, km from 1 km), no miles/feet prop? Recommended: yes. 4. The bar's longest length: no new token, calc(4 * var(--perron-space-600)) = 96 px in ScaleBar's CSS? Recommended: yes. 5. New keys scale 'Scale', metersUnit 'm', kilometersUnit 'km' (SI symbols in every locale), overridden by scaleLabel, metersUnitLabel, kilometersUnitLabel? Recommended: yes."
