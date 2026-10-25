@@ -11,13 +11,15 @@ import type { Locale } from '../../locale/index.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
 import {
   colour,
+  edge,
+  fieldPart,
+  fill,
   heard,
   lines,
   mounted,
   onHover,
   pressedAfterHover,
   rendered,
-  resolve,
   stateRules,
 } from '../../testing/stories.ts'
 import { Button } from '../Button/Button.tsx'
@@ -75,18 +77,8 @@ const part = (
   name: 'control' | 'track' | 'indicator' | 'thumb' | 'value' | 'valueText',
 ) => scope.querySelector<HTMLElement>(`.pn-Slider-${name}`)!
 
-/** One of Field's parts in `scope`, by its class, or null when it isn't rendered. */
-const fieldPart = (scope: Element, name: 'field' | 'label' | 'description' | 'error') =>
-  scope.querySelector<HTMLElement>(name === 'field' ? '.pn-Field' : `.pn-Field-${name}`)
-
 /** The figure as it is read in place: the value text, without the hidden sizers. */
 const figure = (scope: Element) => heard(part(scope, 'value'))
-
-/** A colour token as it renders on an edge, to compare with an element's `border-color`. */
-const edge = (token: string) => resolve('borderColor', `var(--perron-color-${token})`)
-
-/** A colour token as it renders as a fill, to compare with an element's `background-color`. */
-const fill = (token: string) => resolve('backgroundColor', `var(--perron-color-${token})`)
 
 /** The `onChange` or `onChangeCommitted` spy of a story's args. */
 const spy = (handler: unknown) => handler as ReturnType<typeof fn>
@@ -179,6 +171,16 @@ export const Default: Story = {
       await userEvent.keyboard('{PageDown}')
       await expect(slider).toHaveAttribute('aria-valuenow', '0')
     })
+    await step('ArrowUp and ArrowDown step it; with Shift, by one large step', async () => {
+      await userEvent.keyboard('{ArrowUp}')
+      await expect(slider).toHaveAttribute('aria-valuenow', '1')
+      await userEvent.keyboard('{ArrowDown}')
+      await expect(slider).toHaveAttribute('aria-valuenow', '0')
+      await userEvent.keyboard('{Shift>}{ArrowUp}{/Shift}')
+      await expect(slider).toHaveAttribute('aria-valuenow', '10')
+      await userEvent.keyboard('{Shift>}{ArrowDown}{/Shift}')
+      await expect(slider).toHaveAttribute('aria-valuenow', '0')
+    })
     await step('five steps bring it back to 5, and Shift+Tab moves focus out', async () => {
       await userEvent.keyboard('{ArrowRight>5/}')
       await expect(slider).toHaveAttribute('aria-valuenow', '5')
@@ -195,7 +197,7 @@ export const Hover: Story = {
     const image = onHover(thumb, 'background-image')
     await expect(image).toContain('linear-gradient')
     await expect(image).toContain('var(--perron-color-surface-hover)')
-    await expect(getComputedStyle(thumb).backgroundColor).toBe(fill('surface-raised'))
+    await expect(getComputedStyle(thumb).backgroundColor).toBe(fill('color-surface-raised'))
     await expect(getComputedStyle(part(canvasElement, 'control')).cursor).toBe('pointer')
     await expect(getComputedStyle(thumb).cursor).toBe('pointer')
   },
@@ -286,10 +288,10 @@ export const Disabled: Story = {
     await expect(slider).not.toHaveFocus()
     const tertiary = colour('--perron-color-text-tertiary')
     await expect(getComputedStyle(part(canvasElement, 'indicator')).backgroundColor).toBe(
-      fill('text-tertiary'),
+      fill('color-text-tertiary'),
     )
-    await expect(getComputedStyle(thumb).borderColor).toBe(edge('text-tertiary'))
-    await expect(getComputedStyle(thumb).backgroundColor).toBe(fill('surface-raised'))
+    await expect(getComputedStyle(thumb).borderColor).toBe(edge('color-text-tertiary'))
+    await expect(getComputedStyle(thumb).backgroundColor).toBe(fill('color-surface-raised'))
     await expect(getComputedStyle(part(canvasElement, 'value')).color).toBe(tertiary)
     await expect(getComputedStyle(fieldPart(canvasElement, 'label')!).color).toBe(tertiary)
     await expect(getComputedStyle(fieldPart(canvasElement, 'description')!).color).toBe(tertiary)
@@ -322,9 +324,9 @@ export const Invalid: Story = {
       expect(slider.getAttribute('aria-describedby')).toBe(`${description.id} ${error.id}`),
     )
     await expect(slider).toHaveAccessibleDescription(`${DESCRIPTION} Choose 8 minutes or fewer`)
-    await expect(getComputedStyle(thumb).borderColor).toBe(edge('status-danger'))
+    await expect(getComputedStyle(thumb).borderColor).toBe(edge('color-status-danger'))
     await expect(getComputedStyle(part(canvasElement, 'indicator')).backgroundColor).toBe(
-      fill('text-primary'),
+      fill('color-text-primary'),
     )
   },
 }

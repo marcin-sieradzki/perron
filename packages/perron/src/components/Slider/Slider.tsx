@@ -66,9 +66,11 @@ export interface SliderProps extends Omit<
    */
   defaultValue?: number | readonly [number, number]
   /**
-   * Called at every step the value moves, by a drag, a press on the track or a key, with the new
-   * value; `details.reason` says which, and `details.cancel()` keeps the value as it was.
-   * `event.target` holds `value` and `name`, for a form library.
+   * Called at every step the value moves, with the new value: by a key (`details.reason`
+   * `'keyboard'`), a drag (`'drag'`), a press on the track (`'track-press'`), or a screen reader or
+   * the browser setting the hidden range input itself (`'input-change'`); `details.cancel()` keeps
+   * the value as it was. `event` is `details.event`, whose `target` holds `value` and `name`, for a
+   * form library.
    */
   onChange?: (
     event: Event,
@@ -76,9 +78,11 @@ export interface SliderProps extends Omit<
     details: BaseSlider.Root.ChangeEventDetails,
   ) => void
   /**
-   * Called once the person settles on a value: when a drag ends, the track is pressed or a key is
-   * pressed. It is not called when the value didn't change. Use it to act once on the final value,
-   * such as to fetch, rather than at every step.
+   * Called once the person settles on a value: when a drag ends (`details.reason` `'drag'`), the
+   * track is pressed (`'track-press'`), a key is pressed (`'keyboard'`), or a screen reader or the
+   * browser sets the hidden range input itself (`'input-change'`). It is not called when the value
+   * didn't change. Use it to act once on the final value, such as to fetch, rather than at every
+   * step. `event` is `details.event`.
    */
   onChangeCommitted?: (
     event: Event,
