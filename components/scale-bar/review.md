@@ -1,0 +1,20 @@
+# Review: ScaleBar, round 1
+
+## P1
+
+None.
+
+## P2
+
+- **P2-1.** `packages/perron/src/patterns/ScaleBar/ScaleBar.tsx:126` The bar is written as `<span {...barProps} … />` with no children of its own, so a `slotProps.bar.children` (or `dangerouslySetInnerHTML`) that the `ComponentPropsWithRef<'span'>` type allows renders inside the aria-hidden bracket. CR-10 says "the children … are the pattern's". Give the bar its own empty children after the spread, so the caller's are overridden.
+- **P2-2.** `docs/patterns/scale-bar.md:77` The Tokens row for the label's `min-block-size` says it keeps "the box" at its height before the first measure, which is not what renders. The bar and its `space.050` gap are left out, so the glass is 25.6 px tall there and in `Unknown`, against 33.6 px with a bar (measured on `patterns-scalebar--unknown` against `--default`, light and dark). CR-4 holds over the prose ("which keeps one line's height"), so rewrite the row to say the label keeps its line's height.
+- **P2-3.** `docs/patterns/scale-bar.md:5` The prose says ScaleBar's `dependsOn` is "empty today". The build has set it to `["Surface"]` in `packages/perron/components.json`, which CR-1 and line 21 also say, so the shipped spec (and `packages/perron/data/docs.json`) now states something false. Rewrite the sentence to say `dependsOn` lists Surface.
+- **P2-4.** `packages/perron/src/locale/en.ts:54` The `unknown` key's JSDoc still names only "Stat, FactList, Count" as where it is heard, but ScaleBar now reuses it after "Scale" for a map with no resolution (spec Owned strings table, CR-7). The content audit's rule that each key's JSDoc says where the string is seen or heard is broken, and a later edit made for Stat's context would change the scale's word unseen.
+
+## P3
+
+- **P3-1.** `packages/perron/src/patterns/ScaleBar/ScaleBar.tsx:57` ScaleBar draws the "—" plus `VisuallyHidden` "Unknown" pair itself (lines 57 and 106-111), copying the shared helper `UnknownValue` in `packages/perron/src/internal/UnknownValue.tsx`. The contract's Patterns section and the `patterns` gate's allowed files (`internal/nodes` only) don't let a pattern import that helper, even though it reads no Base UI. Question for the maintainer: should `UnknownValue` join what a pattern may import, so the dash is drawn once?
+- **P3-2.** `docs/patterns/scale-bar.md:146` CR-4 reads the root's `inline-size` once after the first layout and never again. If the content box later differs from that first read (a caller's class under a media query, or CSS that arrives after first layout), the bar is drawn at a share computed for a different length, and the scale shows a distance the map doesn't. Question: keep the single read, or follow the box with a `ResizeObserver`?
+- **P3-3.** `packages/perron/src/patterns/ScaleBar/ScaleBar.css:25` Before the map gives its resolution (`Unknown`, and the server render), the glass box is 8 px shorter than with a bar. A scale anchored at the bottom right therefore moves its top edge when the first resolution arrives. This is the build's open direction note. Options: the root keeps the bar's room (for example with a `min-block-size`, or a hidden placeholder bar), or the shorter box stays.
+- **P3-4.** `packages/perron/src/patterns/ScaleBar/ScaleBar.css:28` The label never wraps inside the fixed 96 px content box. A unit override longer than an SI symbol, such as "5000 kilometres" (about 108 px in `typography.data`), runs past the padding and out of the glass. This is the build's open direction note. Options: the root grows to fit its label, or the `metersUnitLabel` and `kilometersUnitLabel` JSDoc and Props rows say the overrides are for symbols only.
+- **P3-5.** `docs/patterns/scale-bar.md:66` Two glass boxes with different shapes sit in the same bottom-right corner. ScaleBar is about 34 px tall at `radius.md`, while the MapControls toolbar beside it is 44 px tall at `radius.lg` (`packages/perron/src/components/Toolbar/Toolbar.css:14`), and Attribution is an edgeless strip at `radius.xs`. This is the brief's open direction note. When the design is drawn, decide whether the corner's cluster should share one radius and height.
