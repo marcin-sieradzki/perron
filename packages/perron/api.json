@@ -1352,6 +1352,116 @@
       }
     }
   },
+  "SearchField": {
+    "extends": [
+      "Omit< Field.Root.Props, | 'children' | 'ref' | 'invalid' | 'validate' | 'validationMode' | 'validationDebounceTime' | 'actionsRef' | 'dirty' | 'touched' | 'onChange' | 'defaultValue' >"
+    ],
+    "props": {
+      "clearLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "defaultOpen": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "defaultValue": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "filter": {
+        "optional": true,
+        "type": [
+          "(item: SearchFieldItem, query: string) => boolean",
+          "null"
+        ]
+      },
+      "hiddenLabel": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "items": {
+        "optional": false,
+        "type": [
+          "readonly SearchFieldItem[]"
+        ]
+      },
+      "label": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "noMatchesLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "onChange": {
+        "optional": true,
+        "type": [
+          "(event: Event, value: string, details: AutocompleteRootChangeEventDetails) => void"
+        ]
+      },
+      "onClose": {
+        "optional": true,
+        "type": [
+          "(event: Event, reason: ChangeEventReason, details: AutocompleteRootOpenChangeEventDetails) => void"
+        ]
+      },
+      "onItemSelect": {
+        "optional": true,
+        "type": [
+          "(event: MouseEvent<HTMLDivElement, MouseEvent>, item: SearchFieldItem) => void"
+        ]
+      },
+      "onOpen": {
+        "optional": true,
+        "type": [
+          "(event: Event, details: AutocompleteRootOpenChangeEventDetails) => void"
+        ]
+      },
+      "open": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "placeholder": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ label?: FieldLabelProps | undefined; inputGroup?: AutocompleteInputGroupProps | undefined; input?: ComboboxInputProps | undefined; clear?: Omit<ComboboxClearProps, \"disabled\"> | undefined; portal?: ComboboxPortalProps | undefined; positioner?: ComboboxPositionerProps | undefined; popup?: ComboboxPopupProps | undefined; empty?: ComboboxEmptyProps | undefined; list?: ComboboxListProps | undefined; item?: AutocompleteItemProps | undefined; }"
+        ]
+      },
+      "value": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      }
+    }
+  },
   "Section": {
     "extends": [
       "Omit< useRender.ComponentProps<'section'>, 'title' | 'children' >"

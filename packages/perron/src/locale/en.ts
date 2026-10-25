@@ -70,6 +70,8 @@ export const en = {
   zoomOut: 'Zoom out',
   /** The map's button that moves and zooms the map to show the whole network. */
   centerMap: 'Centre the map',
+  /** A search field's list: shown and announced when no suggestion matches the words typed. */
+  noMatches: 'No matches',
 }
 
 /** The name of one owned string. */

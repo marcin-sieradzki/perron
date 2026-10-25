@@ -35,4 +35,5 @@ export const sv: OwnedStrings = {
   zoomIn: 'Zooma in',
   zoomOut: 'Zooma ut',
   centerMap: 'Centrera kartan',
+  noMatches: 'Inga träffar',
 }

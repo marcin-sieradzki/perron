@@ -35,4 +35,5 @@ export const nb: OwnedStrings = {
   zoomIn: 'Zoom inn',
   zoomOut: 'Zoom ut',
   centerMap: 'Sentrer kartet',
+  noMatches: 'Ingen treff',
 }
