@@ -41,6 +41,7 @@ export const PAGES = [
   'docs/components/surface.md',
   'docs/components/map-controls.md',
   'docs/components/tabs.md',
+  'docs/components/dialog.md',
   'docs/components/sheet.md',
   'docs/components/delay.md',
   'docs/components/line-badge.md',
