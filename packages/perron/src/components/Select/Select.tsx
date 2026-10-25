@@ -1,3 +1,4 @@
+'use client'
 // Select: the field that picks one value from a short, fixed list. A labelled box showing the
 // chosen option, or a placeholder, that opens a list of options under it, on the Field component
 // and Base UI's Select. Base UI does the opening, the keys, the highlight, the typed letters, the

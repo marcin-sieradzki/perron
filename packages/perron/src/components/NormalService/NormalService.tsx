@@ -1,3 +1,4 @@
+'use client'
 // NormalService: the good news about a line, as a tick in a circle and "Running normally" in the
 // success colour, where the line's disruptions would be listed. Spec:
 // docs/components/normal-service.md.

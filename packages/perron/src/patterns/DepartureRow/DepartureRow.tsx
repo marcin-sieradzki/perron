@@ -1,3 +1,4 @@
+'use client'
 // DepartureRow: one departure from a stop, as one row of the stop's list of departures: the line's
 // badge and where it goes, how fresh the vehicle's data is, and how soon it leaves, with its
 // timetabled time and how late it runs. A pattern: plain elements over LineBadge, VehicleDot and

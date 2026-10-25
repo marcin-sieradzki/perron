@@ -1,3 +1,4 @@
+'use client'
 // Attribution: the map's credits, one strip of caption text on glass in a corner of the map, naming
 // where the map and its data come from, with the caller's links to each source
 // (docs/components/attribution.md). No Base UI component: a native <small>, small print, rendered

@@ -1,4 +1,4 @@
-// Each stable pattern's preview, by registry name: the pattern from '@/components/perron/patterns'
+// Each stable pattern's preview, by registry name: the pattern from '@mylder/perron/patterns'
 // with sample data in the content-design voice (patterns/samples.ts), and the page's `props` laid
 // over it, so a page can ask for any variant or state. A preview with state or a portal is a
 // client component of its own in patterns/. A preview draws no backdrop: the page's frame gives
@@ -10,7 +10,7 @@ import {
   KioskBar,
   ScaleBar,
   StopTimeline,
-} from '@/components/perron/patterns'
+} from '@mylder/perron/patterns'
 import { PackageIcon } from '@/components/site/PackageIcon.tsx'
 import type { Previews } from './index.ts'
 import { DataStatePanelPreview } from './patterns/DataStatePanelPreview.tsx'

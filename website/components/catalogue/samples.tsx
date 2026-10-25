@@ -1,14 +1,7 @@
 // What each card on the components index draws: the preview once with its own defaults, or a few
 // times with the props of Components.dc.html's card, such as Delay late, on time and early. Every
 // sample goes through getPreview, so a card always draws the shipped component.
-import {
-  Segment,
-  Tab,
-  TabsList,
-  TabsPanel,
-  ToolbarButton,
-  ToolbarSeparator,
-} from '@/components/perron'
+import { Segment, Tab, TabsList, TabsPanel, ToolbarButton, ToolbarSeparator } from '@mylder/perron'
 import { PackageIcon } from '@/components/site/PackageIcon.tsx'
 import type { PreviewProps } from '@/previews/index.ts'
 

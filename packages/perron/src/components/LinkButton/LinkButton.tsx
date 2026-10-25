@@ -1,3 +1,4 @@
+'use client'
 // LinkButton: a native <a href> with Button's look, that takes the reader to another page or place,
 // where a Button runs an action. Spec: docs/components/link-button.md.
 import type { CSSProperties, ReactNode, Ref } from 'react'

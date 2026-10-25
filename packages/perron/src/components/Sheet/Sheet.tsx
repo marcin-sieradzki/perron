@@ -1,3 +1,4 @@
+'use client'
 // Sheet: a panel that slides in from an edge of the screen and floats over the map, on Base UI's
 // Drawer. A side sheet on a wide screen, a bottom sheet with snap points on a phone; non-modal by
 // default, so the map beside it stays usable. Spec: docs/components/sheet.md.

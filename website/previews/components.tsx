@@ -1,4 +1,4 @@
-// Each stable component's preview, by registry name: the component from '@/components/perron' with
+// Each stable component's preview, by registry name: the component from '@mylder/perron' with
 // the content its spec's stories use, and the caller's props spread over those defaults, so
 // `getPreview('Button', { variant: 'outline', size: 'small' })` draws exactly that Button. An
 // overlay previews as its trigger, closed; a preview with state is a client component in
@@ -66,7 +66,7 @@ import {
   VehicleDot,
   type StationIconProps,
   type VehicleDotProps,
-} from '@/components/perron'
+} from '@mylder/perron'
 import { PackageIcon } from '@/components/site/PackageIcon.tsx'
 import type { Preview, PreviewProps, Previews } from './index.ts'
 import { AlertDialogPreview } from './components/AlertDialogPreview.tsx'

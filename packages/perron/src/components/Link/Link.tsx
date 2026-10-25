@@ -1,3 +1,4 @@
+'use client'
 // Link: a native <a href> in text, underlined in the colour of the text around it, that takes the
 // reader to another page or place. Spec: docs/components/link.md.
 import type { CSSProperties, ReactNode, Ref } from 'react'

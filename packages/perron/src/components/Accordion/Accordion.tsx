@@ -1,3 +1,4 @@
+'use client'
 // Accordion: a stack of headed sections, each opening and closing its own content under its
 // heading, on Base UI's Accordion. Its item lives here too: Base UI's item, header, trigger and
 // panel read the root's context, so they can't be built or shown apart (docs/components/accordion.md,

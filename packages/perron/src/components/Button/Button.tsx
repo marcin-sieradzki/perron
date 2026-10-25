@@ -1,3 +1,4 @@
+'use client'
 // Button: a native <button> from Base UI's Button that runs one action, in ink or, for the one main
 // action of a screen, in the brand yellow. The spec is docs/components/button.md.
 import { Button as BaseButton } from '@base-ui/react/button'

@@ -1,3 +1,4 @@
+'use client'
 // DataStatePanel: holds a data view and shows the caller's content once its data is in, or in its
 // place an EmptyState saying the data is loading, came back empty, or could not be loaded. A
 // pattern: it builds on Perron's EmptyState and plain divs, never on Base UI.

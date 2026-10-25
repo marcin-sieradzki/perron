@@ -1,3 +1,4 @@
+'use client'
 // Tooltip: a short visual label beside a control, shown while a mouse pointer rests on it or the
 // keyboard focuses it, on Base UI's Tooltip. One component that takes its trigger as a prop and its
 // words as children, the popup as its root; PerronProvider holds the one Tooltip.Provider (CR-1).

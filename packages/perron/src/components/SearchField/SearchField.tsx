@@ -1,3 +1,4 @@
+'use client'
 // SearchField: the field that finds a line or a stop. A labelled text input with the search icon,
 // a clear button while it holds words, and a list of suggestions under it that narrows as the
 // person types, on Base UI's Field and Autocomplete. Base UI does the filtering, the keys, the

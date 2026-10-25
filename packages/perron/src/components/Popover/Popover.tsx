@@ -1,3 +1,4 @@
+'use client'
 // Popover: a small glass panel anchored to the button that opens it, on Base UI's Popover. It is
 // never modal, so the map and the rest of the screen stay usable while it is open, and it gives
 // focus back to its button when it closes. One component in Dialog's shape: it takes its words and

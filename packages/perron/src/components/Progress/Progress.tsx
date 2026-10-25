@@ -1,3 +1,4 @@
+'use client'
 // Progress: a bar that shows how far a task has got, such as an export, with the words that name
 // the task and the share done, such as "Exporting the report" at "45%", or, while how far is not
 // known, a segment that sweeps along the track and the words "In progress". Base UI's Progress

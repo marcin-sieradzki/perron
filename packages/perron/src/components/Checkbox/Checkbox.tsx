@@ -1,3 +1,4 @@
+'use client'
 // Checkbox: a box with its words beside it that turns one setting or one answer on and off, on Base
 // UI's Checkbox. Base UI gives the role, the click and Space, the hidden input and the state;
 // nothing here adds a key or click handler (CR-1). The box is the CheckboxIndicator shared part,

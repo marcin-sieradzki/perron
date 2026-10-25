@@ -2,7 +2,7 @@
 // with its status, links to its Storybook page and its spec, the spec's intro as the lead, and on
 // phones the "On this page" select.
 import NextLink from 'next/link'
-import { Tag } from '@/components/perron'
+import { Tag } from '@mylder/perron'
 import { Markdown } from '@/components/site/Markdown.tsx'
 import type { RegistryEntry } from '../../lib/registry.ts'
 import { githubUrl } from '../../lib/repo.ts'

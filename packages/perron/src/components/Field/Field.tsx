@@ -1,3 +1,4 @@
+'use client'
 // Field: the frame round one form control, its label above it, a line of help, and the error
 // message under it, all tied to the control for the ear by Base UI's Field, which Perron rebuilds
 // none of (CR-1). It draws no box: the box is the control's. The spec is docs/components/field.md.

@@ -1,3 +1,4 @@
+'use client'
 // Kbd: one key of the keyboard, such as "Esc", "+" or "↑", inside help text (docs/components/kbd.md).
 // No Base UI component: a native <kbd> rendered through useRender, so the contract's render prop
 // works, with no role, ARIA or data attribute of its own (CR-1) and no behaviour (CR-2).

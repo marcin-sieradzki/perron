@@ -1,3 +1,4 @@
+'use client'
 // Stat: a key figure under the words that say what it counts, such as "412" under "Reporting
 // live", set large to read at a glance. No Base UI component has behaviour for it, so every part
 // renders through useRender. Spec: docs/components/stat.md.

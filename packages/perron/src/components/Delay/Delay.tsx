@@ -1,3 +1,4 @@
+'use client'
 // Delay: how late or early a vehicle or departure runs, as a short figure in the delay's colour,
 // such as "+3 min", with the same said in words to a screen reader. Spec: docs/components/delay.md.
 import type { CSSProperties, Ref } from 'react'

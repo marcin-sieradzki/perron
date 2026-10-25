@@ -1,3 +1,4 @@
+'use client'
 // VehicleDotLegend: the key to the vehicle dots, the five data states as a list of dots beside their
 // words. No Base UI component: a <ul> rendered through useRender, so the contract's render prop
 // works (docs/components/vehicle-dot-legend.md).

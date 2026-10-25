@@ -1,3 +1,4 @@
+'use client'
 // ReportStrip: how a set of vehicles is reporting right now, each data state's count beside its
 // dot and word, in one row that wraps between items. A pattern: Perron's VehicleDotLabel over plain
 // elements, never Base UI (CR-13). Spec: docs/patterns/report-strip.md.

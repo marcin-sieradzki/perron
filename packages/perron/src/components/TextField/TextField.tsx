@@ -1,3 +1,4 @@
+'use client'
 // TextField: the box a person types one line of words into, framed by Perron's Field, which gives
 // it its label, its line of help and its error. The root is the native <input> itself, Base UI's
 // Field.Control, so React's own onChange, value and defaultValue, and a form library's register(),

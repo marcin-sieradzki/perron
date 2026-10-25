@@ -1,8 +1,9 @@
 // The previews registry: each component's and pattern's preview by its registry name, drawn with
 // the shipped component itself. components.tsx (ticket T5) and patterns.tsx (ticket T6) fill it;
 // every page draws a preview through getPreview, so a page never imports a preview file directly.
-// Both files are server modules: they import Perron from '@/components/perron' (a client
-// boundary), and a preview that needs state or handlers is a 'use client' component of its own.
+// Both files are server modules: they import Perron from '@mylder/perron', whose components arrive
+// as client references, and a preview that needs state or handlers is a 'use client' component of
+// its own.
 import type { ReactNode } from 'react'
 import { compactProps, componentPreviews } from './components.tsx'
 import { patternPreviews } from './patterns.tsx'

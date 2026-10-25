@@ -7,7 +7,7 @@
 import { compiler, type MarkdownToJSX } from 'markdown-to-jsx/react'
 import NextLink from 'next/link'
 import type { ComponentProps } from 'react'
-import { Link } from '@/components/perron'
+import { Link } from '@mylder/perron'
 import { withoutLeadingTitle } from '../../lib/anchors.ts'
 import { assetSrc, siteHref } from '../../lib/routes.ts'
 

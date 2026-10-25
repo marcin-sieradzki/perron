@@ -1,3 +1,4 @@
+'use client'
 // VehicleTable: the vehicles in service as a native table, one row each: the vehicle's line, where
 // it is going, how fresh its position is and how late it runs, the map's text alternative. A
 // pattern: plain table elements over LineBadge, VehicleDotLabel and Delay, never Base UI (CR-1).

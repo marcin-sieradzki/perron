@@ -1,3 +1,4 @@
+'use client'
 // VehicleDotLabel: a vehicle's data state as its dot and its word side by side, such as a solid dot
 // and "Live". No Base UI component: a <span> rendered through useRender, so the contract's render
 // prop works (docs/components/vehicle-dot-label.md).

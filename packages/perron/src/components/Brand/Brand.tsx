@@ -1,3 +1,4 @@
+'use client'
 // Brand: the Mylder mark beside the wordmark "mylder", drawn inline so its colours come from the
 // tokens and follow the theme. Spec: docs/components/brand.md.
 import type { CSSProperties, Ref } from 'react'

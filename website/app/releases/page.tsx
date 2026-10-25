@@ -3,7 +3,7 @@
 // changelog's own markdown, with its commit linked on GitHub. In the Agents page's layout.
 import type { Metadata } from 'next'
 import { DocLayout } from '@/components/agents/DocLayout.tsx'
-import { Link } from '@/components/perron'
+import { Link } from '@mylder/perron'
 import { Markdown } from '@/components/site/Markdown.tsx'
 import { PageHeader } from '@/components/site/PageHeader.tsx'
 import { releaseAnchor } from '../../lib/anchors.ts'

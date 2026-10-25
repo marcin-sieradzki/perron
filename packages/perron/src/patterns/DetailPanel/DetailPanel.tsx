@@ -1,3 +1,4 @@
+'use client'
 // DetailPanel: the panel that opens on the right of the map when a rider picks a vehicle or a stop,
 // and the bottom sheet it becomes on a phone: Perron's Sheet headed by Perron's DetailHeader, with
 // the Sheet's close button at the end of the header row and the caller's details below. A pattern:

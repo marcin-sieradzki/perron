@@ -1,3 +1,4 @@
+'use client'
 // DayProfileChart: how one count moves across a day, such as the vehicles in service each hour from
 // midnight to midnight: one line in the chart colour, the area under it, a 24-hour time axis, and a
 // value tip for the point under the pointer or the keys. A pattern: plain HTML and SVG, Perron's

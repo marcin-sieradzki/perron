@@ -1,3 +1,4 @@
+'use client'
 // SeverityLabel: the kind of a disruption on a line, as its icon and its name in its colour, such
 // as a warning triangle and "Delays". Spec: docs/components/severity-label.md.
 import type { ReactElement, Ref } from 'react'

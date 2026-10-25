@@ -1,3 +1,4 @@
+'use client'
 // NumberField: the box a person types a number into, or steps up and down with its minus and plus
 // buttons and the arrow keys, framed by Perron's Field, which gives it its label, its line of help
 // and its error. The root is Base UI's NumberField.Root, which keeps the number, parses and formats

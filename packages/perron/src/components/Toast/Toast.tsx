@@ -1,3 +1,4 @@
+'use client'
 // Toast: a short message that floats in at the bottom of the screen in Alert's look, confirms what
 // just happened and leaves on its own. It renders nothing where it is written: while `open`, it
 // keeps a toast in Base UI's list, which the region PerronProvider holds renders (ToastRegion.tsx).

@@ -1,3 +1,4 @@
+'use client'
 // Switch: a two-state control that turns one setting on or off at once, on Base UI's Switch, a
 // track with a thumb that slides to its inline end when on. Base UI gives the role, aria-checked,
 // the tab stop, Space and Enter, the label's click, disabled, read-only, the hidden input and the

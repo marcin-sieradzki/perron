@@ -1,7 +1,7 @@
 // Any address the site has no page for.
 import type { Metadata } from 'next'
 import NextLink from 'next/link'
-import { Link } from '@/components/perron'
+import { Link } from '@mylder/perron'
 import { PageHeader } from '@/components/site/PageHeader.tsx'
 
 export const metadata: Metadata = { title: 'Page not found' }

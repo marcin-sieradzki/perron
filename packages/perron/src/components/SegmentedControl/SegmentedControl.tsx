@@ -1,3 +1,4 @@
+'use client'
 // SegmentedControl: a row of two to five segments on an inset track, one of them selected, that
 // picks how one view shows its content, on Base UI's ToggleGroup. Its segment lives here too: Base
 // UI's Toggle reads the group's context for its pressed state, so it can't be built or shown apart

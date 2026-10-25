@@ -1,3 +1,4 @@
+'use client'
 // RadioGroup: a named set of two to six choices of which exactly one holds at a time, each a round
 // mark beside its words, on Base UI's RadioGroup and Radio. Its radio lives here too: Base UI's
 // Radio.Root reads the group's context for its checked state, so it can't be built or shown apart

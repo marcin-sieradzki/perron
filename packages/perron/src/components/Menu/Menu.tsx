@@ -1,3 +1,4 @@
+'use client'
 // Menu: a list of actions and settings that opens from a button, on Base UI's Menu. Base UI gives
 // the opening, the placing, the arrow keys, typeahead, the checkbox and radio state, the submenus,
 // Esc, the outside press, the focus return and every role; nothing here adds a key or pointer

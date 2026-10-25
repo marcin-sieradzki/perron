@@ -1,6 +1,6 @@
 // A data state's VehicleDot, hidden from screen readers since its state's word sits beside it, or
 // nothing while the registry has VehicleDot in design: a page draws the real dot or none.
-import { VehicleDot, type VehicleDotProps } from '@/components/perron'
+import { VehicleDot, type VehicleDotProps } from '@mylder/perron'
 import { entryByName } from '@/lib/registry.ts'
 
 export type StateVariant = NonNullable<VehicleDotProps['variant']>

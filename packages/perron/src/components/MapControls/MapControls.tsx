@@ -1,3 +1,4 @@
+'use client'
 // MapControls: the map's zoom in, zoom out and centre buttons, in Perron's Toolbar on its glass, one
 // tab stop named in the reader's language. Every behaviour and every look is Toolbar's (CR-1, CR-9).
 // The spec is docs/components/map-controls.md.

@@ -1,3 +1,4 @@
+'use client'
 // Slider: a control for choosing a number, or a range between two numbers, along a track, framed by
 // Perron's Field, which gives it its label, its line of help and its error. The root is Base UI's
 // Slider.Root, the group that holds the value; Base UI moves, steps, clamps, formats and submits it,

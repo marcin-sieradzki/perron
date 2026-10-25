@@ -1,3 +1,4 @@
+'use client'
 // ScaleBar: the map's scale, a short bar on glass with the ground distance its length spans
 // written above it, "300 m" or "2 km", which shortens and lengthens as the map zooms. A pattern:
 // Perron's Surface and the VisuallyHidden part over plain elements, never Base UI (CR-1).

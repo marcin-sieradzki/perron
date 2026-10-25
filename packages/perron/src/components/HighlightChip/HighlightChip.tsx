@@ -1,3 +1,4 @@
+'use client'
 // HighlightChip: a pill on glass that floats alone over the map and turns one map highlight on and
 // off, on Base UI's Toggle, which keeps the state, sets aria-pressed and data-pressed, and handles
 // the click, Enter and Space (CR-2). The spec is docs/components/highlight-chip.md.

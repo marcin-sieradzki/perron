@@ -1,3 +1,4 @@
+'use client'
 // DetailHeader: the top of the detail panel, naming what it shows (a line's vehicle by its badge and
 // destination, or a stop by its marker and name) with a line under it and room for the panel's own
 // controls. A pattern: plain elements over Perron's components, never Base UI (CR-1).

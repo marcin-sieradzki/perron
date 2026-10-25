@@ -1,3 +1,4 @@
+'use client'
 // Toolbar: a bar of actions that is one tab stop, moved through with the arrow keys, on Base UI's
 // Toolbar. Its button, group and separator live here too: Base UI's parts read the root's context,
 // so they can't be built or shown apart (docs/components/toolbar.md, Anatomy).
