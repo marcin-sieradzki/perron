@@ -5,10 +5,9 @@ deferred:
   at: 2026-10-25T06:34:21.822Z
 stages:
   brief:
-    status: pending
-    started: 2026-10-25T06:34:28.215Z
-    ended: 2026-10-25T06:46:08.246Z
-    pending: 9
+    status: done
+    started: 2026-10-25T06:46:40.740Z
+    ended: 2026-10-25T06:48:00.020Z
 notes:
   - stage: brief
     at: 2026-10-25T06:46:08.247Z
