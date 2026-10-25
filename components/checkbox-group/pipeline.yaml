@@ -1,0 +1,6 @@
+# Written by npm run factory; never by hand.
+component: CheckboxGroup
+layer: component
+deferred:
+  at: 2026-10-25T06:02:11.177Z
+stages: {}
