@@ -661,7 +661,7 @@
     "name": "Toast",
     "layer": "component",
     "category": "Feedback",
-    "status": "building",
+    "status": "stable",
     "baseUiParts": [
       "Toast.Provider",
       "Toast.Portal",

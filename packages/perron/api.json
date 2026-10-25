@@ -3594,6 +3594,90 @@
       }
     }
   },
+  "Toast": {
+    "extends": [
+      "Omit< BaseToast.Root.Props, 'toast' | 'title' | 'color' | 'children' | 'ref' >"
+    ],
+    "props": {
+      "action": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "autoHideDuration": {
+        "optional": true,
+        "type": [
+          "null",
+          "number"
+        ]
+      },
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "closeLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "color": {
+        "optional": true,
+        "type": [
+          "\"danger\"",
+          "\"info\"",
+          "\"neutral\"",
+          "\"success\"",
+          "\"warning\""
+        ]
+      },
+      "defaultOpen": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "icon": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "onClose": {
+        "optional": true,
+        "type": [
+          "(event: Event, reason: ToastCloseReason, details: ToastCloseDetails) => void"
+        ]
+      },
+      "open": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ icon?: ComponentProps<\"div\", {}, HTMLProps> | undefined; content?: ToastContentProps | undefined; title?: ToastTitleProps | undefined; description?: ToastDescriptionProps | undefined; action?: ComponentProps<\"div\", {}, HTMLProps> | undefined; close?: Omit<ToastCloseProps, \"children\" | \"disabled\"> | undefined; }"
+        ]
+      },
+      "title": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      }
+    }
+  },
   "Toolbar": {
     "extends": [
       "Inherited< BaseToolbar.Root.Props, 'orientation' | 'disabled' >"
