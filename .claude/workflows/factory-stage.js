@@ -65,7 +65,7 @@ const rerun = fix
   : ''
 if (dir && !port) throw new Error(`factory-stage needs a port with dir ${dir}`)
 const worktreeNote = dir
-  ? `Work only in the worktree ${dir}: run every command from it, with STORYBOOK_PORT=${port} exported in each shell, and read and write files only under it. Every repo path below is relative to it. `
+  ? `Work only in the worktree ${dir}: run every command from it, with STORYBOOK_PORT=${port} exported in each shell, and read and write files only under it; give the Perron MCP's tools \`dir: '${dir}'\`, since the server reads the main checkout otherwise. Every repo path below is relative to it. `
   : ''
 if (!name || !(stage in SKILLS || stage === 'review'))
   throw new Error(`factory-stage needs { stage, name }; got ${JSON.stringify(args)}`)

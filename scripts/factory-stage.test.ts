@@ -94,6 +94,8 @@ describe('factory-stage', () => {
   it('pins every agent to its worktree and Storybook port when a batch gives them', async () => {
     const { calls } = await run({ stage: 'build', name: 'Chip', dir: '/wt/chip', port: 6011 })
     expect(calls[0].prompt).toMatch(/^Work only in the worktree \/wt\/chip: .*STORYBOOK_PORT=6011/)
+    // the Perron MCP runs from the main checkout, so its tools are told which project to read
+    expect(calls[0].prompt).toContain("give the Perron MCP's tools `dir: '/wt/chip'`")
   })
 })
 
