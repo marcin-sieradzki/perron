@@ -3,4 +3,8 @@ component: Tag
 layer: component
 deferred:
   at: 2026-10-25T00:21:26.584Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-25T00:21:33.896Z
+    ended: 2026-10-25T00:26:12.037Z
