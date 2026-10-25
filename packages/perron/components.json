@@ -174,7 +174,7 @@
     "name": "NormalService",
     "layer": "component",
     "category": "Transit",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/NormalService",
     "dependsOn": []
@@ -183,7 +183,7 @@
     "name": "Attribution",
     "layer": "component",
     "category": "Map",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/Attribution",
     "dependsOn": []
@@ -201,7 +201,7 @@
     "name": "SegmentedControl",
     "layer": "component",
     "category": "Inputs",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": ["ToggleGroup", "Toggle"],
     "penpotPath": "Components/SegmentedControl",
     "dependsOn": []
@@ -350,7 +350,7 @@
     "name": "DetailPanel",
     "layer": "pattern",
     "category": "Detail",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Patterns/DetailPanel",
     "dependsOn": ["Sheet", "DetailHeader"]

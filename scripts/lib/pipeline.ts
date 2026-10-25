@@ -2,8 +2,9 @@
 // rules that move it through the loop of ROADMAP.md, "Phase 4": design, brief, build, review, docs,
 // visual. Every gate is checked from the files and by running the checks, never taken on a stage's
 // word, and the caps of ADR 0008 stop the loop at `needs-human`: a failed build run (the build
-// stage spends its 3 attempts inside one run), a second review round to find a P1 (a third, when
-// the round finds only P2s), a second failed docs run, a second visual failure. Short of its cap,
+// stage spends its 3 attempts inside one run; one rerun when the spec changed since it began), a
+// third build run that asks, a second review round to find a P1 (a third, when the round finds
+// only P2s), a second failed docs run, a second visual failure. Short of its cap,
 // a review round with a P1 or a P2, a docs failure or a visual failure sends the component back
 // to build, and `next` names what the rerun fixes. A deferred design (ADR 0010) takes design and visual out of the loop until
 // a design run begins. scripts/factory.ts is the command line over it and the only writer.
@@ -47,9 +48,20 @@ export type Gate = 'design-approval' | 'pending-questions' | 'needs-human' | 'do
  * or the spec, so the first goes back to build, as a review's P1 does. A build whose fix is a
  * decision the spec leaves open returns `pending` with its questions and waits at
  * `pending-questions`, like any stage that asks; one whose fix is the shared tooling's, the
- * read-back's or a token's returns `failed`, and that stops the loop.
+ * read-back's or a token's returns `failed`, and that stops the loop, but once: when the spec
+ * has changed since that run began, as when the brief's answer is what the build could not do,
+ * the build runs again from the revised spec (`respec`). A build that keeps asking stops too: the
+ * third build run to end `pending` waits at `needs-human` (`buildAsked`), since in an unattended
+ * run every question is answered and the build would otherwise ask and rerun without end.
  */
-export const CAPS = { review: 2, reviewP2: 3, docs: 2, visual: 2 } as const
+export const CAPS = {
+  review: 2,
+  reviewP2: 3,
+  docs: 2,
+  visual: 2,
+  buildAsked: 3,
+  respec: 1,
+} as const
 
 /** The spec template every spec keeps the sections of. */
 export const TEMPLATE = 'docs/components/TEMPLATE.md'
@@ -67,6 +79,11 @@ export interface StageState {
   pending?: number
   /** build: runs begun, each a fresh set of the build stage's attempts */
   runs?: number
+  /** build: the SHA-256 of the spec when the latest run began */
+  spec?: string
+  /** build: runs that ended `pending`, and failed runs rerun because the spec changed since */
+  asked?: number
+  respecs?: number
   /** review: rounds reviewed, and how many of them found a P1 or a P2 and sent the component back */
   rounds?: number
   sentBack?: number
@@ -374,7 +391,7 @@ function approvalProblem(p: Pipeline, env: Env) {
 
 /** Why `stage` cannot begin now, or nothing. */
 function refusal(p: Pipeline, stage: Stage, env: Env): string | undefined {
-  if (p.needsHuman)
+  if (p.needsHuman && !(stage === 'build' && respecRerun(p, env)))
     return `${p.component} waits at needs-human (${p.needsHuman.stage}): ${p.needsHuman.reason}. Once it is fixed, the maintainer runs ${npm(p.component, 'unblock')}`
   if (stage === 'design') return undefined
   const stages = stagesOf(p)
@@ -428,8 +445,28 @@ function fixOf(p: Pipeline, failing: string, env: Env) {
   return `${failing}. Fix each of its P1 and P2 findings at the line it names:\n${blockingFindings(text)}`
 }
 
+/**
+ * Whether a failed build's needs-human stop gives way to one rerun: the spec has changed since the
+ * failed run began, and no earlier failure since the last `unblock` was rerun that way.
+ */
+function respecRerun(p: Pipeline, env: Env) {
+  const s = p.stages.build
+  if (p.needsHuman?.stage !== 'build' || s?.status !== 'failed' || !s.spec) return false
+  if ((s.respecs ?? 0) >= CAPS.respec) return false
+  return s.spec !== sha256(env, filesOf(p.component, p.layer).spec)
+}
+
 /** What comes next for `p`: the stage to run, or the gate it waits at. Never writes. */
 export function next(p: Pipeline, env: Env): Next {
+  if (p.needsHuman && respecRerun(p, env)) {
+    const { spec } = filesOf(p.component, p.layer)
+    const failing = p.stages.build?.failing ?? p.needsHuman.reason
+    return {
+      run: 'build',
+      why: `the last run failed, and ${spec} has changed since it began; run the build again from the revised spec`,
+      fix: `${failing}. ${spec} has been revised since that run began: build what it says now.`,
+    }
+  }
   if (p.needsHuman)
     return { wait: 'needs-human', stage: p.needsHuman.stage, why: p.needsHuman.reason }
   const stages = stagesOf(p)
@@ -489,9 +526,9 @@ export function next(p: Pipeline, env: Env): Next {
 
 /** Keeps only a stage's counters, for a stage whose latest run no longer counts. */
 function counters(s: StageState = {}): StageState {
-  const { runs, rounds, sentBack, findings, failures } = s
+  const { runs, asked, respecs, rounds, sentBack, findings, failures } = s
   return Object.fromEntries(
-    Object.entries({ runs, rounds, sentBack, findings, failures }).filter(
+    Object.entries({ runs, asked, respecs, rounds, sentBack, findings, failures }).filter(
       ([, v]) => v !== undefined,
     ),
   )
@@ -505,6 +542,16 @@ export function begin(p: Pipeline, stage: Stage, env: Env): Result {
   const was = next(p, env)
   const fix = 'run' in was && was.run === stage ? was.fix : undefined
   const out = clone(p)
+  if (stage === 'build' && respecRerun(p, env)) {
+    const reason = out.needsHuman!.reason
+    delete out.needsHuman
+    out.stages.build!.respecs = (out.stages.build!.respecs ?? 0) + 1
+    ;(out.notes ??= []).push({
+      stage,
+      at: env.now(),
+      unblocked: `${reason}; rerun once because the spec changed since that run began`,
+    })
+  }
   if (stage === 'design') {
     delete out.approval
     delete out.deferred
@@ -514,7 +561,10 @@ export function begin(p: Pipeline, stage: Stage, env: Env): Result {
   const s = (out.stages[stage] = { ...counters(out.stages[stage]), status: 'running' as const })
   s.started = env.now()
   if (fix) s.fix = fix
-  if (stage === 'build') s.runs = (s.runs ?? 0) + 1
+  if (stage === 'build') {
+    s.runs = (s.runs ?? 0) + 1
+    s.spec = sha256(env, filesOf(p.component, p.layer).spec)
+  }
   const extra =
     stage === 'build' ? ` (run ${s.runs})` : stage === 'review' ? ` (round ${roundOf(s)})` : ''
   return { ok: true, pipeline: out, said: `began ${stage}${extra}` }
@@ -555,6 +605,10 @@ export function unblock(p: Pipeline, env: Env): Result {
   const s = stageOf(out, stage)
   if (stage === 'review') s.sentBack = 0
   if (stage === 'docs' || stage === 'visual') s.failures = 0
+  if (stage === 'build') {
+    delete s.asked
+    delete s.respecs
+  }
   delete out.needsHuman
   return { ok: true, pipeline: out, said: `unblocked ${stage}` }
 }
@@ -687,6 +741,14 @@ export function end(
       if (outcome === 'done') verdict = buildGate(p, env)
       if (verdict.outcome === 'failed')
         out.needsHuman = { stage, reason: `build failed: ${verdict.failing}` }
+      if (verdict.outcome === 'pending') {
+        s.asked = (s.asked ?? 0) + 1
+        if (s.asked >= CAPS.buildAsked)
+          out.needsHuman = {
+            stage,
+            reason: `${s.asked} build runs ended with questions; the last asked: ${said}`,
+          }
+      }
       break
     case 'review': {
       const round = roundOf(s)

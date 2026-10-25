@@ -52,11 +52,12 @@ Every icon renders at one of three steps, set with `--perron-icon-size` (one of 
 
 ### Disruptions
 
-| Icon                                                          | Name         | Grid  | Size                   | Use                |
-| ------------------------------------------------------------- | ------------ | ----- | ---------------------- | ------------------ |
-| <img src="../../packages/perron/icons/warning.svg" alt="">    | `warning`    | 14 px | `icon.size.325`, 13 px | Delays             |
-| <img src="../../packages/perron/icons/signal-off.svg" alt=""> | `signal-off` | 14 px | `icon.size.325`, 13 px | Data feed problems |
-| <img src="../../packages/perron/icons/diversion.svg" alt="">  | `diversion`  | 14 px | `icon.size.325`, 13 px | Diversions         |
-| <img src="../../packages/perron/icons/calendar.svg" alt="">   | `calendar`   | 14 px | `icon.size.325`, 13 px | Planned works      |
+| Icon                                                            | Name           | Grid  | Size                   | Use                |
+| --------------------------------------------------------------- | -------------- | ----- | ---------------------- | ------------------ |
+| <img src="../../packages/perron/icons/warning.svg" alt="">      | `warning`      | 14 px | `icon.size.325`, 13 px | Delays             |
+| <img src="../../packages/perron/icons/signal-off.svg" alt="">   | `signal-off`   | 14 px | `icon.size.325`, 13 px | Data feed problems |
+| <img src="../../packages/perron/icons/diversion.svg" alt="">    | `diversion`    | 14 px | `icon.size.325`, 13 px | Diversions         |
+| <img src="../../packages/perron/icons/calendar.svg" alt="">     | `calendar`     | 14 px | `icon.size.325`, 13 px | Planned works      |
+| <img src="../../packages/perron/icons/check-circle.svg" alt=""> | `check-circle` | 14 px | `icon.size.325`, 13 px | Running normally   |
 
 <!-- /files -->
