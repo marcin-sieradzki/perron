@@ -701,13 +701,25 @@ export function defer(p: Pipeline, env: Env): Result {
  * Clears a needs-human stop once the maintainer has acted, resetting the cap it hit, and notes the
  * stop, so the PR and a later review round see that the count started again there.
  */
-export function unblock(p: Pipeline, env: Env): Result {
+export function unblock(p: Pipeline, env: Env, to?: Stage): Result {
   if (!p.needsHuman) return { ok: false, why: `${p.component} is not at needs-human` }
+  const stage = p.needsHuman.stage
+  if (to && !(stage === 'review' && (to === 'build' || to === 'review')))
+    return {
+      ok: false,
+      why: `--to ${to} is for a review cap, to build (the default) or review; ${p.component} stopped at ${stage}`,
+    }
   const out = clone(p)
-  const stage = out.needsHuman!.stage
   ;(out.notes ??= []).push({ stage, at: env.now(), unblocked: out.needsHuman!.reason })
   const s = stageOf(out, stage)
   if (stage === 'review') s.sentBack = 0
+  // a review cap goes back to build with the cap round's findings as its fix, then review again;
+  // `--to review` reviews again as it stands, once the maintainer has fixed the code by hand
+  const capped = stage === 'review' && s.status === 'failed' && s.failing
+  if (capped && to !== 'review') {
+    sendBack(out, 'review', s.failing!)
+    out.stages.review = counters(s)
+  }
   if (stage === 'docs' || stage === 'visual') s.failures = 0
   if (stage === 'build') {
     delete s.asked

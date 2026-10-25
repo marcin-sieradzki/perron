@@ -13,14 +13,14 @@ The loop's state is `components/<name>/pipeline.yaml`, and `npm run factory`, wh
 
 `npm run factory -- <command> <Name>`, each with `--json` for a parsed answer:
 
-| Command                                                                     | Does                                                                                   |
-| --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `next <Name>`                                                               | Says the stage to run, or the gate it waits at and why. Never writes.                  |
-| `begin <Name> <stage>`                                                      | Records the stage as running, or refuses with the reason (exit 1)                      |
-| `end <Name> <stage> <done\|failed\|pending> [--failing …] [--direction …]…` | Checks the stage's gate from the files, records the result and its notes, prints next  |
-| `approve <Name>`                                                            | Records the maintainer's design approval, tied to the current read-back                |
-| `defer <Name>`                                                              | Takes design and visual out of the loop until a design run begins                      |
-| `unblock <Name>`                                                            | Clears `needs-human` once the maintainer has fixed what stopped the loop, and notes it |
+| Command                                                                     | Does                                                                                                                                         |
+| --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `next <Name>`                                                               | Says the stage to run, or the gate it waits at and why. Never writes.                                                                        |
+| `begin <Name> <stage>`                                                      | Records the stage as running, or refuses with the reason (exit 1)                                                                            |
+| `end <Name> <stage> <done\|failed\|pending> [--failing …] [--direction …]…` | Checks the stage's gate from the files, records the result and its notes, prints next                                                        |
+| `approve <Name>`                                                            | Records the maintainer's design approval, tied to the current read-back                                                                      |
+| `defer <Name>`                                                              | Takes design and visual out of the loop until a design run begins                                                                            |
+| `unblock <Name> [--to build\|review]`                                       | Clears `needs-human` once the maintainer has fixed what stopped the loop, and notes it; a review cap goes back to build unless `--to review` |
 
 ## Stages
 
@@ -48,7 +48,7 @@ Each stage but visual runs as the Claude Code workflow `factory-stage` ([`.claud
    - **`pending-questions`**: the stage `next` names has questions. Put them to the maintainer with the [`grilling`](../grilling/SKILL.md) skill, each with its recommended answer.
      - **Brief**: the questions are the `[PENDING]` lines in the spec. Write each answer in place of its line in the answered form of [`component-brief`](../component-brief/SKILL.md#facts-and-decisions), the decision as a statement. Done when no `[PENDING]` is left; then go back to step 2, where `next` says to run the brief again, with a `fix` that has it carry the answers through the spec. The brief always runs again after its questions: a brief that returned `pending` is ended `pending` in step 5 whether the answers are written before or after.
      - **Any other stage**: the questions are in `next`'s reason. Keep the answers, to pass as `answers` when that stage runs again. Done when every question has an answer; then go to step 4 for that stage, since `next` keeps saying `pending-questions` until its `begin` runs.
-   - **`needs-human`**: tell the maintainer which stage stopped and the reason `next` gives, and stop the run. When the maintainer has fixed it and says so, run `npm run factory -- unblock <Name>` and go back to step 2. A failed build whose cause is the spec (it asks for what the build cannot do) needs no `unblock`: once the spec is revised, during the failed run or after its `end`, `next` gives one rerun of the build from it, with the failure as its `fix`; a second failure stops for good.
+   - **`needs-human`**: tell the maintainer which stage stopped and the reason `next` gives, and stop the run. When the maintainer has fixed it and says so, run `npm run factory -- unblock <Name>` and go back to step 2. At a review cap, `unblock` sends the component back to build with the cap round's P1 and P2 findings as its `fix`, then review again, so the build that fixes them runs through `begin` and `end` and its Direction findings reach the notes; when the maintainer has fixed the code by hand, `unblock <Name> --to review` reviews it as it stands. A failed build whose cause is the spec (it asks for what the build cannot do) needs no `unblock`: once the spec is revised, during the failed run or after its `end`, `next` gives one rerun of the build from it, with the failure as its `fix`; a second failure stops for good.
    - **`done`**: go to step 6.
 
 4. **Run the stage.**

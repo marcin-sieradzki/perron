@@ -10,7 +10,9 @@
 //                                                 joins the pipeline's notes, which the PR carries
 //   approve <Name>                                the maintainer's design approval
 //   defer <Name>                                  runs the loop without design and visual (ADR 0010)
-//   unblock <Name>                                clears needs-human once the maintainer has acted
+//   unblock <Name> [--to build|review]            clears needs-human once the maintainer has acted; a
+//                                                 review cap goes back to build with its findings, or
+//                                                 with --to review is reviewed again as it stands
 import { spawnSync } from 'node:child_process'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
@@ -34,7 +36,8 @@ import {
   type Stage,
 } from './lib/pipeline.ts'
 
-const USAGE = `usage: npm run factory -- next|approve|defer|unblock <Name> [--json]
+const USAGE = `usage: npm run factory -- next|approve|defer <Name> [--json]
+       npm run factory -- unblock <Name> [--to build|review] [--json]
        npm run factory -- begin <Name> <stage> [--json]
        npm run factory -- end <Name> <stage> <done|failed|pending> [--failing "<check and why>"] [--direction "<finding>"]… [--json]
 stages: ${STAGES.join(', ')}`
@@ -54,8 +57,8 @@ const nextLines = (n: Next) =>
 /** Runs one factory command over the repo at `env.root`. */
 export function factory(argv: string[], env: Env): Printed {
   const json = argv.includes('--json')
-  // `--failing` once and `--direction` any number of times, each with the word after it
-  const valued: Record<string, string[]> = { '--failing': [], '--direction': [] }
+  // `--failing` and `--to` once and `--direction` any number of times, each with the word after it
+  const valued: Record<string, string[]> = { '--failing': [], '--direction': [], '--to': [] }
   const args: string[] = []
   for (let i = 0; i < argv.length; i++) {
     if (Object.hasOwn(valued, argv[i])) valued[argv[i]].push(argv[++i] ?? '')
@@ -99,9 +102,13 @@ export function factory(argv: string[], env: Env): Printed {
     case 'defer':
       result = defer(p, env)
       break
-    case 'unblock':
-      result = unblock(p, env)
+    case 'unblock': {
+      const to = valued['--to'].at(-1)
+      if (to !== undefined && !STAGES.includes(to as Stage))
+        return refuse(`"${to}" is not a stage\n${USAGE}`)
+      result = unblock(p, env, to as Stage | undefined)
       break
+    }
     default:
       return refuse(`"${command ?? ''}" is not a command\n${USAGE}`)
   }
