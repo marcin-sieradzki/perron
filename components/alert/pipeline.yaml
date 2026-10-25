@@ -1,0 +1,6 @@
+# Written by npm run factory; never by hand.
+component: Alert
+layer: component
+deferred:
+  at: 2026-10-25T07:20:14.474Z
+stages: {}
