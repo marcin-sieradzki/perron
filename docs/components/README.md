@@ -232,6 +232,7 @@ Each of these is written once, in its file, and a component, pattern or story im
 | `typography`   | `packages/perron/src/testing/stories.ts`        | The style of one typography role with its `-tracking` twin and no margin, for a story's own text                   |
 | `heard`        | `packages/perron/src/testing/stories.ts`        | What a screen reader reads of an element: its text outside `aria-hidden`, white space collapsed                    |
 | `mounted`      | `packages/perron/src/testing/stories.ts`        | Renders a node apart from the story into a host it appends, runs a test on it, and unmounts it after, pass or fail |
+| `colour`       | `packages/perron/src/testing/stories.ts`        | A colour custom property as it renders, the computed `color` of a probe, to compare with an element's              |
 
 ## What axe won't catch
 
