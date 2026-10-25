@@ -530,7 +530,7 @@
     "name": "Select",
     "layer": "component",
     "category": "Inputs",
-    "status": "building",
+    "status": "stable",
     "baseUiParts": [
       "Select.Root",
       "Select.Trigger",

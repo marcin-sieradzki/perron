@@ -25,6 +25,10 @@ stages:
     status: done
     started: 2026-10-25T06:57:04.347Z
     ended: 2026-10-25T07:00:53.206Z
+  docs:
+    status: done
+    started: 2026-10-25T07:01:04.617Z
+    ended: 2026-10-25T07:05:32.885Z
 notes:
   - stage: brief
     at: 2026-10-25T05:44:48.986Z
@@ -92,3 +96,9 @@ notes:
   - stage: review
     at: 2026-10-25T06:46:53.245Z
     unblocked: '3 review rounds found a P1 or a P2; the last: review round 3 found 1 P2 (components/select/review.md)'
+  - stage: docs
+    at: 2026-10-25T07:05:32.885Z
+    direction: 'Overlay stories on a docs page sit in iframes (docs.story.inline: false) that load only when scrolled into view, so a full-page screenshot taken without scrolling shows them as empty frames. component-docs step 4 or design-qa/rendering.md could say to scroll each story frame into view before the screenshot.'
+  - stage: docs
+    at: 2026-10-25T07:05:32.885Z
+    direction: On the docs page, Hover and Focus render the same as each other, the placeholder field at rest, because their plays don't run there; with Filled matching Default, four of the fifteen examples are near duplicates. The contract's Stories rule could say whether state stories that only a play sets apart belong on the docs page.
