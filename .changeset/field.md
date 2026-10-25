@@ -2,4 +2,4 @@
 '@mylder/perron': minor
 ---
 
-Adds `Field`, and the owned string `optional`, in all four locales.
+Adds `Field`. Adds the owned string `optional` to every locale; a caller that supplies its own dictionaries adds it too. The contract's Shared helpers table names the story helper `lines`.
