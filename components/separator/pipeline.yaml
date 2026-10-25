@@ -25,6 +25,10 @@ stages:
     status: done
     started: 2026-10-25T07:49:46.713Z
     ended: 2026-10-25T07:53:49.614Z
+  docs:
+    status: done
+    started: 2026-10-25T07:53:57.976Z
+    ended: 2026-10-25T07:56:30.332Z
 notes:
   - stage: brief
     at: 2026-10-25T07:36:06.915Z
@@ -54,3 +58,6 @@ notes:
   - stage: build
     at: 2026-10-25T07:49:43.841Z
     direction: "MenuSeparator adds a third spacing form beside the two the brief noted: a negative `margin-inline` that runs the line over the popup's padding, plus `space.100` above and below. A pass aligning divider spacing should cover all three."
+  - stage: docs
+    at: 2026-10-25T07:56:30.332Z
+    direction: The props table shows orientation's type as Base UI's alias `Orientation`, not the spec's `'horizontal' | 'vertical'`. The two agree, but PropsTable could expand a union alias so the docs page reads like the spec.
