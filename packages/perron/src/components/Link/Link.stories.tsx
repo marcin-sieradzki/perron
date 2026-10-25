@@ -4,14 +4,16 @@
 // story leaves the page.
 import { createRef } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { expect, fn, userEvent, within } from 'storybook/test'
+import { expect, fn, within } from 'storybook/test'
 import { Text } from '../Text/Text.tsx'
 import {
   colour,
+  expectFocusRing,
+  expectFollows,
+  fill,
   heard,
   mounted,
   pressedAfterHover,
-  resolve,
   RouterLink,
   stateFill,
   stateRules,
@@ -40,7 +42,7 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 /** The one link the story renders. */
-const linkIn = (canvas: HTMLElement) => within(canvas).getAllByRole('link')[0]
+const linkIn = (canvas: HTMLElement) => within(canvas).getByRole('link')
 
 /** The declarations every rule for `state` adds to `link`, by property name. */
 const stateProperties = (link: Element, state: ':hover' | ':active') =>
@@ -64,15 +66,9 @@ export const Default: Story = {
     await expect(style.color).toBe(getComputedStyle(link.parentElement!).color)
     // a visited link looks as it did before: no :visited rule reaches it (CR-2)
     await expect(stateRules(link, ':visited')).toHaveLength(0)
-    // Tab focuses it, Enter follows it, Space does nothing to it, Shift+Tab leaves it (CR-5)
-    await userEvent.tab()
-    await expect(link).toHaveFocus()
-    await userEvent.keyboard('{Enter}')
-    await expect(args.onClick).toHaveBeenCalledTimes(1)
-    await userEvent.keyboard(' ')
-    await expect(args.onClick).toHaveBeenCalledTimes(1)
-    await userEvent.tab({ shift: true })
-    await expect(link).not.toHaveFocus()
+    // Tab focuses it, Enter follows it, Space does nothing to it, Shift+Tab moves focus back to
+    // the element before it (CR-5)
+    await expectFollows(canvasElement, link, args.onClick)
   },
 }
 
@@ -83,15 +79,12 @@ export const Default: Story = {
 export const Hover: Story = {
   play: async ({ canvasElement }) => {
     const link = linkIn(canvasElement)
-    const [hover, pressed] = ['color-surface-hover', 'color-surface-selected'].map(
-      (token) => `var(--perron-${token})`,
-    )
-    await expect(stateFill(link, ':hover')).toBe(hover)
-    await expect(stateFill(link, ':active')).toBe(pressed)
+    await expect(stateFill(link, ':hover')).toBe('var(--perron-color-surface-hover)')
+    await expect(stateFill(link, ':active')).toBe('var(--perron-color-surface-selected)')
     await expect(pressedAfterHover(link)).toBe(true)
     // the hover, the pressed and the rest fill render apart from each other
     const rest = getComputedStyle(link).backgroundColor
-    const [hoverFill, pressedFill] = [hover, pressed].map((v) => resolve('backgroundColor', v))
+    const [hoverFill, pressedFill] = [fill('color-surface-hover'), fill('color-surface-selected')]
     await expect(hoverFill).not.toBe(rest)
     await expect(pressedFill).not.toBe(rest)
     await expect(pressedFill).not.toBe(hoverFill)
@@ -106,19 +99,7 @@ export const Hover: Story = {
 
 /** "Show all departures", focus: Tab gives it `:focus-visible` and the ring perron.css draws (CR-6). */
 export const Focus: Story = {
-  play: async ({ canvasElement }) => {
-    const link = linkIn(canvasElement)
-    await userEvent.tab()
-    await expect(link).toHaveFocus()
-    await expect(link.matches(':focus-visible')).toBe(true)
-    const ring = getComputedStyle(link)
-    await expect(ring.outlineStyle).toBe('solid')
-    await expect(ring.outlineColor).toBe(resolve('borderColor', 'var(--perron-color-border-focus)'))
-    await expect(ring.outlineWidth).toBe(resolve('outlineWidth', 'var(--perron-focus-width)'))
-    await expect(ring.outlineOffset).toBe(resolve('outlineOffset', 'var(--perron-focus-offset)'))
-    await userEvent.tab({ shift: true })
-    await expect(link).not.toHaveFocus()
-  },
+  play: async ({ canvasElement }) => expectFocusRing(canvasElement, linkIn(canvasElement)),
 }
 
 /** A sentence of `typography.body` in `color.text.primary`, with its source's name a Link. */

@@ -24,7 +24,7 @@ export interface LinkProps extends Omit<
   children?: ReactNode
   /** Reaches the root; `className` is merged after `pn-Link`. */
   className?: string
-  /** Reaches the root. */
+  /** Reaches the root; `className` is merged after `pn-Link`. */
   style?: CSSProperties
   /** Reaches the root element. */
   ref?: Ref<HTMLAnchorElement>

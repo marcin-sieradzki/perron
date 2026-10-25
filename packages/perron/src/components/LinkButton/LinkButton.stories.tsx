@@ -3,11 +3,13 @@
 // them. A decorator prevents every link's navigation, so no story leaves the page.
 import { createRef, Fragment } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { expect, fn, userEvent, within } from 'storybook/test'
+import { expect, fn, within } from 'storybook/test'
 import plus from '../../../icons/plus.svg?raw'
 import search from '../../../icons/search.svg?raw'
 import { Button } from '../Button/Button.tsx'
 import {
+  expectFocusRing,
+  expectFollows,
   icon,
   pressedAfterHover,
   resolve,
@@ -42,24 +44,6 @@ type Play = NonNullable<Story['play']>
 const linkIn = (canvas: HTMLElement) => within(canvas).getByRole('link', { name: LABEL })
 
 /**
- * Tab focuses the link, Enter fires `onClick` once, Space fires none, Shift+Tab returns focus. The
- * link is named by its label and goes to its `href`.
- */
-const follows: Play = async ({ args, canvasElement }) => {
-  const link = linkIn(canvasElement)
-  await expect(link).toHaveAttribute('href', '/map')
-  await expect(link).not.toHaveAttribute('role')
-  await userEvent.tab()
-  await expect(link).toHaveFocus()
-  await userEvent.keyboard('{Enter}')
-  await expect(args.onClick).toHaveBeenCalledTimes(1)
-  await userEvent.keyboard(' ')
-  await expect(args.onClick).toHaveBeenCalledTimes(1)
-  await userEvent.tab({ shift: true })
-  await expect(link).not.toHaveFocus()
-}
-
-/**
  * Hovering sets the `fill` token's background, and changes neither the border nor the geometry;
  * pressing sets the `pressed` token's, a step past it.
  */
@@ -84,24 +68,18 @@ const hoverFill =
         await expect(['background-color']).toContain(property)
   }
 
-/** Tab gives the root `:focus-visible` and the ring perron.css draws; Shift+Tab leaves it. */
-const focusRing: Play = async ({ canvasElement }) => {
-  const link = linkIn(canvasElement)
-  await userEvent.tab()
-  await expect(link).toHaveFocus()
-  await expect(link.matches(':focus-visible')).toBe(true)
-  const ring = getComputedStyle(link)
-  await expect(ring.outlineStyle).toBe('solid')
-  await expect(ring.outlineColor).toBe(resolve('borderColor', 'var(--perron-color-border-focus)'))
-  await expect(ring.outlineWidth).toBe(resolve('outlineWidth', 'var(--perron-focus-width)'))
-  await expect(ring.outlineOffset).toBe(resolve('outlineOffset', 'var(--perron-focus-offset)'))
-  await userEvent.tab({ shift: true })
-  await expect(link).not.toHaveFocus()
-}
-
+/**
+ * The link is named by its label and goes to its `href`; Tab focuses it, Enter fires `onClick`
+ * once, Space fires none, and Shift+Tab moves focus back to the element before it.
+ */
 export const SolidMediumDefault: Story = {
   args: { variant: 'solid', size: 'medium', onClick: fn() },
-  play: follows,
+  play: async ({ args, canvasElement }) => {
+    const link = linkIn(canvasElement)
+    await expect(link).toHaveAttribute('href', '/map')
+    await expect(link).not.toHaveAttribute('role')
+    await expectFollows(canvasElement, link, args.onClick)
+  },
 }
 export const SolidMediumHover: Story = {
   args: { variant: 'solid', size: 'medium' },
@@ -112,7 +90,7 @@ export const SolidMediumHover: Story = {
 }
 export const SolidMediumFocus: Story = {
   args: { variant: 'solid', size: 'medium' },
-  play: focusRing,
+  play: async ({ canvasElement }) => expectFocusRing(canvasElement, linkIn(canvasElement)),
 }
 export const SolidSmallDefault: Story = {
   args: { variant: 'solid', size: 'small' },
