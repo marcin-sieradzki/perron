@@ -35,4 +35,5 @@ export const da: OwnedStrings = {
   zoomIn: 'Zoom ind',
   zoomOut: 'Zoom ud',
   centerMap: 'Centrér kortet',
+  noMatches: 'Ingen resultater',
 }

@@ -207,12 +207,12 @@ Members of a family share one treatment, in Penpot and in CSS. A new member join
 
 Each of these is drawn once, in its own folder, `packages/perron/src/parts/<Part>/` (`<Part>.tsx` and `<Part>.css`). A component composes the part; it never draws its own. Parts are internal: not registered, not exported. A new shared part joins this table first, and so does a part a second component needs, which moves here from the first one's folder. Two branches that add the same part keep `main`'s copy when they merge `main` in, and change the part there for both.
 
-| Part                | Draws                                       | Composed in                                                                 | Only its folder holds                                       |
-| ------------------- | ------------------------------------------- | --------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| `VisuallyHidden`    | Text for screen readers only                | Any component with a word the eye gets from an icon or a shape              | `pn-VisuallyHidden`, and `clip-path: inset(50%)` or `clip:` |
-| `CheckboxIndicator` | A checkbox's box, with its tick or dash     | `Checkbox.Indicator`, `Menu.CheckboxItemIndicator`                          | `pn-CheckboxIndicator`, and the tick icon                   |
-| `SelectedMark`      | The tick beside a chosen option             | `Select.ItemIndicator`, `Combobox.ItemIndicator`, `Menu.RadioItemIndicator` | `pn-SelectedMark`, and the tick icon                        |
-| `CloseButton`       | The icon button that closes what it sits in | `Dialog.Close`, `Popover.Close`, `Drawer.Close`, `Toast.Close`              | `pn-CloseButton`, and the `close` icon                      |
+| Part                | Draws                                       | Composed in                                                                          | Only its folder holds                                       |
+| ------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------ | ----------------------------------------------------------- |
+| `VisuallyHidden`    | Text for screen readers only                | Any component with a word the eye gets from an icon or a shape                       | `pn-VisuallyHidden`, and `clip-path: inset(50%)` or `clip:` |
+| `CheckboxIndicator` | A checkbox's box, with its tick or dash     | `Checkbox.Indicator`, `Menu.CheckboxItemIndicator`                                   | `pn-CheckboxIndicator`, and the tick icon                   |
+| `SelectedMark`      | The tick beside a chosen option             | `Select.ItemIndicator`, `Combobox.ItemIndicator`, `Menu.RadioItemIndicator`          | `pn-SelectedMark`, and the tick icon                        |
+| `CloseButton`       | The icon button that closes what it sits in | `Dialog.Close`, `Popover.Close`, `Drawer.Close`, `Toast.Close`, `Autocomplete.Clear` | `pn-CloseButton`, and the `close` icon                      |
 
 - `CloseButton`'s label is the owned string for "Close", overridden by the component's `closeLabel`.
 - The tick is not in `packages/perron/icons/` yet. The first part that needs it adds it, following [Icons](../foundations/icons.md).

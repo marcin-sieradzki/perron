@@ -8,6 +8,12 @@ stages:
     status: done
     started: 2026-10-25T01:41:44.227Z
     ended: 2026-10-25T01:43:26.113Z
+  build:
+    status: pending
+    started: 2026-10-25T01:43:31.170Z
+    runs: 1
+    ended: 2026-10-25T01:56:49.829Z
+    failing: '1. (Keyboard and ARIA, What axe won''t catch; Owned strings) While the list is open, Base UI 1.9.0 adds two screen-reader-only span role="button" aria-label="Dismiss" controls (from ComboboxInput and ComboboxPopup), hard-coded English, and its modal focus manager sets aria-hidden on the label and the clear button. (a) keep Base UI''s behaviour, name them in the spec as known exceptions, assert them in a story, and add a Direction asking Base UI for a label prop; (b) hide them with CSS; (c) relabel them with a new owned string. Recommended: (a).'
 notes:
   - stage: brief
     at: 2026-10-25T01:40:53.602Z
@@ -64,3 +70,21 @@ notes:
   - stage: brief
     at: 2026-10-25T01:43:26.115Z
     direction: The registry gives SearchField no Field.Error or Field.Description, so the Fields family's invalid edge still has no component that draws it.
+  - stage: build
+    at: 2026-10-25T01:56:49.830Z
+    direction: The props gate's *Label rule reads hiddenLabel, MUI's name for a boolean, as an owned-string override; the code excuses it with perron-allow(props). The contract's Props table or the gate could name hiddenLabel as an exception to the <key>Label convention.
+  - stage: build
+    at: 2026-10-25T01:56:49.830Z
+    direction: onItemSelect(event, item) is a new event name that later list components will copy; MUI's Autocomplete reports a chosen option through onChange instead. The contract could settle the name for choosing a row in a list that keeps no selection.
+  - stage: build
+    at: 2026-10-25T01:56:49.830Z
+    direction: In WithMarks, rows whose marks have different widths (a 5C badge, a 250S badge, a StationIcon) start their text at different points; a fixed-width mark column would need a token.
+  - stage: build
+    at: 2026-10-25T01:56:49.830Z
+    direction: A disabled field keeps the Fields family's full color.border.control edge and its raised fill; only the text, icon and label turn tertiary. The Fields family row has no disabled edge.
+  - stage: build
+    at: 2026-10-25T01:56:49.830Z
+    direction: Base UI's modal focus manager sets aria-hidden on everything outside the input and the popup while the list is open, the label and the clear button included; the input stays named through aria-labelledby.
+  - stage: build
+    at: 2026-10-25T01:56:49.830Z
+    questions: '1. (Keyboard and ARIA, What axe won''t catch; Owned strings) While the list is open, Base UI 1.9.0 adds two screen-reader-only span role="button" aria-label="Dismiss" controls (from ComboboxInput and ComboboxPopup), hard-coded English, and its modal focus manager sets aria-hidden on the label and the clear button. (a) keep Base UI''s behaviour, name them in the spec as known exceptions, assert them in a story, and add a Direction asking Base UI for a label prop; (b) hide them with CSS; (c) relabel them with a new owned string. Recommended: (a).'
