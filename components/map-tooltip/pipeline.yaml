@@ -3,8 +3,17 @@ component: MapTooltip
 layer: component
 deferred:
   at: 2026-10-25T00:10:58.185Z
+needsHuman:
+  stage: build
+  reason: "build failed: packages/perron/tsconfig.build.json rootDir src: a component cannot import numeric from tokens/generated/tokens.ts (TS6059), which CR-5 required; spec CR-5 revised to read the tokens' custom properties at run time"
 stages:
   brief:
     status: done
     started: 2026-10-25T00:19:18.195Z
     ended: 2026-10-25T00:20:37.896Z
+  build:
+    status: failed
+    started: 2026-10-25T00:20:43.239Z
+    runs: 1
+    ended: 2026-10-25T00:24:43.249Z
+    failing: "packages/perron/tsconfig.build.json rootDir src: a component cannot import numeric from tokens/generated/tokens.ts (TS6059), which CR-5 required; spec CR-5 revised to read the tokens' custom properties at run time"
