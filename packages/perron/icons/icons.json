@@ -25,6 +25,10 @@
     "chevron-down": {
       "size": "icon.size.400",
       "use": "Open a select's list"
+    },
+    "chevron-right": {
+      "size": "icon.size.400",
+      "use": "A menu row that opens a submenu"
     }
   },
   "App": {
@@ -67,10 +71,6 @@
     "dash": {
       "size": "icon.size.325",
       "use": "A checkbox that stands for a set partly ticked"
-    },
-    "chevron-right": {
-      "size": "icon.size.400",
-      "use": "A menu row that opens a submenu"
     }
   }
 }
