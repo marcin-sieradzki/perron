@@ -129,28 +129,44 @@ function closed(reply: string, start: number) {
 const isObject = (v: unknown): v is Record<string, unknown> =>
   typeof v === 'object' && v !== null && !Array.isArray(v)
 
+/** `text` as a stage's result: an object that parses (see `lenient`) and holds `outcome`. */
+function resultIn(text: string) {
+  try {
+    const value = lenient(text)
+    return isObject(value) && 'outcome' in value ? value : undefined
+  } catch {
+    return undefined
+  }
+}
+
 /**
- * An agent's reply as the stage's result. Its candidates, in order: each fenced `json` block, then
- * each object from a `{` to the `}` that closes it, so a brace in the prose before or after the
- * JSON, or inside a string of it, is left out. The first that parses (see `lenient`) and holds the
- * stage's `outcome` is the result; with none, the text from the first `{` to the last `}`.
+ * An agent's reply as the stage's result. Its candidates: each fenced `json` block, then each
+ * object from a `{` to the `}` that closes it, so a brace in the prose before or after the JSON, or
+ * inside a string of it, is left out. The result is the last fenced block that is one (see
+ * `resultIn`), or else the last such object outside another, since the reply ends with its result
+ * and the prose before it may quote one, such as `{"outcome": "failed"}`; with none, the text from
+ * the first `{` to the last `}`.
  */
 export function parseResult(reply: string): Record<string, unknown> {
   const first = reply.indexOf('{')
   const last = reply.lastIndexOf('}')
   if (first < 0 || last < first) throw new Error('the reply holds no JSON object')
-  const fenced = [...reply.matchAll(/^```json[ \t]*\n([\s\S]*?)\n```[ \t]*$/gm)].map((m) => m[1])
-  const starts = [...reply.matchAll(/\{/g)].map((m) => m.index)
-  for (const text of [...fenced, ...starts]) {
-    const candidate = typeof text === 'number' ? closed(reply, text) : text
-    if (!candidate) continue
-    try {
-      const value = lenient(candidate)
-      if (isObject(value) && 'outcome' in value) return value
-    } catch {
-      // not the result: try the next
-    }
+  const fenced = [...reply.matchAll(/^```json[ \t]*\n([\s\S]*?)\n```[ \t]*$/gm)]
+    .map((m) => resultIn(m[1]))
+    .filter((v) => v !== undefined)
+  if (fenced.length) return fenced.at(-1)!
+  let found: Record<string, unknown> | undefined
+  let end = -1
+  for (const { index } of reply.matchAll(/\{/g)) {
+    // an object inside a result is part of it, not another
+    if (index < end) continue
+    const text = closed(reply, index)
+    const value = text && resultIn(text)
+    if (!value) continue
+    found = value
+    end = index + text.length
   }
+  if (found) return found
   const value = lenient(reply.slice(first, last + 1))
   if (!isObject(value)) throw new Error('the reply holds no JSON object')
   return value

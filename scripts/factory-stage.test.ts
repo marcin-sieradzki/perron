@@ -201,6 +201,12 @@ describe('withFix, for a stage the factory sent back', () => {
     ).toEqual(result)
     // an object in the prose without the stage's outcome is passed over
     expect(parseResult(`See {"line": 4}.\n${json}`)).toEqual(result)
+    // the reply ends with its result: an outcome the prose quotes before it is not the result, and
+    // an object inside the result that holds one is part of it
+    const nested = { ...result, last: { outcome: 'failed' } }
+    expect(
+      parseResult(`I won't return {"outcome": "failed"} this time.\n${JSON.stringify(nested)}`),
+    ).toEqual(nested)
     // with the reviewer's \` escapes and a raw line break too
     const loose = json.replaceAll('`', '\\`').replace('and its', 'and\nits')
     expect(parseResult(`Note {x}.\n${loose}\n}`)).toEqual({
