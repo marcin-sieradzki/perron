@@ -25,6 +25,10 @@ stages:
     status: done
     started: 2026-10-25T06:48:12.308Z
     ended: 2026-10-25T06:53:14.893Z
+  docs:
+    status: done
+    started: 2026-10-25T06:53:24.415Z
+    ended: 2026-10-25T06:56:20.298Z
 notes:
   - stage: brief
     at: 2026-10-25T06:11:06.788Z
@@ -50,3 +54,6 @@ notes:
   - stage: build
     at: 2026-10-25T06:28:01.027Z
     direction: Fieldset's spec (docs/components/fieldset.md, lines 24 and 143) still says a group's description and error come through a Field round it, as CheckboxGroup and RadioGroup do; CheckboxGroup renders its own Base UI Field.Root and a caller can't wrap one round it, so Fieldset's lines could name that composition instead.
+  - stage: docs
+    at: 2026-10-25T06:56:20.298Z
+    direction: "At the LongWords story's 120 px width, the description's overflow-wrap: anywhere breaks hovedstadsområdet one letter from its end; hyphens: auto under the locale's lang could break Danish words at syllables instead, but it would need to change for the whole family (Field, CheckboxGroup, RadioGroup)."
