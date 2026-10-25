@@ -168,7 +168,7 @@ No owned strings: every word comes from the caller, as `children`, the `count`, 
 
 Rules for this component alone, numbered so the build and the review can cite them.
 
-- **CR-1.** Base UI's Toggle already gives the native button, the click, Enter and Space toggling, `aria-pressed`, `data-pressed`, the controlled and uncontrolled state, the cancelable change and the disabled behaviour, so FilterChip rebuilds none of it and adds no key handlers.
+- **CR-1.** Base UI's Toggle already gives the native button, the click, Enter and Space toggling, `aria-pressed`, `data-pressed`, the controlled and uncontrolled state, the cancellable change and the disabled behaviour, so FilterChip rebuilds none of it and adds no key handlers.
 - **CR-2.** FilterChip adapts Base UI's `onPressedChange(pressed, details)` into `onChange(details.event, pressed, details)` inside itself, passes `selected` on as `pressed` and `defaultSelected` as `defaultPressed`, and exposes none of `pressed`, `defaultPressed`, `onPressedChange` or `value`: its props type omits them from `Toggle.Props`, with the native `onChange`. It takes no `endIcon`, `variant`, `color`, `size` or `name`.
 - **CR-3.** It takes `{...rest}` before its own attributes and its own props out of `rest` first (`selected`, `defaultSelected`, `onChange`, `disabled`, `startIcon`, `count`, `children`; an inherited Base UI prop such as `nativeButton` stays in `rest`, keeping Base UI's default), and merges `className` after `pn-FilterChip`; `ref` reaches the root.
 - **CR-4.** The selected look reads Base UI's attribute, `.pn-FilterChip[data-pressed]`, and the momentary press `:active`; FilterChip sets no `data-selected`, `data-variant`, `data-color` or `data-size`, having none of those props.
