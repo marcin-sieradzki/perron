@@ -5,10 +5,9 @@ deferred:
   at: 2026-10-25T04:38:49.708Z
 stages:
   brief:
-    status: pending
-    started: 2026-10-25T04:38:54.630Z
-    ended: 2026-10-25T04:49:06.598Z
-    pending: 12
+    status: done
+    started: 2026-10-25T04:49:41.402Z
+    ended: 2026-10-25T04:51:23.451Z
 notes:
   - stage: brief
     at: 2026-10-25T04:49:06.599Z
@@ -31,3 +30,12 @@ notes:
       10. (Tokens) perron.css focus ring round box and label on a radius.xs root, root at least size.target-min, box centred on the first line? Recommended: yes.
       11. (Props) No variant, color or size, and Base UI's parent left out for CheckboxGroup? Recommended: yes.
       12. (Stories) CheckedDisabled and ReadOnly stories and a hover check in Checked's play, with no Penpot variant of their own? Recommended: yes.
+  - stage: brief
+    at: 2026-10-25T04:51:23.451Z
+    direction: "The answered label rule uses overflow-wrap: anywhere. The contract's Long words rule gives break-word to a box that sizes to its content beside others in a flex or inline row. Checkbox's root is a content-sized inline-flex row, so placed in a flex row it could be squeezed to one letter per line. The build and review should test it inside a flex row, or the contract should say which case a checkbox label is."
+  - stage: brief
+    at: 2026-10-25T04:51:23.451Z
+    direction: Read-only has no design state in the contract's Design states table, though Base UI's Checkbox, Radio, Switch and Slider all set data-readonly. A Read-only row there (rest look, default cursor, no hover or press) would give every form control the same treatment.
+  - stage: brief
+    at: 2026-10-25T04:51:23.451Z
+    direction: CR-5 now has the build add 'the dash icon' to the contract's Shared parts row for CheckboxIndicator, so the shared-parts gate guards both icons. That edit to the contract lands with the build, not with this brief.
