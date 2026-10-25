@@ -8,6 +8,7 @@ import { expect, fn, screen, userEvent, waitFor, within } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
 import { Button } from '../Button/Button.tsx'
+import { Text } from '../Text/Text.tsx'
 import { Dialog } from './Dialog.tsx'
 import type { DialogProps } from './Dialog.tsx'
 
@@ -24,7 +25,7 @@ const CONFIRM = 'Clear filters'
 
 const PARAGRAPHS = Array.from(
   { length: 20 },
-  (_, i) => `Line ${i + 1}: the keys work on the map, in every panel and in every list of stops.`,
+  (_, i) => `Tip ${i + 1}: the keys work on the map, in every panel and in every list of stops.`,
 )
 
 const meta = {
@@ -220,11 +221,11 @@ export const TitleOnly: Story = {
 export const LongContent: Story = {
   args: {
     children: (
-      <>
-        {PARAGRAPHS.map((line) => (
-          <p key={line}>{line}</p>
+      <div style={{ display: 'grid', gap: 'var(--perron-space-200)' }}>
+        {PARAGRAPHS.map((tip) => (
+          <Text key={tip}>{tip}</Text>
         ))}
-      </>
+      </div>
     ),
   },
   play: async ({ canvasElement, args, step }) => {
