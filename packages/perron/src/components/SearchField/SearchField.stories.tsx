@@ -216,6 +216,8 @@ export const Disabled: Story = {
     await expect(input).toHaveValue('5C')
     await expect(args.onChange).not.toHaveBeenCalled()
     await expect(args.onOpen).not.toHaveBeenCalled()
+    await expect(args.onClose).not.toHaveBeenCalled()
+    await expect(args.onItemSelect).not.toHaveBeenCalled()
   },
 }
 
