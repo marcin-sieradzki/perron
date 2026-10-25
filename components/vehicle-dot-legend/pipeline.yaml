@@ -9,12 +9,20 @@ stages:
     started: 2026-10-25T12:39:50.219Z
     ended: 2026-10-25T12:40:55.008Z
   build:
-    status: done
-    started: 2026-10-25T12:40:58.520Z
     runs: 1
-    begun: 57293e98cb63d6c60d5fe50e6792c33f7cbb1e1afe3dff04a703d52cc6c5e55e
-    spec: 57293e98cb63d6c60d5fe50e6792c33f7cbb1e1afe3dff04a703d52cc6c5e55e
-    ended: 2026-10-25T12:48:05.689Z
+    failing: review round 1 found 1 P2 (components/vehicle-dot-legend/review.md)
+  review:
+    status: failed
+    started: 2026-10-25T12:48:42.976Z
+    rounds: 1
+    findings:
+      p1: 0
+      p2: 1
+      p3: 3
+    reviewed: b08320a585c81f80fb97e1346438d5b3b9c2e7ba
+    sentBack: 1
+    ended: 2026-10-25T12:53:48.954Z
+    failing: review round 1 found 1 P2 (components/vehicle-dot-legend/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T12:39:30.929Z
