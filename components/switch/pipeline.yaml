@@ -8,6 +8,12 @@ stages:
     status: done
     started: 2026-10-25T04:47:31.908Z
     ended: 2026-10-25T04:49:00.236Z
+  build:
+    status: done
+    started: 2026-10-25T04:49:04.884Z
+    runs: 1
+    spec: 6a95457f644b8e9a4d45d3579c3dc7085781ec1bf4d0674be6320aae057c39b5
+    ended: 2026-10-25T05:00:54.720Z
 notes:
   - stage: brief
     at: 2026-10-25T04:47:26.699Z
@@ -36,3 +42,15 @@ notes:
   - stage: brief
     at: 2026-10-25T04:49:00.237Z
     direction: Answer 10 limits Accessibility's 'say their state in words' rule to toggle buttons; docs/foundations/accessibility.md#rules could say so, so the next two-state control doesn't ask again.
+  - stage: build
+    at: 2026-10-25T05:00:54.720Z
+    direction: duration.switch (150ms, 0.01ms under reduced motion) is a new base token; Motion's Transitions prose now names it, and easing.standard's description reads 'CSS ease (meters, the switch)'.
+  - stage: build
+    at: 2026-10-25T05:00:54.720Z
+    direction: "The invalid danger edge is dropped on a disabled switch (.pn-Switch[data-invalid]:not([data-disabled])): the spec doesn't say what a disabled switch in an invalid Field shows; the spec's Tokens prose could say so."
+  - stage: build
+    at: 2026-10-25T05:00:54.720Z
+    direction: "In forced colours the invalid edge keeps the theme's color.status.danger, because the root opts out with forced-color-adjust: none; CR-11 names no system colour for invalid."
+  - stage: build
+    at: 2026-10-25T05:00:54.720Z
+    direction: "Switch names its state checked/defaultChecked while FilterChip and HighlightChip use selected/defaultSelected: a deliberate difference within the Inputs category (MUI's and Base UI's switch names)."

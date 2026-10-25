@@ -521,7 +521,7 @@
     "name": "Switch",
     "layer": "component",
     "category": "Inputs",
-    "status": "designing",
+    "status": "building",
     "baseUiParts": ["Switch.Root", "Switch.Thumb"],
     "penpotPath": "Components/Switch",
     "dependsOn": []
