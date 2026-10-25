@@ -9,19 +9,19 @@ stages:
     started: 2026-10-25T08:15:49.681Z
     ended: 2026-10-25T08:20:56.613Z
   build:
-    runs: 1
-    failing: review round 1 found 2 P2 (components/accordion/review.md)
+    runs: 2
+    status: done
+    started: 2026-10-25T08:41:29.885Z
+    begun: b5772140c159f2942eb54133be507062558b59011e8e53718e488600b993fb8b
+    spec: 4410cefc4b5261caaf23fee8e558f08265958ff92bd774a5e7a3b0d41ec88270
+    ended: 2026-10-25T08:47:50.519Z
   review:
-    status: failed
-    started: 2026-10-25T08:33:10.246Z
     rounds: 1
+    sentBack: 1
     findings:
       p1: 0
       p2: 2
       p3: 5
-    sentBack: 1
-    ended: 2026-10-25T08:40:37.670Z
-    failing: review round 1 found 2 P2 (components/accordion/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T08:15:45.377Z
@@ -59,3 +59,9 @@ notes:
   - stage: build
     at: 2026-10-25T08:32:12.643Z
     direction: Accordion's Motion story reads a running CSS transition's keyframes and timing through getAnimations() and CSSTransition (helpers transitions and span); Collapsible and any later height motion will need the same, so they could move to testing/stories.ts and the Shared helpers table.
+  - stage: build
+    at: 2026-10-25T08:47:50.519Z
+    direction: "Accordion's stories declare a local forcedValue, which reads what the (forced-colors: active) rules set on an element, to test CR-14; every component with a forced-colours rule needs the same read, so it could join testing/stories.ts and the Shared helpers table next to onHover."
+  - stage: build
+    at: 2026-10-25T08:47:50.519Z
+    direction: Accordion's stories declare a local geometry helper (a trigger's box, its title's offset, padding, gap and font) to prove its states keep their geometry (CR-12); most specs have a rule like this and could share one helper in testing/stories.ts.
