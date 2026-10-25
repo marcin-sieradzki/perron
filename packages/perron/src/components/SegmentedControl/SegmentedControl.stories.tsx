@@ -6,7 +6,7 @@ import { useState } from 'react'
 import type { Decorator, Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, userEvent, within } from 'storybook/test'
 import { Button } from '../Button/Button.tsx'
-import { colour, onHover, rendered } from '../../testing/stories.ts'
+import { colour, onHover, pressedAfterHover, rendered, stateFill } from '../../testing/stories.ts'
 import { Segment, SegmentedControl, type SegmentedControlProps } from './SegmentedControl.tsx'
 
 /** The spy every story's control reports to; a play that asserts on it clears it first. */
@@ -94,6 +94,8 @@ export const SegmentHover: Story = {
     await expect(getComputedStyle(bus).color).toBe(colour('--perron-color-text-secondary'))
     await expect(onHover(bus, 'background-color')).toBe('var(--perron-color-surface-hover)')
     await expect(onHover(bus, 'color')).toBe('var(--perron-color-text-primary)')
+    await expect(stateFill(bus, ':active')).toBe('var(--perron-color-surface-selected)')
+    await expect(pressedAfterHover(bus)).toBe(true)
     // the selected segment takes no hover layer
     await expect(onHover(all, 'background-color')).toBe('')
     await expect(getComputedStyle(all).backgroundColor).toBe(
