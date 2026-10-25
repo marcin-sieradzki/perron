@@ -9,19 +9,19 @@ stages:
     started: 2026-10-25T07:13:13.551Z
     ended: 2026-10-25T07:14:59.750Z
   build:
-    runs: 1
-    failing: review round 1 found 1 P2 (components/slider/review.md)
+    runs: 2
+    status: done
+    started: 2026-10-25T07:35:28.146Z
+    begun: 590e0fa196fd29a58b265c640674eef5b3e36c3a751dae61449f757b16601f4a
+    spec: f0609eb530416ec30a65f1154e07006160dba2217cb2b4fdb9875cd1b62cc4fa
+    ended: 2026-10-25T07:37:43.677Z
   review:
-    status: failed
-    started: 2026-10-25T07:26:50.188Z
     rounds: 1
+    sentBack: 1
     findings:
       p1: 0
       p2: 1
       p3: 4
-    sentBack: 1
-    ended: 2026-10-25T07:35:24.648Z
-    failing: review round 1 found 1 P2 (components/slider/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T07:13:09.465Z
@@ -47,3 +47,6 @@ notes:
   - stage: build
     at: 2026-10-25T07:25:42.601Z
     direction: Slider is the first component whose focus ring is drawn by a wrapper round a visually hidden input (.pn-Slider-thumb:has(:focus-visible), CR-9). The contract's Design states table names focus only as :focus-visible with perron.css's ring, so it could name this form for the next component built on a hidden input.
+  - stage: build
+    at: 2026-10-25T07:37:43.677Z
+    direction: Sheet's Do and don't row (docs/components/sheet.md:214) still tells callers to mark a horizontal carousel with a bare data-base-ui-swipe-ignore. In Base UI's Drawer a bare value drops every touch swipe that starts on the carousel, so a drag across it can't close or resize the sheet; the row could ask for ="x", as Slider's CR-11 does.
