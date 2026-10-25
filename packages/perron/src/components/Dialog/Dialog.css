@@ -78,6 +78,7 @@
   font: var(--perron-typography-body);
   letter-spacing: var(--perron-typography-body-tracking);
   color: var(--perron-color-text-primary);
+  overflow-wrap: anywhere;
 }
 
 /* A further space.300 from the content, the space between blocks; the main action last, at the end. */
