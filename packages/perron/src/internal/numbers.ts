@@ -7,6 +7,6 @@
  */
 export function grouped(count: number) {
   const [whole, fraction] = String(count).split('.')
-  const digits = whole.replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+  const digits = whole.replace(/\B(?=(\d{3})+(?!\d))/g, '\u00A0')
   return fraction === undefined ? digits : `${digits}.${fraction}`
 }
