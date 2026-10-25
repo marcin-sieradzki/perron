@@ -2,9 +2,10 @@
 // own folder, so its class, its icon and its declarations appear nowhere else in the source; and
 // each helper in its "Shared helpers" table is declared once, in its file: not again by its name,
 // by an alias the table lists, under a new name with the same body, or, for a table of strings,
-// as a table of the same strings in any shape; and no two components declare one such table. In
-// CSS and MDX a declaration is matched as text; in TS and TSX only as a style object's key with a
-// string value, such as `clipPath: 'inset(50%)'`, so a variable named `clip` is no declaration.
+// as a table of the same strings in any shape; and no two files, code, story or unit test, declare
+// one such table. In CSS and MDX a declaration is matched as text; in TS and TSX only as a style
+// object's key with a string value, such as `clipPath: 'inset(50%)'`, so a variable named `clip`
+// is no declaration.
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import ts from 'typescript'
@@ -207,24 +208,29 @@ function functionOf(node: ts.Node | undefined): Fn | undefined {
 }
 
 /**
- * The names a file declares at its top level, with the offset of each, its function, if any, and
- * its table of strings, if any.
+ * The names a file declares at its top level, with the offset of each, its function, if any, its
+ * table of strings, if any, and whether the file exports it.
  */
 function topLevelNames(file: string, text: string) {
   const source = ts.createSourceFile(file, text, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
-  const out: { name: string; offset: number; fn?: Fn; table?: string }[] = []
+  const out: { name: string; offset: number; fn?: Fn; table?: string; exported?: boolean }[] = []
+  // the values declared so far, for a table read from another: `Object.keys(STATE_KEY)`
+  const values = new Map<string, ts.Expression>()
   for (const statement of source.statements) {
-    if (ts.isVariableStatement(statement))
+    if (ts.isVariableStatement(statement)) {
+      const exported = statement.modifiers?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword)
       for (const d of statement.declarationList.declarations) {
-        if (ts.isIdentifier(d.name))
-          out.push({
-            name: d.name.text,
-            offset: d.getStart(source),
-            fn: functionOf(d.initializer),
-            table: tableOf(d.initializer),
-          })
+        if (!ts.isIdentifier(d.name)) continue
+        out.push({
+          name: d.name.text,
+          offset: d.getStart(source),
+          fn: functionOf(d.initializer),
+          table: tableOf(d.initializer, values),
+          ...(exported && { exported }),
+        })
+        if (d.initializer) values.set(d.name.text, d.initializer)
       }
-    else if (
+    } else if (
       (ts.isFunctionDeclaration(statement) || ts.isClassDeclaration(statement)) &&
       statement.name
     )
@@ -311,20 +317,54 @@ const LITERALS = [ts.SyntaxKind.TrueKeyword, ts.SyntaxKind.FalseKeyword, ts.Synt
 /** Below this many different strings a table is too small to call a copy: `{ on: 'on' }`. */
 const SMALLEST_TABLE = 4
 
+const strip = (e: ts.Expression): ts.Expression =>
+  ts.isAsExpression(e) || ts.isSatisfiesExpression(e) || ts.isParenthesizedExpression(e)
+    ? strip(e.expression)
+    : e
+
+/**
+ * `Object.keys(TABLE)` or `Object.values(TABLE)` of an object table among `values`, its file's
+ * values by name, as the array literal it stands for; nothing for any other value.
+ */
+function listedFrom(e: ts.Expression, values: ReadonlyMap<string, ts.Expression>) {
+  if (!ts.isCallExpression(e) || e.arguments.length !== 1) return undefined
+  const call = e.expression
+  const [arg] = e.arguments
+  if (!ts.isPropertyAccessExpression(call) || !ts.isIdentifier(arg)) return undefined
+  if (!ts.isIdentifier(call.expression) || call.expression.text !== 'Object') return undefined
+  const of = values.get(arg.text)
+  const table = of && strip(of)
+  if (!table || !ts.isObjectLiteralExpression(table)) return undefined
+  const entries = table.properties.filter(ts.isPropertyAssignment)
+  if (entries.length !== table.properties.length) return undefined
+  const f = ts.factory
+  if (call.name.text === 'keys')
+    return f.createArrayLiteralExpression(
+      entries.map((p) =>
+        ts.isIdentifier(p.name) || ts.isStringLiteral(p.name)
+          ? f.createStringLiteral(p.name.text)
+          : p.name,
+      ) as ts.Expression[],
+    )
+  if (call.name.text === 'values')
+    return f.createArrayLiteralExpression(entries.map((p) => p.initializer))
+  return undefined
+}
+
 /**
  * A value as a table of strings: an object or array literal of nothing but literals, its strings
  * sorted, its outer object's keys among them, an inner object's keys left out as column names. So
  * `{ live: 'live', 'no-signal': 'noSignal' }` and `[{ variant: 'live', key: 'live' }, …]` holding
- * the same strings are one table, the shape of the copy aside. Nothing for any other value, or for
- * a table under `SMALLEST_TABLE` strings.
+ * the same strings are one table, the shape of the copy aside, and `Object.keys(…)` or
+ * `Object.values(…)` of a table among `values`, its file's values by name, is the list of its keys
+ * or its values. Nothing for any other value, or for a table under `SMALLEST_TABLE` strings.
  */
-export function tableOf(value: ts.Expression | undefined): string | undefined {
-  const strip = (e: ts.Expression): ts.Expression =>
-    ts.isAsExpression(e) || ts.isSatisfiesExpression(e) || ts.isParenthesizedExpression(e)
-      ? strip(e.expression)
-      : e
+export function tableOf(
+  value: ts.Expression | undefined,
+  values: ReadonlyMap<string, ts.Expression> = new Map(),
+): string | undefined {
   if (!value) return undefined
-  const root = strip(value)
+  const root = listedFrom(strip(value), values) ?? strip(value)
   if (!ts.isObjectLiteralExpression(root) && !ts.isArrayLiteralExpression(root)) return undefined
   const strings = new Set<string>()
   const read = (e: ts.Expression, outer: boolean): boolean => {
@@ -500,14 +540,21 @@ export function copiedStoryHelpers(root: string, src: string): Problem[] {
   return excuse(problems.sort(byFileLine), RULE, (f) => texts.get(f) ?? '')
 }
 
-/** A component's or a pattern's own code: not a story, a test or a shared helper's file. */
-const OWN_CODE = (name: string) => /\.tsx?$/.test(name) && !/\.(stories|test)\.tsx?$/.test(name)
+/** Where a table a file shares belongs: a story's in `testing/stories.ts`, a unit test's in `testing/markup.ts`, code's in `internal/`. */
+const homeOf = (file: string) =>
+  file.endsWith('.stories.tsx')
+    ? `${PACKAGE}/src/testing/stories.ts`
+    : /\.test\.tsx?$/.test(file)
+      ? `${PACKAGE}/src/testing/markup.ts`
+      : `${PACKAGE}/src/internal/`
 
 /**
- * The problems of the components' and patterns' code under `src` (a path from `root`): a table of
- * strings, such as a map from each variant to its owned string, that a second file declares at its
- * top level with the same strings, in any shape. One table two components need is written once in
- * `internal/` and joins the Shared helpers table; `helperProblems` fails any copy of that one.
+ * The problems of the code under `src` (a path from `root`), in the files `helperProblems` reads:
+ * components' and patterns' code, stories and unit tests. Each is a table of strings, such as a map
+ * from each variant to its owned string, that a second file declares at its top level with the same
+ * strings, in any shape. A story file's exports are its stories, whose `args` are no table. One table
+ * two files need is written once, in `internal/` or `testing/`, and joins the Shared helpers table;
+ * `helperProblems` fails any copy of that one.
  */
 export function copiedTables(
   root: string,
@@ -518,12 +565,12 @@ export function copiedTables(
   const shared = helperShapes(root, src, helpers)
   const texts = new Map<string, string>()
   const byTable = new Map<string, { file: string; name: string; offset: number }[]>()
-  for (const file of walk(root, src, OWN_CODE)) {
-    if (file.startsWith(`${src}/internal/`) || file.startsWith(`${src}/testing/`)) continue
+  for (const file of walk(root, src, (n) => /\.tsx?$/.test(n))) {
     const text = readFileSync(join(root, file), 'utf8')
     texts.set(file, text)
-    for (const { name, offset, table } of topLevelNames(file, text))
-      if (table && !shared.has(table))
+    const story = file.endsWith('.stories.tsx')
+    for (const { name, offset, table, exported } of topLevelNames(file, text))
+      if (table && !shared.has(table) && !(story && exported))
         byTable.set(table, [...(byTable.get(table) ?? []), { file, name, offset }])
   }
   const problems: Problem[] = []
@@ -534,7 +581,7 @@ export function copiedTables(
       problems.push({
         file,
         line: texts.get(file)!.slice(0, offset).split('\n').length,
-        message: `declares ${name}, a table of the strings ${others.join(' and ')} holds too; write it once in ${PACKAGE}/src/internal/, add it to ${CONTRACT}'s "Shared helpers" table, and import it`,
+        message: `declares ${name}, a table of the strings ${others.join(' and ')} holds too; write it once in ${homeOf(file)}, add it to ${CONTRACT}'s "Shared helpers" table, and import it`,
       })
     }
   }

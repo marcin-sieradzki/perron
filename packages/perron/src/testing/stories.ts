@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client'
 import { expect, screen, userEvent, waitFor, within } from 'storybook/test'
 import { holds, isPaint } from './pointer.ts'
 import type { VehicleDotProps } from '../components/VehicleDot/VehicleDot.tsx'
+import type { VehicleState } from '../internal/vehicle-states.ts'
 
 /** An icon file from packages/perron/icons, as its `?raw` text, inline, sized by `.perron-icon`. */
 export const icon = (svg: string) =>
@@ -472,3 +473,21 @@ export async function expectVehicleDotShape(
       variant satisfies never
   }
 }
+
+/** The five vehicle data states, in the order Data states lists them, each with its English word. */
+export const STATE_WORDS: { variant: VehicleState; word: string }[] = [
+  { variant: 'live', word: 'Live' },
+  { variant: 'ageing', word: 'Ageing' },
+  { variant: 'estimated', word: 'Estimated' },
+  { variant: 'timetable-only', word: 'Timetable only' },
+  { variant: 'no-signal', word: 'No signal' },
+]
+
+/** The prop that overrides each vehicle data state's word, on VehicleDot and VehicleDotLabel alike. */
+export const STATE_LABELS = {
+  live: 'liveLabel',
+  ageing: 'ageingLabel',
+  estimated: 'estimatedLabel',
+  'timetable-only': 'timetableOnlyLabel',
+  'no-signal': 'noSignalLabel',
+} as const satisfies Record<VehicleState, keyof VehicleDotProps>
