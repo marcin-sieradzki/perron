@@ -112,6 +112,22 @@ describe('propRows', () => {
   })
 })
 
+describe('propRows types', () => {
+  it("shows a multi-line signature on one line, and Base UI's namespaces by their public names", () => {
+    const rows = propRows({
+      onClose: {
+        name: 'onClose',
+        type: {
+          name: 'function',
+          raw: '(\n  event: Event,\n  details: BaseTooltip.Root.ChangeEventDetails,\n) => void',
+        },
+        table: { type: { summary: 'function' } },
+      },
+    } as never)
+    expect(rows[0].type).toBe('(event: Event, details: Tooltip.Root.ChangeEventDetails) => void')
+  })
+})
+
 const SPEC = `# Gauge
 
 A gauge shows how full something is.
@@ -139,6 +155,16 @@ No owned strings: every word comes from the caller.
 describe('specProse', () => {
   it("gives the spec's opening sentence for the intro", () => {
     expect(specProse(SPEC, 'intro')).toBe('A gauge shows how full something is.')
+  })
+
+  it('stops the intro at the run notes, which are for the maintainer', () => {
+    const spec = SPEC.replace(
+      'is.\n',
+      'is.\n\nIt reads 0 to 100.\n\n<!-- run notes -->\n\nThe design is deferred (ADR 0010).\n',
+    )
+    expect(specProse(spec, 'intro')).toBe(
+      'A gauge shows how full something is.\n\nIt reads 0 to 100.',
+    )
   })
 
   it('gives the sections named, each with its heading, in the order asked', () => {

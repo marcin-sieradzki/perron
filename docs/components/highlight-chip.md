@@ -2,6 +2,8 @@
 
 A pill that floats over the map on glass and turns one highlight of the map on and off, such as line 5C in focus with everything outside it dimmed; while it is selected, the map shows the highlight.
 
+<!-- run notes -->
+
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the contract, the foundations, the tokens, the Base UI reference and the ROADMAP line that names it (`ROADMAP.md`, "Wave 3, interactive, on Base UI": "FilterChip and HighlightChip (Toggle)"). The extracted prototype component is not in any branch this run can reach. The foundations already place it: [Layout](../foundations/layout.md#stacking) stacks "the highlight chip" above the overview sheet and below the detail panel, with `z-index.highlight`; [Accessibility](../foundations/accessibility.md#rules) has Esc close "a dialog, then a detail panel, then a highlight"; and [Map](../foundations/map.md#focus-and-dimming) gives the dimming a line in focus brings.
 
 ## Anatomy

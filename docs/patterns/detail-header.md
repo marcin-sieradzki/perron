@@ -2,6 +2,8 @@
 
 The top of the detail panel: it names what the panel shows, a line's vehicle by its line badge and destination or a stop by its marker and name, with a line under it and room for the panel's own controls.
 
+<!-- run notes -->
+
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): this spec decides what the drawing would, from the [contract](../components/README.md) and its Patterns section, the [foundations](../foundations/README.md), [content design](../content-design.md), the tokens and the specs of the two components in `dependsOn`, [LineBadge](../components/line-badge.md) and [StationIcon](../components/station-icon.md). The extracted prototype is not reachable from this branch, so nothing here rests on it. DetailHeader is the first pattern, so it also sets how a pattern takes a line.
 
 ## Anatomy

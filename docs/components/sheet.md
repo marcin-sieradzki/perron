@@ -2,6 +2,8 @@
 
 A panel that slides in from the edge of the screen and floats over the map: the overview sheet and the detail panel on a wide screen, and the bottom sheet they become on a phone ([Layout](../foundations/layout.md#page-shell)).
 
+<!-- run notes -->
+
 The design is deferred (`docs/adr/0010-unattended-runs-with-design-deferred.md`): this spec decides the variant property, the parts and the token of every part, from the contract, the foundations, the tokens and the Base UI reference. A later design run can change them.
 
 ## Anatomy

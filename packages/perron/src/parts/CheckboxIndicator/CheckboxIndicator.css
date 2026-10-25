@@ -1,8 +1,7 @@
 /* The CheckboxIndicator shared part, from docs/components/checkbox.md: a size.checkbox box with the
    Fields family's fill, edge and hover while unticked, ink while ticked or indeterminate. Its
    states are the attributes Base UI puts on the indicator; its hover and press are read from the
-   control that holds it, the whole row, as [role]:hover, since a bare :hover > would leave the
-   stories' stateRules an invalid selector once it takes the :hover out (CR-6). Every state changes colours only, on one box whose
+   control that holds it, the whole row, as [role]:hover (CR-6). Every state changes colours only, on one box whose
    edge is always drawn (CR-8), at once (CR-12). The mark draws in currentColor, set here (CR-5). */
 
 .pn-CheckboxIndicator {

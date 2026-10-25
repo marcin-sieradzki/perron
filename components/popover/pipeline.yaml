@@ -1,0 +1,71 @@
+# Written by npm run factory; never by hand.
+component: Popover
+layer: component
+deferred:
+  at: 2026-10-25T05:15:09.275Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-25T05:21:42.336Z
+    ended: 2026-10-25T05:22:49.000Z
+  build:
+    runs: 3
+    status: done
+    started: 2026-10-25T05:40:09.145Z
+    spec: 4ce44614ce38e14ccd92004e9e9279900c910df1bf9e535cfd04e7fe84a44629
+    ended: 2026-10-25T05:44:37.978Z
+  review:
+    rounds: 2
+    sentBack: 1
+    findings:
+      p1: 0
+      p2: 0
+      p3: 4
+    status: done
+    started: 2026-10-25T05:45:40.896Z
+    ended: 2026-10-25T05:53:25.112Z
+  docs:
+    status: done
+    started: 2026-10-25T05:53:41.815Z
+    ended: 2026-10-25T05:56:40.539Z
+notes:
+  - stage: brief
+    at: 2026-10-25T05:21:08.076Z
+    direction: The Popups family pads space.100 so menu rows can nest inside it. A popover holds text, so it takes space.400 (question 6). The family's row may need a separate padding for popups that hold text rather than rows.
+  - stage: brief
+    at: 2026-10-25T05:21:08.076Z
+    direction: Popover is the second component to read the positioner's sideOffset and collisionPadding from tokens. The reader becomes a shared helper, and the build touches MapTooltip to import it (question 5).
+  - stage: brief
+    at: 2026-10-25T05:21:08.076Z
+    direction: No ROADMAP line names Popover. Its registry entry, in the Overlays category, was the only source for its parts.
+  - stage: brief
+    at: 2026-10-25T05:21:08.076Z
+    questions: |-
+      1. (Anatomy) One component in Dialog's shape (title, description, children, trigger props; every Base UI part inside; popup as root; no actions prop)? Recommended: yes.
+      2. (Anatomy) Leave out Popover.Arrow, removing it from the entry's baseUiParts? Recommended: yes.
+      3. (Props) title required, as in Dialog? Recommended: yes.
+      4. (Props) Always non-modal, leaving out modal, actionsRef, handle, onOpenChangeComplete, triggerId, defaultTriggerId? Recommended: yes.
+      5. (Props) Positioner keeps side bottom / align center, sideOffset space.200 and collisionPadding size.panel-gap read in script, via a shared positionerOffsets helper in internal/tokens.ts moved from MapTooltip and listed in the contract's Shared helpers? Recommended: yes.
+      6. (Tokens) Popup padded space.400, parts space.200 apart, instead of the Popups family's space.100? Recommended: yes.
+      7. (Tokens) Title heading-sm, description body-sm in text.secondary, content body? Recommended: yes.
+      8. (Tokens) Width follows content, capped at min(320px raw under perron-allow, --available-width); height capped at --available-height and scrolls? Recommended: yes.
+      9. (Tokens) On data-anchor-hidden the popover keeps its rest look rather than hide? Recommended: yes.
+      10. (CR-6) Close button always rendered, as in Dialog? Recommended: yes.
+  - stage: build
+    at: 2026-10-25T05:30:02.531Z
+    direction: "The positioner defaults are side 'bottom' and align 'center'. With a narrow trigger near the screen's edge, the centred popup is shifted to collisionPadding, so its start edge sits about 4 px off the trigger's start edge (components-popover--default, root). Options: keep 'center', or default align to 'start' so the popover lines up with its trigger."
+  - stage: build
+    at: 2026-10-25T05:30:02.531Z
+    direction: "In LongContent (content taller than the room below the trigger), Base UI's default collisionAvoidance falls back to the perpendicular axis: the popup opens to the right of the trigger at full viewport height instead of staying below it and scrolling. Options: keep Base UI's default, or make collisionAvoidance.fallbackAxisSide 'none' the default so a popover stays above or below its trigger."
+  - stage: build
+    at: 2026-10-25T05:30:02.531Z
+    direction: "The Overlays family types the first argument of onOpen and onClose two ways: Dialog and Popover use Event, Sheet uses ChangeDetails['event']. Choose one form for the family."
+  - stage: build
+    at: 2026-10-25T05:40:02.728Z
+    direction: A ToolbarButton given disabled itself and passed as Popover's trigger looks disabled and does not open, but Popover.Trigger leaves aria-disabled="false" on it, so it is announced as enabled; only slotProps.trigger.disabled disables it correctly. Popover could forward a disabled prop on the trigger element to Popover.Trigger, so both ways work; for now the Do and don't row steers callers to slotProps.trigger.disabled.
+  - stage: build
+    at: 2026-10-25T05:40:02.728Z
+    questions: "1. (Base UI parts and Props, the positioner's defaults; popover.md:47, CR-14, the LongContent row; review P2-1) When the popup has no room above or below its trigger, keep Base UI's default fallbackAxisSide 'end' (moves to the side), or default collisionAvoidance to { fallbackAxisSide: 'none' } so it stays above or below and scrolls, with slotProps.positioner.collisionAvoidance still overriding it? Recommended: default to 'none', as Base UI's DROPDOWN_COLLISION_AVOIDANCE does for popups capped at --available-height."
+  - stage: docs
+    at: 2026-10-25T05:56:40.539Z
+    direction: "The props table shows onOpen and onClose with the local alias ChangeDetails, which callers cannot import, where the spec writes Popover.Root.ChangeEventDetails. Dialog, Checkbox, MapTooltip, Sheet, SearchField and Tooltip use the same alias, so it is a library-wide choice: exporting the alias or writing Base UI's name in full would make the docgen type readable."

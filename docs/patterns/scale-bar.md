@@ -2,6 +2,8 @@
 
 The map's scale: a short bar on glass at the bottom right of the map, with the ground distance its length spans written above it, such as "300 m" or "2 km", which shortens and lengthens as the map zooms.
 
+<!-- run notes -->
+
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the [contract](../components/README.md) and its Patterns section, the [foundations](../foundations/README.md), [content design](../content-design.md), the tokens and the specs of what it composes, [Surface](../components/surface.md), and the neighbours it sits beside, [Attribution](../components/attribution.md) and [MapControls](../components/map-controls.md). `packages/perron/components.json` gives ScaleBar no `baseUiParts`, and its `dependsOn` lists `Surface` (CR-1). The extracted prototype is not reachable from this branch, so nothing here rests on it. What the foundations already say of the scale is that it sits at the bottom right with the map controls ([Layout](../foundations/layout.md#page-shell)) and stacks with them, the legend and the attribution at `z-index.map-controls` ([Layout](../foundations/layout.md#stacking)).
 
 ## Anatomy

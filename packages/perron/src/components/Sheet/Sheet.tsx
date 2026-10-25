@@ -11,9 +11,6 @@ import { tokenValue } from '../../internal/tokens.ts'
 import { CloseButton } from '../../parts/CloseButton/CloseButton.tsx'
 import './Sheet.css'
 
-type ChangeDetails = Drawer.Root.ChangeEventDetails
-type SnapPointDetails = Drawer.Root.SnapPointChangeEventDetails
-
 /** The edge a sheet slides from, and the swipe that dismisses it (CR-3). */
 const SWIPE = { left: 'left', right: 'right', bottom: 'down' } as const
 
@@ -68,16 +65,19 @@ export interface SheetProps extends Omit<Drawer.Popup.Props, 'children' | 'title
    */
   defaultOpen?: boolean
   /** Called when the sheet asks to open: from the trigger. */
-  onOpen?: (event: ChangeDetails['event'], details: ChangeDetails) => void
+  onOpen?: (
+    event: Drawer.Root.ChangeEventDetails['event'],
+    details: Drawer.Root.ChangeEventDetails,
+  ) => void
   /**
    * Called when the sheet asks to close, with Base UI's reason: `escape-key`, `close-press`,
    * `outside-press`, `swipe`, `trigger-press`, `focus-out`, `close-watcher`, `imperative-action` or
    * `none`. `details.cancel()` keeps it open.
    */
   onClose?: (
-    event: ChangeDetails['event'],
+    event: Drawer.Root.ChangeEventDetails['event'],
     reason: Drawer.Root.ChangeEventReason,
-    details: ChangeDetails,
+    details: Drawer.Root.ChangeEventDetails,
   ) => void
   /**
    * Whether the sheet shuts out the rest of the page: focus trapped, the page's scroll locked, a
@@ -106,9 +106,9 @@ export interface SheetProps extends Omit<Drawer.Popup.Props, 'children' | 'title
    * shape, `(event, snapPoint, details)`, with `event` being `details.event`.
    */
   onSnapPointChange?: (
-    event: SnapPointDetails['event'],
+    event: Drawer.Root.SnapPointChangeEventDetails['event'],
     snapPoint: Drawer.Root.SnapPoint | null,
-    details: SnapPointDetails,
+    details: Drawer.Root.SnapPointChangeEventDetails,
   ) => void
   /**
    * Overrides "Close", the close button's label.
@@ -196,7 +196,7 @@ export function Sheet({
   const bottom = anchor === 'bottom'
   const points = bottom ? (snapPoints ?? defaultSnapPoints()) : []
 
-  const handleOpenChange = (next: boolean, details: ChangeDetails) => {
+  const handleOpenChange = (next: boolean, details: Drawer.Root.ChangeEventDetails) => {
     if (next) onOpen?.(details.event, details)
     else onClose?.(details.event, details.reason, details)
   }
@@ -208,8 +208,10 @@ export function Sheet({
         snapPoint,
         defaultSnapPoint: defaultSnapPoint === undefined ? points[0] : defaultSnapPoint,
         onSnapPointChange: onSnapPointChange
-          ? (point: Drawer.Root.SnapPoint | null, details: SnapPointDetails) =>
-              onSnapPointChange(details.event, point, details)
+          ? (
+              point: Drawer.Root.SnapPoint | null,
+              details: Drawer.Root.SnapPointChangeEventDetails,
+            ) => onSnapPointChange(details.event, point, details)
           : undefined,
       }
     : {}
@@ -229,15 +231,15 @@ export function Sheet({
           {...mergeProps<typeof Drawer.Trigger>(slotProps?.trigger, { render: trigger })}
         />
       ) : null}
-      <Drawer.Portal {...mergeProps<typeof Drawer.Portal>(slotProps?.portal, undefined)}>
+      <Drawer.Portal {...slotProps?.portal}>
         {modal ? (
           <Drawer.Backdrop
-            {...mergeProps<typeof Drawer.Backdrop>(slotProps?.backdrop, undefined)}
+            {...slotProps?.backdrop}
             className={withClass('pn-Sheet-backdrop', slotProps?.backdrop?.className)}
           />
         ) : null}
         <Drawer.Viewport
-          {...mergeProps<typeof Drawer.Viewport>(slotProps?.viewport, undefined)}
+          {...slotProps?.viewport}
           className={withClass('pn-Sheet-viewport', slotProps?.viewport?.className)}
           data-anchor={anchor}
         >
@@ -249,7 +251,7 @@ export function Sheet({
           >
             <div className="pn-Sheet-header">
               <Drawer.Title
-                {...mergeProps<typeof Drawer.Title>(slotProps?.title, undefined)}
+                {...slotProps?.title}
                 className={withClass('pn-Sheet-title', slotProps?.title?.className)}
               >
                 {title}

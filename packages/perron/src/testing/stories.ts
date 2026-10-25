@@ -72,6 +72,14 @@ export function resolve(property: StyleProperty, value: string) {
  * script's events can't set `:hover`, `:active` or `:visited`, so this reads the rules the browser
  * would apply; the visual stage drives the states for real.
  */
+/**
+ * `selector` with each `pseudo` in it made to match any element, `:is(*)`, so the selector matches
+ * an element at rest wherever the state is written: after a compound (`.a:hover > .b`), alone
+ * (`:hover > .b`) or inside `:not()`. Taking the pseudo-class out would leave the last two invalid.
+ */
+export const withoutState = (selector: string, pseudo: string) =>
+  selector.replaceAll(pseudo, ':is(*)')
+
 export function stateRules(element: Element, pseudo: ':hover' | ':active' | ':visited' = ':hover') {
   const found: CSSStyleDeclaration[] = []
   const visit = (rules: CSSRuleList, inQuery: boolean) => {
@@ -82,7 +90,7 @@ export function stateRules(element: Element, pseudo: ':hover' | ':active' | ':vi
         rule instanceof CSSStyleRule &&
         (pseudo !== ':hover' || inQuery) &&
         rule.selectorText.includes(pseudo) &&
-        element.matches(rule.selectorText.replaceAll(pseudo, ''))
+        element.matches(withoutState(rule.selectorText, pseudo))
       )
         found.push(rule.style)
   }
@@ -110,7 +118,7 @@ export function onHover(element: Element, property: string) {
           if (
             inner instanceof CSSStyleRule &&
             inner.selectorText.includes(':hover') &&
-            element.matches(inner.selectorText.replaceAll(':hover', ''))
+            element.matches(withoutState(inner.selectorText, ':hover'))
           )
             value = inner.style.getPropertyValue(property) || value
   return value
