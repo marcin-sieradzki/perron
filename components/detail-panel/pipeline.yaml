@@ -3,6 +3,9 @@ component: DetailPanel
 layer: pattern
 deferred:
   at: 2026-10-25T00:23:51.390Z
+needsHuman:
+  stage: review
+  reason: '3 review rounds found a P1 or a P2; the last: review round 3 found 1 P2 (components/detail-panel/review.md)'
 stages:
   brief:
     status: done
@@ -14,9 +17,13 @@ stages:
     started: 2026-10-25T01:10:23.572Z
     ended: 2026-10-25T01:14:43.686Z
   review:
-    rounds: 2
-    sentBack: 2
+    rounds: 3
+    sentBack: 3
     findings:
       p1: 0
       p2: 1
-      p3: 5
+      p3: 6
+    status: failed
+    started: 2026-10-25T01:15:10.796Z
+    ended: 2026-10-25T01:19:58.978Z
+    failing: review round 3 found 1 P2 (components/detail-panel/review.md)
