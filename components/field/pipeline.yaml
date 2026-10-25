@@ -3,4 +3,24 @@ component: Field
 layer: component
 deferred:
   at: 2026-10-25T04:38:23.793Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-25T04:38:28.496Z
+    ended: 2026-10-25T04:45:40.175Z
+notes:
+  - stage: brief
+    at: 2026-10-25T04:45:40.176Z
+    direction: typography.label-sm's description names 'field labels', but SearchField's label uses typography.label. Settle one label type for every field through the design-tokens skill.
+  - stage: brief
+    at: 2026-10-25T04:45:40.176Z
+    direction: Field works only with a control that registers with Base UI's field context. A plain <input> gets no htmlFor, aria-labelledby or aria-describedby, so until TextField ships no Perron control can sit inside Field.
+  - stage: brief
+    at: 2026-10-25T04:45:40.176Z
+    direction: SearchField composes Field.Root and Field.Label directly instead of Field. Once Field is stable, SearchField could compose it so that every field shares one label treatment.
+  - stage: brief
+    at: 2026-10-25T04:45:40.176Z
+    direction: Base UI's Field.Error is not a live region and mounts with its content, so an error that appears on blur, outside a Base UI Form, is heard only when focus returns to the control.
+  - stage: brief
+    at: 2026-10-25T04:45:40.176Z
+    questions: "1. (Anatomy) Are the parts stacked in the order label, description, control, error? Recommended: yes. 2. (Props) Does Field take a required label, hiddenLabel (default false), optional description and error (ReactNode) and required children, inheriting the rest of Field.Root's props? Recommended: yes. 3. (Props) Does a given error mark the field invalid (invalid ?? true) and show at once (Field.Error match={true}), while a left-out error lets Base UI show its own message? Recommended: yes. 4. (Tokens) Does the label take typography.label in color.text.primary, as SearchField's does? Recommended: yes. 5. (Tokens) Do the description and error take typography.body-sm, in color.text.secondary and color.text.danger, with space.100 between parts? Recommended: yes. 6. (Tokens) Does Field keep its rest look in every state and show invalid only by mounting the error? Recommended: yes. 7. (Tokens) Is the error its words alone, with no warning icon? Recommended: yes. 8. (Keyboard and ARIA) Does the error stay a plain div read through aria-describedby, with no live region? Recommended: yes. 9. (Owned strings) Does Field show no required or optional marker of its own? Recommended: yes; answered instead, per the batch's slot brief that the marker be designed for TextField, Select and the others to compose: Field takes optional (default false), which adds the owned '(optional)' inside the label in color.text.secondary, overridden by optionalLabel, and no required marker. 10. (Owned strings) Does Field keep Base UI's showing of the browser's own message for a failing native check when no error is given, as a known exception? Recommended: yes. 11. (Stories) Do the stories render Base UI's Input as the control, styled in the story with the Fields family's tokens, until TextField ships? Recommended: yes."
