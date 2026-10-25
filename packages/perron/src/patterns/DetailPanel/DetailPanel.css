@@ -1,0 +1,30 @@
+/* DetailPanel, from docs/patterns/detail-panel.md: the Sheet's panel and the DetailHeader draw
+   everything but these rows, all at rest; the pattern draws no surface of its own (CR-5). */
+
+/* The detail panel's own width beside the map, at most the viewport's box, as the Sheet keeps it.
+   One class more than the Sheet's .pn-Sheet[data-anchor='right'], so it wins; a bottom panel keeps
+   the Sheet's full width. */
+.pn-Sheet.pn-DetailPanel[data-anchor='right'] {
+  inline-size: var(--perron-size-detail-width);
+}
+
+/* Stacked among the map's panels: above the overview sheet and the highlight chip, below the top
+   bar, a tooltip and a dialog. The attribute beats the Sheet's .pn-Sheet-viewport. */
+.pn-DetailPanel-viewport[data-anchor] {
+  z-index: var(--perron-z-index-detail);
+}
+
+/* Centred on the header row, as DetailHeader centres its mark and its action, when a subheader
+   makes the row taller than the button. */
+.pn-DetailPanel-close {
+  align-self: center;
+}
+
+/* The caller's blocks in one column, packed at the start, space.300 apart; minmax(0, 1fr) keeps a
+   long word from widening the scrolling body. */
+.pn-DetailPanel-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  row-gap: var(--perron-space-300);
+}
