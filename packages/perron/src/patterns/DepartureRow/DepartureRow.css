@@ -1,6 +1,6 @@
 /* DepartureRow: a grid of three columns and two lines (docs/patterns/departure-row.md, Tokens): the
    badge at the start across both lines, the destination over the state in the middle, the
-   countdown over the timetabled time and the delay at the end. No fill, border or radius: a
+   countdown, or the interval, over the timetabled time and the delay at the end. No fill, border or radius: a
    divider between rows is the list's. LineBadge, VehicleDot and Delay keep their own colours. */
 .pn-DepartureRow {
   display: grid;
@@ -43,7 +43,17 @@
   align-self: center;
 }
 
-.pn-DepartureRow-countdown {
+/* CR-15: a fact the rider acts on, so in the stronger text, set a step further from the word than
+   the dot is */
+.pn-DepartureRow-platform {
+  margin-inline-start: var(--perron-space-100);
+  color: var(--perron-color-text-primary);
+}
+
+/* CR-14: the interval takes the countdown's place and its type, so it lines up with the countdowns
+   down the list */
+.pn-DepartureRow-countdown,
+.pn-DepartureRow-interval {
   grid-column: 3;
   grid-row: 1;
   justify-self: end;
@@ -51,7 +61,7 @@
   letter-spacing: var(--perron-typography-data-lg-tracking);
   font-variant-numeric: tabular-nums;
   color: var(--perron-color-text-primary);
-  /* CR-9: "~12 min" never breaks */
+  /* CR-9: "~12 min" and "Every 3 to 4 min" never break */
   white-space: nowrap;
 }
 
@@ -82,4 +92,17 @@
   letter-spacing: var(--perron-typography-data-sm-tracking);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
+}
+
+/* CR-13: a cancelled departure stays in the list: "Cancelled" in the danger colour, and what it
+   would have left at struck through, which the word says to the ear. The platform keeps its own
+   colour. */
+.pn-DepartureRow[data-cancelled] .pn-DepartureRow-status {
+  color: var(--perron-color-text-danger);
+}
+
+.pn-DepartureRow[data-cancelled] .pn-DepartureRow-countdown,
+.pn-DepartureRow[data-cancelled] .pn-DepartureRow-interval,
+.pn-DepartureRow[data-cancelled] .pn-DepartureRow-time {
+  text-decoration-line: line-through;
 }
