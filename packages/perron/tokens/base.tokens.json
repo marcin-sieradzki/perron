@@ -1178,6 +1178,14 @@
       },
       "$description": "Large line badge height"
     },
+    "meter-track": {
+      "$type": "dimension",
+      "$value": {
+        "value": 6,
+        "unit": "px"
+      },
+      "$description": "Height of a meter's track"
+    },
     "sheet-width": {
       "$type": "dimension",
       "$value": {

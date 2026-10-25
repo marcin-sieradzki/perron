@@ -1,5 +1,6 @@
-// PerronProvider sets the locale for the components inside it, and useOwnedStrings gives a
-// component its owned strings in that locale, with any *Label props laid over them.
+// PerronProvider sets the locale for the components inside it, useOwnedStrings gives a component
+// its owned strings in that locale, with any *Label props laid over them, and useLocale gives it the
+// locale itself, such as for formatting a number.
 import { createContext, useContext } from 'react'
 import type { ReactNode } from 'react'
 import { dictionaries } from './locale/index.ts'
@@ -29,4 +30,12 @@ export function useOwnedStrings(overrides: Partial<OwnedStrings> = {}): OwnedStr
   const given = Object.entries(overrides) as [keyof OwnedStrings, string | undefined][]
   for (const [key, value] of given) if (value !== undefined) strings[key] = value
   return strings
+}
+
+/**
+ * The nearest PerronProvider's locale, `'en'` without one: a tag `Intl.NumberFormat` takes, for a
+ * component that formats a number in the language of its words.
+ */
+export function useLocale(): Locale {
+  return useContext(LocaleContext)
 }

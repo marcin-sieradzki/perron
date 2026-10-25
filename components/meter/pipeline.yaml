@@ -8,7 +8,22 @@ stages:
     status: done
     started: 2026-10-25T01:53:24.067Z
     ended: 2026-10-25T01:54:59.807Z
+  build:
+    status: done
+    started: 2026-10-25T01:55:23.392Z
+    runs: 1
+    spec: c93fbd7e3755475a7a98b8652597f01aa77125c3797f32a72959e25ef4ea7e7b
+    ended: 2026-10-25T02:06:49.570Z
 notes:
   - stage: brief
     at: 2026-10-25T01:53:19.897Z
     questions: "1. Is label required? Recommended: yes, a required ReactNode. 2. Can value be unknown? Recommended: yes, number | null; null or non-finite shows — and 'Unknown'. 3. Does Meter take a color prop with the mark intents, no thresholds? Recommended: yes, neutral|success|warning|danger|info, default neutral. 4. Does Meter format in the PerronProvider's locale by default? Recommended: yes, via an internal useLocale() hook beside useOwnedStrings. 5. Track height token? Recommended: new base token size.meter-track, 6px. 6. How does expectOwnedStrings treat Base UI's visually hidden 'x' span? Recommended: skip text of role=presentation elements with Base UI's visuallyHidden clip-path:inset(50%) style, with its own test."
+  - stage: build
+    at: 2026-10-25T02:06:49.570Z
+    direction: 'Base UI''s Meter.Root appends a visually hidden span holding "x". Chrome exposes it as a StaticText child of the meter, and Playwright''s aria snapshot reads the meter as "Reporting live x". The spec says the meter''s children are presentational, but no real screen reader was used here. Options: keep Base UI''s root, or replace the root''s children to leave the span out.'
+  - stage: build
+    at: 2026-10-25T02:06:49.570Z
+    direction: docs/foundations/layout.md says "A measure only one component's CSS reads stays in that CSS", but the contract allows only tokens in component CSS. So size.meter-track, like size.badge before it, is a base token that only one component reads. The prose or the rule should change so they agree.
+  - stage: build
+    at: 2026-10-25T02:06:49.570Z
+    direction: '`locale` is the first locale prop in the library, and the next component that formats numbers will copy it. MUI sets locale through a provider rather than per component. Options: keep it per component with the PerronProvider fallback, or keep it on the provider only.'
