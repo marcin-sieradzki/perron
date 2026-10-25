@@ -2,6 +2,8 @@
 
 The panel that opens on the right of the map when a rider picks a vehicle or a stop: a Sheet headed by a DetailHeader, which names the line's vehicle or the stop, with the close button at the end of its header row and the caller's details below, and the bottom sheet it becomes on a phone.
 
+<!-- run notes -->
+
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): this spec decides what the drawing would, from the [contract](../components/README.md) and its Patterns section, the [foundations](../foundations/README.md), [content design](../content-design.md), the tokens and the specs of the two entries in `dependsOn`, [Sheet](../components/sheet.md) and [DetailHeader](detail-header.md). The extracted prototype is not reachable from this branch, so nothing here rests on it. What the foundations already say of the detail panel is that it sits on the right ([Layout](../foundations/layout.md#page-shell)), is `size.detail-width` wide on a wide screen, stacks at `z-index.detail` ([Layout](../foundations/layout.md#stacking)), becomes a bottom sheet under `breakpoint.phone`, sets its parts `space.300` apart ([Semantic spacing](../foundations/semantic-spacing.md#space)), and closes on Esc after a dialog and before a highlight ([Accessibility](../foundations/accessibility.md#rules)).
 
 ## Anatomy

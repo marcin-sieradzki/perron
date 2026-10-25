@@ -2,6 +2,8 @@
 
 A button that runs one action on the screen it sits on, such as "Show departures", in ink (`neutral`) or, for the one main action of a screen, in the brand yellow (`brand`).
 
+<!-- run notes -->
+
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): this spec decides what the drawing would. The read-back `penpot/button.json`, drawn before the contract gave action components the `brand` colour, is one source among the contract, the foundations and the tokens, and the spec follows it wherever it holds.
 
 ## Anatomy

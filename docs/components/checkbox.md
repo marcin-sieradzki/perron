@@ -2,6 +2,8 @@
 
 A box with its words beside it that turns one setting or one answer on and off, such as "Show planned works on the map", ticked when it is on and dashed when it stands for a set that is partly on, and submitted with a form.
 
+<!-- run notes -->
+
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the [contract](README.md), the [foundations](../foundations/README.md), the tokens and the Base UI reference for `Checkbox` (`@base-ui/react` 1.9.0, installed). The contract names Checkbox twice, as a composite control that carries a `name` ([State and events](README.md#state-and-events)) and as the first user of the `CheckboxIndicator` shared part ([Shared parts](README.md#shared-parts)). Its registry entry lists `Checkbox.Root` and `Checkbox.Indicator` and depends on nothing; CheckboxGroup, which depends on it, composes Checkboxes inside a Fieldset.
 
 ## Anatomy

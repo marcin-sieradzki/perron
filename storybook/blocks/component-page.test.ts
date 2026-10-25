@@ -141,6 +141,16 @@ describe('specProse', () => {
     expect(specProse(SPEC, 'intro')).toBe('A gauge shows how full something is.')
   })
 
+  it('stops the intro at the run notes, which are for the maintainer', () => {
+    const spec = SPEC.replace(
+      'is.\n',
+      'is.\n\nIt reads 0 to 100.\n\n<!-- run notes -->\n\nThe design is deferred (ADR 0010).\n',
+    )
+    expect(specProse(spec, 'intro')).toBe(
+      'A gauge shows how full something is.\n\nIt reads 0 to 100.',
+    )
+  })
+
   it('gives the sections named, each with its heading, in the order asked', () => {
     expect(specProse(SPEC, ["Do and don't", 'Owned strings'])).toBe(
       [

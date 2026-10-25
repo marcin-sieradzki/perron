@@ -2,6 +2,8 @@
 
 The frame round one form control: its label above it, a line of help, and the error message under it when the value is wrong, all tied to the control for the ear by Base UI.
 
+<!-- run notes -->
+
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the [contract](README.md), the [foundations](../foundations/README.md), the tokens and the Base UI reference for `Field` (`@base-ui/react` 1.9.0, installed). The extracted prototype component is not in any branch this run can reach.
 
 ## Anatomy

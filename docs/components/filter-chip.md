@@ -2,6 +2,8 @@
 
 A pill that turns one filter on and off, such as "Delays" in the top bar's filters, with an optional icon before its words and a count after them, drawn in ink when it is on.
 
+<!-- run notes -->
+
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the [contract](README.md), the [foundations](../foundations/README.md), the tokens, the Base UI reference for `Toggle` and the ROADMAP line that names it (`ROADMAP.md`, "Wave 3, interactive, on Base UI": "FilterChip and HighlightChip (Toggle)"). The extracted prototype component is not in any branch this run can reach, so nothing here rests on it. The foundations already name much of its look: [Layout](../foundations/layout.md#other-layout-properties) gives `size.control` to "icon buttons and filter chips", [Semantic spacing](../foundations/semantic-spacing.md#radius) rounds "chips" with `radius.full`, [Typography](../foundations/typography.md#roles) sets "chips" in `typography.label` and "counts in chips" in `typography.data-sm`, and [Elevation](../foundations/elevation.md#surfaces) makes `color.surface.inverse`, with `color.text.inverse`, the fill of "pressed toggles".
 
 ## Anatomy

@@ -80,6 +80,22 @@ describe('docs', () => {
     ])
   })
 
+  it('names an overlay no story opens by defaultOpen, and an intro that shows run notes', () => {
+    expect(docs.run(fixture('overlay'))).toEqual([
+      {
+        file: 'docs/components/popup.md',
+        line: 3,
+        message:
+          'Popup\'s docs page would open with run notes ("ADR 0010"): move how the spec was made below a `<!-- run notes -->` line after the intro\'s sentence (docs/components/TEMPLATE.md)',
+      },
+      {
+        file: 'packages/perron/src/components/Popup/Popup.stories.tsx',
+        message:
+          "Popup is an overlay, with open and defaultOpen, but no story opens it by defaultOpen, so its docs page and the visual stage show it closed: open each story by defaultOpen beside the trigger that opens it again (the contract's Stories), and give docs/components/popup.md's Stories rows the same",
+      },
+    ])
+  })
+
   // the docgen of every component in the repo, which outruns the default 5 s on a CI runner
   it('passes on the repo', () => {
     expect(docs.run(join(here, '../..'))).toEqual([])

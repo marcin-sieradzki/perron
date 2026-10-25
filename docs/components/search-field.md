@@ -2,6 +2,8 @@
 
 The field that finds a line or a stop: a labelled text input with the search icon, a clear button while it holds text, and a list of suggestions under it that narrows as the person types.
 
+<!-- run notes -->
+
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the [contract](README.md), the [foundations](../foundations/README.md), the tokens and the Base UI reference for `Field` and `Autocomplete` (`@base-ui/react` 1.9.0, installed). The extracted prototype component is not in any branch this run can reach.
 
 ## Anatomy

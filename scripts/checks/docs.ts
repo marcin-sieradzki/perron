@@ -10,10 +10,14 @@
 // "The locale's" for an owned-string prop, so the docs stage never meets a row or a Default cell the
 // brief or the build could have settled. The spec's Stories table and the stories file name the
 // same stories, one row per export, so the story the contract story renders (its `Default`, or its
-// alphabetically first) is one the spec describes. A missing file or table has no line to excuse,
-// so this rule takes no perron-allow.
+// alphabetically first) is one the spec describes. An overlay, a component with `open` and
+// `defaultOpen`, opens by `defaultOpen` in its stories (the contract's Stories), since the docs page
+// shows each story's first render. The intro the docs page shows holds no run notes: what the spec
+// rests on, such as ADR 0010, sits below the intro's `<!-- run notes -->` line. A missing file or
+// table has no line to excuse, so this rule takes no perron-allow.
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { RUN_NOTES, specProse } from '../../storybook/blocks/component-page.ts'
 import { componentDocs, type ComponentDoc } from '../lib/docgen.ts'
 import { PACKAGE } from '../lib/paths.ts'
 import { codeFile } from '../lib/props.ts'
@@ -167,6 +171,44 @@ function unknownTypes(e: Entry, doc: ComponentDoc): Problem[] {
     }))
 }
 
+/** A story that sets `defaultOpen`: `defaultOpen: true` in args, or the JSX attribute. */
+const OPENS = /\bdefaultOpen(\s*:\s*true\b|\s*=\s*\{\s*true\s*\}|(?=[\s/>]))/
+
+/** An overlay whose stories never open it by `defaultOpen`, so its docs page shows it closed. */
+function overlayProblems(root: string, e: Entry, doc: ComponentDoc): Problem[] {
+  const props = doc.props ?? {}
+  const file = join(root, storiesFile(e))
+  if (!props.open || !props.defaultOpen || !existsSync(file)) return []
+  const code = readFileSync(file, 'utf8').replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, '')
+  if (OPENS.test(code)) return []
+  return [
+    {
+      file: storiesFile(e),
+      message: `${e.name} is an overlay, with open and defaultOpen, but no story opens it by defaultOpen, so its docs page and the visual stage show it closed: open each story by defaultOpen beside the trigger that opens it again (the contract's Stories), and give ${specPage(e)}'s Stories rows the same`,
+    },
+  ]
+}
+
+/** Words in the intro the docs page shows that belong to the run notes. */
+const RUN_NOTE_WORDS = /\bADR \d{4}\b|docs\/adr\/|\bread-back\b|\bcode map\b/
+
+/** A spec whose intro, as the docs page shows it, holds the notes on how the spec was made. */
+function introProblems(root: string, e: Entry): Problem[] {
+  const spec = join(root, specPage(e))
+  if (!existsSync(spec)) return []
+  const text = readFileSync(spec, 'utf8')
+  const word = RUN_NOTE_WORDS.exec(specProse(text, 'intro'))?.[0]
+  if (!word) return []
+  const line = text.split('\n').findIndex((l) => l.includes(word)) + 1
+  return [
+    {
+      file: specPage(e),
+      line,
+      message: `${e.name}'s docs page would open with run notes ("${word}"): move how the spec was made below a \`${RUN_NOTES}\` line after the intro's sentence (docs/components/TEMPLATE.md)`,
+    },
+  ]
+}
+
 /** Where the spec's Props table and the docs page's would differ. */
 function tableProblems(root: string, e: Entry, doc: ComponentDoc): Problem[] {
   const spec = join(root, specPage(e))
@@ -191,8 +233,13 @@ export default {
           file: codeFile(e),
           message: `${e.name}'s docs page would show no props: its docgen finds no exported function component ${e.name} taking ${e.name}Props`,
         })
-      if (doc) problems.push(...tableProblems(root, e, doc), ...unknownTypes(e, doc))
-      problems.push(...storyProblems(root, e))
+      if (doc)
+        problems.push(
+          ...tableProblems(root, e, doc),
+          ...unknownTypes(e, doc),
+          ...overlayProblems(root, e, doc),
+        )
+      problems.push(...storyProblems(root, e), ...introProblems(root, e))
       if (DOCUMENTED.has(e.status) && missing(docsPage(e)))
         problems.push({
           file: docsPage(e),
