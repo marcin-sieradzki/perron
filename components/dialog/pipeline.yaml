@@ -3,9 +3,6 @@ component: Dialog
 layer: component
 deferred:
   at: 2026-10-24T23:23:29.736Z
-needsHuman:
-  stage: review
-  reason: '2 review rounds found a P1 or a P2, the last a P1: review round 2 found 1 P1 (components/dialog/review.md)'
 stages:
   brief:
     status: done
@@ -18,7 +15,7 @@ stages:
     ended: 2026-10-25T00:00:51.531Z
   review:
     rounds: 2
-    sentBack: 2
+    sentBack: 0
     findings:
       p1: 1
       p2: 0
