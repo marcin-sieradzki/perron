@@ -160,7 +160,10 @@ Tokens only.
 - `var()` has no fallback: `var(--perron-space-200)`.
 - Every `--perron-*` name read is a token in `packages/perron/tokens/`. A typography role brings its `-tracking` twin: `font: var(--perron-typography-label)` with `letter-spacing: var(--perron-typography-label-tracking)`.
 - Each layer reads the tokens of its row in [Token families](#token-families).
-- **Long words:** a rule that sets a typography role decides what a word longer than its line does, a Danish compound in a 320 px container: `overflow-wrap: anywhere` breaks it, `white-space: nowrap` keeps it on one line, a choice the spec names. It sits on that rule or on the plain class it inherits from, its own or its root's `.pn-<Name>`.
+- **Long words:** a rule that sets a typography role decides what a word longer than its line does, a Danish compound in a 320 px container, and the spec names the choice. It sits on that rule or on the plain class it inherits from, its own or its root's `.pn-<Name>`:
+  - `overflow-wrap: anywhere` breaks it, for text whose box takes its container's width: a title, a body, a cell.
+  - `overflow-wrap: break-word` breaks it too, for a box that sizes to its content beside others in a flex or inline row, such as a tag: `anywhere` lets the row squeeze that box to one letter a line, where `break-word` keeps whole words at its narrowest, and the row that holds it wraps (`flex-wrap: wrap`).
+  - `white-space: nowrap` keeps it on one line. `pre-wrap` and `pre-line` decide nothing: they wrap at spaces only.
 - **Icons** are sized by setting `--perron-icon-size` to an `icon.size.*` token on the element that holds them. See [Icons](../foundations/icons.md#sizes).
 - **Motion** takes `duration.*` and `easing.*`. A state with no fitting duration changes at once; a new one goes through the `design-tokens` skill. A loop (`infinite`) stops inside `@media (prefers-reduced-motion: reduce)`, in a rule with the loop's own selector that sets its `animation`. See [Motion](../foundations/motion.md).
 - **Stacking:** everything that renders in a portal (popups, tooltips, dialogs) takes `z-index.dialog`, so the one opened last paints on top. The other `z-index.*` tokens order the map screen's panels, for patterns.
