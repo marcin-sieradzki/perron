@@ -10,18 +10,18 @@ stages:
     ended: 2026-10-25T06:17:43.791Z
   build:
     runs: 2
-    status: done
-    started: 2026-10-25T06:36:08.898Z
-    begun: 110204ad0b5a8dcaf867a14fe1874460293ab32aa1173e54f1577f8aa5cfb417
-    spec: 3f59c239ca7e7807d6cc56c381d1d301a40fedc12dd0840f7dc42ca06c22c6a8
-    ended: 2026-10-25T06:39:34.706Z
+    failing: review round 2 found 1 P2 (components/checkbox-group/review.md)
   review:
-    rounds: 1
-    sentBack: 1
+    rounds: 2
+    sentBack: 2
     findings:
       p1: 0
-      p2: 3
-      p3: 3
+      p2: 1
+      p3: 4
+    status: failed
+    started: 2026-10-25T06:39:41.610Z
+    ended: 2026-10-25T06:46:21.727Z
+    failing: review round 2 found 1 P2 (components/checkbox-group/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T06:11:06.788Z
