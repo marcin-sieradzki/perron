@@ -233,6 +233,7 @@ Each of these is written once, in its file, and a component, pattern or story im
 | `mounted`      | `packages/perron/src/testing/stories.ts`        | Renders a node apart from the story into a host it appends, runs a test on it, and unmounts it after, pass or fail |
 | `rendered`     | `packages/perron/src/testing/stories.ts`        | The value a token renders as, read from a probe that sets it on one CSS property, `color` unless given another     |
 | `onHover`      | `packages/perron/src/testing/stories.ts`        | What the `(hover: hover)` rules set a property to on an element, as written, since a synthetic pointer can't hover |
+| `colour`       | `packages/perron/src/testing/stories.ts`        | A colour custom property as it renders, the computed `color` of a probe, to compare with an element's              |
 
 ## What axe won't catch
 

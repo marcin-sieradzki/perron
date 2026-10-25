@@ -6,6 +6,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fireEvent, fn, mocked, screen, userEvent, waitFor, within } from 'storybook/test'
 import { dictionaries, type Locale } from '../../locale/index.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
+import { colour } from '../../testing/stories.ts'
 import { Button } from '../Button/Button.tsx'
 import { MapTooltip } from './MapTooltip.tsx'
 
@@ -73,16 +74,6 @@ function pixels(token: string) {
   const width = Number.parseFloat(getComputedStyle(probe).width)
   probe.remove()
   return width
-}
-
-/** A colour token as it renders, through a probe that reads it. */
-function colour(token: string) {
-  const probe = document.createElement('span')
-  probe.style.color = `var(${token})`
-  document.body.append(probe)
-  const rendered = getComputedStyle(probe).color
-  probe.remove()
-  return rendered
 }
 
 /** The card over a point, open from the first render, with one line of the caller's words. */

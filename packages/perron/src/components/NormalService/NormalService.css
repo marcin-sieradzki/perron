@@ -1,0 +1,35 @@
+/* NormalService: the icon and the words in one inline run, coloured once on the root (CR-1). */
+.pn-NormalService {
+  /* CR-5: the words wrap inside the label, and the icon stays beside their first line. The first
+     row is one line of typography.label-sm tall, held by the strut below; the words span it and
+     the row the rest of their lines take. */
+  display: inline-grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto 1fr;
+  align-items: center;
+  column-gap: var(--perron-space-100);
+  font: var(--perron-typography-label-sm);
+  letter-spacing: var(--perron-typography-label-sm-tracking);
+  /* CR-5: a translated label with a word longer than its line breaks inside it. */
+  overflow-wrap: anywhere;
+  color: var(--perron-color-text-success);
+  --perron-icon-size: var(--perron-icon-size-325);
+}
+
+/* CR-5: a strut, a zero-width space hidden from screen readers, so the first row is exactly one
+   line of the root's own typography and the icon centres on the words' first line. */
+.pn-NormalService::before {
+  content: '\200b' / '';
+  grid-row: 1;
+  grid-column: 1;
+}
+
+.pn-NormalService-icon {
+  grid-row: 1;
+  grid-column: 1;
+}
+
+.pn-NormalService-label {
+  grid-row: 1 / span 2;
+  grid-column: 2;
+}

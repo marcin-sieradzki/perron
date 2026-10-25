@@ -1,4 +1,17 @@
 {
+  "Attribution": {
+    "extends": [
+      "Omit<useRender.ComponentProps<'small'>, 'children'>"
+    ],
+    "props": {
+      "children": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      }
+    }
+  },
   "Brand": {
     "extends": [
       "Omit<useRender.ComponentProps<'span'>, 'children' | 'ref'>"
@@ -966,6 +979,25 @@
         "optional": true,
         "type": [
           "{ portal?: TooltipPortalProps | undefined; positioner?: TooltipPositionerProps | undefined; }"
+        ]
+      }
+    }
+  },
+  "NormalService": {
+    "extends": [
+      "Omit< useRender.ComponentProps<'span'>, 'children' | 'ref' >"
+    ],
+    "props": {
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLSpanElement>"
+        ]
+      },
+      "runningNormallyLabel": {
+        "optional": true,
+        "type": [
+          "string"
         ]
       }
     }
