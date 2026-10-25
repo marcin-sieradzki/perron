@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { RUN_NOTES } from '../../storybook/blocks/component-page.ts'
 import { describe, expect, it } from 'vitest'
 import { readSources } from './token-sources.ts'
 import { headingOf, PAGES, readPages } from './pages.ts'
@@ -61,8 +62,9 @@ describe('Storybook pages', () => {
   })
 
   it('turn every table block into rows, leaving no marker in the prose', () => {
+    // but a spec's run notes line, which the docs page's intro stops at and the page draws as nothing
     const prose = pages.flatMap((p) => p.segments.filter((s) => s.kind === 'prose'))
-    expect(prose.filter((s) => s.markdown.includes('<!--'))).toEqual([])
+    expect(prose.filter((s) => s.markdown.replaceAll(RUN_NOTES, '').includes('<!--'))).toEqual([])
     const motion = pages.find((p) => p.title === 'Motion')!
     const durations = motion.segments.find((s) => s.kind === 'tokens')!
     expect(durations).toMatchObject({ contexts: ['Reduced motion'], themes: ['light'] })

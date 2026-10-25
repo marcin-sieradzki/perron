@@ -2,6 +2,8 @@
 
 A modal panel over the map and a `color.scrim` backdrop, such as the help with the keys or a question before clearing every filter, which holds focus until it closes and then gives it back to the button that opened it.
 
+<!-- run notes -->
+
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the contract, the foundations, the tokens and the Base UI reference. The `CloseButton` shared part gives the close button its look, and the [Button](button.md) spec the trigger and the actions in the stories.
 
 ## Anatomy

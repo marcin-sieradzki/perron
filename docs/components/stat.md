@@ -2,6 +2,8 @@
 
 A key figure with the words that say what it counts, such as "412" under "Reporting live", set large so it reads at a glance in a report, a panel or on the kiosk.
 
+<!-- run notes -->
+
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): this spec decides what the drawing would, from the [contract](README.md), the [foundations](../foundations/README.md), [content design](../content-design.md) and the tokens. Stat has no Base UI component and nothing in `dependsOn`, and the extracted prototype is not reachable from this branch, so nothing here rests on it.
 
 ## Anatomy

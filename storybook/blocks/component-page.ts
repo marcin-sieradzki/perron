@@ -14,7 +14,18 @@ export interface PropRow {
   description: string
 }
 
-const oneLine = (s: string) => s.replace(/\s+/g, ' ').trim()
+/**
+ * A type as the table shows it: on one line, with no trailing comma before a closing paren, and
+ * with a Base UI namespace by its public name, `BaseTooltip.Trigger.Props` as `Tooltip.Trigger.Props`,
+ * since a component imports Base UI's `Tooltip` as `BaseTooltip` when its own name is `Tooltip`.
+ */
+const oneLine = (s: string) =>
+  s
+    .replace(/\s+/g, ' ')
+    .replace(/\(\s+/g, '(')
+    .replace(/,?\s+\)/g, ')')
+    .replace(/\bBase([A-Z]\w*)\./g, '$1.')
+    .trim()
 
 /** A prop's type as written in the props type, where docgen kept the text. */
 function typeOf(arg: InputType) {
@@ -64,16 +75,29 @@ export function propRows(argTypes: ArgTypes): PropRow[] {
   return [...props, ...slots]
 }
 
-/** A spec's `##` sections by heading, and its intro: the text between `#` and the first `##`. */
+/**
+ * The line in a spec's intro that starts its run notes: how the spec was made (ADR 0010, the
+ * sources, what the prototype gave), for the maintainer. The docs page's intro stops above it.
+ */
+export const RUN_NOTES = '<!-- run notes -->'
+
+/**
+ * A spec's `##` sections by heading, and its intro: the text between `#` and the first `##`, up to
+ * its run notes.
+ */
 function sectionsOf(markdown: string) {
   const [head, ...rest] = markdown.split(/^(?=## )/m)
-  const intro = head.replace(/^# .*$/m, '').trim()
+  const intro = head
+    .replace(/^# .*$/m, '')
+    .split(RUN_NOTES)[0]
+    .trim()
   const sections = new Map(rest.map((s) => [/^## (.+)$/m.exec(s)![1].trim(), s.trim()] as const))
   return { intro, sections }
 }
 
 /**
- * Prose from a spec for the docs page: `'intro'` gives what the component is for, a list of
+ * Prose from a spec for the docs page: `'intro'` gives what the component is for, above the run
+ * notes, a list of
  * headings gives those sections, each with its `##` heading, in the order asked.
  */
 export function specProse(markdown: string, which: 'intro' | string[]) {

@@ -2,6 +2,8 @@
 
 A row of tabs that switches between views of one thing, one panel showing at a time, such as a stop's departures, its lines and its disruptions in the detail panel.
 
+<!-- run notes -->
+
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the contract, the foundations, the tokens, the Base UI reference and the ROADMAP line that names it (`ROADMAP.md`, "Wave 3, interactive, on Base UI"). The extracted prototype component is not in any branch this run can reach.
 
 ## Anatomy

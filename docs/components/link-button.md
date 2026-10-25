@@ -2,6 +2,8 @@
 
 A link that looks like a [Button](button.md): it takes the reader to another page or place, such as "Back to the map" or "Open in Rejseplanen", where a Button runs an action on the screen it sits on.
 
+<!-- run notes -->
+
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the contract, the foundations, the tokens, the Base UI reference and the [Button](button.md) spec, the one entry in its `dependsOn`. Base UI's Button guide settles the shape: Base UI's `Button` "enforces button semantics" (`role="button"`, Space activation) and "should not be used for links", and "if a link needs to look like a button visually, style the `<a>` element directly with CSS". So LinkButton is a native `<a href>` with Button's look, not a Button with `render={<a />}`.
 
 ## Anatomy

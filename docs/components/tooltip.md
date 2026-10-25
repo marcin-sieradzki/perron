@@ -2,6 +2,8 @@
 
 A short visual label beside a control, such as "Zoom in" over the map's zoom button, shown while a mouse pointer rests on the control or the keyboard focuses it, for sighted mouse and keyboard users.
 
+<!-- run notes -->
+
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the contract, the foundations, the tokens and the Base UI reference. The ROADMAP names no Tooltip line of its own: Base UI's Tooltip is the part under the MapTooltip line of Wave 3, and this component is its trigger-bound sibling. The extracted prototype component is not in any branch this run can reach. It shares the Tooltips family's treatment with [MapTooltip](map-tooltip.md), which places a card against a point the caller holds, where this one sits against the control it labels.
 
 ## Anatomy

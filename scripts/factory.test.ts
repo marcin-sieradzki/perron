@@ -296,6 +296,20 @@ describe('the factory dry run', () => {
     expect(pipeline().notes).toEqual([{ stage: 'build', at: expect.any(String), questions: asked }])
   })
 
+  it("keeps a review's fix through the build's questions, for the rerun with the answers", () => {
+    throughBrief()
+    stage('build', () => build())
+    stage('review', () => review(1, 0, 1))
+    expect(run('begin Tally build').code).toBe(0)
+    const fix = pipeline().stages.build?.fix
+    expect(fix).toMatch(/^review round 1 found 1 P2/)
+    run('end Tally build pending', '1. Which tone? Recommended: plain.')
+    expect(run('next Tally').out).toMatch(/^wait: pending-questions\n/)
+    expect(run('begin Tally build').code).toBe(0)
+    expect(pipeline().stages.build?.fix).toBe(fix)
+    expect(run('next Tally --json').out).toContain('review round 1 found 1 P2')
+  })
+
   it('stops at needs-human at the third build run to end pending, and unblock resets the count', () => {
     throughBrief()
     const asked = (n: number) => `${n}. Which tone is the default? Recommended: plain.`
@@ -325,7 +339,7 @@ describe('the factory dry run', () => {
     // the spec is revised after the failed run: one rerun, with the failure to fix
     brief('Read the offset from its custom property.\n')
     expect(run('next Tally').out).toBe(
-      'run: build\nwhy: the last run failed, and docs/components/tally.md has changed since it ended; run the build again from the revised spec\nfix: TS6059: tokens.ts is not under rootDir. docs/components/tally.md has been revised since that run ended: build what it says now.\n',
+      'run: build\nwhy: the last run failed, and docs/components/tally.md has changed since it began; run the build again from the revised spec\nfix: TS6059: tokens.ts is not under rootDir. docs/components/tally.md has been revised since that run began: build what it says now.\n',
     )
     expect(run('begin Tally build').code).toBe(0)
     expect(pipeline()).toMatchObject({ stages: { build: { status: 'running', respecs: 1 } } })
@@ -333,7 +347,7 @@ describe('the factory dry run', () => {
     expect(pipeline().notes?.at(-1)).toMatchObject({
       stage: 'build',
       unblocked: expect.stringMatching(
-        /; rerun once because the spec changed since that run ended$/,
+        /; rerun once because the spec changed since that run began$/,
       ),
     })
     expect(run('end Tally build failed', 'TS6059 again').out).toContain('wait: needs-human')
@@ -341,6 +355,20 @@ describe('the factory dry run', () => {
     brief('Read the offset from its custom property, in px.\n')
     expect(run('next Tally').out).toMatch(/^wait: needs-human\nstage: build\n/)
     expect(run('begin Tally build').err).toMatch(/waits at needs-human \(build\)/)
+  })
+
+  it('reruns a failed build once when the spec was revised before the run ended, too', () => {
+    throughBrief()
+    // the revision lands while the run is open, before `end … failed` (Checkbox, retro 8)
+    stage(
+      'build',
+      () => (build(), brief('CR-5 leaves the contract as it is.\n')),
+      'failed',
+      'shared-parts.test.ts fails',
+    )
+    expect(run('next Tally').out).toMatch(/^run: build\nwhy: the last run failed, and/)
+    expect(run('begin Tally build').code).toBe(0)
+    expect(pipeline().stages.build).toMatchObject({ status: 'running', respecs: 1 })
   })
 
   it('takes no answer the build wrote into the spec for a revision, when that run fails', () => {
@@ -402,6 +430,24 @@ describe('the factory dry run', () => {
       },
     ])
     expect(read('components/tally/pipeline.yaml')).toMatch(/\nnotes:\n {2}- stage: build\n/)
+  })
+
+  it("keeps a rerun's Direction finding once, when an earlier run already returned it", () => {
+    throughBrief()
+    const finding =
+      "Naming: Tally takes trigger plus children (Dialog's form) rather than MUI's title."
+    const reworded =
+      "naming: Tally takes trigger plus children (the form of Dialog) rather than MUI's title"
+    const fresh = 'size.tally has no description.'
+    const directions = (...findings: string[]) => findings.flatMap((f) => ['--direction', f])
+    run('begin Tally build')
+    build()
+    factory(['end', 'Tally', 'build', 'done', ...directions(finding, fresh, fresh)], env())
+    stage('review', () => review(1, 1))
+    run('begin Tally build')
+    const later = 'Tally.css repeats the Fields hover layer.'
+    factory(['end', 'Tally', 'build', 'done', ...directions(reworded, fresh, later)], env())
+    expect(pipeline().notes?.flatMap((n) => n.direction ?? [])).toEqual([finding, fresh, later])
   })
 
   it('stops at needs-human after two review rounds with a P1', () => {

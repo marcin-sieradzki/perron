@@ -111,6 +111,24 @@ describe('specProblems', () => {
     expect(specProblems(spec, template, 'Swatch')).toEqual({ pending: 1, problems: [] })
   })
 
+  it("takes prose that names a template slot in a code span, such as the contract's `<key>Label`, as text", () => {
+    const spec = filled(
+      'Swatch',
+      [
+        "`swatchLabel` is the contract's `<key>Label` for the owned string `swatch`.",
+        '',
+        '<!-- run notes -->',
+        '',
+        'The design is deferred.',
+      ].join('\n'),
+    )
+    expect(specProblems(spec, template, 'Swatch')).toEqual({ pending: 0, problems: [] })
+    const row = filled('Swatch', '| `<key>Label` | `string` |')
+    expect(specProblems(row, template, 'Swatch').problems).toEqual([
+      'still has the placeholder <key>',
+    ])
+  })
+
   it("names a spec still headed with the template's title", () => {
     expect(specProblems(filled('Spec template'), template, 'Swatch').problems).toEqual([
       'starts with "# Spec template", not "# Swatch"',
