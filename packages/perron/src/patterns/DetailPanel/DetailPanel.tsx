@@ -192,6 +192,14 @@ export function DetailPanel({
   const { slotProps: headerSlots, className: headerClass, ...headerRest } = headerProps ?? {}
   // CR-3: the caller's title id when given, so the panel's name points where the caller expects
   const titleId = headerSlots?.title?.id ?? generatedId
+  // CR-2: the action takes a row of its own under the title and the subheader; CR-5: it carries
+  // the panel's anchor after the caller's props, as the Sheet's viewport does, for its selector to
+  // beat DetailHeader's
+  const actionProps = {
+    ...headerSlots?.action,
+    className: classes('pn-DetailPanel-action', headerSlots?.action?.className),
+    'data-anchor': anchor,
+  }
 
   return (
     // CR-4: no `modal`, so the Sheet keeps its default, false; CR-6: no media query, the screen
@@ -223,11 +231,7 @@ export function DetailPanel({
           slotProps={{
             ...headerSlots,
             title: { ...headerSlots?.title, id: titleId },
-            // CR-2: the action takes a row of its own under the title and the subheader
-            action: {
-              ...headerSlots?.action,
-              className: classes('pn-DetailPanel-action', headerSlots?.action?.className),
-            },
+            action: actionProps,
           }}
           variant={variant}
           line={line}

@@ -2,9 +2,9 @@
    everything but these rows, all at rest; the pattern draws no surface of its own (CR-5). */
 
 /* The detail panel's own width beside the map, at most the viewport's box, as the Sheet keeps it.
-   One class more than the Sheet's .pn-Sheet[data-anchor='right'], so it wins; a bottom panel keeps
-   the Sheet's full width. */
-.pn-Sheet.pn-DetailPanel[data-anchor='right'] {
+   One attribute more than the Sheet's .pn-Sheet[data-anchor='right'], data-variant, which the root
+   always carries (CR-5), so it wins; a bottom panel keeps the Sheet's full width. */
+.pn-DetailPanel[data-anchor='right'][data-variant] {
   inline-size: var(--perron-size-detail-width);
 }
 
@@ -17,9 +17,10 @@
 /* The caller's controls in a row of their own under the mark, the title and the subheader, from
    the header's start edge, so the title takes the row beside the close button and keeps its words
    whole. DetailHeader's grid ends its mark at the last of its four rows, so this fifth row is the
-   action's alone; two controls that don't fit wrap onto another line. One class more than
-   DetailHeader's .pn-DetailHeader-action, so it wins. */
-.pn-DetailHeader-action.pn-DetailPanel-action {
+   action's alone; two controls that don't fit wrap onto another line. One attribute more than
+   DetailHeader's .pn-DetailHeader-action, the data-anchor the panel gives the action (CR-5), so it
+   wins. */
+.pn-DetailPanel-action[data-anchor] {
   grid-column: 1 / -1;
   grid-row: 5;
   flex-wrap: wrap;
