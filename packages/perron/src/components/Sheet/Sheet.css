@@ -1,0 +1,171 @@
+/* Sheet: the Panels family's glass panel against an edge of the screen, placed by data-anchor
+   (CR-3). Base UI's --drawer-* properties are read here, never set (CR-8). */
+
+/* The fixed layer that places the panel. It lets presses through to the map, and the panel takes
+   them back (CR-4); a modal sheet's backdrop lies under it and catches the press outside. */
+.pn-Sheet-viewport {
+  position: fixed;
+  inset: 0;
+  z-index: var(--perron-z-index-dialog);
+  display: flex;
+  pointer-events: none;
+}
+
+.pn-Sheet-viewport[data-anchor='left'],
+.pn-Sheet-viewport[data-anchor='right'] {
+  padding: var(--perron-size-panel-gap);
+}
+
+.pn-Sheet-viewport[data-anchor='right'] {
+  justify-content: flex-end;
+}
+
+.pn-Sheet-viewport[data-anchor='bottom'] {
+  align-items: flex-end;
+}
+
+.pn-Sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--perron-z-index-dialog);
+  background: var(--perron-color-scrim);
+  opacity: calc(1 - var(--drawer-swipe-progress));
+  transition-property: opacity;
+  transition-duration: var(--perron-duration-sheet);
+  transition-timing-function: var(--perron-easing-sheet);
+}
+
+.pn-Sheet-backdrop[data-starting-style],
+.pn-Sheet-backdrop[data-ending-style] {
+  opacity: 0;
+}
+
+/* The panel: a flex column, so the header keeps its height and the content scrolls under it (CR-7). */
+.pn-Sheet {
+  display: flex;
+  flex-direction: column;
+  pointer-events: auto;
+  border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+  border-radius: var(--perron-radius-xl);
+  background: var(--perron-color-surface-overlay);
+  backdrop-filter: blur(var(--perron-effect-glass-blur))
+    saturate(var(--perron-effect-glass-saturate));
+  box-shadow: var(--perron-shadow-panel);
+  color: var(--perron-color-text-primary);
+  transition-property: transform;
+  transition-duration: var(--perron-duration-sheet);
+  transition-timing-function: var(--perron-easing-sheet);
+}
+
+.pn-Sheet[data-anchor='left'],
+.pn-Sheet[data-anchor='right'] {
+  inline-size: var(--perron-size-sheet-width);
+  max-inline-size: 100%;
+  block-size: 100%;
+  transform: translateX(var(--drawer-swipe-movement-x));
+}
+
+/* Opaque on a phone, where bottom sheets are, so text never sits on moving map; flush with the
+   bottom and side edges, rounded at the top only, and size.panel-gap short of the top at full
+   height. Below a snap point it is pushed down by the offset and padded by the same at its foot,
+   Base UI's recipe, so the content ends at the screen's edge and scrolls there; calc() keeps the
+   padding at 0 or more while a swipe pulls it up. Its height is set, not left to its content, so the
+   padding shrinks the content instead of growing the sheet Base UI measures. */
+.pn-Sheet[data-anchor='bottom'] {
+  inline-size: 100%;
+  block-size: calc(100% - var(--perron-size-panel-gap));
+  max-block-size: calc(100% - var(--perron-size-panel-gap));
+  padding-block-end: calc(var(--drawer-snap-point-offset) + var(--drawer-swipe-movement-y));
+  border-block-end-width: 0;
+  border-end-start-radius: 0;
+  border-end-end-radius: 0;
+  background: var(--perron-color-surface-default);
+  backdrop-filter: none;
+  touch-action: none;
+  transform: translateY(calc(var(--drawer-snap-point-offset) + var(--drawer-swipe-movement-y)));
+}
+
+/* Off its edge while it opens and closes: its own size, and the gap a side sheet keeps. */
+.pn-Sheet[data-anchor='left'][data-starting-style],
+.pn-Sheet[data-anchor='left'][data-ending-style] {
+  transform: translateX(calc(-100% - var(--perron-size-panel-gap)));
+}
+
+.pn-Sheet[data-anchor='right'][data-starting-style],
+.pn-Sheet[data-anchor='right'][data-ending-style] {
+  transform: translateX(calc(100% + var(--perron-size-panel-gap)));
+}
+
+.pn-Sheet[data-anchor='bottom'][data-starting-style],
+.pn-Sheet[data-anchor='bottom'][data-ending-style] {
+  padding-block-end: 0;
+  transform: translateY(100%);
+}
+
+/* The finger moves it while it is swiped; on release it settles as fast as the swipe was strong. */
+.pn-Sheet[data-swiping],
+.pn-Sheet-backdrop[data-swiping] {
+  transition-duration: 0ms;
+}
+
+.pn-Sheet[data-ending-style],
+.pn-Sheet-backdrop[data-ending-style] {
+  transition-duration: calc(var(--drawer-swipe-strength) * var(--perron-duration-sheet));
+}
+
+.pn-Sheet-header {
+  display: flex;
+  flex: none;
+  align-items: flex-start;
+  gap: var(--perron-space-300);
+  padding-block-start: var(--perron-space-400);
+  padding-inline: var(--perron-space-400);
+}
+
+/* Centred on the close button while it fits on one line; a longer title wraps in its own column
+   beside it. */
+.pn-Sheet-title {
+  flex: 1;
+  align-self: center;
+  min-inline-size: 0;
+  margin: 0;
+  font: var(--perron-typography-heading-md);
+  letter-spacing: var(--perron-typography-heading-md-tracking);
+  color: var(--perron-color-text-primary);
+  overflow-wrap: anywhere;
+}
+
+.pn-Sheet-content {
+  flex: 1 1 auto;
+  min-block-size: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: auto;
+  padding-block-start: var(--perron-space-300);
+  padding-inline: var(--perron-space-400);
+  padding-block-end: var(--perron-space-400);
+  font: var(--perron-typography-body);
+  letter-spacing: var(--perron-typography-body-tracking);
+}
+
+/* The caller's first and last blocks lose their outer margins, so the body starts space.300 below
+   the header and ends space.400 above the panel's foot, as its padding says. */
+.pn-Sheet-content > :first-child {
+  margin-block-start: 0;
+}
+
+.pn-Sheet-content > :last-child {
+  margin-block-end: 0;
+}
+
+/* The body takes focus while it scrolls, so the keys scroll it. Its ring is drawn inside the panel, by the
+   focus tokens, and follows the panel's lower corners, so it never crosses the panel's edge. */
+.pn-Sheet-content {
+  border-end-start-radius: inherit;
+  border-end-end-radius: inherit;
+}
+
+.pn-Sheet-content:focus-visible {
+  outline: var(--perron-focus-width) solid var(--perron-color-border-focus);
+  outline-offset: calc(-1 * (var(--perron-focus-width) + var(--perron-focus-offset)));
+}

@@ -1,0 +1,30 @@
+/* The close button: the close icon in a size.control square, secondary ink at rest, primary on the
+   hover surface, and the selected surface while pressed. Focus is the ring perron.css draws. */
+.pn-CloseButton {
+  --perron-icon-size: var(--perron-icon-size-400);
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  inline-size: var(--perron-size-control);
+  block-size: var(--perron-size-control);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--perron-radius-md);
+  background: transparent;
+  color: var(--perron-color-text-secondary);
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .pn-CloseButton:hover {
+    background: var(--perron-color-surface-hover);
+    color: var(--perron-color-text-primary);
+  }
+}
+
+.pn-CloseButton:active,
+.pn-CloseButton[data-pressed] {
+  background: var(--perron-color-surface-selected);
+}
