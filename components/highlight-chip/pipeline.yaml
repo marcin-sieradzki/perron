@@ -5,9 +5,9 @@ deferred:
   at: 2026-10-25T01:16:43.640Z
 stages:
   brief:
-    status: pending
-    started: 2026-10-25T01:16:48.653Z
-    ended: 2026-10-25T01:23:29.991Z
+    status: done
+    started: 2026-10-25T01:23:35.517Z
+    ended: 2026-10-25T02:05:51.436Z
 notes:
   - stage: brief
     at: 2026-10-25T01:23:29.991Z
@@ -35,3 +35,15 @@ notes:
       6. Is the chip at least size.control tall and wide, space.300 at the sides, space.150 gap, typography.label, icon.size.400? Recommended: yes.
       7. Does a pressed disabled chip take color.surface.inset with color.text.tertiary, a disabled chip at rest keeping its glass with color.text.tertiary? Recommended: yes.
       8. Does the chip tell its state through aria-pressed and the pressed fill, with no owned word, the caller free to change children with the state? Recommended: yes.
+  - stage: brief
+    at: 2026-10-25T02:05:51.437Z
+    direction: "Answer 3 was changed after the maintainer's all-recommended answer, to match FilterChip: the state is selected/defaultSelected/onChange(event, value, details), not pressed/defaultPressed; confirm the rename."
+  - stage: brief
+    at: 2026-10-25T02:05:51.437Z
+    direction: size.control's description names only icon buttons and filter chips; it could also name highlight chips (a design-tokens change).
+  - stage: brief
+    at: 2026-10-25T02:05:51.437Z
+    direction: The chip's purpose (one map-highlight toggle, not a filter) rests on the foundations, since no prototype was reachable; check it against Mylder when the design is drawn.
+  - stage: brief
+    at: 2026-10-25T02:05:51.437Z
+    direction: "CR-5 now sets forced-color-adjust: none on the selected chip, matching FilterChip's forced-colours rule."
