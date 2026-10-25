@@ -40,4 +40,7 @@ export const nb: OwnedStrings = {
   kilometersUnit: 'km',
   noMatches: 'Ingen treff',
   optional: '(valgfritt)',
+  increase: 'Øk',
+  decrease: 'Reduser',
+  numberField: 'Tallfelt',
 }

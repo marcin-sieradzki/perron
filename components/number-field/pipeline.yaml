@@ -8,6 +8,13 @@ stages:
     status: done
     started: 2026-10-25T06:46:40.740Z
     ended: 2026-10-25T06:48:00.020Z
+  build:
+    status: done
+    started: 2026-10-25T06:48:04.537Z
+    runs: 1
+    begun: c0eb9d2c478fa228484395846b3b7c23b3b1c2c00fa8bd12524d8cda4b69081d
+    spec: d68db8abded2b0e858f1df176c3a0b2e9197a1201d4ebd0ba8fd9a4ceb619ca2
+    ended: 2026-10-25T07:00:05.669Z
 notes:
   - stage: brief
     at: 2026-10-25T06:46:08.247Z
@@ -42,3 +49,15 @@ notes:
       7. (Tokens) In a read-only field, are both button icons in color.text.tertiary with no hover and no pressed look, while the box and the number keep their rest look? Recommended: yes.
       8. (Owned strings) Are the button names owned strings, keys increase and decrease, English "Increase" and "Decrease", set as each button's aria-label? Recommended: yes.
       9. (Owned strings) Is the input's role description an owned string, key numberField, English "Number field", set as aria-roledescription, with the build adding aria-roledescription to the attributes owned-strings.ts reads? Recommended: yes.
+  - stage: build
+    at: 2026-10-25T07:00:05.669Z
+    direction: 'font-variant-numeric: tabular-nums (spec Tokens, answer 6) makes Schibsted Grotesk set the group separator and the decimal point a full figure wide, so the box reads "1 . 500" in Danish and "100 , 000" in English, spaced out next to the description''s "5.000". Keep it (digits still while a button is held) or drop it for proportional figures.'
+  - stage: build
+    at: 2026-10-25T07:00:05.669Z
+    direction: Base UI's Field flags valueMissing only after the value has changed, so leaving an empty, untouched required NumberField shows no error until the form is submitted; the Validation story types and clears first.
+  - stage: build
+    at: 2026-10-25T07:00:05.669Z
+    direction: A mouse press on a stepper moves focus to the input (Base UI's focusInput), and text inputs always match :focus-visible, so the box shows its focus ring after every button press, as TextField and SearchField do. Decide whether the ring should show on a pointer press.
+  - stage: build
+    at: 2026-10-25T07:00:05.669Z
+    direction: Inherited props keep Base UI's JSDoc per the contract, so NumberField's required, readOnly and name read differently from TextField's own JSDoc for the same props, against api-consistency's one-prop-one-description rule.

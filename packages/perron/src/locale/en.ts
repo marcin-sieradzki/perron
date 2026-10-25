@@ -80,6 +80,12 @@ export const en = {
   noMatches: 'No matches',
   /** A field's label: after the words of a field the person may leave empty, as in "Stop name (optional)". */
   optional: '(optional)',
+  /** A number field's button that steps the number up by one step; heard as its name, never seen. */
+  increase: 'Increase',
+  /** A number field's button that steps the number down by one step; heard as its name, never seen. */
+  decrease: 'Decrease',
+  /** A number field's input: heard in place of its role, after its name, never seen. */
+  numberField: 'Number field',
 }
 
 /** The name of one owned string. */
