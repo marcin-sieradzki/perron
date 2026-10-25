@@ -64,15 +64,14 @@
   white-space: nowrap;
 }
 
-/* the destination's column takes the width the others leave (CR-8); over a <th>'s bold and
-   centring */
+/* over a <th>'s bold and centring; no cell sets a width, so the automatic table layout gives each
+   column its content's width wherever the table has room, a state's word on one line (CR-8) */
 .pn-VehicleTable-destinationCell {
-  inline-size: 100%;
   font: var(--perron-typography-label);
   letter-spacing: var(--perron-typography-label-tracking);
   color: var(--perron-color-text-primary);
   text-align: start;
-  /* CR-8: its column takes the table's spare width, so a word longer than it breaks anywhere */
+  /* CR-8: the column can narrow below its longest word, which breaks inside it at 320 px */
   overflow-wrap: anywhere;
 }
 

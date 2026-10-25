@@ -8,7 +8,15 @@ import { expect, isInaccessible, userEvent, waitFor, within } from 'storybook/te
 import { Link } from '../../components/Link/Link.tsx'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
-import { edge, expectNoFocus, heard, mounted, rendered, stateRules } from '../../testing/stories.ts'
+import {
+  edge,
+  expectNoFocus,
+  heard,
+  lines,
+  mounted,
+  rendered,
+  stateRules,
+} from '../../testing/stories.ts'
 import { VehicleTable } from './VehicleTable.tsx'
 import type { VehicleTableProps, VehicleTableVehicle } from './VehicleTable.tsx'
 
@@ -366,6 +374,12 @@ export const Default: Story = {
           )
       },
     )
+
+    await step("at the panel's width, each state's word keeps to one line (CR-8)", async () => {
+      const labels = table.querySelectorAll('.pn-VehicleDotLabel-label')
+      await expect(labels).toHaveLength(VEHICLES.length)
+      for (const label of labels) await expect(lines(label)).toBeLessThan(1.5)
+    })
 
     await step('rows are at least size.vehicle-row tall, divided by a hairline', async () => {
       const rows = bodyRows(table)
