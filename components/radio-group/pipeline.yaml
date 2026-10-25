@@ -9,13 +9,11 @@ stages:
     started: 2026-10-25T05:39:21.021Z
     ended: 2026-10-25T05:40:26.391Z
   build:
-    status: pending
-    started: 2026-10-25T05:40:32.754Z
-    runs: 1
-    spec: 20b443cebb477c6d10411861076fc4c55b9379264843549571c99f91896994dd
-    asked: 1
-    ended: 2026-10-25T05:49:03.712Z
-    failing: "1. Props (disabled), Keyboard and ARIA (Tab row), Base UI parts, CR-1 and Stories (Disabled row): the spec says a disabled group leaves the tab order and a disabled radio leaves the tab and arrow-key order. Installed Base UI 1.9.0 does neither in full: the group's single tab stop keeps tabIndex 0 while disabled (a disabled group's checked or first radio, and a checked radio disabled alone, keep tabindex 0, aria-disabled); arrow keys do skip disabled radios. Which side should hold? Recommended: (A) keep Base UI's behaviour and rewrite those lines: a disabled group, or a checked radio disabled alone, keeps one focusable stop announced as dimmed that changes nothing; the Disabled story checks Tab reaches 'Match the system', heard as dimmed and checked, and the next Tab reaches the Button. (B) forcing tabIndex -1 would add behaviour against CR-1 and collide with the caller's render prop."
+    runs: 2
+    status: done
+    started: 2026-10-25T05:49:10.400Z
+    spec: c8c2587aa7388af3e0a16161e084fc2c38dbbb373d373236c39fdd1dd23eb7f8
+    ended: 2026-10-25T05:54:58.809Z
 notes:
   - stage: brief
     at: 2026-10-25T05:33:10.548Z
@@ -72,3 +70,9 @@ notes:
   - stage: build
     at: 2026-10-25T05:49:03.713Z
     questions: "1. Props (disabled), Keyboard and ARIA (Tab row), Base UI parts, CR-1 and Stories (Disabled row): the spec says a disabled group leaves the tab order and a disabled radio leaves the tab and arrow-key order. Installed Base UI 1.9.0 does neither in full: the group's single tab stop keeps tabIndex 0 while disabled (a disabled group's checked or first radio, and a checked radio disabled alone, keep tabindex 0, aria-disabled); arrow keys do skip disabled radios. Which side should hold? Recommended: (A) keep Base UI's behaviour and rewrite those lines: a disabled group, or a checked radio disabled alone, keeps one focusable stop announced as dimmed that changes nothing; the Disabled story checks Tab reaches 'Match the system', heard as dimmed and checked, and the next Tab reaches the Button. (B) forcing tabIndex -1 would add behaviour against CR-1 and collide with the caller's render prop."
+  - stage: build
+    at: 2026-10-25T05:54:58.810Z
+    direction: With forced colours on, a disabled radio's words and the disabled legend render in CanvasText, the same as enabled text. Only the indicator's GrayText marks them disabled, because the row keeps the browser's colours. Decide whether disabled words in the choice controls should take GrayText.
+  - stage: build
+    at: 2026-10-25T05:54:58.810Z
+    direction: 'Switch has the same forced-colours invalid-edge gap as RadioGroup (color.status.danger kept under forced-color-adjust: none); decide a system colour for both.'

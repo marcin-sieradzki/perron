@@ -316,9 +316,15 @@ export const Disabled: Story = {
       await expect(root).toHaveAttribute('data-disabled')
     }
     const save = within(canvasElement).getByRole('button', { name: 'Save' })
+    const system = radio(canvasElement, 'Match the system')
+    // CR-1: Base UI keeps the group's one stop, heard as dimmed and checked, and Perron forces no
+    // tabIndex; the next Tab leaves for the Button
+    await userEvent.tab()
+    await expect(system).toHaveFocus()
+    await expect(system).toHaveAttribute('aria-disabled', 'true')
+    await expect(system).toHaveAttribute('aria-checked', 'true')
     await userEvent.tab()
     await expect(save).toHaveFocus()
-    const system = radio(canvasElement, 'Match the system')
     await expect(system).toHaveAttribute('aria-checked', 'true')
     const indicator = indicatorOf(system)
     await expect(getComputedStyle(indicator).backgroundColor).toBe(fill('color-text-tertiary'))
@@ -327,6 +333,9 @@ export const Disabled: Story = {
       fill('color-surface-raised'),
     )
     await expect(group.querySelector('.pn-RadioGroup-legend')).toHaveAttribute('data-disabled')
+    // back to rest: Shift+Tab returns to the group's stop, then leaves it
+    await userEvent.tab({ shift: true })
+    await expect(system).toHaveFocus()
     await userEvent.tab({ shift: true })
     await expect(canvasElement).not.toContainElement(document.activeElement as HTMLElement)
   },

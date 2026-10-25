@@ -4,7 +4,8 @@
 // (docs/components/radio-group.md, Anatomy). The group renders Perron's Fieldset with Base UI's
 // group as its `render`, so its label is Fieldset's legend (CR-2). Base UI gives the roles, the one
 // tab stop, the arrow keys, Space, the click, disabled, read-only, the hidden inputs and the Field;
-// nothing here adds a key or click handler (CR-1).
+// nothing here adds a key or click handler or forces a tabIndex, so a disabled group keeps Base UI's
+// one focusable stop, announced as dimmed (CR-1).
 import type { Fieldset as BaseFieldset } from '@base-ui/react/fieldset'
 import { mergeProps } from '@base-ui/react/merge-props'
 import { Radio as BaseRadio } from '@base-ui/react/radio'
@@ -62,7 +63,8 @@ export interface RadioGroupProps extends Omit<
   name?: string
   /**
    * Whether every radio ignores the pointer and the keys. The checked radio still shows, and the
-   * group leaves the tab order.
+   * group keeps one tab stop, on the checked radio or the first, announced as dimmed, that changes
+   * nothing.
    * @default false
    */
   disabled?: boolean
@@ -165,8 +167,9 @@ export interface RadioProps extends Omit<
    */
   value: string
   /**
-   * Whether the radio ignores the pointer and the keys. It leaves the tab and arrow-key order,
-   * keeps its checked state, and is announced as dimmed.
+   * Whether the radio ignores the pointer and the keys. The arrow keys skip it, it keeps its
+   * checked state, and it is announced as dimmed; checked, it stays the group's tab stop, where
+   * Space changes nothing and the arrow keys move on to the enabled radios.
    * @default false
    */
   disabled?: boolean
