@@ -12,6 +12,7 @@ const SAMPLE = `<SegmentedControl defaultValue="all">
   <Segment value="bus">Bus</Segment>
 </SegmentedControl>`
 
+/** A tile: a link named by its heading alone, as the foundation tiles are, not by all its text. */
 function Tile(props: {
   href: string
   title: string
@@ -19,11 +20,19 @@ function Tile(props: {
   wide?: boolean
   children: ReactNode
 }) {
+  const id = `home-tile-${props.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
   return (
-    <NextLink href={props.href} className="home-tile lift" data-wide={props.wide ? '' : undefined}>
+    <NextLink
+      href={props.href}
+      className="home-tile lift"
+      data-wide={props.wide ? '' : undefined}
+      aria-labelledby={id}
+    >
       <div className="home-tile-figure">{props.children}</div>
       <div className="home-tile-text">
-        <h3 className="home-tile-title">{props.title}</h3>
+        <h3 id={id} className="home-tile-title">
+          {props.title}
+        </h3>
         <p className="home-tile-body">{props.body}</p>
       </div>
     </NextLink>

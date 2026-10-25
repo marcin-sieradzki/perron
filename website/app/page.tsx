@@ -10,8 +10,8 @@ import { MadeOf } from '@/components/home/MadeOf.tsx'
 import { PhoneSections } from '@/components/home/PhoneSections.tsx'
 import { Resources } from '@/components/home/Resources.tsx'
 
-export default function HomePage() {
-  const figures = readHomeFigures()
+export default async function HomePage() {
+  const figures = await readHomeFigures()
   return (
     <div className="page home">
       <Hero figures={figures} />

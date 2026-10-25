@@ -1,7 +1,10 @@
 // The home page's figures, every one read from the repo at build time: the package's version, the
-// registry's counts, the tokens, the data states, the languages, the MCP server's tools and the
-// versions Perron is built on. Server-only, like the loaders in lib/.
+// registry's counts, the tokens, the data states, the languages, the MCP server's tools and command,
+// and the versions Perron is built on. Server-only, like the loaders in lib/; the tools and the
+// command come through lib/mcp.ts, as the Agents and Get started pages read them.
 import { dictionaries, type Locale } from '../../../packages/perron/src/locale/index.ts'
+import { firstTable } from '../../lib/markdown.ts'
+import { loadTools, serverCommand } from '../../lib/mcp.ts'
 import { entryByName, statusCounts } from '../../lib/registry.ts'
 import { once, PACKAGES, readPackage, readRepoFile, readRepoJson } from '../../lib/repo.ts'
 import { tokenCount, tokensUnder } from '../../lib/tokens.ts'
@@ -9,13 +12,9 @@ import { tokenCount, tokensUnder } from '../../lib/tokens.ts'
 /** The page that names the data states, and the table it opens with. */
 export const DATA_STATES_PAGE = 'docs/foundations/data-states.md'
 
-/** The MCP server, whose tools are the `registerTool` calls in this file. */
-const MCP_SERVER = 'packages/mcp/src/server.ts'
-
 /** The token files' resolver: the spec version they are written to, and the themes. */
 const RESOLVER = 'packages/perron/tokens/perron.resolver.json'
 
-const TOOL = /registerTool\(\s*'([a-z_]+)'/g
 const LINE_TOKEN = /^color\.transit\.line\.([a-z0-9]+)$/
 
 export interface DataState {
@@ -27,26 +26,10 @@ export interface DataState {
 
 /** The five data states, from the first table of the Data states page, in its order. */
 export function readDataStates(markdown = readRepoFile(DATA_STATES_PAGE)): DataState[] {
-  const lines = markdown.split('\n')
-  const start = lines.findIndex((l) => l.startsWith('|'))
-  if (start < 0) throw new Error(`${DATA_STATES_PAGE} has no table`)
-  const end = lines.findIndex((l, i) => i > start && !l.startsWith('|'))
-  const cells = (row: string) =>
-    row
-      .slice(1, -1)
-      .split('|')
-      .map((c) => c.trim())
-  // the header row names the columns; the separator row under it holds only dashes
-  const [head, , ...rows] = lines.slice(start, end < 0 ? undefined : end).map(cells)
-  const name = head.indexOf('State')
-  const means = head.indexOf('Means')
-  if (name < 0 || means < 0) throw new Error(`${DATA_STATES_PAGE}'s table has no State or Means`)
-  return rows.map((r) => ({ name: r[name], means: r[means] }))
-}
-
-/** The tools the MCP server registers, by name, in the order it registers them. */
-export function readTools(source = readRepoFile(MCP_SERVER)): string[] {
-  return [...source.matchAll(TOOL)].map((m) => m[1])
+  const { head, rows } = firstTable(markdown)
+  if (!head.includes('State') || !head.includes('Means'))
+    throw new Error(`${DATA_STATES_PAGE}'s first table has no State or Means`)
+  return rows.map((r) => ({ name: r.State, means: r.Means }))
 }
 
 interface Resolver {
@@ -57,7 +40,7 @@ interface Resolver {
 export interface HomeFigures {
   /** `@mylder/perron`'s version */
   version: string
-  /** The MCP server's command, from its package name */
+  /** The command that runs the MCP server, as its readme writes it */
   mcpCommand: string
   /** Entries per layer and status */
   stable: { component: number; pattern: number }
@@ -67,6 +50,7 @@ export interface HomeFigures {
   dataStates: DataState[]
   /** The locales Perron speaks, in its dictionaries' order */
   languages: Locale[]
+  /** The tools the MCP server lists, by name, in its order */
   tools: string[]
   /** The metro and S-tog lines with a colour token of their own: `m1` to `h` */
   lines: string[]
@@ -80,7 +64,7 @@ export interface HomeFigures {
 }
 
 /** Every figure the home page shows. */
-export const readHomeFigures = once((): HomeFigures => {
+export const readHomeFigures = once(async (): Promise<HomeFigures> => {
   const counts = statusCounts()
   const resolver = readRepoJson<Resolver>(RESOLVER)
   const perron = readRepoJson<{ dependencies: Record<string, string> }>(
@@ -89,7 +73,7 @@ export const readHomeFigures = once((): HomeFigures => {
   const react = readRepoJson<{ version: string }>('node_modules/react/package.json')
   return {
     version: readPackage(PACKAGES.perron).version,
-    mcpCommand: `npx -y ${readPackage(PACKAGES.mcp).name}`,
+    mcpCommand: serverCommand(),
     stable: { component: counts.component.stable ?? 0, pattern: counts.pattern.stable ?? 0 },
     designing: {
       component: counts.component.designing ?? 0,
@@ -98,7 +82,7 @@ export const readHomeFigures = once((): HomeFigures => {
     tokens: tokenCount(),
     dataStates: readDataStates(),
     languages: Object.keys(dictionaries) as Locale[],
-    tools: readTools(),
+    tools: (await loadTools()).map((t) => t.name),
     lines: tokensUnder('color.transit.line.').flatMap((t) => LINE_TOKEN.exec(t.name)?.[1] ?? []),
     specVersion: resolver.version,
     themes: Object.keys(resolver.modifiers.theme.contexts),

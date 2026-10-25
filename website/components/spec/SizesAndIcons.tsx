@@ -2,7 +2,7 @@
 // side by side in two glass panels.
 import { Markdown } from '@/components/site/Markdown.tsx'
 import { PackageIcon } from '@/components/site/PackageIcon.tsx'
-import { getPreview } from '@/previews/index.ts'
+import { compactPreviewProps, getPreview } from '@/previews/index.ts'
 import type { ComponentApi } from '../../lib/api.ts'
 import type { RegistryEntry } from '../../lib/registry.ts'
 import { unionValues, valueLabel, type SizeSpec, type SpecPropRow } from '../../lib/spec.ts'
@@ -38,7 +38,7 @@ export function SizesAndIcons({
             {sizes.map((s) => (
               <div key={s.value} className="spec-sample">
                 <div className="spec-cell" inert>
-                  {getPreview(entry.name, { size: s.value })}
+                  {getPreview(entry.name, { ...compactPreviewProps(entry.name), size: s.value })}
                 </div>
                 <span className="spec-sample-name">{valueLabel(s.value)}</span>
                 {s.token ? (

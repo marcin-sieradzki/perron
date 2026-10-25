@@ -86,9 +86,11 @@ export function StopPanel({ className = 'home-panel glass floating' }: { classNa
               </span>
             ),
           },
-          { label: 'Operators', value: 'Metroselskabet, DSB and Movia' },
         ]}
       />
+      <Text variant="caption" emphasis="secondary">
+        Run by Metroselskabet, DSB and Movia.
+      </Text>
       <Shows names={['DetailHeader', 'SegmentedControl', 'FactList', 'LineBadge']} />
     </article>
   )
@@ -120,7 +122,14 @@ export function LiveColumns({ figures }: { figures: HomeFigures }) {
           <Text variant="overline" emphasis="secondary">
             Data states
           </Text>
-          <FactList items={figures.dataStates.map((s) => ({ label: s.name, value: s.means }))} />
+          <ul className="home-facts">
+            {figures.dataStates.map((s) => (
+              <li key={s.name} className="home-fact">
+                <span className="home-fact-name">{s.name}</span>
+                <span className="home-fact-text">{s.means}</span>
+              </li>
+            ))}
+          </ul>
           <Shows names={['Data states foundation']} />
         </Panel>
 

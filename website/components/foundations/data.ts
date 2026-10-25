@@ -9,7 +9,7 @@ import {
   type FoundationPage,
   type Segment,
 } from '../../lib/foundations.ts'
-import { firstParagraph, sectionBody, stripTitle } from '../../lib/markdown.ts'
+import { firstParagraph, sectionBody, stripTitle, tables } from '../../lib/markdown.ts'
 
 export type TokenSegment = Extract<Segment, { kind: 'tokens' }>
 export type ContrastSegment = Extract<Segment, { kind: 'contrast' }>
@@ -38,10 +38,13 @@ export interface FoundationGroup {
 /** The `[Page](page.md)` links of each table in the Contents page's "Pages" section, as slugs. */
 function contentsTables() {
   const body = sectionBody(proseOf(readContents()), 'Pages') ?? ''
-  return body
-    .split(/\n\s*\n/)
-    .filter((block) => block.trimStart().startsWith('|'))
-    .map((table) => [...table.matchAll(/\]\(([\w-]+)\.md\)/g)].map((m) => m[1]))
+  return tables(body).map((table) =>
+    table.rows.flatMap((row) =>
+      Object.values(row).flatMap((cell) =>
+        [...cell.matchAll(/\]\(([\w-]+)\.md\)/g)].map((m) => m[1]),
+      ),
+    ),
+  )
 }
 
 /**

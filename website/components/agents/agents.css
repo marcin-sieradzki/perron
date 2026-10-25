@@ -355,6 +355,95 @@
   letter-spacing: var(--perron-typography-data-sm-tracking);
 }
 
+/* the answer set to read: list_tokens' lines as a table, any other answer as its markdown */
+.agents-tokens {
+  inline-size: 100%;
+  border-collapse: collapse;
+  font: var(--perron-typography-data-sm);
+  letter-spacing: var(--perron-typography-data-sm-tracking);
+  text-align: start;
+}
+
+.agents-tokens :is(th, td) {
+  padding: var(--perron-space-200) var(--perron-space-300);
+  font: inherit;
+  text-align: start;
+  white-space: nowrap;
+}
+
+.agents-tokens thead th {
+  color: var(--perron-color-text-secondary);
+}
+
+.agents-tokens tbody tr {
+  border-block-start: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+}
+
+.agents-token-value {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--perron-space-150);
+}
+
+.agents-swatch {
+  flex: none;
+  inline-size: var(--perron-space-300);
+  block-size: var(--perron-space-300);
+  border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+  border-radius: var(--perron-radius-xs);
+}
+
+.agents-tool-reading {
+  min-inline-size: 0;
+}
+
+/* an answer is a card's side column: its prose a step smaller, its tables' last column (the
+   description, the longest) wrapping anywhere rather than running past the column */
+.agents-tool-reading .markdown {
+  gap: var(--perron-space-300);
+}
+
+.agents-tool-reading .markdown :is(p, li) {
+  font: var(--perron-typography-body-sm);
+  letter-spacing: var(--perron-typography-body-sm-tracking);
+}
+
+.agents-tool-reading .markdown h4 {
+  font: var(--perron-typography-heading-sm);
+  letter-spacing: var(--perron-typography-heading-sm-tracking);
+}
+
+.agents-tool-reading .markdown :is(th, td) {
+  padding: var(--perron-space-150) var(--perron-space-200);
+}
+
+.agents-tool-reading .markdown :is(th, td):last-child {
+  inline-size: 50%;
+  overflow-wrap: anywhere;
+}
+
+.agents-tool-reading .markdown code {
+  font: var(--perron-typography-data-sm);
+  letter-spacing: var(--perron-typography-data-sm-tracking);
+}
+
+/* the exact text the agent receives, one click away */
+.agents-tool-raw > summary {
+  display: list-item;
+  inline-size: fit-content;
+  min-block-size: var(--perron-size-target-min);
+  padding-block: var(--perron-space-050);
+  border-radius: var(--perron-radius-sm);
+  font: var(--perron-typography-label-sm);
+  letter-spacing: var(--perron-typography-label-sm-tracking);
+  color: var(--perron-color-text-secondary);
+  cursor: pointer;
+}
+
+.agents-tool-raw[open] > summary {
+  margin-block-end: var(--perron-space-200);
+}
+
 .agents-tool-cut,
 .agents-tool-error {
   margin: 0;
@@ -443,6 +532,13 @@
   align-self: flex-start;
   font: var(--perron-typography-data-sm);
   letter-spacing: var(--perron-typography-data-sm-tracking);
+}
+
+/* the commit link a target in both directions, though set in data-sm */
+.agents-release-commit > a {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--perron-size-target-min);
 }
 
 .agents-release-entry .markdown {

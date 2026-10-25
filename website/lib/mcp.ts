@@ -9,6 +9,7 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js'
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { packageDir } from '../../packages/mcp/src/resolve.ts'
+import type { TokenEntry } from '../../packages/mcp/src/tokens.ts'
 import { sections, stripTitle } from './markdown.ts'
 import { once, readRepoFile, repoRoot } from './repo.ts'
 
@@ -191,6 +192,45 @@ export function excerpt(text: string, maxLines = 16, maxChars = 1600): Excerpt {
   }
 }
 
+/** A token as `list_tokens` answers it, one JSON object a line. */
+export type AnswerToken = Pick<TokenEntry, 'name' | 'type' | 'cssVar' | 'values'>
+
+/**
+ * The tokens of an answer whose every line is a token as `list_tokens` writes it, so the page can
+ * set them as a table; undefined for any other answer.
+ */
+export function answerTokens(text: string): AnswerToken[] | undefined {
+  const lines = text.split('\n').filter((l) => l.trim())
+  if (!lines.length) return undefined
+  const tokens: AnswerToken[] = []
+  for (const line of lines) {
+    let t: Partial<TokenEntry>
+    try {
+      t = JSON.parse(line) as Partial<TokenEntry>
+    } catch {
+      return undefined
+    }
+    if (!t.name || !t.type || !t.cssVar || !t.values) return undefined
+    tokens.push({ name: t.name, type: t.type, cssVar: t.cssVar, values: t.values })
+  }
+  return tokens
+}
+
+/**
+ * A markdown answer made fit to render inside a tool's card: character references decoded (a
+ * line break, which would end a table row, as a space), headings set below the card's own, and
+ * relative links reduced to their words, since they point inside a package's docs.
+ */
+export function answerMarkdown(text: string) {
+  return text
+    .replace(/&#x([0-9a-f]+);|&#(\d+);/gi, (_, hex: string, dec: string) => {
+      const c = String.fromCodePoint(hex ? Number.parseInt(hex, 16) : Number(dec))
+      return /[\n\r]/.test(c) ? ' ' : c
+    })
+    .replace(/^#{1,6} /gm, '#### ')
+    .replace(/\[([^\]]+)\]\((?!https?:)[^)]*\)/g, '$1')
+}
+
 export interface Segment {
   /** The prose before the code, as markdown; empty when the code follows another block of code */
   prose: string
@@ -267,6 +307,13 @@ export function parseSetup(readme: string): Setup {
 
 /** The MCP server's setup, from its readme. */
 export const readSetup = once(() => parseSetup(readRepoFile(MCP_README)))
+
+/** The command that runs the server, as its readme's first shell step writes it. */
+export function serverCommand(setup = readSetup()) {
+  const command = setup.steps.find((s) => s.code?.lang === 'sh')?.code?.text.trim()
+  if (!command) throw new Error(`${MCP_README} has no shell command in its setup`)
+  return command
+}
 
 export interface Source {
   /** Where the server reads, from the project's folder */

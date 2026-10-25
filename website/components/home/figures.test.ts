@@ -1,10 +1,14 @@
-import { describe, expect, it } from 'vitest'
+import { beforeAll, describe, expect, it } from 'vitest'
+import { loadTools, readSetup } from '../../lib/mcp.ts'
 import { statusCounts } from '../../lib/registry.ts'
 import { readTokenData } from '../../lib/tokens.ts'
-import { readDataStates, readHomeFigures, readTools, routeOf } from './figures.ts'
+import { readDataStates, readHomeFigures, routeOf, type HomeFigures } from './figures.ts'
 
 describe('readHomeFigures', () => {
-  const figures = readHomeFigures()
+  let figures: HomeFigures
+  beforeAll(async () => {
+    figures = await readHomeFigures()
+  })
 
   it('counts the registry and the tokens', () => {
     expect(figures.stable.component).toBe(statusCounts().component.stable)
@@ -30,17 +34,12 @@ describe('readHomeFigures', () => {
     expect(figures.themes).toEqual(['light', 'dark'])
     expect(figures.specVersion).toMatch(/^\d{4}\.\d{2}$/)
     expect(figures.baseUi).toMatch(/^\d+\.\d+\.\d+$/)
-    expect(figures.mcpCommand).toBe('npx -y @mylder/perron-mcp')
   })
-})
 
-describe('readTools', () => {
-  it('lists the tools the MCP server registers', () => {
-    expect(readTools()).toEqual(expect.arrayContaining(['list_tokens', 'get_reference']))
-    expect(readTools("server.registerTool(\n    'one',\n  server.registerTool('two'")).toEqual([
-      'one',
-      'two',
-    ])
+  it("takes the MCP server's tools and command from the server and its readme", async () => {
+    expect(figures.tools).toEqual((await loadTools()).map((t) => t.name))
+    expect(figures.tools).toEqual(expect.arrayContaining(['list_tokens', 'get_reference']))
+    expect(figures.mcpCommand).toBe(readSetup().steps[0].code?.text)
   })
 })
 
@@ -49,6 +48,10 @@ describe('readDataStates', () => {
     const page =
       '# T\n\nIntro.\n\n| State | Shape | Means |\n| --- | --- | --- |\n| Live | Dot | New |\n\nMore.'
     expect(readDataStates(page)).toEqual([{ name: 'Live', means: 'New' }])
+  })
+
+  it('throws for a first table without State and Means', () => {
+    expect(() => readDataStates('| A | B |\n| - | - |\n| 1 | 2 |')).toThrow('State or Means')
   })
 })
 

@@ -1,9 +1,11 @@
 // Variants and states: each variant and colour by rest, hover, pressed, focus and disabled, each
 // cell the real component through getPreview. Hover, pressed and focus come from the component's
 // own stylesheet, its state rules rewritten to the cell's attribute (lib/spec.ts), so a cell shows
-// a state with no pointer and no copied value. On a phone, a row picked by variant and colour.
+// a state with no pointer and no copied value. Each cell takes the preview's compact content, so
+// the five columns fit side by side; where they still overflow, the table is a focusable, named
+// region a keyboard can scroll. On a phone, a row picked by variant and colour.
 import type { ReactNode } from 'react'
-import { getPreview } from '@/previews/index.ts'
+import { compactPreviewProps, getPreview } from '@/previews/index.ts'
 import { cellProps, valueLabel, type Matrix, type State } from '../../lib/spec.ts'
 import { StatePicker, type PickerRow } from './StatePicker.tsx'
 
@@ -42,12 +44,13 @@ export function StatesSection({
   /** Its states run down the page at every width, for an entry a panel wide, such as a pattern */
   stacked: boolean
 }) {
+  const compact = compactPreviewProps(name)
   const rows: PickerRow[] = matrix.rows.map((row) => ({
     key: row.key,
     label: row.label,
     props: row.props,
     cells: matrix.states.map((state) => (
-      <Cell key={state}>{getPreview(name, cellProps(row, state))}</Cell>
+      <Cell key={state}>{getPreview(name, { ...compact, ...cellProps(row, state) })}</Cell>
     )),
   }))
   const states = matrix.states.map((s) => ({ state: s, label: STATE_LABEL[s] }))
@@ -66,7 +69,12 @@ export function StatesSection({
       <h2 id="states-heading" className="spec-heading">
         Variants and states
       </h2>
-      <div className={`spec-panel glass scroll-x spec-states-table ${scope}`}>
+      <div
+        className={`spec-panel glass scroll-x spec-states-table ${scope}`}
+        role="region"
+        aria-label={`${name}'s variants by state`}
+        tabIndex={0}
+      >
         <table className="spec-matrix">
           <thead>
             <tr>
