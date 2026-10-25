@@ -236,6 +236,10 @@ Each of these is written once, in its file, and a component, pattern or story im
 | `heard`, `exposedText`, `textOf` | `packages/perron/src/testing/stories.ts`        | What a screen reader reads of an element: its text outside `aria-hidden`, white space collapsed                    |
 | `mounted`, `mount`               | `packages/perron/src/testing/stories.ts`        | Renders a node apart from the story into a host it appends, runs a test on it, and unmounts it after, pass or fail |
 | `colour`                         | `packages/perron/src/testing/stories.ts`        | A colour custom property as it renders, the computed `color` of a probe, to compare with an element's              |
+| `rendered`                       | `packages/perron/src/testing/stories.ts`        | The value a token renders as on one CSS property, read from a probe; a colour as `color` is `colour`'s             |
+| `onHover`                        | `packages/perron/src/testing/stories.ts`        | What the `(hover: hover)` rules set a property to on an element, as written, since a synthetic pointer can't hover |
+| `closed`                         | `packages/perron/src/testing/stories.ts`        | Resolves once no dialog is open, for a story of Dialog, Sheet or a pattern on them                                 |
+| `byTestId`                       | `packages/perron/src/testing/stories.ts`        | The element with a `data-testid`, once it has rendered                                                             |
 | `heardMarkup`                    | `packages/perron/src/testing/markup.ts`         | `heard` for a unit test: what a screen reader reads of server-rendered markup, with no DOM                         |
 
 ## What axe won't catch

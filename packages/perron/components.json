@@ -201,7 +201,7 @@
     "name": "SegmentedControl",
     "layer": "component",
     "category": "Inputs",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": ["ToggleGroup", "Toggle"],
     "penpotPath": "Components/SegmentedControl",
     "dependsOn": []
@@ -219,10 +219,10 @@
     "name": "FilterChip",
     "layer": "component",
     "category": "Inputs",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": ["Toggle"],
     "penpotPath": "Components/FilterChip",
-    "dependsOn": []
+    "dependsOn": ["Count"]
   },
   {
     "name": "HighlightChip",
@@ -350,7 +350,7 @@
     "name": "DetailPanel",
     "layer": "pattern",
     "category": "Detail",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Patterns/DetailPanel",
     "dependsOn": ["Sheet", "DetailHeader"]

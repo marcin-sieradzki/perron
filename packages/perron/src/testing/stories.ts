@@ -1,6 +1,7 @@
 // Helpers the stories share, written once here (docs/components/README.md, "Shared helpers").
 import type { CSSProperties, ReactNode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { expect, screen, waitFor } from 'storybook/test'
 
 /**
  * The style of one typography role with its `-tracking` twin, for a story's own text, with no
@@ -24,6 +25,38 @@ export function heard(element: Element) {
 }
 
 /**
+ * The value a token renders as here, read from a probe that sets it on `property`. A colour read
+ * as `color` is `colour`'s.
+ */
+export function rendered(token: string, property: string) {
+  const probe = document.createElement('div')
+  probe.style.setProperty(property, `var(--perron-${token})`)
+  document.body.append(probe)
+  const value = getComputedStyle(probe).getPropertyValue(property)
+  probe.remove()
+  return value
+}
+
+/**
+ * What the `(hover: hover)` rules set `property` to when `element` is hovered, as written. A
+ * synthetic pointer doesn't reach `:hover`, so this reads the rule the real pointer would apply.
+ */
+export function onHover(element: Element, property: string) {
+  let value = ''
+  for (const sheet of Array.from(document.styleSheets))
+    for (const rule of Array.from(sheet.cssRules))
+      if (rule instanceof CSSMediaRule && rule.conditionText.includes('hover: hover'))
+        for (const inner of Array.from(rule.cssRules))
+          if (
+            inner instanceof CSSStyleRule &&
+            inner.selectorText.includes(':hover') &&
+            element.matches(inner.selectorText.replaceAll(':hover', ''))
+          )
+            value = inner.style.getPropertyValue(property) || value
+  return value
+}
+
+/**
  * A colour custom property, such as `--perron-color-text-secondary`, as it renders: the computed
  * `color` of a probe that reads it, to compare with an element's computed colour.
  */
@@ -31,9 +64,9 @@ export function colour(property: string) {
   const probe = document.createElement('span')
   probe.style.color = `var(${property})`
   document.body.append(probe)
-  const rendered = getComputedStyle(probe).color
+  const value = getComputedStyle(probe).color
   probe.remove()
-  return rendered
+  return value
 }
 
 /**
@@ -56,3 +89,14 @@ export async function mounted<T>(
     host.remove()
   }
 }
+
+/** Resolves once no dialog is open. */
+export const closed = () => waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+
+/** The element with `data-testid` `id`, once it has rendered. */
+export const byTestId = (id: string) =>
+  waitFor(() => {
+    const found = document.querySelector(`[data-testid="${id}"]`)
+    expect(found).not.toBeNull()
+    return found as HTMLElement
+  })

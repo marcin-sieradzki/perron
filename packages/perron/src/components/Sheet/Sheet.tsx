@@ -48,8 +48,8 @@ export interface SheetProps extends Omit<Drawer.Popup.Props, 'children' | 'title
   /**
    * The sheet's name, such as a stop or a destination, shown in the header and naming the dialog.
    * Required, so every sheet draws its header with the title and the close button and is always
-   * named; a pattern with a header of its own (DetailPanel) passes its name as `title` and the rest
-   * of its header in `children`.
+   * named; a pattern with a header of its own (DetailPanel) passes that whole header as `title`,
+   * with `slotProps.title.render` a `div`, and names the dialog by its own `aria-labelledby`.
    * @default Required
    */
   title: ReactNode
