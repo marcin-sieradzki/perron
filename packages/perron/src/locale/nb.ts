@@ -35,5 +35,8 @@ export const nb: OwnedStrings = {
   zoomIn: 'Zoom inn',
   zoomOut: 'Zoom ut',
   centerMap: 'Sentrer kartet',
+  scale: 'Målestokk',
+  metersUnit: 'm',
+  kilometersUnit: 'km',
   noMatches: 'Ingen treff',
 }

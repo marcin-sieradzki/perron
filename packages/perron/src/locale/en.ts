@@ -52,8 +52,8 @@ export const en = {
   /** Delay: no real-time data says how late a vehicle runs; heard in place of "—". */
   delayUnknown: 'Delay unknown',
   /**
-   * Stat, FactList, Count, Meter: no data gives the figure, value or count; heard in place of "—",
-   * or as a meter's value text.
+   * Stat, FactList, Count, Meter, ScaleBar: no data gives the figure, value, count or distance; heard
+   * in place of "—", as a meter's value text, or after "Scale" on the map's scale.
    */
   unknown: 'Unknown',
   /** Brand: the brand name, a name and never translated; the wordmark shows it lowercase. */
@@ -70,6 +70,12 @@ export const en = {
   zoomOut: 'Zoom out',
   /** The map's button that moves and zooms the map to show the whole network. */
   centerMap: 'Centre the map',
+  /** The map's scale: heard before the distance its bar spans, as in "Scale 300 m". */
+  scale: 'Scale',
+  /** The map's scale: the unit after a distance under a kilometre, as in "300 m". */
+  metersUnit: 'm',
+  /** The map's scale: the unit after a distance of a kilometre or more, as in "2 km". */
+  kilometersUnit: 'km',
   /** A search field's list: shown and announced when no suggestion matches the words typed. */
   noMatches: 'No matches',
 }

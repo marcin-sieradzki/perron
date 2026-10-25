@@ -113,6 +113,7 @@ const preview: Preview = {
             'DetailPanel',
             'StopTimeline',
             'DisruptionCard',
+            'ScaleBar',
             'KioskBar',
           ],
           // registry:patterns end
@@ -156,6 +157,7 @@ const preview: Preview = {
             'DetailPanel',
             'StopTimeline',
             'DisruptionCard',
+            'ScaleBar',
             'KioskBar',
           ],
           // registry:specs end

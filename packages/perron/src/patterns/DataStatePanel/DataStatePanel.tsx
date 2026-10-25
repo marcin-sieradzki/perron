@@ -2,12 +2,12 @@
 // place an EmptyState saying the data is loading, came back empty, or could not be loaded. A
 // pattern: it builds on Perron's EmptyState and plain divs, never on Base UI.
 // Spec: docs/patterns/data-state-panel.md.
-import { useCallback, useEffect, useLayoutEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef } from 'react'
 import type { ComponentPropsWithRef, CSSProperties, ReactNode, Ref } from 'react'
 import { EmptyState } from '../../components/EmptyState/EmptyState.tsx'
 import type { EmptyStateProps } from '../../components/EmptyState/EmptyState.tsx'
 import { useOwnedStrings } from '../../PerronProvider.tsx'
-import { classes } from '../../internal/nodes.ts'
+import { classes, joinRefs } from '../../internal/nodes.ts'
 import './DataStatePanel.css'
 
 export interface DataStatePanelProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
@@ -64,12 +64,6 @@ export interface DataStatePanelProps extends Omit<ComponentPropsWithRef<'div'>, 
 /** The owned string each status but ready shows as the EmptyState's title (CR-3). */
 const TITLE = { loading: 'loading', empty: 'noData', error: 'loadFailed' } as const
 
-/** Sets a ref the caller gave, a callback or an object, to `node`. */
-function setRef<T>(ref: Ref<T> | undefined, node: T | null) {
-  if (typeof ref === 'function') ref(node)
-  else if (ref) ref.current = node
-}
-
 /**
  * Holds a data view, such as a vehicle table or a day's chart, and shows it once its data is in,
  * or in its place a calm message while the data loads, when there is none, or when it could not
@@ -99,13 +93,7 @@ export function DataStatePanel({
   /** The element inside the message part that has focus, or had it until it left the document. */
   const focused = useRef<Element | null>(null)
 
-  const messageRef = useCallback(
-    (node: HTMLDivElement | null) => {
-      message.current = node
-      setRef(messageSlotRef, node)
-    },
-    [messageSlotRef],
-  )
+  const messageRef = useMemo(() => joinRefs(message, messageSlotRef), [messageSlotRef])
 
   // Remembers what has focus inside the message part, for the status change that removes it
   // (CR-6), and forgets it once that can no longer happen: a blur that leaves the element in the
