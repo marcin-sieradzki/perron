@@ -13,6 +13,7 @@ import {
   mounted,
   onHover,
   resolve,
+  pressedAfterHover,
   stateFill,
   stateRules,
 } from '../../testing/stories.ts'
@@ -112,12 +113,13 @@ export const Hover: Story = {
     await expect(getComputedStyle(indicator).borderColor).toBe(
       resolve('borderColor', 'var(--perron-color-border-control)'),
     )
-    // pressed lays the same layer, outside (hover: hover)
+    // pressed lays the denser selected layer, outside (hover: hover) and after it
     await expect(
       stateRules(indicator, ':active').some((s) =>
-        s.getPropertyValue('background-image').includes('--perron-color-surface-hover'),
+        s.getPropertyValue('background-image').includes('--perron-color-surface-selected'),
       ),
     ).toBe(true)
+    await expect(pressedAfterHover(indicator)).toBe(true)
   },
 }
 
@@ -157,7 +159,7 @@ export const Checked: Story = {
     await expect(
       stateRules(indicator, ':active').some(
         (s) =>
-          s.getPropertyValue('background-color') === 'var(--perron-color-surface-inverse-hover)',
+          s.getPropertyValue('background-color') === 'var(--perron-color-surface-inverse-pressed)',
       ),
     ).toBe(true)
     // CR-8: ticked and unticked share one box, and the label doesn't move

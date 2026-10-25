@@ -139,8 +139,8 @@ Disabled and invalid are states Base UI produces. A disabled slider's fill is `c
 | `thumb`      | rest                            | `box-sizing`                | none: the keyword `border-box`, so the edge sits inside the thumb's size                                                  |
 | `thumb`      | hover                           | `background-image`          | `color.surface.hover`, laid over the fill as a `linear-gradient`                                                          |
 | `thumb`      | pressed                         | `background-image`          | `color.surface.selected`, laid over the fill as a `linear-gradient`, in a rule after the hover rule and outside the query |
-| `thumb`      | rest                            | `cursor`                    | none: the keyword `pointer`, from the control                                                                             |
-| `thumb`      | disabled                        | `cursor`                    | none: the keyword `default`, from the control                                                                             |
+| `thumb`      | rest                            | `cursor`                    | none: the keyword `pointer`, as the control's                                                                             |
+| `thumb`      | disabled                        | `cursor`                    | none: the keyword `default`, as the control's                                                                             |
 | `thumb`      | disabled                        | `border-color`              | `color.text.tertiary`                                                                                                     |
 | `thumb`      | invalid                         | `border-color`              | `color.status.danger`; not while disabled, which keeps its own edge                                                       |
 | `thumb`      | focus                           | `outline`, `outline-offset` | `focus.width`, `solid` in `color.border.focus`, `focus.offset`, drawn by the thumb on `:has(:focus-visible)` (CR-9)       |

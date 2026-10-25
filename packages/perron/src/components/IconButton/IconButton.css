@@ -19,6 +19,7 @@
   border: var(--perron-border-width-025) solid transparent;
   border-radius: var(--perron-radius-md);
   vertical-align: middle;
+  cursor: pointer;
 }
 
 .pn-IconButton[data-size='large'] {
@@ -51,8 +52,8 @@
   color: var(--perron-color-text-on-color-dark);
 }
 
-/* Hover inside (hover: hover); pressed outside it so a touch press shows; neither on a disabled
-   button (CR-5). */
+/* Hover inside (hover: hover); pressed, a step past it, outside it so a touch press shows; neither
+   on a disabled button (CR-5). */
 @media (hover: hover) {
   .pn-IconButton[data-color='neutral']:hover:not([data-disabled]) {
     background-color: var(--perron-color-surface-hover);
@@ -64,14 +65,18 @@
 }
 
 .pn-IconButton[data-color='neutral']:active:not([data-disabled]) {
-  background-color: var(--perron-color-surface-hover);
+  background-color: var(--perron-color-surface-selected);
 }
 
 .pn-IconButton[data-color='brand']:active:not([data-disabled]) {
-  background-color: var(--perron-color-surface-brand-hover);
+  background-color: var(--perron-color-surface-brand-pressed);
 }
 
-/* disabled: a colour, never an opacity. After the colours, which it ties. */
+/* disabled: a colour, never an opacity, and the default cursor. After the colours, which it ties. */
+
+.pn-IconButton[data-disabled] {
+  cursor: default;
+}
 
 .pn-IconButton[data-color='neutral'][data-disabled] {
   background-color: transparent;

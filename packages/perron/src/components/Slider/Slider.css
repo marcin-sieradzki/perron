@@ -59,7 +59,7 @@
 }
 
 /* The thumb: Switch's thumb size, raised, with an ink edge inside its size and no shadow. Its
-   cursor is the control's. */
+   cursor is the control's, set on it as well, since the thumb is the part that hovers. */
 .pn-Slider-thumb {
   box-sizing: border-box;
   block-size: calc(
@@ -72,6 +72,7 @@
   border: var(--perron-border-width-050) solid var(--perron-color-surface-inverse);
   border-radius: var(--perron-radius-full);
   background-color: var(--perron-color-surface-raised);
+  cursor: pointer;
 }
 
 /* Hover lays the quiet part's layer over the thumb's fill (CR-12), never on a disabled slider. */
@@ -103,6 +104,7 @@
 /* Disabled is a colour, never an opacity; the thumb keeps its raised fill. */
 .pn-Slider-thumb[data-disabled] {
   border-color: var(--perron-color-text-tertiary);
+  cursor: default;
 }
 
 /* The danger edge, the Fields' invalid look, never on a disabled slider. */

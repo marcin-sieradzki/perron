@@ -3,6 +3,7 @@
 // so axe's color-contrast rule stays on (CR-11). Hover and focus render at rest.
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, isInaccessible, userEvent, within } from 'storybook/test'
+import { onHover, pressedAfterHover, stateRules } from '../../testing/stories.ts'
 import { DisruptionCard } from './DisruptionCard.tsx'
 import type { DisruptionCardLine, DisruptionCardProps } from './DisruptionCard.tsx'
 
@@ -162,6 +163,16 @@ const tabsThrough: Play = async ({ canvasElement, step }) => {
     await expect(link).toHaveAttribute('href', '#line-m2')
     await expect(link).toHaveClass('pn-DisruptionCard', 'pn-Surface')
     await expect(link).toHaveAttribute('data-severity', 'delay')
+  })
+  await step('it hovers, presses a step past hover and takes the pointer (CR-8)', async () => {
+    await expect(onHover(link, 'background-image')).toContain('--perron-color-surface-hover')
+    await expect(
+      stateRules(link, ':active').some((s) =>
+        s.getPropertyValue('background-image').includes('--perron-color-surface-selected'),
+      ),
+    ).toBe(true)
+    await expect(pressedAfterHover(link)).toBe(true)
+    await expect(getComputedStyle(link).cursor).toBe('pointer')
   })
   await step('Tab focuses it and Shift+Tab leaves it', async () => {
     const before = document.activeElement

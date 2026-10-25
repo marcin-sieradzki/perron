@@ -20,6 +20,7 @@
   /* CR-10: the label stays on one line and the chip grows with it; the row of chips wraps */
   white-space: nowrap;
   vertical-align: middle;
+  cursor: pointer;
 }
 
 .pn-FilterChip-label {
@@ -33,8 +34,8 @@
   --perron-icon-size: var(--perron-icon-size-325);
 }
 
-/* off: the hover layer every control shares, inside (hover: hover); the press outside it, so a
-   touch press shows (CR-6) */
+/* off: the hover layer every control shares, inside (hover: hover); the press, a denser layer,
+   outside it, so a touch press shows (CR-6) */
 
 @media (hover: hover) {
   .pn-FilterChip:not([data-pressed], [data-disabled]):hover {
@@ -43,7 +44,7 @@
 }
 
 .pn-FilterChip:not([data-pressed], [data-disabled]):active {
-  background-color: var(--perron-color-surface-hover);
+  background-color: var(--perron-color-surface-selected);
 }
 
 /* on: the selected design state */
@@ -61,7 +62,7 @@
 }
 
 .pn-FilterChip[data-pressed]:not([data-disabled]):active {
-  background-color: var(--perron-color-surface-inverse-hover);
+  background-color: var(--perron-color-surface-inverse-pressed);
 }
 
 /* disabled, off and on: a colour, never an opacity. After the colours, which it ties. */
@@ -70,6 +71,7 @@
   border-color: var(--perron-color-border-subtle);
   background-color: transparent;
   color: var(--perron-color-text-tertiary);
+  cursor: default;
 }
 
 .pn-FilterChip[data-pressed][data-disabled] {

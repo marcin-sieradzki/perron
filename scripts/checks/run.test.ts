@@ -21,6 +21,7 @@ describe('the gates', () => {
       'paths',
       'patterns',
       'penpot',
+      'pointer-feedback',
       'props',
       'shared-parts',
     ])

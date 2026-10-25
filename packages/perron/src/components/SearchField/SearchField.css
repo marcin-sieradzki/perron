@@ -39,6 +39,7 @@
 
 /* The hover layer laid over the raised fill, as the Fields do; an open field keeps its rest look. */
 @media (hover: hover) {
+  /* perron-allow(pointer-feedback): a text box takes the focus ring and the text cursor on press, so it has no pressed look and no pointer */
   .pn-SearchField-inputGroup:not([data-disabled]):hover {
     background-image: linear-gradient(
       var(--perron-color-surface-hover),
@@ -154,6 +155,7 @@
 }
 
 @media (hover: hover) {
+  /* perron-allow(pointer-feedback): a popup row is a menu row, whose highlight answers the pointer and the keys alike, with the default cursor; a press chooses it on release */
   .pn-SearchField-item:hover {
     background-color: var(--perron-color-surface-hover);
   }

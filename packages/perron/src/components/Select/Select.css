@@ -30,6 +30,7 @@
 /* The hover layer laid over the raised fill, as the Fields do; never on a disabled or read-only
    box (CR-9). */
 @media (hover: hover) {
+  /* perron-allow(pointer-feedback): a Fields box has no pressed look, and a press opens the list at once, the change the person sees (CR-9) */
   .pn-Select-trigger:not([data-disabled]):not([data-readonly]):hover {
     background-image: linear-gradient(
       var(--perron-color-surface-hover),
