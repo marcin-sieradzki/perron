@@ -5,11 +5,12 @@
 import postcss, { type AtRule, type ChildNode, type Container, type Rule } from 'postcss'
 import { specProse } from '../../storybook/blocks/component-page.ts'
 import { folderOf, kebab, type Layer } from '../../scripts/lib/entry.ts'
+import { SITE } from '../../scripts/lib/site.ts'
 import { markdownHeadings, slug, type Heading } from './anchors.ts'
 import type { ComponentApi } from './api.ts'
 import { firstTable, sections } from './markdown.ts'
 import type { RegistryEntry } from './registry.ts'
-import { readRepoFile, repoFileExists, REPO_URL } from './repo.ts'
+import { readRepoFile, repoFileExists } from './repo.ts'
 import { readTokenData } from './tokens.ts'
 
 /* The spec's prose */
@@ -439,11 +440,8 @@ export function agentCalls(entry: Pick<RegistryEntry, 'name' | 'baseUiParts'>) {
     : [`search_docs({ query: "${entry.name}" })`]
 }
 
-/** The published Storybook: under storybook/ on the repository's GitHub Pages site. */
-export const STORYBOOK_URL = REPO_URL.replace(
-  /^https:\/\/github\.com\/([^/]+)\/([^/]+)$/,
-  'https://$1.github.io/$2/storybook/',
-)
+/** The published Storybook: under storybook/ on the docs site. */
+export const STORYBOOK_URL = `${SITE}storybook/`
 
 /** The entry's docs page in the published Storybook, from its stories' title, or undefined. */
 export function storybookUrl(entry: Pick<RegistryEntry, 'name' | 'layer'>) {

@@ -88,26 +88,15 @@ export function Catalogue({ intro, sections, more, searchIcon }: CatalogueProps)
         </nav>
         <Separator />
         <nav aria-label="More" className="catalogue-nav">
-          {more.map((link) => {
-            const label = (
-              <>
-                {link.label}
-                {link.count === undefined ? null : (
-                  <span className="catalogue-nav-count">{link.count}</span>
-                )}
-              </>
-            )
-            // a route of the site goes through NextLink, which adds the base path
-            return link.href.startsWith('/') ? (
-              <NextLink key={link.href} href={link.href} className="catalogue-nav-link hover">
-                {label}
-              </NextLink>
-            ) : (
-              <a key={link.href} href={link.href} className="catalogue-nav-link hover">
-                {label}
-              </a>
-            )
-          })}
+          {/* NextLink adds the base path to a site route and leaves a full URL as it is */}
+          {more.map((link) => (
+            <NextLink key={link.href} href={link.href} className="catalogue-nav-link hover">
+              {link.label}
+              {link.count === undefined ? null : (
+                <span className="catalogue-nav-count">{link.count}</span>
+              )}
+            </NextLink>
+          ))}
         </nav>
       </aside>
 

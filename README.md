@@ -61,6 +61,7 @@ npm install
 npm run tokens        # rebuild packages/perron/tokens/generated and the tables in docs/foundations
 npm run check         # generated files and tables up to date, typecheck, lint, format, tests
 npm run storybook     # the guideline pages in Storybook, at localhost:6006
+npm run dev -w website  # the website, at localhost:3000/perron/ (its path on GitHub Pages)
 npm run storybook:build  # Storybook in dist/storybook
 npm run site:build     # the docs site in dist/site, after npm run build -w website and storybook:build
 npm run smoke         # pack both packages and install them in a scratch Vite app
