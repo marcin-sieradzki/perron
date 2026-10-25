@@ -1,0 +1,6 @@
+# Written by npm run factory; never by hand.
+component: Toast
+layer: component
+deferred:
+  at: 2026-10-25T08:35:01.279Z
+stages: {}
