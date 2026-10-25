@@ -1212,6 +1212,72 @@
       }
     }
   },
+  "Meter": {
+    "extends": [
+      "Omit< BaseMeter.Root.Props, 'value' | 'children' | 'locale' | 'color' | 'className' | 'style' | 'ref' >"
+    ],
+    "props": {
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "color": {
+        "optional": true,
+        "type": [
+          "\"danger\"",
+          "\"info\"",
+          "\"neutral\"",
+          "\"success\"",
+          "\"warning\""
+        ]
+      },
+      "label": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "locale": {
+        "optional": true,
+        "type": [
+          "LocalesArgument"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ label?: MeterLabelProps | undefined; value?: MeterValueProps | undefined; track?: MeterTrackProps | undefined; indicator?: MeterIndicatorProps | undefined; }"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "unknownLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "value": {
+        "optional": false,
+        "type": [
+          "null",
+          "number"
+        ]
+      }
+    }
+  },
   "NormalService": {
     "extends": [
       "Omit< useRender.ComponentProps<'span'>, 'children' | 'ref' >"

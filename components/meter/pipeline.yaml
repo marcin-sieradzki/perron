@@ -23,6 +23,10 @@ stages:
       p2: 0
       p3: 6
     ended: 2026-10-25T02:13:40.199Z
+  docs:
+    status: done
+    started: 2026-10-25T02:13:50.732Z
+    ended: 2026-10-25T02:16:10.511Z
 notes:
   - stage: brief
     at: 2026-10-25T01:53:19.897Z
@@ -36,3 +40,15 @@ notes:
   - stage: build
     at: 2026-10-25T02:06:49.570Z
     direction: '`locale` is the first locale prop in the library, and the next component that formats numbers will copy it. MUI sets locale through a provider rather than per component. Options: keep it per component with the PerronProvider fallback, or keep it on the provider only.'
+  - stage: docs
+    at: 2026-10-25T02:16:10.511Z
+    direction: The page's opening shows the spec's second paragraph, about the deferred design (ADR 0010, no read-back, the prototype not reachable). That is process prose for maintainers on a page for callers; the spec's intro might keep it out of what SpecProse draws.
+  - stage: docs
+    at: 2026-10-25T02:16:10.511Z
+    direction: The props table shows label's JSDoc as it stands, including the maintainer reasoning about axe's aria-meter-name and Stat (review P3-5). Shortening it to Stat's form would tidy the page.
+  - stage: docs
+    at: 2026-10-25T02:16:10.511Z
+    direction: The Keyboard and ARIA table on the page still says Base UI's "x" span is "Not read", though Chromium exposes it as text inside the meter (review P3-1), and the root's name has no caveat that it is missing in server-rendered markup until hydration (review P3-2).
+  - stage: docs
+    at: 2026-10-25T02:16:10.511Z
+    direction: The slots table gives slotProps.value only "Props for the value part", as the PropsTable block draws every slot; its function children (to show "1 046 of 1 204") appears only in the spec's Props table and Do and don't.
