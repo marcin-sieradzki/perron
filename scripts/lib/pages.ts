@@ -61,6 +61,7 @@ export const PAGES = [
   'docs/components/surface.md',
   'docs/components/attribution.md',
   'docs/components/map-controls.md',
+  'docs/components/link.md',
   'docs/components/tabs.md',
   'docs/components/alert-dialog.md',
   'docs/components/dialog.md',
