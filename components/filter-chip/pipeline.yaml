@@ -10,16 +10,18 @@ stages:
     ended: 2026-10-25T01:21:25.932Z
   build:
     runs: 2
-    status: done
-    started: 2026-10-25T01:37:53.915Z
-    ended: 2026-10-25T01:41:55.733Z
+    failing: review round 2 found 5 P2 (components/filter-chip/review.md)
   review:
-    rounds: 1
-    sentBack: 1
+    rounds: 2
+    sentBack: 2
     findings:
-      p1: 1
-      p2: 4
-      p3: 5
+      p1: 0
+      p2: 5
+      p3: 6
+    status: failed
+    started: 2026-10-25T01:41:59.985Z
+    ended: 2026-10-25T01:47:20.513Z
+    failing: review round 2 found 5 P2 (components/filter-chip/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T01:19:52.654Z
