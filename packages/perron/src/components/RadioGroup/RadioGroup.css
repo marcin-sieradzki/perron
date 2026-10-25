@@ -1,5 +1,5 @@
 /* RadioGroup, from docs/components/radio-group.md. The group is Fieldset's column and sets nothing
-   of its own (CR-2); this file draws the radios: a row of a round mark and its words, the mark on
+   of its own (CR-2) but its disabled legend's forced colour (CR-11); this file draws the radios: a row of a round mark and its words, the mark on
    the raised surface with the control edge, and checked, read from Base UI's data-checked, the
    pressed toggle's ink with a raised dot. Every state changes the fills, the edge's colour and the
    dot only, never the geometry (CR-6), and at once: nothing changes place. */
@@ -132,8 +132,15 @@
 
 /* CR-11: forced colours drop the fills, and the checked circle would vanish into Canvas, so the
    indicator keeps its own system colours: ButtonText on Canvas unchecked, HighlightText on
-   Highlight checked, GrayText when disabled. The row keeps the browser's own colours and ring. */
+   Highlight checked, GrayText when disabled. The row keeps the browser's own ring. */
 @media (forced-colors: active) {
+  /* the radio's <span> and the legend's <div> aren't natively disabled, so the system can't tell
+     their words are, as Checkbox's root (Checkbox CR-11) */
+  .pn-Radio[data-disabled],
+  .pn-RadioGroup-legend[data-disabled] {
+    color: GrayText;
+  }
+
   .pn-Radio-indicator {
     forced-color-adjust: none;
     border-color: ButtonText;

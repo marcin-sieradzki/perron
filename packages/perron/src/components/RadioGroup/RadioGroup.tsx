@@ -187,10 +187,10 @@ export interface RadioProps extends Omit<
   /** Props for each inner part, merged with the part's own, which win. */
   slotProps?: {
     /**
-     * Props for the `indicator` part, merged under Perron's own; its `className` joins after
-     * `pn-Radio-indicator`. Its `keepMounted` stays `true`.
+     * Props for the `indicator` part, all but `keepMounted`, which stays Radio's `true`, merged
+     * under Perron's own; its `className` joins after `pn-Radio-indicator`.
      */
-    indicator?: BaseRadio.Indicator.Props
+    indicator?: Omit<BaseRadio.Indicator.Props, 'keepMounted'>
   }
 }
 

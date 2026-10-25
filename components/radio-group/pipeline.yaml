@@ -9,19 +9,18 @@ stages:
     started: 2026-10-25T05:39:21.021Z
     ended: 2026-10-25T05:40:26.391Z
   build:
-    runs: 2
-    failing: review round 1 found 8 P2 (components/radio-group/review.md)
+    runs: 3
+    status: done
+    started: 2026-10-25T06:04:37.426Z
+    spec: a25dfabf6443e05fb79ef9783fba7a4a8c9e059178d156dee1bd56f1fbff7313
+    ended: 2026-10-25T06:11:08.209Z
   review:
-    status: failed
-    started: 2026-10-25T05:55:39.748Z
     rounds: 1
+    sentBack: 1
     findings:
       p1: 0
       p2: 8
       p3: 5
-    sentBack: 1
-    ended: 2026-10-25T06:04:30.106Z
-    failing: review round 1 found 8 P2 (components/radio-group/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T05:33:10.548Z
@@ -84,3 +83,15 @@ notes:
   - stage: build
     at: 2026-10-25T05:54:58.810Z
     direction: 'Switch has the same forced-colours invalid-edge gap as RadioGroup (color.status.danger kept under forced-color-adjust: none); decide a system colour for both.'
+  - stage: build
+    at: 2026-10-25T06:11:08.210Z
+    direction: Fieldset's disabled legend has no forced-colours rule of its own. RadioGroup now gives its legend GrayText itself, but a plain disabled Fieldset still renders its legend in CanvasText. Moving the rule into Fieldset.css would fix it for every group.
+  - stage: build
+    at: 2026-10-25T06:11:08.210Z
+    direction: 'Radio and Checkbox draw disabled differently. Radio follows Switch: an inset circle with a subtle edge, and a tertiary fill with a raised dot when checked. Checkbox uses a transparent box with a subtle edge, and an inset box with a tertiary mark when ticked. The maintainer should pick one look for both choice marks (review P3-2).'
+  - stage: build
+    at: 2026-10-25T06:11:08.210Z
+    direction: The radio's circle uses icon.size.400 and Checkbox's box uses size.checkbox, both 16 px. A shared choice-mark size token, added through the design-tokens skill, would tie the two (review P3-4).
+  - stage: build
+    at: 2026-10-25T06:11:08.210Z
+    direction: Fieldset's spec (docs/components/fieldset.md:22,141) still says RadioGroup takes its description and error through a Field round it, which RadioGroup's CR-12 forbids for Perron's Field (review P3-5).

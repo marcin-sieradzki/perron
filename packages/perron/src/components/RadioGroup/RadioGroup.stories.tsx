@@ -393,6 +393,9 @@ export const Invalid: Story = {
   play: async ({ canvasElement }) => {
     const group = groupIn(canvasElement)
     await expect(group).toHaveAttribute('aria-required', 'true')
+    // the group too is invalid and described by the error, and still named by its legend
+    await expect(group).toHaveAttribute('aria-invalid', 'true')
+    await expect(group).toHaveAccessibleDescription('Choose a theme')
     for (const name of ['Match the system', 'Light', 'Dark']) {
       const root = radio(canvasElement, name)
       await expect(root).toHaveAttribute('aria-invalid', 'true')
@@ -513,9 +516,17 @@ export const Controlled: Story = {
   },
 }
 
-/** Words as a string, an element and a list, in a 320 px wide group. */
+/**
+ * Words as a string, an element and a list, in a 320 px wide group named by a list, "Show on" then
+ * "map" in a `<span>`.
+ */
 export const LabelShapes: Story = {
   args: {
+    label: (
+      <>
+        Show on <span>map</span>
+      </>
+    ),
     defaultValue: 'planned',
     style: { inlineSize: 320, maxInlineSize: '100%' },
     children: (
@@ -531,7 +542,9 @@ export const LabelShapes: Story = {
     ),
   },
   play: async ({ canvasElement }) => {
-    const group = groupIn(canvasElement)
+    // the group's label as a list reads as one run in the legend and the group's name
+    const group = groupIn(canvasElement, 'Show on map')
+    await expect(group.querySelector('.pn-RadioGroup-legend')).toHaveTextContent('Show on map')
     const radios = within(group).getAllByRole('radio')
     await expect(radios).toHaveLength(3)
     for (const root of radios) {
@@ -543,23 +556,42 @@ export const LabelShapes: Story = {
     const list = radio(canvasElement, 'Data feed problems')
     await expect(labelOf(list)).toHaveTextContent('Data feed problems')
     await expect(lines(labelOf(list))).toBeLessThan(1.5)
+    // the group's label as an element names the group as its text does
+    await mounted(
+      canvasElement,
+      <RadioGroup label={<span>Show on map</span>} defaultValue="planned">
+        <Radio value="planned">Planned works</Radio>
+        <Radio value="diversions">Diversions</Radio>
+      </RadioGroup>,
+      async (host) => {
+        const named = await within(host).findByRole('radiogroup', { name: 'Show on map' })
+        const legend = named.querySelector('.pn-RadioGroup-legend')!
+        await expect(legend.querySelector('span')).toHaveTextContent('Show on map')
+      },
+    )
   },
 }
 
-/** Three radios, one of them "Realtidsdataforsinkelser", in a 120 px wide group. */
+/**
+ * Three radios in Danish, "Vis på kort" over "Omkørsler", "Planlagt arbejde" and
+ * "Realtidsdataforsinkelser", in a 120 px wide group.
+ */
 export const LongLabels: Story = {
   args: {
+    label: 'Vis på kort',
+    lang: 'da',
+    defaultValue: 'diversions',
     style: { inlineSize: 120 },
     children: (
       <>
-        <Radio value="system">Match the system</Radio>
-        <Radio value="light">Light</Radio>
+        <Radio value="diversions">Omkørsler</Radio>
+        <Radio value="planned">Planlagt arbejde</Radio>
         <Radio value="long">Realtidsdataforsinkelser</Radio>
       </>
     ),
   },
   play: async ({ canvasElement }) => {
-    const group = groupIn(canvasElement)
+    const group = groupIn(canvasElement, 'Vis på kort')
     const long = radio(canvasElement, 'Realtidsdataforsinkelser')
     const words = labelOf(long)
     // CR-7: the long word wraps inside its radio, which is no wider than the group
