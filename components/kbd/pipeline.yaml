@@ -8,3 +8,9 @@ stages:
     status: done
     started: 2026-10-25T00:18:20.870Z
     ended: 2026-10-25T00:19:28.519Z
+  build:
+    status: pending
+    started: 2026-10-25T00:19:32.373Z
+    runs: 1
+    ended: 2026-10-25T00:25:00.859Z
+    failing: "1. CR-3 contradicts itself in typography.caption text: a baseline-aligned 17.59 px key grows each caption line from 18 px to 18.59 px. Recommended: add a Tokens row root | rest | margin-block | calc(-1 * border.width.025), a CR-3 sentence saying the border paints outside the line's layout, and an InHelpText play check that a caption paragraph with keys is no taller than the same paragraph without them."
