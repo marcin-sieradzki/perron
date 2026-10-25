@@ -8,7 +8,7 @@ import { Menu as BaseMenu } from '@base-ui/react/menu'
 import { useId } from 'react'
 import type { CSSProperties, ReactElement, ReactNode, Ref } from 'react'
 import { classes, given, withClass } from '../../internal/nodes.ts'
-import { tokenValue } from '../../internal/tokens.ts'
+import { positionerOffsets, tokenValue } from '../../internal/tokens.ts'
 import { CheckboxIndicator } from '../../parts/CheckboxIndicator/CheckboxIndicator.tsx'
 import { SelectedMark } from '../../parts/SelectedMark/SelectedMark.tsx'
 import './Menu.css'
@@ -128,8 +128,8 @@ export interface MenuProps extends Inherited<BaseMenu.Popup.Props> {
     /** Props for the `portal` part, such as its `container`. */
     portal?: BaseMenu.Portal.Props
     /**
-     * Props for the `positioner` part, such as `side` or `align`. Its `align` and `sideOffset`
-     * replace Menu's own (CR-9).
+     * Props for the `positioner` part, such as `side` or `align`. Its `align`, `sideOffset` and
+     * `collisionPadding` replace Menu's own (CR-9).
      */
     positioner?: BaseMenu.Positioner.Props
   }
@@ -163,8 +163,10 @@ export function Menu({
   const triggerId = (trigger.props as { id?: string }).id ?? slotProps?.trigger?.id ?? generatedId
   const triggerLink = open === undefined ? { defaultTriggerId: triggerId } : { triggerId }
 
-  // CR-9: below the trigger, at its start edge, space.100 away; the caller's positioner wins
-  const sideOffset = menuOffsets()?.sideOffset
+  // CR-9: below the trigger, at its start edge, space.100 away and size.panel-gap from the screen's
+  // edge; the caller's positioner wins
+  const positioner = slotProps?.positioner
+  const defaults = positionerOffsets()
 
   return (
     <BaseMenu.Root
@@ -182,15 +184,17 @@ export function Menu({
         className={withClass('pn-Menu-trigger', slotProps?.trigger?.className)}
       />
       <BaseMenu.Portal
-        {...mergeProps<typeof BaseMenu.Portal>(slotProps?.portal, undefined)}
+        {...slotProps?.portal}
         className={withClass('pn-Menu-portal', slotProps?.portal?.className)}
       >
         <BaseMenu.Positioner
-          {...mergeProps<typeof BaseMenu.Positioner>(
-            sideOffset === undefined ? { align: 'start' } : { align: 'start', sideOffset },
-            slotProps?.positioner,
-          )}
-          className={withClass('pn-Menu-positioner', slotProps?.positioner?.className)}
+          // CR-9: the caller's props, then Menu's defaults where it gives none
+          {...mergeProps<typeof BaseMenu.Positioner>(positioner, {
+            align: positioner?.align ?? 'start',
+            sideOffset: positioner?.sideOffset ?? menuOffsets()?.sideOffset,
+            collisionPadding: positioner?.collisionPadding ?? defaults.collisionPadding,
+          })}
+          className={withClass('pn-Menu-positioner', positioner?.className)}
         >
           <BaseMenu.Popup
             {...rest}
@@ -208,7 +212,7 @@ export function Menu({
 
 export interface MenuItemProps extends Inherited<BaseMenu.Item.Props, 'disabled'> {
   /**
-   * An icon before the label, in reading order, such as `monitor` for "Kiosk mode". Hidden from
+   * An icon before the label, in reading order, such as `locate` for "Centre the map". Hidden from
    * screen readers: the label names the item.
    */
   startIcon?: ReactNode
@@ -218,7 +222,7 @@ export interface MenuItemProps extends Inherited<BaseMenu.Item.Props, 'disabled'
    * @default false
    */
   disabled?: boolean
-  /** The label: the words that name the action, in sentence case, such as "Kiosk mode". */
+  /** The label: the words that name the action, in sentence case, such as "Centre the map". */
   children?: ReactNode
   /** Reaches the root, the row. Merged after `pn-MenuItem`. */
   className?: string
@@ -228,7 +232,7 @@ export interface MenuItemProps extends Inherited<BaseMenu.Item.Props, 'disabled'
   ref?: Ref<HTMLDivElement>
 }
 
-/** One action in a `Menu`, such as "Kiosk mode": a press runs it and closes the menu. */
+/** One action in a `Menu`, such as "Centre the map": a press runs it and closes the menu. */
 export function MenuItem({
   startIcon,
   disabled = false,
@@ -387,7 +391,8 @@ export interface MenuRadioGroupProps extends Inherited<
 > {
   /**
    * The choice's name, in sentence case, such as "Theme", shown above its items and naming the
-   * group for screen readers. Leave it out only when the menu's trigger already names the choice.
+   * group for screen readers. Leave it out only when the menu's trigger, or the submenu's row that
+   * holds the group, already names the choice.
    */
   label?: ReactNode
   /** The `value` of the chosen radio item, when the caller controls it. */
@@ -449,7 +454,7 @@ export function MenuRadioGroup({
     >
       {given(label) && (
         <BaseMenu.GroupLabel
-          {...mergeProps<typeof BaseMenu.GroupLabel>(slotProps?.groupLabel, undefined)}
+          {...slotProps?.groupLabel}
           className={withClass('pn-MenuRadioGroup-groupLabel', slotProps?.groupLabel?.className)}
         >
           {label}
@@ -482,8 +487,11 @@ export interface MenuRadioItemProps extends Inherited<
   ref?: Ref<HTMLDivElement>
   /** Props for each inner part, merged with the part's own, which win. */
   slotProps?: {
-    /** Props for the tick, such as `keepMounted`. */
-    radioItemIndicator?: BaseMenu.RadioItemIndicator.Props
+    /**
+     * Props for the tick, such as `keepMounted`, all but `render`: the tick is always the
+     * `SelectedMark` part.
+     */
+    radioItemIndicator?: Omit<BaseMenu.RadioItemIndicator.Props, 'render'>
   }
 }
 
@@ -546,7 +554,7 @@ export function MenuGroup({ label, children, className, ref, slotProps, ...rest 
     <BaseMenu.Group {...rest} ref={ref} className={classes('pn-MenuGroup', className)}>
       {given(label) && (
         <BaseMenu.GroupLabel
-          {...mergeProps<typeof BaseMenu.GroupLabel>(slotProps?.groupLabel, undefined)}
+          {...slotProps?.groupLabel}
           className={withClass('pn-MenuGroup-groupLabel', slotProps?.groupLabel?.className)}
         >
           {label}
@@ -606,8 +614,8 @@ export interface MenuSubmenuProps extends Inherited<
     /** Props for the submenu's `portal` part. */
     portal?: BaseMenu.Portal.Props
     /**
-     * Props for the submenu's `positioner` part. Its `alignOffset` replaces the submenu's own
-     * (CR-9).
+     * Props for the submenu's `positioner` part. Its `alignOffset` and `collisionPadding` replace
+     * the submenu's own (CR-9).
      */
     positioner?: BaseMenu.Positioner.Props
     /** Props for the submenu's `popup` part, such as `aria-label`. */
@@ -626,8 +634,10 @@ export function MenuSubmenu({
   slotProps,
   ...rest
 }: MenuSubmenuProps) {
-  // CR-9: the first item level with the row, pulled up by the popup's padding and edge
-  const alignOffset = menuOffsets()?.alignOffset
+  // CR-9: the first item level with the row, pulled up by the popup's padding and edge, and
+  // size.panel-gap from the screen's edge
+  const positioner = slotProps?.positioner
+  const defaults = positionerOffsets()
   return (
     <BaseMenu.SubmenuRoot>
       <BaseMenu.SubmenuTrigger
@@ -655,18 +665,19 @@ export function MenuSubmenu({
         </svg>
       </BaseMenu.SubmenuTrigger>
       <BaseMenu.Portal
-        {...mergeProps<typeof BaseMenu.Portal>(slotProps?.portal, undefined)}
+        {...slotProps?.portal}
         className={withClass('pn-MenuSubmenu-portal', slotProps?.portal?.className)}
       >
         <BaseMenu.Positioner
-          {...mergeProps<typeof BaseMenu.Positioner>(
-            alignOffset === undefined ? undefined : { alignOffset },
-            slotProps?.positioner,
-          )}
-          className={withClass('pn-MenuSubmenu-positioner', slotProps?.positioner?.className)}
+          // CR-9: the caller's props, then the submenu's defaults where it gives none
+          {...mergeProps<typeof BaseMenu.Positioner>(positioner, {
+            alignOffset: positioner?.alignOffset ?? menuOffsets()?.alignOffset,
+            collisionPadding: positioner?.collisionPadding ?? defaults.collisionPadding,
+          })}
+          className={withClass('pn-MenuSubmenu-positioner', positioner?.className)}
         >
           <BaseMenu.Popup
-            {...mergeProps<typeof BaseMenu.Popup>(slotProps?.popup, undefined)}
+            {...slotProps?.popup}
             className={withClass('pn-MenuSubmenu-popup', slotProps?.popup?.className)}
           >
             {children}

@@ -5,9 +5,9 @@
 import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, screen, userEvent, waitFor, within } from 'storybook/test'
-import info from '../../../icons/info.svg?raw'
 import locate from '../../../icons/locate.svg?raw'
-import monitor from '../../../icons/monitor.svg?raw'
+import minus from '../../../icons/minus.svg?raw'
+import plus from '../../../icons/plus.svg?raw'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
 import { closed, colour, frames, icon, lines, mounted, onHover } from '../../testing/stories.ts'
@@ -34,24 +34,28 @@ const glyph = (svg: string) => icon(svg.trim().replace(/>\s+</g, '><'))
 
 const TRIGGER = 'Map options'
 const CENTRE = 'Centre the map'
-const KIOSK = 'Kiosk mode'
-const ABOUT = 'About and help'
+const ZOOM_IN = 'Zoom in'
+const ZOOM_OUT = 'Zoom out'
 
 const onCentre = fn()
-const onKiosk = fn()
-const onAbout = fn()
+const onZoomIn = fn()
+const onZoomOut = fn()
 
-/** The three items of the Default menu, with `disabled` on "Kiosk mode" when asked. */
-const items = ({ kioskDisabled = false } = {}) => (
+/**
+ * The three items of the Default menu, each with its 16 px icon, drawn for `icon.size.400`, or
+ * with none when `icons` is false, for a menu whose other rows have none, so every label starts
+ * at one edge; with `disabled` on "Zoom in" when asked.
+ */
+const items = ({ zoomInDisabled = false, icons = true } = {}) => (
   <>
-    <MenuItem startIcon={glyph(locate)} onClick={onCentre}>
+    <MenuItem startIcon={icons && glyph(locate)} onClick={onCentre}>
       {CENTRE}
     </MenuItem>
-    <MenuItem startIcon={glyph(monitor)} onClick={onKiosk} disabled={kioskDisabled}>
-      {KIOSK}
+    <MenuItem startIcon={icons && glyph(plus)} onClick={onZoomIn} disabled={zoomInDisabled}>
+      {ZOOM_IN}
     </MenuItem>
-    <MenuItem startIcon={glyph(info)} onClick={onAbout}>
-      {ABOUT}
+    <MenuItem startIcon={icons && glyph(minus)} onClick={onZoomOut}>
+      {ZOOM_OUT}
     </MenuItem>
   </>
 )
@@ -122,7 +126,7 @@ export const Default: Story = {
     await step('the popup is a menu named by its trigger, and every word is known', async () => {
       const popup = await menu()
       await expect(trigger).toHaveAttribute('aria-haspopup', 'menu')
-      expectOwnedStrings(popup.outerHTML, 'en', [CENTRE, KIOSK, ABOUT])
+      expectOwnedStrings(popup.outerHTML, 'en', [CENTRE, ZOOM_IN, ZOOM_OUT])
     })
     await step('Escape closes it, and focus returns to the trigger', async () => {
       await userEvent.keyboard('{Escape}')
@@ -144,21 +148,21 @@ export const Default: Story = {
     await step('the arrow keys, Home, End and typeahead move between the items', async () => {
       const popup = await menu()
       await userEvent.keyboard('{ArrowDown}')
-      await waitFor(() => expect(row(popup, KIOSK)).toHaveFocus())
+      await waitFor(() => expect(row(popup, ZOOM_IN)).toHaveFocus())
       await userEvent.keyboard('{End}')
-      await waitFor(() => expect(row(popup, ABOUT)).toHaveFocus())
+      await waitFor(() => expect(row(popup, ZOOM_OUT)).toHaveFocus())
       await userEvent.keyboard('{ArrowDown}')
       await waitFor(() => expect(row(popup, CENTRE)).toHaveFocus())
       await userEvent.keyboard('{Home}')
       await waitFor(() => expect(row(popup, CENTRE)).toHaveFocus())
-      await userEvent.keyboard('a')
-      await waitFor(() => expect(row(popup, ABOUT)).toHaveFocus())
+      await userEvent.keyboard('z')
+      await waitFor(() => expect(row(popup, ZOOM_IN)).toHaveFocus())
     })
     await step('Enter runs the item once, closes the menu, and focus returns', async () => {
-      onAbout.mockClear()
+      onZoomIn.mockClear()
       await userEvent.keyboard('{Enter}')
       await closed('menu')
-      await expect(onAbout).toHaveBeenCalledTimes(1)
+      await expect(onZoomIn).toHaveBeenCalledTimes(1)
       await expect(args.onClose).toHaveBeenLastCalledWith(
         expect.anything(),
         'item-press',
@@ -179,19 +183,19 @@ export const Default: Story = {
           expect(found).not.toBeNull()
           return found as HTMLElement
         })
-        expectOwnedStrings(da.outerHTML, 'da', [CENTRE, KIOSK, ABOUT])
+        expectOwnedStrings(da.outerHTML, 'da', [CENTRE, ZOOM_IN, ZOOM_OUT])
       })
       await closed('menu')
     })
   },
 }
 
-/** The row at rest: one item, "Kiosk mode", in an open menu. */
+/** The row at rest: one item, "Zoom in", in an open menu. */
 export const ItemDefault: Story = {
   args: {
     children: (
-      <MenuItem startIcon={glyph(monitor)} onClick={onKiosk}>
-        {KIOSK}
+      <MenuItem startIcon={glyph(plus)} onClick={onZoomIn}>
+        {ZOOM_IN}
       </MenuItem>
     ),
   },
@@ -202,14 +206,14 @@ export const ItemHighlighted: Story = {
   play: async ({ canvasElement, step }) => {
     const trigger = triggerIn(canvasElement)
     await step('the pointer highlights and focuses the row, with the hover fill', async () => {
-      const kiosk = row(await menu(), KIOSK)
-      await userEvent.hover(kiosk)
-      await waitFor(() => expect(kiosk).toHaveAttribute('data-highlighted'))
-      await waitFor(() => expect(kiosk).toHaveFocus())
-      await expect(getComputedStyle(kiosk).backgroundColor).toBe(
+      const zoomIn = row(await menu(), ZOOM_IN)
+      await userEvent.hover(zoomIn)
+      await waitFor(() => expect(zoomIn).toHaveAttribute('data-highlighted'))
+      await waitFor(() => expect(zoomIn).toHaveFocus())
+      await expect(getComputedStyle(zoomIn).backgroundColor).toBe(
         colour('--perron-color-surface-hover'),
       )
-      await userEvent.unhover(kiosk)
+      await userEvent.unhover(zoomIn)
     })
     await step('opened from the keys, the first row has the focus ring', async () => {
       const popup = await reopenFromKeys(trigger)
@@ -224,34 +228,34 @@ export const ItemHighlighted: Story = {
   },
 }
 
-/** The row disabled: the Default menu with "Kiosk mode" disabled. */
+/** The row disabled: the Default menu with "Zoom in" disabled. */
 export const ItemDisabled: Story = {
-  args: { children: items({ kioskDisabled: true }) },
+  args: { children: items({ zoomInDisabled: true }) },
   play: async ({ canvasElement, step }) => {
     const trigger = triggerIn(canvasElement)
     await step('the item is announced as dimmed and drawn in the tertiary colour', async () => {
-      const kiosk = row(await menu(), KIOSK)
-      await expect(kiosk).toHaveAttribute('aria-disabled', 'true')
-      await expect(kiosk).toHaveAttribute('data-disabled')
-      await expect(getComputedStyle(kiosk).color).toBe(colour('--perron-color-text-tertiary'))
+      const zoomIn = row(await menu(), ZOOM_IN)
+      await expect(zoomIn).toHaveAttribute('aria-disabled', 'true')
+      await expect(zoomIn).toHaveAttribute('data-disabled')
+      await expect(getComputedStyle(zoomIn).color).toBe(colour('--perron-color-text-tertiary'))
     })
     await step('ArrowDown still reaches it, and Enter and a click do nothing', async () => {
-      onKiosk.mockClear()
+      onZoomIn.mockClear()
       const popup = await reopenFromKeys(trigger)
       await waitFor(() => expect(row(popup, CENTRE)).toHaveFocus())
       await userEvent.keyboard('{ArrowDown}')
-      const kiosk = row(popup, KIOSK)
-      await waitFor(() => expect(kiosk).toHaveFocus())
+      const zoomIn = row(popup, ZOOM_IN)
+      await waitFor(() => expect(zoomIn).toHaveFocus())
       await userEvent.keyboard('{Enter}')
-      await userEvent.click(kiosk)
+      await userEvent.click(zoomIn)
       await frames(2)
-      await expect(onKiosk).not.toHaveBeenCalled()
+      await expect(onZoomIn).not.toHaveBeenCalled()
       await expect(screen.getByRole('menu', { name: TRIGGER })).toBeInTheDocument()
     })
     await step('hovered or highlighted, it lays no fill', async () => {
-      const kiosk = row(await menu(), KIOSK)
-      await expect(onHover(kiosk, 'background-color')).toBe('')
-      await expect(getComputedStyle(kiosk).backgroundColor).toBe('rgba(0, 0, 0, 0)')
+      const zoomIn = row(await menu(), ZOOM_IN)
+      await expect(onHover(zoomIn, 'background-color')).toBe('')
+      await expect(getComputedStyle(zoomIn).backgroundColor).toBe('rgba(0, 0, 0, 0)')
     })
     await step('Escape closes it, and focus returns to the trigger', () => closeAtRest(trigger))
   },
@@ -302,9 +306,9 @@ export const ItemSelected: Story = {
 }
 
 const MAP = 'Map'
-const HELP = 'Help'
+const ZOOM = 'Zoom'
 
-/** Two groups, "Map" and "Help", a separator between them. */
+/** Two groups, "Map" and "Zoom", a separator between them. */
 export const Groups: Story = {
   args: {
     children: (
@@ -313,14 +317,14 @@ export const Groups: Story = {
           <MenuItem startIcon={glyph(locate)} onClick={onCentre}>
             {CENTRE}
           </MenuItem>
-          <MenuItem startIcon={glyph(monitor)} onClick={onKiosk}>
-            {KIOSK}
-          </MenuItem>
         </MenuGroup>
         <MenuSeparator />
-        <MenuGroup label={HELP}>
-          <MenuItem startIcon={glyph(info)} onClick={onAbout}>
-            {ABOUT}
+        <MenuGroup label={ZOOM}>
+          <MenuItem startIcon={glyph(plus)} onClick={onZoomIn}>
+            {ZOOM_IN}
+          </MenuItem>
+          <MenuItem startIcon={glyph(minus)} onClick={onZoomOut}>
+            {ZOOM_OUT}
           </MenuItem>
         </MenuGroup>
       </>
@@ -331,7 +335,7 @@ export const Groups: Story = {
     await step('each group is named by its label, which is hidden itself', async () => {
       const popup = await menu()
       await expect(within(popup).getByRole('group', { name: MAP })).toBeInTheDocument()
-      await expect(within(popup).getByRole('group', { name: HELP })).toBeInTheDocument()
+      await expect(within(popup).getByRole('group', { name: ZOOM })).toBeInTheDocument()
       for (const label of popup.querySelectorAll('.pn-MenuGroup-groupLabel'))
         await expect(label).toHaveAttribute('aria-hidden', 'true')
       await expect(within(popup).getByRole('separator')).toBeInTheDocument()
@@ -340,9 +344,9 @@ export const Groups: Story = {
       const popup = await reopenFromKeys(trigger)
       await waitFor(() => expect(row(popup, CENTRE)).toHaveFocus())
       await userEvent.keyboard('{ArrowDown}')
-      await waitFor(() => expect(row(popup, KIOSK)).toHaveFocus())
+      await waitFor(() => expect(row(popup, ZOOM_IN)).toHaveFocus())
       await userEvent.keyboard('{ArrowDown}')
-      await waitFor(() => expect(row(popup, ABOUT)).toHaveFocus())
+      await waitFor(() => expect(row(popup, ZOOM_OUT)).toHaveFocus())
     })
     await step('Escape closes it, and focus returns to the trigger', () => closeAtRest(trigger))
   },
@@ -446,12 +450,15 @@ export const RadioItems: Story = {
 const LANGUAGE = 'Language'
 const ENGLISH = 'English'
 
-/** The Default items, a separator, and a submenu "Language" of four languages. */
+/**
+ * The Default items, a separator, and a submenu "Language" of four languages, its radio group
+ * named by the row. No row has a start icon, as "Language" has none.
+ */
 export const Submenu: Story = {
   args: {
     children: (
       <>
-        {items()}
+        {items({ icons: false })}
         <MenuSeparator />
         <MenuSubmenu label={LANGUAGE}>
           <MenuRadioGroup defaultValue="en">
@@ -502,12 +509,12 @@ export const Submenu: Story = {
 const DATA_SOURCES = 'Data sources'
 const PRIVACY = 'Privacy'
 
-/** Two links after "About and help". */
+/** Two links after "Zoom out". No row has a start icon, as the links have none. */
 export const LinkItems: Story = {
   args: {
     children: (
       <>
-        {items()}
+        {items({ icons: false })}
         <MenuLinkItem href="#data-sources">{DATA_SOURCES}</MenuLinkItem>
         <MenuLinkItem href="#privacy">{PRIVACY}</MenuLinkItem>
       </>
@@ -530,7 +537,7 @@ export const LinkItems: Story = {
       await userEvent.keyboard('{ArrowUp}')
       await waitFor(() => expect(row(popup, DATA_SOURCES)).toHaveFocus())
       await userEvent.keyboard('{ArrowUp}')
-      await waitFor(() => expect(row(popup, ABOUT)).toHaveFocus())
+      await waitFor(() => expect(row(popup, ZOOM_OUT)).toHaveFocus())
     })
     await step('Escape closes it, and focus returns to the trigger', () => closeAtRest(trigger))
   },
@@ -577,7 +584,7 @@ export const LongLabel: Story = {
   args: {
     children: (
       <MenuGroup label={LONG_GROUP}>
-        <MenuItem startIcon={glyph(info)} onClick={onAbout}>
+        <MenuItem startIcon={glyph(locate)} onClick={onCentre}>
           {LONG_ITEM}
         </MenuItem>
       </MenuGroup>
@@ -595,6 +602,13 @@ export const LongLabel: Story = {
       const item = row(popup, LONG_ITEM)
       const label = item.querySelector('.pn-MenuItem-label') as HTMLElement
       await expect(lines(label)).toBeGreaterThan(1.5)
+      const glyphBox = (
+        item.querySelector('.pn-MenuItem-startIcon') as HTMLElement
+      ).getBoundingClientRect()
+      const firstLine =
+        label.getBoundingClientRect().top +
+        Number.parseFloat(getComputedStyle(label).lineHeight) / 2
+      await expect(Math.abs((glyphBox.top + glyphBox.bottom) / 2 - firstLine)).toBeLessThan(1)
       await expect(item.scrollWidth).toBeLessThanOrEqual(item.clientWidth)
       await expect(popup.scrollWidth).toBeLessThanOrEqual(popup.clientWidth)
     })

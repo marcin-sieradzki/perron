@@ -40,7 +40,8 @@
 }
 
 /* The five rows share one look (CR-7): SearchField's row metrics, the Rows family's fills. The
-   states change colours only, never the box. */
+   states change colours only, never the box. Their marks sit at the top, each centred on the
+   label's first line below, so a wrapped label keeps them level with its first words (CR-11). */
 .pn-MenuItem,
 .pn-MenuLinkItem,
 .pn-MenuCheckboxItem,
@@ -48,7 +49,7 @@
 .pn-MenuSubmenu {
   box-sizing: border-box;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--perron-space-200);
   min-block-size: var(--perron-size-target-min);
   padding-block: var(--perron-space-150);
@@ -133,6 +134,7 @@
   --perron-icon-size: var(--perron-icon-size-400);
   display: inline-flex;
   flex: none;
+  margin-block: calc((1lh - var(--perron-icon-size-400)) / 2);
 }
 
 /* The label grows between the row's start and its end mark; a long word breaks (CR-11). */
@@ -146,16 +148,26 @@
   overflow-wrap: anywhere;
 }
 
-/* The box and the tick at the row's end, keeping their size (CR-8, CR-11). */
+/* The box and the tick at the row's end, keeping their size, centred on the label's first line
+   (CR-8, CR-11). */
 .pn-MenuCheckboxItem-checkboxItemIndicator,
 .pn-MenuRadioItem-radioItemIndicator {
   flex: none;
   margin-inline-start: auto;
 }
 
+.pn-MenuCheckboxItem-checkboxItemIndicator {
+  margin-block: calc((1lh - var(--perron-size-checkbox)) / 2);
+}
+
+.pn-MenuRadioItem-radioItemIndicator {
+  margin-block: calc((1lh - var(--perron-icon-size-325)) / 2);
+}
+
 .pn-MenuSubmenu-chevron {
   --perron-icon-size: var(--perron-icon-size-400);
   flex: none;
+  margin-block: calc((1lh - var(--perron-icon-size-400)) / 2);
   color: var(--perron-color-text-secondary);
 }
 
@@ -169,7 +181,7 @@
   flex-direction: column;
 }
 
-/* A group's name, lined up with its rows' labels, parted from the group before. */
+/* A group's name, starting where its rows' content starts, parted from the group before. */
 .pn-MenuGroup-groupLabel,
 .pn-MenuRadioGroup-groupLabel {
   padding-block-start: var(--perron-space-200);

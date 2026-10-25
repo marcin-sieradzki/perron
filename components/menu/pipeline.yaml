@@ -9,19 +9,19 @@ stages:
     started: 2026-10-25T05:51:06.415Z
     ended: 2026-10-25T05:54:23.935Z
   build:
-    runs: 2
-    failing: review round 1 found 2 P1 and 6 P2 (components/menu/review.md)
+    runs: 3
+    status: done
+    started: 2026-10-25T06:24:51.035Z
+    begun: 9265c9d671d92b95395e092193203af5f6547e7443fcd0925b85f783ddff068e
+    spec: 4622a377d9b8ccbe028715d0435f42079af64ff9863ec8ccbc57258862279cd0
+    ended: 2026-10-25T06:33:21.496Z
   review:
-    status: failed
-    started: 2026-10-25T06:14:00.566Z
     rounds: 1
+    sentBack: 1
     findings:
       p1: 2
       p2: 6
       p3: 6
-    sentBack: 1
-    ended: 2026-10-25T06:24:45.026Z
-    failing: review round 1 found 2 P1 and 6 P2 (components/menu/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T05:50:01.967Z
@@ -51,3 +51,9 @@ notes:
   - stage: build
     at: 2026-10-25T06:13:52.649Z
     direction: "When a row's label wraps, as in LongLabel, the rows' align-items: center puts the start icon midway between the two lines instead of level with the first; lining it up with the first line would need a Tokens line in the spec."
+  - stage: build
+    at: 2026-10-25T06:33:21.497Z
+    direction: With start icons in the rows, a group label (padding-inline space.200) lines up with the icons, not the labels; the spec now says so, but the maintainer may prefer the label indented to the row labels' edge when its rows carry icons.
+  - stage: build
+    at: 2026-10-25T06:33:21.497Z
+    direction: The stories' example menu moved from the top bar's real items (Kiosk mode, About and help) to map actions (Centre the map, Zoom in, Zoom out), since monitor and info have no 16 px drawings; the real menu gets its icons back once they do, or once menu start icons may be icon.size.450.
