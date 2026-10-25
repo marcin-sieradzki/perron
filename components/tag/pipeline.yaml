@@ -1,0 +1,29 @@
+# Written by npm run factory; never by hand.
+component: Tag
+layer: component
+deferred:
+  at: 2026-10-25T00:21:26.584Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-25T00:26:16.348Z
+    ended: 2026-10-25T00:27:45.131Z
+  build:
+    runs: 2
+    status: done
+    started: 2026-10-25T00:39:09.395Z
+    ended: 2026-10-25T00:43:41.011Z
+  review:
+    rounds: 2
+    sentBack: 1
+    findings:
+      p1: 0
+      p2: 0
+      p3: 3
+    status: done
+    started: 2026-10-25T00:43:45.771Z
+    ended: 2026-10-25T00:48:31.738Z
+  docs:
+    status: done
+    started: 2026-10-25T00:48:42.130Z
+    ended: 2026-10-25T00:50:40.032Z
