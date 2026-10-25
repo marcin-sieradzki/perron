@@ -678,7 +678,7 @@
     "name": "Progress",
     "layer": "component",
     "category": "Feedback",
-    "status": "building",
+    "status": "stable",
     "baseUiParts": [
       "Progress.Root",
       "Progress.Label",

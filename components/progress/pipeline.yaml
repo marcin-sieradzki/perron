@@ -25,6 +25,10 @@ stages:
     status: done
     started: 2026-10-25T07:53:03.918Z
     ended: 2026-10-25T07:56:50.027Z
+  docs:
+    status: done
+    started: 2026-10-25T07:56:58.791Z
+    ended: 2026-10-25T07:59:41.838Z
 notes:
   - stage: brief
     at: 2026-10-25T07:27:51.488Z
@@ -68,3 +72,9 @@ notes:
   - stage: build
     at: 2026-10-25T07:53:00.547Z
     direction: "Review P3-1 stands: on easing.standard the sweep slows as it leaves at the inline end, so the track looks empty for a moment; a linear sweep or a loop easing token is the maintainer's call."
+  - stage: docs
+    at: 2026-10-25T07:59:41.838Z
+    direction: label's JSDoc ends with 'Required' while value's starts with 'Required.', repeating the props table's marker two different ways; dropping the word from both, or placing it alike, would make them agree.
+  - stage: docs
+    at: 2026-10-25T07:59:41.838Z
+    direction: slotProps.value's JSDoc tip (its function children writes the figure from (formattedValue, value)) never reaches the docs page, whose slots table shows a fixed 'Props for the value part.'; it lives only in the spec and editor hover text.
