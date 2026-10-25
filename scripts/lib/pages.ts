@@ -57,6 +57,7 @@ export const PAGES = [
   'docs/components/attribution.md',
   'docs/components/map-controls.md',
   'docs/components/tabs.md',
+  'docs/components/alert-dialog.md',
   'docs/components/dialog.md',
   'docs/components/map-tooltip.md',
   'docs/components/popover.md',

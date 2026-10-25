@@ -1,0 +1,72 @@
+/* AlertDialog, from docs/components/alert-dialog.md: the Panels family's glass panel in the middle
+   of the viewport, over the scrim, as Dialog's. It opens and closes at once, with no transition
+   (CR-10), and never redefines a token: it portals to <body> (CR-8). */
+
+/* A press on it does nothing: Base UI's alert dialog has no outside-press dismissal. */
+.pn-AlertDialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--perron-z-index-dialog);
+  background-color: var(--perron-color-scrim);
+}
+
+/* The popup: after the backdrop in the portal, so it paints on top at the same z-index; centred,
+   and scrolling as a whole when its content is taller than the viewport (CR-8). */
+.pn-AlertDialog {
+  position: fixed;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  z-index: var(--perron-z-index-dialog);
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-300);
+  /* perron-allow(component-css): Dialog's measure, which the Panels family shares and only this CSS and Dialog's read (spec, Tokens) */
+  inline-size: min(440px, calc(100% - 2 * var(--perron-size-panel-gap)));
+  max-block-size: calc(100% - 2 * var(--perron-size-panel-gap));
+  margin: 0;
+  padding: var(--perron-space-600);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  translate: -50% -50%;
+  /* an edge as a border, kept by forced colours when they drop the glass and the shadow (CR-11) */
+  border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+  border-radius: var(--perron-radius-xl);
+  background-color: var(--perron-color-surface-overlay);
+  backdrop-filter: blur(var(--perron-effect-glass-blur))
+    saturate(var(--perron-effect-glass-saturate));
+  box-shadow: var(--perron-shadow-panel);
+  color: var(--perron-color-text-primary);
+}
+
+/* In right-to-left text the inline start is the right edge, so the popup moves back the other way. */
+.pn-AlertDialog:dir(rtl) {
+  translate: 50% -50%;
+}
+
+/* No margins of their own, the popup's gap spacing the parts; long words wrap (CR-9). */
+.pn-AlertDialog-title {
+  margin: 0;
+  font: var(--perron-typography-heading-lg);
+  letter-spacing: var(--perron-typography-heading-lg-tracking);
+  color: var(--perron-color-text-primary);
+  overflow-wrap: anywhere;
+}
+
+.pn-AlertDialog-description {
+  margin: 0;
+  font: var(--perron-typography-body-sm);
+  letter-spacing: var(--perron-typography-body-sm-tracking);
+  color: var(--perron-color-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+/* A further space.300 from the description, the space between blocks; Cancel first, the action
+   last, at the end, wrapping when their words don't fit side by side. Only the layout: the
+   buttons are the caller's, with Button's look and states (CR-7, CR-9). */
+.pn-AlertDialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--perron-space-200);
+  margin-block-start: var(--perron-space-300);
+}
