@@ -257,7 +257,8 @@ export const lines = (element: Element) =>
 export const fill = (token: string) => resolve('backgroundColor', `var(--perron-${token})`)
 
 /**
- * A colour token, by its custom property's name without `--perron-`, as an edge renders it, to
+ * A colour token, by its custom property's full name without `--perron-`, such as
+ * `'color-border-control'`, as an edge renders it, to
  * compare with an element's `border-color` or `outline-color`.
  */
 export const edge = (token: string) => resolve('borderColor', `var(--perron-${token})`)

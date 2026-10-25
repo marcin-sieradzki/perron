@@ -169,14 +169,26 @@ function storyProblems(root: string, e: Entry): Problem[] {
   ]
 }
 
-/** A key the spec's Keyboard table names, as a `play` test presses it with `userEvent`. */
+/** Keys a `play` test can press in a way of their own, besides `userEvent.keyboard`'s syntax. */
 const PRESSES: Record<string, RegExp> = {
-  Tab: /userEvent\.tab\(|\{Tab\}|\[Tab\]/,
-  'Shift+Tab': /tab\(\s*\{\s*shift:\s*true|\{Shift>\}\{Tab\}|\{\/?Shift\}/,
-  Space: /\[Space\]|\{ \}|keyboard\(\s*(['"`]) \1/,
+  Tab: /userEvent\.tab\(/,
+  'Shift+Tab': /tab\(\s*\{\s*shift:\s*true/,
+  Space: /\{ \}|keyboard\(\s*(['"`]) \1/,
 }
-const pressOf = (key: string) =>
-  PRESSES[key] ?? new RegExp(`[{[]${key.replace(/[+]/g, '\\+')}[}\\]]`)
+
+const escaped = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+/**
+ * Whether `stories` presses `key`, a key of the spec's Keyboard table: in `userEvent.keyboard`'s
+ * syntax, `{Enter}` or `[Enter]`, released `{/Shift}`, held `{Shift>}` or repeated `{ArrowUp>3/}`;
+ * in a way of the key's own, such as `userEvent.tab()`; or, for a combination such as
+ * `Shift+ArrowUp`, each of its keys.
+ */
+export function pressed(stories: string, key: string): boolean {
+  if (PRESSES[key]?.test(stories)) return true
+  if (key.includes('+')) return key.split('+').every((part) => pressed(stories, part))
+  return new RegExp(`[{[]/?${escaped(key)}(>[^}\\]]*)?[}\\]]`).test(stories)
+}
 
 /**
  * Each key of the spec's Keyboard table, a code span starting a row of its first table, such as
@@ -216,11 +228,11 @@ function keyboardProblems(root: string, e: Entry): Problem[] {
   if (!existsSync(spec) || !existsSync(file)) return []
   const stories = readFileSync(file, 'utf8')
   return keyboardRows(readFileSync(spec, 'utf8'))
-    .filter(({ key }) => !pressOf(key).test(stories))
+    .filter(({ key }) => !pressed(stories, key))
     .map(({ key, line }) => ({
       file: specPage(e),
       line,
-      message: `${specPage(e)}'s Keyboard table names \`${key}\`, which no play test in ${storiesFile(e)} presses: give the story that shows it a step that presses it and checks what it does`,
+      message: `${specPage(e)}'s Keyboard table names \`${key}\`, which no play test in ${storiesFile(e)} presses: give the story that shows it a step that presses it, as {Enter}, [Space], {Shift>}{ArrowUp}{/Shift}, {ArrowUp>3/} or userEvent.tab(), and checks what it does`,
     }))
 }
 
