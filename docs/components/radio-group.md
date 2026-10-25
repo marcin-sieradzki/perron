@@ -53,6 +53,8 @@ The group comes in one look, a vertical column, with no `variant`, `size`, `colo
 
 The group passes Base UI's `form` and `inputRef` through unchanged and declares `name`, `disabled`, `readOnly` and `required` with Perron's own descriptions: the contract's [State and events](README.md#state-and-events) asks a radio group for `name`, and names `required` and `readOnly` among its booleans. A radio passes Base UI's `nativeButton`, `readOnly`, `required` and `inputRef` through; a radio's own `readOnly` or `required` adds to the group's, which Base UI joins with an "or". No label-override props: the component owns no strings.
 
+RadioGroup takes no `description` and no `error`: a hint or an error reaches the group through Base UI's `Field.Root` round it, with `Field.Description` and `Field.Error` and no `Field.Label`, as Anatomy says, never through Perron's [Field](field.md), whose required label would rename the group and every radio in it (CR-12); either prop can join later without a break.
+
 `Radio` takes no description line of its own: `children` is phrasing content in one span, so a caller who needs a second line can set one in it, and a `description` prop, with its own typography and `aria-describedby`, can join later without a break.
 
 ### RadioGroup
@@ -209,6 +211,7 @@ Rules for this component alone, numbered so the build and the review can cite th
 - **CR-9.** A read-only radio looks as at rest, checked or not, with no hover or pressed layer and the default cursor; the label or the Field's description says why it can't change. An invalid one turns its indicator's edge `color.status.danger`, checked or not, and a disabled one keeps its disabled edge even inside an invalid Field.
 - **CR-10.** Focus uses the ring `perron.css` draws on the radio's `:focus-visible`, which follows its `radius.md`; the component draws no ring of its own and never removes the outline. Nothing in RadioGroup or Radio sets `overflow`, so a ring drawn `focus.offset` outside a radio is never cut at the group's edge.
 - **CR-11.** In `@media (forced-colors: active)`, where the browser drops the fills, the indicator sets `forced-color-adjust: none` and draws its states in system colours: unchecked, a `Canvas` circle with a `ButtonText` edge; checked, a `Highlight` circle and edge with a `HighlightText` dot; disabled, a `GrayText` edge unchecked, and a `GrayText` circle and edge with a `Canvas` dot checked. So the checked state, which would otherwise vanish into the forced `Canvas`, still shows, as [Accessibility](../foundations/accessibility.md#what-a-person-checks) asks.
+- **CR-12.** RadioGroup declares no `description` or `error` prop and renders no Field of its own, Perron's or Base UI's. A hint or an error comes from a Base UI `Field.Root` the caller puts round the group, with `Field.Description` and `Field.Error` and no `Field.Label`, as the `Invalid` story does: inside it the group keeps its legend as its name and each radio its own words, while Base UI joins the description and the error into each radio's `aria-describedby` and marks each radio invalid. No story and no example wraps the group in Perron's [Field](field.md), whose `Field.Label` would become the `aria-labelledby` of the group and of every radio.
 
 ## Stories
 
