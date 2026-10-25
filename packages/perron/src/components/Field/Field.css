@@ -1,0 +1,52 @@
+/* Field, from docs/components/field.md: the label, the description and the error round a control,
+   which draws its own box. Field keeps its rest look in every state Base UI marks but disabled, and
+   shows invalid only by mounting the error, which appears and goes at once (CR-9). */
+
+/* The parts stacked space.100 apart; the root takes its container's width (CR-7). */
+.pn-Field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-100);
+  min-inline-size: 0;
+}
+
+.pn-Field-label {
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+  color: var(--perron-color-text-primary);
+  overflow-wrap: anywhere;
+}
+
+/* The mark takes the label's type, which it inherits, in the description's quieter colour. */
+.pn-Field-optional {
+  color: var(--perron-color-text-secondary);
+}
+
+.pn-Field-description {
+  margin: 0;
+  font: var(--perron-typography-body-sm);
+  letter-spacing: var(--perron-typography-body-sm-tracking);
+  color: var(--perron-color-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.pn-Field-error {
+  font: var(--perron-typography-body-sm);
+  letter-spacing: var(--perron-typography-body-sm-tracking);
+  color: var(--perron-color-text-danger);
+  overflow-wrap: anywhere;
+}
+
+/* Base UI's list of several messages, its bullets inside the field's edge. */
+.pn-Field-error ul {
+  margin: 0;
+  padding-inline-start: var(--perron-space-400);
+}
+
+/* Disabled is a colour, never an opacity; a caller's error stays shown on a disabled field. */
+.pn-Field-label[data-disabled],
+.pn-Field-label[data-disabled] .pn-Field-optional,
+.pn-Field-description[data-disabled],
+.pn-Field-error[data-disabled] {
+  color: var(--perron-color-text-tertiary);
+}

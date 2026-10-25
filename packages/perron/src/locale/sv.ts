@@ -39,4 +39,5 @@ export const sv: OwnedStrings = {
   metersUnit: 'm',
   kilometersUnit: 'km',
   noMatches: 'Inga träffar',
+  optional: '(valfritt)',
 }
