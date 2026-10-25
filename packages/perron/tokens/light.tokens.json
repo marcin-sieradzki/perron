@@ -253,6 +253,10 @@
         "planned": {
           "$value": "{color.text.secondary}",
           "$description": "Icon and label for planned works"
+        },
+        "notice": {
+          "$value": "{color.text.secondary}",
+          "$description": "Icon and label for service notices"
         }
       }
     },

@@ -67,15 +67,16 @@ A delay is known only for live, ageing and estimated vehicles. Timetable only an
 
 ## Kinds of disruption
 
-Each kind of disruption has its colour, always with its icon and its name.
+Each kind of disruption has its colour, always with its icon and its name. A service notice is the neutral kind, for a message whose fields don't say which of the other four it is: it is shown as received, never guessed into one of them.
 
 <!-- tokens: color.transit.severity.* -->
 
-| Token                              | Light                            | Dark                             | Use                              |
-| ---------------------------------- | -------------------------------- | -------------------------------- | -------------------------------- |
-| `color.transit.severity.delay`     | `#AD3600` (color.text.danger)    | `#FF8655` (color.text.danger)    | Icon and label for delays        |
-| `color.transit.severity.data`      | `#47535A` (color.text.secondary) | `#A2ADB1` (color.text.secondary) | Data feed problems               |
-| `color.transit.severity.diversion` | `#2351AF` (color.text.info)      | `#7FA6FF` (color.text.info)      | Icon and label for diversions    |
-| `color.transit.severity.planned`   | `#47535A` (color.text.secondary) | `#A2ADB1` (color.text.secondary) | Icon and label for planned works |
+| Token                              | Light                            | Dark                             | Use                                |
+| ---------------------------------- | -------------------------------- | -------------------------------- | ---------------------------------- |
+| `color.transit.severity.delay`     | `#AD3600` (color.text.danger)    | `#FF8655` (color.text.danger)    | Icon and label for delays          |
+| `color.transit.severity.data`      | `#47535A` (color.text.secondary) | `#A2ADB1` (color.text.secondary) | Data feed problems                 |
+| `color.transit.severity.diversion` | `#2351AF` (color.text.info)      | `#7FA6FF` (color.text.info)      | Icon and label for diversions      |
+| `color.transit.severity.planned`   | `#47535A` (color.text.secondary) | `#A2ADB1` (color.text.secondary) | Icon and label for planned works   |
+| `color.transit.severity.notice`    | `#47535A` (color.text.secondary) | `#A2ADB1` (color.text.secondary) | Icon and label for service notices |
 
 <!-- /tokens -->

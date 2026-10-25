@@ -177,6 +177,7 @@ Delay and disruption colours point at the status text colours. When each is used
 | `color.transit.severity.data`      | `#47535A` (color.text.secondary) | `#A2ADB1` (color.text.secondary) | Data feed problems                         |
 | `color.transit.severity.diversion` | `#2351AF` (color.text.info)      | `#7FA6FF` (color.text.info)      | Icon and label for diversions              |
 | `color.transit.severity.planned`   | `#47535A` (color.text.secondary) | `#A2ADB1` (color.text.secondary) | Icon and label for planned works           |
+| `color.transit.severity.notice`    | `#47535A` (color.text.secondary) | `#A2ADB1` (color.text.secondary) | Icon and label for service notices         |
 
 <!-- /tokens -->
 

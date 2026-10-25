@@ -80,7 +80,7 @@
     },
     "info-circle": {
       "size": "icon.size.325",
-      "use": "An info message"
+      "use": "An info message, and a service notice"
     }
   }
 }

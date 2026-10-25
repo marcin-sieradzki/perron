@@ -35,8 +35,36 @@ export const en = {
   plannedWorks: 'Planned works',
   /** The name of the data kind of disruption: a problem with the real-time data feed. */
   dataFeedProblems: 'Data feed problems',
+  /**
+   * The name of the neutral kind of disruption: a service notice whose message does not say which of
+   * the other kinds it is.
+   */
+  serviceNotice: 'Service notice',
   /** A disruption: said just before the list of lines it affects, heard by screen readers only. */
   affectedLines: 'Affected lines',
+  /**
+   * A disruption: the stops it affects, as in "Affects Nørreport and Kongens Nytorv". `{stops}` is
+   * the stop names, joined by `stopListEnd` or `moreStops`.
+   */
+  affectsStops: 'Affects {stops}',
+  /**
+   * A list of stops: joins the last stop to those before it, as in "Nørreport, Kongens Nytorv and
+   * Christianshavn". `{stops}` is the names before the last, comma-separated; `{stop}` the last.
+   */
+  stopListEnd: '{stops} and {stop}',
+  /**
+   * A list of stops cut short: the names shown, then how many more, as in "Nørreport, Kongens
+   * Nytorv and 3 more". `{count}` is always 2 or more.
+   */
+  moreStops: '{stops} and {count} more',
+  /** A disruption on a stretch of line: its two ends, as in "Between Hellerup and Klampenborg". */
+  betweenStops: 'Between {from} and {to}',
+  /** A disruption's time: when it starts, with no end given, as in "From 08:03". */
+  fromTime: 'From {time}',
+  /** A disruption's time: when it ends, with no start given, as in "Until 22:00". */
+  untilTime: 'Until {time}',
+  /** A disruption's time: its start and its end, as in "24 to 25 October" or "06:00 to 22:00". */
+  timeRange: '{from} to {to}',
   /** A line with no delays or disruptions. */
   runningNormally: 'Running normally',
   /** A link that shows a vehicle, stop or line on the map. */

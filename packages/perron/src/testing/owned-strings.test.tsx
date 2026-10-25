@@ -69,6 +69,31 @@ describe('expectOwnedStrings', () => {
     expect(() => expectOwnedStrings(english, 'da', ['Afgange'])).toThrow(/"Previous page"/)
   })
 
+  it("passes a template filled with the caller's strings and figures, in its own locale only", () => {
+    const filled = (locale: Locale, text: string) => render(locale, <p>{text}</p>)
+    const stops = ['Nørreport', 'Kongens Nytorv']
+    expect(() =>
+      expectOwnedStrings(filled('en', 'Affects Nørreport, Kongens Nytorv and 3 more'), 'en', stops),
+    ).not.toThrow()
+    expect(() =>
+      expectOwnedStrings(filled('da', 'Berører Nørreport, Kongens Nytorv og 3 andre'), 'da', stops),
+    ).not.toThrow()
+    expect(() => expectOwnedStrings(filled('en', 'From 08:03'), 'en')).not.toThrow()
+    // English joining words in a Danish render, a word the caller never gave, and a template
+    // word inside another word are each strays
+    expect(() =>
+      expectOwnedStrings(filled('da', 'Berører Nørreport and 3 more'), 'da', stops),
+    ).toThrow(/"Berører Nørreport and 3 more"/)
+    expect(() => expectOwnedStrings(filled('en', 'Affects Valby'), 'en', stops)).toThrow(
+      /"Affects Valby"/,
+    )
+    expect(() => expectOwnedStrings(filled('en', 'Fromage 08:03'), 'en')).toThrow(/"Fromage/)
+    // caller's strings alone, with no template word, are a run the caller must give whole
+    expect(() =>
+      expectOwnedStrings(filled('en', 'Nørreport, Kongens Nytorv'), 'en', stops),
+    ).toThrow(/"Nørreport, Kongens Nytorv"/)
+  })
+
   it('skips the "x" Base UI appends to a meter, and nothing that only looks like it', () => {
     const meter = render(
       'da',
