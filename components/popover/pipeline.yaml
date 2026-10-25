@@ -24,6 +24,10 @@ stages:
     status: done
     started: 2026-10-25T05:45:40.896Z
     ended: 2026-10-25T05:53:25.112Z
+  docs:
+    status: done
+    started: 2026-10-25T05:53:41.815Z
+    ended: 2026-10-25T05:56:40.539Z
 notes:
   - stage: brief
     at: 2026-10-25T05:21:08.076Z
@@ -62,3 +66,6 @@ notes:
   - stage: build
     at: 2026-10-25T05:40:02.728Z
     questions: "1. (Base UI parts and Props, the positioner's defaults; popover.md:47, CR-14, the LongContent row; review P2-1) When the popup has no room above or below its trigger, keep Base UI's default fallbackAxisSide 'end' (moves to the side), or default collisionAvoidance to { fallbackAxisSide: 'none' } so it stays above or below and scrolls, with slotProps.positioner.collisionAvoidance still overriding it? Recommended: default to 'none', as Base UI's DROPDOWN_COLLISION_AVOIDANCE does for popups capped at --available-height."
+  - stage: docs
+    at: 2026-10-25T05:56:40.539Z
+    direction: "The props table shows onOpen and onClose with the local alias ChangeDetails, which callers cannot import, where the spec writes Popover.Root.ChangeEventDetails. Dialog, Checkbox, MapTooltip, Sheet, SearchField and Tooltip use the same alias, so it is a library-wide choice: exporting the alias or writing Base UI's name in full would make the docgen type readable."

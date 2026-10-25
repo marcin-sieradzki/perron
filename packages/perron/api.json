@@ -1548,6 +1548,91 @@
       }
     }
   },
+  "Popover": {
+    "extends": [
+      "Omit< BasePopover.Popup.Props, 'children' | 'title' | 'className' | 'style' | 'ref' >"
+    ],
+    "props": {
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "closeLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "defaultOpen": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "description": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "onClose": {
+        "optional": true,
+        "type": [
+          "(event: Event, reason: PopoverRootChangeEventReason, details: PopoverRootChangeEventDetails) => void"
+        ]
+      },
+      "onOpen": {
+        "optional": true,
+        "type": [
+          "(event: Event, details: PopoverRootChangeEventDetails) => void"
+        ]
+      },
+      "open": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ trigger?: Props<unknown> | undefined; portal?: PopoverPortalProps | undefined; positioner?: PopoverPositionerProps | undefined; title?: PopoverTitleProps | undefined; description?: PopoverDescriptionProps | undefined; close?: Omit<PopoverCloseProps, \"disabled\"> | undefined; }"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "title": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "trigger": {
+        "optional": true,
+        "type": [
+          "ReactElement<unknown, JSXElementConstructor<any> | string>"
+        ]
+      }
+    }
+  },
   "ScaleBar": {
     "extends": [
       "Omit<ComponentPropsWithRef<'div'>, 'children'>"

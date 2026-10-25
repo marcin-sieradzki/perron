@@ -587,7 +587,7 @@
     "name": "Popover",
     "layer": "component",
     "category": "Overlays",
-    "status": "building",
+    "status": "stable",
     "baseUiParts": [
       "Popover.Root",
       "Popover.Trigger",
