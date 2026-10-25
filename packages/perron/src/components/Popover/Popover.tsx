@@ -13,8 +13,6 @@ import { positionerOffsets } from '../../internal/tokens.ts'
 import { CloseButton } from '../../parts/CloseButton/CloseButton.tsx'
 import './Popover.css'
 
-type ChangeDetails = BasePopover.Root.ChangeEventDetails
-
 // CR-7: the popup flips between below and above its trigger, never to its side, and scrolls inside
 // --available-height when neither has room for it, as Base UI's menus and select lists do
 const COLLISION_AVOIDANCE: BasePopover.Positioner.Props['collisionAvoidance'] = {
@@ -57,7 +55,7 @@ export interface PopoverProps extends Omit<
    * Called when the popover asks to open, from its trigger. `details` is Base UI's, with its
    * `reason` and `cancel()`.
    */
-  onOpen?: (event: Event, details: ChangeDetails) => void
+  onOpen?: (event: Event, details: BasePopover.Root.ChangeEventDetails) => void
   /**
    * Called when the popover asks to close: `reason` is `'escape-key'`, `'outside-press'`,
    * `'close-press'`, `'focus-out'` or another of Base UI's reasons, and `details.cancel()` keeps it
@@ -66,7 +64,7 @@ export interface PopoverProps extends Omit<
   onClose?: (
     event: Event,
     reason: BasePopover.Root.ChangeEventReason,
-    details: ChangeDetails,
+    details: BasePopover.Root.ChangeEventDetails,
   ) => void
   /**
    * Overrides "Close", the close button's name.
@@ -122,7 +120,7 @@ export function Popover({
   const defaults = positionerOffsets()
 
   // CR-4: Base UI's one handler becomes MUI's two
-  const handleOpenChange = (next: boolean, details: ChangeDetails) => {
+  const handleOpenChange = (next: boolean, details: BasePopover.Root.ChangeEventDetails) => {
     if (next) onOpen?.(details.event, details)
     else onClose?.(details.event, details.reason, details)
   }
@@ -155,7 +153,7 @@ export function Popover({
         />
       ) : null}
       <BasePopover.Portal
-        {...mergeProps<typeof BasePopover.Portal>(slotProps?.portal, undefined)}
+        {...slotProps?.portal}
         className={withClass('pn-Popover-portal', slotProps?.portal?.className)}
       >
         <BasePopover.Positioner
@@ -175,7 +173,7 @@ export function Popover({
           >
             <div className="pn-Popover-header">
               <BasePopover.Title
-                {...mergeProps<typeof BasePopover.Title>(slotProps?.title, undefined)}
+                {...slotProps?.title}
                 className={withClass('pn-Popover-title', slotProps?.title?.className)}
               >
                 {title}
@@ -189,7 +187,7 @@ export function Popover({
             </div>
             {given(description) ? (
               <BasePopover.Description
-                {...mergeProps<typeof BasePopover.Description>(slotProps?.description, undefined)}
+                {...slotProps?.description}
                 className={withClass('pn-Popover-description', slotProps?.description?.className)}
               >
                 {description}
