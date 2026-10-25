@@ -193,6 +193,17 @@
   letter-spacing: var(--perron-typography-label-sm-tracking);
 }
 
+/* a state's dot leads its word, and the word keeps its own width beside it */
+.home-fact-name:has(.pn-VehicleDot) {
+  inline-size: calc(
+    var(--perron-space-800) * 3 + var(--perron-space-200) * 2 + var(--perron-icon-size-325)
+  );
+}
+
+.home-fact-name .pn-VehicleDot {
+  margin-inline-end: var(--perron-space-200);
+}
+
 .home-fact-text {
   min-inline-size: 0;
   font: var(--perron-typography-caption);
@@ -209,6 +220,15 @@
 
 .home-row-wide {
   gap: var(--perron-space-300) var(--perron-space-600);
+}
+
+/* a state's dot beside its word, at the size of a panel title */
+.home-state {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--perron-space-200);
+  font: var(--perron-typography-heading-sm);
+  letter-spacing: var(--perron-typography-heading-sm-tracking);
 }
 
 .home-badges {

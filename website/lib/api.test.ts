@@ -12,6 +12,11 @@ describe('readApi', () => {
   it("gives Button's props with their types", () => {
     const button = readComponentApi('Button')!
     expect(button.props.variant).toEqual({ optional: true, type: ['"outline"', '"solid"'] })
-    expect(readComponentApi('VehicleDot')).toBeUndefined()
+  })
+
+  it('gives nothing for an entry in design or a name the registry lacks', () => {
+    const designing = readEntries().filter((x) => x.status === 'designing')
+    expect(designing.filter((e) => readComponentApi(e.name)).map((e) => e.name)).toEqual([])
+    expect(readComponentApi('NoSuchComponent')).toBeUndefined()
   })
 })

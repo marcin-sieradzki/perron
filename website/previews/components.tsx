@@ -63,12 +63,16 @@ import {
   ToolbarGroup,
   ToolbarSeparator,
   Tooltip,
+  VehicleDot,
   type StationIconProps,
+  type VehicleDotProps,
 } from '@/components/perron'
 import { PackageIcon } from '@/components/site/PackageIcon.tsx'
 import type { Preview, PreviewProps, Previews } from './index.ts'
 import { AlertDialogPreview } from './components/AlertDialogPreview.tsx'
 import { MapTooltipPreview } from './components/MapTooltipPreview.tsx'
+import { ToastPreview } from './components/ToastPreview.tsx'
+import { dictionaries } from '../../packages/perron/src/locale/index.ts'
 import './components/previews.css'
 
 /** A preview that draws `Component` with `defaults`, then the caller's props over them. */
@@ -97,6 +101,24 @@ const STOP_ON: Record<string, string> = {
   h: 'Østerport',
   bus: 'Nørrebros Runddel',
   regional: 'Høje Taastrup',
+}
+
+const en = dictionaries.en
+
+/** Each data state's word, the dot's own name in English, written beside it as its spec asks. */
+const STATE_WORD: Record<NonNullable<VehicleDotProps['variant']>, string> = {
+  live: en.live,
+  ageing: en.ageing,
+  estimated: en.estimated,
+  'timetable-only': en.timetableOnly,
+  'no-signal': en.noSignal,
+}
+
+/** The type role of the text each VehicleDot size sits beside, as its spec's Sizes story sets it. */
+const DOT_TEXT: Record<NonNullable<VehicleDotProps['size']>, string> = {
+  small: 'perron-typography-caption',
+  medium: 'perron-typography-label',
+  large: 'perron-typography-heading-md',
 }
 
 /**
@@ -135,6 +157,16 @@ export const componentPreviews: Previews = {
       <span className="preview-row perron-typography-label">
         <StationIcon variant="outlined" {...props} />
         <span>{line ? STOP_ON[line] : 'Nørreport'}</span>
+      </span>
+    )
+  }),
+  // the dot beside its state's word, so the dot is hidden and the state is heard once
+  VehicleDot: framed((props) => {
+    const { variant = 'live', size = 'medium' } = props as Partial<VehicleDotProps>
+    return (
+      <span className={`preview-row ${DOT_TEXT[size]}`}>
+        <VehicleDot line="m1" aria-hidden {...props} />
+        <span>{STATE_WORD[variant]}</span>
       </span>
     )
   }),
@@ -386,6 +418,8 @@ export const componentPreviews: Previews = {
     ),
   }),
   Progress: drawn(Progress, { label: 'Exporting the report', value: 9, max: 20 }),
+  // a toast floats in the layout's region, so it previews as an overlay does: its trigger, closed
+  Toast: (props) => <ToastPreview {...props} />,
 
   // Navigation
   Tabs: drawn(Tabs, {

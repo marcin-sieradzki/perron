@@ -5,9 +5,9 @@
 import NextLink from 'next/link'
 import type { CSSProperties, ReactNode } from 'react'
 import { LineBadge, type LineBadgeProps } from '@/components/perron'
+import { dotsDrawn, StateDot, stateVariant } from '@/components/site/StateDot.tsx'
 import type { FoundationPage } from '@/lib/foundations.ts'
 import { firstTable } from '@/lib/markdown.ts'
-import { entryByName } from '@/lib/registry.ts'
 import { cssVar } from '@/lib/tokens.ts'
 import {
   contrastSegments,
@@ -497,23 +497,21 @@ const proseBullets = (page: FoundationPage) =>
       .matchAll(/^- (.+)$/gm),
   ].map((m) => m[1])
 
-/** The entry that draws each state's dot. Until it is stable, the tile names the states in words. */
-const DOT = 'VehicleDot'
-
 function DataStatesTile({ page }: { page: FoundationPage }) {
   const { rows } = firstTable(proseOf(page))
-  const dot = entryByName(DOT)
   // with no dots drawn, the page's rule about writing the words beside them would read oddly here
-  const caption =
-    dot && dot.status !== 'stable'
-      ? `Each state's dot shape comes with \`${DOT}\`, still in design.`
-      : firstSentence(proseBullets(page)[0] ?? '')
+  const caption = dotsDrawn()
+    ? firstSentence(proseBullets(page)[0] ?? '')
+    : "Each state's dot shape comes with `VehicleDot`, still in design."
   return (
     <Tile page={page} glass caption={caption}>
       <span className="fd-states">
         {rows.map((r) => (
           <span key={r.State} className="fd-state">
-            <span className="fd-state-name">{r.State}</span>
+            <span className="fd-state-name">
+              <StateDot variant={stateVariant(r.State)} line="m3" />
+              {r.State}
+            </span>
             <span className="fd-state-means">{r.Means}</span>
           </span>
         ))}

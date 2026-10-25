@@ -1,7 +1,7 @@
 // Three still columns of glass panels over the map, each holding shipped components at work, with
 // links to their pages. Sample data reads as Mylder writes it (docs/content-design.md); figures
-// about Perron itself come from the loaders. VehicleDot and DepartureRow are still designing, so
-// the data states are listed in words without their dots, and the stop shows no departures.
+// about Perron itself come from the loaders. Each data state's VehicleDot sits beside its words;
+// DepartureRow is still designing, so the stop shows no departures.
 import NextLink from 'next/link'
 import type { ReactNode } from 'react'
 import {
@@ -24,6 +24,7 @@ import {
 } from '@/components/perron'
 import { DetailHeader, DisruptionCard, StopTimeline } from '@/components/perron/patterns'
 import { PackageIcon } from '@/components/site/PackageIcon.tsx'
+import { dotsDrawn, StateDot, stateVariant } from '@/components/site/StateDot.tsx'
 import { siteRoute } from '@/lib/routes.ts'
 import { DATA_STATES_PAGE, routeOf, type HomeFigures } from './figures.ts'
 
@@ -125,12 +126,19 @@ export function LiveColumns({ figures }: { figures: HomeFigures }) {
           <ul className="home-facts">
             {figures.dataStates.map((s) => (
               <li key={s.name} className="home-fact">
-                <span className="home-fact-name">{s.name}</span>
+                <span className="home-fact-name">
+                  <StateDot variant={stateVariant(s.name)} line="m3" size="small" />
+                  {s.name}
+                </span>
                 <span className="home-fact-text">{s.means}</span>
               </li>
             ))}
           </ul>
-          <Shows names={['Data states foundation']} />
+          <Shows
+            names={
+              dotsDrawn() ? ['VehicleDot', 'Data states foundation'] : ['Data states foundation']
+            }
+          />
         </Panel>
 
         <Panel label="The registry">

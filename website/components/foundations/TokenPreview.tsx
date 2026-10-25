@@ -3,6 +3,7 @@
 // Storybook's TokenTable draws, in the site's own markup.
 import type { CSSProperties } from 'react'
 import { PackageIcon } from '@/components/site/PackageIcon.tsx'
+import { dotsDrawn, StateDot, type StateVariant } from '@/components/site/StateDot.tsx'
 import { cssVar, readToken } from '@/lib/tokens.ts'
 import { cssValue, leafOf, valueOf, type TokenRow } from './data.ts'
 import { MotionDemo } from './MotionDemo.tsx'
@@ -14,6 +15,15 @@ const LONG = 160
 
 /** The sample a family or weight is set in. */
 const SAMPLE = 'Aa Øresund 08:14'
+
+/** The data state whose dot a `vehicle-dot` token shapes: the inset shapes every dot, as live shows. */
+const DOT_OF: Record<string, StateVariant> = {
+  inset: 'live',
+  ageing: 'ageing',
+  estimated: 'estimated',
+  timetable: 'timetable-only',
+  'no-signal': 'no-signal',
+}
 
 /** A cubic-bezier curve drawn on a unit square, from the token's own four numbers. */
 function EasingCurve({ css }: { css: string }) {
@@ -31,6 +41,9 @@ function EasingCurve({ css }: { css: string }) {
 export function TokenPreview({ row }: { row: TokenRow }) {
   const value = cssValue(row)
   const { name } = row
+  // a vehicle dot's geometry, drawn by VehicleDot itself in the state it shapes
+  const dot = name.startsWith('vehicle-dot.') ? DOT_OF[name.split('.')[1]] : undefined
+  if (dot && dotsDrawn()) return <StateDot variant={dot} line="m3" />
   switch (row.type) {
     case 'color':
       return <span className="fd-chip-swatch" style={{ '--fd-fill': value } as Style} />

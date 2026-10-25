@@ -1,9 +1,9 @@
 // "What the system is made of": one tile per part of Perron, each drawn from the repo's data and
-// linking to its section. VehicleDot is still designing, so the data states tile names the states
-// in words rather than drawing their dots.
+// linking to its section. The data states tile draws each state's VehicleDot beside its word.
 import NextLink from 'next/link'
 import type { ReactNode } from 'react'
 import { LineBadge, type LineBadgeProps, Tag } from '@/components/perron'
+import { dotsDrawn, StateDot, stateVariant } from '@/components/site/StateDot.tsx'
 import { siteRoute } from '@/lib/routes.ts'
 import { DATA_STATES_PAGE, type HomeFigures } from './figures.ts'
 
@@ -53,11 +53,22 @@ export function MadeOf({ figures }: { figures: HomeFigures }) {
           title="Honest about every vehicle"
           body={`Every vehicle shows one of ${states.length} data states, each with its own shape, so none is drawn without how sure we are about where it is. The words for each state are the same on every screen.`}
         >
-          <span className="home-row">
-            {states.map((s) => (
-              <Tag key={s.name}>{s.name}</Tag>
-            ))}
-          </span>
+          {dotsDrawn() ? (
+            <span className="home-row home-row-wide">
+              {states.map((s) => (
+                <span key={s.name} className="home-state">
+                  <StateDot variant={stateVariant(s.name)} line="a" size="large" />
+                  {s.name}
+                </span>
+              ))}
+            </span>
+          ) : (
+            <span className="home-row">
+              {states.map((s) => (
+                <Tag key={s.name}>{s.name}</Tag>
+              ))}
+            </span>
+          )}
         </Tile>
         <Tile
           href={`${siteRoute('docs/foundations/semantic-colours.md') ?? '/foundations'}#line-colours`}

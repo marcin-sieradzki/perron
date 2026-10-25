@@ -892,7 +892,7 @@
   letter-spacing: var(--perron-typography-data-tracking);
 }
 
-/* Data states, in words: VehicleDot, which draws their shapes, is still in design */
+/* Data states: each state's VehicleDot leads its word */
 
 .fd-states {
   display: flex;
@@ -911,6 +911,15 @@
   inline-size: calc(var(--fd-unit) * 3 + var(--perron-space-200));
   font: var(--perron-typography-label);
   letter-spacing: var(--perron-typography-label-tracking);
+}
+
+/* the word keeps its own width beside its dot */
+.fd-state-name:has(.pn-VehicleDot) {
+  inline-size: calc(var(--fd-unit) * 3 + var(--perron-space-200) * 2 + var(--perron-icon-size-400));
+}
+
+.fd-state-name .pn-VehicleDot {
+  margin-inline-end: var(--perron-space-200);
 }
 
 .fd-state-means {
@@ -1200,7 +1209,7 @@
   stroke-width: var(--perron-border-width-050);
 }
 
-/* a dash as a dashed stroke, in ink: drawn as a ring it would be a vehicle dot, VehicleDot's to draw */
+/* a dash no VehicleDot draws, as a dashed stroke in ink: drawn as a ring it would be a vehicle dot */
 .fd-dash {
   flex: none;
   inline-size: var(--fd-unit);

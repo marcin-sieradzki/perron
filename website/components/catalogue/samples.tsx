@@ -39,6 +39,14 @@ const SAMPLES: Record<string, PreviewProps[]> = {
     { line: 'bus', children: '5C' },
   ],
   StationIcon: [{ line: 'm4' }, { variant: 'filled', line: 'a' }, {}],
+  // the five data states, in the order every legend lists them
+  VehicleDot: [
+    { variant: 'live' },
+    { variant: 'ageing' },
+    { variant: 'estimated' },
+    { variant: 'timetable-only' },
+    { variant: 'no-signal' },
+  ],
   Delay: [{ minutes: 4 }, { minutes: 0 }, { minutes: -1 }],
   SeverityLabel: [{ severity: 'delay' }, { severity: 'diversion' }, { severity: 'planned' }],
   // three segments, as the card has room for
@@ -106,7 +114,15 @@ const SAMPLES: Record<string, PreviewProps[]> = {
 export const cardSamples = (name: string): PreviewProps[] => SAMPLES[name] ?? [{}]
 
 /** Cards whose samples stack: a few marks or lines, one under the other. */
-const COLUMN = new Set(['Button', 'Delay', 'SeverityLabel', 'StationIcon', 'Text', 'FilterChip'])
+const COLUMN = new Set([
+  'Button',
+  'Delay',
+  'SeverityLabel',
+  'StationIcon',
+  'Text',
+  'FilterChip',
+  'VehicleDot',
+])
 
 /** Cards whose preview takes the card's width, as it takes its container's in a panel. */
 const FILL = new Set([
