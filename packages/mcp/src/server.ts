@@ -1,7 +1,7 @@
 // The Perron MCP server: tokens and docs from the data @mylder/perron ships, and the API reference
 // of the Base UI and MUI versions installed in the project. The data comes from the project's own
 // @mylder/perron when it has one, so the answers match what the app ships, else from the server's.
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync, readFileSync, statSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { join } from 'node:path'
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
@@ -12,12 +12,27 @@ import { packageDir } from './resolve.ts'
 import { listTokens, type TokenEntry } from './tokens.ts'
 
 const require = createRequire(import.meta.url)
+const read = new Map<string, { mtime: number; value: unknown }>()
+/** The project's data file `name`, read again whenever it changes, so a rebuilt token shows. */
 function data<T>(name: string, cwd: string): T {
   const project = packageDir('@mylder/perron', cwd)
   const own = project && join(project, 'data', `${name}.json`)
   const file = own && existsSync(own) ? own : require.resolve(`@mylder/perron/data/${name}.json`)
-  return JSON.parse(readFileSync(file, 'utf8'))
+  const mtime = statSync(file).mtimeMs
+  const cached = read.get(file)
+  if (cached?.mtime === mtime) return cached.value as T
+  const value = JSON.parse(readFileSync(file, 'utf8')) as T
+  read.set(file, { mtime, value })
+  return value
 }
+
+/** The input every tool takes: the project to read, for an agent working in another checkout. */
+const dirInput = z
+  .string()
+  .optional()
+  .describe(
+    "The project folder to read from, as an absolute path, such as the git worktree you work in; the server's own project by default",
+  )
 const version = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'))
   .version as string
 
@@ -30,8 +45,9 @@ export interface Options {
 }
 
 export function createServer({ cwd = process.cwd() }: Options = {}) {
-  const tokens = data<TokenEntry[]>('tokens', cwd)
-  const pages = data<DocPage[]>('docs', cwd)
+  // read once now, so a project without the data fails at start rather than at the first call
+  data<TokenEntry[]>('tokens', cwd)
+  data<DocPage[]>('docs', cwd)
   const server = new McpServer({ name: 'perron', version })
 
   server.registerTool(
@@ -49,11 +65,12 @@ export function createServer({ cwd = process.cwd() }: Options = {}) {
           .string()
           .optional()
           .describe('A DTCG type: color, dimension, duration, typography…'),
+        dir: dirInput,
       },
       annotations: { readOnlyHint: true },
     },
-    ({ query, type }) => {
-      const found = listTokens(tokens, query, type)
+    ({ query, type, dir }) => {
+      const found = listTokens(data<TokenEntry[]>('tokens', dir ?? cwd), query, type)
       // Unfiltered, the whole set is names only: the values of 245 tokens would flood the context.
       if (!query && !type)
         return text(
@@ -82,11 +99,12 @@ export function createServer({ cwd = process.cwd() }: Options = {}) {
           .max(10)
           .optional()
           .describe('Sections to return, 3 by default'),
+        dir: dirInput,
       },
       annotations: { readOnlyHint: true },
     },
-    ({ query, limit }) => {
-      const hits = searchDocs(pages, query, limit)
+    ({ query, limit, dir }) => {
+      const hits = searchDocs(data<DocPage[]>('docs', dir ?? cwd), query, limit)
       if (!hits.length) return error(`No section matches "${query}".`)
       return text(hits.map((h) => `From ${h.page} (${h.path}):\n\n${h.text}`).join('\n\n---\n\n'))
     },
@@ -102,11 +120,12 @@ export function createServer({ cwd = process.cwd() }: Options = {}) {
         library: z.enum(Object.keys(LIBRARIES) as [Library, ...Library[]]),
         component: z.string().describe('The component, such as `Select` or `TextField`'),
         part: z.string().optional().describe('One part, such as `Positioner`'),
+        dir: dirInput,
       },
       annotations: { readOnlyHint: true },
     },
-    ({ library, component, part }) => {
-      const result = getReference(cwd, library, component, part)
+    ({ library, component, part, dir }) => {
+      const result = getReference(dir ?? cwd, library, component, part)
       return 'error' in result ? error(result.error) : text(result.text)
     },
   )

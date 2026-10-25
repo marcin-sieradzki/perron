@@ -40,6 +40,7 @@ export const PAGES = [
   'docs/components/stat.md',
   'docs/components/tag.md',
   'docs/components/text.md',
+  'docs/components/alert.md',
   'docs/components/empty-state.md',
   'docs/components/progress.md',
   'docs/components/checkbox.md',

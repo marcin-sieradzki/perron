@@ -62,9 +62,10 @@ One row per part, state and property. States are the contract's design states: r
 
 From the Base UI reference for each part. "From" says who does it: Base UI, or Perron.
 
-| Key       | Does     | From        |
-| --------- | -------- | ----------- |
-| `<Enter>` | `<what>` | `<Base UI>` |
+| Key       | Does                                                                              | From        |
+| --------- | --------------------------------------------------------------------------------- | ----------- |
+| `<Enter>` | `<what>`                                                                          | `<Base UI>` |
+| `<Tab>`   | `<what no play test can reproduce>`. Untested: `<why user-event cannot drive it>` | `<Base UI>` |
 
 | Element  | Role     | Accessible name from                           | States announced     |
 | -------- | -------- | ---------------------------------------------- | -------------------- |
