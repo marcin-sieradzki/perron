@@ -301,7 +301,8 @@ export function VehicleTable({
       <thead className="pn-VehicleTable-head">
         <tr className="pn-VehicleTable-headerRow">
           {columns.map(([column, key]) => {
-            // CR-10: the sorted column says its direction; with a handler, every other says none
+            // CR-10: the sorted column alone says its direction, as the APG's sortable table does;
+            // the others carry no aria-sort, their buttons telling the ear they sort
             const direction = sort?.column === column ? sort.direction : undefined
             const label = (
               <>
@@ -317,7 +318,7 @@ export function VehicleTable({
                 data-column={column}
                 data-direction={direction}
                 data-sortable={onSortChange ? '' : undefined}
-                aria-sort={direction ? ARIA_SORT[direction] : onSortChange ? 'none' : undefined}
+                aria-sort={direction ? ARIA_SORT[direction] : undefined}
               >
                 {onSortChange ? (
                   <button

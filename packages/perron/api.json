@@ -736,6 +736,12 @@
           "string"
         ]
       },
+      "everyRangeLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
       "interval": {
         "optional": true,
         "type": [
@@ -812,12 +818,6 @@
         "optional": true,
         "type": [
           "ReactNode"
-        ]
-      },
-      "rangeToLabel": {
-        "optional": true,
-        "type": [
-          "string"
         ]
       },
       "slotProps": {
@@ -3353,7 +3353,7 @@
           "string"
         ]
       },
-      "expectedLabel": {
+      "expectedTimeLabel": {
         "optional": true,
         "type": [
           "string"

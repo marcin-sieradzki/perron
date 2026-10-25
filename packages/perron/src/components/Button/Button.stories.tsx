@@ -328,8 +328,9 @@ const ON: Record<'neutral' | 'brand', Look> = {
 }
 
 /**
- * A toggle off ("Follow") or on ("Following"): `aria-pressed` says the state and the label names
- * the button, `data-selected` is set only while on, and `data-variant` keeps the prop's value. It
+ * A toggle off or on, "Follow" either way: `aria-pressed` says the state and the label, which
+ * stays the same, names the button, `data-selected` is set only while on, and `data-variant` keeps
+ * the prop's value. It
  * draws `look` at rest, takes its hover fill and its press fill a step past it, written after the
  * hover rule, and keeps its edge on both. A click fires `onClick` once and leaves the state alone,
  * since the caller keeps it.
@@ -337,10 +338,9 @@ const ON: Record<'neutral' | 'brand', Look> = {
 const toggles =
   (on: boolean, look: Look): Play =>
   async ({ args, canvasElement }) => {
-    const name = on ? 'Following' : 'Follow'
-    const button = within(canvasElement).getByRole('button', { name, pressed: on })
+    const button = within(canvasElement).getByRole('button', { name: 'Follow', pressed: on })
     await expect(button).toHaveAttribute('aria-pressed', String(on))
-    await expect(button).toHaveAccessibleName(name)
+    await expect(button).toHaveAccessibleName('Follow')
     await expect(button.hasAttribute('data-selected')).toBe(on)
     await expect(button).toHaveAttribute('data-variant', args.variant)
     const style = getComputedStyle(button)
@@ -363,7 +363,7 @@ const toggles =
     button.blur()
   }
 
-/** The args of a toggle story: medium, labelled as Follow is, with `onClick` spied on. */
+/** The args of a toggle story: medium, labelled "Follow" off and on, with `onClick` spied on. */
 const toggle = (
   variant: 'solid' | 'outline',
   color: 'neutral' | 'brand',
@@ -373,7 +373,7 @@ const toggle = (
   color,
   size: 'medium',
   selected: on,
-  children: on ? 'Following' : 'Follow',
+  children: 'Follow',
   onClick: fn(),
 })
 
@@ -386,7 +386,10 @@ export const SolidNeutralToggleOn: Story = {
   play: async (context) => {
     await toggles(true, ON.neutral)(context)
     // CR-16: in forced colours, a toggle that is on keeps a Highlight fill, so it still shows on
-    const button = within(context.canvasElement).getByRole('button', { name: 'Following' })
+    const button = within(context.canvasElement).getByRole('button', {
+      name: 'Follow',
+      pressed: true,
+    })
     const sheet = forcedColourSheet('pn-Button')
     document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet]
     try {
@@ -435,14 +438,14 @@ export const ToggleDisabled: Story = {
         Follow
       </Button>
       <Button {...args} selected>
-        Following
+        Follow
       </Button>
     </div>
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     const off = canvas.getByRole('button', { name: 'Follow', pressed: false })
-    const on = canvas.getByRole('button', { name: 'Following', pressed: true })
+    const on = canvas.getByRole('button', { name: 'Follow', pressed: true })
     for (const button of [off, on]) {
       await expect(button).toBeDisabled()
       await expect(getComputedStyle(button).color).toBe(resolve('color', v('color-text-tertiary')))
@@ -460,19 +463,22 @@ export const ToggleDisabled: Story = {
   },
 }
 
-/** Follow as a screen keeps it: the caller's state, flipped in `onClick`, and the label with it. */
+/**
+ * Follow as a screen keeps it: the caller's state, flipped in `onClick`. The label stays "Follow",
+ * since `aria-pressed` says the state and a label that changed too would say it twice.
+ */
 function Follow(props: ButtonProps) {
   const [following, setFollowing] = useState(false)
   return (
     <Button {...props} selected={following} onClick={() => setFollowing((was) => !was)}>
-      {following ? 'Following' : 'Follow'}
+      Follow
     </Button>
   )
 }
 
 /**
  * A Follow toggle the story keeps the state of: a click, Enter and Space each turn it on or off,
- * and `aria-pressed` and the accessible name change with it.
+ * and `aria-pressed` changes with it while the accessible name stays "Follow".
  */
 export const FollowToggle: Story = {
   args: { variant: 'outline', color: 'neutral', size: 'medium' },
@@ -482,14 +488,14 @@ export const FollowToggle: Story = {
     const button = canvas.getByRole('button', { name: 'Follow', pressed: false })
     await userEvent.click(button)
     await expect(button).toHaveAttribute('aria-pressed', 'true')
-    await expect(button).toHaveAccessibleName('Following')
+    await expect(button).toHaveAccessibleName('Follow')
     await expect(button).toHaveFocus()
     await userEvent.keyboard(' ')
     await expect(button).toHaveAttribute('aria-pressed', 'false')
     await expect(button).toHaveAccessibleName('Follow')
     await userEvent.keyboard('{Enter}')
     await expect(button).toHaveAttribute('aria-pressed', 'true')
-    await expect(button).toHaveAccessibleName('Following')
+    await expect(button).toHaveAccessibleName('Follow')
     button.blur()
   },
 }

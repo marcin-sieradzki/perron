@@ -35,42 +35,78 @@ function wordsIn(markup: string): string[] {
 const LETTER = /\p{L}/u
 
 /**
- * The words of the dictionary's templates, the owned strings with `{name}` placeholders, cut at
- * each placeholder and trimmed: "Affects {stops}" gives "Affects", "{stops} and {count} more" gives
- * "and" and "more".
+ * The dictionary's templates, the owned strings with `{name}` placeholders, each as its literal
+ * parts in order, cut at each placeholder: "Affects {stops}" gives "Affects " and "", "{stops} and
+ * {count} more" gives "", " and " and " more". A template whose parts hold no letter fills with
+ * anything and says nothing of its own, so it is left out.
  */
-const templateWords = (strings: string[]) =>
+const templatesIn = (strings: string[]) =>
   strings
     .filter((s) => /\{\w+\}/.test(s))
-    .flatMap((s) => s.split(/\{\w+\}/))
-    .map((s) => s.trim())
-    .filter((s) => LETTER.test(s))
+    .map((s) => s.replace(/\s+/g, ' ').split(/\{\w+\}/))
+    .filter((parts) => parts.some((part) => LETTER.test(part)))
 
 /**
- * Whether a text run is a filled template: it reads, from start to end, as the dictionary's
- * template words, the caller's strings and characters that are no letter (digits, spaces,
- * punctuation), each word standing whole, with at least one template word among them. So
- * "Affects Nørreport and 3 more" passes when the caller gave "Nørreport", and "and" from another
- * locale fails.
+ * Whether a text run is one template filled, as `interpolate` fills it: it reads, from start to
+ * end, as one template's literal parts in their order, with each placeholder between them holding
+ * something. A placeholder holds the caller's strings, each standing whole, another template
+ * filled, and characters that are no letter (digits, spaces, punctuation), with at least one that
+ * is no space. So "Affects Nørreport and 3 more" passes when the caller gave "Nørreport", while
+ * "to 3", a template with a placeholder left empty, "more Nørreport Affects", its words out of
+ * order, and "and" from another locale fail.
  */
-function filled(run: string, words: string[], callerStrings: string[]) {
-  const pieces = [...new Set([...words, ...callerStrings.filter((s) => LETTER.test(s))])]
-  const isWord = new Set(words)
+function filled(run: string, templates: string[][], callerStrings: string[]) {
+  const callers = [...new Set(callerStrings.filter((s) => LETTER.test(s)))]
   const whole = (at: number, end: number) =>
     !LETTER.test(run[at - 1] ?? '') && !LETTER.test(run[end] ?? '')
-  // reached[i]: 0 not reached, 1 reached, 2 reached with a template word on the way
-  const reached = new Array<number>(run.length + 1).fill(0)
-  reached[0] = 1
-  for (let at = 0; at < run.length; at++) {
-    if (!reached[at]) continue
-    if (!LETTER.test(run[at])) reached[at + 1] = Math.max(reached[at + 1], reached[at])
-    for (const piece of pieces) {
-      const end = at + piece.length
-      if (run.startsWith(piece, at) && whole(at, end))
-        reached[end] = Math.max(reached[end], isWord.has(piece) ? 2 : reached[at])
-    }
+  // memo of each range: whether it is a template filled, and whether it is a placeholder's
+  // value; a range is marked false before it is worked out, so a loop finds no match
+  const isTemplate = new Map<string, boolean>()
+  const isValue = new Map<string, boolean>()
+  const isPieces = new Map<string, boolean>()
+  const remembered = (memo: Map<string, boolean>, at: number, end: number, work: () => boolean) => {
+    const key = `${at}:${end}`
+    const known = memo.get(key)
+    if (known !== undefined) return known
+    memo.set(key, false)
+    const result = work()
+    memo.set(key, result)
+    return result
   }
-  return reached[run.length] === 2
+  // run[at, end) reads as parts[k], a placeholder's value, parts[k + 1], and so on to the last
+  const fits = (parts: string[], k: number, at: number, end: number): boolean => {
+    const part = parts[k]
+    if (at + part.length > end || !run.startsWith(part, at)) return false
+    const after = at + part.length
+    if (k === parts.length - 1) return after === end
+    for (let next = after + 1; next <= end; next++)
+      if (value(after, next) && fits(parts, k + 1, next, end)) return true
+    return false
+  }
+  const template = (at: number, end: number): boolean =>
+    remembered(
+      isTemplate,
+      at,
+      end,
+      () => whole(at, end) && templates.some((parts) => fits(parts, 0, at, end)),
+    )
+  // run[at, end) is pieces, each a character that is no letter, a caller's string or a template
+  const pieces = (at: number, end: number): boolean =>
+    at === end ||
+    remembered(isPieces, at, end, () => {
+      if (!LETTER.test(run[at]) && pieces(at + 1, end)) return true
+      for (const caller of callers) {
+        const stop = at + caller.length
+        if (stop <= end && run.startsWith(caller, at) && whole(at, stop) && pieces(stop, end))
+          return true
+      }
+      for (let stop = end; stop > at; stop--)
+        if (template(at, stop) && pieces(stop, end)) return true
+      return false
+    })
+  const value = (at: number, end: number): boolean =>
+    remembered(isValue, at, end, () => run.slice(at, end).trim() !== '' && pieces(at, end))
+  return template(0, run.length)
 }
 
 /**
@@ -79,17 +115,18 @@ function filled(run: string, words: string[], callerStrings: string[]) {
  * children or props.
  * Words without a letter, such as "4 / 12" or "—", pass, and so does the "x" in Base UI's visually
  * hidden `span role="presentation"`. An owned string with `{name}` placeholders passes filled with
- * the caller's strings and figures, as `interpolate` fills it.
+ * the caller's strings, figures and other templates, as `interpolate` fills it, each of its own
+ * words in its own order and each placeholder holding something.
  *
  * @example expectOwnedStrings(renderToStaticMarkup(<Pager>Departures</Pager>), 'en', ['Departures'])
  */
 export function expectOwnedStrings(markup: string, locale: Locale, callerStrings: string[] = []) {
   const strings = Object.values(dictionaries[locale])
   const known = new Set([...strings, ...callerStrings])
-  const words = templateWords(strings)
+  const templates = templatesIn(strings)
   const strays = [
     ...new Set(
-      wordsIn(markup).filter((word) => !known.has(word) && !filled(word, words, callerStrings)),
+      wordsIn(markup).filter((word) => !known.has(word) && !filled(word, templates, callerStrings)),
     ),
   ]
   if (strays.length)

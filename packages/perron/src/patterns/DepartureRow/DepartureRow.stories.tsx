@@ -179,8 +179,8 @@ const EVERY_PROP = {
   nowLabel: 'Leaving',
   unknownLabel: 'Not known',
   cancelledLabel: 'Not running',
-  everyLabel: 'Each',
-  rangeToLabel: 'or',
+  everyLabel: 'Each {count} mins',
+  everyRangeLabel: 'Each {from} or {to} mins',
   liveLabel: 'Real-time',
   ageingLabel: 'Older',
   estimatedLabel: 'Guessed',
@@ -631,9 +631,15 @@ export const Interval: Story = {
     await step('an estimated interval takes no "~"', async () => {
       await expect(shows({ variant: 'estimated' }).textContent).toBe('Every 3 to 4 min')
     })
-    await step('everyLabel, rangeToLabel and minutesUnitLabel replace its words', async () => {
-      const found = shows({ everyLabel: 'Each', rangeToLabel: 'or', minutesUnitLabel: 'mins' })
-      await expect(found.textContent).toBe('Each 3 or 4 mins')
+    await step('everyLabel and everyRangeLabel replace its words, filled alike', async () => {
+      const labels = {
+        everyLabel: 'Each {count} mins',
+        everyRangeLabel: 'Each {from} or {to} mins',
+      }
+      await expect(shows(labels).textContent).toBe('Each 3 or 4 mins')
+      await expect(shows({ ...labels, interval: 3 }).textContent).toBe('Each 3 mins')
+      // the template carries its own unit, so minutesUnitLabel leaves the interval alone
+      await expect(shows({ minutesUnitLabel: 'mins' }).textContent).toBe('Every 3 to 4 min')
     })
     await step("slotProps.interval's class joins after the part's own", async () => {
       const found = shows({ slotProps: { interval: { className: 'caller-interval' } } })

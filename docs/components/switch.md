@@ -143,7 +143,7 @@ What axe won't catch, from the contract, each with how this component meets it:
 
 ## Owned strings
 
-The switch shows no "On" or "Off" word, though [Accessibility](../foundations/accessibility.md#rules) asks toggles to say their state in words as well as in looks. That rule is for a toggle whose label is an action and its only word, such as "Follow" and "Following"; a switch's label names the setting and stays the same, Base UI's `role="switch"` says on or off to the ear in every locale with no word of Perron's, and the eye gets the thumb's place as well as the fill, so the state never rests on colour alone. A word beside every switch would also lengthen each settings row in Danish, and the caller can still write one in the label.
+The switch shows no "On" or "Off" word, though [Accessibility](../foundations/accessibility.md#rules) asks toggles to say their state in words as well as in looks. That rule asks for the state once, either in words that change on a plain button, such as "Follow" and "Following", or from the role of a control whose label stays the same; a switch's label names the setting and stays the same, Base UI's `role="switch"` says on or off to the ear in every locale with no word of Perron's, and the eye gets the thumb's place as well as the fill, so the state never rests on colour alone. A word beside every switch would also lengthen each settings row in Danish, and the caller can still write one in the label.
 
 No owned strings: every word comes from the caller, as the label or `aria-label`.
 

@@ -21,6 +21,8 @@ import { VisuallyHidden } from '../../parts/VisuallyHidden/VisuallyHidden.tsx'
 import { classes, given } from '../../internal/nodes.ts'
 import { grouped } from '../../internal/numbers.ts'
 import { interpolate } from '../../internal/strings.ts'
+// the package entry's type, as a pattern imports no file of locale/ (the patterns gate)
+import type { OwnedStrings } from '../../index.ts'
 import './DisruptionCard.css'
 
 /** One line a disruption touches: the line whose colours its badge takes, and its short name. */
@@ -171,9 +173,6 @@ export interface DisruptionCardProps extends Omit<SurfaceProps, 'variant' | 'chi
 const LIST_ITEM = <li />
 const PARAGRAPH = <p />
 const BLOCK = <div />
-
-/** The owned strings in the card's locale, as `useOwnedStrings` gives them. */
-type OwnedStrings = ReturnType<typeof useOwnedStrings>
 
 /** CR-12: a list names this many stops at most, and past it names the first two and counts the rest. */
 const NAMED_STOPS = 3
