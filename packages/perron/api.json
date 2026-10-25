@@ -2599,6 +2599,110 @@
       }
     }
   },
+  "TextArea": {
+    "extends": [
+      "Omit< ComponentPropsWithoutRef<'textarea'>, | 'onChange' | 'value' | 'defaultValue' | 'disabled' | 'children' | 'dangerouslySetInnerHTML' | 'className' | 'style' >",
+      "Pick<BaseField.Control.Props, 'className' | 'style'>"
+    ],
+    "props": {
+      "defaultValue": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "description": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "disabled": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "error": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "hiddenLabel": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "label": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "name": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "onChange": {
+        "optional": true,
+        "type": [
+          "(event: ChangeEvent<HTMLTextAreaElement, Element>) => void"
+        ]
+      },
+      "optional": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "optionalLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "placeholder": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLTextAreaElement>"
+        ]
+      },
+      "required": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "rows": {
+        "optional": true,
+        "type": [
+          "number"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ field?: Omit<FieldRootProps, \"children\" | \"disabled\" | \"name\"> | undefined; label?: FieldLabelProps | undefined; description?: FieldDescriptionProps | undefined; error?: FieldErrorProps | undefined; }"
+        ]
+      },
+      "value": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      }
+    }
+  },
   "TextField": {
     "extends": [
       "Omit< BaseField.Control.Props, 'onValueChange' | 'ref' | 'disabled' | 'children' | 'dangerouslySetInnerHTML' >"
