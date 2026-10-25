@@ -38,10 +38,12 @@ Every icon renders at one of three steps, set with `--perron-icon-size` (one of 
 
 ### Actions
 
-| Icon                                                      | Name     | Grid  | Size                   | Use                                    |
-| --------------------------------------------------------- | -------- | ----- | ---------------------- | -------------------------------------- |
-| <img src="../../packages/perron/icons/search.svg" alt=""> | `search` | 16 px | `icon.size.400`, 16 px | The search field                       |
-| <img src="../../packages/perron/icons/close.svg" alt="">  | `close`  | 16 px | `icon.size.400`, 16 px | Close a panel, a dialog or a highlight |
+| Icon                                                             | Name            | Grid  | Size                   | Use                                    |
+| ---------------------------------------------------------------- | --------------- | ----- | ---------------------- | -------------------------------------- |
+| <img src="../../packages/perron/icons/search.svg" alt="">        | `search`        | 16 px | `icon.size.400`, 16 px | The search field                       |
+| <img src="../../packages/perron/icons/close.svg" alt="">         | `close`         | 16 px | `icon.size.400`, 16 px | Close a panel, a dialog or a highlight |
+| <img src="../../packages/perron/icons/chevron-down.svg" alt="">  | `chevron-down`  | 16 px | `icon.size.400`, 16 px | Open a select's list                   |
+| <img src="../../packages/perron/icons/chevron-right.svg" alt=""> | `chevron-right` | 16 px | `icon.size.400`, 16 px | A menu row that opens a submenu        |
 
 ### App
 
@@ -62,9 +64,9 @@ Every icon renders at one of three steps, set with `--perron-icon-size` (one of 
 
 ### Controls
 
-| Icon                                                    | Name   | Grid  | Size                   | Use                                            |
-| ------------------------------------------------------- | ------ | ----- | ---------------------- | ---------------------------------------------- |
-| <img src="../../packages/perron/icons/tick.svg" alt=""> | `tick` | 14 px | `icon.size.325`, 13 px | A ticked checkbox                              |
-| <img src="../../packages/perron/icons/dash.svg" alt=""> | `dash` | 14 px | `icon.size.325`, 13 px | A checkbox that stands for a set partly ticked |
+| Icon                                                    | Name   | Grid  | Size                   | Use                                                |
+| ------------------------------------------------------- | ------ | ----- | ---------------------- | -------------------------------------------------- |
+| <img src="../../packages/perron/icons/tick.svg" alt=""> | `tick` | 14 px | `icon.size.325`, 13 px | A ticked checkbox, and the chosen option in a list |
+| <img src="../../packages/perron/icons/dash.svg" alt=""> | `dash` | 14 px | `icon.size.325`, 13 px | A checkbox that stands for a set partly ticked     |
 
 <!-- /files -->

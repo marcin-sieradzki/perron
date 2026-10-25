@@ -7,6 +7,8 @@ import { createRef, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import {
+  edge,
+  fill,
   mounted,
   onHover,
   pressedAfterHover,
@@ -34,12 +36,6 @@ const control = (canvasElement: HTMLElement, name = 'Show vehicle trails') =>
 
 /** The thumb inside a switch's root. */
 const thumbOf = (root: HTMLElement) => root.querySelector<HTMLElement>('.pn-Switch-thumb')!
-
-/** A colour token as it renders as a background, to compare with an element's computed one. */
-const fill = (token: string) => resolve('backgroundColor', `var(--perron-${token})`)
-
-/** A colour token as it renders as a border. */
-const edge = (token: string) => resolve('borderColor', `var(--perron-${token})`)
 
 /** The hover layer the off track takes, as the CSS writes it. */
 const HOVER_LAYER =

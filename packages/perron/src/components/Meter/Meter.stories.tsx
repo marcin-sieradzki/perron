@@ -3,11 +3,11 @@
 import { createRef } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { expect, userEvent, within } from 'storybook/test'
+import { expect, within } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { dictionaries, type Locale } from '../../locale/index.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
-import { colour, rendered } from '../../testing/stories.ts'
+import { colour, expectNoFocus, rendered } from '../../testing/stories.ts'
 import { Meter } from './Meter.tsx'
 
 const meta = {
@@ -58,9 +58,7 @@ export const Danger: Story = {
     await expect(value).toHaveAttribute('aria-hidden', 'true')
     await expect(indicator.style.width).toBe('31%')
     // Meter is not a control: Tab passes it by
-    await userEvent.tab()
-    await expect(root.contains(document.activeElement)).toBe(false)
-    await userEvent.tab({ shift: true })
+    await expectNoFocus(root)
   },
 }
 

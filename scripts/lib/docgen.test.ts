@@ -112,6 +112,21 @@ export function Press({ className, ...rest }: PressProps) {
     expect(doc.props?.nativeButton.description).toMatch(/^Whether the component renders a native/)
   })
 
+  it("leaves out Base UI's @ignore, which would drop the row from the props table", () => {
+    const src = `
+import { Menu } from '@base-ui/react/menu'
+
+export interface RowProps extends Menu.Item.Props {}
+
+export function Row(props: RowProps) {
+  return <Menu.Item {...props} />
+}
+`
+    const [doc] = componentDocs(src, FILE)
+    expect(doc.props?.id).toMatchObject({ tsType: { name: 'string' } })
+    expect(doc.props?.id.description).not.toMatch(/@ignore/)
+  })
+
   it('gives an inherited member the component destructures with a default its type and JSDoc', () => {
     const src = `
 import { Button as BaseButton } from '@base-ui/react/button'
@@ -134,6 +149,21 @@ export function Press({ focusableWhenDisabled = true, nativeButton = false, ...r
       tsType: { name: 'boolean' },
       defaultValue: { value: 'false', computed: false },
     })
+  })
+
+  it('keeps the null of an inherited `T | null` member, and drops the undefined of an optional one', () => {
+    const src = `
+import { NumberField as BaseNumberField } from '@base-ui/react/number-field'
+
+export interface CountProps extends Pick<BaseNumberField.Root.Props, 'value' | 'min'> {}
+
+export function Count(props: CountProps) {
+  return <BaseNumberField.Root {...props} />
+}
+`
+    const [doc] = componentDocs(src, FILE)
+    expect(doc.props?.value.tsType?.name).toBe('number | null')
+    expect(doc.props?.min.tsType?.name).toBe('number')
   })
 
   it('writes a type react-docgen reads as unknown, such as a readonly array, as the compiler does', () => {

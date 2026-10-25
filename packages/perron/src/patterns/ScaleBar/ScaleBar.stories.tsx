@@ -4,11 +4,11 @@
 import type { CSSProperties } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Decorator, Meta, StoryObj } from '@storybook/react-vite'
-import { expect, userEvent, waitFor } from 'storybook/test'
+import { expect, waitFor } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { dictionaries, type Locale } from '../../locale/index.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
-import { heard, mounted } from '../../testing/stories.ts'
+import { expectNoFocus, heard, mounted } from '../../testing/stories.ts'
 import { ScaleBar } from './ScaleBar.tsx'
 
 /** Land with a street running behind the scale, as the map it floats over, so the glass shows. */
@@ -86,13 +86,6 @@ async function expectMeasuredOwnedStrings(parent: HTMLElement, metersPerPixel: n
         expectOwnedStrings(textMarkup(host), locale)
       },
     )
-}
-
-/** Tab once, and expect focus to land nowhere inside `root`, then go back. */
-async function expectNoFocus(root: HTMLElement) {
-  await userEvent.tab()
-  await expect(root.contains(document.activeElement)).toBe(false)
-  await userEvent.tab({ shift: true })
 }
 
 /** A city street at close zoom: "300 m" over a bar about three quarters long; the contract story renders it. */

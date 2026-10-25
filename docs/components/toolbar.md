@@ -53,7 +53,7 @@ In MUI's layout. Every prop here gets this description as its JSDoc. Slots come 
 | `loopFocus`                 | `boolean`                    | `true`         | `loopFocus`          | Inherited from Base UI with its JSDoc: whether the arrow keys wrap from one end of the toolbar to the other.                  |
 | `render`                    | Base UI's `render`           | none           | `render`             | Inherited from Base UI: swaps the root element and keeps the behaviour, the class and the data attributes.                    |
 | `children`                  | `ReactNode`                  | none           | none                 | The toolbar's `ToolbarButton`s, `ToolbarGroup`s and `ToolbarSeparator`s, in reading order.                                    |
-| `className`, `style`, `ref` | React's                      | none           | `className`, `style` | Reach the root. `className` is merged after `pn-Toolbar`.                                                                     |
+| `className`, `style`, `ref` | React's                      | none           | `className`, `style` | Reaches the root. `className` is merged after `pn-Toolbar`.                                                                   |
 
 The caller names the toolbar with `aria-label` or `aria-labelledby`, which reach the root through `{...rest}`; Toolbar declares neither.
 
@@ -75,7 +75,7 @@ A `ToolbarButton` with a `startIcon` and no `children` is an icon-only button: s
 | `nativeButton`              | `boolean`              | `true`      | `nativeButton`          | Inherited from Base UI with its JSDoc: set it to `false` when `render` gives an element that isn't a `<button>`.                                              |
 | `render`                    | Base UI's `render`     | none        | `render`                | Inherited from Base UI: swaps the element, such as for a popup's trigger (`render={<Menu.Trigger />}`), which then joins the toolbar's arrow-key order.       |
 | `children`                  | `ReactNode`            | none        | none                    | The label: the words that name the action, in sentence case. Leave it out only for an icon-only button with an `aria-label`.                                  |
-| `className`, `style`, `ref` | React's                | none        | `className`, `style`    | Reach the root. `className` is merged after `pn-ToolbarButton`.                                                                                               |
+| `className`, `style`, `ref` | React's                | none        | `className`, `style`    | Reaches the root. `className` is merged after `pn-ToolbarButton`.                                                                                             |
 
 ### ToolbarGroup
 
@@ -84,7 +84,7 @@ A `ToolbarButton` with a `startIcon` and no `children` is an icon-only button: s
 | `disabled`                  | `boolean`          | `false` | `disabled`           | Whether every button in the group is disabled.                                                             |
 | `render`                    | Base UI's `render` | none    | `render`             | Inherited from Base UI: swaps the root element and keeps the behaviour, the class and the data attributes. |
 | `children`                  | `ReactNode`        | none    | none                 | The group's `ToolbarButton`s, in reading order.                                                            |
-| `className`, `style`, `ref` | React's            | none    | `className`, `style` | Reach the root. `className` is merged after `pn-ToolbarGroup`.                                             |
+| `className`, `style`, `ref` | React's            | none    | `className`, `style` | Reaches the root. `className` is merged after `pn-ToolbarGroup`.                                           |
 
 ### ToolbarSeparator
 
@@ -92,7 +92,7 @@ A `ToolbarButton` with a `startIcon` and no `children` is an icon-only button: s
 | --------------------------- | ---------------------------- | -------------------------------- | -------------------- | ---------------------------------------------------------------------------------------------------------- |
 | `orientation`               | `'horizontal' \| 'vertical'` | Across the toolbar's orientation | `orientation`        | Inherited from Base UI with its JSDoc: the separator's own orientation.                                    |
 | `render`                    | Base UI's `render`           | none                             | `render`             | Inherited from Base UI: swaps the root element and keeps the behaviour, the class and the data attributes. |
-| `className`, `style`, `ref` | React's                      | none                             | `className`, `style` | Reach the root. `className` is merged after `pn-ToolbarSeparator`.                                         |
+| `className`, `style`, `ref` | React's                      | none                             | `className`, `style` | Reaches the root. `className` is merged after `pn-ToolbarSeparator`.                                       |
 
 No `slotProps`: each of the four components renders one Base UI part, its own root, which takes the component's own props, and the label and icon spans are not Base UI parts. No label-override props: the toolbar owns no strings.
 

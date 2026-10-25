@@ -12,13 +12,14 @@ export const isPaint = (prop: string) =>
   )
 
 /**
- * Whether a media query, with its spacing collapsed, holds `feature` and doesn't negate it:
+ * Whether a media query holds `feature`, in any spacing, and doesn't negate it:
  * `not all and (hover: hover)` and `(not (hover: hover))` hold on the devices `(hover: hover)`
  * leaves out.
  */
 export const holds = (query: string, feature: string) =>
   query
     .toLowerCase()
+    .replace(/\s+/g, ' ')
     .split(',')
     .some(
       (entry) =>

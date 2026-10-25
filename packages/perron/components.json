@@ -530,7 +530,7 @@
     "name": "Select",
     "layer": "component",
     "category": "Inputs",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [
       "Select.Root",
       "Select.Trigger",
@@ -605,7 +605,7 @@
     "name": "Menu",
     "layer": "component",
     "category": "Overlays",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [
       "Menu.Root",
       "Menu.Trigger",
@@ -632,7 +632,7 @@
     "name": "AlertDialog",
     "layer": "component",
     "category": "Overlays",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [
       "AlertDialog.Root",
       "AlertDialog.Trigger",
@@ -640,11 +640,10 @@
       "AlertDialog.Backdrop",
       "AlertDialog.Popup",
       "AlertDialog.Title",
-      "AlertDialog.Description",
-      "AlertDialog.Close"
+      "AlertDialog.Description"
     ],
     "penpotPath": "Components/AlertDialog",
-    "dependsOn": ["Button"]
+    "dependsOn": []
   },
   {
     "name": "Alert",
@@ -678,7 +677,7 @@
     "name": "Progress",
     "layer": "component",
     "category": "Feedback",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [
       "Progress.Root",
       "Progress.Label",
@@ -693,7 +692,7 @@
     "name": "Separator",
     "layer": "component",
     "category": "Layout",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": ["Separator"],
     "penpotPath": "Components/Separator",
     "dependsOn": []

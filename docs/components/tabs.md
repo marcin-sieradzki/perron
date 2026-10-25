@@ -56,7 +56,7 @@ Tabs leaves out Base UI's `orientation`, so tabs only run horizontally. Mylder's
 | `onChange`                  | `(event: Event, value: string \| null, details: Tabs.Root.ChangeEventDetails) => void` | none                  | `onValueChange` | Called when the selected tab changes: by a click, Enter or Space, or an arrow key with `activateOnFocus` on (`details.reason` `'none'`); and by Tabs itself, at mount when `defaultValue` is left out (`'initial'`), or when the selected tab is disabled or removed (`'disabled'`, `'missing'`). `event` is `details.event`. |
 | `render`                    | Base UI's `render`                                                                     | none                  | inherited       | Inherited from Base UI: swaps the root element and keeps the behaviour, the class and the data attributes.                                                                                                                                                                                                                    |
 | `children`                  | `ReactNode`                                                                            | none                  | none            | One `TabsList` and a `TabsPanel` for each of its tabs.                                                                                                                                                                                                                                                                        |
-| `className`, `style`, `ref` | React's                                                                                | none                  | none            | Reach the root. `className` is merged after `pn-Tabs`.                                                                                                                                                                                                                                                                        |
+| `className`, `style`, `ref` | React's                                                                                | none                  | none            | Reaches the root. `className` is merged after `pn-Tabs`.                                                                                                                                                                                                                                                                      |
 
 ### TabsList
 
@@ -68,7 +68,7 @@ Tabs leaves out Base UI's `orientation`, so tabs only run horizontally. Mylder's
 | `loopFocus`                 | `boolean`              | `true`  | inherited        | Inherited from Base UI with its JSDoc: whether the arrow keys wrap from the last tab to the first and back.                       |
 | `render`                    | Base UI's `render`     | none    | inherited        | Inherited from Base UI: swaps the list's element and keeps the behaviour, the class and the data attributes.                      |
 | `children`                  | `ReactNode`            | none    | none             | The list's `Tab`s, in reading order.                                                                                              |
-| `className`, `style`, `ref` | React's                | none    | none             | Reach the root. `className` is merged after `pn-TabsList`.                                                                        |
+| `className`, `style`, `ref` | React's                | none    | none             | Reaches the root. `className` is merged after `pn-TabsList`.                                                                      |
 | `slotProps.indicator`       | `Tabs.Indicator.Props` | none    | `Tabs.Indicator` | Props for the `indicator` part, the underline under the selected tab                                                              |
 
 ### Tab
@@ -83,7 +83,7 @@ Tabs leaves out Base UI's `orientation`, so tabs only run horizontally. Mylder's
 | `nativeButton`              | `boolean`          | `true`  | inherited    | Inherited from Base UI with its JSDoc: set it to `false` when `render` gives an element that isn't a `<button>`.                              |
 | `render`                    | Base UI's `render` | none    | inherited    | Inherited from Base UI: swaps the tab's element and keeps the behaviour, the class and the data attributes.                                   |
 | `children`                  | `ReactNode`        | none    | none         | The label: the words that name the view, in sentence case, such as "Departures".                                                              |
-| `className`, `style`, `ref` | React's            | none    | none         | Reach the root. `className` is merged after `pn-Tab`.                                                                                         |
+| `className`, `style`, `ref` | React's            | none    | none         | Reaches the root. `className` is merged after `pn-Tab`.                                                                                       |
 
 ### TabsPanel
 
@@ -93,7 +93,7 @@ Tabs leaves out Base UI's `orientation`, so tabs only run horizontally. Mylder's
 | `keepMounted`               | `boolean`          | `false` | inherited    | Inherited from Base UI with its JSDoc: whether the panel stays in the DOM, `hidden` and `inert`, while another tab is selected. |
 | `render`                    | Base UI's `render` | none    | inherited    | Inherited from Base UI: swaps the panel's element and keeps the behaviour, the class and the data attributes.                   |
 | `children`                  | `ReactNode`        | none    | none         | The view the tab names.                                                                                                         |
-| `className`, `style`, `ref` | React's            | none    | none         | Reach the root. `className` is merged after `pn-TabsPanel`.                                                                     |
+| `className`, `style`, `ref` | React's            | none    | none         | Reaches the root. `className` is merged after `pn-TabsPanel`.                                                                   |
 
 No `variant`, `size` or `color`: Tabs has one look, ink and an underline, as the brand keeps colour for the map and the one main action. No `fullWidth`: tabs size to their labels, and the API can grow one. No `slotProps` but `TabsList`'s `indicator`: each of the four renders one Base UI part as its own root, and the label and count spans are not Base UI parts. No label-override props: Tabs owns no strings.
 

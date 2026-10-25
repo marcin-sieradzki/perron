@@ -1,4 +1,83 @@
 {
+  "AlertDialog": {
+    "extends": [
+      "Omit< BaseAlertDialog.Popup.Props, 'children' | 'title' | 'className' | 'style' | 'ref' >"
+    ],
+    "props": {
+      "actions": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "defaultOpen": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "description": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "onClose": {
+        "optional": true,
+        "type": [
+          "(event: Event, reason: DialogRootChangeEventReason, details: AlertDialogRootChangeEventDetails) => void"
+        ]
+      },
+      "onOpen": {
+        "optional": true,
+        "type": [
+          "(event: Event, details: AlertDialogRootChangeEventDetails) => void"
+        ]
+      },
+      "open": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ trigger?: Props<unknown> | undefined; portal?: DialogPortalProps | undefined; backdrop?: DialogBackdropProps | undefined; title?: DialogTitleProps | undefined; description?: DialogDescriptionProps | undefined; }"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "title": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "trigger": {
+        "optional": true,
+        "type": [
+          "ReactElement<unknown, JSXElementConstructor<any> | string>"
+        ]
+      }
+    }
+  },
   "Attribution": {
     "extends": [
       "Omit<useRender.ComponentProps<'small'>, 'children'>"
@@ -1543,6 +1622,85 @@
       }
     }
   },
+  "Menu": {
+    "extends": [
+      "Inherited<BaseMenu.Popup.Props, 'id'>"
+    ],
+    "props": {
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "defaultOpen": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "disabled": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "id": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "onClose": {
+        "optional": true,
+        "type": [
+          "(event: Event, reason: MenuRootChangeEventReason, details: MenuRootChangeEventDetails) => void"
+        ]
+      },
+      "onOpen": {
+        "optional": true,
+        "type": [
+          "(event: Event, details: MenuRootChangeEventDetails) => void"
+        ]
+      },
+      "open": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ trigger?: Props<unknown> | undefined; portal?: MenuPortalProps | undefined; positioner?: MenuPositionerProps | undefined; }"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "trigger": {
+        "optional": false,
+        "type": [
+          "ReactElement<unknown, JSXElementConstructor<any> | string>"
+        ]
+      }
+    }
+  },
   "Meter": {
     "extends": [
       "Omit< BaseMeter.Root.Props, 'value' | 'children' | 'locale' | 'color' | 'className' | 'style' | 'ref' >"
@@ -1709,6 +1867,62 @@
         "optional": true,
         "type": [
           "ReactElement<unknown, JSXElementConstructor<any> | string>"
+        ]
+      }
+    }
+  },
+  "Progress": {
+    "extends": [
+      "Omit< BaseProgress.Root.Props, 'value' | 'children' | 'locale' | 'className' | 'style' | 'ref' >"
+    ],
+    "props": {
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "inProgressLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "label": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "locale": {
+        "optional": true,
+        "type": [
+          "LocalesArgument"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ label?: ProgressLabelProps | undefined; value?: ProgressValueProps | undefined; track?: ProgressTrackProps | undefined; indicator?: ProgressIndicatorProps | undefined; }"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "value": {
+        "optional": false,
+        "type": [
+          "null",
+          "number"
         ]
       }
     }
@@ -2057,6 +2271,155 @@
         "optional": true,
         "type": [
           "string"
+        ]
+      }
+    }
+  },
+  "Select": {
+    "extends": [
+      "Omit< FieldProps, 'children' | 'slotProps' | 'onChange' | 'defaultValue' >"
+    ],
+    "props": {
+      "defaultOpen": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "defaultValue": {
+        "optional": true,
+        "type": [
+          "null",
+          "string"
+        ]
+      },
+      "description": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "error": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "hiddenLabel": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "items": {
+        "optional": false,
+        "type": [
+          "readonly SelectGroup[]",
+          "readonly SelectItem[]"
+        ]
+      },
+      "label": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "onChange": {
+        "optional": true,
+        "type": [
+          "(event: Event, value: null | string, details: SelectRootChangeEventDetails) => void"
+        ]
+      },
+      "onClose": {
+        "optional": true,
+        "type": [
+          "(event: Event, reason: SelectRootChangeEventReason, details: SelectRootOpenChangeEventDetails) => void"
+        ]
+      },
+      "onOpen": {
+        "optional": true,
+        "type": [
+          "(event: Event, details: SelectRootOpenChangeEventDetails) => void"
+        ]
+      },
+      "open": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "optional": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "optionalLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "placeholder": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "readOnly": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "required": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ label?: FieldLabelProps | undefined; description?: FieldDescriptionProps | undefined; error?: FieldErrorProps | undefined; trigger?: SelectTriggerProps | undefined; value?: SelectValueProps | undefined; icon?: SelectIconProps | undefined; portal?: SelectPortalProps | undefined; positioner?: Omit<SelectPositionerProps, \"alignItemWithTrigger\"> | undefined; popup?: SelectPopupProps | undefined; list?: SelectListProps | undefined; group?: SelectGroupProps | undefined; groupLabel?: SelectGroupLabelProps | undefined; separator?: SelectSeparatorProps | undefined; item?: SelectItemProps | undefined; itemText?: SelectItemTextProps | undefined; itemIndicator?: SelectItemIndicatorProps | undefined; }"
+        ]
+      },
+      "value": {
+        "optional": true,
+        "type": [
+          "null",
+          "string"
+        ]
+      }
+    }
+  },
+  "Separator": {
+    "extends": [
+      "Omit< BaseSeparator.Props, 'className' | 'style' | 'children' | 'ref' >"
+    ],
+    "props": {
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
         ]
       }
     }

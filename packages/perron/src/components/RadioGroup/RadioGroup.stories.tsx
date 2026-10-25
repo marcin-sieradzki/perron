@@ -10,6 +10,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import {
   colour,
+  edge,
+  fill,
   lines,
   mounted,
   onHover,
@@ -71,12 +73,6 @@ const indicatorOf = (root: HTMLElement) => root.querySelector<HTMLElement>('.pn-
 
 /** The label span inside a radio. */
 const labelOf = (root: HTMLElement) => root.querySelector<HTMLElement>('.pn-Radio-label')!
-
-/** A colour token as it renders as a background, to compare with an element's computed one. */
-const fill = (token: string) => resolve('backgroundColor', `var(--perron-${token})`)
-
-/** A colour token as it renders as a border. */
-const edge = (token: string) => resolve('borderColor', `var(--perron-${token})`)
 
 /** A length token as it renders as a block size. */
 const length = (token: string) => parseFloat(resolve('blockSize', `var(--perron-${token})`))
@@ -209,7 +205,6 @@ export const RadioHover: Story = {
     await expect(
       stateRules(light, ':active')
         .map((s) => s.getPropertyValue('background-image'))
-        .filter((value) => value !== 'none')
         .join('')
         .replace(/\s+/g, ''),
     ).toBe(PRESSED_LAYER)

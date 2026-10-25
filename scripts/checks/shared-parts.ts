@@ -345,10 +345,96 @@ export function helperProblems(
   return excuse(problems.sort(byFileLine), RULE, (f) => texts.get(f) ?? '')
 }
 
+/**
+ * Whether `fn` is one Testing Library query, such as `within(el).getByRole('button', { name })`:
+ * a story's name for one of its own elements, not a helper to share.
+ */
+function isQuery(fn: Fn) {
+  let body: ts.Node = fn.body
+  if (ts.isBlock(body)) {
+    const [only] = body.statements
+    if (body.statements.length !== 1 || !ts.isReturnStatement(only) || !only.expression)
+      return false
+    body = only.expression
+  }
+  while (ts.isParenthesizedExpression(body) || ts.isAwaitExpression(body)) body = body.expression
+  return (
+    ts.isCallExpression(body) &&
+    ts.isPropertyAccessExpression(body.expression) &&
+    /^(get|find|query)(All)?By[A-Z]/.test(body.expression.name.text)
+  )
+}
+
+/**
+ * Whether `fn`, its default values included, reads a name its own file declares at the top level
+ * (other than its own): a story's `TITLE` or `LABEL`, so a copy elsewhere does something else.
+ */
+function readsLocal(fn: Fn, local: Set<string>, own: string) {
+  let found = false
+  const visit = (node: ts.Node) => {
+    if (found) return
+    if (
+      ts.isIdentifier(node) &&
+      node.text !== own &&
+      local.has(node.text) &&
+      !(ts.isPropertyAccessExpression(node.parent) && node.parent.name === node) &&
+      !(ts.isPropertyAssignment(node.parent) && node.parent.name === node)
+    )
+      found = true
+    else ts.forEachChild(node, visit)
+  }
+  visit(fn)
+  return found
+}
+
+/** A story file or a unit test, whose helpers a second one copies. */
+const TEST_FILE = /\.(stories\.tsx|test\.tsx?)$/
+
+/**
+ * The problems of the stories and unit tests under `src` (a path from `root`): a function declared
+ * at the top level of one such file whose shape another declares too, under any name. A helper a
+ * second file needs is written once under `testing/` (`stories.ts` for a story's, `markup.ts` for
+ * a markup test's) and joins the Shared helpers table.
+ */
+export function copiedStoryHelpers(root: string, src: string): Problem[] {
+  const texts = new Map<string, string>()
+  const byShape = new Map<string, { file: string; name: string; offset: number }[]>()
+  for (const file of walk(root, src, (n) => TEST_FILE.test(n))) {
+    if (file.startsWith(`${src}/testing/`)) continue
+    const text = readFileSync(join(root, file), 'utf8')
+    texts.set(file, text)
+    const names = topLevelNames(file, text)
+    const local = new Set(names.map((n) => n.name))
+    for (const { name, offset, fn } of names) {
+      if (!fn || isQuery(fn) || readsLocal(fn, local, name)) continue
+      const shape = shapeOf(fn, name)
+      if (shape) byShape.set(shape, [...(byShape.get(shape) ?? []), { file, name, offset }])
+    }
+  }
+  const problems: Problem[] = []
+  for (const found of byShape.values()) {
+    const files = new Set(found.map((f) => f.file))
+    if (files.size < 2) continue
+    for (const { file, name, offset } of found) {
+      const others = found.filter((f) => f.file !== file).map((f) => `${f.name} in ${f.file}`)
+      problems.push({
+        file,
+        line: texts.get(file)!.slice(0, offset).split('\n').length,
+        message: `declares ${name}, a helper ${others.join(' and ')} declares too; write it once in ${PACKAGE}/src/testing/${file.endsWith('.stories.tsx') ? 'stories.ts' : 'markup.ts'}, add it to ${CONTRACT}'s "Shared helpers" table, and import it`,
+      })
+    }
+  }
+  return excuse(problems.sort(byFileLine), RULE, (f) => texts.get(f) ?? '')
+}
+
 export default {
   rule: RULE,
   run(root) {
     const src = `${PACKAGE}/src`
-    return [...partProblems(root, src), ...helperProblems(root, src)].sort(byFileLine)
+    return [
+      ...partProblems(root, src),
+      ...helperProblems(root, src),
+      ...copiedStoryHelpers(root, src),
+    ].sort(byFileLine)
   },
 } satisfies Check

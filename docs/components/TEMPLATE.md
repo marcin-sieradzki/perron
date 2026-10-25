@@ -34,16 +34,16 @@ Base UI already does: `<behaviour Base UI handles, such as typeahead or focus re
 
 In MUI's layout, one row per prop the docs page shows, slots last: each prop the component declares, its description becoming the JSDoc, and each it inherits from Base UI, such as `render`, which reads `inherited` under Base UI prop and gives Base UI's type, default and description while the code inherits it as it is (the contract's [Props](../components/README.md#props)).
 
-| Name                        | Type                              | Default      | Base UI prop         | Description                                         |
-| --------------------------- | --------------------------------- | ------------ | -------------------- | --------------------------------------------------- |
-| `variant`                   | `'<value>' \| '<value>'`          | `'<value>'`  | none                 | `<what each value is for>`                          |
-| `size`                      | `'small' \| 'medium' \| 'large'`  | `'medium'`   | none                 | `<…>`                                               |
-| `disabled`                  | `boolean`                         | `false`      | `disabled`           | `<…>`                                               |
-| `onChange`                  | `(event, value, details) => void` |              | `onValueChange`      | `<when it fires>`                                   |
-| `render`                    | Base UI's `render`                |              | inherited            | `<Base UI's description>`                           |
-| `className`, `style`, `ref` | React's                           |              | none                 | Reach the root; `className` joins after `pn-<Name>` |
-| `<key>Label`                | `string`                          | The locale's | none                 | Overrides "`<English text>`"                        |
-| `slotProps.<part>`          | `<Component>.<Part>.Props`        |              | `<Component>.<Part>` | Props for the `<part>` part                         |
+| Name                        | Type                              | Default      | Base UI prop         | Description                                           |
+| --------------------------- | --------------------------------- | ------------ | -------------------- | ----------------------------------------------------- |
+| `variant`                   | `'<value>' \| '<value>'`          | `'<value>'`  | none                 | `<what each value is for>`                            |
+| `size`                      | `'small' \| 'medium' \| 'large'`  | `'medium'`   | none                 | `<…>`                                                 |
+| `disabled`                  | `boolean`                         | `false`      | `disabled`           | `<…>`                                                 |
+| `onChange`                  | `(event, value, details) => void` |              | `onValueChange`      | `<when it fires>`                                     |
+| `render`                    | Base UI's `render`                |              | inherited            | `<Base UI's description>`                             |
+| `className`, `style`, `ref` | React's                           |              | none                 | Reaches the root; `className` joins after `pn-<Name>` |
+| `<key>Label`                | `string`                          | The locale's | none                 | Overrides "`<English text>`"                          |
+| `slotProps.<part>`          | `<Component>.<Part>.Props`        |              | `<Component>.<Part>` | Props for the `<part>` part                           |
 
 ## Tokens
 
@@ -62,9 +62,10 @@ One row per part, state and property. States are the contract's design states: r
 
 From the Base UI reference for each part. "From" says who does it: Base UI, or Perron.
 
-| Key       | Does     | From        |
-| --------- | -------- | ----------- |
-| `<Enter>` | `<what>` | `<Base UI>` |
+| Key       | Does                                                                              | From        |
+| --------- | --------------------------------------------------------------------------------- | ----------- |
+| `<Enter>` | `<what>`                                                                          | `<Base UI>` |
+| `<Tab>`   | `<what no play test can reproduce>`. Untested: `<why user-event cannot drive it>` | `<Base UI>` |
 
 | Element  | Role     | Accessible name from                           | States announced     |
 | -------- | -------- | ---------------------------------------------- | -------------------- |
