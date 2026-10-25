@@ -233,13 +233,22 @@ export function Select({
       slotProps={{
         // CR-5: Select's own label props last, so the label stays a non-native <div> with its id
         // (mergeProps types the ref as an HTMLElement's, where Field's slot takes a <label>'s)
-        label: mergeProps<typeof BaseField.Label>(slotProps?.label, {
-          id: labelId,
-          render: <div />,
-          nativeLabel: false,
-        }) as BaseField.Label.Props,
-        description: slotProps?.description,
-        error: slotProps?.error,
+        label: {
+          ...(mergeProps<typeof BaseField.Label>(slotProps?.label, {
+            id: labelId,
+            render: <div />,
+            nativeLabel: false,
+          }) as BaseField.Label.Props),
+          className: withClass('pn-Select-label', slotProps?.label?.className),
+        },
+        description: {
+          ...slotProps?.description,
+          className: withClass('pn-Select-description', slotProps?.description?.className),
+        },
+        error: {
+          ...slotProps?.error,
+          className: withClass('pn-Select-error', slotProps?.error?.className),
+        },
       }}
     >
       <BaseSelect.Root<string>
