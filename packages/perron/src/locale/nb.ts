@@ -29,6 +29,7 @@ export const nb: OwnedStrings = {
   delayUnknown: 'Forsinkelse ukjent',
   unknown: 'Ukjent',
   brandName: 'Mylder',
+  now: 'Nå',
   nextStop: 'Neste stopp',
   passed: 'Passert',
   mapControls: 'Kartknapper',
