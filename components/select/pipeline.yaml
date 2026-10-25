@@ -5,11 +5,31 @@ deferred:
   at: 2026-10-25T05:33:08.882Z
 stages:
   brief:
-    status: pending
-    started: 2026-10-25T05:33:13.677Z
-    ended: 2026-10-25T05:44:48.985Z
-    pending: 16
+    status: done
+    started: 2026-10-25T05:46:03.147Z
+    ended: 2026-10-25T05:47:29.658Z
 notes:
   - stage: brief
     at: 2026-10-25T05:44:48.986Z
     questions: 16 questions, see docs/components/select.md [PENDING] lines
+  - stage: brief
+    at: 2026-10-25T05:47:29.659Z
+    direction: size.input's description says "Search field", but the Select trigger and every Fields member use it. Settle the description through the design-tokens skill.
+  - stage: brief
+    at: 2026-10-25T05:47:29.659Z
+    direction: Select is the first to compose the SelectedMark shared part and the tick, so its build adds packages/perron/src/parts/SelectedMark and check.svg. Combobox and Menu then reuse them.
+  - stage: brief
+    at: 2026-10-25T05:47:29.659Z
+    direction: Field's label must be a non-native <div> (nativeLabel false) for button controls such as Select, and later Combobox's trigger, while text controls keep a native <label>. Field could take this as a prop of its own rather than each dependent passing slotProps.label.
+  - stage: brief
+    at: 2026-10-25T05:47:29.659Z
+    direction: Select's rows take real DOM focus and so show perron.css's ring beside the highlight fill, while SearchField's rows use virtual focus and show only the fill. The contract's Rows family could say how a keyboard-focused row looks in both cases.
+  - stage: brief
+    at: 2026-10-25T05:47:29.659Z
+    direction: The Disabled story will need axe's color-contrast exception for color.text.tertiary, as Field's does. Every disabled field will keep needing it unless one rule is settled in .storybook/preview.ts.
+  - stage: brief
+    at: 2026-10-25T05:47:29.659Z
+    direction: "Select answers Field's open Direction on optional versus required: it takes both as separate props and derives neither. TextField and the other Field dependents should take the same answer."
+  - stage: brief
+    at: 2026-10-25T05:47:29.659Z
+    direction: The row's tick shows at icon.size.325 while the trigger's chevron shows at icon.size.400, so the open field mixes two icon sizes. Design QA should check that the tick holds its weight beside typography.label in a size.target-min row.
