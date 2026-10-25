@@ -18,7 +18,7 @@ import type { TextAreaProps } from './TextArea.tsx'
 const LABEL = 'What happened'
 const DESCRIPTION = 'Say where and when, such as the stop and the time'
 const WORDS = 'The 5C waited at Nørreport for 10 minutes.\nThe display showed no delay.'
-const PLACEHOLDER = 'Such as: the 5C waited at Nørreport for 10 minutes'
+const PLACEHOLDER = 'Such as the 5C waited at Nørreport for 10 minutes'
 
 const meta = {
   title: 'Components/TextArea',
@@ -194,7 +194,7 @@ export const Filled: Story = {
   },
 }
 
-/** The empty field with the placeholder "Such as: the 5C waited at Nørreport for 10 minutes". */
+/** The empty field with the placeholder "Such as the 5C waited at Nørreport for 10 minutes". */
 export const Placeholder: Story = {
   args: { placeholder: PLACEHOLDER },
   play: async ({ canvasElement }) => {

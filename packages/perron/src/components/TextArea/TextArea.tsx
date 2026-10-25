@@ -72,7 +72,7 @@ export interface TextAreaProps
    */
   rows?: number
   /**
-   * Words shown in the empty box, such as "Such as: the 5C waited at Nørreport for 10 minutes".
+   * Words shown in the empty box, such as "Such as the 5C waited at Nørreport for 10 minutes".
    * They vanish as the person types, so they never replace the label or the description.
    */
   placeholder?: string
