@@ -1,6 +1,6 @@
 // The server through an MCP client, as an agent meets it: its tools, their answers from the data
 // @mylder/perron ships, and the references of the Base UI and MUI versions the repo pins.
-import { mkdtempSync, readdirSync, readFileSync } from 'node:fs'
+import { mkdirSync, mkdtempSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -164,6 +164,20 @@ describe('the Perron MCP server', () => {
     })
     expect(isError).toBe(true)
     expect(text).toContain('Positioner')
+  })
+
+  it('reads the tokens of the project `dir` names, such as a worktree, over its own', async () => {
+    const dir = mkdtempSync(join(tmpdir(), 'perron-mcp-'))
+    const data = join(dir, 'node_modules/@mylder/perron/data')
+    mkdirSync(data, { recursive: true })
+    writeFileSync(join(dir, 'node_modules/@mylder/perron/package.json'), '{}')
+    const own = JSON.parse(readFileSync(join(root, 'packages/perron/data/tokens.json'), 'utf8'))
+    const added = { ...own[0], name: 'size.worktree-only', description: 'Only in the worktree' }
+    writeFileSync(join(data, 'tokens.json'), JSON.stringify([...own, added]))
+    writeFileSync(join(data, 'docs.json'), '[]')
+    expect((await call('list_tokens', { query: 'worktree-only' })).isError).toBe(true)
+    const { text } = await call('list_tokens', { query: 'worktree-only', dir })
+    expect(JSON.parse(text).name).toBe('size.worktree-only')
   })
 
   it('says to install a library it cannot find', async () => {

@@ -97,6 +97,11 @@ export interface StageState {
   /** review: rounds reviewed, and how many of them found a P1 or a P2 and sent the component back */
   rounds?: number
   sentBack?: number
+  /**
+   * review: the commit the latest round reviewed, HEAD when it ended; the next round raises a new
+   * P1 or P2 only on a line changed since it, or a regression that change causes
+   */
+  reviewed?: string
   /** review: the latest round's findings by level */
   findings?: { p1: number; p2: number; p3: number }
   /** docs: failed runs; visual: failed reports */
@@ -153,6 +158,8 @@ export type Next =
        * back or failed, with a review's P1 and P2 findings word for word, or the answers to carry
        */
       fix?: string
+      /** review after a round: the commit that round reviewed, to pass to the stage as `since` */
+      since?: string
     }
   | { wait: Gate; stage?: Stage; why: string }
 
@@ -548,7 +555,8 @@ export function next(p: Pipeline, env: Env): Next {
     }
     const s = p.stages[stage] ?? {}
     if (s.status === 'done') continue
-    const round = stage === 'review' ? { round: roundOf(s) } : {}
+    const round =
+      stage === 'review' ? { round: roundOf(s), ...(s.reviewed && { since: s.reviewed }) } : {}
     if (s.status === 'running')
       return {
         run: stage,
@@ -598,9 +606,9 @@ export function next(p: Pipeline, env: Env): Next {
 
 /** Keeps only a stage's counters, for a stage whose latest run no longer counts. */
 function counters(s: StageState = {}): StageState {
-  const { runs, asked, respecs, rounds, sentBack, findings, failures } = s
+  const { runs, asked, respecs, rounds, sentBack, reviewed, findings, failures } = s
   return Object.fromEntries(
-    Object.entries({ runs, asked, respecs, rounds, sentBack, findings, failures }).filter(
+    Object.entries({ runs, asked, respecs, rounds, sentBack, reviewed, findings, failures }).filter(
       ([, v]) => v !== undefined,
     ),
   )
@@ -919,6 +927,10 @@ export function end(
       }
       s.rounds = round
       s.findings = { p1: found.p1, p2: found.p2, p3: found.p3 }
+      // the reviewer is read-only and the round's commit comes after `end`, so HEAD is what it read
+      const head = env.run('git rev-parse HEAD')
+      const sha = head.output.trim()
+      if (head.ok && /^[0-9a-f]{40}$/.test(sha)) s.reviewed = sha
       note = `, round ${round}: ${found.p1} P1, ${found.p2} P2, ${found.p3} P3`
       if (!found.p1 && !found.p2) {
         verdict = { outcome: 'done' }

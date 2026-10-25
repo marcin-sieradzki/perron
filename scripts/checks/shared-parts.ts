@@ -387,15 +387,20 @@ function readsLocal(fn: Fn, local: Set<string>, own: string) {
   return found
 }
 
+/** A story file or a unit test, whose helpers a second one copies. */
+const TEST_FILE = /\.(stories\.tsx|test\.tsx?)$/
+
 /**
- * The problems of the stories under `src` (a path from `root`): a function declared at the top
- * level of one story file whose shape another story file declares too, under any name. A helper
- * a second story needs is written once in `testing/stories.ts` and joins the Shared helpers table.
+ * The problems of the stories and unit tests under `src` (a path from `root`): a function declared
+ * at the top level of one such file whose shape another declares too, under any name. A helper a
+ * second file needs is written once under `testing/` (`stories.ts` for a story's, `markup.ts` for
+ * a markup test's) and joins the Shared helpers table.
  */
 export function copiedStoryHelpers(root: string, src: string): Problem[] {
   const texts = new Map<string, string>()
   const byShape = new Map<string, { file: string; name: string; offset: number }[]>()
-  for (const file of walk(root, src, (n) => n.endsWith('.stories.tsx'))) {
+  for (const file of walk(root, src, (n) => TEST_FILE.test(n))) {
+    if (file.startsWith(`${src}/testing/`)) continue
     const text = readFileSync(join(root, file), 'utf8')
     texts.set(file, text)
     const names = topLevelNames(file, text)
@@ -415,7 +420,7 @@ export function copiedStoryHelpers(root: string, src: string): Problem[] {
       problems.push({
         file,
         line: texts.get(file)!.slice(0, offset).split('\n').length,
-        message: `declares ${name}, a helper ${others.join(' and ')} declares too; write it once in ${PACKAGE}/src/testing/stories.ts, add it to ${CONTRACT}'s "Shared helpers" table, and import it`,
+        message: `declares ${name}, a helper ${others.join(' and ')} declares too; write it once in ${PACKAGE}/src/testing/${file.endsWith('.stories.tsx') ? 'stories.ts' : 'markup.ts'}, add it to ${CONTRACT}'s "Shared helpers" table, and import it`,
       })
     }
   }

@@ -16,6 +16,8 @@ The tokens and docs come from the data that `@mylder/perron` ships in `data/`, s
 
 ## Tools
 
+Each tool takes `dir`, the project folder to read from as an absolute path, such as a git worktree an agent works in while the server runs from another checkout; the server's own project is the default. The data is read again when it changes, so a token rebuilt mid-session shows.
+
 ### `list_tokens`
 
 Every token's name, type, CSS custom property, value in each theme, the token it aliases, its reduced-motion value and what it is for. `query` keeps the tokens whose name or description holds all its words (`surface warning`); `type` keeps one DTCG type (`color`).
