@@ -553,6 +553,49 @@ export const Lines: Story = {
   },
 }
 
+/**
+ * The five states with no line, beside their words, as a dot that stands for a state across many
+ * lines shows them: each in the colour of the text around it (CR-7), and in `CanvasText` in forced
+ * colours (CR-9).
+ */
+export const NoLine: Story = {
+  args: { line: undefined },
+  render: () => <States line={undefined} size="medium" />,
+  play: async ({ canvasElement, step }) => {
+    const roots = [...canvasElement.querySelectorAll<HTMLElement>('.pn-VehicleDot')]
+    await expect(roots).toHaveLength(STATES.length)
+    const ink = colour('--perron-color-text-primary')
+    await expect(ink).not.toBe(lineColour('m1'))
+    for (const [index, { variant, word }] of STATES.entries())
+      await step(`${word}: no data-line, drawn in the text's colour`, async () => {
+        const root = roots[index]
+        await expect(root).not.toHaveAttribute('data-line')
+        await expect(root).toHaveAttribute('data-variant', variant)
+        await expect(root).toHaveAttribute('role', 'img')
+        await expect(root).toHaveAttribute('aria-label', word)
+        await expect(getComputedStyle(root).color).toBe(ink)
+        await expectVehicleDotShape(root, variant, ink, colour(NO_SIGNAL))
+      })
+    const sheet = forcedColourSheet('pn-VehicleDot')
+    const text = resolve('color', 'CanvasText')
+    document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet]
+    try {
+      await step('in forced colours, every dot with no line draws in CanvasText', async () => {
+        for (const [index, { variant }] of STATES.entries()) {
+          await expect(getComputedStyle(roots[index]).color).toBe(text)
+          await expectVehicleDotShape(roots[index], variant, text)
+        }
+      })
+    } finally {
+      document.adoptedStyleSheets = document.adoptedStyleSheets.filter((s) => s !== sheet)
+    }
+    await step('the sheet comes off after', async () => {
+      await expect(document.adoptedStyleSheets).not.toContain(sheet)
+      await expect(getComputedStyle(roots[0]).color).toBe(ink)
+    })
+  },
+}
+
 /** A dot's shape without its colour: its fill and opacity, its rim and dash, and its cut. */
 function shape(root: Element) {
   const style = getComputedStyle(dotOf(root))

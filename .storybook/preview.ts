@@ -133,6 +133,7 @@ const preview: Preview = {
             // each registered pattern
             'DataStatePanel',
             'DayProfileChart',
+            'ReportStrip',
             'DepartureRow',
             'DetailHeader',
             'DetailPanel',
@@ -202,6 +203,7 @@ const preview: Preview = {
             'VehicleDotLegend',
             'DataStatePanel',
             'DayProfileChart',
+            'ReportStrip',
             'DepartureRow',
             'DetailHeader',
             'DetailPanel',

@@ -3,6 +3,7 @@
 // npm run registry. Its fixed lines live in scripts/lib/registry.ts.
 export * from './patterns/DataStatePanel/DataStatePanel.tsx'
 export * from './patterns/DayProfileChart/DayProfileChart.tsx'
+export * from './patterns/ReportStrip/ReportStrip.tsx'
 export * from './patterns/DepartureRow/DepartureRow.tsx'
 export * from './patterns/DetailHeader/DetailHeader.tsx'
 export * from './patterns/DetailPanel/DetailPanel.tsx'
