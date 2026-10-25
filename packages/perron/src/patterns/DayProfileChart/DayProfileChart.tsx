@@ -2,7 +2,7 @@
 // midnight to midnight: one line in the chart colour, the area under it, a 24-hour time axis, and a
 // value tip for the point under the pointer or the keys. A pattern: plain HTML and SVG, Perron's
 // VisuallyHidden part and the nodes.ts helpers, never Base UI. Spec: docs/patterns/day-profile-chart.md.
-import { useId, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import type {
   ComponentPropsWithRef,
   CSSProperties,
@@ -162,6 +162,16 @@ function shapes(drawn: Drawn[], top: number | undefined) {
 const percent = (minutes: number) => `${at((minutes / DAY) * 100)}%`
 
 /**
+ * Where a tick sits: 00:00 flush with the axis's left edge, 24:00 with its right, and the three
+ * between centred on their times (CR-8).
+ */
+function tickPlace(index: number): CSSProperties {
+  if (index === 0) return { left: 0 }
+  if (index === TICKS.length - 1) return { right: 0 }
+  return { left: `${(index / (TICKS.length - 1)) * 100}%`, transform: 'translateX(-50%)' }
+}
+
+/**
  * One handler from the caller's and the pattern's own: the caller's first, then the pattern's,
  * unless the caller's called `preventDefault` (CR-7).
  */
@@ -230,6 +240,22 @@ export function DayProfileChart({
     return best
   }
 
+  // CR-7: the plot the pointer last reached, so a highlight it showed closes with Escape wherever
+  // focus is
+  const hoveredPlot = useRef<HTMLDivElement | null>(null)
+  const shown = active !== null
+  useEffect(() => {
+    const plot = hoveredPlot.current
+    if (!shown || !plot) return
+    const owner = plot.ownerDocument
+    // a focused plot's own keydown handles Escape (CR-6); the key goes on to what has focus
+    const onEscape = (event: globalThis.KeyboardEvent) => {
+      if (event.key === 'Escape' && owner.activeElement !== plot) setHighlight(null)
+    }
+    owner.addEventListener('keydown', onEscape)
+    return () => owner.removeEventListener('keydown', onEscape)
+  }, [shown])
+
   /** Whether the plot an event reached has focus. */
   const focused = (event: PointerEvent<HTMLDivElement>) =>
     event.currentTarget.ownerDocument.activeElement === event.currentTarget
@@ -237,7 +263,9 @@ export function DayProfileChart({
   // CR-7: moving over the plot, or pressing it, highlights the point nearest the pointer; the
   // browser focuses the plot on press
   const onPointer = (event: PointerEvent<HTMLDivElement>) => {
-    if (last >= 0) setHighlight(nearest(event))
+    if (last < 0) return
+    hoveredPlot.current = event.currentTarget
+    setHighlight(nearest(event))
   }
   // CR-7: a finger lifting from a tap leaves before the browser focuses the plot, so a touch's
   // leave keeps the tip the tap showed; any other leave clears it unless the plot has focus
@@ -274,7 +302,12 @@ export function DayProfileChart({
     setHighlight(next)
   }
 
-  const tipAt = highlighted ? (highlighted.minutes / DAY) * 100 : 0
+  // CR-8: the tip beside the guide, after it up to the middle and before it past the middle, and
+  // never over the scale's count, which is as many characters wide as the tip's `ch` at most
+  const tipAt = highlighted ? at((highlighted.minutes / DAY) * 100) : 0
+  const scaleWidth = top === undefined ? 0 : grouped(top).length
+  const tipPlace: CSSProperties =
+    tipAt > 50 ? { right: `${at(100 - tipAt)}%` } : { left: `max(${tipAt}%, ${scaleWidth}ch)` }
 
   return (
     // the rest props first, so the pattern's own class wins; the caller's ref reaches the figure
@@ -347,17 +380,13 @@ export function DayProfileChart({
             </li>
           ))}
         </ol>
-        {/* CR-8: only while a point is highlighted, sliding with it inside the plot */}
+        {/* CR-8: only while a point is highlighted, beside its guide inside the plot */}
         {highlighted && (
           <div
             {...tipProps}
             className={classes('pn-DayProfileChart-tip', tipProps?.className)}
             aria-hidden="true"
-            style={{
-              ...tipProps?.style,
-              left: `${at(tipAt)}%`,
-              transform: `translateX(-${at(tipAt)}%)`,
-            }}
+            style={{ ...tipProps?.style, ...tipPlace }}
           >
             <span>{highlighted.time}</span>
             <span>{highlighted.count === undefined ? DASH : grouped(highlighted.count)}</span>
@@ -370,11 +399,7 @@ export function DayProfileChart({
         aria-hidden="true"
       >
         {TICKS.map((tick, index) => (
-          <span
-            key={tick}
-            className="pn-DayProfileChart-tick"
-            style={{ left: `${index * 25}%`, transform: `translateX(-${index * 25}%)` }}
-          >
+          <span key={tick} className="pn-DayProfileChart-tick" style={tickPlace(index)}>
             {tick}
           </span>
         ))}

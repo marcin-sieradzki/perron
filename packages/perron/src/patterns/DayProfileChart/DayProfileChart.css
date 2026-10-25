@@ -102,11 +102,12 @@
   border-inline-start: var(--perron-border-width-025) solid var(--perron-color-border-strong);
 }
 
-/* CR-8: the value tip along the plot's top edge, the Tooltips row's fill, text and radius, set in
-   the data role */
+/* CR-8: the value tip along the plot's top edge, a gap beside the guide on whichever side its
+   style.left or style.right sets, the Tooltips row's fill, text and radius, set in the data role */
 .pn-DayProfileChart-tip {
   position: absolute;
   top: 0;
+  margin-inline: var(--perron-space-200);
   display: flex;
   align-items: baseline;
   gap: var(--perron-space-200);
@@ -133,7 +134,7 @@
   white-space: nowrap;
 }
 
-/* CR-8: each tick placed as the tip is */
+/* CR-8: each tick at its time, by its style.left or style.right and style.transform */
 .pn-DayProfileChart-tick {
   position: absolute;
   top: 0;

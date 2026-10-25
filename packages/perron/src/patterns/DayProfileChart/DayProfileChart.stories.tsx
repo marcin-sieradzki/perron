@@ -101,6 +101,13 @@ async function expectAtRest(plot: HTMLElement) {
   await expect(plot.querySelector('.pn-DayProfileChart-tip')).toBeNull()
 }
 
+/** Where along the plot an element's centre sits, as a share of the plot's width. */
+const centreOf = (plot: HTMLElement, element: Element) => {
+  const box = plot.getBoundingClientRect()
+  const { left, width } = element.getBoundingClientRect()
+  return (left + width / 2 - box.left) / box.width
+}
+
 /** Where along the plot an element's left edge sits, as a share of the plot's width. */
 const shareOf = (plot: HTMLElement, element: Element) => {
   const box = plot.getBoundingClientRect()
@@ -137,6 +144,12 @@ export const Default: Story = {
       '18:00',
       '24:00',
     ])
+    // CR-8: 00:00 and 24:00 flush with the plot's edges, the three between centred on their times
+    const box = plot.getBoundingClientRect()
+    await expect(ticks[0].getBoundingClientRect().left).toBeCloseTo(box.left, 0)
+    await expect(ticks[4].getBoundingClientRect().right).toBeCloseTo(box.right, 0)
+    for (const index of [1, 2, 3])
+      await expect(centreOf(plot, ticks[index])).toBeCloseTo(index / 4, 2)
     await expect(tip()).toBeNull()
     await expectAtRest(plot)
     // CR-10: nothing is a live region
@@ -237,20 +250,35 @@ export const Keyboard: Story = {
 /** `Default`'s args, driven by the pointer. */
 export const Pointer: Story = {
   play: async ({ canvasElement }) => {
-    const { plot } = parts(canvasElement)
+    const { plot, scale } = parts(canvasElement)
     const box = plot.getBoundingClientRect()
     const clientY = box.top + box.height / 2
+    const guideOf = () => plot.querySelector('[data-highlighted]')!.getBoundingClientRect()
+    const tipOf = () => parts(canvasElement).tip()!.getBoundingClientRect()
     // CR-7: the point nearest the pointer in time
     await userEvent.pointer({
       target: plot,
       coords: { clientX: box.left + box.width / 2, clientY },
     })
     await expectHighlighted(plot, '12:00')
+    // CR-8: up to the middle, the tip sits after the guide, a gap away
+    await expect(tipOf().left).toBeGreaterThan(guideOf().right)
+    await userEvent.pointer({ target: plot, coords: { clientX: box.right - 1, clientY } })
+    await expectHighlighted(plot, '23:00')
+    // past the middle, before it, inside the plot
+    await expect(tipOf().right).toBeLessThan(guideOf().left)
+    await expect(tipOf().left).toBeGreaterThanOrEqual(box.left)
     await userEvent.pointer({ target: plot, coords: { clientX: box.left, clientY } })
     await expectHighlighted(plot, '00:00')
-    // CR-8: left-aligned inside the plot at 00:00
-    const tip = parts(canvasElement).tip()!
-    await expect(tip.getBoundingClientRect().left).toBeCloseTo(box.left, 0)
+    // at 00:00, after the guide and clear of the scale's count
+    await expect(tipOf().left).toBeGreaterThan(scale.getBoundingClientRect().right)
+    await expect(tipOf().right).toBeLessThanOrEqual(box.right)
+    // CR-7: Escape closes the tip the pointer showed, with focus elsewhere
+    await expect(plot).not.toHaveFocus()
+    await userEvent.keyboard('{Escape}')
+    await expectAtRest(plot)
+    await userEvent.pointer({ target: plot, coords: { clientX: box.left + 1, clientY } })
+    await expectHighlighted(plot, '00:00')
     await userEvent.unhover(plot)
     await expectAtRest(plot)
   },

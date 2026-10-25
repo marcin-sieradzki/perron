@@ -9,19 +9,18 @@ stages:
     started: 2026-10-25T01:59:06.340Z
     ended: 2026-10-25T02:00:24.926Z
   build:
-    runs: 2
-    failing: review round 1 found 1 P1 and 4 P2 (components/day-profile-chart/review.md)
+    runs: 3
+    status: done
+    started: 2026-10-25T02:27:44.732Z
+    spec: 96b980272330eb6a8d3dcc3552f7a153065a45cb35ab7bb195b068bc70ea8f1b
+    ended: 2026-10-25T02:34:45.908Z
   review:
-    status: failed
-    started: 2026-10-25T02:20:12.172Z
     rounds: 1
+    sentBack: 1
     findings:
       p1: 1
       p2: 4
       p3: 9
-    sentBack: 1
-    ended: 2026-10-25T02:27:36.439Z
-    failing: review round 1 found 1 P1 and 4 P2 (components/day-profile-chart/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T01:58:32.189Z
@@ -78,3 +77,12 @@ notes:
   - stage: build
     at: 2026-10-25T02:19:34.726Z
     direction: The tip still sits along the plot's top edge (CR-8). At 00:00 it covers the scale's top count, and near a rush-hour peak it covers the line it describes. Placing it above the plot, or offsetting it from the line, would avoid this.
+  - stage: build
+    at: 2026-10-25T02:34:45.908Z
+    direction: 'With the tip beside the guide, it can still cover a neighbouring point: at 17:00 it lies over the 16:00 peak, and at 00:00 over the 07:00 rise. Only the point it describes is always clear. If a design wants the line fully visible, the tip would need to move off the plot, for example into the space above it.'
+  - stage: build
+    at: 2026-10-25T02:34:45.908Z
+    direction: To stay clear of the scale's count, the tip at 00:00 and 01:00 starts after that count (about 44 px from the guide at 376 px), not right next to the guide. The chart has no measured layout, so CR-8 bounds the count's width with the tip's ch.
+  - stage: build
+    at: 2026-10-25T02:34:45.908Z
+    direction: Pressing Escape over a hover tip while focus is elsewhere clears the tip and still passes the key to whatever has focus, so a detail panel that listens on the document closes in the same press. The foundations' rule 'Esc closes the topmost thing first' could decide whether a hover tip should take that press for itself.
