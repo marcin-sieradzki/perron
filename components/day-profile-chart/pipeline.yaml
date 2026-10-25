@@ -3,4 +3,36 @@ component: DayProfileChart
 layer: pattern
 deferred:
   at: 2026-10-25T01:49:02.924Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-25T01:49:08.104Z
+    ended: 2026-10-25T01:58:32.188Z
+    pending: 8
+notes:
+  - stage: brief
+    at: 2026-10-25T01:58:32.189Z
+    direction: The foundations name the chart's value tip and give axis and series colours, but no token gives a chart's height, its line width or a highlighted-point marker. The spec uses an aspect ratio, border.width.050 and a border guide, pending the design-tokens skill.
+  - stage: brief
+    at: 2026-10-25T01:58:32.189Z
+    direction: PerronProvider gives strings but no number format, so the chart groups counts with a no-break space in every locale, as KioskBar's story figures show ('1 204'). A shared count formatter may be worth a shared helper when ReportStrip or VehicleTable need one.
+  - stage: brief
+    at: 2026-10-25T01:58:32.189Z
+    direction: "Patterns disagree on slotProps: StopTimeline has none because the contract keys slotProps by Base UI part, while DataStatePanel and KioskBar give one per part. This spec follows the brief skill's one-per-part rule for HTML parts, with none for the SVG shapes and ticks. The contract could say which applies to patterns."
+  - stage: brief
+    at: 2026-10-25T01:58:32.189Z
+    direction: The axis ticks and scale use color.text.tertiary, which misses 4.5:1 by design. They are aria-hidden eye-only context, and each point's list item carries the time and count to the ear.
+  - stage: brief
+    at: 2026-10-25T01:58:32.189Z
+    direction: "The registry's dependsOn stays empty: the chart draws its own tip rather than composing MapTooltip, which portals and anchors to the map, and its only shared pieces are the VisuallyHidden part and the UnknownValue, known and classes helpers."
+  - stage: brief
+    at: 2026-10-25T01:58:32.189Z
+    questions: |-
+      1. (Intro) Does DayProfileChart plot one series of counts across one calendar day, 00:00 to 24:00, as a line with the area under it, with no marker for the time now, no second series and no day to compare with? Recommended: yes. The only series token is the vehicles in service curve, and a now marker, a second series or a fixed scale can each join later as an optional prop without a break.
+      2. (Anatomy) Does the axis show five ticks (00:00, 06:00, 12:00, 18:00, 24:00), and the scale show only its top count, rounded up from the largest known count to the next multiple of half its leading power of ten (412 to 450, 1 260 to 1 500), with 0 left to the baseline? Recommended: yes. The labels fit a 320 px plot, and each point already says its own count to the ear.
+      3. (Anatomy) Does the chart show a value tip for one highlighted point, from the pointer, from touch, or from the arrow keys once the plot has focus, with the plot one focus stop whose group points at the highlighted point through aria-activedescendant? Recommended: yes. Elevation names the chart's value tip, Accessibility asks that hover content be reachable without hover, and one stop avoids 24 to 96 Tab stops.
+      4. (Props) Does a point take its time as an HH:MM string and its figure as a number named `count`, which the pattern writes in digits grouped in threes by a no-break space ('1 260'), the same in every locale? Recommended: yes. HH:MM matches StopTimeline and KioskBar, `value` is kept for controls, and PerronProvider gives no number format.
+      5. (Props) Does the chart take `label` as a required ReactNode, shown above the plot as the figure's figcaption, which also names the plot's group? Recommended: yes. A line with no words says nothing of what it counts, and Stat uses the same name.
+      6. (Tokens) Needs a token for the plot's height. Recommended: none; use `aspect-ratio: 3`, which gives 107 px at 320 px wide and 115 px in the overview sheet. No size.* token gives a chart height, and a ratio keeps the curve's shape at every width.
+      7. (Tokens) Needs a token for the width of a chart's line. Recommended: border.width.050 (2 px), with 'the line of a chart' added to its use through the design-tokens skill, so the series stands out from the 1 px gridline and baseline.
+      8. (Tokens) Needs a typography role for the value tip. Recommended: typography.data with its tracking twin, in place of the Tooltips row's typography.label-sm, since the tip holds only a time and a figure and the data roles keep figures tabular.
