@@ -28,12 +28,14 @@ jobs:
       # the Chromium the story tests run in (npm run test:stories, part of npm run check)
       - run: npx playwright install --with-deps chromium
       - run: npm run check
-      # Storybook, with llms.txt, AGENTS.md and a Markdown twin of every page beside it
+      # The docs site in dist/site: the website's static export (built by the check) at the root,
+      # Storybook under storybook/, and llms.txt, AGENTS.md and a Markdown twin of every page
       - run: npm run storybook:build
+      - run: npm run site:build
       - if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v4
         with:
-          path: dist/storybook
+          path: dist/site
 
   # The docs site, deployed from main once the check passes. The repository's Pages source must be
   # set to GitHub Actions.

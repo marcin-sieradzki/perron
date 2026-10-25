@@ -2,3 +2,5 @@
 .next/
 next-env.d.ts
 *.tsbuildinfo
+# the static export that scripts/build-site.ts puts on GitHub Pages
+out/

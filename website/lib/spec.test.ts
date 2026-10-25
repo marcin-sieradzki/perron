@@ -169,7 +169,7 @@ describe('the install strip and links', () => {
 
   it("links to the entry's docs page in the published Storybook", () => {
     expect(storybookUrl(entryByName('Button')!)).toBe(
-      'https://marcin-sieradzki.github.io/perron/?path=/docs/components-button--docs',
+      'https://marcin-sieradzki.github.io/perron/storybook/?path=/docs/components-button--docs',
     )
   })
 })

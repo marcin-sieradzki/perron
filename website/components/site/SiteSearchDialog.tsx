@@ -9,6 +9,7 @@ import NextLink from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { KeyboardEvent, ReactNode } from 'react'
+import { BASE_PATH } from '../../lib/base-path.ts'
 import type { SearchEntry } from '../../lib/search-index.ts'
 import { SECTIONS } from '../../lib/sections.ts'
 import { searchEntries } from './SiteSearchMatch.ts'
@@ -30,7 +31,7 @@ const SECTION_ENTRIES: SearchEntry[] = SECTIONS.map((s) => ({
 const SECTION_HREFS = new Set(SECTIONS.map((s) => s.href))
 
 /** Where the index is served, built by website/lib/search-index.ts. */
-const INDEX_URL = '/search-index.json'
+const INDEX_URL = `${BASE_PATH}/search-index.json`
 
 /** Where focus is typing, or inside another dialog, so / is a character there, not the shortcut. */
 const TYPING =

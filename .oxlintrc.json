@@ -68,6 +68,7 @@
     "packages/perron/tokens/generated",
     "packages/perron/data",
     "website/.next",
+    "website/out",
     "website/next-env.d.ts"
   ]
 }
