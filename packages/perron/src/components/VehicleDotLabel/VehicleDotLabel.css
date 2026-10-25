@@ -1,0 +1,41 @@
+/* VehicleDotLabel: a vehicle's dot and its word in one inline run, at rest only (CR-6). The dot is a
+   VehicleDot, which draws itself in its line's colour (CR-1); the word is set once on the root. */
+.pn-VehicleDotLabel {
+  /* CR-5: the word wraps inside the label, and the dot stays beside its first line. The first row
+     is one line of typography.label-sm tall, held by the strut below; the word spans it and the
+     row the rest of its lines take. */
+  display: inline-grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto 1fr;
+  align-items: center;
+  column-gap: var(--perron-space-100);
+  font: var(--perron-typography-label-sm);
+  letter-spacing: var(--perron-typography-label-sm-tracking);
+  /* CR-5: never wider than its container, and a word longer than its line breaks inside the label,
+     while a row of labels keeps whole words at its narrowest */
+  max-inline-size: 100%;
+  overflow-wrap: break-word;
+  /* the word at full strength in every state, never the dot's grey or a line colour */
+  color: var(--perron-color-text-primary);
+}
+
+/* CR-5: a strut, a zero-width space screen readers skip, so the first row is exactly one line of
+   the root's own typography and the dot centres on the word's first line. */
+.pn-VehicleDotLabel::before {
+  content: '\200b' / '';
+  grid-row: 1;
+  grid-column: 1;
+}
+
+.pn-VehicleDotLabel-dot {
+  grid-row: 1;
+  grid-column: 1;
+}
+
+/* CR-5: the word's column may shrink below its longest word once the root has a width to fit, so
+   the word breaks inside it; sized to its content, the column still keeps whole words. */
+.pn-VehicleDotLabel-label {
+  grid-row: 1 / span 2;
+  grid-column: 2;
+  min-inline-size: 0;
+}

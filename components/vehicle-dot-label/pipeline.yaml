@@ -8,6 +8,13 @@ stages:
     status: done
     started: 2026-10-25T12:38:42.851Z
     ended: 2026-10-25T12:39:52.829Z
+  build:
+    status: done
+    started: 2026-10-25T12:39:56.747Z
+    runs: 1
+    begun: b78c6780c653f0ff04de87772b5efe9bdb06a26884e6d715897f08bd39701d7c
+    spec: 668db7fd05ab060a1cb5a5e9948db93f517c387718b74ad294ffc84e92985bd4
+    ended: 2026-10-25T12:50:42.485Z
 notes:
   - stage: brief
     at: 2026-10-25T12:38:27.446Z
@@ -22,3 +29,6 @@ notes:
       2. (Props) Does VehicleDotLabel come in one size, with no `size` prop: the dot at VehicleDot's `size='small'` (icon.size.325) and the word in `typography.label-sm`, with a `space.100` gap? Recommended: yes, as SeverityLabel and Delay come in one size. label-sm is the role for legend items and short labels in rows, tables and strips, and a `size` prop can be added later without a break.
       3. (Props) Is `line` required, with no default, as on VehicleDot? Recommended: yes. The dot requires it, and a dot in a wrong default colour would name the wrong line. A label that stands for many lines at once, such as a count in ReportStrip, needs a neutral dot, which is a separate VehicleDot change (an optional `line` with an ink default) to decide before ReportStrip is built.
       4. (Tokens) Is the word set in `color.text.primary` for every state? Recommended: yes. The word is the one place the state is told without relying on colour or a 9 px shape, so it reads at full strength (15.32:1 or more on every surface). No signal's word is never greyed like its dot, since tertiary misses 4.5:1, and a line colour is never put on text.
+  - stage: build
+    at: 2026-10-25T12:50:42.485Z
+    direction: "In Chromium, giving the label `min-inline-size: 0` makes the inline-grid's min-content the dot alone. A row that wraps (flex-wrap: wrap) still keeps whole words, which a play test checks. A row that never wraps, or an auto-layout table cell squeezed below the word, breaks the word letter by letter, so break-word buys nothing over anywhere there. VehicleTable and ReportStrip, both built on VehicleDotLabel, should give the state column a minimum width or let their row wrap. Otherwise the label needs a layout whose narrowest is its longest word, which this grid cannot pair with wrapping inside a narrow container."
