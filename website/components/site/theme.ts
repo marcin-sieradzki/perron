@@ -1,6 +1,6 @@
 // The site's theme: dark by default, the visitor's choice kept in localStorage, and set as
 // data-theme on <html> by an inline script in <head> before the first paint, so a reload never
-// flashes the other theme. Shared by the root layout and the theme switch.
+// flashes the other theme. Shared by the root layout, the theme switch and the menu.
 
 export type Theme = 'light' | 'dark'
 
@@ -16,6 +16,16 @@ export const THEME_SCRIPT = `try{var t=localStorage.getItem(${JSON.stringify(THE
 /** The theme <html> shows now. */
 export function currentTheme(): Theme {
   return document.documentElement.dataset.theme === 'light' ? 'light' : 'dark'
+}
+
+/**
+ * Calls back whenever data-theme on <html> changes, from any switch: `useSyncExternalStore`'s
+ * subscribe, with `currentTheme` as its snapshot.
+ */
+export function subscribeTheme(onChange: () => void) {
+  const observer = new MutationObserver(onChange)
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
+  return () => observer.disconnect()
 }
 
 /** Shows `theme` and keeps it for the next visit, when storage allows. */

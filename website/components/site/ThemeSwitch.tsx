@@ -5,14 +5,7 @@
 import { IconButton } from '@mylder/perron'
 import { useSyncExternalStore } from 'react'
 import { MoonIcon, SunIcon } from './icons.tsx'
-import { applyTheme, currentTheme, DEFAULT_THEME, type Theme } from './theme.ts'
-
-/** Calls back whenever data-theme on <html> changes, from this switch or any other. */
-function subscribe(onChange: () => void) {
-  const observer = new MutationObserver(onChange)
-  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
-  return () => observer.disconnect()
-}
+import { applyTheme, currentTheme, DEFAULT_THEME, subscribeTheme, type Theme } from './theme.ts'
 
 const LABEL: Record<Theme, string> = {
   dark: 'Switch to the light theme',
@@ -20,7 +13,7 @@ const LABEL: Record<Theme, string> = {
 }
 
 export function ThemeSwitch() {
-  const theme = useSyncExternalStore(subscribe, currentTheme, () => DEFAULT_THEME)
+  const theme = useSyncExternalStore(subscribeTheme, currentTheme, () => DEFAULT_THEME)
   return (
     <IconButton
       label={LABEL[theme]}
