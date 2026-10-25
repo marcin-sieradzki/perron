@@ -571,15 +571,14 @@
     "name": "Tooltip",
     "layer": "component",
     "category": "Overlays",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [
       "Tooltip.Provider",
       "Tooltip.Root",
       "Tooltip.Trigger",
       "Tooltip.Portal",
       "Tooltip.Positioner",
-      "Tooltip.Popup",
-      "Tooltip.Arrow"
+      "Tooltip.Popup"
     ],
     "penpotPath": "Components/Tooltip",
     "dependsOn": []
