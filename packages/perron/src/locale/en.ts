@@ -51,7 +51,7 @@ export const en = {
   onTime: 'On time',
   /** Delay: no real-time data says how late a vehicle runs; heard in place of "—". */
   delayUnknown: 'Delay unknown',
-  /** Stat, FactList: no data gives the figure or the value; heard in place of "—". */
+  /** Stat, FactList, Count: no data gives the figure, value or count; heard in place of "—". */
   unknown: 'Unknown',
   /** Brand: the brand name, a name and never translated; the wordmark shows it lowercase. */
   brandName: 'Mylder',
