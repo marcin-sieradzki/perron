@@ -121,7 +121,7 @@ export interface TextAreaProps
 // TextArea renders it as a <textarea> (CR-6), so this one cast types the control on the textarea's
 // own attributes, TextAreaProps less the frame's, plus Base UI's render, and every prop TextArea
 // passes it is still type-checked, the rest included.
-const TextareaControl = BaseField.Control as ComponentType<
+const TextAreaControl = BaseField.Control as ComponentType<
   Omit<
     TextAreaProps,
     | 'label'
@@ -188,7 +188,7 @@ export function TextArea({
       {/* CR-3, CR-4: the textarea takes the rest as given, then its declared props, React's own
           onChange among them; CR-10: its rows in every render; CR-6: the textarea is the box,
           rendered after the spread in every render */}
-      <TextareaControl
+      <TextAreaControl
         {...rest}
         name={name}
         rows={rows}
