@@ -10,18 +10,18 @@ stages:
     ended: 2026-10-25T07:18:21.088Z
   build:
     runs: 2
-    status: done
-    started: 2026-10-25T07:32:15.849Z
-    begun: 8883425ad9d9f1b461507603146a323947e7e8091e3e07df0f79e661aa01d30a
-    spec: 0318a7e9c0c8d5e2503204017f0cd691b7765ef3a65aa866607033fa2f463583
-    ended: 2026-10-25T07:36:47.426Z
+    failing: review round 2 found 2 P2 (components/alert-dialog/review.md)
   review:
-    rounds: 1
-    sentBack: 1
+    rounds: 2
+    sentBack: 2
     findings:
       p1: 0
-      p2: 4
+      p2: 2
       p3: 3
+    status: failed
+    started: 2026-10-25T07:37:36.908Z
+    ended: 2026-10-25T07:42:30.558Z
+    failing: review round 2 found 2 P2 (components/alert-dialog/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T07:14:18.875Z
