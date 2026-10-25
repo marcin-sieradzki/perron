@@ -1,0 +1,292 @@
+/* Perron's tokens, copied from @mylder/perron's generated tokens.css on main (2026-10-25),
+   trimmed to what these mockups use, plus a few helpers the mockups share. */
+
+:root {
+  --perron-palette-neutral-0: #FFFFFF;
+  --perron-palette-neutral-50: #FAFBF9;
+  --perron-palette-neutral-100: #EBEEEB;
+  --perron-palette-neutral-300: #A2ADB1;
+  --perron-palette-neutral-400: #8B979E;
+  --perron-palette-neutral-500: #74818A;
+  --perron-palette-neutral-600: #47535A;
+  --perron-palette-neutral-700: #283237;
+  --perron-palette-neutral-800: #1D2428;
+  --perron-palette-neutral-900: #12181B;
+  --perron-palette-neutral-950: #0A0E10;
+  --perron-palette-blue-100: #EEF4FF;
+  --perron-palette-blue-300: #7FA6FF;
+  --perron-palette-blue-500: #2D5FC4;
+  --perron-palette-blue-700: #2351AF;
+  --perron-palette-blue-900: #202D49;
+  --perron-palette-green-100: #E5FAEC;
+  --perron-palette-green-300: #3CCB80;
+  --perron-palette-green-500: #13915A;
+  --perron-palette-green-700: #067849;
+  --perron-palette-green-900: #133622;
+  --perron-palette-orange-100: #FEF1E4;
+  --perron-palette-orange-300: #F0A43A;
+  --perron-palette-orange-500: #B06A00;
+  --perron-palette-orange-700: #965A00;
+  --perron-palette-orange-900: #3F280A;
+  --perron-palette-red-100: #FEF0EC;
+  --perron-palette-red-300: #FF8655;
+  --perron-palette-red-500: #C2410C;
+  --perron-palette-red-700: #AD3600;
+  --perron-palette-red-900: #452417;
+  --perron-palette-yellow-100: #FFF2DD;
+  --perron-palette-yellow-300: #F2B630;
+  --perron-palette-yellow-500: #D99A00;
+  --perron-palette-yellow-550: #C48A02;
+  --perron-palette-yellow-600: #B07B05;
+  --perron-palette-yellow-700: #896001;
+  --perron-palette-yellow-900: #3B2B07;
+
+  --perron-color-text-on-color-dark: var(--perron-palette-neutral-900);
+  --perron-color-text-on-color-light: var(--perron-palette-neutral-0);
+  --perron-color-scrim: rgba(10, 14, 16, 0.42);
+  --perron-color-transit-line-m1: #0B8A44;
+  --perron-color-transit-line-m2: #F0B400;
+  --perron-color-transit-line-m3: #E2231A;
+  --perron-color-transit-line-m4: #0090D0;
+  --perron-color-transit-line-a: #00A1DE;
+  --perron-color-transit-line-b: #4BA046;
+  --perron-color-transit-line-c: #F18A00;
+  --perron-color-transit-line-e: #7D5AA6;
+  --perron-color-transit-line-f: #F5C200;
+  --perron-color-transit-line-h: #DD1F2A;
+  --perron-color-transit-line-on-m1: var(--perron-color-text-on-color-light);
+  --perron-color-transit-line-on-m2: var(--perron-color-text-on-color-dark);
+  --perron-color-transit-line-on-m3: var(--perron-color-text-on-color-light);
+  --perron-color-transit-line-on-m4: var(--perron-color-text-on-color-light);
+  --perron-color-transit-line-on-a: var(--perron-color-text-on-color-light);
+  --perron-color-transit-line-on-b: var(--perron-color-text-on-color-light);
+  --perron-color-transit-line-on-c: var(--perron-color-text-on-color-light);
+  --perron-color-transit-line-on-e: var(--perron-color-text-on-color-light);
+  --perron-color-transit-line-on-f: var(--perron-color-text-on-color-dark);
+  --perron-color-transit-line-on-h: var(--perron-color-text-on-color-light);
+
+  --perron-font-family-display: "Familjen Grotesk", "Schibsted Grotesk", system-ui, sans-serif;
+  --perron-font-family-body: "Schibsted Grotesk", system-ui, -apple-system, "Segoe UI", "Roboto", sans-serif;
+  --perron-font-family-data: "JetBrains Mono", ui-monospace, "SF Mono", "Menlo", "Consolas", monospace;
+  --perron-font-weight-regular: 400;
+  --perron-font-weight-medium: 500;
+  --perron-font-weight-semibold: 600;
+  --perron-font-weight-bold: 700;
+  --perron-font-size-275: 11px;
+  --perron-font-size-300: 12px;
+  --perron-font-size-325: 13px;
+  --perron-font-size-350: 14px;
+  --perron-font-size-400: 16px;
+  --perron-font-size-500: 20px;
+  --perron-font-size-600: 24px;
+  --perron-font-size-700: 28px;
+  --perron-font-size-800: 32px;
+  --perron-font-size-1200: 48px;
+  --perron-font-line-height-none: 1;
+  --perron-font-line-height-tight: 1.15;
+  --perron-font-line-height-snug: 1.3;
+  --perron-font-line-height-normal: 1.5;
+
+  --perron-typography-display: 700 48px/1.15 var(--perron-font-family-display);
+  --perron-typography-display-tracking: -0.96px;
+  --perron-typography-heading-lg: 700 24px/1.15 var(--perron-font-family-display);
+  --perron-typography-heading-lg-tracking: -0.48px;
+  --perron-typography-heading-md: 600 20px/1.15 var(--perron-font-family-display);
+  --perron-typography-heading-md-tracking: -0.3px;
+  --perron-typography-heading-sm: 600 14px/1.3 var(--perron-font-family-body);
+  --perron-typography-body: 400 14px/1.5 var(--perron-font-family-body);
+  --perron-typography-body-sm: 400 13px/1.5 var(--perron-font-family-body);
+  --perron-typography-caption: 400 12px/1.5 var(--perron-font-family-body);
+  --perron-typography-label: 600 13px/1.3 var(--perron-font-family-body);
+  --perron-typography-label-sm: 500 12px/1.3 var(--perron-font-family-body);
+  --perron-typography-overline: 600 11px/1.3 var(--perron-font-family-body);
+  --perron-typography-overline-tracking: 0.88px;
+  --perron-typography-badge: 700 12px/1 var(--perron-font-family-body);
+  --perron-typography-badge-tracking: 0.12px;
+  --perron-typography-stat: 600 28px/1.15 var(--perron-font-family-body);
+  --perron-typography-stat-tracking: -0.84px;
+  --perron-typography-data-xl: 600 48px/1 var(--perron-font-family-data);
+  --perron-typography-data-lg: 600 16px/1.15 var(--perron-font-family-data);
+  --perron-typography-data: 500 12px/1.3 var(--perron-font-family-data);
+  --perron-typography-data-sm: 500 11px/1.3 var(--perron-font-family-data);
+
+  --perron-space-050: 2px;
+  --perron-space-100: 4px;
+  --perron-space-150: 6px;
+  --perron-space-200: 8px;
+  --perron-space-300: 12px;
+  --perron-space-400: 16px;
+  --perron-space-500: 20px;
+  --perron-space-600: 24px;
+  --perron-space-800: 32px;
+  --perron-radius-xs: 4px;
+  --perron-radius-sm: 6px;
+  --perron-radius-md: 8px;
+  --perron-radius-lg: 12px;
+  --perron-radius-xl: 16px;
+  --perron-radius-full: 9999px;
+  --perron-border-width-025: 1px;
+  --perron-border-width-050: 2px;
+  --perron-focus-width: 2px;
+  --perron-focus-offset: 2px;
+  --perron-effect-glass-blur: 16px;
+  --perron-effect-glass-saturate: 1.3;
+  --perron-duration-switch: 150ms;
+  --perron-duration-blink: 1400ms;
+  --perron-easing-standard: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --perron-easing-sheet: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --perron-size-control: 34px;
+  --perron-size-button: 36px;
+  --perron-size-button-sm: 30px;
+  --perron-size-input: 38px;
+  --perron-size-segment: 32px;
+  --perron-size-badge: 22px;
+  --perron-size-badge-lg: 34px;
+  --perron-size-meter-track: 6px;
+  --perron-size-checkbox: 16px;
+  --perron-size-sheet-width: 376px;
+}
+
+:root,
+[data-theme='light'] {
+  color-scheme: light;
+  --perron-color-text-primary: var(--perron-palette-neutral-900);
+  --perron-color-text-secondary: var(--perron-palette-neutral-600);
+  --perron-color-text-tertiary: var(--perron-palette-neutral-500);
+  --perron-color-text-inverse: var(--perron-palette-neutral-50);
+  --perron-color-text-success: var(--perron-palette-green-700);
+  --perron-color-text-warning: var(--perron-palette-orange-700);
+  --perron-color-text-danger: var(--perron-palette-red-700);
+  --perron-color-text-info: var(--perron-palette-blue-700);
+  --perron-color-text-brand: var(--perron-palette-yellow-700);
+  --perron-color-surface-default: var(--perron-palette-neutral-50);
+  --perron-color-surface-raised: var(--perron-palette-neutral-0);
+  --perron-color-surface-inset: var(--perron-palette-neutral-100);
+  --perron-color-surface-overlay: rgba(250, 251, 249, 0.9);
+  --perron-color-surface-hover: rgba(18, 24, 27, 0.05);
+  --perron-color-surface-selected: rgba(18, 24, 27, 0.09);
+  --perron-color-surface-inverse: var(--perron-palette-neutral-900);
+  --perron-color-surface-inverse-hover: var(--perron-palette-neutral-700);
+  --perron-color-surface-inverse-pressed: var(--perron-palette-neutral-600);
+  --perron-color-surface-success: var(--perron-palette-green-100);
+  --perron-color-surface-warning: var(--perron-palette-orange-100);
+  --perron-color-surface-danger: var(--perron-palette-red-100);
+  --perron-color-surface-info: var(--perron-palette-blue-100);
+  --perron-color-surface-brand: var(--perron-palette-yellow-500);
+  --perron-color-surface-brand-hover: var(--perron-palette-yellow-550);
+  --perron-color-surface-brand-pressed: var(--perron-palette-yellow-600);
+  --perron-color-surface-brand-subtle: var(--perron-palette-yellow-100);
+  --perron-color-border-subtle: rgba(18, 24, 27, 0.11);
+  --perron-color-border-strong: rgba(18, 24, 27, 0.22);
+  --perron-color-border-control: rgba(18, 24, 27, 0.47);
+  --perron-color-border-brand: var(--perron-palette-yellow-700);
+  --perron-color-border-focus: var(--perron-palette-neutral-900);
+  --perron-color-status-success: var(--perron-palette-green-500);
+  --perron-color-status-warning: var(--perron-palette-orange-500);
+  --perron-color-status-danger: var(--perron-palette-red-500);
+  --perron-color-status-info: var(--perron-palette-blue-500);
+  --perron-color-chart-series: #2B6C8C;
+  --perron-color-transit-mode-bus: var(--perron-palette-yellow-500);
+  --perron-color-transit-mode-regional: #232C31;
+  --perron-color-data-state-no-signal: #9AA4A9;
+  --perron-color-map-water: #C4D4DD;
+  --perron-color-map-land: #EDEFEB;
+  --perron-color-map-park: #D8E4D2;
+  --perron-color-map-street: #FFFFFF;
+  --perron-color-map-rail: #BCC4C1;
+  --perron-color-map-label: #66737A;
+  --perron-shadow-panel: 0px 1px 2px 0px rgba(18, 24, 27, 0.06), 0px 10px 30px 0px rgba(18, 24, 27, 0.1);
+  --perron-shadow-thumb: 0px 1px 2px 0px rgba(0, 0, 0, 0.14);
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+  --perron-color-text-primary: var(--perron-palette-neutral-100);
+  --perron-color-text-secondary: var(--perron-palette-neutral-300);
+  --perron-color-text-tertiary: var(--perron-palette-neutral-500);
+  --perron-color-text-inverse: var(--perron-palette-neutral-900);
+  --perron-color-text-success: var(--perron-palette-green-300);
+  --perron-color-text-warning: var(--perron-palette-orange-300);
+  --perron-color-text-danger: var(--perron-palette-red-300);
+  --perron-color-text-info: var(--perron-palette-blue-300);
+  --perron-color-text-brand: var(--perron-palette-yellow-300);
+  --perron-color-surface-default: var(--perron-palette-neutral-900);
+  --perron-color-surface-raised: var(--perron-palette-neutral-800);
+  --perron-color-surface-inset: var(--perron-palette-neutral-700);
+  --perron-color-surface-overlay: rgba(18, 24, 27, 0.88);
+  --perron-color-surface-hover: rgba(235, 238, 235, 0.06);
+  --perron-color-surface-selected: rgba(235, 238, 235, 0.09);
+  --perron-color-surface-inverse: var(--perron-palette-neutral-100);
+  --perron-color-surface-inverse-hover: var(--perron-palette-neutral-300);
+  --perron-color-surface-inverse-pressed: var(--perron-palette-neutral-400);
+  --perron-color-surface-success: var(--perron-palette-green-900);
+  --perron-color-surface-warning: var(--perron-palette-orange-900);
+  --perron-color-surface-danger: var(--perron-palette-red-900);
+  --perron-color-surface-info: var(--perron-palette-blue-900);
+  --perron-color-surface-brand: var(--perron-palette-yellow-300);
+  --perron-color-surface-brand-hover: var(--perron-palette-yellow-500);
+  --perron-color-surface-brand-pressed: var(--perron-palette-yellow-600);
+  --perron-color-surface-brand-subtle: var(--perron-palette-yellow-900);
+  --perron-color-border-subtle: rgba(235, 238, 235, 0.1);
+  --perron-color-border-strong: rgba(235, 238, 235, 0.2);
+  --perron-color-border-control: rgba(235, 238, 235, 0.39);
+  --perron-color-border-brand: var(--perron-palette-yellow-300);
+  --perron-color-border-focus: var(--perron-palette-neutral-100);
+  --perron-color-status-success: var(--perron-palette-green-300);
+  --perron-color-status-warning: var(--perron-palette-orange-300);
+  --perron-color-status-danger: var(--perron-palette-red-300);
+  --perron-color-status-info: var(--perron-palette-blue-300);
+  --perron-color-chart-series: #6DB3D8;
+  --perron-color-transit-mode-bus: var(--perron-palette-yellow-300);
+  --perron-color-transit-mode-regional: #EEF1F0;
+  --perron-color-data-state-no-signal: #5F6B71;
+  --perron-color-map-water: #0A1115;
+  --perron-color-map-land: #151B1E;
+  --perron-color-map-park: #16231E;
+  --perron-color-map-street: #252D31;
+  --perron-color-map-rail: #323C41;
+  --perron-color-map-label: #7E8B91;
+  --perron-shadow-panel: 0px 1px 2px 0px rgba(0, 0, 0, 0.35), 0px 14px 36px 0px rgba(0, 0, 0, 0.38);
+  --perron-shadow-thumb: 0px 1px 2px 0px rgba(0, 0, 0, 0.4);
+}
+
+/* Helpers shared by the mockups */
+.pn-glass {
+  -webkit-backdrop-filter: blur(var(--perron-effect-glass-blur)) saturate(var(--perron-effect-glass-saturate));
+  backdrop-filter: blur(var(--perron-effect-glass-blur)) saturate(var(--perron-effect-glass-saturate));
+}
+.pn-hover { transition: background-color var(--perron-duration-switch) var(--perron-easing-standard); }
+.pn-hover:hover { background-color: var(--perron-color-surface-hover) !important; }
+.pn-lift:hover { background-image: linear-gradient(var(--perron-color-surface-hover), var(--perron-color-surface-hover)); }
+.pn-link { color: inherit; text-decoration: none; }
+.pn-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+.pn-brand-btn:hover { background-color: var(--perron-color-surface-brand-hover) !important; }
+.pn-ink-btn:hover { background-color: var(--perron-color-surface-inverse-hover) !important; }
+.pn-scroll-x { overflow-x: auto; scrollbar-width: none; }
+.pn-scroll-x::-webkit-scrollbar { display: none; }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible {
+  outline: var(--perron-focus-width) solid var(--perron-color-border-focus);
+  outline-offset: var(--perron-focus-offset);
+}
+
+
+/* Page titles: the display role, and heading-lg under breakpoint.phone */
+.pn-title { font: var(--perron-typography-display); letter-spacing: var(--perron-typography-display-tracking); }
+@media (max-width: 759.98px) { .pn-title { font: var(--perron-typography-heading-lg); letter-spacing: var(--perron-typography-heading-lg-tracking); } }
+
+/* Vehicles glide between reports; with reduced motion they jump to each report instead */
+.pn-still { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .pn-moving { display: none; }
+  .pn-still { display: inline; }
+}
+
+/* Motion specimens on the Foundations page: each move lasts its duration token, then holds */
+@keyframes fd-sheet { 0% { left: 4px; animation-timing-function: var(--perron-easing-sheet); } 16% { left: calc(100% - 22px); } 50% { left: calc(100% - 22px); animation-timing-function: var(--perron-easing-sheet); } 66% { left: 4px; } 100% { left: 4px; } }
+@keyframes fd-camera { 0% { left: 4px; animation-timing-function: var(--perron-easing-standard); } 25% { left: calc(100% - 22px); } 50% { left: calc(100% - 22px); animation-timing-function: var(--perron-easing-standard); } 75% { left: 4px; } 100% { left: 4px; } }
+@keyframes fd-pulse { 0% { transform: scale(1); opacity: 0.9; } 33% { transform: scale(2.6); opacity: 0; } 100% { transform: scale(2.6); opacity: 0; } }
+@media (prefers-reduced-motion: no-preference) {
+  .fd-sheet { animation: fd-sheet 2000ms infinite; }
+  .fd-camera { animation: fd-camera 3000ms infinite; }
+  .fd-pulse { animation: fd-pulse 3300ms var(--perron-easing-standard) infinite; }
+}

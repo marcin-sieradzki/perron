@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Perron, over the map: agents</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="perron-tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@600;700&amp;family=JetBrains+Mono:wght@500;600&amp;family=Schibsted+Grotesk:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:inherit}
+</style>
+</helmet>
+<div data-theme="{{theme}}" style="position: relative; min-height: 100vh; overflow: hidden; background: var(--perron-color-surface-default); color: var(--perron-color-text-primary); font: var(--perron-typography-body); -webkit-font-smoothing: antialiased">
+
+  <div aria-hidden="true" style="position: absolute; inset: 0 0 auto 0; height: 460px; background: var(--perron-color-map-land); overflow: hidden">
+    <svg width="100%" height="100%" viewBox="0 0 1440 460" preserveAspectRatio="xMidYMin slice" style="display: block; opacity: 0.7">
+      <path d="M1200 0 C1180 140 1215 300 1195 460 L1440 460 L1440 0 Z" style="fill: var(--perron-color-map-water)"></path>
+      <ellipse cx="610" cy="300" rx="64" ry="18" transform="rotate(-38 610 300)" style="fill: var(--perron-color-map-water)"></ellipse>
+      <ellipse cx="672" cy="228" rx="58" ry="17" transform="rotate(-38 672 228)" style="fill: var(--perron-color-map-water)"></ellipse>
+      <ellipse cx="780" cy="110" rx="120" ry="64" style="fill: var(--perron-color-map-park)"></ellipse>
+      <g style="fill: none; stroke: var(--perron-color-map-street); stroke-width: 4; stroke-linecap: round">
+        <path d="M820 420 L0 260"></path><path d="M820 420 L560 0"></path><path d="M820 420 L1040 0"></path><path d="M120 0 C220 200 300 340 340 460"></path>
+      </g>
+      <g style="fill: none; stroke-linecap: round; opacity: 0.78">
+        <path d="M0 330 C200 360 420 400 760 380 C840 376 900 400 980 460" style="stroke: var(--perron-color-transit-line-m1); stroke-width: 3.2"></path>
+        <path d="M0 334 C200 364 420 404 760 384 C838 380 896 404 976 464" style="stroke: var(--perron-color-transit-line-m2); stroke-width: 3.2"></path>
+        <path d="M915 460 C950 380 950 300 915 245 C880 190 800 165 720 172 C635 180 560 225 505 290 C470 340 455 400 465 460" style="stroke: var(--perron-color-transit-line-m3); stroke-width: 3.2"></path>
+        <path d="M1080 0 C1010 140 960 250 918 360 C900 400 880 430 860 460" style="stroke: var(--perron-color-transit-line-a); stroke-width: 2.5"></path>
+        <path d="M640 0 C620 140 600 240 560 330 C520 390 460 430 400 460" style="stroke: var(--perron-color-transit-line-f); stroke-width: 2.5"></path>
+      </g>
+      <g class="pn-moving">
+        <g><animateMotion dur="40s" begin="-6s" repeatCount="indefinite" calcMode="linear" keyPoints="0;0.3;0.3;0.62;0.62;1" keyTimes="0;0.28;0.34;0.62;0.68;1" path="M0 330 C200 360 420 400 760 380 C840 376 900 400 980 460"></animateMotion><circle r="4.6" style="fill: none; stroke: var(--perron-color-transit-line-m1); stroke-width: 1.4"><animate attributeName="r" values="4.6;14;14" keyTimes="0;0.1375;1" dur="8s" begin="2s" repeatCount="indefinite"></animate><animate attributeName="opacity" values="0.9;0;0" keyTimes="0;0.1375;1" dur="8s" begin="2s" repeatCount="indefinite"></animate></circle><circle r="4.6" style="fill: var(--perron-color-transit-line-m1); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+        <g><animateMotion dur="44s" begin="-20s" repeatCount="indefinite" calcMode="linear" keyPoints="1;0.7;0.7;0.38;0.38;0" keyTimes="0;0.28;0.34;0.62;0.68;1" path="M0 334 C200 364 420 404 760 384 C838 380 896 404 976 464"></animateMotion><circle r="4.6" style="fill: var(--perron-color-transit-line-m2); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+        <g><animateMotion dur="38s" begin="-12s" repeatCount="indefinite" path="M915 460 C950 380 950 300 915 245 C880 190 800 165 720 172 C635 180 560 225 505 290 C470 340 455 400 465 460"></animateMotion><circle r="4.6" style="fill: var(--perron-color-transit-line-m3); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+        <g><animateMotion dur="38s" begin="-30s" repeatCount="indefinite" calcMode="linear" keyPoints="1;0" keyTimes="0;1" path="M915 460 C950 380 950 300 915 245 C880 190 800 165 720 172 C635 180 560 225 505 290 C470 340 455 400 465 460"></animateMotion><circle r="3.7" style="fill: none; stroke: var(--perron-color-transit-line-m3); stroke-width: 1.8"></circle></g>
+        <g><animateMotion dur="30s" begin="-9s" repeatCount="indefinite" path="M1080 0 C1010 140 960 250 918 360 C900 400 880 430 860 460"></animateMotion><circle r="4.8" style="fill: var(--perron-color-transit-line-a); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+        <g><animateMotion dur="34s" begin="-15s" repeatCount="indefinite" calcMode="linear" keyPoints="1;0" keyTimes="0;1" path="M640 0 C620 140 600 240 560 330 C520 390 460 430 400 460"></animateMotion><circle r="4.8" style="fill: var(--perron-color-transit-line-f); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+        <g><animateMotion dur="60s" begin="-12s" repeatCount="indefinite" calcMode="linear" keyPoints="1;0" keyTimes="0;1" path="M820 420 L0 260"></animateMotion><circle r="3.3" style="fill: var(--perron-color-transit-mode-bus); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+        <g><animateMotion dur="40s" begin="-28s" repeatCount="indefinite" path="M820 420 L1040 0"></animateMotion><circle r="3.3" style="fill: var(--perron-color-transit-mode-bus); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+        <g><animateMotion dur="50s" begin="-5s" repeatCount="indefinite" path="M120 0 C220 200 300 340 340 460"></animateMotion><circle r="3.3" style="fill: var(--perron-color-transit-mode-bus); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+      </g>
+      <g class="pn-still">
+        <g><animateMotion dur="40s" begin="-6s" repeatCount="indefinite" calcMode="discrete" keyPoints="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" path="M0 330 C200 360 420 400 760 380 C840 376 900 400 980 460"></animateMotion><circle r="4.6" style="fill: var(--perron-color-transit-line-m1); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+        <g><animateMotion dur="44s" begin="-20s" repeatCount="indefinite" calcMode="discrete" keyPoints="1;0.9;0.8;0.7;0.6;0.5;0.4;0.3;0.2;0.1" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" path="M0 334 C200 364 420 404 760 384 C838 380 896 404 976 464"></animateMotion><circle r="4.6" style="fill: var(--perron-color-transit-line-m2); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+        <g><animateMotion dur="38s" begin="-12s" repeatCount="indefinite" calcMode="discrete" keyPoints="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" path="M915 460 C950 380 950 300 915 245 C880 190 800 165 720 172 C635 180 560 225 505 290 C470 340 455 400 465 460"></animateMotion><circle r="4.6" style="fill: var(--perron-color-transit-line-m3); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+        <g><animateMotion dur="38s" begin="-30s" repeatCount="indefinite" calcMode="discrete" keyPoints="1;0.9;0.8;0.7;0.6;0.5;0.4;0.3;0.2;0.1" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" path="M915 460 C950 380 950 300 915 245 C880 190 800 165 720 172 C635 180 560 225 505 290 C470 340 455 400 465 460"></animateMotion><circle r="3.7" style="fill: none; stroke: var(--perron-color-transit-line-m3); stroke-width: 1.8"></circle></g>
+        <g><animateMotion dur="30s" begin="-9s" repeatCount="indefinite" calcMode="discrete" keyPoints="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" path="M1080 0 C1010 140 960 250 918 360 C900 400 880 430 860 460"></animateMotion><circle r="4.8" style="fill: var(--perron-color-transit-line-a); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+        <g><animateMotion dur="34s" begin="-15s" repeatCount="indefinite" calcMode="discrete" keyPoints="1;0.9;0.8;0.7;0.6;0.5;0.4;0.3;0.2;0.1" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" path="M640 0 C620 140 600 240 560 330 C520 390 460 430 400 460"></animateMotion><circle r="4.8" style="fill: var(--perron-color-transit-line-f); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+        <g><animateMotion dur="60s" begin="-12s" repeatCount="indefinite" calcMode="discrete" keyPoints="1;0.9;0.8;0.7;0.6;0.5;0.4;0.3;0.2;0.1" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" path="M820 420 L0 260"></animateMotion><circle r="3.3" style="fill: var(--perron-color-transit-mode-bus); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+        <g><animateMotion dur="40s" begin="-28s" repeatCount="indefinite" calcMode="discrete" keyPoints="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" path="M820 420 L1040 0"></animateMotion><circle r="3.3" style="fill: var(--perron-color-transit-mode-bus); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+        <g><animateMotion dur="50s" begin="-5s" repeatCount="indefinite" calcMode="discrete" keyPoints="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9" path="M120 0 C220 200 300 340 340 460"></animateMotion><circle r="3.3" style="fill: var(--perron-color-transit-mode-bus); stroke: var(--perron-color-map-land); stroke-width: 1.6"></circle></g>
+      </g>
+    </svg>
+    <div style="position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 10%, var(--perron-color-surface-default) 92%)"></div>
+  </div>
+
+  <header style="position: relative; z-index: 2; padding: 16px clamp(16px, 3vw, 32px) 0">
+    <div class="pn-glass" style="max-width: 1280px; margin: 0 auto; min-height: 56px; box-sizing: border-box; padding: 8px 8px 8px 18px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; border-radius: 28px; background: var(--perron-color-surface-overlay); border: 1px solid var(--perron-color-border-subtle); box-shadow: var(--perron-shadow-panel)">
+      <a href="Home.dc.html" style="display: flex; align-items: center; gap: 10px; color: inherit; text-decoration: none">
+        <svg width="27" height="19" viewBox="0 0 27 19" aria-hidden="true"><circle cx="5.5" cy="12.5" r="4.3" style="fill: var(--perron-color-transit-mode-bus)"></circle><circle cx="13.5" cy="5.5" r="4.3" style="fill: var(--perron-color-transit-line-a)"></circle><circle cx="21.5" cy="12.5" r="3.6" style="fill: none; stroke: var(--perron-color-text-primary); stroke-width: 1.7"></circle></svg>
+        <span style="font: var(--perron-typography-heading-md); font-weight: 700; letter-spacing: var(--perron-typography-heading-md-tracking)">Perron</span>
+      </a>
+      <nav aria-label="Sections" class="pn-scroll-x" style="flex: 1 1 360px; min-width: 0; display: flex; gap: 2px">
+        <a href="Foundations.dc.html" class="pn-hover" style="flex: none; height: 34px; padding: 0 14px; display: inline-flex; align-items: center; border-radius: 9999px; font: var(--perron-typography-label); color: var(--perron-color-text-secondary); text-decoration: none">Foundations</a>
+        <a href="Components.dc.html" class="pn-hover" style="flex: none; height: 34px; padding: 0 14px; display: inline-flex; align-items: center; border-radius: 9999px; font: var(--perron-typography-label); color: var(--perron-color-text-secondary); text-decoration: none">Components</a>
+        <a href="Patterns.dc.html" class="pn-hover" style="flex: none; height: 34px; padding: 0 14px; display: inline-flex; align-items: center; border-radius: 9999px; font: var(--perron-typography-label); color: var(--perron-color-text-secondary); text-decoration: none">Patterns</a>
+        <a href="#" class="pn-hover" style="flex: none; height: 34px; padding: 0 14px; display: inline-flex; align-items: center; border-radius: 9999px; font: var(--perron-typography-label); color: var(--perron-color-text-secondary); text-decoration: none">Content</a>
+        <a href="Agents.dc.html" aria-current="page" style="flex: none; height: 34px; padding: 0 14px; display: inline-flex; align-items: center; border-radius: 9999px; font: var(--perron-typography-label); color: var(--perron-color-text-primary); background: var(--perron-color-surface-selected); text-decoration: none">Agents</a>
+      </nav>
+      <div style="display: flex; align-items: center; gap: 6px; margin-left: auto">
+        <button type="button" class="pn-hover" style="height: 36px; padding: 0 8px 0 12px; display: inline-flex; align-items: center; gap: 10px; border-radius: 9999px; border: 1px solid var(--perron-color-border-subtle); background: transparent; color: var(--perron-color-text-secondary); font: var(--perron-typography-label-sm); cursor: pointer">
+          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" style="fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round"><circle cx="7" cy="7" r="4.6"></circle><path d="m10.5 10.5 3.2 3.2"></path></svg>
+          <span>Search the docs</span>
+          <kbd style="font: var(--perron-typography-data-sm); line-height: 1.15; padding: 0 4px; border-radius: 4px; border: 1px solid var(--perron-color-border-strong); background: var(--perron-color-surface-raised); color: var(--perron-color-text-primary)">/</kbd>
+        </button>
+        <button type="button" aria-label="Switch theme" class="pn-hover" style="width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; border-radius: 9999px; border: 0; background: transparent; color: var(--perron-color-text-primary); cursor: pointer">
+          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" style="fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round"><path d="M13.2 9.6A5.6 5.6 0 0 1 6.4 2.8a5.6 5.6 0 1 0 6.8 6.8Z"></path></svg>
+        </button>
+        <a href="#" class="pn-hover" style="height: 36px; padding: 0 12px; display: inline-flex; align-items: center; border-radius: 9999px; font: var(--perron-typography-label); color: var(--perron-color-text-primary); text-decoration: none">GitHub</a>
+      </div>
+    </div>
+  </header>
+
+
+  <div style="position: relative; z-index: 1; max-width: 1280px; margin: 0 auto; padding: 40px clamp(16px, 3vw, 32px) 64px; display: flex; flex-wrap: wrap; align-items: flex-start; gap: 32px">
+
+    <aside aria-label="Agents" class="pn-glass" style="flex: 1 1 220px; max-width: 100%; box-sizing: border-box; padding: 12px; border-radius: 16px; background: var(--perron-color-surface-overlay); border: 1px solid var(--perron-color-border-subtle); display: flex; flex-direction: column; gap: 4px">
+      <a href="#" aria-current="page" style="display: flex; align-items: center; height: 32px; padding: 0 10px; border-radius: 8px; background: var(--perron-color-surface-selected); font: var(--perron-typography-label); color: var(--perron-color-text-primary); text-decoration: none">The MCP server</a>
+      <a href="#setup" class="pn-hover" style="display: flex; align-items: center; height: 32px; padding: 0 10px; border-radius: 8px; font: var(--perron-typography-body-sm); color: var(--perron-color-text-secondary); text-decoration: none">Set it up</a>
+      <span style="padding: 12px 10px 4px; font: var(--perron-typography-overline); letter-spacing: var(--perron-typography-overline-tracking); text-transform: uppercase; color: var(--perron-color-text-secondary)">Tools</span>
+      <a href="#list-tokens" class="pn-hover" style="display: flex; align-items: center; height: 32px; padding: 0 10px; border-radius: 8px; font: var(--perron-typography-data); color: var(--perron-color-text-secondary); text-decoration: none">list_tokens</a>
+      <a href="#search-docs" class="pn-hover" style="display: flex; align-items: center; height: 32px; padding: 0 10px; border-radius: 8px; font: var(--perron-typography-data); color: var(--perron-color-text-secondary); text-decoration: none">search_docs</a>
+      <a href="#get-reference" class="pn-hover" style="display: flex; align-items: center; height: 32px; padding: 0 10px; border-radius: 8px; font: var(--perron-typography-data); color: var(--perron-color-text-secondary); text-decoration: none">get_reference</a>
+      <span style="padding: 12px 10px 4px; font: var(--perron-typography-overline); letter-spacing: var(--perron-typography-overline-tracking); text-transform: uppercase; color: var(--perron-color-text-secondary)">More</span>
+      <a href="#sources" class="pn-hover" style="display: flex; align-items: center; height: 32px; padding: 0 10px; border-radius: 8px; font: var(--perron-typography-body-sm); color: var(--perron-color-text-secondary); text-decoration: none">Where answers come from</a>
+      <a href="#" class="pn-hover" style="display: flex; align-items: center; height: 32px; padding: 0 10px; border-radius: 8px; font: var(--perron-typography-body-sm); color: var(--perron-color-text-secondary); text-decoration: none">The component contract</a>
+    </aside>
+
+    <main style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 40px">
+      <div style="display: flex; flex-direction: column; gap: 16px">
+        <nav aria-label="Breadcrumb" style="font: var(--perron-typography-label-sm); color: var(--perron-color-text-secondary)"><a href="Home.dc.html" class="pn-link">Perron</a> <span aria-hidden="true">/</span> Agents</nav>
+        <div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 12px">
+          <h1 class="pn-title" style="margin: 0">Agents</h1>
+          <span style="font: var(--perron-typography-data-sm); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--perron-color-border-subtle); color: var(--perron-color-text-secondary)">@mylder/perron-mcp 0.1.1</span>
+        </div>
+        <p style="margin: 0; font: var(--perron-typography-heading-lg); letter-spacing: var(--perron-typography-heading-lg-tracking)">Small, exact answers for your coding agent</p>
+        <p style="margin: 0; max-width: 680px; font: var(--perron-typography-body); color: var(--perron-color-text-secondary)">The Perron MCP server answers an agent's questions about Perron's tokens, its docs and the API of the Base UI and MUI versions your project installs. The agent reads a few lines that match what is installed, instead of the sources or the hosted docs of a newer release.</p>
+      </div>
+
+      <!-- Set up -->
+      <section id="setup" aria-labelledby="setup-h" style="display: flex; flex-direction: column; gap: 12px">
+        <h2 id="setup-h" style="margin: 0; font: var(--perron-typography-heading-md); letter-spacing: var(--perron-typography-heading-md-tracking)">Set it up</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px">
+          <div style="padding: 16px; border-radius: 16px; background: var(--perron-color-surface-raised); border: 1px solid var(--perron-color-border-subtle); display: flex; flex-direction: column; gap: 10px">
+            <span style="display: flex; align-items: center; gap: 8px"><span style="width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; border-radius: 9999px; background: var(--perron-color-surface-inset); font: var(--perron-typography-label)">1</span><span style="font: var(--perron-typography-heading-sm)">Add it to the project's .mcp.json</span></span>
+            <pre style="margin: 0; padding: 12px; overflow-x: auto; border-radius: 10px; background: var(--perron-color-surface-inset); font: var(--perron-typography-data); line-height: 1.7">{
+  "mcpServers": {
+    "perron": {
+      "command": "npx",
+      "args": ["-y", "@mylder/perron-mcp"]
+    }
+  }
+}</pre>
+          </div>
+          <div style="padding: 16px; border-radius: 16px; background: var(--perron-color-surface-raised); border: 1px solid var(--perron-color-border-subtle); display: flex; flex-direction: column; gap: 10px">
+            <span style="display: flex; align-items: center; gap: 8px"><span style="width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; border-radius: 9999px; background: var(--perron-color-surface-inset); font: var(--perron-typography-label)">2</span><span style="font: var(--perron-typography-heading-sm)">Install Perron beside it</span></span>
+            <span style="display: flex; align-items: center; gap: 4px; padding: 4px 4px 4px 12px; border-radius: 10px; background: var(--perron-color-surface-inset)">
+              <code style="flex: 1; min-width: 0; overflow-x: auto; white-space: nowrap; font: var(--perron-typography-data)">npm install @mylder/perron</code>
+              <button type="button" aria-label="Copy the command" class="pn-hover" style="flex: none; width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 6px; background: transparent; color: var(--perron-color-text-secondary); cursor: pointer"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" style="fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linejoin: round"><rect x="4.5" y="4.5" width="7.5" height="7.5" rx="1.4"></rect><path d="M9.5 4.5V3.4c0-.8-.6-1.4-1.4-1.4H3.4C2.6 2 2 2.6 2 3.4v4.7c0 .8.6 1.4 1.4 1.4h1.1"></path></svg></button>
+            </span>
+            <span style="font: var(--perron-typography-body-sm); color: var(--perron-color-text-secondary)">The tokens and docs come from the data the installed <code style="font: var(--perron-typography-data); color: var(--perron-color-text-primary)">@mylder/perron</code> ships, so the answers always match the version you use. The server runs over stdio and needs no key.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tools: each one called, and what comes back -->
+      <section aria-labelledby="tools-h" style="display: flex; flex-direction: column; gap: 16px">
+        <h2 id="tools-h" style="margin: 0; display: flex; align-items: baseline; gap: 10px; font: var(--perron-typography-heading-md); letter-spacing: var(--perron-typography-heading-md-tracking)">Tools <span style="font: var(--perron-typography-data); color: var(--perron-color-text-secondary)">3</span></h2>
+
+        <article id="list-tokens" style="padding: 20px; border-radius: 16px; background: var(--perron-color-surface-raised); border: 1px solid var(--perron-color-border-subtle); display: flex; flex-wrap: wrap; gap: 20px">
+          <div style="flex: 1 1 240px; display: flex; flex-direction: column; gap: 8px">
+            <code style="font: var(--perron-typography-data-lg)">list_tokens</code>
+            <p style="margin: 0; font: var(--perron-typography-body); color: var(--perron-color-text-secondary)">Every token's name, CSS custom property, value in each theme, what it aliases, its reduced-motion value and what it is for. <code style="font: var(--perron-typography-data); color: var(--perron-color-text-primary)">query</code> keeps tokens whose name or description holds all its words; <code style="font: var(--perron-typography-data); color: var(--perron-color-text-primary)">type</code> keeps one DTCG type.</p>
+          </div>
+          <div style="flex: 2 1 380px; min-width: 0; border-radius: 12px; overflow: hidden; border: 1px solid var(--perron-color-border-subtle)">
+            <div style="padding: 10px 12px; background: var(--perron-color-surface-inset); font: var(--perron-typography-data)">list_tokens({ query: "surface warning" })</div>
+            <table style="width: 100%; border-collapse: collapse; font: var(--perron-typography-data-sm)">
+              <thead><tr style="text-align: left; color: var(--perron-color-text-secondary)"><th scope="col" style="padding: 8px 12px; font-weight: 500">Token</th><th scope="col" style="padding: 8px 12px; font-weight: 500">Light</th><th scope="col" style="padding: 8px 12px; font-weight: 500">Dark</th></tr></thead>
+              <tbody>
+                <tr style="border-top: 1px solid var(--perron-color-border-subtle)"><td style="padding: 8px 12px">color.surface.warning</td><td style="padding: 8px 12px"><span style="display: inline-flex; align-items: center; gap: 6px"><span data-theme="light" style="width: 12px; height: 12px; border-radius: 3px; border: 1px solid var(--perron-color-border-subtle); background: var(--perron-color-surface-warning)"></span>orange.100</span></td><td style="padding: 8px 12px"><span style="display: inline-flex; align-items: center; gap: 6px"><span data-theme="dark" style="width: 12px; height: 12px; border-radius: 3px; border: 1px solid var(--perron-color-border-subtle); background: var(--perron-color-surface-warning)"></span>orange.900</span></td></tr>
+                <tr style="border-top: 1px solid var(--perron-color-border-subtle)"><td style="padding: 8px 12px">color.text.warning</td><td style="padding: 8px 12px"><span style="display: inline-flex; align-items: center; gap: 6px"><span data-theme="light" style="width: 12px; height: 12px; border-radius: 3px; border: 1px solid var(--perron-color-border-subtle); background: var(--perron-color-text-warning)"></span>orange.700</span></td><td style="padding: 8px 12px"><span style="display: inline-flex; align-items: center; gap: 6px"><span data-theme="dark" style="width: 12px; height: 12px; border-radius: 3px; border: 1px solid var(--perron-color-border-subtle); background: var(--perron-color-text-warning)"></span>orange.300</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <article id="search-docs" style="padding: 20px; border-radius: 16px; background: var(--perron-color-surface-raised); border: 1px solid var(--perron-color-border-subtle); display: flex; flex-wrap: wrap; gap: 20px">
+          <div style="flex: 1 1 240px; display: flex; flex-direction: column; gap: 8px">
+            <code style="font: var(--perron-typography-data-lg)">search_docs</code>
+            <p style="margin: 0; font: var(--perron-typography-body); color: var(--perron-color-text-secondary)">The sections of the foundations, content design, the glossary and the component contract that best match <code style="font: var(--perron-typography-data); color: var(--perron-color-text-primary)">query</code>, in full. <code style="font: var(--perron-typography-data); color: var(--perron-color-text-primary)">limit</code> sets how many, three by default.</p>
+          </div>
+          <div style="flex: 2 1 380px; min-width: 0; border-radius: 12px; overflow: hidden; border: 1px solid var(--perron-color-border-subtle)">
+            <div style="padding: 10px 12px; background: var(--perron-color-surface-inset); font: var(--perron-typography-data)">search_docs({ query: "focus ring", limit: 1 })</div>
+            <div style="padding: 12px; display: flex; flex-direction: column; gap: 6px">
+              <span style="font: var(--perron-typography-label-sm); color: var(--perron-color-text-secondary)">Accessibility › Rules</span>
+              <span style="font: var(--perron-typography-body-sm)"><strong style="font-weight: 600">Focus.</strong> Every interactive element shows the ring on <code style="font: var(--perron-typography-data-sm)">:focus-visible</code>: a <code style="font: var(--perron-typography-data-sm)">focus.width</code> solid outline in <code style="font: var(--perron-typography-data-sm)">color.border.focus</code>, <code style="font: var(--perron-typography-data-sm)">focus.offset</code> away from the element. Never remove an outline without drawing the ring another way.</span>
+            </div>
+          </div>
+        </article>
+
+        <article id="get-reference" style="padding: 20px; border-radius: 16px; background: var(--perron-color-surface-raised); border: 1px solid var(--perron-color-border-subtle); display: flex; flex-wrap: wrap; gap: 20px">
+          <div style="flex: 1 1 240px; display: flex; flex-direction: column; gap: 8px">
+            <code style="font: var(--perron-typography-data-lg)">get_reference</code>
+            <p style="margin: 0; font: var(--perron-typography-body); color: var(--perron-color-text-secondary)">A component's API reference from the installed package's own docs. <code style="font: var(--perron-typography-data); color: var(--perron-color-text-primary)">library</code> is <code style="font: var(--perron-typography-data); color: var(--perron-color-text-primary)">base-ui</code> or <code style="font: var(--perron-typography-data); color: var(--perron-color-text-primary)">mui</code>, and <code style="font: var(--perron-typography-data); color: var(--perron-color-text-primary)">part</code> narrows it to one part. Ask it before the hosted docs.</p>
+          </div>
+          <div style="flex: 2 1 380px; min-width: 0; border-radius: 12px; overflow: hidden; border: 1px solid var(--perron-color-border-subtle)">
+            <div style="padding: 10px 12px; background: var(--perron-color-surface-inset); font: var(--perron-typography-data); overflow-x: auto; white-space: nowrap">get_reference({ library: "base-ui", component: "Select", part: "Positioner" })</div>
+            <div style="padding: 12px; display: flex; flex-direction: column; gap: 6px">
+              <span style="font: var(--perron-typography-label-sm); color: var(--perron-color-text-secondary)">@base-ui/react 1.9.0 › Select › API reference › Positioner</span>
+              <span style="font: var(--perron-typography-body-sm)">Positions the select popup against the trigger. Renders a <code style="font: var(--perron-typography-data-sm)">&lt;div&gt;</code> element.</span>
+              <span style="font: var(--perron-typography-data-sm); color: var(--perron-color-text-secondary)">side · align · sideOffset · alignOffset · collisionPadding …</span>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <!-- Where answers come from -->
+      <section id="sources" aria-labelledby="sources-h" class="pn-glass" style="padding: 20px; border-radius: 16px; background: var(--perron-color-surface-overlay); border: 1px solid var(--perron-color-border-subtle); display: flex; flex-direction: column; gap: 14px">
+        <h2 id="sources-h" style="margin: 0; font: var(--perron-typography-heading-md); letter-spacing: var(--perron-typography-heading-md-tracking)">Where the answers come from</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px">
+          <div style="padding: 14px; border-radius: 12px; background: var(--perron-color-surface-raised); display: flex; flex-direction: column; gap: 6px">
+            <span style="font: var(--perron-typography-data)">node_modules/@mylder/perron/data/</span>
+            <span style="font: var(--perron-typography-body-sm); color: var(--perron-color-text-secondary)">Tokens and docs, for <code style="font: var(--perron-typography-data-sm); color: var(--perron-color-text-primary)">list_tokens</code> and <code style="font: var(--perron-typography-data-sm); color: var(--perron-color-text-primary)">search_docs</code>. Built with the release, so they never drift from it.</span>
+          </div>
+          <div style="padding: 14px; border-radius: 12px; background: var(--perron-color-surface-raised); display: flex; flex-direction: column; gap: 6px">
+            <span style="font: var(--perron-typography-data)">node_modules/@base-ui/react, @mui/material</span>
+            <span style="font: var(--perron-typography-body-sm); color: var(--perron-color-text-secondary)">The docs bundled in each library, for <code style="font: var(--perron-typography-data-sm); color: var(--perron-color-text-primary)">get_reference</code>. The versions your lockfile holds, not the latest release.</span>
+          </div>
+        </div>
+      </section>
+
+      <nav aria-label="Pages" style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding-top: 8px; border-top: 1px solid var(--perron-color-border-subtle)">
+        <a href="Patterns.dc.html" class="pn-hover" style="padding: 10px 12px; border-radius: 10px; display: flex; flex-direction: column; gap: 2px; text-decoration: none"><span style="font: var(--perron-typography-caption); color: var(--perron-color-text-secondary)">Previous</span><span style="font: var(--perron-typography-label)">Patterns</span></a>
+        <a href="Home.dc.html" class="pn-hover" style="padding: 10px 12px; border-radius: 10px; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; text-decoration: none"><span style="font: var(--perron-typography-caption); color: var(--perron-color-text-secondary)">Back to</span><span style="font: var(--perron-typography-label)">Home</span></a>
+      </nav>
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":1440,"height":2300}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { theme: this.props.theme ?? 'dark' };
+  }
+}
+</script>
+</body>
+</html>
