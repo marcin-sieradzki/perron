@@ -65,7 +65,7 @@ export const da: OwnedStrings = {
   maximum: 'Maksimum',
   inProgress: 'I gang',
   notifications: 'Notifikationer',
-  updated: 'opdateret',
-  paused: 'Sat på pause',
+  sourceUpdated: 'opdateret',
+  sourcePaused: 'Sat på pause',
   mayBeOutOfDate: 'er måske forældet',
 }

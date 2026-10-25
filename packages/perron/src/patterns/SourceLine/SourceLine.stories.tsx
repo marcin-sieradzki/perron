@@ -30,15 +30,15 @@ const STALE: SourceLineSource = { name: 'Vehicle positions', time: '08:09:40', o
 
 /** Each of the line's words overridden, with the prop that overrides it and the locale's word. */
 const WORDS = [
-  { prop: 'updatedLabel', word: 'updated', own: 'as of' },
-  { prop: 'pausedLabel', word: 'Paused', own: 'On hold' },
+  { prop: 'sourceUpdatedLabel', word: 'updated', own: 'as of' },
+  { prop: 'sourcePausedLabel', word: 'Paused', own: 'On hold' },
   { prop: 'mayBeOutOfDateLabel', word: 'may be out of date', own: 'could be old' },
 ] as const satisfies readonly { prop: keyof SourceLineProps; word: string; own: string }[]
 
 /** Every word override at once, from `WORDS`. */
 const OWN_LABELS = {
-  updatedLabel: WORDS[0].own,
-  pausedLabel: WORDS[1].own,
+  sourceUpdatedLabel: WORDS[0].own,
+  sourcePausedLabel: WORDS[1].own,
   mayBeOutOfDateLabel: WORDS[2].own,
 } satisfies Partial<SourceLineProps>
 
@@ -106,6 +106,22 @@ function roleLonghands(role: string) {
 const longhandsOf = (element: Element) => {
   const style = getComputedStyle(element)
   return [style.fontFamily, style.fontSize, style.fontWeight, style.lineHeight]
+}
+
+/**
+ * A line in a 320 px `box` wraps onto more than one line, keeps each time on one line, reaches
+ * nowhere past the box's edge, and starts no line with a "·" (CR-1, CR-13).
+ */
+async function expectWrapsInside(box: HTMLElement, line: HTMLElement) {
+  const parts = partsOf(line)
+  await expect(lines(line)).toBeGreaterThan(1)
+  for (const time of parts.times) await expect(lines(time)).toBeLessThan(1.5)
+  await expect(box.scrollWidth).toBe(box.clientWidth)
+  await expect(line.scrollWidth).toBe(line.clientWidth)
+  // a line's first box sits at the paragraph's start edge; no "·" may be that box
+  const start = line.getBoundingClientRect().left
+  for (const separator of parts.separators)
+    await expect(separator.getBoundingClientRect().left).toBeGreaterThan(start + 1)
 }
 
 /** One source, Rejseplanen at 08:14:05. The subject story: its args render the line alone. */
@@ -424,6 +440,19 @@ export const OutOfDate: Story = {
       colour('--perron-color-text-warning'),
     )
     await expect(line).not.toHaveAttribute('data-paused')
+    // CR-3, CR-6: outOfDate false shows none of it, and an HH:MM time is shown as it is given
+    await mounted(
+      canvasElement,
+      <SourceLine sources={[{ name: 'Rejseplanen', time: '08:14', outOfDate: false }]} />,
+      async (host) => {
+        const own = partsOf(await lineIn(host))
+        await expect(own.sources[0]).not.toHaveAttribute('data-out-of-date')
+        await expect(own.outOfDate).toHaveLength(0)
+        await expect(own.times[0]).toHaveAttribute('dateTime', '08:14')
+        await expect(own.times[0]).toHaveTextContent(/^08:14$/)
+        await expect(heard(own.sources[0])).toBe('Rejseplanen · updated 08:14')
+      },
+    )
     // the paused and out-of-date words, beyond the subject story's: in every locale, the dictionary's
     for (const locale of Object.keys(dictionaries) as Locale[])
       expectOwnedStrings(
@@ -456,11 +485,25 @@ export const Narrow: Story = {
     await expect(heard(line)).toBe(
       'Pausad · Rejseplanen · uppdaterad 08:14:05 · Vehicle positions · uppdaterad 08:09:40, kan vara inaktuell',
     )
-    // CR-13: the line wraps, each time on one line, and nothing past the container's edge
-    await expect(lines(line)).toBeGreaterThan(1)
-    for (const time of parts.times) await expect(lines(time)).toBeLessThan(1.5)
-    await expect(container.scrollWidth).toBe(container.clientWidth)
-    await expect(line.scrollWidth).toBe(line.clientWidth)
+    await expect(parts.separators).toHaveLength(4)
+    // CR-13: the line wraps, each time on one line, nothing past the edge, no line starts with "·"
+    await expectWrapsInside(container, line)
+    // the same in the other three locales, each in its own 320 px container
+    for (const locale of ['en', 'da', 'nb'] as const)
+      await mounted(
+        canvasElement,
+        <PerronProvider locale={locale}>
+          <div data-testid={`narrow-${locale}`} style={{ inlineSize: 320 }}>
+            <SourceLine sources={[REJSEPLANEN, STALE]} paused />
+          </div>
+        </PerronProvider>,
+        async (host) => {
+          const box = await waitFor(() => within(host).getByTestId(`narrow-${locale}`))
+          const own = await lineIn(box)
+          await expect(heard(own)).toContain(dictionaries[locale].mayBeOutOfDate)
+          await expectWrapsInside(box, own)
+        },
+      )
     // a name longer than the container's line breaks inside itself
     await mounted(
       canvasElement,

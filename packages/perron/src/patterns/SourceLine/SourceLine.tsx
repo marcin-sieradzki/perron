@@ -44,12 +44,12 @@ export interface SourceLineProps extends Omit<ComponentPropsWithRef<'p'>, 'child
    * Overrides "updated", the word before each source's time
    * @default The locale's
    */
-  updatedLabel?: string
+  sourceUpdatedLabel?: string
   /**
    * Overrides "Paused", the word that starts a paused line
    * @default The locale's
    */
-  pausedLabel?: string
+  sourcePausedLabel?: string
   /**
    * Overrides "may be out of date", the words after the time of a source whose `outOfDate` is set
    * @default The locale's
@@ -83,6 +83,9 @@ export interface SourceLineProps extends Omit<ComponentPropsWithRef<'p'>, 'child
 /** U+00B7, the mark between a source's name and "updated", after "Paused", and between sources. */
 const SEPARATOR = '·'
 
+/** U+00A0, before each "·", so a wrapped line never starts with one (CR-1). */
+const NO_BREAK_SPACE = '\u00A0'
+
 /**
  * One caption line that names where a panel's data comes from and the time of that data, each
  * source with its own time: "Rejseplanen · updated 08:14:05". Put one on every panel that shows a
@@ -91,8 +94,8 @@ const SEPARATOR = '·'
 export function SourceLine({
   sources,
   paused = false,
-  updatedLabel,
-  pausedLabel,
+  sourceUpdatedLabel,
+  sourcePausedLabel,
   mayBeOutOfDateLabel,
   slotProps,
   className,
@@ -101,8 +104,8 @@ export function SourceLine({
 }: SourceLineProps) {
   // CR-7: the line's three words, with this instance's overrides laid over them
   const strings = useOwnedStrings({
-    updated: updatedLabel,
-    paused: pausedLabel,
+    sourceUpdated: sourceUpdatedLabel,
+    sourcePaused: sourcePausedLabel,
     mayBeOutOfDate: mayBeOutOfDateLabel,
   })
   const {
@@ -115,10 +118,11 @@ export function SourceLine({
     outOfDate: outOfDateProps,
   } = slotProps ?? {}
 
-  // CR-1: a "·" with a space on each side outside it, so the line wraps at those spaces
+  // CR-1: a "·" with a no-break space before it and a space after it, so the line wraps after a
+  // "·" and never starts a line with one
   const separator = (
     <>
-      {' '}
+      {NO_BREAK_SPACE}
       <span
         {...separatorProps}
         className={classes('pn-SourceLine-separator', separatorProps?.className)}
@@ -148,7 +152,7 @@ export function SourceLine({
             {...pausedProps}
             className={classes('pn-SourceLine-paused', pausedProps?.className)}
           >
-            {strings.paused}
+            {strings.sourcePaused}
           </span>
           {separator}
         </>
@@ -173,7 +177,7 @@ export function SourceLine({
               {...updatedProps}
               className={classes('pn-SourceLine-updated', updatedProps?.className)}
             >
-              {strings.updated}
+              {strings.sourceUpdated}
             </span>{' '}
             {/* CR-3: the caller's time as it is, with no timer, clock or formatting of its own */}
             <time

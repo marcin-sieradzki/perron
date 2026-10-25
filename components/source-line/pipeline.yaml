@@ -9,21 +9,21 @@ stages:
     started: 2026-10-25T17:54:16.088Z
     ended: 2026-10-25T17:54:26.277Z
   build:
-    runs: 2
+    runs: 3
     respecs: 1
-    failing: review round 1 found 2 P2 (components/source-line/review.md)
+    status: done
+    started: 2026-10-25T18:29:33.211Z
+    begun: 9d5d039065812d4ba8bf8487c17ee08c8286c34517bca057a75331af3b8a57f5
+    spec: e9a2b7b424fb43c88a46d65b32989bb431e7b1abffa207fa4dcfa366d10778b0
+    ended: 2026-10-25T18:41:42.460Z
   review:
-    status: failed
-    started: 2026-10-25T18:14:30.845Z
     rounds: 1
+    sentBack: 1
+    reviewed: 00251b726aed70486675c293a29adf40641d17ca
     findings:
       p1: 0
       p2: 2
       p3: 5
-    reviewed: 00251b726aed70486675c293a29adf40641d17ca
-    sentBack: 1
-    ended: 2026-10-25T18:29:26.220Z
-    failing: review round 1 found 2 P2 (components/source-line/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T17:53:46.108Z

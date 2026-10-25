@@ -65,7 +65,7 @@ export const sv: OwnedStrings = {
   maximum: 'Maximum',
   inProgress: 'Pågår',
   notifications: 'Aviseringar',
-  updated: 'uppdaterad',
-  paused: 'Pausad',
+  sourceUpdated: 'uppdaterad',
+  sourcePaused: 'Pausad',
   mayBeOutOfDate: 'kan vara inaktuell',
 }
