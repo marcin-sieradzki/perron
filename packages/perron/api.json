@@ -128,7 +128,7 @@
   },
   "Checkbox": {
     "extends": [
-      "Omit< BaseCheckbox.Root.Props, 'onCheckedChange' | 'onChange' | 'parent' | 'children' | 'className' | 'style' | 'ref' >"
+      "Omit< BaseCheckbox.Root.Props, 'onCheckedChange' | 'onChange' | 'children' | 'className' | 'style' | 'ref' >"
     ],
     "props": {
       "children": {
@@ -159,6 +159,86 @@
         "optional": true,
         "type": [
           "{ indicator?: Omit<CheckboxIndicatorProps, \"keepMounted\" | \"render\"> | undefined; }"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      }
+    }
+  },
+  "CheckboxGroup": {
+    "extends": [
+      "Omit< BaseCheckboxGroup.Props, 'onValueChange' | 'onChange' | 'disabled' | 'children' | 'className' | 'style' | 'ref' >",
+      "Pick< BaseField.Root.Props, | 'invalid' | 'validate' | 'validationMode' | 'validationDebounceTime' | 'dirty' | 'touched' | 'actionsRef' >"
+    ],
+    "props": {
+      "children": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "description": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "disabled": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "error": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "hiddenLabel": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "label": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "name": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "onChange": {
+        "optional": true,
+        "type": [
+          "(event: Event, value: string[], details: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) => void"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLElement>"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ legend?: FieldsetLegendProps | undefined; description?: FieldDescriptionProps | undefined; error?: FieldErrorProps | undefined; }"
         ]
       },
       "style": {
