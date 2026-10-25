@@ -604,6 +604,61 @@
       }
     }
   },
+  "KioskBar": {
+    "extends": [
+      "Omit<ComponentPropsWithRef<'div'>, 'children'>"
+    ],
+    "props": {
+      "brandNameLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ brand?: Omit<BrandProps, \"render\" | \"brandNameLabel\"> | undefined; stats?: DetailedHTMLProps<HTMLAttributes<HTMLUListElement>, HTMLUListElement> | undefined; stat?: Omit<StatProps, \"label\" | \"children\" | \"render\" | \"unknownLabel\"> | undefined; time?: DetailedHTMLProps<TimeHTMLAttributes<HTMLTimeElement>, HTMLTimeElement> | undefined; }"
+        ]
+      },
+      "stats": {
+        "optional": true,
+        "type": [
+          "readonly KioskBarStat[]"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "time": {
+        "optional": false,
+        "type": [
+          "string"
+        ]
+      },
+      "unknownLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      }
+    }
+  },
   "LineBadge": {
     "extends": [
       "Omit<useRender.ComponentProps<'span'>, 'children'>"
