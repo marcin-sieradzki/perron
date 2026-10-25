@@ -1,6 +1,7 @@
 // Helpers the stories share, written once here (docs/components/README.md, "Shared helpers").
 import type { CSSProperties, ReactNode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { expect, screen, waitFor } from 'storybook/test'
 
 /**
  * The style of one typography role with its `-tracking` twin, for a story's own text, with no
@@ -56,3 +57,14 @@ export async function mounted<T>(
     host.remove()
   }
 }
+
+/** Resolves once no dialog is open: no Dialog, Sheet or DetailPanel popup is in the document. */
+export const closed = () => waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+
+/** The element with `data-testid` `id`, once it has rendered. */
+export const byTestId = (id: string) =>
+  waitFor(() => {
+    const found = document.querySelector(`[data-testid="${id}"]`)
+    expect(found).not.toBeNull()
+    return found as HTMLElement
+  })

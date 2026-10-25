@@ -46,7 +46,7 @@ export interface DetailPanelProps extends Omit<ComponentPropsWithRef<'div'>, 'ti
   subheader?: ReactNode
   /**
    * The panel's own controls, in a row of their own under the title and the subheader, as
-   * DetailHeader's `action`, such as a "Show on map" link. The close button is the panel's and
+   * DetailHeader's `action`, such as a "Show on map" button. The close button is the panel's and
    * needs no place here.
    */
   action?: ReactNode

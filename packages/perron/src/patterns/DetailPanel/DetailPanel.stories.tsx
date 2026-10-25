@@ -9,7 +9,7 @@ import { Button } from '../../components/Button/Button.tsx'
 import { Text } from '../../components/Text/Text.tsx'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
-import { mounted } from '../../testing/stories.ts'
+import { byTestId, closed, mounted } from '../../testing/stories.ts'
 import { DetailPanel } from './DetailPanel.tsx'
 import type { DetailPanelProps } from './DetailPanel.tsx'
 
@@ -71,9 +71,6 @@ type Story = StoryObj<typeof meta>
 /** The open panel, found by its name in the portal at the end of `<body>`. */
 const panel = (name: string) => screen.findByRole('dialog', { name })
 
-/** Resolves once no panel is open. */
-const closed = () => waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
-
 /** A token's value as `:root` holds it, such as `--perron-z-index-detail`'s `6`. */
 const token = (name: string) =>
   getComputedStyle(document.documentElement).getPropertyValue(`--perron-${name}`).trim()
@@ -81,14 +78,6 @@ const token = (name: string) =>
 /** The part of the open panel `dialog` with the class `pn-<part>`. */
 const part = (dialog: HTMLElement, name: string) =>
   dialog.querySelector<HTMLElement>(`.pn-${name}`)!
-
-/** The element with `data-testid` `id`, once it has rendered. */
-const byTestId = (id: string) =>
-  waitFor(() => {
-    const found = document.querySelector(`[data-testid="${id}"]`)
-    expect(found).not.toBeNull()
-    return found as HTMLElement
-  })
 
 /** Each shape a `ReactNode` prop takes, holding `text`: a string, an element and a list. */
 const shapes = (text: string): ReactNode[] => [
