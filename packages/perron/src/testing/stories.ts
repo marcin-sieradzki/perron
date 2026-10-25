@@ -60,9 +60,9 @@ export function colour(property: string) {
   const probe = document.createElement('span')
   probe.style.color = `var(${property})`
   document.body.append(probe)
-  const rendered = getComputedStyle(probe).color
+  const value = getComputedStyle(probe).color
   probe.remove()
-  return rendered
+  return value
 }
 
 /**

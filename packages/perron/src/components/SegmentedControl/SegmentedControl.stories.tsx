@@ -1,7 +1,7 @@
 // SegmentedControl's stories: the control, then the segment in each state of the deferred design,
 // each in a control of its own, as Base UI's Toggle needs (CR-2), then a disabled control, a
-// controlled one, a narrow one and one whose labels take each shape a label can. Hover and focus render at rest; the visual check drives them,
-// and their play tests check them.
+// controlled one, a narrow one and one whose labels take each shape a label can. Hover and focus
+// render at rest; the visual check drives them, and their play tests check them.
 import { useState } from 'react'
 import type { Decorator, Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, userEvent, within } from 'storybook/test'
@@ -244,7 +244,10 @@ const narrow: Decorator = (Story) => (
   </div>
 )
 
-/** Three long labels in a 320 px wide container: they wrap inside their segments, and nothing scrolls. */
+/**
+ * Three long labels in a 320 px wide container: they wrap inside their segments, and nothing
+ * scrolls.
+ */
 export const LongLabels: Story = {
   args: {
     defaultValue: 'planned-works',
@@ -308,11 +311,13 @@ export const LabelShapes: Story = {
     await expect(list.getBoundingClientRect().height).toBeGreaterThan(
       parseFloat(rendered('size-segment', 'height')),
     )
-    // the element wraps with the text before it, on a line below it, and whole: one line box
+    // the element wraps with the text before it, whole, on a line below that text's first line: its
+    // one box starts at or below the bottom of the box the text's first line gives
     const element = within(list).getByText('problems')
+    const before = document.createRange()
+    before.selectNodeContents(element.previousSibling!)
+    const firstLine = before.getClientRects()[0]
     await expect(element.getClientRects()).toHaveLength(1)
-    await expect(element.getBoundingClientRect().top).toBeGreaterThan(
-      list.firstElementChild!.getBoundingClientRect().top,
-    )
+    await expect(element.getClientRects()[0].top).toBeGreaterThanOrEqual(firstLine.bottom)
   },
 }

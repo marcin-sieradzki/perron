@@ -40,8 +40,8 @@ export interface SegmentedControlProps extends Inherited<
    */
   onChange?: (event: Event, value: string, details: ToggleGroup.ChangeEventDetails) => void
   /**
-   * Whether every segment ignores clicks and keys. The selected segment still shows, and the
-   * control leaves the tab order.
+   * Whether every segment ignores the pointer and the keys. The selected segment still shows, and
+   * the control leaves the tab order.
    * @default false
    */
   disabled?: boolean
@@ -71,7 +71,8 @@ export function SegmentedControl({
   return (
     <ToggleGroup
       {...rest}
-      // each only when given, so a control given neither is uncontrolled with nothing selected (CR-4)
+      // each only when given, so a control given neither is uncontrolled with nothing selected
+      // (CR-4)
       {...(value !== undefined && { value: [value] })}
       {...(defaultValue !== undefined && { defaultValue: [defaultValue] })}
       ref={ref}
@@ -96,8 +97,8 @@ export interface SegmentProps extends Inherited<
   /** Required. The value that selects this segment, unique within its control. */
   value: string
   /**
-   * Whether the segment can't be selected. It leaves the tab and arrow-key order, and is announced
-   * as dimmed.
+   * Whether the segment ignores the pointer and the keys. It leaves the tab and arrow-key order,
+   * and is announced as dimmed.
    * @default false
    */
   disabled?: boolean
