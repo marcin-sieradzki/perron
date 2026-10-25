@@ -1313,6 +1313,36 @@
       }
     }
   },
+  "Tag": {
+    "extends": [
+      "Omit<useRender.ComponentProps<'span'>, 'children'>"
+    ],
+    "props": {
+      "children": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "color": {
+        "optional": true,
+        "type": [
+          "\"danger\"",
+          "\"info\"",
+          "\"neutral\"",
+          "\"success\"",
+          "\"warning\""
+        ]
+      },
+      "variant": {
+        "optional": true,
+        "type": [
+          "\"dashed\"",
+          "\"filled\""
+        ]
+      }
+    }
+  },
   "Text": {
     "extends": [
       "Omit<HTMLAttributes<HTMLElement>, 'color' | 'children' | 'className' | 'style'>",
