@@ -25,6 +25,10 @@ stages:
     status: done
     started: 2026-10-25T05:17:13.549Z
     ended: 2026-10-25T05:22:16.001Z
+  docs:
+    status: done
+    started: 2026-10-25T05:23:42.826Z
+    ended: 2026-10-25T05:26:22.153Z
 notes:
   - stage: brief
     at: 2026-10-25T04:49:06.599Z
@@ -80,3 +84,9 @@ notes:
   - stage: build
     at: 2026-10-25T05:03:54.587Z
     unblocked: "build failed: npm run check, at npm run test (unit): scripts/checks/shared-parts.test.ts:26 pins the contract's CheckboxIndicator row's icons as ['tick']; the build added 'the dash icon' to that row per CR-5, so the shared-tooling test fails. The spec is revised: CR-5 no longer edits the contract's Shared parts row, so revert that row to name the tick icon alone (keep the dash icon in the part's folder and the updated note below the table) and re-run npm run check.; rerun once because the spec changed since that run ended"
+  - stage: docs
+    at: 2026-10-25T05:26:22.155Z
+    direction: The page's intro draws the spec's second paragraph, which holds notes about this run ("No ROADMAP wave line names Checkbox", "The extracted prototype component is not in any branch this run can reach"); they now show on the public docs page and belong in pipeline.yaml (review P3-6).
+  - stage: docs
+    at: 2026-10-25T05:26:22.155Z
+    direction: The props table types onChange's third argument as the local alias ChangeDetails, not Checkbox.Root.ChangeEventDetails as the spec does; writing the full Base UI name in the signature would make the docgen show it.
