@@ -99,6 +99,8 @@ export const Default: Story = {
           await expect(dot.nextElementSibling).toHaveClass('pn-VehicleDotLegend-label')
           await expect(dot).toHaveAttribute('data-variant', variant)
           await expect(dot).toHaveAttribute('data-size', 'small')
+          // no line, so the dot draws in the legend's ink (CR-3)
+          await expect(dot).not.toHaveAttribute('data-line')
           await expect(dot).toHaveAttribute('aria-hidden', 'true')
           await expect(isInaccessible(dot)).toBe(true)
           const box = dot.getBoundingClientRect()
@@ -296,9 +298,10 @@ export const Narrow: Story = {
  */
 export const ForcedColours: Story = {
   play: async ({ canvasElement, step }) => {
-    const sheet = forcedColourSheet('pn-VehicleDot', 'pn-VehicleDotLegend')
+    // the dots have no line, so VehicleDot's own rules draw them; the legend adds none (CR-3)
+    await expect(forcedColourSheet('pn-VehicleDotLegend').cssRules).toHaveLength(0)
+    const sheet = forcedColourSheet('pn-VehicleDot')
     const selectors = Array.from(sheet.cssRules, (rule) => (rule as CSSStyleRule).selectorText)
-    await expect(selectors.some((s) => s.includes('.pn-VehicleDotLegend-dot'))).toBe(true)
     await expect(selectors.some((s) => /\.pn-VehicleDot\[/.test(s))).toBe(true)
     const legend = await legendIn(canvasElement)
     const dots = dotsOf(legend)

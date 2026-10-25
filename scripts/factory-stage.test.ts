@@ -5,7 +5,7 @@ import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'nod
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { printed, stageCall, withFix } from './factory-stage.ts'
+import { parseResult, printed, stageCall, withFix, writeReview } from './factory-stage.ts'
 
 interface Call {
   prompt: string
@@ -175,6 +175,28 @@ describe('withFix, for a stage the factory sent back', () => {
       expect(withFix({ stage: 'review', name: 'Chip', since: 'given' }, root).since).toBe('given')
     } finally {
       rmSync(root, { recursive: true })
+    }
+  })
+  it("reads an agent's reply past its fences and the backslashes JSON doesn't allow", () => {
+    const review = '# Review: Chip, round 1\n\n- **P2-1.** `Chip.tsx:4` A \\ stays.'
+    const valid = JSON.stringify({ review })
+    expect(parseResult(`Done.\n\`\`\`json\n${valid}\n\`\`\``)).toEqual({ review })
+    // the reviewer escaped each backtick, \`, which JSON refuses, and broke a line in a string
+    const loose = valid.replaceAll('`', '\\`').replace('\\n\\n', '\n\n')
+    expect(() => JSON.parse(loose)).toThrow(/Bad (escaped|control) character/)
+    expect(parseResult(loose)).toEqual({ review })
+    expect(() => parseResult('no result')).toThrow('the reply holds no JSON object')
+  })
+
+  it("writes a review round's text to review.md as Prettier formats it", async () => {
+    const dir = mkdtempSync(join(tmpdir(), 'factory-stage-'))
+    try {
+      const file = join(dir, 'review.md')
+      await writeReview({ review: '# Review: Chip, round 1\n## P1\nNone.' }, file)
+      expect(readFileSync(file, 'utf8')).toBe('# Review: Chip, round 1\n\n## P1\n\nNone.\n')
+      await expect(writeReview({ outcome: 'done' }, file)).rejects.toThrow('no review text')
+    } finally {
+      rmSync(dir, { recursive: true, force: true })
     }
   })
 })

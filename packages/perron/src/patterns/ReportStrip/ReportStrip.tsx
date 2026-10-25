@@ -7,6 +7,7 @@ import type { VehicleDotLabelProps } from '../../components/VehicleDotLabel/Vehi
 import { useOwnedStrings } from '../../PerronProvider.tsx'
 import { classes, known } from '../../internal/nodes.ts'
 import { grouped } from '../../internal/numbers.ts'
+import { STATE_KEY, VEHICLE_STATES } from '../../internal/vehicle-states.ts'
 import { UnknownValue } from '../../internal/UnknownValue.tsx'
 import './ReportStrip.css'
 
@@ -23,21 +24,6 @@ export interface ReportStripCounts {
   /** Optional. How many have no signal: silent for over 5 minutes */
   noSignal?: number | null
 }
-
-/**
- * The five data states, in the order Data states lists them, each with its field in `counts` and
- * VehicleDot's spelling of it (CR-1, CR-2). No prop picks, hides or reorders them.
- */
-const STATES = [
-  { field: 'live', variant: 'live' },
-  { field: 'ageing', variant: 'ageing' },
-  { field: 'estimated', variant: 'estimated' },
-  { field: 'timetableOnly', variant: 'timetable-only' },
-  { field: 'noSignal', variant: 'no-signal' },
-] as const satisfies readonly {
-  field: keyof ReportStripCounts
-  variant: NonNullable<VehicleDotLabelProps['variant']>
-}[]
 
 export interface ReportStripProps extends Omit<ComponentPropsWithRef<'ul'>, 'children'> {
   /**
@@ -129,9 +115,10 @@ export function ReportStrip({
   return (
     // CR-9: the rest props first, then the root's own class, ref and children, so its own win
     <ul {...rest} className={classes('pn-ReportStrip', className)} ref={ref}>
-      {/* CR-1: always the five states, in the order of Data states */}
-      {STATES.map(({ field, variant }) => {
-        const count = counts[field]
+      {/* CR-1, CR-2: always the five states, in the order of Data states, none picked, hidden or
+          reordered; each state's field in counts is its key */}
+      {VEHICLE_STATES.map((variant) => {
+        const count = counts[STATE_KEY[variant]]
         // CR-5: left out, null or not finite is unknown; 0 is a count
         const unknown = !known(count)
         return (

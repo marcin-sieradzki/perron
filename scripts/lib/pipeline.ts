@@ -182,6 +182,8 @@ export type Result =
       ok: true
       pipeline: Pipeline
       said: string
+      /** `end`'s message for the stage's commit, from the gate's outcome: `Chip: review failed, round 1: …` */
+      commit?: string
       /** What the command took but the orchestrator should fix next time, for stderr */
       warnings?: string[]
     }
@@ -1061,6 +1063,7 @@ export function end(
     ok: true,
     pipeline: out,
     said: `ended ${stage}: ${verdict.outcome}${note}${why}`,
+    commit: `${p.component}: ${stage} ${verdict.outcome}${note}`,
     ...(warnings.length && { warnings }),
   }
 }

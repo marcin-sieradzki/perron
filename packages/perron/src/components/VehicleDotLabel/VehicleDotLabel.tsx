@@ -5,25 +5,17 @@ import type { CSSProperties, Ref } from 'react'
 import { mergeProps } from '@base-ui/react/merge-props'
 import { useRender } from '@base-ui/react/use-render'
 import { useOwnedStrings } from '../../PerronProvider.tsx'
-import type { OwnedStringKey } from '../../locale/index.ts'
+import { STATE_KEY } from '../../internal/vehicle-states.ts'
+import type { VehicleState } from '../../internal/vehicle-states.ts'
 import { VehicleDot } from '../VehicleDot/VehicleDot.tsx'
 import './VehicleDotLabel.css'
-
-/** The owned string that names each data state (CR-1, CR-4). */
-const LABEL_KEY = {
-  live: 'live',
-  ageing: 'ageing',
-  estimated: 'estimated',
-  'timetable-only': 'timetableOnly',
-  'no-signal': 'noSignal',
-} as const satisfies Record<NonNullable<VehicleDotLabelProps['variant']>, OwnedStringKey>
 
 export interface VehicleDotLabelProps extends Omit<useRender.ComponentProps<'span'>, 'children'> {
   /**
    * How fresh the vehicle's data is, as Data states names it: the dot's shape and the word beside
    * it. Set on the root as `data-variant`, and passed to the dot.
    */
-  variant?: 'live' | 'ageing' | 'estimated' | 'timetable-only' | 'no-signal'
+  variant?: VehicleState
   /**
    * The vehicle's line, which gives the dot its colour: a metro line (`m1` to `m4`), an S-tog line
    * (`a` to `h`), any bus (`bus`), or any regional or Øresund train (`regional`). Set on the root
@@ -88,7 +80,7 @@ export function VehicleDotLabel({
     timetableOnly: timetableOnlyLabel,
     noSignal: noSignalLabel,
   })
-  const word = strings[LABEL_KEY[variant]]
+  const word = strings[STATE_KEY[variant]]
   // CR-3: data-variant always, its default included; data-line only when a line is given
   const own = {
     className: 'pn-VehicleDotLabel',
