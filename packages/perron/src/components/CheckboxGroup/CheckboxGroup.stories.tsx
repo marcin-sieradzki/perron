@@ -3,7 +3,7 @@
 // (docs/components/checkbox-group.md), each on a raised Surface in a 320 px container, in English.
 // The checkboxes are Perron's Checkbox; the group draws none of their looks.
 import { createRef, useState } from 'react'
-import type { ReactNode } from 'react'
+import type { FormEvent, ReactNode } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
@@ -15,7 +15,7 @@ import { Section } from '../Section/Section.tsx'
 import { Surface } from '../Surface/Surface.tsx'
 import { CheckboxGroup, type CheckboxGroupProps } from './CheckboxGroup.tsx'
 
-const LABEL = 'Show on the map'
+const LABEL = 'Show on map'
 const DESCRIPTION = 'The map shows vehicles of the ticked modes only'
 const ERROR = 'Choose at least one mode'
 const MODES = [
@@ -85,7 +85,7 @@ const part = (scope: Element, name: 'legend' | 'description' | 'error') =>
 const before = (a: Node, b: Node) =>
   Boolean(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING)
 
-/** The values ticked, in document order. */
+/** The labels of the ticked checkboxes, in document order. */
 const ticked = (scope: HTMLElement) =>
   allBoxes(scope)
     .filter((root) => root.getAttribute('aria-checked') === 'true')
@@ -392,11 +392,11 @@ export const Controlled: Story = {
 }
 
 /** The story's submit handler, which stops the form from leaving the page. */
-const onSubmit = fn((event: { preventDefault: () => void }) => event.preventDefault())
+const onSubmit = fn((event: FormEvent<HTMLFormElement>) => event.preventDefault())
 
-/** The group with `name="modes"` in a `<form>` with a submit button, "S-tog" disabled. */
+/** The group with `name="modes"` in a `<form>` with a submit button, "S-tog" ticked and disabled. */
 export const InForm: Story = {
-  args: { name: 'modes', children: boxes('s-tog') },
+  args: { name: 'modes', defaultValue: ['bus', 's-tog'], children: boxes('s-tog') },
   render: (args) => (
     <form
       onSubmit={onSubmit}
@@ -416,14 +416,19 @@ export const InForm: Story = {
     const form = canvasElement.querySelector('form')!
     const group = groupIn(canvasElement)
     const modes = () => new FormData(form).getAll('modes')
+    // "S-tog" is ticked but disabled, so it submits nothing
+    await expect(box(group, 'S-tog')).toHaveAttribute('aria-checked', 'true')
     await expect(modes()).toEqual(['bus'])
     await userEvent.click(box(group, 'Metro'))
     await expect(modes()).toEqual(['bus', 'metro'])
-    await expect(modes()).not.toContain('s-tog')
     // Enter on a checkbox clicks the form's submit button, which the story stops
     await expect(box(group, 'Metro')).toHaveFocus()
     await userEvent.keyboard('{Enter}')
     await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1))
+    const [event] = onSubmit.mock.calls[0]
+    await expect((event.nativeEvent as SubmitEvent).submitter).toBe(
+      within(form).getByRole('button', { name: 'Save' }),
+    )
     await expect(box(group, 'Metro')).toHaveAttribute('aria-checked', 'true')
     // as it started
     await userEvent.click(box(group, 'Metro'))
@@ -555,7 +560,7 @@ export const RichContent: Story = {
   args: {
     label: (
       <span>
-        Show on the <strong>map</strong>
+        Show on <strong>map</strong>
       </span>
     ),
     description: (
@@ -585,7 +590,7 @@ export const RichContent: Story = {
       await mounted(
         canvasElement,
         <CheckboxGroup
-          label={['Show on the ', <strong key="map">map</strong>]}
+          label={['Show on ', <strong key="map">map</strong>]}
           description={[
             'The map shows vehicles of the ',
             <strong key="ticked">ticked</strong>,

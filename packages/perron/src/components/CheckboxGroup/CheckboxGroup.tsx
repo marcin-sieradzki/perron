@@ -32,7 +32,7 @@ export interface CheckboxGroupProps
     > {
   /**
    * Required. The group's name, in sentence case, a few words or a short question, such as "Show
-   * on the map": shown above the checkboxes, and the group's accessible name.
+   * on map": shown above the checkboxes, and the group's accessible name.
    */
   label: ReactNode
   /**
@@ -101,6 +101,35 @@ export interface CheckboxGroupProps
   }
 }
 
+/** The keys `Field.Root` takes from the caller: the form name, the style and the validation (CR-3). */
+const FIELD_KEYS = [
+  'name',
+  'style',
+  'invalid',
+  'validate',
+  'validationMode',
+  'validationDebounceTime',
+  'dirty',
+  'touched',
+  'actionsRef',
+] as const satisfies ReadonlyArray<keyof CheckboxGroupProps & keyof BaseField.Root.Props>
+
+/**
+ * Splits `props` into the given `keys` and the rest. A key the caller left out stays out of both,
+ * never set to `undefined` (CR-4).
+ */
+function split<T extends object, K extends keyof T>(props: T, keys: readonly K[]) {
+  const picked = {} as Pick<T, K>
+  const others = { ...props }
+  for (const key of keys) {
+    if (key in others) {
+      picked[key] = others[key]
+      delete others[key]
+    }
+  }
+  return [picked, others as Omit<T, K>] as const
+}
+
 /**
  * A named set of checkboxes that answer one question together, such as which modes the map shows:
  * its label above, a line of help, the checkboxes in one column, and its error under them.
@@ -111,22 +140,15 @@ export function CheckboxGroup({
   description,
   error,
   disabled = false,
-  name,
   onChange,
   children,
   className,
-  style,
-  invalid,
-  validate,
-  validationMode,
-  validationDebounceTime,
-  dirty,
-  touched,
-  actionsRef,
   ref,
   slotProps,
   ...rest
 }: CheckboxGroupProps) {
+  // CR-3: the field's props go to Field.Root, the rest to Base UI's group, each only when given
+  const [field, group] = split(rest, FIELD_KEYS)
   // CR-4: a given error marks the group invalid, unless the caller says otherwise, and shows at
   // once; left out, Base UI's own message shows when the group fails its `validate`
   const hasError = given(error)
@@ -136,20 +158,13 @@ export function CheckboxGroup({
     // CR-2, CR-3: the field renders as the Fieldset, which renders as Base UI's group, so the three
     // are one element; the field hands its class, style and ref on to it
     <BaseField.Root
+      {...field}
+      {...(hasError ? { invalid: field.invalid ?? true } : null)}
       // Field.Root types its ref for its own <div>; it lands on the element `render` gives, the
       // group's <div>, or the caller's own through the group's `render`
       ref={ref as Ref<HTMLDivElement> | undefined}
-      name={name}
       disabled={disabled}
-      invalid={hasError ? (invalid ?? true) : invalid}
-      validate={validate}
-      validationMode={validationMode}
-      validationDebounceTime={validationDebounceTime}
-      dirty={dirty}
-      touched={touched}
-      actionsRef={actionsRef}
       className={withClass('pn-CheckboxGroup', className)}
-      style={style}
       render={
         // CR-3, CR-5: Fieldset names the group by its legend and hands it `disabled`; the legend
         // takes the group's class after Fieldset's, then the caller's
@@ -164,15 +179,18 @@ export function CheckboxGroup({
             },
           }}
           render={
-            // CR-3: rest first, so the group's own props win; Base UI's change adapted to the
-            // contract's onChange(event, value, details)
+            // CR-3: the rest first, so the group's own props win; Base UI's change adapted to the
+            // contract's onChange(event, value, details), and left out with no onChange
             <BaseCheckboxGroup
-              {...rest}
-              onValueChange={
-                onChange &&
-                ((value: string[], details: BaseCheckboxGroup.ChangeEventDetails) =>
-                  onChange(details.event, value, details))
-              }
+              {...group}
+              {...(onChange
+                ? {
+                    onValueChange: (
+                      value: string[],
+                      details: BaseCheckboxGroup.ChangeEventDetails,
+                    ) => onChange(details.event, value, details),
+                  }
+                : null)}
             />
           }
         />

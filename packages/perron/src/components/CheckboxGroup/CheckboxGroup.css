@@ -22,6 +22,7 @@
 
 /* CR-7: Field's error, mounted only while the group is invalid */
 .pn-CheckboxGroup-error {
+  margin: 0;
   font: var(--perron-typography-body-sm);
   letter-spacing: var(--perron-typography-body-sm-tracking);
   color: var(--perron-color-text-danger);
