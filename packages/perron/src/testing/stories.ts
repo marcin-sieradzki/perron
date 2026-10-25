@@ -168,3 +168,7 @@ export const byTestId = (id: string) =>
     expect(found).not.toBeNull()
     return found as HTMLElement
   })
+
+/** How many lines tall `element` is, in its own line height. */
+export const lines = (element: Element) =>
+  element.getBoundingClientRect().height / Number.parseFloat(getComputedStyle(element).lineHeight)

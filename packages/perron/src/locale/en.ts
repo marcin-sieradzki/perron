@@ -78,6 +78,8 @@ export const en = {
   kilometersUnit: 'km',
   /** A search field's list: shown and announced when no suggestion matches the words typed. */
   noMatches: 'No matches',
+  /** A field's label: after the words of a field the person may leave empty, as in "Stop name (optional)". */
+  optional: '(optional)',
 }
 
 /** The name of one owned string. */

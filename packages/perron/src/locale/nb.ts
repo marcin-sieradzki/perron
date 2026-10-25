@@ -39,4 +39,5 @@ export const nb: OwnedStrings = {
   metersUnit: 'm',
   kilometersUnit: 'km',
   noMatches: 'Ingen treff',
+  optional: '(valgfritt)',
 }

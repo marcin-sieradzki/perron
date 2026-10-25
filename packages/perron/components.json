@@ -431,7 +431,7 @@
     "name": "Field",
     "layer": "component",
     "category": "Inputs",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": ["Field.Root", "Field.Label", "Field.Description", "Field.Error"],
     "penpotPath": "Components/Field",
     "dependsOn": []
