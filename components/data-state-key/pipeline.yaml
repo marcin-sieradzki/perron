@@ -10,18 +10,19 @@ stages:
     ended: 2026-10-25T17:56:40.084Z
   build:
     runs: 5
-    status: done
-    started: 2026-10-25T18:44:46.656Z
-    spec: 19c18805c1aac4c46e45f4847f2c9b2f65919953508551c3ad0dff011e3903aa
-    ended: 2026-10-25T18:54:19.996Z
+    failing: review round 2 found 1 P2 (components/data-state-key/review.md)
   review:
-    rounds: 1
-    sentBack: 1
-    reviewed: 0a3a676585c1bf2f856e4943306e5de5fef469ea
+    rounds: 2
+    sentBack: 2
+    reviewed: 5ff6f1f2b902a1d6cccd59986edb20d05cb2431d
     findings:
       p1: 0
-      p2: 2
-      p3: 7
+      p2: 1
+      p3: 5
+    status: failed
+    started: 2026-10-25T18:54:29.816Z
+    ended: 2026-10-25T19:01:54.784Z
+    failing: review round 2 found 1 P2 (components/data-state-key/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T17:55:46.713Z
