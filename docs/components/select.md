@@ -2,6 +2,8 @@
 
 The field that picks one value from a short, fixed list: a labelled box showing the chosen option, or a placeholder, that opens a list of options under it, with the field's help and error round it.
 
+<!-- run notes -->
+
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the [contract](README.md), the [foundations](../foundations/README.md), the tokens, the Base UI reference for `Select` (`@base-ui/react` 1.9.0, installed) and the spec of [Field](field.md), which the registry entry's `dependsOn` names. The extracted prototype component is not in any branch this run can reach.
 
 ## Anatomy

@@ -13,9 +13,6 @@ import { Field } from '../Field/Field.tsx'
 import type { FieldProps } from '../Field/Field.tsx'
 import './Select.css'
 
-type ChangeDetails = BaseSelect.Root.ChangeEventDetails
-type OpenDetails = BaseSelect.Root.OpenChangeEventDetails
-
 /** One option of a Select. */
 export interface SelectItem {
   /** Identifies the option, and is the value a form submits. */
@@ -59,7 +56,11 @@ export interface SelectProps extends Omit<
    * Called when the chosen option changes: by a press or Enter on a row (`details.reason`
    * `'item-press'`), or by letters typed on the closed box (`'none'`). `event` is `details.event`.
    */
-  onChange?: (event: Event, value: string | null, details: ChangeDetails) => void
+  onChange?: (
+    event: Event,
+    value: string | null,
+    details: BaseSelect.Root.ChangeEventDetails,
+  ) => void
   /** Whether the list of options is shown, when the caller controls it. */
   open?: boolean
   /**
@@ -71,12 +72,16 @@ export interface SelectProps extends Omit<
    * Called when the list asks to open: by a press of the box, Enter or Space (`details.reason`
    * `'trigger-press'`), or an arrow key (`'list-navigation'`).
    */
-  onOpen?: (event: Event, details: OpenDetails) => void
+  onOpen?: (event: Event, details: BaseSelect.Root.OpenChangeEventDetails) => void
   /**
    * Called when the list asks to close: `reason` is `'item-press'`, `'escape-key'`,
    * `'outside-press'`, `'trigger-press'` or `'focus-out'`; `details.cancel()` keeps it open.
    */
-  onClose?: (event: Event, reason: BaseSelect.Root.ChangeEventReason, details: OpenDetails) => void
+  onClose?: (
+    event: Event,
+    reason: BaseSelect.Root.ChangeEventReason,
+    details: BaseSelect.Root.OpenChangeEventDetails,
+  ) => void
   /**
    * Whether an option must be chosen before the form is submitted. Use it or `optional`, never
    * both.
@@ -186,9 +191,9 @@ export function Select({
   )
 
   // CR-4: Base UI's handlers become MUI's, here, and neither reaches the caller
-  const handleValueChange = (next: string | null, details: ChangeDetails) =>
+  const handleValueChange = (next: string | null, details: BaseSelect.Root.ChangeEventDetails) =>
     onChange?.(details.event, next, details)
-  const handleOpenChange = (next: boolean, details: OpenDetails) => {
+  const handleOpenChange = (next: boolean, details: BaseSelect.Root.OpenChangeEventDetails) => {
     if (next) onOpen?.(details.event, details)
     else onClose?.(details.event, details.reason, details)
   }
