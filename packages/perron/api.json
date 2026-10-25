@@ -3369,6 +3369,68 @@
       }
     }
   },
+  "SourceLine": {
+    "extends": [
+      "Omit<ComponentPropsWithRef<'p'>, 'children' | 'color'>"
+    ],
+    "props": {
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "paused": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLParagraphElement>"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ paused?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; source?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; name?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; separator?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; time?: DetailedHTMLProps<TimeHTMLAttributes<HTMLTimeElement>, HTMLTimeElement> | undefined; }"
+        ]
+      },
+      "sourceOutOfDateLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "sourcePausedLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "sourceUpdatedLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "sources": {
+        "optional": false,
+        "type": [
+          "readonly [ SourceLineSource ]",
+          "readonly [ SourceLineSource, SourceLineSource ]"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      }
+    }
+  },
   "Stat": {
     "extends": [
       "Omit<useRender.ComponentProps<'div'>, 'children'>"

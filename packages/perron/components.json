@@ -419,6 +419,15 @@
     "dependsOn": []
   },
   {
+    "name": "SourceLine",
+    "layer": "pattern",
+    "category": "Data",
+    "status": "stable",
+    "baseUiParts": [],
+    "penpotPath": "Patterns/SourceLine",
+    "dependsOn": ["Text"]
+  },
+  {
     "name": "ScaleBar",
     "layer": "pattern",
     "category": "Map",

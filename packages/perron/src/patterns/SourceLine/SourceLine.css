@@ -1,0 +1,19 @@
+/* SourceLine: one caption line of each source's name and the time of its data
+   (docs/patterns/source-line.md, Tokens). The root is Text's caption in color.text.secondary, with
+   Text's margin and long-word rule, none of them set again here. Every rule is at rest: nothing in
+   the line is interactive (CR-8). No background, border, radius or shadow, and no position, inset,
+   z-index or outer margin: it sits on its container's surface and its screen places it (CR-9). */
+
+/* CR-5: a paused line's first word, a step past the line's secondary ink */
+.pn-SourceLine-paused {
+  color: var(--perron-color-text-primary);
+}
+
+/* A source's phrase and time keep the caption's own face and figures: the owned-strings check reads
+   each text run between tags as one string, so the time stays in its phrase's run, and tabular
+   figures would set the colons and the comma on figure-wide advances. A time never breaks at any
+   width the line supports, so the line wraps at the phrase's spaces and after a "·" (CR-13).
+   CR-6: the phrase of a source the app judges may be out of date, in the warning intent's text */
+.pn-SourceLine-source[data-out-of-date] > .pn-SourceLine-time {
+  color: var(--perron-color-text-warning);
+}
