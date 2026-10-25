@@ -5,6 +5,7 @@ import { PerronProvider } from '../../PerronProvider.tsx'
 import { dictionaries } from '../../locale/index.ts'
 import type { Locale } from '../../locale/index.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
+import { heard } from '../../testing/stories.ts'
 import { NormalService } from './NormalService.tsx'
 
 const meta = {
@@ -16,14 +17,6 @@ const meta = {
 export default meta
 
 type Story = StoryObj<typeof meta>
-
-/** The text under `node` that the accessibility tree exposes: its text, less every hidden subtree. */
-const exposedText = (node: Node): string =>
-  node instanceof Element && isInaccessible(node)
-    ? ''
-    : node.nodeType === Node.TEXT_NODE
-      ? (node.textContent ?? '')
-      : Array.from(node.childNodes, exposedText).join('')
 
 /** The `check-circle` icon and "Running normally" in `color.text.success`, with no args. */
 export const Default: Story = {
@@ -40,9 +33,9 @@ export const Default: Story = {
       await expect(root?.textContent).toBe(word)
       await expect(label).toBeVisible()
       await expect(isInaccessible(label)).toBe(false)
-      await expect(exposedText(root!)).toBe(word)
+      await expect(heard(root!)).toBe(word)
       // the CR-5 strut is generated content with empty alternative text, so it adds nothing
-      await expect(getComputedStyle(root!, '::before').content).toBe('"​" / ""')
+      await expect(getComputedStyle(root!, '::before').content).toBe('"\u200b" / ""')
     })
     await step('the icon is aria-hidden', async () => {
       const icon = root!.querySelector('svg')!

@@ -70,7 +70,7 @@ NormalService is not interactive, so its one design state is rest. It is not one
 
 ## Keyboard and ARIA
 
-NormalService is text: it takes no focus, and no key does anything. A caller who makes it a link or button through `render` brings that element's own keys and must give it a target of `size.target-min`.
+NormalService is text: it takes no focus, and no key does anything. It is not a control: a caller who needs a link or button puts NormalService inside their own, and that element brings its own keys and a target of at least `size.target-min`.
 
 | Key  | Does                                       | From   |
 | ---- | ------------------------------------------ | ------ |
@@ -96,7 +96,7 @@ What axe won't catch, from the contract, each with how this component meets it:
 
 ## Owned strings
 
-Every word NormalService shows is its own. It reuses the key `en.ts` already has, `runningNormally`, whose JSDoc is "A line with no delays or disruptions.", and which [Content design](../content-design.md#data-state-delay-and-disruption-words) already gives in all four languages: "Kører normalt", "Går som vanligt" and "Går som normalt".
+Every word NormalService shows is its own. It reuses the key `en.ts` already has, `runningNormally`, whose JSDoc is "A line with no delays or disruptions.", and which [Content design](../content-design.md#data-state-delay-and-disruption-words) already gives in the other three languages: "Kører normalt", "Går som vanligt" and "Går som normalt".
 
 | Key               | English            | Override               | Seen or heard where                                  |
 | ----------------- | ------------------ | ---------------------- | ---------------------------------------------------- |

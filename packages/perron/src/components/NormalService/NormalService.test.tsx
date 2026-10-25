@@ -15,8 +15,11 @@ const icon = readFileSync(
   'utf8',
 )
 
-/** The markup with every `aria-hidden` element taken out: what a screen reader reads. */
-const read = (markup: string) =>
+/**
+ * The text of server-rendered markup with every `aria-hidden` svg taken out: what a screen reader
+ * reads. These tests run in node, with no DOM for `heard` to take an Element from.
+ */
+const textOutsideHiddenSvg = (markup: string) =>
   markup.replace(/<svg\b[^>]*aria-hidden="true"[^>]*>[\s\S]*?<\/svg>/g, '').replace(/<[^>]*>/g, '')
 
 /** A tag's attributes, less width and height, which CR-2 leaves out of the inlined icon. */
@@ -41,7 +44,7 @@ describe('NormalService', () => {
     const markup = renderToStaticMarkup(<NormalService runningNormallyLabel="Normal service" />)
     expect(markup).toContain('<span class="pn-NormalService-label">Normal service</span>')
     expect(markup).not.toContain('Running normally')
-    expect(read(markup)).toBe('Normal service')
+    expect(textOutsideHiddenSvg(markup)).toBe('Normal service')
     expect(markup).not.toMatch(/runningnormallylabel/i)
     expectOwnedStrings(
       renderToStaticMarkup(
@@ -60,7 +63,7 @@ describe('NormalService', () => {
         <NormalService runningNormallyLabel={undefined} />
       </PerronProvider>,
     )
-    expect(read(markup)).toBe('Går som vanligt')
+    expect(textOutsideHiddenSvg(markup)).toBe('Går som vanligt')
   })
 
   it("joins the caller's className after pn-NormalService, and passes the rest to the root", () => {
@@ -75,7 +78,7 @@ describe('NormalService', () => {
   it('swaps the root for the element render gives, keeping its class and children', () => {
     const markup = renderToStaticMarkup(<NormalService render={<p />} />)
     expect(markup).toMatch(/^<p class="pn-NormalService"><svg /)
-    expect(read(markup)).toBe('Running normally')
+    expect(textOutsideHiddenSvg(markup)).toBe('Running normally')
   })
 
   it('inlines the check-circle file unchanged but for width and height, hidden from the ear', () => {
