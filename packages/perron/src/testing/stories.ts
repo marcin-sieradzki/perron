@@ -147,6 +147,7 @@ export const stateRules = (
  */
 export function pressedAfterHover(element: Element) {
   let [index, hover, active] = [0, -1, -1]
+  // a var() shorthand still lists its longhands, empty, so `background: var(…)` counts as paint
   const paints = (style: CSSStyleDeclaration) => Array.from(style).some(isPaint)
   const visit = (rules: CSSRuleList, inQuery: boolean) => {
     for (const rule of Array.from(rules))
@@ -169,12 +170,26 @@ export function pressedAfterHover(element: Element) {
   return hover >= 0 && active > hover
 }
 
+/**
+ * The fill a rule's declarations give, as written: its `background-color`, or else the colour of
+ * its `background` shorthand, whose longhands the CSSOM leaves empty when the shorthand holds a
+ * `var()`; '' for none, or for a shorthand that draws a gradient or an image.
+ */
+export function fillOf(style: Pick<CSSStyleDeclaration, 'getPropertyValue'>) {
+  const color = style.getPropertyValue('background-color').trim()
+  if (color) return color
+  const short = style.getPropertyValue('background').trim()
+  if (!short || /gradient\(|url\(/i.test(short)) return ''
+  // the colour is the shorthand's last var(), hex, colour function or keyword
+  const colours = short.match(
+    /var\((?:[^()]|\([^()]*\))*\)|#[\da-f]+\b|\b(?:rgba?|hsla?|oklch|oklab|color-mix)\((?:[^()]|\([^()]*\))*\)|\b(?:transparent|currentcolor)\b/gi,
+  )
+  return colours?.at(-1) ?? short
+}
+
 /** The background a state's rules give `element` last, as written, or '' when none sets one. */
 export const stateFill = (element: Element, pseudo: ':hover' | ':active' = ':hover') =>
-  stateRules(element, pseudo)
-    .map((s) => s.getPropertyValue('background-color'))
-    .filter(Boolean)
-    .at(-1) ?? ''
+  stateRules(element, pseudo).map(fillOf).filter(Boolean).at(-1) ?? ''
 
 /** The last background layer a state's rules give `element`, as written, or '' when none does. */
 export const stateLayer = (element: Element, pseudo: ':hover' | ':active' = ':hover') =>

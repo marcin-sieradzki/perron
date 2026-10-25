@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { stateRulesIn, withoutState, type SheetRule } from './stories.ts'
+import { fillOf, stateRulesIn, withoutState, type SheetRule } from './stories.ts'
 
 describe('withoutState', () => {
   it('turns a state selector into one that matches the element at rest', () => {
@@ -48,5 +48,30 @@ describe('stateRulesIn', () => {
       ),
     )
     expect(names).not.toContain('reset')
+  })
+})
+
+describe('fillOf', () => {
+  // a rule's declarations as Chrome's CSSOM gives them: a var() shorthand lists its longhands, but
+  // their values read empty, and only the shorthand reads as written
+  const declared = (values: Record<string, string>) =>
+    ({ getPropertyValue: (p: string) => values[p] ?? '' }) as CSSStyleDeclaration
+
+  it('reads background-color, or the colour of a background shorthand', () => {
+    expect(fillOf(declared({ 'background-color': 'var(--color-surface-hover)' }))).toBe(
+      'var(--color-surface-hover)',
+    )
+    expect(fillOf(declared({ background: 'var(--color-surface-hover)' }))).toBe(
+      'var(--color-surface-hover)',
+    )
+    expect(fillOf(declared({ background: 'none var(--color-surface-selected)' }))).toBe(
+      'var(--color-surface-selected)',
+    )
+    expect(fillOf(declared({ background: 'var(--a, var(--b))' }))).toBe('var(--a, var(--b))')
+  })
+
+  it('gives none for no fill, or for a shorthand that draws a layer', () => {
+    expect(fillOf(declared({ color: 'red' }))).toBe('')
+    expect(fillOf(declared({ background: 'linear-gradient(var(--a), var(--a))' }))).toBe('')
   })
 })

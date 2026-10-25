@@ -33,12 +33,20 @@ export interface Part {
   declarations: string[]
 }
 
+/**
+ * An icon a row names: "the `close` icon", "the chevron icon", or a list ending in "icons", such as
+ * "the `info-circle` and `exclamation-circle` icons" or "the `a`, `b` or `c` icons".
+ */
+const ICONS = /((?:`[\w-]+`(?:,\s*|\s+(?:and|or)\s+(?:the\s+)?))*`[\w-]+`|\b\w[\w-]*) icons?\b/g
+
 /** The parts the contract lists, from the table under its "Shared parts" heading. */
 export function readParts(contract: string): Part[] {
   return tableRows(section(contract, 'Shared parts')).map((cells) => {
     const holds = cells.at(-1) ?? ''
-    const icons = [...holds.matchAll(/(?:`([\w-]+)`|(\w[\w-]*)) icon\b/g)].map((m) => m[1] ?? m[2])
-    const items = codeSpans(holds.replace(/`[\w-]+` icon\b/g, ''))
+    const icons = [...holds.matchAll(ICONS)].flatMap((m) =>
+      m[1].startsWith('`') ? codeSpans(m[1]) : [m[1]],
+    )
+    const items = codeSpans(holds.replace(ICONS, ''))
     return {
       name: cells[0].replaceAll('`', ''),
       classes: items.filter((i) => i.startsWith('pn-')),
@@ -226,10 +234,17 @@ function topLevelNames(file: string, text: string) {
  */
 function nestedFunctions(file: string, text: string) {
   const source = ts.createSourceFile(file, text, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
-  const out: { offset: number; fn: Fn }[] = []
+  const out: { offset: number; fn: Fn; name?: string }[] = []
   const visit = (node: ts.Node, top: boolean) => {
     const fn = functionOf(node)
-    if (fn && !top) out.push({ offset: node.getStart(source), fn })
+    // a named one, `const fill = (el) => …` or `function fill(el) {…}`, is a helper declared inline
+    const named =
+      ts.isFunctionDeclaration(node) && node.name
+        ? node.name.text
+        : ts.isVariableDeclaration(node.parent) && ts.isIdentifier(node.parent.name)
+          ? node.parent.name.text
+          : undefined
+    if (fn && !top) out.push({ offset: node.getStart(source), fn, ...(named && { name: named }) })
     // a top-level `const` keeps its own function at the top level, which topLevelNames reads
     const keeps =
       ts.isVariableStatement(node) ||
@@ -398,7 +413,11 @@ const TEST_FILE = /\.(stories\.tsx|test\.tsx?)$/
  */
 export function copiedStoryHelpers(root: string, src: string): Problem[] {
   const texts = new Map<string, string>()
-  const byShape = new Map<string, { file: string; name: string; offset: number }[]>()
+  type Found = { file: string; name: string; offset: number; inline?: boolean }
+  const byShape = new Map<string, Found[]>()
+  const add = (shape: string | undefined, found: Found) => {
+    if (shape) byShape.set(shape, [...(byShape.get(shape) ?? []), found])
+  }
   for (const file of walk(root, src, (n) => TEST_FILE.test(n))) {
     if (file.startsWith(`${src}/testing/`)) continue
     const text = readFileSync(join(root, file), 'utf8')
@@ -407,20 +426,24 @@ export function copiedStoryHelpers(root: string, src: string): Problem[] {
     const local = new Set(names.map((n) => n.name))
     for (const { name, offset, fn } of names) {
       if (!fn || isQuery(fn) || readsLocal(fn, local, name)) continue
-      const shape = shapeOf(fn, name)
-      if (shape) byShape.set(shape, [...(byShape.get(shape) ?? []), { file, name, offset }])
+      add(shapeOf(fn, name), { file, name, offset })
     }
+    // a helper copied into a story's body, such as a `const fill = …` inside its play function
+    for (const { offset, fn, name } of nestedFunctions(file, text))
+      if (name && !isQuery(fn) && !readsLocal(fn, local, name))
+        add(shapeOf(fn, name), { file, name, offset, inline: true })
   }
   const problems: Problem[] = []
   for (const found of byShape.values()) {
     const files = new Set(found.map((f) => f.file))
-    if (files.size < 2) continue
-    for (const { file, name, offset } of found) {
+    // a copy between two files that keeps one of them at the top level, where a helper lives
+    if (files.size < 2 || found.every((f) => f.inline)) continue
+    for (const { file, name, offset, inline } of found) {
       const others = found.filter((f) => f.file !== file).map((f) => `${f.name} in ${f.file}`)
       problems.push({
         file,
         line: texts.get(file)!.slice(0, offset).split('\n').length,
-        message: `declares ${name}, a helper ${others.join(' and ')} declares too; write it once in ${PACKAGE}/src/testing/${file.endsWith('.stories.tsx') ? 'stories.ts' : 'markup.ts'}, add it to ${CONTRACT}'s "Shared helpers" table, and import it`,
+        message: `declares ${name}${inline ? ' inside a story' : ''}, a helper ${others.join(' and ')} declares too; write it once in ${PACKAGE}/src/testing/${file.endsWith('.stories.tsx') ? 'stories.ts' : 'markup.ts'}, add it to ${CONTRACT}'s "Shared helpers" table, and import it`,
       })
     }
   }
