@@ -1,0 +1,11 @@
+[
+  {
+    "name": "Pin",
+    "layer": "component",
+    "category": "Display",
+    "status": "building",
+    "baseUiParts": [],
+    "penpotPath": "Components/Pin",
+    "dependsOn": []
+  }
+]

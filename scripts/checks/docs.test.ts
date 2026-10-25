@@ -80,6 +80,15 @@ describe('docs', () => {
     ])
   })
 
+  it("names a key of a building entry's Keyboard table that no play test presses", () => {
+    const message = (key: string) =>
+      `docs/components/pin.md's Keyboard table names \`${key}\`, which no play test in packages/perron/src/components/Pin/Pin.stories.tsx presses: give the story that shows it a step that presses it and checks what it does`
+    expect(docs.run(fixture('keyboard'))).toEqual([
+      { file: 'docs/components/pin.md', line: 10, message: message('Space') },
+      { file: 'docs/components/pin.md', line: 12, message: message('Escape') },
+    ])
+  })
+
   it('names an overlay no story opens by defaultOpen, an intro that shows run notes, and a private type', () => {
     expect(docs.run(fixture('overlay'))).toEqual([
       {
