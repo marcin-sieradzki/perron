@@ -1,6 +1,7 @@
 // The two changelogs the release workflow writes from changesets, as versions and entries: the
 // Release log's data. A changelog is `# <package>`, then `## <version>`, then `### <kind> Changes`,
-// then one list item per change, `- <commit>: <text>`, with indented lines that belong to it.
+// then one list item per change, `- <commit>: <text>`, with indented lines that belong to it. A
+// release's run of "Updated dependencies" lines reads as one entry.
 import { once, readRepoFile } from './repo.ts'
 
 /** The changelogs, by path from the repo root: the package first, then the MCP server. */
@@ -33,6 +34,22 @@ export interface Changelog {
   releases: Release[]
 }
 
+/** Changesets' line for a release that only picks up a dependency's: `Updated dependencies [5d5f868]`. */
+const DEPENDENCY_UPDATE = /^Updated dependencies(?: \[[0-9a-f, ]*\])?$/
+
+/**
+ * A group's entries with changesets' "Updated dependencies" lines, one per commit, folded into one
+ * at the place of the first, listing each dependency's new version once: `Updated dependencies`,
+ * then `- @mylder/perron@0.2.0`. Other entries stay as they are, in order.
+ */
+export function foldDependencyUpdates(entries: ChangelogEntry[]): ChangelogEntry[] {
+  const updates = entries.filter((e) => DEPENDENCY_UPDATE.test(e.markdown.split('\n')[0]))
+  if (!updates.length) return entries
+  const versions = new Set(updates.flatMap((e) => e.markdown.split('\n').slice(1)))
+  const folded: ChangelogEntry = { markdown: ['Updated dependencies', ...versions].join('\n') }
+  return entries.flatMap((e) => (e === updates[0] ? [folded] : updates.includes(e) ? [] : [e]))
+}
+
 /** A changelog's markdown as versions, groups and entries. */
 export function parseChangelog(markdown: string, path: string): Changelog {
   const log: Changelog = { name: '', path, releases: [] }
@@ -54,6 +71,8 @@ export function parseChangelog(markdown: string, path: string): Changelog {
     } else if (entry && /^\s+\S/.test(line)) entry.markdown += `\n${line.replace(/^ {2}/, '')}`
   }
   if (!log.name) throw new Error(`${path} has no # heading`)
+  for (const release of log.releases)
+    for (const group of release.groups) group.entries = foldDependencyUpdates(group.entries)
   return log
 }
 

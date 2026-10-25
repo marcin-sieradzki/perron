@@ -49,7 +49,7 @@ export function PatternCard({ entry }: { entry: RegistryEntry }) {
       {hasPreview(entry.name) ? (
         <div className="patterns-stage" data-stage={stage}>
           {stage === 'map' ? (
-            <MapBackground view="quiet" idPrefix={`patterns-${entry.slug}`} />
+            <MapBackground view="framed" idPrefix={`patterns-${entry.slug}`} />
           ) : null}
           <div className="patterns-stage-preview">
             {getPreview(entry.name, CARD_PROPS[entry.name])}

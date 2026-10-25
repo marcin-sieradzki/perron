@@ -1,6 +1,7 @@
 /* Perron's website: the mockups' helpers as site classes, the shell around every page, PageHeader
-   and Markdown, in Perron's tokens only. Media queries can't read custom properties, so
-   breakpoint.phone is written once, as a number, in the last block of this file.
+   and Markdown, in Perron's tokens only. Media queries can't read custom properties, so every file
+   that needs breakpoint.phone writes the same query, (max-width: 759.98px), and breakpoint.tablet
+   the same way, (max-width: 1179.98px): the token less a fraction of a pixel, as "below" it.
 
    Helpers a page can use:
    .page      the content column: --site-width wide at most, with --site-gutter at each side
@@ -12,15 +13,18 @@
    .scroll-x  a row that scrolls sideways, with no scrollbar drawn
    .title     a page title: typography.display, typography.heading-lg under breakpoint.phone
    .lead      the paragraph under a title: typography.lead
+   .site-visually-hidden  text heard and not seen, such as a status line
    .moving    shown while motion is allowed: the map's gliding vehicles
    .still     shown instead under prefers-reduced-motion: the vehicles at their reports */
 
 :root {
   /* the widest the content gets: the tablet breakpoint, past which the map screen hides nothing */
   --site-width: var(--perron-breakpoint-tablet);
-  /* the side gutter: space.400 on a phone, growing with the window up to space.800 */
-  --site-gutter: clamp(var(--perron-space-400), 3vw, var(--perron-space-800));
-  /* a readable line of running text, about 68 characters */
+  /* the side gutter: space.800, and space.400 under breakpoint.phone */
+  --site-gutter: var(--perron-space-800);
+  /* A readable line of running text, about 68 characters of the font it is set in. A count of
+     characters, not a size: it follows the role's font size, which a size token can't, and
+     Perron has no measure token. */
   --site-measure: 68ch;
   /* room for the focus ring inside a container that clips, such as .scroll-x */
   --site-ring-room: calc(var(--perron-focus-width) + var(--perron-focus-offset));
@@ -70,6 +74,25 @@ body {
   text-decoration: underline;
 }
 
+.site-visually-hidden {
+  /* a box a hairline square, not 0, so screen readers that skip empty boxes read it */
+  position: absolute;
+  inline-size: var(--perron-border-width-025);
+  block-size: var(--perron-border-width-025);
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* a copy button's result when the browser refused the clipboard, seen as well as heard */
+.site-copy-failed {
+  font: var(--perron-typography-caption);
+  letter-spacing: var(--perron-typography-caption-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
 .scroll-x {
   overflow-x: auto;
   scrollbar-width: none;
@@ -86,12 +109,11 @@ body {
   text-wrap: balance;
 }
 
-/* typography.lead joins the tokens with ticket T2; until then the lead falls back to body */
 .lead {
   margin: 0;
   max-inline-size: var(--site-measure);
-  font: var(--perron-typography-lead, var(--perron-typography-body));
-  letter-spacing: var(--perron-typography-lead-tracking, var(--perron-typography-body-tracking));
+  font: var(--perron-typography-lead);
+  letter-spacing: var(--perron-typography-lead-tracking);
   color: var(--perron-color-text-secondary);
   text-wrap: pretty;
 }
@@ -114,7 +136,9 @@ body {
 
 .site-shell {
   position: relative;
-  min-block-size: 100vh;
+  /* the window's height, a layout unit rather than a design value: a short page still fills the
+     window, so the footer sits at its bottom and the map behind covers it */
+  min-block-size: 100dvh;
   display: flex;
   flex-direction: column;
   overflow-x: clip;
@@ -180,13 +204,11 @@ body {
   color: inherit;
 }
 
+/* all six links show from breakpoint.tablet up; below it they give way to the menu (below) */
 .site-nav {
-  flex: 1 1 auto;
-  min-inline-size: 0;
+  flex: none;
   display: flex;
   gap: var(--perron-space-050);
-  padding: var(--site-ring-room);
-  margin: calc(-1 * var(--site-ring-room));
 }
 
 .site-nav-link,
@@ -240,6 +262,7 @@ body {
 .site-footer {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   justify-content: space-between;
   gap: var(--perron-space-300);
   margin-block-start: var(--perron-space-800);
@@ -252,6 +275,13 @@ body {
 
 .site-footer p {
   margin: 0;
+}
+
+/* the repository's link, size.target-min tall at least, like every target */
+.site-footer a {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--perron-size-target-min);
 }
 
 /* PageHeader */
@@ -396,10 +426,26 @@ body {
   letter-spacing: var(--perron-typography-body-sm-tracking);
 }
 
-/* Under breakpoint.phone (760px): the only place the site writes it, as media queries can't read
-   var(--perron-breakpoint-phone). The title steps down, and the header's links give way to the
-   menu, its search to an icon. */
+/* Under breakpoint.tablet (1180px), where the bar can't hold all six links beside the search, the
+   theme switch and GitHub: the links and GitHub give way to the menu, which holds them. */
+@media (max-width: 1179.98px) {
+  .site-nav,
+  .site-header-link {
+    display: none;
+  }
+
+  .site-header .site-menu-button {
+    display: inline-flex;
+  }
+}
+
+/* Under breakpoint.phone (760px): the gutter narrows, the title steps down, and the header's
+   search gives way to an icon. */
 @media (max-width: 759.98px) {
+  :root {
+    --site-gutter: var(--perron-space-400);
+  }
+
   .title {
     font: var(--perron-typography-heading-lg);
     letter-spacing: var(--perron-typography-heading-lg-tracking);
@@ -414,14 +460,8 @@ body {
     padding-inline-start: var(--perron-space-300);
   }
 
-  .site-nav,
-  .site-header-link,
   .site-search-label,
   .site-search .pn-Kbd {
     display: none;
-  }
-
-  .site-header .site-menu-button {
-    display: inline-flex;
   }
 }

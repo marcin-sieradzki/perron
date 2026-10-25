@@ -1,8 +1,8 @@
 // A doc's markdown on the site: every element in a type role (site.css, under .markdown), code in
-// the data family, tables in a sideways-scrolling frame, a repo image inlined, and every link
-// rewritten by website/lib/routes.ts: a doc the site shows to its route, any other repo file to
-// GitHub. A leading `#` heading is dropped, since the page's PageHeader shows the title. A server
-// component: it compiles the markdown at build time.
+// the data family, tables in a sideways-scrolling frame, task lists as plain lists, a repo image
+// inlined, and every link rewritten by website/lib/routes.ts: a doc the site shows to its route,
+// any other repo file to GitHub. A leading `#` heading is dropped, since the page's PageHeader
+// shows the title. A server component: it compiles the markdown at build time.
 import { compiler, type MarkdownToJSX } from 'markdown-to-jsx/react'
 import NextLink from 'next/link'
 import type { ComponentProps } from 'react'
@@ -38,6 +38,15 @@ function Table(props: ComponentProps<'table'>) {
   )
 }
 
+/**
+ * A task list's box, `- [ ]`, drawn as nothing, so the item reads as a plain list item. The specs'
+ * checklists say how each rule is met, so a box would show a stable component's list unticked, and
+ * a page is no form: a checkbox there would be a focusable, unlabelled control.
+ */
+function TaskBox() {
+  return null
+}
+
 const LEADING_TITLE = /^\s*# [^\n]*\n?/
 
 export function Markdown({ source, path, inline = false }: MarkdownProps) {
@@ -46,6 +55,7 @@ export function Markdown({ source, path, inline = false }: MarkdownProps) {
       a: { component: MarkdownLink, props: { from: path } },
       img: { component: MarkdownImage, props: { from: path } },
       table: Table,
+      input: TaskBox,
     },
     wrapper: null,
     ...(inline ? { forceInline: true } : { forceBlock: true }),

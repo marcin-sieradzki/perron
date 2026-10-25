@@ -8,7 +8,7 @@ import { sectionOf, type SiteSection } from './sections.ts'
 export function SiteNav({ sections }: { sections: readonly SiteSection[] }) {
   const active = sectionOf(usePathname())
   return (
-    <nav aria-label="Sections" className="site-nav scroll-x">
+    <nav aria-label="Sections" className="site-nav">
       {sections.map((s) => (
         <NextLink
           key={s.href}

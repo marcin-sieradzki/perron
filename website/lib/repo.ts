@@ -4,9 +4,6 @@
 import { existsSync, readFileSync, statSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 
-/** The repository on GitHub, for the header's link and for files the site has no page for. */
-export const REPO_URL = 'https://github.com/marcin-sieradzki/perron'
-
 /** The branch GitHub links point at. */
 const BRANCH = 'main'
 
@@ -43,6 +40,20 @@ export const readRepoFile = (path: string) => readFileSync(repoPath(path), 'utf8
 
 /** A JSON file's contents, by path from the repo root. */
 export const readRepoJson = <T>(path: string): T => JSON.parse(readRepoFile(path)) as T
+
+/**
+ * A package.json's `repository.url` as a link to the repository: npm's `git+https://….git` form
+ * without its `git+` and `.git`.
+ */
+export const repositoryLink = (url: string) => url.replace(/^git\+/, '').replace(/\.git$/, '')
+
+/**
+ * The repository on GitHub, for the header's link and for files the site has no page for: the
+ * `repository.url` of `@mylder/perron`'s package.json, so it moves when the package says it moved.
+ */
+export const REPO_URL = repositoryLink(
+  readRepoJson<{ repository: { url: string } }>('packages/perron/package.json').repository.url,
+)
 
 /** A file or folder on GitHub, by path from the repo root: a folder as a tree, a file as a blob. */
 export function githubUrl(path: string) {

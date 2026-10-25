@@ -1,21 +1,8 @@
 /* The navigation's own parts, the phone menu (SiteMenu) and the docs search (SiteSearch), and the
    phone rules every page shares: under breakpoint.phone the header turns into the two glass groups
-   of the phone mockups, the page becomes an opaque sheet over the map, a panel full of text loses
-   its glass, and nothing is wider than the screen. In Perron's tokens only. SiteMenu and SiteSearch
+   of the phone mockups, the page's <main> becomes the one opaque sheet over the map, a panel full
+   of text loses its glass, and nothing is wider than the screen. In Perron's tokens only. SiteMenu and SiteSearch
    import this file, so it comes after site.css, whose rules it refines. */
-
-/* Text heard and not seen, such as the search's count of results: a box a hairline square, not 0,
-   so screen readers that skip empty boxes read it */
-.site-visually-hidden {
-  position: absolute;
-  inline-size: var(--perron-border-width-025);
-  block-size: var(--perron-border-width-025);
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
 
 /* The phone menu: a bottom sheet as tall as its content, under its one snap point, full height,
    which Base UI clamps to the sheet's height. */
@@ -139,8 +126,8 @@
   color: var(--perron-color-text-secondary);
 }
 
-/* Under breakpoint.phone (760px), written as a number as in site.css: media queries can't read
-   var(--perron-breakpoint-phone). */
+/* Under breakpoint.phone (760px), written as every file writes it (site.css): media queries can't
+   read var(--perron-breakpoint-phone). */
 @media (max-width: 759.98px) {
   /* The header as the phone mockups draw it: no pill around everything, but two glass groups
      size.top-bar-phone tall, the brand at the start and the controls at the end, each control a
@@ -201,8 +188,9 @@
     padding-inline: var(--perron-space-300);
   }
 
-  /* The page: an opaque sheet over the map, rounded at the top and floating, so its text never
-     sits on the moving map; the map shows above it, deeper on the home page's full map. */
+  /* The page: the one opaque sheet over the map, rounded at the top and floating, so its text
+     never sits on the moving map. No page draws a sheet of its own inside it. A strip of the map
+     shows above it, deeper by size.sheet-peek where the layout's map is full: the home page. */
   .site-main {
     margin-block-start: calc(2 * var(--perron-space-800));
     padding-block: var(--perron-space-600) var(--perron-space-800);
@@ -213,8 +201,8 @@
     overflow-wrap: break-word;
   }
 
-  .site-shell:has(.map[data-view='full']) .site-main {
-    margin-block-start: var(--perron-size-sheet-peek);
+  .site-shell[data-view='full'] .site-main {
+    margin-block-start: calc(var(--perron-size-sheet-peek) + 2 * var(--perron-space-800));
   }
 
   /* the footer goes on with the sheet */

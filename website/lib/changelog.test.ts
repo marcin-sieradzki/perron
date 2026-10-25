@@ -14,6 +14,9 @@ const log = `# @mylder/example
 ### Patch Changes
 
 - Updated dependencies [5d5f868]
+- Updated dependencies [84fa566]
+- 1a2b3c4: A fix.
+- Updated dependencies [a1df949]
   - @mylder/perron@0.2.0
 
 ## 0.1.0
@@ -36,8 +39,19 @@ describe('parseChangelog', () => {
   })
 
   it('keeps indented lines with the entry above them', () => {
-    const patch = parseChangelog(log, 'x').releases[0].groups[1].entries[0]
-    expect(patch.markdown).toBe('Updated dependencies [5d5f868]\n- @mylder/perron@0.2.0')
+    const minor = parseChangelog(
+      `# x\n\n## 1.0.0\n\n### Minor Changes\n\n- One\n  more line\n`,
+      'x',
+    )
+    expect(minor.releases[0].groups[0].entries[0].markdown).toBe('One\nmore line')
+  })
+
+  it("folds a release's dependency updates into one entry, where the first was", () => {
+    const patch = parseChangelog(log, 'x').releases[0].groups[1].entries
+    expect(patch).toEqual([
+      { markdown: 'Updated dependencies\n- @mylder/perron@0.2.0' },
+      { commit: '1a2b3c4', markdown: 'A fix.' },
+    ])
   })
 
   it('throws for a file with no # heading', () => {
@@ -52,5 +66,14 @@ describe('readChangelogs', () => {
     expect(mcp.name).toBe('@mylder/perron-mcp')
     expect(perron.releases[0].version).toBe(readPackage(PACKAGES.perron).version)
     expect(mcp.releases[0].version).toBe(readPackage(PACKAGES.mcp).version)
+  })
+
+  it('shows at most one dependency update in each group', () => {
+    for (const changelog of readChangelogs())
+      for (const release of changelog.releases)
+        for (const group of release.groups)
+          expect(
+            group.entries.filter((e) => e.markdown.startsWith('Updated dependencies')).length,
+          ).toBeLessThanOrEqual(1)
   })
 })

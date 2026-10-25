@@ -34,8 +34,10 @@ export type { MapViewName }
 
 export interface MapBackgroundProps {
   /**
-   * `full`, the home page's map under the hero, or `quiet`, a fainter strip behind a page's title.
-   * Left out, it follows the route: `full` on `/`, `quiet` everywhere else.
+   * `full`, the home page's map under the hero; `quiet`, a fainter strip behind a page's title; or
+   * `framed`, a map in a page's own frame: whole, with no veil, filling its positioned container,
+   * the drawing's middle at the frame's middle, and zoomed by the container's `--map-zoom`. Left
+   * out, it follows the route: `full` on `/`, `quiet` everywhere else.
    */
   view?: MapViewName
   /** Prefixes the ids the vehicles' paths refer to; give one if a page draws a second map */
@@ -97,129 +99,136 @@ export function MapBackground({ view, idPrefix = 'map' }: MapBackgroundProps) {
     return { v, route, keys: keysOf(v, route), r: size(route.mode, v.state) }
   })
 
-  return (
-    <MapView view={view}>
-      <svg
-        className="map-drawing"
-        width="100%"
-        height={SIZE.height}
-        viewBox={`0 0 ${SIZE.width} ${SIZE.height}`}
-        preserveAspectRatio="xMidYMin slice"
-        focusable="false"
-      >
-        <g className="map-water">
-          <path d={WATER.sea} />
-          <path className="map-harbour" d={WATER.harbour.d} strokeWidth={WATER.harbour.width} />
-          {WATER.lakes.map((l) => (
-            <ellipse
-              key={`${l.cx},${l.cy}`}
-              cx={l.cx}
-              cy={l.cy}
-              rx={l.rx}
-              ry={l.ry}
-              transform={`rotate(${l.rotate} ${l.cx} ${l.cy})`}
-            />
-          ))}
-        </g>
-        <g className="map-parks">
-          {PARKS.map((p) => (
-            <ellipse key={`${p.cx},${p.cy}`} cx={p.cx} cy={p.cy} rx={p.rx} ry={p.ry} />
-          ))}
-        </g>
-        <g className="map-streets" strokeWidth={STREET_WIDTH}>
-          {streets.map((r) => (
-            <path key={r.id} id={pathId(r)} d={r.d} />
-          ))}
-        </g>
-        <g className="map-lines">
-          {lines.map((r) => (
-            <path
-              key={r.id}
-              id={pathId(r)}
-              className={`map-line map-line-${r.mode}`}
-              style={lineColor(r)}
-              d={r.d}
-            />
-          ))}
-        </g>
-        <g className="map-stations">
-          {Object.entries(STATIONS).map(([id, s]) => (
-            <circle key={id} cx={s.x} cy={s.y} r={STATION_RADIUS} />
-          ))}
-        </g>
+  const drawing = (
+    <svg
+      className="map-drawing"
+      width="100%"
+      height={SIZE.height}
+      viewBox={`0 0 ${SIZE.width} ${SIZE.height}`}
+      preserveAspectRatio="xMidYMin slice"
+      focusable="false"
+    >
+      <g className="map-water">
+        <path d={WATER.sea} />
+        <path className="map-harbour" d={WATER.harbour.d} strokeWidth={WATER.harbour.width} />
+        {WATER.lakes.map((l) => (
+          <ellipse
+            key={`${l.cx},${l.cy}`}
+            cx={l.cx}
+            cy={l.cy}
+            rx={l.rx}
+            ry={l.ry}
+            transform={`rotate(${l.rotate} ${l.cx} ${l.cy})`}
+          />
+        ))}
+      </g>
+      <g className="map-parks">
+        {PARKS.map((p) => (
+          <ellipse key={`${p.cx},${p.cy}`} cx={p.cx} cy={p.cy} rx={p.rx} ry={p.ry} />
+        ))}
+      </g>
+      <g className="map-streets" strokeWidth={STREET_WIDTH}>
+        {streets.map((r) => (
+          <path key={r.id} id={pathId(r)} d={r.d} />
+        ))}
+      </g>
+      <g className="map-lines">
+        {lines.map((r) => (
+          <path
+            key={r.id}
+            id={pathId(r)}
+            className={`map-line map-line-${r.mode}`}
+            style={lineColor(r)}
+            d={r.d}
+          />
+        ))}
+      </g>
+      <g className="map-stations">
+        {Object.entries(STATIONS).map(([id, s]) => (
+          <circle key={id} cx={s.x} cy={s.y} r={STATION_RADIUS} />
+        ))}
+      </g>
 
-        <g className="moving">
-          {moving.map(({ v, route, keys, r }, i) => {
-            const every = v.duration / REPORTS_PER_RUN
-            return (
-              <g key={i} style={lineColor(route)}>
-                <animateMotion
-                  dur={`${v.duration}s`}
-                  begin={`${v.offset}s`}
-                  repeatCount="indefinite"
-                  calcMode="linear"
-                  keyTimes={svgList(keys.times)}
-                  keyPoints={svgList(keys.points)}
-                >
-                  <mpath href={`#${pathId(route)}`} />
-                </animateMotion>
-                {v.pulses ? (
-                  <circle className="map-pulse" r={r} strokeWidth={PULSE_STROKE}>
-                    <animate
-                      attributeName="r"
-                      values={`${r};${r * PULSE_GROWTH};${r * PULSE_GROWTH}`}
-                      keyTimes={`0;${svgList([pulse / (every * 1000)])};1`}
-                      dur={`${every}s`}
-                      begin={`${v.offset}s`}
-                      repeatCount="indefinite"
-                    />
-                    <animate
-                      attributeName="opacity"
-                      values="0.9;0;0"
-                      keyTimes={`0;${svgList([pulse / (every * 1000)])};1`}
-                      dur={`${every}s`}
-                      begin={`${v.offset}s`}
-                      repeatCount="indefinite"
-                    />
-                  </circle>
-                ) : null}
-                <Dot r={r} state={v.state} />
-              </g>
-            )
-          })}
-        </g>
-
-        <g className="still">
-          {moving.map(({ v, route, keys, r }, i) => {
-            const reports = reportKeys(keys, REPORTS_PER_RUN)
-            return (
-              <g key={i} style={lineColor(route)}>
-                <animateMotion
-                  dur={`${v.duration}s`}
-                  begin={`${v.offset}s`}
-                  repeatCount="indefinite"
-                  calcMode="discrete"
-                  keyTimes={svgList(reports.times)}
-                  keyPoints={svgList(reports.points)}
-                >
-                  <mpath href={`#${pathId(route)}`} />
-                </animateMotion>
-                <Dot r={r} state={v.state} />
-              </g>
-            )
-          })}
-        </g>
-
-        {STILL.map((v, i) => {
-          const route = routeOf(v.route)
-          const at = pointAt(route.d, v.at)
+      <g className="moving">
+        {moving.map(({ v, route, keys, r }, i) => {
+          const every = v.duration / REPORTS_PER_RUN
           return (
-            <g key={i} style={lineColor(route)} transform={`translate(${at.x} ${at.y})`}>
-              <Dot r={size(route.mode, v.state)} state={v.state} />
+            <g key={i} style={lineColor(route)}>
+              <animateMotion
+                dur={`${v.duration}s`}
+                begin={`${v.offset}s`}
+                repeatCount="indefinite"
+                calcMode="linear"
+                keyTimes={svgList(keys.times)}
+                keyPoints={svgList(keys.points)}
+              >
+                <mpath href={`#${pathId(route)}`} />
+              </animateMotion>
+              {v.pulses ? (
+                <circle className="map-pulse" r={r} strokeWidth={PULSE_STROKE}>
+                  <animate
+                    attributeName="r"
+                    values={`${r};${r * PULSE_GROWTH};${r * PULSE_GROWTH}`}
+                    keyTimes={`0;${svgList([pulse / (every * 1000)])};1`}
+                    dur={`${every}s`}
+                    begin={`${v.offset}s`}
+                    repeatCount="indefinite"
+                  />
+                  <animate
+                    attributeName="opacity"
+                    values="0.9;0;0"
+                    keyTimes={`0;${svgList([pulse / (every * 1000)])};1`}
+                    dur={`${every}s`}
+                    begin={`${v.offset}s`}
+                    repeatCount="indefinite"
+                  />
+                </circle>
+              ) : null}
+              <Dot r={r} state={v.state} />
             </g>
           )
         })}
-      </svg>
-    </MapView>
+      </g>
+
+      <g className="still">
+        {moving.map(({ v, route, keys, r }, i) => {
+          const reports = reportKeys(keys, REPORTS_PER_RUN)
+          return (
+            <g key={i} style={lineColor(route)}>
+              <animateMotion
+                dur={`${v.duration}s`}
+                begin={`${v.offset}s`}
+                repeatCount="indefinite"
+                calcMode="discrete"
+                keyTimes={svgList(reports.times)}
+                keyPoints={svgList(reports.points)}
+              >
+                <mpath href={`#${pathId(route)}`} />
+              </animateMotion>
+              <Dot r={r} state={v.state} />
+            </g>
+          )
+        })}
+      </g>
+
+      {STILL.map((v, i) => {
+        const route = routeOf(v.route)
+        const at = pointAt(route.d, v.at)
+        return (
+          <g key={i} style={lineColor(route)} transform={`translate(${at.x} ${at.y})`}>
+            <Dot r={size(route.mode, v.state)} state={v.state} />
+          </g>
+        )
+      })}
+    </svg>
   )
+
+  // a framed map follows no route and lays no veil, so it needs no client frame
+  if (view === 'framed')
+    return (
+      <div className="map" data-view="framed" aria-hidden="true">
+        <div className="map-canvas">{drawing}</div>
+      </div>
+    )
+  return <MapView view={view}>{drawing}</MapView>
 }

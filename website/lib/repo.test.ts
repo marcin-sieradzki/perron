@@ -10,6 +10,7 @@ import {
   readRepoFile,
   REPO_URL,
   repoRoot,
+  repositoryLink,
 } from './repo.ts'
 
 describe('repoRoot', () => {
@@ -26,6 +27,18 @@ describe('repoRoot', () => {
 describe('readRepoFile', () => {
   it('reads a file by its path from the root', () => {
     expect(readRepoFile('docs/content-design.md')).toMatch(/^# Content design/)
+  })
+})
+
+describe('REPO_URL', () => {
+  it("is the package's repository.url as a link", () => {
+    expect(repositoryLink('git+https://github.com/example/repo.git')).toBe(
+      'https://github.com/example/repo',
+    )
+    expect(REPO_URL).toMatch(/^https:\/\/github\.com\/[\w.-]+\/[\w.-]+$/)
+    expect(REPO_URL).toBe(
+      repositoryLink(JSON.parse(readRepoFile('packages/perron/package.json')).repository.url),
+    )
   })
 })
 

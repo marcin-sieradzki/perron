@@ -162,19 +162,13 @@
   inset: 0;
 }
 
-/* The zoom buttons zoom the drawing about the frame's centre, by the halving the scale reads */
-.patterns-screen[data-zoom='1'] .map {
-  scale: 2;
+/* The zoom buttons zoom the framed map about the frame's centre, by the halving the scale reads */
+.patterns-screen[data-zoom='1'] {
+  --map-zoom: 2;
 }
 
-.patterns-screen[data-zoom='2'] .map {
-  scale: 4;
-}
-
-/* A map in a frame shows whole, with no fade into the page */
-.patterns-screen .map-veil,
-.patterns-stage .map-veil {
-  display: none;
+.patterns-screen[data-zoom='2'] {
+  --map-zoom: 4;
 }
 
 .patterns-screen-overview {
