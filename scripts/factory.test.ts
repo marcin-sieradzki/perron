@@ -348,10 +348,11 @@ describe('the factory dry run', () => {
     expect(run('next Tally').out).toMatch(/^wait: needs-human\n/)
     run('unblock Tally')
     stage('build', () => build(), 'failed', 'TS6059: tokens.ts is not under rootDir')
-    // the spec is revised after the failed run: one rerun, with the failure to fix
+    // the spec is revised after the failed run: one rerun, which builds the revised spec and is
+    // never told to make the failure's own fix, which the revision may answer another way
     brief('Read the offset from its custom property.\n')
     expect(run('next Tally').out).toBe(
-      'run: build\nwhy: the last run failed, and docs/components/tally.md has changed since it began; run the build again from the revised spec\nfix: TS6059: tokens.ts is not under rootDir. docs/components/tally.md has been revised since that run began: build what it says now.\n',
+      "run: build\nwhy: the last run failed, and docs/components/tally.md has changed since it began; run the build again from the revised spec\nfix: The last build run stopped (build failed: TS6059: tokens.ts is not under rootDir), and docs/components/tally.md has been revised since that run began to answer it, so that failure and any fix it recommends are not this run's to make. Build what docs/components/tally.md says now: read its revision (git log -p -- docs/components/tally.md) and change the code to match, then run npm run check and fix each failure at the line it names, and do the skill's other steps.\n",
     )
     expect(run('begin Tally build').code).toBe(0)
     expect(pipeline()).toMatchObject({ stages: { build: { status: 'running', respecs: 1 } } })
