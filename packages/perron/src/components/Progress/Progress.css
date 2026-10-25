@@ -61,15 +61,19 @@
   background-color: var(--perron-color-text-primary);
 }
 
-/* CR-6: a change eases, and under reduced motion duration.meter is 0.01 ms, so no query of its own */
+/* CR-6: a change eases, and under reduced motion duration.meter is 0.01 ms, so no query of its own.
+   The segment below leaves its width auto, which a transition cannot ease from, so a task's first
+   figure appears at once at its share, never shrinking from the segment */
 .pn-Progress-indicator[data-progressing],
 .pn-Progress-indicator[data-complete] {
   transition: width var(--perron-duration-meter) var(--perron-easing-standard);
 }
 
-/* CR-6: while how far is not known, a segment 40% of the track wide sweeps along it */
+/* CR-6: while how far is not known, a segment 40% of the track wide, set by its two insets, sweeps
+   along it; where the sweep does not run, it rests at the middle of the track, where it never reads
+   as a share done from the inline start */
 .pn-Progress-indicator[data-indeterminate] {
-  inline-size: 40%;
+  inset-inline: 30%;
   animation: pn-Progress-sweep var(--perron-duration-progress-sweep) var(--perron-easing-standard)
     infinite;
 }
@@ -77,19 +81,19 @@
 @keyframes pn-Progress-sweep {
   from {
     inset-inline-start: -40%;
+    inset-inline-end: 100%;
   }
 
   to {
     inset-inline-start: 100%;
+    inset-inline-end: -40%;
   }
 }
 
-/* CR-6: when the system asks for less motion, the sweep stops with the segment resting at the
-   middle of the track, where it never reads as a share done from the inline start */
+/* CR-6: when the system asks for less motion, the sweep stops, and the segment keeps its rest */
 @media (prefers-reduced-motion: reduce) {
   .pn-Progress-indicator[data-indeterminate] {
     animation: none;
-    inset-inline-start: 30%;
   }
 }
 

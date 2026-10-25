@@ -9,8 +9,12 @@ stages:
     started: 2026-10-25T07:27:56.145Z
     ended: 2026-10-25T07:29:11.881Z
   build:
-    runs: 2
-    failing: review round 2 found 1 P2 (components/progress/review.md)
+    runs: 3
+    status: done
+    started: 2026-10-25T07:48:12.389Z
+    begun: 4c5c70fd44be70a6ca06a355f5647dde51496c2f37d564cf7a1241773b34481b
+    spec: 8a465c0b8d78b2084987a6cfdd239eb95dd559b30f9d804636e0307cc3112906
+    ended: 2026-10-25T07:53:00.547Z
   review:
     rounds: 2
     sentBack: 2
@@ -18,10 +22,6 @@ stages:
       p1: 0
       p2: 1
       p3: 3
-    status: failed
-    started: 2026-10-25T07:44:11.930Z
-    ended: 2026-10-25T07:48:09.492Z
-    failing: review round 2 found 1 P2 (components/progress/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T07:27:51.488Z
@@ -56,3 +56,12 @@ notes:
   - stage: build
     at: 2026-10-25T07:35:35.660Z
     direction: An agent wrote the Danish, Swedish and Norwegian for inProgress ('I gang', 'Pågår', 'Pågår'); the word is not in content design's fixed data-state table, so a native reader should confirm it.
+  - stage: build
+    at: 2026-10-25T07:53:00.547Z
+    direction: 'The P2-1 fix (indeterminate segment sized by inset-inline, width auto) depends on width: auto not being animatable; a global interpolate-size: allow-keywords would make a first figure ease from the segment again. The Indeterminate play step checking getAnimations() would catch it.'
+  - stage: build
+    at: 2026-10-25T07:53:00.547Z
+    direction: "With the segment resting at 30% outside reduced motion too, scripts/visual.ts needs only Playwright's animations: 'disabled' for a stable Indeterminate screenshot."
+  - stage: build
+    at: 2026-10-25T07:53:00.547Z
+    direction: "Review P3-1 stands: on easing.standard the sweep slows as it leaves at the inline end, so the track looks empty for a moment; a linear sweep or a loop easing token is the maintainer's call."
