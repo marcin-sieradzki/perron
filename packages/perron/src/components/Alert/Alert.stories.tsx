@@ -249,7 +249,7 @@ export const Success: Story = {
       })
     })
 
-    await step("the caller's slotProps.close.onClick runs before onClose (CR-6)", async () => {
+    await step("onClose is called, then the caller's slotProps.close.onClick (CR-6)", async () => {
       const calls: string[] = []
       await mounted(
         canvasElement,
@@ -260,23 +260,7 @@ export const Success: Story = {
         />,
         async (host) => {
           await userEvent.click(await within(host).findByRole('button', { name: 'Close' }))
-          await expect(calls).toEqual(['onClick', 'onClose'])
-        },
-      )
-    })
-
-    await step('preventBaseUIHandler() in that onClick stops onClose (CR-6)', async () => {
-      const onClose = fn()
-      // slotProps.close is typed with React's button props; mergeProps adds the method at runtime
-      type BaseUIClick = { preventBaseUIHandler: () => void }
-      const onClick = fn((event: unknown) => (event as BaseUIClick).preventBaseUIHandler())
-      await mounted(
-        canvasElement,
-        <Alert {...args} onClose={onClose} slotProps={{ close: { onClick } }} />,
-        async (host) => {
-          await userEvent.click(await within(host).findByRole('button', { name: 'Close' }))
-          await expect(onClick).toHaveBeenCalledTimes(1)
-          await expect(onClose).not.toHaveBeenCalled()
+          await expect(calls).toEqual(['onClose', 'onClick'])
         },
       )
     })

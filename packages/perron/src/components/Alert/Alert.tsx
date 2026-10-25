@@ -79,7 +79,7 @@ export interface AlertProps extends Omit<
     action?: useRender.ComponentProps<'div'>
     /**
      * Props for the `close` part, the `CloseButton`, all but `disabled`: the close button is never
-     * disabled. Its `onClick` runs before `onClose`
+     * disabled. Its `onClick` runs after `onClose`
      */
     close?: Omit<ComponentPropsWithRef<'button'>, 'children' | 'disabled'>
   }
@@ -142,25 +142,27 @@ export function Alert({
     ),
   })
 
-  // CR-6, CR-7: the press only calls onClose. mergeProps runs the rightmost handler first, so the
-  // caller's onClick, merged after this one, runs before it; the class is merged last, first in
-  // the string.
+  // CR-6, CR-7: the press only calls onClose. Alert's own props are merged last, so mergeProps runs
+  // its onClick first and the caller's after it, and its class comes first in the string.
   const handleClose = (event: ReactMouseEvent<HTMLButtonElement>) => {
     const native = event.nativeEvent
     onClose?.(native, 'close-press', { reason: 'close-press', event: native })
   }
   const close = onClose ? (
     <CloseButton
-      {...mergeProps<'button'>({ onClick: handleClose }, slotProps?.close, {
+      {...mergeProps<'button'>(slotProps?.close, {
+        onClick: handleClose,
         className: 'pn-Alert-close',
       })}
       label={strings.close}
     />
   ) : null
 
-  // CR-1: data-color after the caller's props, so it cannot be overwritten.
+  // CR-1, CR-8: the own props after the caller's, so data-color cannot be overwritten; the role is
+  // status unless the caller gives one.
   const own = {
     className: 'pn-Alert',
+    role: rest.role ?? 'status',
     'data-color': color,
     children: (
       <>
@@ -174,7 +176,6 @@ export function Alert({
     defaultTagName: 'div',
     render,
     ref,
-    // CR-8: role="status" before the caller's props, so the caller's role wins
-    props: mergeProps<'div'>({ role: 'status' }, rest, own),
+    props: mergeProps<'div'>(rest, own),
   })
 }
