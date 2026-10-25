@@ -75,7 +75,7 @@ A link in the credits keeps the credits' colour, underlined in every state, take
 | `root`, a link inside it | focus                | `outline`                                      | none: the ring `perron.css` draws on `:focus-visible`, `focus.width` in `color.border.focus` at `focus.offset`                              |
 | `root`                   | rest, forced colours | `background-color`, `color`, `backdrop-filter` | none: Windows' contrast themes paint the strip `Canvas`, its text `CanvasText` and its links `LinkText`, and the links keep their underline |
 
-The strip is one line of `typography.caption`, 12 px at a line height of 1.5, so 18 px, and `space.050` above and below it: 22 px tall, a little under `size.badge`. The text and the links change colour at once, with no transition: no `duration.*` token is given to a link's hover, and the strip has no motion.
+The strip is one line of `typography.caption`, 12 px at a line height of 1.5, so 18 px, and `space.050` above and below it: 22 px tall, the height of `size.badge`, a line badge. The text and the links change colour at once, with no transition: no `duration.*` token is given to a link's hover, and the strip has no motion.
 
 ## Keyboard and ARIA
 
