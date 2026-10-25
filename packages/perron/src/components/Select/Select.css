@@ -1,0 +1,209 @@
+/* Select, from docs/components/select.md: the Fields family's box with the value and the chevron,
+   over the Popups family's glass list of the Rows family's rows. The label, the description and the
+   error are Field's, with Field's looks. The list opens and closes at once, with no transition
+   (CR-12), and never redefines a token: it portals to <body>. */
+
+/* The box: the value growing, the chevron keeping its size (CR-9). Its focus ring is perron.css's,
+   on :focus-visible, never redrawn; pressed, open and read-only keep this rest look. */
+.pn-Select-trigger {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--perron-space-200);
+  inline-size: 100%;
+  block-size: var(--perron-size-input);
+  margin: 0;
+  padding-block: 0;
+  padding-inline: var(--perron-space-300);
+  border: var(--perron-border-width-025) solid var(--perron-color-border-control);
+  border-radius: var(--perron-radius-md);
+  background-color: var(--perron-color-surface-raised);
+  font: var(--perron-typography-body);
+  letter-spacing: var(--perron-typography-body-tracking);
+  color: var(--perron-color-text-primary);
+  text-align: start;
+  white-space: nowrap;
+  cursor: default;
+}
+
+/* The hover layer laid over the raised fill, as the Fields do; never on a disabled box. */
+@media (hover: hover) {
+  .pn-Select-trigger:not([data-disabled]):hover {
+    background-image: linear-gradient(
+      var(--perron-color-surface-hover),
+      var(--perron-color-surface-hover)
+    );
+  }
+}
+
+.pn-Select-trigger[data-invalid] {
+  border-color: var(--perron-color-status-danger);
+}
+
+/* Disabled is a colour, never an opacity. */
+.pn-Select-trigger[data-disabled] {
+  color: var(--perron-color-text-tertiary);
+}
+
+/* The chosen option's words, or the placeholder, on one line that ends in an ellipsis (CR-11). */
+.pn-Select-value {
+  flex: 1;
+  min-inline-size: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* CR-14: the placeholder's colour, from Base UI's attribute on the value */
+.pn-Select-value[data-placeholder] {
+  color: var(--perron-color-text-tertiary);
+}
+
+/* The chevron, decoration beside the value; it doesn't turn while open (CR-12). */
+.pn-Select-icon {
+  --perron-icon-size: var(--perron-icon-size-400);
+  display: inline-flex;
+  flex: none;
+  color: var(--perron-color-text-secondary);
+}
+
+/* CR-14: the chevron's disabled colour, read from the box it sits in */
+.pn-Select-trigger[data-disabled] .pn-Select-icon {
+  color: var(--perron-color-text-tertiary);
+}
+
+/* The gap on whichever side the list flips to, inside the box Base UI measures (CR-8). */
+.pn-Select-positioner {
+  z-index: var(--perron-z-index-dialog);
+  padding-block: var(--perron-space-100);
+}
+
+/* The Popups family's glass, as wide as the box; the list inside it scrolls and carries the
+   family's padding, so a row's ring is never cut. An edge as a border, kept by forced colours when
+   they drop the glass and the shadow (CR-10). */
+.pn-Select-popup {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  inline-size: var(--anchor-width);
+  max-block-size: calc(var(--available-height) - 2 * var(--perron-space-100));
+  padding: 0;
+  border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+  border-radius: var(--perron-radius-lg);
+  background-color: var(--perron-color-surface-overlay);
+  backdrop-filter: blur(var(--perron-effect-glass-blur))
+    saturate(var(--perron-effect-glass-saturate));
+  box-shadow: var(--perron-shadow-panel);
+  color: var(--perron-color-text-primary);
+}
+
+/* Focus rests on the popup while no row holds the highlight, as when the list opens with nothing
+   chosen; the ring is the trigger's and the rows' (focusRing), never the whole list's. */
+.pn-Select-popup:focus-visible {
+  outline: none;
+}
+
+/* The listbox, the box that scrolls, padded space.100: room for a row's focus ring (CR-10). */
+.pn-Select-list {
+  box-sizing: border-box;
+  min-block-size: 0;
+  padding: var(--perron-space-100);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-padding-block: var(--perron-space-100);
+}
+
+/* A group's name, in the overline style, set in capitals as the role asks; it wraps (CR-11). */
+.pn-Select-groupLabel {
+  padding-block: var(--perron-space-150) var(--perron-space-100);
+  padding-inline: var(--perron-space-200);
+  font: var(--perron-typography-overline);
+  letter-spacing: var(--perron-typography-overline-tracking);
+  text-transform: uppercase;
+  color: var(--perron-color-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+/* The hairline between two groups, the Rows family's divider. */
+.pn-Select-separator {
+  margin-block: var(--perron-space-100);
+  border-block-start: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+}
+
+/* A row of the Rows family: its words growing, the tick at its end (CR-13). Its focus ring is
+   perron.css's, on :focus-visible, beside the highlight fill. */
+.pn-Select-item {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--perron-space-200);
+  min-block-size: var(--perron-size-target-min);
+  padding-block: var(--perron-space-150);
+  padding-inline: var(--perron-space-200);
+  border-radius: var(--perron-radius-md);
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+  color: var(--perron-color-text-primary);
+  overflow-wrap: anywhere;
+  cursor: default;
+}
+
+.pn-Select-item[data-selected] {
+  background-color: var(--perron-color-surface-selected);
+}
+
+@media (hover: hover) {
+  .pn-Select-item:hover {
+    background-color: var(--perron-color-surface-hover);
+  }
+
+  /* the hover laid over the selected fill, as the Fields lay it over theirs */
+  .pn-Select-item[data-selected]:hover {
+    background-color: var(--perron-color-surface-selected);
+    background-image: linear-gradient(
+      var(--perron-color-surface-hover),
+      var(--perron-color-surface-hover)
+    );
+  }
+}
+
+.pn-Select-item[data-highlighted] {
+  background-color: var(--perron-color-surface-hover);
+}
+
+.pn-Select-item[data-selected][data-highlighted] {
+  background-color: var(--perron-color-surface-selected);
+  background-image: linear-gradient(
+    var(--perron-color-surface-hover),
+    var(--perron-color-surface-hover)
+  );
+}
+
+/* Disabled is a colour, never an opacity; a disabled row keeps the highlight the keys give it. */
+.pn-Select-item[data-disabled] {
+  color: var(--perron-color-text-tertiary);
+}
+
+/* Forced colours drop the hover surface, so the highlighted row takes the system's (CR-13), and
+   keeps it: left to adjust, the browser backs each line of text with Canvas. The chosen row's rule
+   is matched too, so its selected fill never shows under HighlightText; the tick follows the
+   row's ink. */
+@media (forced-colors: active) {
+  .pn-Select-item[data-highlighted],
+  .pn-Select-item[data-selected][data-highlighted] {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    background-image: none;
+    color: HighlightText;
+  }
+}
+
+.pn-Select-itemText {
+  flex: 1;
+  min-inline-size: 0;
+}
+
+/* Only its place in the row: the size and the ink are the SelectedMark part's (CR-7). */
+.pn-Select-itemIndicator {
+  flex: none;
+}

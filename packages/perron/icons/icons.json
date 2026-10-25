@@ -21,6 +21,10 @@
     "close": {
       "size": "icon.size.400",
       "use": "Close a panel, a dialog or a highlight"
+    },
+    "chevron-down": {
+      "size": "icon.size.400",
+      "use": "Opens a select's list"
     }
   },
   "App": {
@@ -58,7 +62,7 @@
   "Controls": {
     "tick": {
       "size": "icon.size.325",
-      "use": "A ticked checkbox"
+      "use": "A ticked checkbox, and the chosen option in a list"
     },
     "dash": {
       "size": "icon.size.325",

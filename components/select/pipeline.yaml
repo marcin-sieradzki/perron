@@ -8,6 +8,14 @@ stages:
     status: done
     started: 2026-10-25T05:46:03.147Z
     ended: 2026-10-25T05:47:29.658Z
+  build:
+    status: pending
+    started: 2026-10-25T05:47:45.501Z
+    runs: 1
+    spec: fe1a71d03580cbca4697aebce01e9b7a920078332f46d26b69f1c7b8c7313262
+    asked: 1
+    ended: 2026-10-25T06:05:10.001Z
+    failing: "1. Placeholder contrast: axe colour-contrast fails the text placeholder (color.text.tertiary, 4.0:1) in the contract story Root, which renders Default's args. Recommended: one rule in .storybook/preview.ts skipping colour-contrast on [data-placeholder]; alternative: draw the placeholder in color.text.secondary. 2. Validation story: Base UI 1.9.0 marks a required field invalid only after its value changed and skips validate while the native check fails. Recommended (built): the Validation story drops required, its validate alone asks for a choice, and its play mounts a required copy to show aria-required and the hidden input's required."
 notes:
   - stage: brief
     at: 2026-10-25T05:44:48.986Z
@@ -33,3 +41,24 @@ notes:
   - stage: brief
     at: 2026-10-25T05:47:29.659Z
     direction: The row's tick shows at icon.size.325 while the trigger's chevron shows at icon.size.400, so the open field mixes two icon sizes. Design QA should check that the tick holds its weight beside typography.label in a size.target-min row.
+  - stage: build
+    at: 2026-10-25T06:05:10.002Z
+    direction: A placeholder drawn as text (Select's Value, later Combobox's) is checked by axe where a native input's placeholder is not. The tertiary placeholder the contract decides needs one exception in .storybook/preview.ts, beside the disabled-text one the brief raised.
+  - stage: build
+    at: 2026-10-25T06:05:10.002Z
+    direction: Base UI does not mark a required field invalid until its value has changed, and skips `validate` while the native check fails. Every Field dependent that sets `required` meets this, so the contract's Forms rule could say so.
+  - stage: build
+    at: 2026-10-25T06:05:10.002Z
+    direction: A Select opened by a press or by defaultOpen with nothing chosen gives focus to the popup and highlights no row. Select draws no ring on the popup. Combobox and Menu popups that take focus could follow the same rule in the Popups family.
+  - stage: build
+    at: 2026-10-25T06:05:10.002Z
+    direction: SelectedMark sets no colour of its own and inherits the row's ink, so forced colours' HighlightText reaches the tick. Menu.RadioItemIndicator and Combobox.ItemIndicator should keep that rather than set color.text.primary on the part.
+  - stage: build
+    at: 2026-10-25T06:05:10.002Z
+    direction: Select declares JSDoc of its own for `required` and `readOnly`, while Checkbox and Switch inherit Base UI's wording for the same props. The Inputs family could settle on one wording.
+  - stage: build
+    at: 2026-10-25T06:05:10.002Z
+    direction: "Typing Field's slotProps.label through Base UI's mergeProps needs a cast: mergeProps types the ref as HTMLElement, while Field's slot takes a label's ref. A `nativeLabel` prop on Field, as the brief proposed, would remove it."
+  - stage: build
+    at: 2026-10-25T06:05:10.002Z
+    questions: "1. Placeholder contrast: axe colour-contrast fails the text placeholder (color.text.tertiary, 4.0:1) in the contract story Root, which renders Default's args. Recommended: one rule in .storybook/preview.ts skipping colour-contrast on [data-placeholder]; alternative: draw the placeholder in color.text.secondary. 2. Validation story: Base UI 1.9.0 marks a required field invalid only after its value changed and skips validate while the native check fails. Recommended (built): the Validation story drops required, its validate alone asks for a choice, and its play mounts a required copy to show aria-required and the hidden input's required."
