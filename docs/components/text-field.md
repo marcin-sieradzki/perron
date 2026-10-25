@@ -2,6 +2,8 @@
 
 The box a person types one line of words into, such as a stop's name or an email address, framed by the [Field](field.md) that gives it its label, its line of help and its error message.
 
+<!-- run notes -->
+
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the [contract](README.md), the [foundations](../foundations/README.md), the tokens, the Base UI reference for `Field` (`@base-ui/react` 1.9.0, installed) and the [Field](field.md) spec, the entry TextField's registry entry names in `dependsOn`. No ROADMAP line names TextField, and the extracted prototype component is not in any branch this run can reach.
 
 ## Anatomy
