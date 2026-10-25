@@ -3,4 +3,43 @@ component: NumberField
 layer: component
 deferred:
   at: 2026-10-25T06:34:21.822Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-25T06:34:28.215Z
+    ended: 2026-10-25T06:46:08.246Z
+    pending: 9
+notes:
+  - stage: brief
+    at: 2026-10-25T06:46:08.247Z
+    direction: 'Base UI''s NumberField hard-codes English for the ear: aria-roledescription "Number field" on the input and aria-label "Increase"/"Decrease" on the buttons. expectOwnedStrings reads no aria-roledescription, so that word passes the owned-strings check unseen in every locale.'
+  - stage: brief
+    at: 2026-10-25T06:46:08.247Z
+    direction: Intl.NumberFormat writes negatives with a hyphen-minus in en and da but with U+2212 in sv and nb, while content design asks for the true minus sign. NumberField, like Meter, shows whatever Intl gives.
+  - stage: brief
+    at: 2026-10-25T06:46:08.247Z
+    direction: 'The description of size.input still reads "Search field", but it is now the height of every Fields family box: SearchField, TextField and NumberField.'
+  - stage: brief
+    at: 2026-10-25T06:46:08.247Z
+    direction: The plus and minus icons are filed under Map in icons.json, with uses "Zoom in" and "Zoom out". A second use inside a field suggests they belong with the controls.
+  - stage: brief
+    at: 2026-10-25T06:46:08.247Z
+    direction: NumberField's steppers repeat the CloseButton part's look in their own CSS (size.control square, secondary ink, hover surface, selected when pressed). A third icon button inside a field box would justify a shared field-button part.
+  - stage: brief
+    at: 2026-10-25T06:46:08.247Z
+    direction: The contract's State and events names no commit event. If onChangeCommitted is taken, it sets the precedent for Slider and belongs in the contract's table.
+  - stage: brief
+    at: 2026-10-25T06:46:08.247Z
+    direction: Base UI renders NumberField.Group as role="group" with no accessible name, so some screen readers announce an unnamed group around the input.
+  - stage: brief
+    at: 2026-10-25T06:46:08.247Z
+    questions: |-
+      1. (Anatomy) Is the root Base UI's NumberField.Root, with Field rendered round it as the frame and reached through slotProps.field, as TextField does it? Recommended: yes.
+      2. (Anatomy) Do both stepper buttons sit at the end of the box, decrement then increment, each a size.control square, with the number at the box's start? Recommended: yes.
+      3. (Anatomy) Do the buttons use the existing minus and plus icons (the map's zoom icons), with the build widening their use in packages/perron/icons/icons.json? Recommended: yes.
+      4. (Props) Does NumberField take Base UI's onValueCommitted as onChangeCommitted(event, value, details), MUI Slider's name in the contract's event shape? Recommended: yes.
+      5. (Props) Does NumberField declare placeholder and pass it to NumberField.Input, as TextField declares its own? Recommended: yes.
+      6. (Tokens) Does the input set font-variant-numeric: tabular-nums? Recommended: yes.
+      7. (Tokens) In a read-only field, are both button icons in color.text.tertiary with no hover and no pressed look, while the box and the number keep their rest look? Recommended: yes.
+      8. (Owned strings) Are the button names owned strings, keys increase and decrease, English "Increase" and "Decrease", set as each button's aria-label? Recommended: yes.
+      9. (Owned strings) Is the input's role description an owned string, key numberField, English "Number field", set as aria-roledescription, with the build adding aria-roledescription to the attributes owned-strings.ts reads? Recommended: yes.
