@@ -1,0 +1,29 @@
+# Written by npm run factory; never by hand.
+component: FactList
+layer: component
+deferred:
+  at: 2026-10-24T23:39:13.778Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-24T23:45:17.068Z
+    ended: 2026-10-24T23:46:37.552Z
+  build:
+    runs: 2
+    status: done
+    started: 2026-10-24T23:56:54.277Z
+    ended: 2026-10-24T23:58:19.067Z
+  review:
+    rounds: 2
+    sentBack: 1
+    findings:
+      p1: 0
+      p2: 0
+      p3: 2
+    status: done
+    started: 2026-10-24T23:58:24.362Z
+    ended: 2026-10-25T00:00:17.536Z
+  docs:
+    status: done
+    started: 2026-10-25T00:00:29.595Z
+    ended: 2026-10-25T00:02:36.664Z
