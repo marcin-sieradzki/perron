@@ -19,7 +19,7 @@ type Story = StoryObj<typeof meta>
 /** Every Kbd rendered inside `canvas`. */
 const keysIn = (canvas: HTMLElement) => [...canvas.querySelectorAll<HTMLElement>('.pn-Kbd')]
 
-/** `element`'s text, its white space collapsed, as a screen reader reads it. */
+/** `element`'s text content, its white space collapsed: a Kbd has no role and no hidden text, so this is what a screen reader reads. */
 const textOf = (element: Element) => element.textContent!.replace(/\s+/g, ' ').trim()
 
 /** The key "Esc", the contract story's subject. */
