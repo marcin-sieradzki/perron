@@ -21,6 +21,10 @@
     "close": {
       "size": "icon.size.400",
       "use": "Close a panel, a dialog or a highlight"
+    },
+    "chevron-down": {
+      "size": "icon.size.400",
+      "use": "Open a select's list"
     }
   },
   "App": {

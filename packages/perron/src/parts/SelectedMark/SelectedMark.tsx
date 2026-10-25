@@ -1,15 +1,16 @@
 // The SelectedMark shared part: the tick beside a chosen option. A component renders it through its
-// Base UI indicator's `render` (`Menu.RadioItemIndicator`, later `Select.ItemIndicator` and
-// `Combobox.ItemIndicator`), which passes the indicator's class, ref and state attributes in as
-// props. Internal: composed by components, never registered or exported. Its class and the tick
-// icon live only in this folder and CheckboxIndicator's (docs/components/README.md, "Shared parts").
+// Base UI indicator's `render` (`Select.ItemIndicator`, later `Combobox.ItemIndicator` and
+// `Menu.RadioItemIndicator`), which passes the indicator's class, ref, `aria-hidden` and state
+// attributes in as props, and mounts it on the chosen option only. Internal: composed by
+// components, never registered or exported. Its class and the tick icon live only in this folder
+// and CheckboxIndicator's (docs/components/README.md, "Shared parts").
 import type { ComponentProps } from 'react'
 import { classes } from '../../internal/nodes.ts'
 import './SelectedMark.css'
 
 export type SelectedMarkProps = Omit<ComponentProps<'span'>, 'children'>
 
-/** The `tick` icon at `icon.size.325`, in the colour of the row that holds it. */
+/** The `tick` at `icon.size.325`, in the ink of the row it sits in, hidden from screen readers. */
 export function SelectedMark({ className, ...rest }: SelectedMarkProps) {
   return (
     <span {...rest} className={classes('pn-SelectedMark', className)}>
