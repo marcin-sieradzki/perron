@@ -104,6 +104,7 @@ export function ScaleBar({
       <span
         {...labelProps}
         className={classes('pn-ScaleBar-label', labelProps?.className)}
+        aria-hidden={undefined}
         dangerouslySetInnerHTML={undefined}
       >
         <VisuallyHidden>{strings.scale}</VisuallyHidden>{' '}
