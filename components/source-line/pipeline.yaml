@@ -9,9 +9,13 @@ stages:
     started: 2026-10-25T17:54:16.088Z
     ended: 2026-10-25T17:54:26.277Z
   build:
-    runs: 3
+    runs: 4
     respecs: 1
-    failing: review round 2 found 2 P2 (components/source-line/review.md)
+    status: done
+    started: 2026-10-25T18:49:00.639Z
+    begun: e9a2b7b424fb43c88a46d65b32989bb431e7b1abffa207fa4dcfa366d10778b0
+    spec: 1c5b2d9d756b857e7ce210f0e60d262e9a7a2442ee8043765b258bb57f3203bf
+    ended: 2026-10-25T19:05:14.141Z
   review:
     rounds: 2
     sentBack: 2
@@ -20,10 +24,6 @@ stages:
       p1: 0
       p2: 2
       p3: 3
-    status: failed
-    started: 2026-10-25T18:42:01.446Z
-    ended: 2026-10-25T18:48:52.949Z
-    failing: review round 2 found 2 P2 (components/source-line/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T17:53:46.108Z
@@ -44,3 +44,6 @@ notes:
   - stage: build
     at: 2026-10-25T18:09:24.468Z
     unblocked: 'build failed: npm run check failed:  ❯ Object.runStep node_modules/.cache/storybook/10.6.3/4013f3538612f7ed7c79acd9f5439b7a53c2236d1a33638c6f38e15109db62ae/sb-vitest/vitest/e53922df741b1d4df1a1998731800f1113be1681/deps/csf-B00LHp8e.js?v=9444478f:8875:3 /  ❯ play packages/perron/src/components/NumberField/NumberField.stories.tsx:291:6 /  ❯ runStory node_modules/.cache/storybook/10.6.3/4013f3538612f7ed7c79acd9f5439b7a53c2236d1a33638c6; rerun once because the spec changed since that run began'
+  - stage: build
+    at: 2026-10-25T19:05:14.141Z
+    direction: The time is no longer set in typography.data but in the line's own caption, because the contract's Words rule makes the time part of one owned phrase; this reverses brief answer 5, and a design run should confirm it.

@@ -162,12 +162,15 @@ export const en = {
   inProgress: 'In progress',
   /** The region at the bottom of the screen that holds the toasts. */
   notifications: 'Notifications',
-  /** A source line: before the time of a source's data, as in "Rejseplanen · updated 08:14:05". */
-  sourceUpdated: 'updated',
+  /** A source line: the time of a source's data, as in "Rejseplanen · updated 08:14:05". */
+  sourceUpdated: 'updated {time}',
   /** A source line: first in the line while the panel takes no updates. */
   sourcePaused: 'Paused',
-  /** A source line: after a source's time, and a comma, when the app judges its data may be stale. */
-  mayBeOutOfDate: 'may be out of date',
+  /**
+   * A source line: the time of a source's data when the app judges it may be out of date, as in
+   * "Vehicle positions · updated 08:09:40, may be out of date".
+   */
+  sourceOutOfDate: 'updated {time}, may be out of date',
 }
 
 /** The name of one owned string. */

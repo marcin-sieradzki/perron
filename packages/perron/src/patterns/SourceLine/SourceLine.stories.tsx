@@ -28,18 +28,36 @@ const POSITIONS: SourceLineSource = { name: 'Vehicle positions', time: '08:13:58
 /** The second source gone stale under a fresh first one: the case the line exists for. */
 const STALE: SourceLineSource = { name: 'Vehicle positions', time: '08:09:40', outOfDate: true }
 
-/** Each of the line's words overridden, with the prop that overrides it and the locale's word. */
-const WORDS = [
-  { prop: 'sourceUpdatedLabel', word: 'updated', own: 'as of' },
-  { prop: 'sourcePausedLabel', word: 'Paused', own: 'On hold' },
-  { prop: 'mayBeOutOfDateLabel', word: 'may be out of date', own: 'could be old' },
-] as const satisfies readonly { prop: keyof SourceLineProps; word: string; own: string }[]
+/**
+ * Each of the line's owned strings overridden: the prop, the caller's own string, and how the
+ * paused line of `REJSEPLANEN` and `STALE` is heard with that one override alone.
+ */
+const OVERRIDES = [
+  {
+    prop: 'sourceUpdatedLabel',
+    own: 'as of {time}',
+    alone:
+      'Paused · Rejseplanen · as of 08:14:05 · Vehicle positions · updated 08:09:40, may be out of date',
+  },
+  {
+    prop: 'sourcePausedLabel',
+    own: 'On hold',
+    alone:
+      'On hold · Rejseplanen · updated 08:14:05 · Vehicle positions · updated 08:09:40, may be out of date',
+  },
+  {
+    prop: 'sourceOutOfDateLabel',
+    own: 'as of {time}, could be old',
+    alone:
+      'Paused · Rejseplanen · updated 08:14:05 · Vehicle positions · as of 08:09:40, could be old',
+  },
+] as const satisfies readonly { prop: keyof SourceLineProps; own: string; alone: string }[]
 
-/** Every word override at once, from `WORDS`. */
+/** Every override at once, from `OVERRIDES`. */
 const OWN_LABELS = {
-  sourceUpdatedLabel: WORDS[0].own,
-  sourcePausedLabel: WORDS[1].own,
-  mayBeOutOfDateLabel: WORDS[2].own,
+  sourceUpdatedLabel: OVERRIDES[0].own,
+  sourcePausedLabel: OVERRIDES[1].own,
+  sourceOutOfDateLabel: OVERRIDES[2].own,
 } satisfies Partial<SourceLineProps>
 
 /** One 100-letter name, longer than a 320 px container's line, for the long-word check (CR-13). */
@@ -85,9 +103,7 @@ const partsOf = (line: Element) => {
     names: all('name'),
     separators: all('separator'),
     between: all('separator').filter((s) => !s.closest('.pn-SourceLine-source')),
-    updated: all('updated'),
     times: [...line.querySelectorAll<HTMLTimeElement>('time.pn-SourceLine-time')],
-    outOfDate: all('outOfDate'),
   }
 }
 
@@ -108,20 +124,44 @@ const longhandsOf = (element: Element) => {
   return [style.fontFamily, style.fontSize, style.fontWeight, style.lineHeight]
 }
 
+/** How many line boxes the caller's time takes inside its `time` part: 1 when its digits hold. */
+function timeBoxes(time: HTMLTimeElement) {
+  const text = time.firstChild!
+  const at = text.textContent!.indexOf(time.dateTime)
+  const range = document.createRange()
+  range.setStart(text, at)
+  range.setEnd(text, at + time.dateTime.length)
+  return new Set([...range.getClientRects()].map((box) => Math.round(box.top))).size
+}
+
 /**
- * A line in a 320 px `box` wraps onto more than one line, keeps each time on one line, reaches
- * nowhere past the box's edge, and starts no line with a "·" (CR-1, CR-13).
+ * The widths, from 240 to 480 px, at which a line in `box` starts a line with a "·": a "·" at a
+ * line's start sits at the paragraph's start edge (CR-1). Leaves `box` at its own width.
+ */
+function separatorFirstAt(box: HTMLElement, line: HTMLElement) {
+  const own = box.style.inlineSize
+  const found: number[] = []
+  for (let width = 240; width <= 480; width++) {
+    box.style.inlineSize = `${width}px`
+    const start = line.getBoundingClientRect().left
+    if (partsOf(line).separators.some((s) => s.getBoundingClientRect().left <= start + 1))
+      found.push(width)
+  }
+  box.style.inlineSize = own
+  return found
+}
+
+/**
+ * A line in a 320 px `box` wraps onto more than one line, keeps each time's digits together,
+ * reaches nowhere past the box's edge, and at no width from 240 to 480 px starts a line with a "·"
+ * (CR-1, CR-13).
  */
 async function expectWrapsInside(box: HTMLElement, line: HTMLElement) {
-  const parts = partsOf(line)
   await expect(lines(line)).toBeGreaterThan(1)
-  for (const time of parts.times) await expect(lines(time)).toBeLessThan(1.5)
+  for (const time of partsOf(line).times) await expect(timeBoxes(time)).toBe(1)
   await expect(box.scrollWidth).toBe(box.clientWidth)
   await expect(line.scrollWidth).toBe(line.clientWidth)
-  // a line's first box sits at the paragraph's start edge; no "·" may be that box
-  const start = line.getBoundingClientRect().left
-  for (const separator of parts.separators)
-    await expect(separator.getBoundingClientRect().left).toBeGreaterThan(start + 1)
+  await expect(separatorFirstAt(box, line)).toEqual([])
 }
 
 /** One source, Rejseplanen at 08:14:05. The subject story: its args render the line alone. */
@@ -129,7 +169,7 @@ export const Default: Story = {
   play: async ({ canvasElement, step }) => {
     const line = await lineIn(canvasElement)
     const parts = partsOf(line)
-    await step('a paragraph: name, "·", "updated", then the time (CR-1, CR-2)', async () => {
+    await step('a paragraph: name, "·", then the time in its phrase (CR-1, CR-2)', async () => {
       await expect(line.tagName).toBe('P')
       await expect(line.className).toBe('pn-Text pn-SourceLine')
       await expect(within(canvasElement).getByRole('paragraph')).toBe(line)
@@ -142,21 +182,28 @@ export const Default: Story = {
       await expect([...source.children]).toEqual([
         parts.names[0],
         parts.separators[0],
-        parts.updated[0],
         parts.times[0],
       ])
       await expect(parts.names[0]).toHaveTextContent(/^Rejseplanen$/)
       await expect(parts.separators[0]).toHaveTextContent(/^·$/)
-      await expect(parts.updated[0]).toHaveTextContent(/^updated$/)
+      // a no-break space before the "·" and a space after it (CR-1)
+      await expect(parts.separators[0].previousSibling?.textContent).toBe('\u00A0')
+      await expect(parts.separators[0].nextSibling?.textContent).toBe(' ')
       // the "·" is read in place: nothing in the line is hidden from the ear
       await expect(line.querySelector('[aria-hidden]')).toBeNull()
     })
-    await step('the time: the caller’s string, in a <time> with that dateTime (CR-3)', async () => {
-      const [time] = parts.times
-      await expect(time).toHaveAttribute('dateTime', '08:14:05')
-      await expect(time).toHaveTextContent(/^08:14:05$/)
-    })
-    await step('caption in secondary ink; the time in the data role, tabular', async () => {
+    await step(
+      'the time: one phrase, in a <time> with the caller’s dateTime (CR-2, CR-3)',
+      async () => {
+        const [time] = parts.times
+        await expect(time).toHaveAttribute('dateTime', '08:14:05')
+        // the owned phrase filled by interpolate: one text run, no element between word and time
+        await expect(time.childNodes).toHaveLength(1)
+        await expect(time.firstChild?.nodeType).toBe(Node.TEXT_NODE)
+        await expect(time).toHaveTextContent(/^updated 08:14:05$/)
+      },
+    )
+    await step('caption in secondary ink, the time in its face and figures', async () => {
       const secondary = colour(SECONDARY)
       await expect(longhandsOf(line)).toEqual(roleLonghands('caption'))
       await expect(getComputedStyle(line).letterSpacing).toBe(
@@ -165,17 +212,13 @@ export const Default: Story = {
       await expect(getComputedStyle(line).color).toBe(secondary)
       await expect(getComputedStyle(line).margin).toBe('0px')
       await expect(getComputedStyle(line).overflowWrap).toBe('anywhere')
-      for (const part of [...parts.names, ...parts.separators, ...parts.updated])
+      for (const part of [...parts.names, ...parts.separators])
         await expect(getComputedStyle(part).color).toBe(secondary)
       const [time] = parts.times
       const style = getComputedStyle(time)
-      await expect(roleLonghands('data')[0]).toContain('JetBrains Mono')
-      await expect(longhandsOf(time)).toEqual(roleLonghands('data'))
-      await expect(style.letterSpacing).toBe(
-        resolve('letterSpacing', 'var(--perron-typography-data-tracking)'),
-      )
-      await expect(style.fontVariantNumeric).toBe('tabular-nums')
-      await expect(style.whiteSpace).toBe('nowrap')
+      await expect(roleLonghands('caption')[0]).toContain('Schibsted Grotesk')
+      await expect(longhandsOf(time)).toEqual(roleLonghands('caption'))
+      await expect(style.fontVariantNumeric).toBe('normal')
       await expect(style.color).toBe(secondary)
     })
     await step('no surface and no place of its own (CR-9)', async () => {
@@ -189,7 +232,6 @@ export const Default: Story = {
     await step('not paused, nothing out of date (CR-5, CR-6)', async () => {
       await expect(line).not.toHaveAttribute('data-paused')
       await expect(parts.paused).toHaveLength(0)
-      await expect(parts.outOfDate).toHaveLength(0)
       await expect(parts.sources[0]).not.toHaveAttribute('data-out-of-date')
     })
     await step('no live region (CR-12)', async () => {
@@ -277,9 +319,7 @@ export const Default: Story = {
             source: {},
             name: {},
             separator: {},
-            updated: {},
             time: {},
-            outOfDate: {},
           }}
         />,
         async (host) => {
@@ -306,9 +346,7 @@ export const Default: Story = {
             source: { className: 'caller-source' },
             name: { className: 'caller-name' },
             separator: { className: 'caller-separator' },
-            updated: { className: 'caller-updated' },
             time: { className: 'caller-time' },
-            outOfDate: { className: 'caller-outOfDate' },
           }}
         />,
         async (host) => {
@@ -319,9 +357,7 @@ export const Default: Story = {
             source: own.sources,
             name: own.names,
             separator: own.separators,
-            updated: own.updated,
             time: own.times,
-            outOfDate: own.outOfDate,
           }
           for (const [part, copies] of Object.entries(byPart)) {
             await expect(copies.length).toBeGreaterThan(0)
@@ -343,9 +379,7 @@ export const Default: Story = {
               source: { 'data-out-of-date': 'caller', children: 'Caller source' },
               name: { children: 'Caller name' },
               separator: { children: 'Caller separator' },
-              updated: { children: 'Caller updated' },
               time: { dateTime: '23:59:59', children: 'Caller time' },
-              outOfDate: { children: 'Caller out of date' },
             } as SourceLineProps['slotProps']
           }
         />,
@@ -368,7 +402,7 @@ export const Default: Story = {
   },
 }
 
-/** Two sources, each with its own name, "updated" and time. */
+/** Two sources, each with its own name and its own phrase and time. */
 export const TwoSources: Story = {
   args: { sources: [REJSEPLANEN, POSITIONS] },
   play: async ({ canvasElement }) => {
@@ -386,8 +420,7 @@ export const TwoSources: Story = {
     await expect(parts.between).toHaveLength(1)
     await expect(parts.between[0].previousElementSibling).toBe(parts.sources[0])
     await expect(parts.between[0].nextElementSibling).toBe(parts.sources[1])
-    // CR-4: each source its own word and time, and no time for the line as a whole
-    await expect(parts.updated).toHaveLength(2)
+    // CR-4: each source its own phrase and time, and no time for the line as a whole
     await expect(parts.times).toHaveLength(2)
     await expect(line.querySelectorAll('time')).toHaveLength(2)
     for (const [index, source] of parts.sources.entries()) {
@@ -416,7 +449,11 @@ export const Paused: Story = {
       colour('--perron-color-text-primary'),
     )
     // each source keeps its own time while paused
-    await expect(parts.times.map((time) => time.textContent)).toEqual(['08:14:05', '08:13:58'])
+    await expect(parts.times.map((time) => time.dateTime)).toEqual(['08:14:05', '08:13:58'])
+    await expect(parts.times.map((time) => time.textContent)).toEqual([
+      'updated 08:14:05',
+      'updated 08:13:58',
+    ])
   },
 }
 
@@ -426,19 +463,18 @@ export const OutOfDate: Story = {
   play: async ({ canvasElement }) => {
     const line = await lineIn(canvasElement)
     const parts = partsOf(line)
-    // CR-6: only the stale source carries the state and the words, after its own time
+    // CR-6: only the stale source carries the state, and its phrase says it, in warning ink
     await expect(parts.sources[0]).not.toHaveAttribute('data-out-of-date')
-    await expect(parts.sources[0].querySelector('.pn-SourceLine-outOfDate')).toBeNull()
+    await expect(parts.times[0]).toHaveTextContent(/^updated 08:14:05$/)
+    await expect(getComputedStyle(parts.times[0]).color).toBe(colour(SECONDARY))
     await expect(parts.sources[1]).toHaveAttribute('data-out-of-date', '')
     await expect(heard(parts.sources[1])).toBe(
       'Vehicle positions · updated 08:09:40, may be out of date',
     )
-    await expect(parts.outOfDate).toHaveLength(1)
-    await expect(parts.outOfDate[0].previousElementSibling).toBe(parts.times[1])
-    await expect(parts.sources[1].lastElementChild).toBe(parts.outOfDate[0])
-    await expect(getComputedStyle(parts.outOfDate[0]).color).toBe(
-      colour('--perron-color-text-warning'),
-    )
+    await expect(parts.times[1].childNodes).toHaveLength(1)
+    await expect(parts.times[1]).toHaveTextContent(/^updated 08:09:40, may be out of date$/)
+    await expect(parts.times[1]).toHaveAttribute('dateTime', '08:09:40')
+    await expect(getComputedStyle(parts.times[1]).color).toBe(colour('--perron-color-text-warning'))
     await expect(line).not.toHaveAttribute('data-paused')
     // CR-3, CR-6: outOfDate false shows none of it, and an HH:MM time is shown as it is given
     await mounted(
@@ -447,13 +483,13 @@ export const OutOfDate: Story = {
       async (host) => {
         const own = partsOf(await lineIn(host))
         await expect(own.sources[0]).not.toHaveAttribute('data-out-of-date')
-        await expect(own.outOfDate).toHaveLength(0)
         await expect(own.times[0]).toHaveAttribute('dateTime', '08:14')
-        await expect(own.times[0]).toHaveTextContent(/^08:14$/)
+        await expect(own.times[0]).toHaveTextContent(/^updated 08:14$/)
         await expect(heard(own.sources[0])).toBe('Rejseplanen · updated 08:14')
       },
     )
-    // the paused and out-of-date words, beyond the subject story's: in every locale, the dictionary's
+    // the paused word and out-of-date phrase, beyond the subject story's: in every locale, only the
+    // dictionary's, each phrase filled with its time
     for (const locale of Object.keys(dictionaries) as Locale[])
       expectOwnedStrings(
         renderToStaticMarkup(
@@ -486,7 +522,8 @@ export const Narrow: Story = {
       'Pausad · Rejseplanen · uppdaterad 08:14:05 · Vehicle positions · uppdaterad 08:09:40, kan vara inaktuell',
     )
     await expect(parts.separators).toHaveLength(4)
-    // CR-13: the line wraps, each time on one line, nothing past the edge, no line starts with "·"
+    // CR-13: the line wraps, no time's digits break, nothing past the edge, and at no width does a
+    // line start with "·" (CR-1)
     await expectWrapsInside(container, line)
     // the same in the other three locales, each in its own 320 px container
     for (const locale of ['en', 'da', 'nb'] as const)
@@ -500,7 +537,9 @@ export const Narrow: Story = {
         async (host) => {
           const box = await waitFor(() => within(host).getByTestId(`narrow-${locale}`))
           const own = await lineIn(box)
-          await expect(heard(own)).toContain(dictionaries[locale].mayBeOutOfDate)
+          await expect(heard(own)).toContain(
+            dictionaries[locale].sourceOutOfDate.replace('{time}', STALE.time),
+          )
           await expectWrapsInside(box, own)
         },
       )
@@ -526,28 +565,25 @@ export const Narrow: Story = {
   },
 }
 
-/** `Narrow`'s sources in English, paused, with each of the line's words overridden. */
+/** `Narrow`'s sources in English, paused, with each of the line's owned strings overridden. */
 export const Labels: Story = {
   args: { sources: [REJSEPLANEN, STALE], paused: true, ...OWN_LABELS },
   play: async ({ canvasElement, step }) => {
     const line = await lineIn(canvasElement)
-    await step('each word is the caller’s, in every copy (CR-7)', async () => {
+    await step('each phrase and word is the caller’s, its time filled in (CR-7)', async () => {
       await expect(heard(line)).toBe(
         'On hold · Rejseplanen · as of 08:14:05 · Vehicle positions · as of 08:09:40, could be old',
       )
-      for (const { word } of WORDS) await expect(line.textContent).not.toContain(word)
+      for (const word of ['updated', 'Paused', 'may be out of date'])
+        await expect(line.textContent).not.toContain(word)
     })
-    for (const [index, { prop, word, own }] of WORDS.entries())
-      await step(`${prop} replaces only “${word}”`, async () => {
+    for (const { prop, own, alone } of OVERRIDES)
+      await step(`${prop} replaces only its own string`, async () => {
         await mounted(
           canvasElement,
           <SourceLine sources={[REJSEPLANEN, STALE]} paused {...{ [prop]: own }} />,
           async (host) => {
-            const text = heard(await lineIn(host))
-            await expect(text).toContain(own)
-            await expect(text).not.toContain(word)
-            for (const other of WORDS.filter((_, at) => at !== index))
-              await expect(text).toContain(other.word)
+            await expect(heard(await lineIn(host))).toBe(alone)
           },
         )
       })

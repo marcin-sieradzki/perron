@@ -7,6 +7,7 @@ import type { ComponentPropsWithRef, CSSProperties, Ref } from 'react'
 import { Text } from '../../components/Text/Text.tsx'
 import { useOwnedStrings } from '../../PerronProvider.tsx'
 import { classes } from '../../internal/nodes.ts'
+import { interpolate } from '../../internal/strings.ts'
 import './SourceLine.css'
 
 /** One source of a panel's data, as SourceLine's `sources` takes it. */
@@ -41,7 +42,8 @@ export interface SourceLineProps extends Omit<ComponentPropsWithRef<'p'>, 'child
    */
   paused?: boolean
   /**
-   * Overrides "updated", the word before each source's time
+   * Overrides "updated {time}", the phrase that gives each source's time; `{time}` is filled with
+   * the source's `time`
    * @default The locale's
    */
   sourceUpdatedLabel?: string
@@ -51,10 +53,11 @@ export interface SourceLineProps extends Omit<ComponentPropsWithRef<'p'>, 'child
    */
   sourcePausedLabel?: string
   /**
-   * Overrides "may be out of date", the words after the time of a source whose `outOfDate` is set
+   * Overrides "updated {time}, may be out of date", the phrase that gives the time of a source
+   * whose `outOfDate` is set; `{time}` is filled with the source's `time`
    * @default The locale's
    */
-  mayBeOutOfDateLabel?: string
+  sourceOutOfDateLabel?: string
   /** Joined after `pn-Text pn-SourceLine` on the root */
   className?: string
   /** Reaches the root */
@@ -71,16 +74,12 @@ export interface SourceLineProps extends Omit<ComponentPropsWithRef<'p'>, 'child
     name?: ComponentPropsWithRef<'span'>
     /** Props for every `separator` part, each "·" */
     separator?: ComponentPropsWithRef<'span'>
-    /** Props for every `updated` part, each "updated" */
-    updated?: ComponentPropsWithRef<'span'>
-    /** Props for every `time` part, each source's time */
+    /** Props for every `time` part, each source's "updated" and time */
     time?: ComponentPropsWithRef<'time'>
-    /** Props for every `outOfDate` part, each "may be out of date" */
-    outOfDate?: ComponentPropsWithRef<'span'>
   }
 }
 
-/** U+00B7, the mark between a source's name and "updated", after "Paused", and between sources. */
+/** U+00B7, the mark between a source's name and its time, after "Paused", and between sources. */
 const SEPARATOR = '·'
 
 /** U+00A0, before each "·", so a wrapped line never starts with one (CR-1). */
@@ -96,26 +95,24 @@ export function SourceLine({
   paused = false,
   sourceUpdatedLabel,
   sourcePausedLabel,
-  mayBeOutOfDateLabel,
+  sourceOutOfDateLabel,
   slotProps,
   className,
   ref,
   ...rest
 }: SourceLineProps) {
-  // CR-7: the line's three words, with this instance's overrides laid over them
+  // CR-7: the line's word and two phrases, with this instance's overrides laid over them
   const strings = useOwnedStrings({
     sourceUpdated: sourceUpdatedLabel,
     sourcePaused: sourcePausedLabel,
-    mayBeOutOfDate: mayBeOutOfDateLabel,
+    sourceOutOfDate: sourceOutOfDateLabel,
   })
   const {
     paused: pausedProps,
     source: sourceProps,
     name: nameProps,
     separator: separatorProps,
-    updated: updatedProps,
     time: timeProps,
-    outOfDate: outOfDateProps,
   } = slotProps ?? {}
 
   // CR-1: a "·" with a no-break space before it and a space after it, so the line wraps after a
@@ -157,7 +154,7 @@ export function SourceLine({
           {separator}
         </>
       )}
-      {/* CR-1, CR-4: each source in the caller's order, each with its own name, word and time,
+      {/* CR-1, CR-4: each source in the caller's order, each with its own name, phrase and time,
           never joined under one "updated" */}
       {sources.map((source, index) => (
         // the sources have no id of their own, and their order is the caller's
@@ -173,32 +170,18 @@ export function SourceLine({
               {source.name}
             </span>
             {separator}
-            <span
-              {...updatedProps}
-              className={classes('pn-SourceLine-updated', updatedProps?.className)}
-            >
-              {strings.sourceUpdated}
-            </span>{' '}
-            {/* CR-3: the caller's time as it is, with no timer, clock or formatting of its own */}
+            {/* CR-2, CR-3, CR-6: the time in one owned phrase, filled by interpolate, never an owned
+                word joined to the caller's time; the caller's time as it is, with no timer, clock
+                or formatting of its own */}
             <time
               {...timeProps}
               className={classes('pn-SourceLine-time', timeProps?.className)}
               dateTime={source.time}
             >
-              {source.time}
+              {interpolate(source.outOfDate ? strings.sourceOutOfDate : strings.sourceUpdated, {
+                time: source.time,
+              })}
             </time>
-            {/* CR-6: the app's judgement, after its own source's time and a comma */}
-            {source.outOfDate && (
-              <>
-                {', '}
-                <span
-                  {...outOfDateProps}
-                  className={classes('pn-SourceLine-outOfDate', outOfDateProps?.className)}
-                >
-                  {strings.mayBeOutOfDate}
-                </span>
-              </>
-            )}
           </span>
         </Fragment>
       ))}
