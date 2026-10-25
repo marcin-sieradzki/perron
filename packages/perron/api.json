@@ -113,6 +113,35 @@
       }
     }
   },
+  "Count": {
+    "extends": [
+      "Omit<useRender.ComponentProps<'span'>, 'children' | 'color'>"
+    ],
+    "props": {
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "color": {
+        "optional": true,
+        "type": [
+          "\"danger\"",
+          "\"info\"",
+          "\"neutral\"",
+          "\"success\"",
+          "\"warning\""
+        ]
+      },
+      "unknownLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      }
+    }
+  },
   "DataStatePanel": {
     "extends": [
       "Omit<ComponentPropsWithRef<'div'>, 'children'>"

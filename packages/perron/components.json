@@ -75,7 +75,7 @@
     "name": "Count",
     "layer": "component",
     "category": "Display",
-    "status": "building",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Components/Count",
     "dependsOn": []
