@@ -3,4 +3,35 @@ component: RadioGroup
 layer: component
 deferred:
   at: 2026-10-25T05:22:58.444Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-25T05:23:03.910Z
+    ended: 2026-10-25T05:33:10.547Z
+    pending: 10
+notes:
+  - stage: brief
+    at: 2026-10-25T05:33:10.548Z
+    direction: This branch was cut before Switch was merged to main (f094951), so Switch's spec and its duration.switch token are missing here. Merge main before the build so the review can hold the radio's look to Switch's, and so a state transition can take duration.switch through the design-tokens skill if wanted.
+  - stage: brief
+    at: 2026-10-25T05:33:10.548Z
+    direction: Checkbox, CheckboxGroup and Field are still designing. RadioGroup sets the first round choice mark (icon.size.400 on color.surface.raised and inverse), so Checkbox's box should take the same size and fills, or a shared size token should be added for both now.
+  - stage: brief
+    at: 2026-10-25T05:33:10.548Z
+    direction: The Invalid story uses Base UI's Field.Root directly until Perron's Field ships; move it to Field when Field reaches building.
+  - stage: brief
+    at: 2026-10-25T05:33:10.548Z
+    direction: Radio has no description (second line) prop; add an optional description with aria-describedby when a screen needs one.
+  - stage: brief
+    at: 2026-10-25T05:33:10.548Z
+    questions: |-
+      1. Anatomy: Is the control two components, RadioGroup and Radio, both exported from RadioGroup.tsx as an exception to 'one component per folder', the way SegmentedControl/Segment and Tabs are? Recommended: yes. Radio.Root reads the group's context, callers write many radios, a ReactNode label is simpler than an options array, MUI nests radios the same way, and the registry keeps one entry.
+      2. Anatomy: Is each radio's root Base UI's Radio.Root itself, a <span role="radio"> that holds the indicator and a label span as one row, rather than a <label> wrapped round a bare Radio.Root? Recommended: yes. One element then takes ref, class, the other props, render and the focus ring. Its words become its accessible name, the whole row is the click target, and slotProps has one key, indicator.
+      3. Props: Is the group's name the required `label` prop, with `hiddenLabel` to hide it visually (SearchField's names), passed to Fieldset as `legend` and `hiddenLegend`? Recommended: yes. A radio group is one form field, and Fieldset's spec already expects RadioGroup to pass its own hiddenLabel.
+      4. Props: Is the value a `string`, with no radio checked when neither value nor defaultValue is given, and no fallback to the first radio? Recommended: yes. A string is what the hidden input submits, it matches SegmentedControl, and Base UI has no fallback.
+      5. Props: Does the group come in one look, a vertical column, with no variant, size, color or orientation? Recommended: yes. The brand keeps controls ink and neutral, a row is already at size.target-min, a horizontal row of choices is SegmentedControl's job, and each prop can be added later without a break.
+      6. Tokens: Is the indicator a 16 px circle using icon.size.400, with a dot half its size, kept on the label's first line with margin-block calc((1lh - icon.size.400)/2)? Recommended: yes. Checkbox can reuse the same token so the two marks match. The alternative is a new size token through the design-tokens skill.
+      7. Tokens: Is a checked radio a color.surface.inverse circle and edge with a color.surface.raised dot, and an unchecked one a color.surface.raised circle with a border.width.025 edge in color.border.control, with a color.surface.hover overlay on hover and color.surface.inverse-hover for checked hover? Recommended: yes. Elevation's inputs and pressed toggles use these surfaces, the control edge reaches 3:1, and the geometry stays fixed across states.
+      8. Tokens: Base UI produces read-only and invalid states that no drawing shows. Does read-only look like rest (no hover, default cursor), and invalid turn the edge color.status.danger, checked or not, with disabled winning over invalid? Recommended: yes. This follows the Fields family and Base UI dropping aria-invalid while disabled.
+      9. Tokens: Does the focus ring go round the radio's whole row, using perron.css's own outline and the row's radius.md, rather than round the circle alone? Recommended: yes. The row is the focusable element and the click target, and the component then draws no ring of its own.
+      10. Stories: Does the deferred design's page draw the group as `Default`, plus the radio with one `State` property (default, hover, focus, checked, disabled), its stories prefixed Radio (RadioDefault, RadioHover, RadioFocus, RadioChecked, RadioDisabled) the way SegmentedControl's are prefixed Segment? Recommended: yes. Disabled, ReadOnly, Invalid, HiddenLabel, Controlled, LabelShapes, LongLabels and InForm are extra stories with no Penpot variant.
