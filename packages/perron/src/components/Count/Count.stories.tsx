@@ -33,9 +33,10 @@ function heard(element: Element) {
 
 /**
  * A story's render: the caller's words, then the pill, so the tint is never the only sign (CR-9)
- * and the dash of an unknown count sits next to stronger text. The args stay Count's alone, so the subject story still renders the subject alone.
+ * and the dash of an unknown count sits next to stronger text. The args stay Count's alone, so
+ * the subject story still renders the subject alone.
  */
-const after =
+const afterWords =
   (words: string): Story['render'] =>
   (args) => (
     <>
@@ -49,7 +50,7 @@ const neutralRef = createRef<HTMLSpanElement>()
 /** The subject story: a count of bad news, "Delays 3" on the danger tint. */
 export const Danger: Story = {
   args: { color: 'danger', children: 3 },
-  render: after('Delays'),
+  render: afterWords('Delays'),
   play: async ({ canvasElement }) => {
     await expect(rootIn(canvasElement)).toHaveAttribute('data-color', 'danger')
   },
@@ -58,7 +59,7 @@ export const Danger: Story = {
 /** A count of diversions, which the foundations give the info intent: "Diversions 2". */
 export const Info: Story = {
   args: { color: 'info', children: 2 },
-  render: after('Diversions'),
+  render: afterWords('Diversions'),
 }
 
 /** The default intent, a plain tally: "12" on the inset surface. */
@@ -88,7 +89,7 @@ export const Neutral: Story = {
 /** `0` is a count, and shows (CR-4): "Delays 0", the good news of a line running normally. */
 export const Success: Story = {
   args: { color: 'success', children: 0 },
-  render: after('Delays'),
+  render: afterWords('Delays'),
   play: async ({ canvasElement }) => {
     const root = rootIn(canvasElement)
     await expect(root).toHaveTextContent(/^0$/)
@@ -102,7 +103,7 @@ export const Success: Story = {
  */
 export const Warning: Story = {
   args: { color: 'warning', children: 5 },
-  render: after('Ageing'),
+  render: afterWords('Ageing'),
   play: async ({ canvasElement }) => {
     const { width, height } = rootIn(canvasElement).getBoundingClientRect()
     await expect(Math.abs(width - height)).toBeLessThan(1)
@@ -112,7 +113,7 @@ export const Warning: Story = {
 /** No count: "—", heard as "Unknown", untinted (CR-4 to CR-6). */
 export const Unknown: Story = {
   args: { color: 'neutral' },
-  render: after('Delays'),
+  render: afterWords('Delays'),
   play: async ({ canvasElement }) => {
     const root = rootIn(canvasElement)
     await expect(root).toHaveAttribute('data-unknown', '')
