@@ -3,22 +3,19 @@ component: VehicleTable
 layer: pattern
 deferred:
   at: 2026-10-25T13:17:35.632Z
-needsHuman:
-  stage: build
-  reason: 'build failed: P2-1 (packages/perron/src/patterns/VehicleTable/VehicleTable.css:75, and the Tokens row for destinationCell overflow-wrap with CR-8 in docs/patterns/vehicle-table.md) needs a token, and adding one is not the build''s to do. Measured container widths 256-600 px: the line, position and delay columns together need at least 188 px. With `anywhere`, the destination''s least width falls to its header word (76 px), so "Lufthavnen" breaks at a 272 px container even though whole words would fit. Plain `break-word` keeps words whole but LongDestination needs 329 px. Chromium''s auto table layout ignores `min-inline-size: 30%`, `inline-size: max-content` and `fit-content` on the cell. Hyphenation works only with lang="da" and a Chromium hyphenation dictionary, which CI (ubuntu-latest) lacks. The only reliable fix is a least width on the destination cell, a length no token holds (measured: `min-inline-size: 88px` kept every Default word whole from a 276 px container up). Recommendation: add a size token through the design-tokens skill for the destination column''s least width, about 92 to 100 px, so "Københavns" and "Lufthavnen" stay whole and the table fits a 288 px container (a 320 px screen less a space.400 sheet padding); use it on destinationCell next to `overflow-wrap: anywhere`.'
 stages:
   brief:
     status: done
     started: 2026-10-25T13:25:13.975Z
     ended: 2026-10-25T13:27:10.436Z
   build:
-    runs: 3
-    status: failed
-    started: 2026-10-25T13:48:28.938Z
-    begun: dd54ab9b273e1d76f3f5145624e3cab015f1963427b627fbff292acc14692d98
-    spec: 9da5ad12dbb7ef649e487c11da5919c3734e364c95399bf6fb28dab4df9213b2
-    ended: 2026-10-25T13:57:28.266Z
-    failing: 'P2-1 (packages/perron/src/patterns/VehicleTable/VehicleTable.css:75, and the Tokens row for destinationCell overflow-wrap with CR-8 in docs/patterns/vehicle-table.md) needs a token, and adding one is not the build''s to do. Measured container widths 256-600 px: the line, position and delay columns together need at least 188 px. With `anywhere`, the destination''s least width falls to its header word (76 px), so "Lufthavnen" breaks at a 272 px container even though whole words would fit. Plain `break-word` keeps words whole but LongDestination needs 329 px. Chromium''s auto table layout ignores `min-inline-size: 30%`, `inline-size: max-content` and `fit-content` on the cell. Hyphenation works only with lang="da" and a Chromium hyphenation dictionary, which CI (ubuntu-latest) lacks. The only reliable fix is a least width on the destination cell, a length no token holds (measured: `min-inline-size: 88px` kept every Default word whole from a 276 px container up). Recommendation: add a size token through the design-tokens skill for the destination column''s least width, about 92 to 100 px, so "Københavns" and "Lufthavnen" stay whole and the table fits a 288 px container (a 320 px screen less a space.400 sheet padding); use it on destinationCell next to `overflow-wrap: anywhere`.'
+    runs: 4
+    respecs: 1
+    status: done
+    started: 2026-10-25T13:58:18.247Z
+    begun: 464e46caa066d0ffce9ef83b10a03b5a218888f323549b54a8d199fd01dfd59f
+    spec: 464e46caa066d0ffce9ef83b10a03b5a218888f323549b54a8d199fd01dfd59f
+    ended: 2026-10-25T14:04:07.607Z
   review:
     rounds: 1
     sentBack: 1
@@ -78,3 +75,12 @@ notes:
   - stage: build
     at: 2026-10-25T13:57:28.266Z
     direction: 'Hyphenation (hyphens: auto with hyphenate-limit-chars) only works with the page''s lang and a Chromium hyphenation dictionary, so it cannot be the table''s only way of keeping a long destination inside the table. If Mylder''s pages set lang="da", it could be added on top of a token-based least width, so that a long compound breaks at a syllable rather than a letter.'
+  - stage: build
+    at: 2026-10-25T13:58:18.247Z
+    unblocked: 'build failed: P2-1 (packages/perron/src/patterns/VehicleTable/VehicleTable.css:75, and the Tokens row for destinationCell overflow-wrap with CR-8 in docs/patterns/vehicle-table.md) needs a token, and adding one is not the build''s to do. Measured container widths 256-600 px: the line, position and delay columns together need at least 188 px. With `anywhere`, the destination''s least width falls to its header word (76 px), so "Lufthavnen" breaks at a 272 px container even though whole words would fit. Plain `break-word` keeps words whole but LongDestination needs 329 px. Chromium''s auto table layout ignores `min-inline-size: 30%`, `inline-size: max-content` and `fit-content` on the cell. Hyphenation works only with lang="da" and a Chromium hyphenation dictionary, which CI (ubuntu-latest) lacks. The only reliable fix is a least width on the destination cell, a length no token holds (measured: `min-inline-size: 88px` kept every Default word whole from a 276 px container up). Recommendation: add a size token through the design-tokens skill for the destination column''s least width, about 92 to 100 px, so "Københavns" and "Lufthavnen" stay whole and the table fits a 288 px container (a 320 px screen less a space.400 sheet padding); use it on destinationCell next to `overflow-wrap: anywhere`.; rerun once because the spec changed since that run began'
+  - stage: build
+    at: 2026-10-25T14:04:07.607Z
+    direction: "The least width raises the table's least width from 265 to 284 px; under Storybook's default padded layout at a 320 px viewport (a 256 px box) the table would run 28 px past its panel. The stories now use layout: 'fullscreen', the first in the library, so the decorator's space.400 is the only padding. A design run or the maintainer could decide whether that becomes the convention for patterns shown inside a sheet's padding."
+  - stage: build
+    at: 2026-10-25T14:04:07.607Z
+    direction: Between 288 and 300 px containers, 'Timetable only' wraps onto two lines, because the destination column's 96 px least width takes its width from the position column first. A design run could weigh a slightly smaller least width, about 88 px, which kept 'Lufthavnen' and 'Københavns' whole in earlier measurements.

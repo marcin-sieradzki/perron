@@ -71,7 +71,10 @@
   letter-spacing: var(--perron-typography-label-tracking);
   color: var(--perron-color-text-primary);
   text-align: start;
-  /* CR-8: the column can narrow below its longest word, which breaks inside it at 320 px */
+  /* CR-8: the column's least width, 96 px, a measure only this CSS reads, so the automatic layout
+     takes width from the other columns before it breaks a word such as "Lufthavnen" */
+  min-inline-size: calc(4 * var(--perron-space-600));
+  /* CR-8: only a word longer than that least width breaks inside it, never past the table's edge */
   overflow-wrap: anywhere;
 }
 

@@ -98,6 +98,9 @@ const meta = {
   title: 'Patterns/VehicleTable',
   component: VehicleTable,
   args: { vehicles: VEHICLES, 'aria-label': 'Vehicles' },
+  // the decorator's padding is the sheet's, so Storybook adds none of its own: at a 320 px screen
+  // the table gets the 288 px CR-8 measures it at
+  parameters: { layout: 'fullscreen' },
   decorators: [
     // a detail panel or sheet: its width and its raised surface
     (Story) => (
@@ -134,8 +137,11 @@ const tableIn = (host: HTMLElement) =>
     return table!
   })
 
-/** Each word of `element`'s one text run sits on one line: it wraps at its spaces only. */
-async function expectWholeWords(element: Element) {
+/**
+ * Each word of `element`'s one text run sits on one line, but those in `except`: it wraps at its
+ * spaces only.
+ */
+async function expectWholeWords(element: Element, except: string[] = []) {
   const text = element.firstChild!
   let start = 0
   for (const word of text.textContent!.split(' ')) {
@@ -143,6 +149,7 @@ async function expectWholeWords(element: Element) {
     range.setStart(text, start)
     range.setEnd(text, start + word.length)
     start += word.length + 1
+    if (except.includes(word)) continue
     await expect(new Set([...range.getClientRects()].map((box) => Math.round(box.top))).size).toBe(
       1,
     )
@@ -526,24 +533,25 @@ export const Empty: Story = {
 /** The long destination, longer than its column in a 320 px container. */
 const LONG = 'Københavns Lufthavn (Kastrup) Lufthavnsterminalen'
 
+/** The `Default` vehicles with one going to the long destination. */
+const WITH_LONG: VehicleTableVehicle[] = [
+  ...VEHICLES,
+  {
+    id: 'metro-m3-14',
+    line: 'm3',
+    lineName: 'M3',
+    destination: LONG,
+    variant: 'estimated',
+    delay: 12,
+  },
+]
+
 /**
  * A destination too long for its column, in a 320 px container: it wraps inside its column and its
  * row grows, while the badges, the state words and the delays stay inside their cells (CR-8).
  */
 export const LongDestination: Story = {
-  args: {
-    vehicles: [
-      ...VEHICLES,
-      {
-        id: 'metro-m3-14',
-        line: 'm3',
-        lineName: 'M3',
-        destination: LONG,
-        variant: 'estimated',
-        delay: 12,
-      },
-    ],
-  },
+  args: { vehicles: WITH_LONG },
   render: (args) => (
     <div style={{ inlineSize: 320, maxInlineSize: '100%' }} data-testid="container">
       <VehicleTable {...args} />
@@ -595,6 +603,36 @@ export const LongDestination: Story = {
           await expect(
             new Set([...node.getClientRects()].map((box) => Math.round(box.top))).size,
           ).toBe(1)
+      },
+    )
+
+    await step(
+      'the destination column keeps its least width, and only a longer word breaks (CR-8)',
+      async () => {
+        const least = 4 * Number.parseFloat(rendered('space-600', 'padding-top'))
+        // a 320 px screen less a space.400 padding on each side
+        const padding = 2 * Number.parseFloat(rendered('space-400', 'padding-top'))
+        // the Default vehicles, whose columns would otherwise squeeze the destination's, and the
+        // long destination beside them
+        for (const vehicles of [VEHICLES, WITH_LONG])
+          await mounted(
+            canvasElement,
+            <div style={{ inlineSize: 320 - padding }}>
+              <VehicleTable vehicles={vehicles} aria-label="Least width" />
+            </div>,
+            async (host) => {
+              const root = await tableIn(host)
+              await expect(root.getBoundingClientRect().width).toBeLessThanOrEqual(
+                root.parentElement!.getBoundingClientRect().width + 0.5,
+              )
+              for (const cell of root.querySelectorAll('.pn-VehicleTable-destinationCell')) {
+                await expect(cell.getBoundingClientRect().width).toBeGreaterThanOrEqual(least - 0.5)
+                // "Lufthavnen", "Københavns" and "Kokkedal" stay whole; only a word wider than
+                // the column breaks inside it
+                await expectWholeWords(cell, ['Lufthavnsterminalen'])
+              }
+            },
+          )
       },
     )
 
