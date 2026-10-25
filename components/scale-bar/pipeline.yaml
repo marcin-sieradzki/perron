@@ -1,0 +1,6 @@
+# Written by npm run factory; never by hand.
+component: ScaleBar
+layer: pattern
+deferred:
+  at: 2026-10-25T02:03:49.659Z
+stages: {}
