@@ -1,0 +1,75 @@
+# Written by npm run factory; never by hand.
+component: Slider
+layer: component
+deferred:
+  at: 2026-10-25T06:59:37.033Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-25T07:13:13.551Z
+    ended: 2026-10-25T07:14:59.750Z
+  build:
+    runs: 6
+    status: done
+    started: 2026-10-25T08:27:59.002Z
+    begun: ba36c6128d0dd29b015b4bbca552aa6444360a82a23357f594309d521d670ae1
+    spec: 92fb4db7ddbd52eb5ddfc5fedcb24efe0964d935e9827ac8e92b68ba3a451ded
+    ended: 2026-10-25T08:31:40.715Z
+  review:
+    rounds: 7
+    sentBack: 0
+    findings:
+      p1: 0
+      p2: 0
+      p3: 4
+    status: done
+    started: 2026-10-25T08:39:22.320Z
+    reviewed: aa3bf41d6304f1f40103cc15b7b8272c84475743
+    ended: 2026-10-25T08:42:24.743Z
+  docs:
+    status: done
+    started: 2026-10-25T08:43:08.788Z
+    ended: 2026-10-25T08:46:26.930Z
+notes:
+  - stage: brief
+    at: 2026-10-25T07:13:09.465Z
+    direction: The Perron MCP's list_tokens reads the main checkout, which is behind this branch. It is missing size.meter-track, color.surface.inverse-pressed and color.surface.brand-pressed, so the brief read the worktree's packages/perron/tokens files instead. Agents in worktrees can get stale token answers from it.
+  - stage: brief
+    at: 2026-10-25T07:13:09.465Z
+    direction: "The registry entry for Slider lists Slider.Label in baseUiParts, which the spec leaves out: drop it and list Field.Root, Field.Label, Field.Description and Field.Error, as TextField's entry does."
+  - stage: brief
+    at: 2026-10-25T07:13:09.465Z
+    direction: Sheet's Do and don't row asks callers to mark a slider inside a bottom sheet with data-base-ui-swipe-ignore. If Slider marks its own control (CR-11), reword that row to say Slider does it.
+  - stage: brief
+    at: 2026-10-25T07:13:09.465Z
+    direction: Switch and Slider both read the thumb size from the same calc() over size.target-min, space.050 and border.width.025. If a third component needs a thumb, a size.thumb token through the design-tokens skill would hold the size in one place.
+  - stage: brief
+    at: 2026-10-25T07:13:09.465Z
+    direction: For a two-thumb slider, Base UI's default aria-valuetext adds the English words 'start range' and 'end range' in every locale. Any future component built on a Base UI range slider must replace it, or expectOwnedStrings fails outside English.
+  - stage: brief
+    at: 2026-10-25T07:13:09.465Z
+    questions: "1. Does Slider compose Field as its frame (root Slider.Root, Field via slotProps.field, Slider.Label left out)? Recommended: yes. 2. Does the figure (Slider.Value) always show at the inline end of the track row, its column held as wide as the formatted min and max? Recommended: yes. 3. Is the value a number or readonly [number, number], one thumb per value, no generic? Recommended: yes. 4. Does Slider take onChange(event, value, details) and onChangeCommitted(event, value, details)? Recommended: yes. 5. Does Slider leave out variant, size, color, orientation, thumbAlignment, optional and required, inherit min/max/step/largeStep/minStepsBetweenValues/format/thumbCollisionBehavior/name/form, and declare locale defaulting to the PerronProvider's? Recommended: yes. 6. Geometry: control size.target-min tall with half-thumb inline padding, track size.meter-track (description widened), thumb 18 px as Switch's calc()? Recommended: yes. 7. Colours: track color.surface.inset, fill color.text.primary, thumb color.surface.raised with a border.width.050 color.surface.inverse edge, hover/pressed layers color.surface.hover/selected, figure typography.data, no transitions? Recommended: yes. 8. Disabled in color.text.tertiary with no hover/pressed; invalid thumb edge color.status.danger; disabled wins inside an invalid field? Recommended: yes. 9. Range thumbs named by new owned strings minimum/maximum via getAriaLabel, overridable by minimumLabel/maximumLabel, aria-valuetext the formatted value alone? Recommended: yes. 10. Deferred design draws one State property (default, hover, focus, pressed, disabled, invalid) with Range, Units, Controlled, HiddenLabel, InForm and LongWords as content stories? Recommended: yes."
+  - stage: build
+    at: 2026-10-25T07:25:42.601Z
+    direction: Base UI's Slider takes right-to-left from its own DirectionProvider, not from the page's dir, and PerronProvider sets none. On an RTL page the thumbs sit half a thumb away from the fill and the arrow keys don't swap. Mylder's four locales are all left-to-right; PerronProvider could carry a DirectionProvider if an RTL locale ever joins.
+  - stage: build
+    at: 2026-10-25T07:25:42.601Z
+    direction: Slider is the first component whose focus ring is drawn by a wrapper round a visually hidden input (.pn-Slider-thumb:has(:focus-visible), CR-9). The contract's Design states table names focus only as :focus-visible with perron.css's ring, so it could name this form for the next component built on a hidden input.
+  - stage: build
+    at: 2026-10-25T07:37:43.677Z
+    direction: Sheet's Do and don't row (docs/components/sheet.md:214) still tells callers to mark a horizontal carousel with a bare data-base-ui-swipe-ignore. In Base UI's Drawer a bare value drops every touch swipe that starts on the carousel, so a drag across it can't close or resize the sheet; the row could ask for ="x", as Slider's CR-11 does.
+  - stage: review
+    at: 2026-10-25T07:59:46.114Z
+    unblocked: '3 review rounds found a P1 or a P2; the last: review round 3 found 1 P2 (components/slider/review.md)'
+  - stage: build
+    at: 2026-10-25T08:09:34.839Z
+    direction: "Slider's stories define three helpers other components could use: setInput (sets a hidden range input with no key, so Base UI reports 'input-change'), still (an element runs no transition or animation) and pointerAt (a pointer event at a point). The next control on a hidden input, or with a no-motion rule, could take them from packages/perron/src/testing/stories.ts."
+  - stage: build
+    at: 2026-10-25T08:20:14.306Z
+    direction: Slider's stories have a sizers(scope) helper that reads a figure's hidden sizer text, and a SLOTS list that checks every slotProps class comes after the part's own; a component with hidden sizers or merged slot classes could take them from packages/perron/src/testing/stories.ts.
+  - stage: review
+    at: 2026-10-25T08:39:18.671Z
+    unblocked: '3 review rounds found a P1 or a P2; the last: review round 6 found 1 P2 (components/slider/review.md)'
+  - stage: docs
+    at: 2026-10-25T08:46:26.930Z
+    direction: The docs page's slots table gives every key the fixed text 'Props for the <part> part', dropping guidance the JSDoc and spec give slotProps.field, slotProps.error (match) and slotProps.thumb (getAriaValueText); PropsTable could show a slot's own JSDoc when it says more.

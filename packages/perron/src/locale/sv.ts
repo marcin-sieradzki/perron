@@ -40,5 +40,7 @@ export const sv: OwnedStrings = {
   kilometersUnit: 'km',
   noMatches: 'Inga träffar',
   optional: '(valfritt)',
+  minimum: 'Minimum',
+  maximum: 'Maximum',
   inProgress: 'Pågår',
 }

@@ -20,7 +20,7 @@ import {
   rendered,
   resolve,
   stateFill,
-  stateRules,
+  stateLayer,
 } from '../../testing/stories.ts'
 import { Select } from './Select.tsx'
 import type { SelectGroup, SelectItem, SelectProps } from './Select.tsx'
@@ -102,13 +102,6 @@ const scrollLocked = () =>
   [document.documentElement, document.body].some((element) =>
     /hidden|clip/.test(getComputedStyle(element).overflowY),
   )
-
-/** The last background layer a state's rules give `element`, as written, or '' when none does. */
-const stateLayer = (element: Element, pseudo: ':hover' | ':active') =>
-  stateRules(element, pseudo)
-    .map((s) => s.getPropertyValue('background-image'))
-    .filter(Boolean)
-    .at(-1) ?? ''
 
 /** The open list's option named `name`. */
 const option = async (name: string) =>
