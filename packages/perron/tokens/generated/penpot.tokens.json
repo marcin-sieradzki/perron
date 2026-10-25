@@ -1094,7 +1094,7 @@
         "selected": {
           "$type": "color",
           "$value": "rgba(18, 24, 27, 0.09)",
-          "$description": "Selected row; the pressed layer of a quiet or outline control, over its hover"
+          "$description": "Selected row; the pressed layer of a quiet or outline control, in place of color.surface.hover and denser"
         },
         "inverse": {
           "$type": "color",
@@ -1468,7 +1468,7 @@
         "selected": {
           "$type": "color",
           "$value": "rgba(235, 238, 235, 0.09)",
-          "$description": "Selected row; the pressed layer of a quiet or outline control, over its hover"
+          "$description": "Selected row; the pressed layer of a quiet or outline control, in place of color.surface.hover and denser"
         },
         "inverse": {
           "$type": "color",

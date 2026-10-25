@@ -186,7 +186,7 @@ Rules for this component alone, numbered so the build and the review can cite th
 
 ## Stories
 
-The deferred design's variant properties, in this order: `variant` (`solid`, `outline`), `color` (`neutral`, `brand`), `size` (`medium`, `small`) and `State` (`default`, `hover`, `pressed`, `focus`, `disabled`). Each story is named by its variant name (`penpot/README.md`, "Conventions"), renders the label "Show departures", as the read-back does, and sets `disabled` for a `Disabled` story. The hover, pressed and focus stories render at rest: the visual check drives the state itself, and their `play` tests check it.
+The deferred design's variant properties, in this order: `variant` (`solid`, `outline`), `color` (`neutral`, `brand`), `size` (`medium`, `small`) and `State` (`default`, `hover`, `pressed`, `focus`, `disabled`), where `pressed` is this spec's own: the read-back draws none, and the design run that ends the deferral adds it. Each story is named by its variant name (`penpot/README.md`, "Conventions"), renders the label "Show departures", as the read-back does, and sets `disabled` for a `Disabled` story. The hover, pressed and focus stories render at rest: the visual check drives the state itself, and their `play` tests check it.
 
 `color` is a variant property, after `variant`, so the stories and a later drawing's exports are named `SolidNeutralMediumDefault` and `SolidBrandMediumDefault` rather than the read-back's `SolidMediumDefault`, 40 variants in all: the contract gives every action component `brand` beside `neutral`, and the design run that ends the deferral redraws the page with it.
 

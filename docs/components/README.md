@@ -162,6 +162,8 @@ Every part a pointer presses to act or to change a value, such as a button, a ta
 
 Neither hover nor pressed applies to a disabled or read-only part: the rules exclude `[data-disabled]` and `[data-readonly]`, since a part with `focusableWhenDisabled` has no native `disabled` and still matches `:hover` and `:active`. The spec's Tokens table has a hover row, a pressed row and the two cursor rows for each such part, and a `play` test checks the pressed fill, as written, renders apart from the hover one (`stateFill`, [Shared helpers](#shared-helpers)). The states change at once, as [Motion](#css) says; a transition on them takes a `duration.*` token, which reduced motion already shortens.
 
+Components built before this rule press with their hover look and set no cursor, and each catches up in a change of its own, spec first: IconButton, ToolbarButton, FilterChip, HighlightChip, SegmentedControl, Tabs, Switch and Checkbox. Button and LinkButton follow it.
+
 ## CSS
 
 Tokens only.

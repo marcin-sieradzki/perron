@@ -77,7 +77,7 @@
           "alpha": 0.09,
           "hex": "#EBEEEB"
         },
-        "$description": "Selected row; the pressed layer of a quiet or outline control, over its hover"
+        "$description": "Selected row; the pressed layer of a quiet or outline control, in place of color.surface.hover and denser"
       },
       "inverse": {
         "$value": "{color.text.primary}",

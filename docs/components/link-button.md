@@ -75,6 +75,7 @@ All variants:
 | `root`, small          | rest  | `gap`                       | `space.150`                                                                                                                      |
 | `root`                 | rest  | `border-radius`             | `radius.md`                                                                                                                      |
 | `root`                 | rest  | `border-width`              | `border.width.025`                                                                                                               |
+| `root`                 | rest  | `cursor`                    | none: the `pointer` every `<a href>` has, so no rule sets it                                                                     |
 | `root`                 | rest  | `text-decoration`           | none: the keyword `none`, since the shape marks the link (CR-6)                                                                  |
 | `label`                | rest  | `font`, `letter-spacing`    | `typography.label`, with its tracking twin                                                                                       |
 | `startIcon`, `endIcon` | rest  | `--perron-icon-size`        | `icon.size.400`                                                                                                                  |
@@ -101,7 +102,7 @@ All variants:
 | `root` | hover   | `background-color` | `color.surface.hover`    |
 | `root` | pressed | `background-color` | `color.surface.selected` |
 
-Pressed is a step past hover, Button's pressed tokens, in a rule outside `@media (hover: hover)` so a touch press shows, as Button's CR-13 does. The cursor is the `pointer` every `<a href>` has, so the CSS sets none.
+Pressed is a step past hover, Button's pressed tokens, in a rule outside `@media (hover: hover)` so a touch press shows, as Button's CR-13 does.
 
 ## Keyboard and ARIA
 
@@ -144,7 +145,7 @@ Rules for this component alone, numbered so the build and the review can cite th
 - **CR-2.** The root always carries `data-variant` and `data-size`, defaults included, and `data-full-width` when `fullWidth`; the CSS selects on them, one class then attributes: `.pn-LinkButton[data-variant='outline'][data-size='small']`.
 - **CR-3.** LinkButton's CSS sets, for each `variant` and `size`, the tokens Button's sets for the same `variant` and `size` in its `neutral` colour (see Tokens), so a LinkButton and a Button side by side share their height, padding, gap, radius, border, font and colours in every state. A change to Button's tokens changes LinkButton's in the same PR.
 - **CR-4.** LinkButton adds no keyboard handling: Enter follows the link through the browser, Space does nothing to it, and modifier clicks open it in a new tab or window, as on every link.
-- **CR-5.** The states keep the link's geometry: hover, pressed and focus change colours only, never the height, padding, gap, border width or radius, so nothing moves when the state changes. Hover is read inside `@media (hover: hover)`; pressed (`:active`) takes the hover row's tokens outside it.
+- **CR-5.** The states keep the link's geometry: hover, pressed and focus change colours only, never the height, padding, gap, border width or radius, so nothing moves when the state changes. Hover is read inside `@media (hover: hover)`; pressed (`:active`) takes the pressed row's tokens, a step past hover, outside it.
 - **CR-6.** The root resets the browser's link styles: `text-decoration: none` in every state, and its `color` from the tokens in every state, `:visited` included, so a visited LinkButton looks as it did before. Its shape marks it as something to press, as Button's does.
 - **CR-7.** Focus uses the ring `perron.css` draws on `:focus-visible`; the component draws no ring of its own and never removes the outline.
 - **CR-8.** The colour is set on the root's `color`; the label and the icons take it, the icons through `currentColor`. No rule sets a colour on an icon.
