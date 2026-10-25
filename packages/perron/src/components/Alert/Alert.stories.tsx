@@ -303,7 +303,7 @@ export const Warning: Story = {
       await mounted(
         canvasElement,
         <div style={{ inlineSize: 320 }}>
-          <Alert {...args} title={longWord} />
+          <Alert {...args} title={longWord} onClose={() => {}} />
         </div>,
         async (host) => {
           const title = await waitFor(() => {
@@ -318,6 +318,10 @@ export const Warning: Story = {
           const bounds = alert.getBoundingClientRect()
           await expect(box.right).toBeLessThanOrEqual(bounds.right + 0.5)
           await expect(bounds.right).toBeLessThanOrEqual(frame.getBoundingClientRect().right + 0.5)
+          const close = part(alert, 'close')!.getBoundingClientRect()
+          await expect(close.left).toBeGreaterThanOrEqual(box.right - 0.5)
+          await expect(close.right).toBeLessThanOrEqual(bounds.right + 0.5)
+          await expect(close.top).toBeLessThan(box.top + box.height / 2)
           await expect(alert.scrollWidth).toBeLessThanOrEqual(alert.clientWidth)
           await expect(frame.scrollWidth).toBeLessThanOrEqual(frame.clientWidth)
         },
