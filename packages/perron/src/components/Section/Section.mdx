@@ -1,0 +1,19 @@
+import { Meta, Stories, Title } from '@storybook/addon-docs/blocks'
+import { PropsTable } from '../../../../../storybook/blocks/PropsTable.tsx'
+import { SpecProse } from '../../../../../storybook/blocks/SpecProse.tsx'
+import * as SectionStories from './Section.stories.tsx'
+
+<Meta of={SectionStories} />
+
+<Title />
+
+<SpecProse path="docs/components/section.md" intro />
+
+<Stories title="Examples" />
+
+<PropsTable of={SectionStories} />
+
+<SpecProse
+  path="docs/components/section.md"
+  sections={['Keyboard and ARIA', 'Owned strings', "Do and don't"]}
+/>
