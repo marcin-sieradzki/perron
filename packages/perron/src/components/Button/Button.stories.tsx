@@ -5,7 +5,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, userEvent, within } from 'storybook/test'
 import plus from '../../../icons/plus.svg?raw'
 import search from '../../../icons/search.svg?raw'
-import { icon, resolve, stateFill, stateRules } from '../../testing/stories.ts'
+import { icon, pressedAfterHover, resolve, stateFill, stateRules } from '../../testing/stories.ts'
 import { Button } from './Button.tsx'
 
 const meta = {
@@ -18,18 +18,6 @@ export default meta
 
 type Story = StoryObj<typeof meta>
 type Play = NonNullable<Story['play']>
-
-/** Where a rule's declarations sit among every style rule of the document, in source order. */
-const sourceIndex = (declarations: CSSStyleDeclaration) => {
-  const all: CSSStyleDeclaration[] = []
-  const visit = (rules: CSSRuleList) => {
-    for (const rule of Array.from(rules))
-      if (rule instanceof CSSMediaRule) visit(rule.cssRules)
-      else if (rule instanceof CSSStyleRule) all.push(rule.style)
-  }
-  for (const sheet of Array.from(document.styleSheets)) visit(sheet.cssRules)
-  return all.indexOf(declarations)
-}
 
 /** Tab focuses the button, Enter and Space each fire `onClick` once, Shift+Tab returns focus. */
 const activates: Play = async ({ args, canvasElement }) => {
@@ -69,11 +57,7 @@ const pressFill =
   async ({ canvasElement }) => {
     const button = within(canvasElement).getByRole('button', { name: 'Show departures' })
     await expect(stateFill(button, ':active')).toBe(fill)
-    // as specific as the hover rules, so it must come after them to win under the pointer
-    const [hover, active] = [stateRules(button), stateRules(button, ':active')].map((rules) =>
-      Math.max(...rules.map(sourceIndex)),
-    )
-    await expect(active).toBeGreaterThan(hover)
+    await expect(pressedAfterHover(button)).toBe(true)
     const pressed = resolve('backgroundColor', fill)
     await expect(pressed).not.toBe(getComputedStyle(button).backgroundColor)
     await expect(pressed).not.toBe(resolve('backgroundColor', stateFill(button)))

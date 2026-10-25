@@ -185,6 +185,9 @@ describe('contrast', () => {
       const hover = composite(t['color.surface.hover'], ground)
       const pressed = composite(t['color.surface.selected'], ground)
       expect(contrastRatio(pressed, ground)).toBeGreaterThan(contrastRatio(hover, ground))
+      // the label of a pressed outline button, brand or ink, still reads
+      for (const label of ['color.text.brand', 'color.text.primary'] as const)
+        expect(contrastRatio(t[label], pressed), `${th} ${label}`).toBeGreaterThanOrEqual(4.5)
     }
   })
 

@@ -7,7 +7,7 @@ import { expect, fn, userEvent, within } from 'storybook/test'
 import plus from '../../../icons/plus.svg?raw'
 import search from '../../../icons/search.svg?raw'
 import { Button } from '../Button/Button.tsx'
-import { icon, resolve, stateFill, stateRules } from '../../testing/stories.ts'
+import { icon, pressedAfterHover, resolve, stateFill, stateRules } from '../../testing/stories.ts'
 import { LinkButton } from './LinkButton.tsx'
 
 const LABEL = 'Back to the map'
@@ -67,6 +67,7 @@ const hoverFill =
       for (const property of Array.from(declarations))
         await expect(['background-color']).toContain(property)
     await expect(stateFill(link, ':active')).toBe(pressed)
+    await expect(pressedAfterHover(link)).toBe(true)
     await expect(resolve('backgroundColor', pressed)).not.toBe(resolve('backgroundColor', fill))
   }
 

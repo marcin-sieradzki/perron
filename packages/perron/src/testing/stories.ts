@@ -98,6 +98,30 @@ export function stateRules(element: Element, pseudo: ':hover' | ':active' | ':vi
   return found
 }
 
+/**
+ * Whether the last `:active` rule that sets `element`'s background comes after the last
+ * `(hover: hover)` rule that does, in source order. The two are as specific, so the later one wins
+ * while a mouse presses, and a press written first shows the hover fill.
+ */
+export function pressedAfterHover(element: Element) {
+  let [index, hover, active] = [0, -1, -1]
+  const visit = (rules: CSSRuleList, inQuery: boolean) => {
+    for (const rule of Array.from(rules))
+      if (rule instanceof CSSMediaRule)
+        visit(rule.cssRules, inQuery || rule.conditionText.includes('(hover: hover)'))
+      else if (rule instanceof CSSStyleRule && rule.style.getPropertyValue('background-color')) {
+        index++
+        const text = rule.selectorText
+        if (inQuery && text.includes(':hover') && element.matches(withoutState(text, ':hover')))
+          hover = index
+        if (text.includes(':active') && element.matches(withoutState(text, ':active')))
+          active = index
+      }
+  }
+  for (const sheet of Array.from(document.styleSheets)) visit(sheet.cssRules, false)
+  return active > hover
+}
+
 /** The background a state's rules give `element` last, as written, or '' when none sets one. */
 export const stateFill = (element: Element, pseudo: ':hover' | ':active' = ':hover') =>
   stateRules(element, pseudo)

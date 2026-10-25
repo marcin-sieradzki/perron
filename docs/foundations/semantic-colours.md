@@ -40,7 +40,7 @@ What each surface is for, and how they stack, is on [Elevation](elevation.md).
 A control shows hover and pressed as two steps away from its rest look, each one the eye sees: the pressed step is further from rest than the hover step, so a press answers even under a pointer that is already hovering.
 
 - A solid ink control takes `color.surface.inverse-hover` on hover and `color.surface.inverse-pressed` while pressed; a solid brand one takes `color.surface.brand-hover` and `color.surface.brand-pressed`. Each step is at least 1.2:1 from the one before it, and the label keeps 4.5:1 on all three.
-- A quiet or outline control, transparent at rest, lays `color.surface.hover` over what it sits on while hovered and `color.surface.selected` while pressed.
+- A quiet or outline control, transparent at rest, lays `color.surface.hover` over what it sits on while hovered and `color.surface.selected` while pressed. These layers step less than the solid fills: a denser pressed layer would take a brand outline label under 4.5:1 in light.
 
 <!-- tokens: color.surface.default color.surface.raised color.surface.inset color.surface.overlay color.surface.hover color.surface.selected color.surface.inverse color.surface.inverse-hover color.surface.inverse-pressed color.scrim -->
 
