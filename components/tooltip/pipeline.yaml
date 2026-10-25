@@ -9,20 +9,20 @@ stages:
     started: 2026-10-25T04:46:25.148Z
     ended: 2026-10-25T04:47:34.087Z
   build:
-    status: done
-    started: 2026-10-25T04:47:38.732Z
     runs: 1
-    spec: 03d56f27ec907c3336aff2ac97c6b6a5515976d00f1548b836db49e9ccf087ff
-    ended: 2026-10-25T04:59:58.822Z
+    failing: "docs failed: Docs page (iframe.html?viewMode=docs&id=components-tooltip--docs, light and dark): the Hover, Keyboard, Group and DisabledTrigger frames render only their trigger, with no .pn-Tooltip in the frame. The contract's Stories section (docs/components/README.md:283) says an overlay's story opens it with defaultOpen, beside the trigger that opens it again, so the docs page shows it open. The component-build skill (step 2, stories) says the same. Stage: build. The stories follow spec rows that contradict the contract: docs/components/tooltip.md:161 (Hover, closed at first), :162 (Keyboard, closed at first), :165 (Group, no tooltip open), :167 (DisabledTrigger, closed at first). Fix: in packages/perron/src/components/Tooltip/Tooltip.stories.tsx, set defaultOpen: true in the args of Hover (line 149), Keyboard (line 185) and DisabledTrigger (line 374). For Group (line 309), open the first tooltip, Zoom in, with defaultOpen. In each play, first close the open tooltip (Esc, or move the pointer away), then exercise the behaviour as now, ending closed. Then rewrite those four spec rows to say the tooltip is open at first, as the contract decides, and run npm run tokens."
   review:
-    status: done
-    started: 2026-10-25T05:00:07.868Z
     rounds: 1
     findings:
       p1: 0
       p2: 0
       p3: 2
-    ended: 2026-10-25T05:05:06.464Z
+  docs:
+    status: failed
+    started: 2026-10-25T05:05:16.764Z
+    failures: 1
+    ended: 2026-10-25T05:11:41.351Z
+    failing: "Docs page (iframe.html?viewMode=docs&id=components-tooltip--docs, light and dark): the Hover, Keyboard, Group and DisabledTrigger frames render only their trigger, with no .pn-Tooltip in the frame. The contract's Stories section (docs/components/README.md:283) says an overlay's story opens it with defaultOpen, beside the trigger that opens it again, so the docs page shows it open. The component-build skill (step 2, stories) says the same. Stage: build. The stories follow spec rows that contradict the contract: docs/components/tooltip.md:161 (Hover, closed at first), :162 (Keyboard, closed at first), :165 (Group, no tooltip open), :167 (DisabledTrigger, closed at first). Fix: in packages/perron/src/components/Tooltip/Tooltip.stories.tsx, set defaultOpen: true in the args of Hover (line 149), Keyboard (line 185) and DisabledTrigger (line 374). For Group (line 309), open the first tooltip, Zoom in, with defaultOpen. In each play, first close the open tooltip (Esc, or move the pointer away), then exercise the behaviour as now, ending closed. Then rewrite those four spec rows to say the tooltip is open at first, as the contract decides, and run npm run tokens."
 notes:
   - stage: brief
     at: 2026-10-25T04:46:00.238Z
@@ -57,3 +57,9 @@ notes:
   - stage: build
     at: 2026-10-25T04:59:58.823Z
     direction: MapTooltip's stories still declare a local pixels() probe, close to the shared rendered() helper; worth folding into rendered() in a later cleanup.
+  - stage: docs
+    at: 2026-10-25T05:11:41.352Z
+    direction: "onOpen and onClose show the file-local alias ChangeDetails in the docs props table ((event: Event, details: ChangeDetails) => void), a name the reader can't look up; api.json resolves it to TooltipRootChangeEventDetails. Dialog does the same, so the pattern is library-wide. The JSDoc could name Tooltip.Root.ChangeEventDetails, or PropsTable could resolve aliases."
+  - stage: docs
+    at: 2026-10-25T05:11:41.352Z
+    direction: PropsTable prints onClose's multi-line type with its source line breaks and trailing comma, and the internal import name BaseTooltip appears in the type and in the slots table (BaseTooltip.Trigger.Props). This is shared tooling, the maintainer's to change.
