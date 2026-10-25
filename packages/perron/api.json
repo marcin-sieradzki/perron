@@ -818,6 +818,49 @@
       }
     }
   },
+  "Fieldset": {
+    "extends": [
+      "Omit< BaseFieldset.Root.Props, 'disabled' | 'children' | 'ref' >"
+    ],
+    "props": {
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "disabled": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "hiddenLegend": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "legend": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLElement>"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ legend?: FieldsetLegendProps | undefined; }"
+        ]
+      }
+    }
+  },
   "FilterChip": {
     "extends": [
       "Omit< Toggle.Props, | 'pressed' | 'defaultPressed' | 'onPressedChange' | 'value' | 'onChange' | 'disabled' | 'className' | 'style' | 'children' | 'ref' >"
