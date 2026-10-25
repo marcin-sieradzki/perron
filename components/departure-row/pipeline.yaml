@@ -26,6 +26,10 @@ stages:
     status: done
     started: 2026-10-25T13:04:40.322Z
     ended: 2026-10-25T13:08:00.785Z
+  docs:
+    status: done
+    started: 2026-10-25T13:08:10.330Z
+    ended: 2026-10-25T13:10:39.876Z
 notes:
   - stage: brief
     at: 2026-10-25T12:41:14.367Z
@@ -64,3 +68,6 @@ notes:
   - stage: build
     at: 2026-10-25T12:52:15.481Z
     direction: In light theme, VehicleDot's ageing dot at size small in a yellow line colour (F, M2) shows faintly on color.surface.raised. The word beside it carries the state, so contrast isn't required, but the design run should check that the dot still reads in a list.
+  - stage: docs
+    at: 2026-10-25T13:10:39.876Z
+    direction: The props table shows variant as NonNullable<VehicleDotProps['variant']> and line as LineBadgeProps['line'], not the spec's unions, so the page doesn't list the five data states or the twelve lines. Writing the unions out in the types, or having PropsTable resolve such references, would put the values on the page.
