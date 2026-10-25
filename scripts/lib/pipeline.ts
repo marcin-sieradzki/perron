@@ -559,6 +559,19 @@ function counters(s: StageState = {}): StageState {
 }
 
 /**
+ * The fix a run of `stage` starts from, given `was`, the answer of `next`: the one `next` gives for
+ * it, or, while it waits on its questions, the fix the run that asked was given, which its rerun
+ * with the answers still has to make.
+ */
+function fixIn(p: Pipeline, stage: Stage, was: Next) {
+  if ('run' in was) return was.run === stage ? was.fix : undefined
+  return was.wait === 'pending-questions' && was.stage === stage ? p.stages[stage]?.fix : undefined
+}
+
+/** The fix a run of `stage` begins with now, as `begin` records it: `next`'s, or the asking run's. */
+export const fixFor = (p: Pipeline, stage: Stage, env: Env) => fixIn(p, stage, next(p, env))
+
+/**
  * Why `stage` is not what `was`, the answer of `next`, names: a stage it doesn't run or wait on,
  * which would begin without the `fix` `next` gives (a build begun where `next` says review). A
  * design run may always begin, since it ends a deferral; once every stage is done, any may.
@@ -581,7 +594,7 @@ export function begin(p: Pipeline, stage: Stage, env: Env): Result {
   const was = next(p, env)
   const skipped = notNext(stage, was)
   if (skipped) return { ok: false, why: `${stage} cannot begin: ${skipped}` }
-  const fix = 'run' in was && was.run === stage ? was.fix : undefined
+  const fix = fixIn(p, stage, was)
   const out = clone(p)
   if (stage === 'build' && respecRerun(p, env)) {
     const reason = out.needsHuman!.reason
@@ -900,7 +913,8 @@ export function end(
   }
   s.status = verdict.outcome
   s.ended = env.now()
-  delete s.fix
+  // a run that asks keeps its fix, such as a review's findings, for the rerun with the answers
+  if (verdict.outcome !== 'pending') delete s.fix
   if (verdict.failing) s.failing = verdict.failing
   else delete s.failing
   if (verdict.pending) s.pending = verdict.pending

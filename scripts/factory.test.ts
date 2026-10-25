@@ -296,6 +296,20 @@ describe('the factory dry run', () => {
     expect(pipeline().notes).toEqual([{ stage: 'build', at: expect.any(String), questions: asked }])
   })
 
+  it("keeps a review's fix through the build's questions, for the rerun with the answers", () => {
+    throughBrief()
+    stage('build', () => build())
+    stage('review', () => review(1, 0, 1))
+    expect(run('begin Tally build').code).toBe(0)
+    const fix = pipeline().stages.build?.fix
+    expect(fix).toMatch(/^review round 1 found 1 P2/)
+    run('end Tally build pending', '1. Which tone? Recommended: plain.')
+    expect(run('next Tally').out).toMatch(/^wait: pending-questions\n/)
+    expect(run('begin Tally build').code).toBe(0)
+    expect(pipeline().stages.build?.fix).toBe(fix)
+    expect(run('next Tally --json').out).toContain('review round 1 found 1 P2')
+  })
+
   it('stops at needs-human at the third build run to end pending, and unblock resets the count', () => {
     throughBrief()
     const asked = (n: number) => `${n}. Which tone is the default? Recommended: plain.`
