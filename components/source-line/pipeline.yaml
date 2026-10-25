@@ -3,9 +3,6 @@ component: SourceLine
 layer: pattern
 deferred:
   at: 2026-10-25T17:46:59.950Z
-needsHuman:
-  stage: review
-  reason: '3 review rounds found a P1 or a P2; the last: review round 3 found 2 P2 (components/source-line/review.md)'
 stages:
   brief:
     status: done
@@ -14,11 +11,7 @@ stages:
   build:
     runs: 4
     respecs: 1
-    status: done
-    started: 2026-10-25T18:49:00.639Z
-    begun: e9a2b7b424fb43c88a46d65b32989bb431e7b1abffa207fa4dcfa366d10778b0
-    spec: 1c5b2d9d756b857e7ce210f0e60d262e9a7a2442ee8043765b258bb57f3203bf
-    ended: 2026-10-25T19:05:14.141Z
+    failing: review round 3 found 2 P2 (components/source-line/review.md)
   review:
     rounds: 3
     sentBack: 3
@@ -27,10 +20,7 @@ stages:
       p1: 0
       p2: 2
       p3: 2
-    status: failed
-    started: 2026-10-25T19:05:37.680Z
-    ended: 2026-10-25T19:13:09.859Z
-    failing: review round 3 found 2 P2 (components/source-line/review.md)
+    granted: 4
 notes:
   - stage: brief
     at: 2026-10-25T17:53:46.108Z
@@ -54,3 +44,6 @@ notes:
   - stage: build
     at: 2026-10-25T19:05:14.141Z
     direction: The time is no longer set in typography.data but in the line's own caption, because the contract's Words rule makes the time part of one owned phrase; this reverses brief answer 5, and a design run should confirm it.
+  - stage: review
+    at: 2026-10-25T19:13:18.813Z
+    unblocked: '3 review rounds found a P1 or a P2; the last: review round 3 found 2 P2 (components/source-line/review.md)'
