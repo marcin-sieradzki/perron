@@ -71,6 +71,9 @@ describe('factory-stage', () => {
   it('tells a stage where the factory records its outcome', async () => {
     const { calls } = await run({ stage: 'build', name: 'DatePicker' })
     expect(calls[0].prompt).toContain('components/date-picker/pipeline.yaml')
+    expect(calls[0].prompt).toContain(
+      'return in `direction` only the findings they do not already say',
+    )
   })
 
   it('refuses visual, which the factory runs without an agent, a stage the loop does not have, or no name', async () => {

@@ -2,7 +2,7 @@
 // rules that move it through the loop of ROADMAP.md, "Phase 4": design, brief, build, review, docs,
 // visual. Every gate is checked from the files and by running the checks, never taken on a stage's
 // word, and the caps of ADR 0008 stop the loop at `needs-human`: a failed build run (the build
-// stage spends its 3 attempts inside one run; one rerun when the spec changed since it ended), a
+// stage spends its 3 attempts inside one run; one rerun when the spec was revised in or after it), a
 // third build run in a row that asks, a second review round to find a P1 (a third, when the round finds
 // only P2s), a second failed docs run, a second visual failure. Short of its cap,
 // a review round with a P1 or a P2, a docs failure or a visual failure sends the component back
@@ -49,9 +49,9 @@ export type Gate = 'design-approval' | 'pending-questions' | 'needs-human' | 'do
  * decision the spec leaves open returns `pending` with its questions and waits at
  * `pending-questions`, like any stage that asks; one whose fix is the shared tooling's, the
  * read-back's or a token's returns `failed`, and that stops the loop, but once: when the spec
- * has changed since that run ended, as when the brief's answer is what the build could not do,
- * the build runs again from the revised spec (`respec`); the build's own edits to the spec, such as
- * the answers it writes in, are not a revision. A build that keeps asking stops too: the third
+ * was revised since that run began, whether before or after it ended, as when the brief's answer is
+ * what the build could not do, the build runs again from the revised spec (`respec`); the answers a
+ * run after the build's questions writes in are its own, not a revision. A build that keeps asking stops too: the third
  * build run in a row to end `pending` waits at `needs-human` (`buildAsked`), since in an unattended
  * run every question is answered and the build would otherwise ask and rerun without end; a build
  * that passes its gate starts the count again, so a send-back's rerun may ask afresh.
@@ -83,6 +83,11 @@ export interface StageState {
   runs?: number
   /** build: the SHA-256 of the spec as the latest run left it, its own answers written in */
   spec?: string
+  /**
+   * build: the SHA-256 of the spec when the latest run began, unless that run answers the build's
+   * questions, whose answers it writes in, so a revision made before the run ended counts too
+   */
+  begun?: string
   /**
    * build: runs in a row that ended `pending` (a run that passes its gate clears it), and failed
    * runs rerun because the spec changed since
@@ -216,19 +221,30 @@ const PENDING_MENTION = /`\[PENDING\][^`]*`/g
 const ANSWER_LEFT = /^[\s>*|-]*answered\b|\bRecommended:/i
 const CODE_SPAN = /`[^`\n]+`/g
 
+/** Whether a line of a spec or the template is a table row, where the template's slots are cells. */
+const isRow = (line: string) => line.trimStart().startsWith('|')
+
 /**
  * Where a template placeholder left in `spec` would show: its text outside the `[PENDING]`
  * questions, whose words are the maintainer's to answer, and outside its code spans, which can hold
- * angle brackets as code (`[data-delay='<value>']`), but for a code span the template has as is.
+ * angle brackets as code (`[data-delay='<value>']`), but for a code span the template has as is, on
+ * a line of the same kind: a table row for a span the template has in a table, prose for one it has
+ * in prose. So a cell left as `<key>Label` is a slot, and prose naming the contract's `<key>Label`
+ * is not.
  */
 function unfilledText(spec: string, template: string) {
-  const templateSpans = new Set(template.match(CODE_SPAN))
+  const spans = { row: new Set<string>(), prose: new Set<string>() }
+  for (const line of template.split('\n'))
+    for (const span of line.match(CODE_SPAN) ?? []) spans[isRow(line) ? 'row' : 'prose'].add(span)
   return spec
     .replace(PENDING_MENTION, '')
     .split('\n')
     .filter((line) => !line.includes('[PENDING]'))
+    .map((line) => {
+      const kept = spans[isRow(line) ? 'row' : 'prose']
+      return line.replace(CODE_SPAN, (span) => (kept.has(span) ? span : ''))
+    })
     .join('\n')
-    .replace(CODE_SPAN, (span) => (templateSpans.has(span) ? span : ''))
 }
 
 /**
@@ -258,7 +274,7 @@ export function specProblems(
   const title = /^# (.+)$/m.exec(spec)?.[1]
   if (title !== name) problems.push(`starts with "# ${title ?? ''}", not "# ${name}"`)
   const placeholders = new Set(
-    [...template.replace(PENDING_MENTION, '').matchAll(/<[^<>\n]+>/g)].map((m) => m[0]),
+    [...template.replace(PENDING_MENTION, '').matchAll(/<(?!!--)[^<>\n]+>/g)].map((m) => m[0]),
   )
   const unfilled = unfilledText(spec, template)
   for (const p of placeholders)
@@ -451,14 +467,17 @@ function fixOf(p: Pipeline, failing: string, env: Env) {
 }
 
 /**
- * Whether a failed build's needs-human stop gives way to one rerun: the spec has changed since the
- * failed run ended, and no earlier failure since the last `unblock` was rerun that way.
+ * Whether a failed build's needs-human stop gives way to one rerun: the spec was revised since the
+ * failed run began, before it ended or after (a run that answers the build's questions counts from
+ * its end, its answers being its own), and no earlier failure since the last `unblock` was rerun
+ * that way.
  */
 function respecRerun(p: Pipeline, env: Env) {
   const s = p.stages.build
   if (p.needsHuman?.stage !== 'build' || s?.status !== 'failed' || !s.spec) return false
   if ((s.respecs ?? 0) >= CAPS.respec) return false
-  return s.spec !== sha256(env, filesOf(p.component, p.layer).spec)
+  const now = sha256(env, filesOf(p.component, p.layer).spec)
+  return s.spec !== now || (s.begun ?? s.spec) !== now
 }
 
 /** What comes next for `p`: the stage to run, or the gate it waits at. Never writes. */
@@ -468,8 +487,8 @@ export function next(p: Pipeline, env: Env): Next {
     const failing = p.stages.build?.failing ?? p.needsHuman.reason
     return {
       run: 'build',
-      why: `the last run failed, and ${spec} has changed since it ended; run the build again from the revised spec`,
-      fix: `${failing}. ${spec} has been revised since that run ended: build what it says now.`,
+      why: `the last run failed, and ${spec} has changed since it began; run the build again from the revised spec`,
+      fix: `${failing}. ${spec} has been revised since that run began: build what it says now.`,
     }
   }
   if (p.needsHuman)
@@ -571,7 +590,7 @@ export function begin(p: Pipeline, stage: Stage, env: Env): Result {
     ;(out.notes ??= []).push({
       stage,
       at: env.now(),
-      unblocked: `${reason}; rerun once because the spec changed since that run ended`,
+      unblocked: `${reason}; rerun once because the spec changed since that run began`,
     })
   }
   if (stage === 'design') {
@@ -583,7 +602,12 @@ export function begin(p: Pipeline, stage: Stage, env: Env): Result {
   const s = (out.stages[stage] = { ...counters(out.stages[stage]), status: 'running' as const })
   s.started = env.now()
   if (fix) s.fix = fix
-  if (stage === 'build') s.runs = (s.runs ?? 0) + 1
+  if (stage === 'build') {
+    s.runs = (s.runs ?? 0) + 1
+    // a run after the build's questions writes their answers in, which are not a revision
+    const { spec } = filesOf(p.component, p.layer)
+    if (!s.asked && exists(env, spec)) s.begun = sha256(env, spec)
+  }
   const extra =
     stage === 'build' ? ` (run ${s.runs})` : stage === 'review' ? ` (round ${roundOf(s)})` : ''
   return { ok: true, pipeline: out, said: `began ${stage}${extra}` }
@@ -725,10 +749,42 @@ function freshReport(p: Pipeline, env: Env) {
   }
 }
 
+/** The words of a finding, for comparing two: lower case, three letters or more, punctuation out. */
+const findingWords = (text: string) =>
+  new Set(
+    text
+      .toLowerCase()
+      .replace(/[^a-z0-9.]+/g, ' ')
+      .split(' ')
+      .filter((w) => w.length > 2),
+  )
+
+/** How much of the shorter finding's words the other holds, from 0 to 1. */
+function overlap(a: string, b: string) {
+  const [x, y] = [findingWords(a), findingWords(b)]
+  let shared = 0
+  for (const w of x) if (y.has(w)) shared++
+  return shared / Math.max(1, Math.min(x.size, y.size))
+}
+
+/**
+ * The Direction findings of `direction` that no note in `notes` (nor an earlier one of the list)
+ * already says: a rerun returns the earlier run's findings again, often reworded, so a finding
+ * whose words are four fifths or more another's is that one again.
+ */
+export function newDirection(direction: string[], notes: Note[] = []) {
+  const known = notes.flatMap((n) => (n.direction ? [n.direction] : []))
+  const fresh: string[] = []
+  for (const d of direction)
+    if (![...known, ...fresh].some((k) => overlap(k, d) >= 0.8)) fresh.push(d)
+  return fresh
+}
+
 /**
  * Ends a running stage: checks its gate from the files (a stage's `done` is a claim, its `failed`
  * and `pending` are taken as said), records the result, and applies the caps and send-backs. The
- * run's Direction findings, and a `pending` run's questions, join the notes the PR carries.
+ * run's Direction findings the notes don't already hold, and a `pending` run's questions, join the
+ * notes the PR carries.
  */
 export function end(
   p: Pipeline,
@@ -851,7 +907,7 @@ export function end(
   else delete s.pending
   const at = env.now()
   const notes = [
-    ...direction.map((d) => ({ stage, at, direction: d })),
+    ...newDirection(direction, p.notes).map((d) => ({ stage, at, direction: d })),
     ...(verdict.outcome === 'pending' && failing ? [{ stage, at, questions: failing }] : []),
   ]
   if (notes.length) (out.notes ??= []).push(...notes)
