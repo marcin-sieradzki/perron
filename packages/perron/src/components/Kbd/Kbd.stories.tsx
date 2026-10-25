@@ -42,7 +42,7 @@ export const Default: Story = {
   },
 }
 
-/** The key "+": one character, in a square box (CR-3). */
+/** The key "+": one character, in a box at least as wide as it is tall (CR-3). */
 export const SingleCharacter: Story = {
   args: { children: '+' },
   play: async ({ canvasElement }) => {
@@ -98,5 +98,17 @@ export const InHelpText: Story = {
       await expect(box.left).toBeGreaterThanOrEqual(column.left)
       await expect(box.right).toBeLessThanOrEqual(column.right)
     }
+    // a key on a wrapped line stands apart from a key on the line above, by more than both their
+    // borders, so their edges never read as one doubled line (CR-3)
+    const border = parseFloat(getComputedStyle(keys[0]).borderTopWidth)
+    const boxes = keys.map((key) => key.getBoundingClientRect())
+    // the space between each key and each key below it: the column wraps the caption, so there is one
+    const gaps = boxes.flatMap((upper) =>
+      boxes
+        .filter((lower) => lower.top >= upper.bottom - border)
+        .map((lower) => lower.top - upper.bottom),
+    )
+    await expect(gaps.length).toBeGreaterThan(0)
+    for (const gap of gaps) await expect(gap).toBeGreaterThan(2 * border)
   },
 }
