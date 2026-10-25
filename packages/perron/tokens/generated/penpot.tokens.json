@@ -446,6 +446,17 @@
         },
         "$description": "Card titles, such as a disruption"
       },
+      "lead": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.body}",
+          "fontWeight": "{font.weight.regular}",
+          "fontSize": "{font.size.400}",
+          "lineHeight": "{font.line-height.normal}",
+          "letterSpacing": "0px"
+        },
+        "$description": "Page intros: the paragraph under a page title on long-form screens"
+      },
       "body": {
         "$type": "typography",
         "$value": {

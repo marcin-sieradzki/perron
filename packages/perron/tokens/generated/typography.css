@@ -20,6 +20,11 @@
   letter-spacing: var(--perron-typography-heading-sm-tracking);
 }
 
+.perron-typography-lead {
+  font: var(--perron-typography-lead);
+  letter-spacing: var(--perron-typography-lead-tracking);
+}
+
 .perron-typography-body {
   font: var(--perron-typography-body);
   letter-spacing: var(--perron-typography-body-tracking);

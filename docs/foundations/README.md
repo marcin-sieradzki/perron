@@ -27,7 +27,7 @@ Each page gives the rules for one foundation, then its tokens or files. The tabl
 | [Primitive colours](primitive-colours.md) | The palette every colour token points at                              |
 | [Semantic colours](semantic-colours.md)   | Every colour token in both themes                                     |
 | [Semantic spacing](semantic-spacing.md)   | Spacing, radius, border widths and the focus ring                     |
-| [Typography](typography.md)               | The three families, the sixteen roles, sizes and line heights         |
+| [Typography](typography.md)               | The three families, the seventeen roles, sizes and line heights       |
 
 Two more pages hold what only a live map needs:
 
