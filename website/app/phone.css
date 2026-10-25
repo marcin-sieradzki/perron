@@ -1,0 +1,239 @@
+/* The navigation's own parts, the phone menu (SiteMenu) and the docs search (SiteSearch), and the
+   phone rules every page shares: under breakpoint.phone the header turns into the two glass groups
+   of the phone mockups, the page becomes an opaque sheet over the map, a panel full of text loses
+   its glass, and nothing is wider than the screen. In Perron's tokens only. SiteMenu and SiteSearch
+   import this file, so it comes after site.css, whose rules it refines. */
+
+/* Text heard and not seen, such as the search's count of results: a box a hairline square, not 0,
+   so screen readers that skip empty boxes read it */
+.site-visually-hidden {
+  position: absolute;
+  inline-size: var(--perron-border-width-025);
+  block-size: var(--perron-border-width-025);
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* The phone menu: a bottom sheet as tall as its content, under its one snap point, full height,
+   which Base UI clamps to the sheet's height. */
+.site-menu.pn-Sheet[data-anchor='bottom'] {
+  block-size: auto;
+}
+
+.site-menu-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.site-menu-group + .site-menu-group {
+  margin-block-start: var(--perron-space-200);
+  padding-block-start: var(--perron-space-200);
+  border-block-start: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+}
+
+.site-menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--perron-space-300);
+  inline-size: 100%;
+  margin: 0;
+  padding: var(--perron-space-300);
+  border: 0;
+  border-radius: var(--perron-radius-md);
+  background-color: transparent;
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+  color: var(--perron-color-text-primary);
+  text-align: start;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.site-menu-item[aria-current='page'] {
+  background-color: var(--perron-color-surface-selected);
+}
+
+.site-menu-keys {
+  margin: var(--perron-space-300) 0 0;
+  font: var(--perron-typography-caption);
+  letter-spacing: var(--perron-typography-caption-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+/* The docs search: the field, then the results in a frame of a steady height, so the dialog keeps
+   its size and place as the results change, then the keys. */
+.site-search-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-300);
+}
+
+.site-search-results {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-100);
+  /* the six sections under their heading; the frame scrolls past them */
+  block-size: calc(6 * var(--perron-size-vehicle-row) + var(--perron-space-600));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  /* room for a result's focus ring, which the scrolling frame would clip */
+  padding: var(--site-ring-room);
+  margin: calc(-1 * var(--site-ring-room));
+}
+
+.site-search-group {
+  margin: 0;
+  padding-inline: var(--perron-space-300);
+  font: var(--perron-typography-overline);
+  letter-spacing: var(--perron-typography-overline-tracking);
+  text-transform: uppercase;
+  color: var(--perron-color-text-secondary);
+}
+
+.site-search-empty {
+  margin: 0;
+  padding: var(--perron-space-300);
+  font: var(--perron-typography-body);
+  letter-spacing: var(--perron-typography-body-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.site-search-list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-search-result {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--perron-space-050);
+  min-block-size: var(--perron-size-vehicle-row);
+  padding: var(--perron-space-150) var(--perron-space-300);
+  border-radius: var(--perron-radius-md);
+  color: var(--perron-color-text-primary);
+  text-decoration: none;
+}
+
+.site-search-result-title {
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+}
+
+.site-search-result-context {
+  font: var(--perron-typography-caption);
+  letter-spacing: var(--perron-typography-caption-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+.site-search-keys {
+  margin: 0;
+  font: var(--perron-typography-caption);
+  letter-spacing: var(--perron-typography-caption-tracking);
+  color: var(--perron-color-text-secondary);
+}
+
+/* Under breakpoint.phone (760px), written as a number as in site.css: media queries can't read
+   var(--perron-breakpoint-phone). */
+@media (max-width: 759.98px) {
+  /* The header as the phone mockups draw it: no pill around everything, but two glass groups
+     size.top-bar-phone tall, the brand at the start and the controls at the end, each control a
+     size.control round target. */
+  .site-header .site-header-bar {
+    justify-content: space-between;
+    gap: var(--perron-space-200);
+    padding: 0;
+    border-color: transparent;
+    border-radius: 0;
+    background: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    box-shadow: none;
+  }
+
+  .site-header .site-brand,
+  .site-header .site-header-actions {
+    block-size: var(--perron-size-top-bar-phone);
+    border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
+    border-radius: var(--perron-radius-full);
+    background: var(--perron-color-surface-overlay);
+    -webkit-backdrop-filter: blur(var(--perron-effect-glass-blur))
+      saturate(var(--perron-effect-glass-saturate));
+    backdrop-filter: blur(var(--perron-effect-glass-blur))
+      saturate(var(--perron-effect-glass-saturate));
+    box-shadow: var(--perron-shadow-panel);
+  }
+
+  .site-header .site-brand {
+    padding-inline: var(--perron-space-300) var(--perron-space-400);
+  }
+
+  .site-header .site-header-actions {
+    gap: var(--perron-space-050);
+    padding-inline: calc(
+      (var(--perron-size-top-bar-phone) - var(--perron-size-control)) / 2 -
+        var(--perron-border-width-025)
+    );
+  }
+
+  /* the Buttons' own outline variant draws an edge, which the group's glass replaces */
+  .site-header .site-header-actions .pn-Button.site-search,
+  .site-header .site-header-actions .pn-Button.site-menu-button,
+  .site-header .site-header-actions .site-theme-switch {
+    block-size: var(--perron-size-control);
+    border-color: transparent;
+    border-radius: var(--perron-radius-full);
+  }
+
+  .site-header .site-header-actions .pn-Button.site-search {
+    inline-size: var(--perron-size-control);
+    padding-inline: 0;
+  }
+
+  .site-header .site-header-actions .pn-Button.site-menu-button {
+    gap: var(--perron-space-150);
+    padding-inline: var(--perron-space-300);
+  }
+
+  /* The page: an opaque sheet over the map, rounded at the top and floating, so its text never
+     sits on the moving map; the map shows above it, deeper on the home page's full map. */
+  .site-main {
+    margin-block-start: calc(2 * var(--perron-space-800));
+    padding-block: var(--perron-space-600) var(--perron-space-800);
+    border-start-start-radius: var(--perron-radius-xl);
+    border-start-end-radius: var(--perron-radius-xl);
+    background: var(--perron-color-surface-default);
+    box-shadow: var(--perron-shadow-panel);
+    overflow-wrap: break-word;
+  }
+
+  .site-shell:has(.map[data-view='full']) .site-main {
+    margin-block-start: var(--perron-size-sheet-peek);
+  }
+
+  /* the footer goes on with the sheet */
+  .site-footer {
+    margin-block-start: 0;
+    background: var(--perron-color-surface-default);
+  }
+
+  /* A glass panel full of text is opaque on a phone; the search's dialog too. */
+  .glass:has(p, li, dd, td, blockquote, pre, .markdown, .lead),
+  .site-search-dialog.pn-Dialog {
+    background: var(--perron-color-surface-default);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  /* Nothing wider than the screen: a doc's image shrinks to the column. */
+  .markdown img {
+    max-inline-size: 100%;
+    block-size: auto;
+  }
+}
