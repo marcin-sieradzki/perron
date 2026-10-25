@@ -1,0 +1,63 @@
+# Written by npm run factory; never by hand.
+component: Separator
+layer: component
+deferred:
+  at: 2026-10-25T07:31:46.377Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-25T07:36:10.911Z
+    ended: 2026-10-25T07:37:06.217Z
+  build:
+    runs: 2
+    status: done
+    started: 2026-10-25T07:46:10.923Z
+    begun: 96e96a2d09a1889024d984a4fd150d68ff5cdf9ffb894c122bfdc0fab9f391cf
+    spec: 37e7622bc32ea73560cd12f8df7f739490ea22b0246466dbcbadc9edbf6020bc
+    ended: 2026-10-25T07:49:43.841Z
+  review:
+    rounds: 2
+    sentBack: 1
+    findings:
+      p1: 0
+      p2: 0
+      p3: 2
+    status: done
+    started: 2026-10-25T07:49:46.713Z
+    ended: 2026-10-25T07:53:49.614Z
+  docs:
+    status: done
+    started: 2026-10-25T07:53:57.976Z
+    ended: 2026-10-25T07:56:30.332Z
+notes:
+  - stage: brief
+    at: 2026-10-25T07:36:06.915Z
+    direction: The local `type Inherited<P, own>` helper is copied in Tabs.tsx, Toolbar.tsx and SegmentedControl.tsx, and Separator would be a fourth copy. Consider adding it to the contract's Shared helpers table.
+  - stage: brief
+    at: 2026-10-25T07:36:06.915Z
+    direction: Separator spacing is used inconsistently. ToolbarSeparator's space.100 margin insets the line along its length (margin-block on a vertical line), while Select's space.100 margin spaces it from the rows across its length. If Separator takes no margin, a later pass could align these two.
+  - stage: brief
+    at: 2026-10-25T07:36:06.915Z
+    direction: The Toolbar spec's ToolbarSeparator (and Toolbar) Props rows name the Base UI prop (orientation, render) in the Base UI prop column, where the template now asks inherited rows to read 'inherited'.
+  - stage: brief
+    at: 2026-10-25T07:36:06.915Z
+    questions: |-
+      1. (Props) Does Separator ship one look, with no variant, color, size or inset prop? Recommended: yes.
+      2. (Props) Is Separator always announced as a separator, with no decorative prop that swaps its role for none? Recommended: yes.
+      3. (Tokens) Does Separator take no margin of its own, so the space on either side comes from its container's gap or padding? Recommended: yes.
+      4. (Component rules, CR-8) Do ToolbarSeparator, Select's separator and Menu's (once built) keep their own Base UI parts rather than later render Separator? Recommended: yes, with no follow-up.
+  - stage: build
+    at: 2026-10-25T07:42:02.327Z
+    direction: "Library-wide, the JSDoc on className, style and ref is written three or four ways: Surface's 'Reaches the root, merged after `pn-Surface`', Button's 'Classes for the root, merged after `pn-Button`', Toolbar's 'Reaches the root. Merged after `pn-Toolbar`.' and Kbd's and Separator's 'Joined after `pn-<Name>` on the root'. Pick one form for the template and the contract's Props section."
+  - stage: build
+    at: 2026-10-25T07:42:02.327Z
+    direction: "The `rendered` story helper cannot read a border width: its probe sets no border-style, so the computed width is always 0px. Border checks have to use `resolve`. The contract's Shared helpers row for `rendered` could say so, so specs stop naming it for borders."
+  - stage: build
+    at: 2026-10-25T07:49:43.841Z
+    direction: "ToolbarSeparator (`Toolbar.css:40-53`), MenuSeparator (`Menu.css:223`) and Select's separator (`Select.css:144`) each set one border side and never clear the others, so a `render={<hr />}`, which their props pass through, draws the browser's 1px inset grey border round the line, the gap Separator's P2-2 fixed. Under CR-7's rule that the four dividers change together, a follow-up could give each `border: 0` before its side."
+  - stage: build
+    at: 2026-10-25T07:49:43.841Z
+    direction: "MenuSeparator adds a third spacing form beside the two the brief noted: a negative `margin-inline` that runs the line over the popup's padding, plus `space.100` above and below. A pass aligning divider spacing should cover all three."
+  - stage: docs
+    at: 2026-10-25T07:56:30.332Z
+    direction: The props table shows orientation's type as Base UI's alias `Orientation`, not the spec's `'horizontal' | 'vertical'`. The two agree, but PropsTable could expand a union alias so the docs page reads like the spec.
