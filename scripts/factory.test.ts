@@ -435,8 +435,52 @@ describe('the factory dry run', () => {
       /run: review\nround: 3\n/,
     )
     expect(pipeline().notes).toContainEqual(expect.objectContaining({ direction: 'A note' }))
-    expect(pipeline().stages.review?.sentBack).toBe(0)
+    expect(pipeline().stages.review?.granted).toBe(3)
     expect(run('unblock Tally --to docs').err).toMatch(/is not at needs-human/)
+  })
+
+  it('grants exactly one review round past a cap: a P1 or P2 in it stops the loop again', () => {
+    throughBrief()
+    stage('build', () => build())
+    stage('review', () => review(1, 0, 1))
+    stage('build', () => build())
+    stage('review', () => review(2, 0, 1))
+    stage('build', () => build())
+    expect(stage('review', () => review(3, 0, 1)).out).toMatch(/wait: needs-human/)
+    run('unblock Tally')
+    expect(read('components/tally/pipeline.yaml')).toMatch(/\n {4}granted: 4\n/)
+    stage('build', () => build())
+    // round 4 finds only a P2: no fresh count of three, the loop stops again
+    expect(stage('review', () => review(4, 0, 1)).out).toMatch(
+      /\nwait: needs-human\nstage: review\nwhy: review round 4 found a P1 or a P2 after unblock granted one round past the cap \(round 4\)/,
+    )
+    // a second unblock grants round 5 alone, and a clean round 5 passes
+    run('unblock Tally --to review')
+    expect(pipeline().stages.review?.granted).toBe(5)
+    expect(stage('review', () => review(5)).out).toContain('ended review: done, round 5')
+  })
+
+  it("gives a rerun after unblock what fails now as its fix, never the stop's old reason", () => {
+    throughBrief()
+    stage('build', () => build())
+    stage('review', () => review(1))
+    const fault = 'Shared tooling: scripts/lib/docgen.ts:95 drops null from value'
+    // a docs run whose failing starts "Shared tooling:" stops without --tooling
+    expect(stage('docs', () => {}, 'failed', fault).out).toMatch(
+      /\nwait: needs-human\nstage: docs\n/,
+    )
+    expect(pipeline().stages.build?.failing).toBeUndefined()
+    run('unblock Tally')
+    const n = JSON.parse(run('next Tally --json').out)
+    expect(n).toMatchObject({ run: 'docs' })
+    expect(n.fix).toMatch(/^docs stopped at needs-human \(docs failed on shared tooling: /)
+    expect(n.fix).toMatch(
+      /is not this run's to fix\. Fix only what fails now: run npm run check first/,
+    )
+    // begin keeps that fix for the run, and the stop's reason no longer reaches a later rerun
+    run('begin Tally docs')
+    expect(pipeline().stages.docs).toMatchObject({ status: 'running', fix: n.fix })
+    expect(pipeline().stages.docs?.acted).toBeUndefined()
   })
 
   it('refuses --to anywhere but build or review, and at any stop but a review cap', () => {
@@ -507,7 +551,7 @@ describe('the factory dry run', () => {
       /\nwait: needs-human\nstage: review\nwhy: 2 review rounds found a P1 or a P2, the last a P1: review round 2 found 1 P1 and 1 P2/,
     )
     expect(run('unblock Tally').out).toContain('unblocked review')
-    expect(pipeline().stages.review?.sentBack).toBe(0)
+    expect(pipeline().stages.review).toMatchObject({ sentBack: 2, granted: 3 })
   })
 
   it('gives a second round with only P2s one round more, and stops at the third', () => {

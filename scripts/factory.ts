@@ -11,8 +11,9 @@
 //   approve <Name>                                the maintainer's design approval
 //   defer <Name>                                  runs the loop without design and visual (ADR 0010)
 //   unblock <Name> [--to build|review]            clears needs-human once the maintainer has acted; a
-//                                                 review cap goes back to build with its findings, or
-//                                                 with --to review is reviewed again as it stands
+//                                                 review cap gets exactly one more round, going back to
+//                                                 build with its findings, or with --to review reviewed
+//                                                 again as it stands
 import { spawnSync } from 'node:child_process'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'

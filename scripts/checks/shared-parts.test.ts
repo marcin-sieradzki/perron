@@ -24,6 +24,8 @@ describe('shared-parts', () => {
       '| ---- | ----- | ----------- | --------------------- |',
       '| `VisuallyHidden` | Text | Any | `pn-VisuallyHidden`, and `clip-path: inset(50%)` or `clip:` |',
       '| `CheckboxIndicator` | A box | `Checkbox.Indicator` | `pn-CheckboxIndicator`, and the tick and the `dash` icon |',
+      '| `IntentIcon` | An intent | Alert | `pn-IntentIcon`, and the `info-circle` and `exclamation-circle` icons |',
+      '| `Marks` | Marks | Any | `pn-Marks`, the `a`, `b` or `c` icons |',
       '',
     ].join('\n')
     expect(readParts(contract)).toEqual([
@@ -39,6 +41,14 @@ describe('shared-parts', () => {
         icons: ['dash'],
         declarations: [],
       },
+      // a plural list names each of its icons, none of them a class or a declaration
+      {
+        name: 'IntentIcon',
+        classes: ['pn-IntentIcon'],
+        icons: ['info-circle', 'exclamation-circle'],
+        declarations: [],
+      },
+      { name: 'Marks', classes: ['pn-Marks'], icons: ['a', 'b', 'c'], declarations: [] },
     ])
   })
 
@@ -131,12 +141,18 @@ describe('shared-parts', () => {
       [
         'Card.stories.tsx',
         6,
-        'declares noFocusIn, a helper expectNoFocus in scripts/checks/fixtures/shared-parts/stories/components/Chip/Chip.stories.tsx declares too',
+        'declares noFocusIn, a helper expectNoFocus in scripts/checks/fixtures/shared-parts/stories/components/Chip/Chip.stories.tsx and leaves in scripts/checks/fixtures/shared-parts/stories/components/Tag/Tag.stories.tsx declares too',
       ],
       [
         'Chip.stories.tsx',
         6,
-        'declares expectNoFocus, a helper noFocusIn in scripts/checks/fixtures/shared-parts/stories/components/Card/Card.stories.tsx declares too',
+        'declares expectNoFocus, a helper noFocusIn in scripts/checks/fixtures/shared-parts/stories/components/Card/Card.stories.tsx and leaves in scripts/checks/fixtures/shared-parts/stories/components/Tag/Tag.stories.tsx declares too',
+      ],
+      // a copy inside a story's play function is a copy all the same
+      [
+        'Tag.stories.tsx',
+        6,
+        'declares leaves inside a story, a helper noFocusIn in scripts/checks/fixtures/shared-parts/stories/components/Card/Card.stories.tsx and expectNoFocus in scripts/checks/fixtures/shared-parts/stories/components/Chip/Chip.stories.tsx declares too',
       ],
     ])
   })
