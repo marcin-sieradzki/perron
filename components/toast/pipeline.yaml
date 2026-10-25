@@ -5,10 +5,9 @@ deferred:
   at: 2026-10-25T08:35:01.279Z
 stages:
   brief:
-    status: pending
-    started: 2026-10-25T08:35:08.807Z
-    ended: 2026-10-25T08:49:45.449Z
-    pending: 15
+    status: done
+    started: 2026-10-25T08:51:16.685Z
+    ended: 2026-10-25T08:53:13.129Z
 notes:
   - stage: brief
     at: 2026-10-25T08:49:45.449Z
@@ -55,3 +54,9 @@ notes:
       13. (Keyboard and ARIA) With no `title`, is the toast named by its description (aria-labelledby set to the description, no aria-describedby)? Recommended: yes. Otherwise axe's aria-dialog-name rule fails.
       14. (Keyboard and ARIA) Is the close button never aria-hidden (`aria-hidden={false}` set after Base UI's, which hides it while the region is collapsed)? Recommended: yes. Otherwise axe's aria-hidden-focus rule fails, and screen-reader users cannot find the close button.
       15. (Owned strings) Is the region's name a new owned key `notifications` ("Notifications"), overridden by a new `notificationsLabel` prop on PerronProvider rather than on Toast? This is an exception to the Words rule's per-component override. Recommended: yes. Base UI's viewport hard-codes English "Notifications", and the region is shared.
+  - stage: brief
+    at: 2026-10-25T08:53:13.129Z
+    direction: Toast narrows Alert's `color` JSDoc. For Toast, `danger` means only 'something that failed', not 'or stops the task', because a failure that stops the task belongs in an AlertDialog. So Toast does not take Alert's words whole on that one prop, despite Alert's CR-12.
+  - stage: brief
+    at: 2026-10-25T08:53:13.129Z
+    direction: Toast's CSS copies Alert's values under `.pn-Toast…`, because a component's CSS reads no other component's classes. Any later change to Alert's look must be made in Toast.css as well, and no check links the two.
