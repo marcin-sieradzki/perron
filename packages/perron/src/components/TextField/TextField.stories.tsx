@@ -11,7 +11,15 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import type { Locale } from '../../locale/index.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
-import { colour, lines, mounted, onHover, rendered, resolve } from '../../testing/stories.ts'
+import {
+  colour,
+  edge,
+  fieldPart,
+  lines,
+  mounted,
+  onHover,
+  rendered,
+} from '../../testing/stories.ts'
 import { TextField } from './TextField.tsx'
 import type { TextFieldProps } from './TextField.tsx'
 
@@ -43,13 +51,6 @@ type Story = StoryObj<typeof meta>
 const inputIn = (scope: HTMLElement, name: string | RegExp = LABEL) =>
   within(scope).getByRole<HTMLInputElement>('textbox', { name })
 
-/** One of Field's parts in `scope`, by its class, or null when it isn't rendered. */
-const part = (scope: Element, name: 'field' | 'label' | 'description' | 'error') =>
-  scope.querySelector<HTMLElement>(name === 'field' ? '.pn-Field' : `.pn-Field-${name}`)
-
-/** A colour token as it renders on an edge, to compare with an element's `border-color`. */
-const edge = (token: string) => resolve('borderColor', `var(--perron-color-${token})`)
-
 /** The subject story, State default: the label, the description and the empty box. */
 export const Default: Story = {
   play: async ({ canvasElement, step }) => {
@@ -60,15 +61,18 @@ export const Default: Story = {
       await expect(input).toHaveClass('pn-TextField')
       const frame = input.closest('.pn-Field')
       await expect(frame).toHaveClass('pn-Field', 'pn-TextField-field')
-      await expect(part(canvasElement, 'label')).toHaveClass('pn-Field-label', 'pn-TextField-label')
-      await expect(part(canvasElement, 'description')).toHaveClass(
+      await expect(fieldPart(canvasElement, 'label')).toHaveClass(
+        'pn-Field-label',
+        'pn-TextField-label',
+      )
+      await expect(fieldPart(canvasElement, 'description')).toHaveClass(
         'pn-Field-description',
         'pn-TextField-description',
       )
       await expect(input).not.toHaveAttribute('aria-invalid')
     })
     await step('pressing the label focuses the input', async () => {
-      await userEvent.click(part(canvasElement, 'label')!)
+      await userEvent.click(fieldPart(canvasElement, 'label')!)
       await expect(input).toHaveFocus()
       input.blur()
     })
@@ -124,14 +128,14 @@ export const Disabled: Story = {
     const input = inputIn(canvasElement)
     await expect(input).toBeDisabled()
     await expect(input).toHaveAttribute('data-disabled')
-    await expect(part(canvasElement, 'label')).toHaveAttribute('data-disabled')
+    await expect(fieldPart(canvasElement, 'label')).toHaveAttribute('data-disabled')
     await userEvent.tab()
     await expect(input).not.toHaveFocus()
     const tertiary = colour('--perron-color-text-tertiary')
     await expect(getComputedStyle(input).color).toBe(tertiary)
-    await expect(getComputedStyle(part(canvasElement, 'label')!).color).toBe(tertiary)
-    await expect(getComputedStyle(part(canvasElement, 'description')!).color).toBe(tertiary)
-    await expect(getComputedStyle(input).borderColor).toBe(edge('border-control'))
+    await expect(getComputedStyle(fieldPart(canvasElement, 'label')!).color).toBe(tertiary)
+    await expect(getComputedStyle(fieldPart(canvasElement, 'description')!).color).toBe(tertiary)
+    await expect(getComputedStyle(input).borderColor).toBe(edge('color-border-control'))
     await expect(getComputedStyle(input).backgroundColor).toBe(
       colour('--perron-color-surface-raised'),
     )
@@ -147,12 +151,12 @@ export const Invalid: Story = {
   args: { error: 'Enter a stop name' },
   play: async ({ canvasElement }) => {
     const input = inputIn(canvasElement)
-    const description = part(canvasElement, 'description')!
-    const error = part(canvasElement, 'error')!
+    const description = fieldPart(canvasElement, 'description')!
+    const error = fieldPart(canvasElement, 'error')!
     await expect(error).toHaveClass('pn-Field-error', 'pn-TextField-error')
     await expect(input).toHaveAttribute('aria-invalid', 'true')
     await expect(input).toHaveAttribute('data-invalid')
-    await expect(getComputedStyle(input).borderColor).toBe(edge('status-danger'))
+    await expect(getComputedStyle(input).borderColor).toBe(edge('color-status-danger'))
     // the help first, then the error
     await waitFor(() =>
       expect(input.getAttribute('aria-describedby')).toBe(`${description.id} ${error.id}`),
@@ -238,7 +242,7 @@ export const HiddenLabel: Story = {
     a11y: { options: { rules: { 'label-title-only': { enabled: false } } } },
   },
   play: async ({ canvasElement }) => {
-    const label = part(canvasElement, 'label')!
+    const label = fieldPart(canvasElement, 'label')!
     await expect(label.tagName).toBe('SPAN')
     await expect(label.getBoundingClientRect().width).toBeLessThanOrEqual(1)
     await expect(inputIn(canvasElement)).toHaveAccessibleName(LABEL)
@@ -296,7 +300,7 @@ export const ReadOnly: Story = {
     await userEvent.keyboard('x')
     await expect(input).toHaveValue(WORDS)
     await expect(args.onChange).not.toHaveBeenCalled()
-    await expect(getComputedStyle(input).borderColor).toBe(edge('border-control'))
+    await expect(getComputedStyle(input).borderColor).toBe(edge('color-border-control'))
     await expect(getComputedStyle(input).backgroundColor).toBe(
       colour('--perron-color-surface-raised'),
     )
@@ -390,7 +394,7 @@ export const Validation: Story = {
     const input = inputIn(canvasElement)
     const start = document.activeElement
     await step('the field is valid at first, with no error', async () => {
-      await expect(part(canvasElement, 'error')).toBeNull()
+      await expect(fieldPart(canvasElement, 'error')).toBeNull()
       await expect(input).not.toHaveAttribute('aria-invalid')
     })
     await step('one letter, then Tab out, shows the message and the danger edge', async () => {
@@ -398,19 +402,19 @@ export const Validation: Story = {
       await userEvent.type(input, 'N')
       await userEvent.tab()
       await waitFor(() =>
-        expect(part(canvasElement, 'error')).toHaveTextContent(/^Enter at least 2 letters$/),
+        expect(fieldPart(canvasElement, 'error')).toHaveTextContent(/^Enter at least 2 letters$/),
       )
       await expect(input).toHaveAttribute('aria-invalid', 'true')
-      await expect(getComputedStyle(input).borderColor).toBe(edge('status-danger'))
+      await expect(getComputedStyle(input).borderColor).toBe(edge('color-status-danger'))
     })
     await step('a second letter, then Tab out, removes it', async () => {
       await userEvent.tab({ shift: true })
       await expect(input).toHaveFocus()
       await userEvent.type(input, 'ø')
       await userEvent.tab()
-      await waitFor(() => expect(part(canvasElement, 'error')).toBeNull())
+      await waitFor(() => expect(fieldPart(canvasElement, 'error')).toBeNull())
       await expect(input).not.toHaveAttribute('aria-invalid')
-      await expect(getComputedStyle(input).borderColor).toBe(edge('border-control'))
+      await expect(getComputedStyle(input).borderColor).toBe(edge('color-border-control'))
       await expect(document.activeElement).toBe(start)
     })
   },
@@ -427,10 +431,10 @@ export const LongWords: Story = {
     defaultValue: `${COMPOUND} ${COMPOUND}`,
   },
   play: async ({ canvasElement }) => {
-    const frame = part(canvasElement, 'field')!
+    const frame = fieldPart(canvasElement, 'field')!
     const bounds = frame.getBoundingClientRect()
     for (const name of ['label', 'description', 'error'] as const) {
-      const element = part(canvasElement, name)!
+      const element = fieldPart(canvasElement, name)!
       await expect(lines(element)).toBeGreaterThan(1.5)
       await expect(element.getBoundingClientRect().right).toBeLessThanOrEqual(bounds.right + 0.5)
       await expect(element.scrollWidth).toBeLessThanOrEqual(element.clientWidth)

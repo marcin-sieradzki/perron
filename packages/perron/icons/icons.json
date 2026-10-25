@@ -25,6 +25,10 @@
     "chevron-down": {
       "size": "icon.size.400",
       "use": "Open a select's list"
+    },
+    "chevron-right": {
+      "size": "icon.size.400",
+      "use": "A menu row that opens a submenu"
     }
   },
   "App": {
