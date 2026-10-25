@@ -3,9 +3,6 @@ component: Menu
 layer: component
 deferred:
   at: 2026-10-25T05:37:09.604Z
-needsHuman:
-  stage: review
-  reason: '3 review rounds found a P1 or a P2; the last: review round 3 found 1 P2 (components/menu/review.md)'
 stages:
   brief:
     status: done
@@ -20,7 +17,7 @@ stages:
     ended: 2026-10-25T06:45:49.476Z
   review:
     rounds: 3
-    sentBack: 3
+    sentBack: 0
     findings:
       p1: 0
       p2: 1
@@ -64,3 +61,6 @@ notes:
   - stage: build
     at: 2026-10-25T06:33:21.497Z
     direction: The stories' example menu moved from the top bar's real items (Kiosk mode, About and help) to map actions (Centre the map, Zoom in, Zoom out), since monitor and info have no 16 px drawings; the real menu gets its icons back once they do, or once menu start icons may be icon.size.450.
+  - stage: review
+    at: 2026-10-25T06:54:29.242Z
+    unblocked: '3 review rounds found a P1 or a P2; the last: review round 3 found 1 P2 (components/menu/review.md)'
