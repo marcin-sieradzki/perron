@@ -9,8 +9,12 @@ stages:
     started: 2026-10-25T06:46:40.740Z
     ended: 2026-10-25T06:48:00.020Z
   build:
-    runs: 7
-    failing: review round 8 found 2 P2 (components/number-field/review.md)
+    runs: 8
+    status: done
+    started: 2026-10-25T09:01:59.350Z
+    begun: b0eb39e20815030b2f74d36c6aa04083cf9dbc13a03b5e14348d7330ec8461c8
+    spec: 1b0a12b122a0564c1bde6f210c34d1f9d29e428813d4ce385584e38e69b2cf77
+    ended: 2026-10-25T09:05:20.282Z
   review:
     rounds: 8
     sentBack: 1
@@ -19,10 +23,6 @@ stages:
       p1: 0
       p2: 2
       p3: 11
-    status: failed
-    started: 2026-10-25T08:59:12.434Z
-    ended: 2026-10-25T09:01:51.390Z
-    failing: review round 8 found 2 P2 (components/number-field/review.md)
   docs:
     failures: 1
 notes:
@@ -92,3 +92,6 @@ notes:
   - stage: review
     at: 2026-10-25T08:59:12.193Z
     unblocked: '3 review rounds found a P1 or a P2; the last: review round 7 found 1 P2 (components/number-field/review.md)'
+  - stage: build
+    at: 2026-10-25T09:05:20.282Z
+    direction: "SearchField sets cursor: text on its whole input group, so its strips round the icon and the clear button show a text cursor although a press there focuses nothing, while NumberField leaves the default cursor on its equivalent strips. The family could pick one rule for a box's dead strips."
