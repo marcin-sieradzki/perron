@@ -9,8 +9,10 @@ stages:
     started: 2026-10-25T00:19:18.195Z
     ended: 2026-10-25T00:20:37.896Z
   build:
-    runs: 3
-    failing: review round 2 found 3 P2 (components/map-tooltip/review.md)
+    runs: 4
+    status: done
+    started: 2026-10-25T00:54:02.693Z
+    ended: 2026-10-25T00:55:47.533Z
   review:
     rounds: 2
     sentBack: 2
@@ -18,7 +20,3 @@ stages:
       p1: 0
       p2: 3
       p3: 4
-    status: failed
-    started: 2026-10-25T00:48:15.196Z
-    ended: 2026-10-25T00:53:56.457Z
-    failing: review round 2 found 3 P2 (components/map-tooltip/review.md)

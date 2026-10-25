@@ -4,6 +4,7 @@
 import { mergeProps } from '@base-ui/react/merge-props'
 import { Tooltip } from '@base-ui/react/tooltip'
 import type { ReactNode, Ref } from 'react'
+import { classes } from '../../internal/nodes.ts'
 import './MapTooltip.css'
 
 type ChangeDetails = Tooltip.Root.ChangeEventDetails
@@ -70,7 +71,7 @@ export interface MapTooltipProps extends Omit<Tooltip.Popup.Props, 'children' | 
     reason: Tooltip.Root.ChangeEventReason,
     details: ChangeDetails,
   ) => void
-  /** The root element, the card. */
+  /** Reaches the root, the card. */
   ref?: Ref<HTMLDivElement>
   /** Props for the inner parts, each merged with what the card sets on that part. */
   slotProps?: {
@@ -92,11 +93,9 @@ type ClassName<State> = string | ((state: State) => string | undefined) | undefi
 
 /** The part's own class first, then the caller's, whether the caller's is a string or a function. */
 function withClass<State>(own: string, theirs: ClassName<State>): ClassName<State> {
-  if (typeof theirs === 'function') return (state) => join(own, theirs(state))
-  return join(own, theirs)
+  if (typeof theirs === 'function') return (state) => classes(own, theirs(state))
+  return classes(own, theirs)
 }
-
-const join = (own: string, theirs: string | undefined) => (theirs ? `${own} ${theirs}` : own)
 
 /** The map's hover card: a few of the caller's words against a point on the map or an element. */
 export function MapTooltip({
