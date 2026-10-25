@@ -219,19 +219,21 @@ Each of these is drawn once, in its own folder, `packages/perron/src/parts/<Part
 
 ## Shared helpers
 
-Each of these is written once, in its file, and a component, pattern or story imports it from there; no other file in `packages/perron/src/` declares its name at the top level. Helpers are internal: no barrel exports them. A helper a second component needs joins this table first.
+Each of these is written once, in its file, and a component, pattern or story imports it from there; no other file in `packages/perron/src/` declares at its top level its name, a name after it in its cell (one a copy went by), or a function with its body under a new name (`npm run gates`, `shared-parts`). Helpers are internal: no barrel exports them. A helper a second component needs joins this table first. A story has the DOM and uses `testing/stories.ts`; a unit test runs in node with no DOM and reads server-rendered markup with `testing/markup.ts`.
 
-| Helper         | File                                            | Does                                                                                                               |
-| -------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| `given`        | `packages/perron/src/internal/nodes.ts`         | Whether a node renders something, so a part given nothing is left out                                              |
-| `known`        | `packages/perron/src/internal/nodes.ts`         | Whether a value says something, so one that says nothing shows `UnknownValue`                                      |
-| `classes`      | `packages/perron/src/internal/nodes.ts`         | A part's own class first, then the caller's                                                                        |
-| `usePart`      | `packages/perron/src/internal/use-part.ts`      | One inner part, from its `slotProps` value merged under the part's own props; it reads Base UI                     |
-| `UnknownValue` | `packages/perron/src/internal/UnknownValue.tsx` | A value no one knows: "—" for the eye, the caller's or the locale's word for the ear                               |
-| `typography`   | `packages/perron/src/testing/stories.ts`        | The style of one typography role with its `-tracking` twin and no margin, for a story's own text                   |
-| `heard`        | `packages/perron/src/testing/stories.ts`        | What a screen reader reads of an element: its text outside `aria-hidden`, white space collapsed                    |
-| `mounted`      | `packages/perron/src/testing/stories.ts`        | Renders a node apart from the story into a host it appends, runs a test on it, and unmounts it after, pass or fail |
-| `colour`       | `packages/perron/src/testing/stories.ts`        | A colour custom property as it renders, the computed `color` of a probe, to compare with an element's              |
+| Helper                           | File                                            | Does                                                                                                               |
+| -------------------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `given`                          | `packages/perron/src/internal/nodes.ts`         | Whether a node renders something, so a part given nothing is left out                                              |
+| `known`                          | `packages/perron/src/internal/nodes.ts`         | Whether a value says something, so one that says nothing shows `UnknownValue`                                      |
+| `classes`                        | `packages/perron/src/internal/nodes.ts`         | A part's own class first, then the caller's                                                                        |
+| `withClass`                      | `packages/perron/src/internal/nodes.ts`         | `classes` for a Base UI part whose caller's `className` may be a function of its state                             |
+| `usePart`                        | `packages/perron/src/internal/use-part.ts`      | One inner part, from its `slotProps` value merged under the part's own props; it reads Base UI                     |
+| `UnknownValue`                   | `packages/perron/src/internal/UnknownValue.tsx` | A value no one knows: "—" for the eye, the caller's or the locale's word for the ear                               |
+| `typography`                     | `packages/perron/src/testing/stories.ts`        | The style of one typography role with its `-tracking` twin and no margin, for a story's own text                   |
+| `heard`, `exposedText`, `textOf` | `packages/perron/src/testing/stories.ts`        | What a screen reader reads of an element: its text outside `aria-hidden`, white space collapsed                    |
+| `mounted`, `mount`               | `packages/perron/src/testing/stories.ts`        | Renders a node apart from the story into a host it appends, runs a test on it, and unmounts it after, pass or fail |
+| `colour`                         | `packages/perron/src/testing/stories.ts`        | A colour custom property as it renders, the computed `color` of a probe, to compare with an element's              |
+| `heardMarkup`                    | `packages/perron/src/testing/markup.ts`         | `heard` for a unit test: what a screen reader reads of server-rendered markup, with no DOM                         |
 
 ## What axe won't catch
 
