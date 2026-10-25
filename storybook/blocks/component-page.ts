@@ -28,13 +28,14 @@ function typeOf(arg: InputType) {
 function slotRows(arg: InputType, row: PropRow): PropRow[] {
   const type = arg.type as {
     name?: string
-    value?: Record<string, { value?: string; name?: string }>
+    value?: Record<string, { raw?: string; value?: string; name?: string }>
   }
   if (type?.name !== 'object' || !type.value) return [row]
   return Object.entries(type.value).map(([key, part]) => ({
     name: `slotProps.${key}`,
     required: false,
-    type: oneLine(part.value ?? part.name ?? ''),
+    // `raw` keeps a generic's arguments, `Omit<Dialog.Close.Props, 'children'>`, which `name` drops
+    type: oneLine(part.raw ?? part.value ?? part.name ?? ''),
     default: '',
     description: `Props for the \`${key}\` part.`,
   }))

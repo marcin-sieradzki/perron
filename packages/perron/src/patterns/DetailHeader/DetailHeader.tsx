@@ -7,6 +7,7 @@ import type { ComponentPropsWithRef, ReactNode } from 'react'
 import { LineBadge } from '../../components/LineBadge/LineBadge.tsx'
 import { StationIcon } from '../../components/StationIcon/StationIcon.tsx'
 import { VisuallyHidden } from '../../parts/VisuallyHidden/VisuallyHidden.tsx'
+import { classes, given } from '../../internal/nodes.ts'
 import './DetailHeader.css'
 
 export interface DetailHeaderProps extends Omit<
@@ -54,16 +55,6 @@ export interface DetailHeaderProps extends Omit<
     action?: ComponentPropsWithRef<'div'>
   }
 }
-
-/**
- * A node that renders something. `null`, `undefined`, a boolean, `''` and an array of only such
- * values render nothing, so their part is left out (CR-3).
- */
-const given = (node: ReactNode): boolean =>
-  Array.isArray(node) ? node.some(given) : node != null && typeof node !== 'boolean' && node !== ''
-
-/** The part's own class first, then the caller's (CR-6). */
-const classes = (own: string, caller: string | undefined) => (caller ? `${own} ${caller}` : own)
 
 /**
  * Heads the detail panel: names the vehicle's line and destination, or the stop, with one line

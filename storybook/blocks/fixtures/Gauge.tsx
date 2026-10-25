@@ -16,7 +16,7 @@ export interface GaugeProps extends Omit<Meter.Root.Props, 'className'> {
   /** Props for the inner parts. */
   slotProps?: {
     track?: Meter.Track.Props
-    indicator?: Meter.Indicator.Props
+    indicator?: Omit<Meter.Indicator.Props, 'children'>
   }
   /** Whether the gauge is greyed out. */
   disabled?: boolean
