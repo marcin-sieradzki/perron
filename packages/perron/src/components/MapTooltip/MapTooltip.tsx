@@ -5,40 +5,10 @@ import { mergeProps } from '@base-ui/react/merge-props'
 import { Tooltip } from '@base-ui/react/tooltip'
 import type { ReactNode, Ref } from 'react'
 import { withClass } from '../../internal/nodes.ts'
-import { tokenValue } from '../../internal/tokens.ts'
+import { positionerOffsets } from '../../internal/tokens.ts'
 import './MapTooltip.css'
 
 type ChangeDetails = Tooltip.Root.ChangeEventDetails
-
-/** The positioner's defaults in pixels, read from the tokens' custom properties (CR-5). */
-interface Offsets {
-  sideOffset?: number
-  collisionPadding?: number
-}
-
-/** Read once a token stylesheet has given both, and kept, so every render passes the same numbers. */
-let offsets: Offsets | undefined
-
-/**
- * `space.200` and `size.panel-gap` as pixel lengths, from `--perron-space-200` and
- * `--perron-size-panel-gap` in the document root's computed style (CR-5). With no document, as on
- * a server, or no token stylesheet yet, each is left out, and Base UI's own default holds until
- * they can be read.
- */
-function defaultOffsets(): Offsets {
-  if (offsets === undefined) {
-    const px = (property: `--perron-${string}`) => {
-      const value = tokenValue(property)
-      return value?.endsWith('px') ? Number.parseFloat(value) : Number.NaN
-    }
-    const read = {
-      sideOffset: px('--perron-space-200'),
-      collisionPadding: px('--perron-size-panel-gap'),
-    }
-    if (!Number.isNaN(read.sideOffset) && !Number.isNaN(read.collisionPadding)) offsets = read
-  }
-  return offsets ?? {}
-}
 
 export interface MapTooltipProps extends Omit<Tooltip.Popup.Props, 'children' | 'ref'> {
   /**
@@ -98,7 +68,7 @@ export function MapTooltip({
   ...rest
 }: MapTooltipProps) {
   const positioner = slotProps?.positioner
-  const defaults = defaultOffsets()
+  const defaults = positionerOffsets()
 
   // CR-4: Base UI's onOpenChange is adapted once, here, and only a closing reaches the caller
   const handleOpenChange = (next: boolean, details: ChangeDetails) => {

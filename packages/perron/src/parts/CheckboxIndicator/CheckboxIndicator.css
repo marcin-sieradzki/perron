@@ -1,0 +1,123 @@
+/* The CheckboxIndicator shared part, from docs/components/checkbox.md: a size.checkbox box with the
+   Fields family's fill, edge and hover while unticked, ink while ticked or indeterminate. Its
+   states are the attributes Base UI puts on the indicator; its hover and press are read from the
+   control that holds it, the whole row, as [role]:hover, since a bare :hover > would leave the
+   stories' stateRules an invalid selector once it takes the :hover out (CR-6). Every state changes colours only, on one box whose
+   edge is always drawn (CR-8), at once (CR-12). The mark draws in currentColor, set here (CR-5). */
+
+.pn-CheckboxIndicator {
+  --perron-icon-size: var(--perron-icon-size-325);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  inline-size: var(--perron-size-checkbox);
+  block-size: var(--perron-size-checkbox);
+  border: var(--perron-border-width-025) solid var(--perron-color-border-control);
+  border-radius: var(--perron-radius-xs);
+  background-color: var(--perron-color-surface-raised);
+}
+
+/* unticked: the Fields family's hover layer over the fill, inside (hover: hover); the press outside
+   it, so a touch press shows; never on a disabled or read-only box (CR-6) */
+
+@media (hover: hover) {
+  [role]:hover > .pn-CheckboxIndicator[data-unchecked]:not([data-disabled], [data-readonly]) {
+    background-image: linear-gradient(
+      var(--perron-color-surface-hover),
+      var(--perron-color-surface-hover)
+    );
+  }
+}
+
+[role]:active > .pn-CheckboxIndicator[data-unchecked]:not([data-disabled], [data-readonly]) {
+  background-image: linear-gradient(
+    var(--perron-color-surface-hover),
+    var(--perron-color-surface-hover)
+  );
+}
+
+/* ticked or indeterminate: the selected design state, in ink, its edge kept and transparent */
+
+.pn-CheckboxIndicator:is([data-checked], [data-indeterminate]) {
+  border-color: transparent;
+  background-color: var(--perron-color-surface-inverse);
+  color: var(--perron-color-text-inverse);
+}
+
+@media (hover: hover) {
+  [role]:hover
+    > .pn-CheckboxIndicator:is([data-checked], [data-indeterminate]):not(
+      [data-disabled],
+      [data-readonly]
+    ) {
+    background-color: var(--perron-color-surface-inverse-hover);
+  }
+}
+
+[role]:active
+  > .pn-CheckboxIndicator:is([data-checked], [data-indeterminate]):not(
+    [data-disabled],
+    [data-readonly]
+  ) {
+  background-color: var(--perron-color-surface-inverse-hover);
+}
+
+/* invalid, ticked or not: the danger edge, the fill and the mark kept */
+
+.pn-CheckboxIndicator[data-invalid] {
+  border-color: var(--perron-color-status-danger);
+}
+
+/* disabled, unticked and ticked: a colour, never an opacity. After the colours, which it ties. */
+
+.pn-CheckboxIndicator[data-disabled] {
+  border-color: var(--perron-color-border-subtle);
+  background-color: transparent;
+}
+
+.pn-CheckboxIndicator:is([data-checked], [data-indeterminate])[data-disabled] {
+  border-color: transparent;
+  background-color: var(--perron-color-surface-inset);
+  color: var(--perron-color-text-tertiary);
+}
+
+/* CR-11: forced colours drop the ink fill, so a ticked box keeps a system fill of its own,
+   Highlight, or GrayText when it is disabled too; a disabled unticked box takes a GrayText edge */
+@media (forced-colors: active) {
+  /* :hover and :active too, at the hover rules' specificity and after them, so the theme's
+     inverse-hover never shows inside forced-color-adjust: none */
+  .pn-CheckboxIndicator:is([data-checked], [data-indeterminate]):not([data-disabled]) {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    color: HighlightText;
+  }
+
+  /* a rule of its own, so the stories' stateRules reads it only for a box its :hover or :active
+     reaches */
+  [role]:hover
+    > .pn-CheckboxIndicator:is([data-checked], [data-indeterminate]):not(
+      [data-disabled],
+      [data-readonly]
+    ),
+  [role]:active
+    > .pn-CheckboxIndicator:is([data-checked], [data-indeterminate]):not(
+      [data-disabled],
+      [data-readonly]
+    ) {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    color: HighlightText;
+  }
+
+  .pn-CheckboxIndicator[data-disabled] {
+    border-color: GrayText;
+  }
+
+  .pn-CheckboxIndicator:is([data-checked], [data-indeterminate])[data-disabled] {
+    forced-color-adjust: none;
+    border-color: transparent;
+    background-color: GrayText;
+    color: Canvas;
+  }
+}

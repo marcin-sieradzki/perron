@@ -67,7 +67,7 @@ From lowest to highest: map controls, the overview sheet, the highlight chip, th
 
 A measure lives here when two places must agree on it, such as a component and the list that virtualises its rows. A measure only one component's CSS reads stays in that CSS.
 
-<!-- tokens: size.control size.button size.button-sm size.input size.segment size.badge size.badge-lg size.meter-track size.vehicle-row size.target-min -->
+<!-- tokens: size.control size.button size.button-sm size.input size.segment size.badge size.badge-lg size.meter-track size.checkbox size.vehicle-row size.target-min -->
 
 | Token              | Value  | Use                                                                   |
 | ------------------ | ------ | --------------------------------------------------------------------- |
@@ -79,6 +79,7 @@ A measure lives here when two places must agree on it, such as a component and t
 | `size.badge`       | `22px` | Line badge height                                                     |
 | `size.badge-lg`    | `34px` | Large line badge height                                               |
 | `size.meter-track` | `6px`  | Height of a meter's track                                             |
+| `size.checkbox`    | `16px` | The box of a checkbox, and of a menu's checkbox item                  |
 | `size.vehicle-row` | `52px` | Vehicle table row height (virtualised list relies on it)              |
 | `size.target-min`  | `24px` | Smallest touch or pointer target, from WCAG 2.2 target size (minimum) |
 

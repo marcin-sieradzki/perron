@@ -126,6 +126,49 @@
       }
     }
   },
+  "Checkbox": {
+    "extends": [
+      "Omit< BaseCheckbox.Root.Props, 'onCheckedChange' | 'onChange' | 'parent' | 'children' | 'className' | 'style' | 'ref' >"
+    ],
+    "props": {
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "onChange": {
+        "optional": true,
+        "type": [
+          "(event: Event, value: boolean, details: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) => void"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLElement>"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ indicator?: Omit<CheckboxIndicatorProps, \"keepMounted\" | \"render\"> | undefined; }"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      }
+    }
+  },
   "Count": {
     "extends": [
       "Omit< useRender.ComponentProps<'span'>, 'children' | 'color' | 'ref' >"
@@ -2420,6 +2463,61 @@
         "optional": true,
         "type": [
           "CSSProperties"
+        ]
+      }
+    }
+  },
+  "Tooltip": {
+    "extends": [
+      "Omit<BaseTooltip.Popup.Props, 'children' | 'ref'>"
+    ],
+    "props": {
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "defaultOpen": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "onClose": {
+        "optional": true,
+        "type": [
+          "(event: Event, reason: TooltipRootChangeEventReason, details: TooltipRootChangeEventDetails) => void"
+        ]
+      },
+      "onOpen": {
+        "optional": true,
+        "type": [
+          "(event: Event, details: TooltipRootChangeEventDetails) => void"
+        ]
+      },
+      "open": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ trigger?: Props<unknown> | undefined; portal?: TooltipPortalProps | undefined; positioner?: TooltipPositionerProps | undefined; }"
+        ]
+      },
+      "trigger": {
+        "optional": false,
+        "type": [
+          "ReactElement<unknown, JSXElementConstructor<any> | string>"
         ]
       }
     }
