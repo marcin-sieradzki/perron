@@ -350,7 +350,7 @@
     "name": "DetailPanel",
     "layer": "pattern",
     "category": "Detail",
-    "status": "building",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Patterns/DetailPanel",
     "dependsOn": ["Sheet", "DetailHeader"]

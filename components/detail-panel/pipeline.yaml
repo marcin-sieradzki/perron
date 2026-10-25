@@ -23,6 +23,10 @@ stages:
     status: done
     started: 2026-10-25T01:30:05.473Z
     ended: 2026-10-25T01:34:01.997Z
+  docs:
+    status: done
+    started: 2026-10-25T01:34:08.346Z
+    ended: 2026-10-25T01:37:04.350Z
 notes:
   - stage: review
     at: 2026-10-25T01:20:49.454Z
@@ -51,3 +55,15 @@ notes:
   - stage: build
     at: 2026-10-25T01:24:35.172Z
     direction: 'Inherited from Sheet: the popup takes focus on open, so the global :focus-visible ring outlines the whole panel in every open story.'
+  - stage: docs
+    at: 2026-10-25T01:37:04.351Z
+    direction: Props table shows callbacks and snap point props as SheetProps['onOpen'], SheetProps['snapPoints'] etc. where the spec gives (event, details) => void; a reader has to open Sheet's page for the signature.
+  - stage: docs
+    at: 2026-10-25T01:37:04.351Z
+    direction: Slots table shows SheetSlots['trigger'] etc.; SheetSlots is a local unexported alias in DetailPanel.tsx, so the page names a type a caller cannot import. Spell it NonNullable<SheetProps['slotProps']>['trigger'], as the spec does.
+  - stage: docs
+    at: 2026-10-25T01:37:04.351Z
+    direction: npm run api reorders union members in callback types it does not own (Tooltip onOpenChange, Sheet onClose/onOpen/onSnapPointChange now start MouseEvent | Event); sorting union members in scripts/build-api.ts would keep api.json stable.
+  - stage: docs
+    at: 2026-10-25T01:37:04.351Z
+    direction: 'Docs page: the popup that took focus last on load (e.g. LongTitle) shows the focus ring, so the examples look uneven; cosmetic.'
