@@ -99,6 +99,25 @@ function pressOutside() {
   fireEvent.click(document.body)
 }
 
+/**
+ * Closes the tooltip a story opens at first (`defaultOpen`) with a press outside, and clears the
+ * callbacks' calls, so the rest of the `play` starts from rest. Not with Esc: Base UI keeps focus
+ * from opening a tooltip again on the trigger Esc closed it on, until the pointer leaves it or it
+ * loses focus.
+ */
+async function closeAtFirst(args: TooltipProps) {
+  await popup()
+  pressOutside()
+  await gone()
+  await expect(args.onClose).toHaveBeenLastCalledWith(
+    expect.anything(),
+    'outside-press',
+    expect.anything(),
+  )
+  mocked(args.onOpen!).mockClear()
+  mocked(args.onClose!).mockClear()
+}
+
 /** The subject story: open above its trigger, an IconButton labelled "Zoom in". */
 export const Default: Story = {
   args: { defaultOpen: true },
@@ -145,13 +164,14 @@ export const Default: Story = {
   },
 }
 
-/** Closed at first, beside its trigger: a resting pointer opens it. */
+/** Open at first, beside its trigger, which a resting pointer opens it from again. */
 export const Hover: Story = {
+  args: { defaultOpen: true },
   play: async ({ canvasElement, args, step }) => {
     const user = userEvent.setup()
     const trigger = button(canvasElement)
+    await step('a press outside closes the tooltip open at first', () => closeAtFirst(args))
     await step('hovering the trigger opens it, with trigger-hover', async () => {
-      await expect(document.querySelector('.pn-Tooltip')).toBeNull()
       await pointTo(user, trigger)
       await popup(ZOOM_IN, HOVER)
       await expect(args.onOpen).toHaveBeenLastCalledWith(
@@ -181,8 +201,9 @@ export const Hover: Story = {
   },
 }
 
-/** Closed at first, after a button "Before" that holds focus at the start. */
+/** Open at first, after a button "Before" that holds focus at the start. */
 export const Keyboard: Story = {
+  args: { defaultOpen: true },
   render: (args) => (
     <>
       <Button variant="outline">{BEFORE}</Button>
@@ -193,6 +214,7 @@ export const Keyboard: Story = {
     const before = button(canvasElement, BEFORE)
     const trigger = button(canvasElement)
     before.focus()
+    await step('a press outside closes the tooltip open at first', () => closeAtFirst(args))
     await step('Tab focuses the trigger and opens it, with trigger-focus', async () => {
       await userEvent.tab()
       await expect(trigger).toHaveFocus()
@@ -305,12 +327,12 @@ export const Content: Story = {
   },
 }
 
-/** Three triggers in a row, each in its own Tooltip, inside one PerronProvider. */
+/** Three triggers in a row, each in its own Tooltip, inside one PerronProvider, the first open. */
 export const Group: Story = {
   render: (args) => (
     <PerronProvider locale="en">
       <div data-testid="row" style={{ display: 'flex', gap: 'var(--perron-space-200)' }}>
-        <Tooltip {...args} />
+        <Tooltip {...args} defaultOpen />
         <Tooltip {...args} trigger={<IconButton label={ZOOM_OUT}>{icon(minus)}</IconButton>}>
           {ZOOM_OUT}
         </Tooltip>
@@ -320,12 +342,15 @@ export const Group: Story = {
       </div>
     </PerronProvider>
   ),
-  play: async ({ canvasElement, step }) => {
+  play: async ({ canvasElement, args, step }) => {
     const user = userEvent.setup()
     const first = button(canvasElement)
     const second = button(canvasElement, ZOOM_OUT)
     const popups = () => [...document.querySelectorAll<HTMLElement>('.pn-Tooltip')]
-    await step('hovering the first opens its tooltip', async () => {
+    await step('a press outside closes the first’s tooltip, open at first', () =>
+      closeAtFirst(args),
+    )
+    await step('hovering the first opens its tooltip again', async () => {
       await pointTo(user, first)
       await waitFor(() => expect(popups().map(heard)).toEqual([ZOOM_IN]), HOVER)
     })
@@ -370,18 +395,20 @@ export const NearTopEdge: Story = {
   },
 }
 
-/** A disabled IconButton that keeps its focus, closed at first: the keys still open its tooltip. */
+/** A disabled IconButton that keeps its focus, its tooltip open at first: the keys open it again. */
 export const DisabledTrigger: Story = {
   args: {
+    defaultOpen: true,
     trigger: (
       <IconButton label={ZOOM_IN} disabled focusableWhenDisabled>
         {icon(plus)}
       </IconButton>
     ),
   },
-  play: async ({ canvasElement, step }) => {
+  play: async ({ canvasElement, args, step }) => {
     const trigger = button(canvasElement)
     const look = getComputedStyle(trigger).backgroundColor
+    await step('a press outside closes the tooltip open at first', () => closeAtFirst(args))
     await step('Tab focuses the disabled trigger, and its tooltip opens', async () => {
       await userEvent.tab()
       await expect(trigger).toHaveFocus()
