@@ -1,0 +1,92 @@
+# Written by npm run factory; never by hand.
+component: Checkbox
+layer: component
+deferred:
+  at: 2026-10-25T04:38:49.708Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-25T04:49:41.402Z
+    ended: 2026-10-25T04:51:23.451Z
+  build:
+    runs: 3
+    respecs: 1
+    status: done
+    started: 2026-10-25T05:13:47.202Z
+    spec: 64d2564d009c8ca9a87bb6f2d572515dff8d44f1c3aed6c80cc3028c102db04b
+    ended: 2026-10-25T05:17:09.657Z
+  review:
+    rounds: 2
+    sentBack: 1
+    findings:
+      p1: 0
+      p2: 0
+      p3: 8
+    status: done
+    started: 2026-10-25T05:17:13.549Z
+    ended: 2026-10-25T05:22:16.001Z
+  docs:
+    status: done
+    started: 2026-10-25T05:23:42.826Z
+    ended: 2026-10-25T05:26:22.153Z
+notes:
+  - stage: brief
+    at: 2026-10-25T04:49:06.599Z
+    direction: No ROADMAP wave line names Checkbox or the other 20 components registered in eb95ff6, so the brief's only sources for scope were the contract's two mentions. A Phase 6 wave line for the form components would anchor future briefs.
+  - stage: brief
+    at: 2026-10-25T04:49:06.599Z
+    direction: The contract's Shared parts row for CheckboxIndicator names only the tick icon, though it says the part draws a dash too. Question 4 asks to add the dash icon to that row, so the shared-parts gate guards both icons.
+  - stage: brief
+    at: 2026-10-25T04:49:06.599Z
+    questions: |-
+      1. (Anatomy) Is the label the caller's `children`, rendered inside Base UI's `<span role="checkbox">` after the box, so the whole row is one control? Recommended: yes; a checkbox with no children takes its name from aria-label, aria-labelledby or a <label htmlFor>; links go beside the checkbox.
+      2. (Anatomy) Is the box drawn by the new CheckboxIndicator shared part in packages/perron/src/parts/, rendered through Checkbox.Indicator's render callback with keepMounted, passing a mark of 'tick', 'dash' or none? Recommended: yes.
+      3. (Tokens) Token for the box's side? Recommended: size.checkbox, a new 16px base token, "The box of a checkbox, and of a menu's checkbox item".
+      4. (Tokens) Are the tick and dash two new icons, tick and dash, on the 14 px grid with a 1.8 px round stroke at icon.size.325, under a new "Controls" category, with the contract's CheckboxIndicator row naming the dash icon too? Recommended: yes.
+      5. (Tokens) Unticked box takes the Fields family's treatment (surface.raised, border.width.025 in border.control, surface.hover overlay, radius.xs) and turns ink (surface.inverse, text.inverse mark, transparent edge, inverse-hover) when ticked or indeterminate? Recommended: yes.
+      6. (Tokens) Disabled drawn as FilterChip's disabled states (transparent + border.subtle unticked; surface.inset + text.tertiary mark ticked; label text.tertiary; no hover)? Recommended: yes.
+      7. (Tokens) Invalid inside Field.Root gives a status.danger edge, ticked or not? Recommended: yes.
+      8. (Tokens) Read-only keeps its rest look, no hover or press, default cursor? Recommended: yes.
+      9. (Tokens) Label in typography.body, text.primary, space.200 after the box, overflow-wrap: anywhere, root an inline flex row with max-inline-size 100%? Recommended: yes.
+      10. (Tokens) perron.css focus ring round box and label on a radius.xs root, root at least size.target-min, box centred on the first line? Recommended: yes.
+      11. (Props) No variant, color or size, and Base UI's parent left out for CheckboxGroup? Recommended: yes.
+      12. (Stories) CheckedDisabled and ReadOnly stories and a hover check in Checked's play, with no Penpot variant of their own? Recommended: yes.
+  - stage: brief
+    at: 2026-10-25T04:51:23.451Z
+    direction: "The answered label rule uses overflow-wrap: anywhere. The contract's Long words rule gives break-word to a box that sizes to its content beside others in a flex or inline row. Checkbox's root is a content-sized inline-flex row, so placed in a flex row it could be squeezed to one letter per line. The build and review should test it inside a flex row, or the contract should say which case a checkbox label is."
+  - stage: brief
+    at: 2026-10-25T04:51:23.451Z
+    direction: Read-only has no design state in the contract's Design states table, though Base UI's Checkbox, Radio, Switch and Slider all set data-readonly. A Read-only row there (rest look, default cursor, no hover or press) would give every form control the same treatment.
+  - stage: brief
+    at: 2026-10-25T04:51:23.451Z
+    direction: CR-5 now has the build add 'the dash icon' to the contract's Shared parts row for CheckboxIndicator, so the shared-parts gate guards both icons. That edit to the contract lands with the build, not with this brief.
+  - stage: build
+    at: 2026-10-25T05:03:26.918Z
+    direction: "Long words in a flex row: with overflow-wrap: anywhere (answer 9), two checkboxes side by side in a 320 px display:flex row break 'driftsforstyrrelsesmeddelelser' mid-word, where break-word would keep the word whole and wrap the row. LongLabel tests only a block container. The contract or CheckboxGroup's spec should say which Long words case a checkbox label is."
+  - stage: build
+    at: 2026-10-25T05:03:26.918Z
+    direction: "stateRules and stateFill in packages/perron/src/testing/stories.ts take ':hover' out of a rule's whole selectorText and call element.matches on what is left: a bare ':hover > .x' becomes '> .x', which throws; a selector list is matched as one. The part reads hover as [role]:hover > .pn-CheckboxIndicator. The helper could match per selector and leave :scope in place of the pseudo."
+  - stage: build
+    at: 2026-10-25T05:03:26.918Z
+    direction: "A shared part's own class can't be asserted in a story without an allowance: the shared-parts gate exempts only *.test.tsx files, so Default's play needed a perron-allow(shared-parts) comment. The gate could exempt reads inside expect() in stories, or the contract could name the allowance."
+  - stage: build
+    at: 2026-10-25T05:03:26.918Z
+    direction: usePart renders a plain element through useRender, so it can't merge slotProps into a Base UI part such as Checkbox.Indicator. The contract's helper row could say so, so the next brief writes 'mergeProps and withClass, as Dialog' for a Base UI part.
+  - stage: build
+    at: 2026-10-25T05:03:26.918Z
+    direction: The focus ring sits about 2 px from the label's last glyph, since the root has no inline padding and the ring is drawn by focus.offset alone. Within the rules, but tight next to Button's ring.
+  - stage: build
+    at: 2026-10-25T05:03:26.918Z
+    direction: "Two names for an on/off state now sit in the Inputs category: FilterChip's selected/defaultSelected and Checkbox's checked/defaultChecked (Base UI's and MUI's). Switch and the menu checkbox item will copy one, so the contract could name which goes with which kind of control."
+  - stage: build
+    at: 2026-10-25T05:03:26.918Z
+    direction: shared-parts.test.ts pins the contract's Shared parts table, so a component that adds an icon to its own part's row (CheckboxIndicator's dash) can't land without editing shared tooling; the dash stays out of the row and out of the gate until the maintainer adds it.
+  - stage: build
+    at: 2026-10-25T05:03:54.587Z
+    unblocked: "build failed: npm run check, at npm run test (unit): scripts/checks/shared-parts.test.ts:26 pins the contract's CheckboxIndicator row's icons as ['tick']; the build added 'the dash icon' to that row per CR-5, so the shared-tooling test fails. The spec is revised: CR-5 no longer edits the contract's Shared parts row, so revert that row to name the tick icon alone (keep the dash icon in the part's folder and the updated note below the table) and re-run npm run check.; rerun once because the spec changed since that run ended"
+  - stage: docs
+    at: 2026-10-25T05:26:22.155Z
+    direction: The page's intro draws the spec's second paragraph, which holds notes about this run ("No ROADMAP wave line names Checkbox", "The extracted prototype component is not in any branch this run can reach"); they now show on the public docs page and belong in pipeline.yaml (review P3-6).
+  - stage: docs
+    at: 2026-10-25T05:26:22.155Z
+    direction: The props table types onChange's third argument as the local alias ChangeDetails, not Checkbox.Root.ChangeEventDetails as the spec does; writing the full Base UI name in the signature would make the docgen show it.

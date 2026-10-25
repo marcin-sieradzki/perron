@@ -1194,6 +1194,14 @@
       },
       "$description": "Height of a meter's track"
     },
+    "checkbox": {
+      "$type": "dimension",
+      "$value": {
+        "value": 16,
+        "unit": "px"
+      },
+      "$description": "The box of a checkbox, and of a menu's checkbox item"
+    },
     "sheet-width": {
       "$type": "dimension",
       "$value": {

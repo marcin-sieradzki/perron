@@ -126,6 +126,49 @@
       }
     }
   },
+  "Checkbox": {
+    "extends": [
+      "Omit< BaseCheckbox.Root.Props, 'onCheckedChange' | 'onChange' | 'parent' | 'children' | 'className' | 'style' | 'ref' >"
+    ],
+    "props": {
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "onChange": {
+        "optional": true,
+        "type": [
+          "(event: Event, value: boolean, details: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) => void"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLElement>"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ indicator?: Omit<CheckboxIndicatorProps, \"keepMounted\" | \"render\"> | undefined; }"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      }
+    }
+  },
   "Count": {
     "extends": [
       "Omit< useRender.ComponentProps<'span'>, 'children' | 'color' | 'ref' >"
