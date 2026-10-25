@@ -28,6 +28,10 @@ stages:
     status: done
     started: 2026-10-25T14:19:16.490Z
     ended: 2026-10-25T14:21:33.895Z
+  docs:
+    status: done
+    started: 2026-10-25T14:21:42.250Z
+    ended: 2026-10-25T14:24:25.723Z
 notes:
   - stage: brief
     at: 2026-10-25T13:25:09.831Z
@@ -94,3 +98,6 @@ notes:
   - stage: review
     at: 2026-10-25T14:19:12.653Z
     unblocked: '3 review rounds found a P1 or a P2; the last: review round 3 found 1 P2 (components/vehicle-table/review.md)'
+  - stage: docs
+    at: 2026-10-25T14:24:25.723Z
+    direction: On the docs page, LongDestination's 'Lufthavnsterminalen' breaks as 'Lufthavnsterminal' / 'en', leaving a two-letter orphan on its own line. The spec allows this break (CR-8), but a design run could weigh how a mid-word break should look against the hyphenation and least-width options the notes already list.
