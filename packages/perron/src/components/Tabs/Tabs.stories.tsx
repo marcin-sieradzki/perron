@@ -5,36 +5,8 @@ import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import { Button } from '../Button/Button.tsx'
+import { colour, onHover, rendered } from '../../testing/stories.ts'
 import { Tab, Tabs, TabsList, TabsPanel, type TabsProps } from './Tabs.tsx'
-
-/** The value a token renders as here, read from a probe that sets it on `property`. */
-function rendered(token: string, property = 'color') {
-  const probe = document.createElement('div')
-  probe.style.setProperty(property, `var(--perron-${token})`)
-  document.body.append(probe)
-  const value = getComputedStyle(probe).getPropertyValue(property)
-  probe.remove()
-  return value
-}
-
-/**
- * What the `(hover: hover)` rules set `property` to when `element` is hovered, as written. A
- * synthetic pointer doesn't reach `:hover`, so this reads the rule the real pointer would apply.
- */
-function onHover(element: Element, property: string) {
-  let value = ''
-  for (const sheet of Array.from(document.styleSheets))
-    for (const rule of Array.from(sheet.cssRules))
-      if (rule instanceof CSSMediaRule && rule.conditionText.includes('hover: hover'))
-        for (const inner of Array.from(rule.cssRules))
-          if (
-            inner instanceof CSSStyleRule &&
-            inner.selectorText.includes(':hover') &&
-            element.matches(inner.selectorText.replaceAll(':hover', ''))
-          )
-            value = inner.style.getPropertyValue(property) || value
-  return value
-}
 
 /** The underline of the list in `canvasElement`, once Base UI has measured the selected tab. */
 async function measuredIndicator(canvasElement: HTMLElement) {
@@ -159,7 +131,7 @@ export const TabHover: Story = {
   args: { defaultValue: 'departures', children: twoTabs() },
   play: async ({ canvasElement }) => {
     const lines = within(canvasElement).getByRole('tab', { name: 'Lines' })
-    await expect(getComputedStyle(lines).color).toBe(rendered('color-text-secondary'))
+    await expect(getComputedStyle(lines).color).toBe(colour('--perron-color-text-secondary'))
     await expect(onHover(lines, 'color')).toBe('var(--perron-color-text-primary)')
   },
 }
@@ -175,7 +147,7 @@ export const TabFocus: Story = {
     await expect(lines.matches(':focus-visible')).toBe(true)
     const ring = getComputedStyle(lines)
     await expect(ring.outlineStyle).toBe('solid')
-    await expect(ring.outlineColor).toBe(rendered('color-border-focus'))
+    await expect(ring.outlineColor).toBe(colour('--perron-color-border-focus'))
     await expect(ring.outlineWidth).toBe(rendered('focus-width', 'outline-width'))
     await userEvent.tab({ shift: true })
     await expect(canvasElement).not.toContainElement(document.activeElement as HTMLElement)
@@ -189,7 +161,7 @@ export const TabSelected: Story = {
     const lines = within(canvasElement).getByRole('tab', { name: 'Lines' })
     await expect(lines).toHaveAttribute('aria-selected', 'true')
     await expect(lines).toHaveAttribute('data-active')
-    await expect(getComputedStyle(lines).color).toBe(rendered('color-text-primary'))
+    await expect(getComputedStyle(lines).color).toBe(colour('--perron-color-text-primary'))
     await expectUnder(await measuredIndicator(canvasElement), lines)
   },
 }
