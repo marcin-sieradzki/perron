@@ -1,0 +1,93 @@
+import { Meta, Stories, Title, Unstyled } from '@storybook/addon-docs/blocks'
+import { PropsTable } from '../../../../../storybook/blocks/PropsTable.tsx'
+import { SpecProse } from '../../../../../storybook/blocks/SpecProse.tsx'
+import * as MenuStories from './Menu.stories.tsx'
+import {
+  MenuCheckboxItem,
+  MenuGroup,
+  MenuItem,
+  MenuLinkItem,
+  MenuRadioGroup,
+  MenuRadioItem,
+  MenuSeparator,
+  MenuSubmenu,
+} from './Menu.tsx'
+
+<Meta of={MenuStories} />
+
+<Title />
+
+<SpecProse path="docs/components/menu.md" intro />
+
+<Stories title="Examples" />
+
+<PropsTable of={MenuStories} />
+
+<Unstyled>
+  <div className="pd-page">
+    <h2>MenuItem</h2>
+  </div>
+</Unstyled>
+
+<PropsTable of={MenuItem} />
+
+<Unstyled>
+  <div className="pd-page">
+    <h2>MenuLinkItem</h2>
+  </div>
+</Unstyled>
+
+<PropsTable of={MenuLinkItem} />
+
+<Unstyled>
+  <div className="pd-page">
+    <h2>MenuCheckboxItem</h2>
+  </div>
+</Unstyled>
+
+<PropsTable of={MenuCheckboxItem} />
+
+<Unstyled>
+  <div className="pd-page">
+    <h2>MenuRadioGroup</h2>
+  </div>
+</Unstyled>
+
+<PropsTable of={MenuRadioGroup} />
+
+<Unstyled>
+  <div className="pd-page">
+    <h2>MenuRadioItem</h2>
+  </div>
+</Unstyled>
+
+<PropsTable of={MenuRadioItem} />
+
+<Unstyled>
+  <div className="pd-page">
+    <h2>MenuGroup</h2>
+  </div>
+</Unstyled>
+
+<PropsTable of={MenuGroup} />
+
+<Unstyled>
+  <div className="pd-page">
+    <h2>MenuSeparator</h2>
+  </div>
+</Unstyled>
+
+<PropsTable of={MenuSeparator} />
+
+<Unstyled>
+  <div className="pd-page">
+    <h2>MenuSubmenu</h2>
+  </div>
+</Unstyled>
+
+<PropsTable of={MenuSubmenu} />
+
+<SpecProse
+  path="docs/components/menu.md"
+  sections={['Keyboard and ARIA', 'Owned strings', "Do and don't"]}
+/>

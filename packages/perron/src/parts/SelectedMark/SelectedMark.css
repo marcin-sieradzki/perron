@@ -1,0 +1,10 @@
+/* The SelectedMark shared part: the tick beside a chosen option, at the size it is drawn for. It
+   draws in currentColor and sets no colour of its own, so it takes the row's ink, color.text.primary
+   at rest and the system's HighlightText in forced colours; the row sets its place. */
+
+.pn-SelectedMark {
+  --perron-icon-size: var(--perron-icon-size-325);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
