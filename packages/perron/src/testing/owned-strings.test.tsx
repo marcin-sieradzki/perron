@@ -119,7 +119,7 @@ describe('expectOwnedStrings', () => {
       'Every 3 and 4 more',
       'Between Hellerup to Klampenborg',
       'Hellerup Every 3 min',
-      'Every 3 min min',
+      'Every 3 min ago',
       'Every Every 3 min',
     ])
       expect(() => expectOwnedStrings(filled(run), 'en', stops)).toThrow(`"${run}"`)
