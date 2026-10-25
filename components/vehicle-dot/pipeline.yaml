@@ -8,6 +8,13 @@ stages:
     status: done
     started: 2026-10-25T11:58:22.025Z
     ended: 2026-10-25T11:59:34.967Z
+  build:
+    status: done
+    started: 2026-10-25T11:59:39.278Z
+    runs: 1
+    begun: 5a1582d8792e3a89534ce3be0381c39f6fa395ea126990a06866413d50e066d6
+    spec: 5a1582d8792e3a89534ce3be0381c39f6fa395ea126990a06866413d50e066d6
+    ended: 2026-10-25T12:06:51.367Z
 notes:
   - stage: brief
     at: 2026-10-25T11:57:53.820Z
@@ -27,3 +34,9 @@ notes:
   - stage: brief
     at: 2026-10-25T11:57:53.820Z
     questions: "1. (Anatomy) Is the root a span role=img rendered through useRender, holding an svg with one circle, render inherited as on LineBadge, StationIcon and Delay, and a caller who writes the state beside the dot passes aria-hidden? Recommended: yes. 2. (Props) Is line required, no default, named and typed as LineBadge's and StationIcon's line? Recommended: yes. 3. (Props) Does size map small, medium, large to icon.size.325, 400, 450 via --perron-icon-size, default medium? Recommended: yes, as StationIcon. 4. (Tokens) Does VehicleDot leave out the color.data-state.outline hairline (map-only)? Recommended: yes. 5. (Tokens) Does the timetable-only ring take vehicle-dot.timetable.dash as given at every size, though medium does not close evenly? Recommended: yes; an even fit is a separate token change. 6. (Component rules) Is no signal's shape a dot cut by a top-left to bottom-right diagonal slash, vehicle-dot.no-signal.cut-width (1.6px) wide, drawn as the root's mask? Recommended: yes. 7. (Component rules) Does the cut show in every theme and on the map canvas, not only in forced colours? Recommended: yes. 8. (Component rules) In forced colours does no signal fill with CanvasText like every other state, not GrayText? Recommended: yes."
+  - stage: build
+    at: 2026-10-25T12:06:51.367Z
+    direction: "The ForcedColours story's first render, which the docs page and the visual stage show, is in normal colours, because its forced-colours look only exists while its play test runs. Playwright's page.emulateMedia({ forcedColors: 'active' }) draws it for real; the visual stage could capture a forced-colours render for any story named ForcedColours."
+  - stage: build
+    at: 2026-10-25T12:06:51.367Z
+    direction: In the Lines story's table, each cell's dot is a named img, so a screen reader hears the state word in the column header and again from the dot. VehicleDotLegend is the place to decide whether its dots pass aria-hidden beside their words.

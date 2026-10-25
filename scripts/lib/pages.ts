@@ -79,6 +79,7 @@ export const PAGES = [
   'docs/components/normal-service.md',
   'docs/components/severity-label.md',
   'docs/components/station-icon.md',
+  'docs/components/vehicle-dot.md',
   'docs/patterns/data-state-panel.md',
   'docs/patterns/day-profile-chart.md',
   'docs/patterns/detail-header.md',

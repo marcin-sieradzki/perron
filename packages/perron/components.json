@@ -93,7 +93,7 @@
     "name": "VehicleDot",
     "layer": "component",
     "category": "Transit",
-    "status": "designing",
+    "status": "building",
     "baseUiParts": [],
     "penpotPath": "Components/VehicleDot",
     "dependsOn": []
