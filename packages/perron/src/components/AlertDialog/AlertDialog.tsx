@@ -1,6 +1,6 @@
 // AlertDialog: a modal question over the map and a scrim, on Base UI's AlertDialog, that only one of
-// its actions or Esc answers. It moves focus to the first action, Cancel, holds it until it closes,
-// then gives it back to the button that opened it. One component that takes its words and controls
+// its actions or Esc answers. It moves focus to the first action, Cancel, wraps Tab inside the popup
+// until it closes, then gives focus back to the button that opened it. One component that takes its words and controls
 // as props and renders every Base UI part itself, the popup as its root. The spec is
 // docs/components/alert-dialog.md.
 import { AlertDialog as BaseAlertDialog } from '@base-ui/react/alert-dialog'
@@ -40,11 +40,14 @@ export interface AlertDialogProps extends Omit<
   trigger?: ReactElement
   /**
    * Whether the alert dialog is open. Set it to control the alert dialog, with `onClose` to hear when
-   * it asks to close; leave it out for an alert dialog its trigger opens.
+   * it asks to close. An alert dialog whose actions must close it is controlled with `open`: a button
+   * in `actions` closes it only by setting `open` to `false`.
    */
   open?: boolean
   /**
-   * Whether the alert dialog is open at first, when `open` is left out.
+   * Whether the alert dialog is open at first, when `open` is left out. Uncontrolled, the alert dialog
+   * closes only by Esc, since its actions close it through `open`: an alert dialog whose actions must
+   * close it is controlled with `open` instead.
    * @default false
    */
   defaultOpen?: boolean
@@ -54,7 +57,8 @@ export interface AlertDialogProps extends Omit<
    */
   onOpen?: (event: Event, details: BaseAlertDialog.Root.ChangeEventDetails) => void
   /**
-   * Called when the alert dialog asks to close, by Esc, with `reason` `'escape-key'`;
+   * Called when the alert dialog asks to close, by Esc, with `reason` `'escape-key'`, or by Enter or
+   * Space on the trigger, reached by Shift+Tab after a press on the backdrop, with `'trigger-press'`;
    * `details.cancel()` keeps it open. A button in `actions` closes it through `open` and calls no
    * `onClose`.
    */

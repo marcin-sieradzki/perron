@@ -2,7 +2,7 @@
    of the viewport, over the scrim, as Dialog's. It opens and closes at once, with no transition
    (CR-10), and never redefines a token: it portals to <body> (CR-8). */
 
-/* A press on it does nothing: Base UI's alert dialog has no outside-press dismissal. */
+/* A press on it closes nothing: Base UI's alert dialog has no outside-press dismissal. */
 .pn-AlertDialog-backdrop {
   position: fixed;
   inset: 0;
