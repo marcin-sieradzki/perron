@@ -83,25 +83,25 @@ All variants:
 
 `solid`:
 
-| Part   | State   | Property           | Token                         |
-| ------ | ------- | ------------------ | ----------------------------- |
-| `root` | rest    | `background-color` | `color.surface.inverse`       |
-| `root` | rest    | `border-color`     | `transparent`                 |
-| `root` | rest    | `color`            | `color.text.inverse`          |
-| `root` | hover   | `background-color` | `color.surface.inverse-hover` |
-| `root` | pressed | `background-color` | `color.surface.inverse-hover` |
+| Part   | State   | Property           | Token                           |
+| ------ | ------- | ------------------ | ------------------------------- |
+| `root` | rest    | `background-color` | `color.surface.inverse`         |
+| `root` | rest    | `border-color`     | `transparent`                   |
+| `root` | rest    | `color`            | `color.text.inverse`            |
+| `root` | hover   | `background-color` | `color.surface.inverse-hover`   |
+| `root` | pressed | `background-color` | `color.surface.inverse-pressed` |
 
 `outline`:
 
-| Part   | State   | Property           | Token                  |
-| ------ | ------- | ------------------ | ---------------------- |
-| `root` | rest    | `background-color` | `transparent`          |
-| `root` | rest    | `border-color`     | `color.border.control` |
-| `root` | rest    | `color`            | `color.text.primary`   |
-| `root` | hover   | `background-color` | `color.surface.hover`  |
-| `root` | pressed | `background-color` | `color.surface.hover`  |
+| Part   | State   | Property           | Token                    |
+| ------ | ------- | ------------------ | ------------------------ |
+| `root` | rest    | `background-color` | `transparent`            |
+| `root` | rest    | `border-color`     | `color.border.control`   |
+| `root` | rest    | `color`            | `color.text.primary`     |
+| `root` | hover   | `background-color` | `color.surface.hover`    |
+| `root` | pressed | `background-color` | `color.surface.selected` |
 
-Pressed takes the hover row's tokens, in a rule outside `@media (hover: hover)` so a touch press shows, as Button's CR-13 does: no token is made for a pressed fill.
+Pressed is a step past hover, Button's pressed tokens, in a rule outside `@media (hover: hover)` so a touch press shows, as Button's CR-13 does. The cursor is the `pointer` every `<a href>` has, so the CSS sets none.
 
 ## Keyboard and ARIA
 
@@ -163,13 +163,13 @@ The deferred design's variant properties, in this order: `variant` (`solid`, `ou
 | Story                  | Shows                                                                                               | `play` test                                                                                                                                         |
 | ---------------------- | --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `SolidMediumDefault`   | solid, medium, at rest                                                                              | The root is a `link` named "Back to the map" with its `href`; Tab focuses it, Enter fires `onClick` once, Space fires none, Shift+Tab returns focus |
-| `SolidMediumHover`     | solid, medium, hover                                                                                | Hovering sets the `color.surface.inverse-hover` fill                                                                                                |
+| `SolidMediumHover`     | solid, medium, hover                                                                                | Hovering sets the `color.surface.inverse-hover` fill, and pressing the `color.surface.inverse-pressed` fill past it                                 |
 | `SolidMediumFocus`     | solid, medium, focus                                                                                | Tab gives the root `:focus-visible` and the ring                                                                                                    |
 | `SolidSmallDefault`    | solid, small, at rest                                                                               | none                                                                                                                                                |
 | `SolidSmallHover`      | solid, small, hover                                                                                 | none                                                                                                                                                |
 | `SolidSmallFocus`      | solid, small, focus                                                                                 | none                                                                                                                                                |
 | `OutlineMediumDefault` | outline, medium, at rest                                                                            | none                                                                                                                                                |
-| `OutlineMediumHover`   | outline, medium, hover                                                                              | Hovering lays `color.surface.hover` over the transparent fill                                                                                       |
+| `OutlineMediumHover`   | outline, medium, hover                                                                              | Hovering lays `color.surface.hover` over the transparent fill, and pressing the denser `color.surface.selected`                                     |
 | `OutlineMediumFocus`   | outline, medium, focus                                                                              | none                                                                                                                                                |
 | `OutlineSmallDefault`  | outline, small, at rest                                                                             | none                                                                                                                                                |
 | `OutlineSmallHover`    | outline, small, hover                                                                               | none                                                                                                                                                |

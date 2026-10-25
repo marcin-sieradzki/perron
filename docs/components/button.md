@@ -57,79 +57,81 @@ Button offers `fullWidth`, which the read-back doesn't show: a bottom sheet's ma
 
 ## Tokens
 
-One row per part, state and property. States are the contract's design states; Penpot's `State` values map through the code map: `default` is rest, `hover` is `:hover` inside `@media (hover: hover)`, `focus` is `:focus-visible`, `disabled` is `[data-disabled]`; pressed, which the read-back doesn't draw, is `:active`. Every `color` row sets the root's `color`, which the label and both icons take, since icons draw in `currentColor`.
+One row per part, state and property. States are the contract's design states; Penpot's `State` values map through the code map: `default` is rest, `hover` is `:hover` inside `@media (hover: hover)`, `focus` is `:focus-visible`, `disabled` is `[data-disabled]`; `pressed`, which the read-back doesn't draw, is `:active`. Every `color` row sets the root's `color`, which the label and both icons take, since icons draw in `currentColor`.
 
 All variants and colours:
 
-| Part                   | State | Property                    | Token                                                                                                                                            |
-| ---------------------- | ----- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `root`, medium         | rest  | `height`                    | `size.button`                                                                                                                                    |
-| `root`, medium         | rest  | `padding-inline`            | `space.400`                                                                                                                                      |
-| `root`, medium         | rest  | `gap`                       | `space.200`                                                                                                                                      |
-| `root`, small          | rest  | `height`                    | `size.button-sm`                                                                                                                                 |
-| `root`, small          | rest  | `padding-inline`            | `space.300`                                                                                                                                      |
-| `root`, small          | rest  | `gap`                       | `space.150`                                                                                                                                      |
-| `root`                 | rest  | `border-radius`             | `radius.md`                                                                                                                                      |
-| `root`                 | rest  | `border-width`              | `border.width.025`                                                                                                                               |
-| `label`                | rest  | `font`, `letter-spacing`    | `typography.label`, with its tracking twin                                                                                                       |
-| `startIcon`, `endIcon` | rest  | `--perron-icon-size`        | `icon.size.400`                                                                                                                                  |
-| `root`                 | focus | `outline`, `outline-offset` | `focus.width` in `color.border.focus`, `focus.offset` (drawn by `perron.css`)                                                                    |
-| `focusRing`            | focus | ring corner radius          | `radius.lg`, as drawn: the outline follows the root's `radius.md` out by `focus.offset` plus `focus.width`, so the CSS sets no radius of its own |
+| Part                   | State    | Property                    | Token                                                                                                                                            |
+| ---------------------- | -------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `root`, medium         | rest     | `height`                    | `size.button`                                                                                                                                    |
+| `root`, medium         | rest     | `padding-inline`            | `space.400`                                                                                                                                      |
+| `root`, medium         | rest     | `gap`                       | `space.200`                                                                                                                                      |
+| `root`, small          | rest     | `height`                    | `size.button-sm`                                                                                                                                 |
+| `root`, small          | rest     | `padding-inline`            | `space.300`                                                                                                                                      |
+| `root`, small          | rest     | `gap`                       | `space.150`                                                                                                                                      |
+| `root`                 | rest     | `border-radius`             | `radius.md`                                                                                                                                      |
+| `root`                 | rest     | `border-width`              | `border.width.025`                                                                                                                               |
+| `root`                 | rest     | `cursor`                    | none: the keyword `pointer`                                                                                                                      |
+| `root`                 | disabled | `cursor`                    | none: the keyword `default`                                                                                                                      |
+| `label`                | rest     | `font`, `letter-spacing`    | `typography.label`, with its tracking twin                                                                                                       |
+| `startIcon`, `endIcon` | rest     | `--perron-icon-size`        | `icon.size.400`                                                                                                                                  |
+| `root`                 | focus    | `outline`, `outline-offset` | `focus.width` in `color.border.focus`, `focus.offset` (drawn by `perron.css`)                                                                    |
+| `focusRing`            | focus    | ring corner radius          | `radius.lg`, as drawn: the outline follows the root's `radius.md` out by `focus.offset` plus `focus.width`, so the CSS sets no radius of its own |
 
 `solid`, `neutral`:
 
-| Part   | State    | Property           | Token                         |
-| ------ | -------- | ------------------ | ----------------------------- |
-| `root` | rest     | `background-color` | `color.surface.inverse`       |
-| `root` | rest     | `border-color`     | `transparent`                 |
-| `root` | rest     | `color`            | `color.text.inverse`          |
-| `root` | hover    | `background-color` | `color.surface.inverse-hover` |
-| `root` | pressed  | `background-color` | `color.surface.inverse-hover` |
-| `root` | disabled | `background-color` | `color.surface.inset`         |
-| `root` | disabled | `color`            | `color.text.tertiary`         |
+| Part   | State    | Property           | Token                           |
+| ------ | -------- | ------------------ | ------------------------------- |
+| `root` | rest     | `background-color` | `color.surface.inverse`         |
+| `root` | rest     | `border-color`     | `transparent`                   |
+| `root` | rest     | `color`            | `color.text.inverse`            |
+| `root` | hover    | `background-color` | `color.surface.inverse-hover`   |
+| `root` | pressed  | `background-color` | `color.surface.inverse-pressed` |
+| `root` | disabled | `background-color` | `color.surface.inset`           |
+| `root` | disabled | `color`            | `color.text.tertiary`           |
 
 `solid`, `brand`:
 
-| Part   | State    | Property           | Token                       |
-| ------ | -------- | ------------------ | --------------------------- |
-| `root` | rest     | `background-color` | `color.surface.brand`       |
-| `root` | rest     | `border-color`     | `color.border.brand`        |
-| `root` | rest     | `color`            | `color.text.on-color.dark`  |
-| `root` | hover    | `background-color` | `color.surface.brand-hover` |
-| `root` | pressed  | `background-color` | `color.surface.brand-hover` |
-| `root` | disabled | `background-color` | `color.surface.inset`       |
-| `root` | disabled | `border-color`     | `transparent`               |
-| `root` | disabled | `color`            | `color.text.tertiary`       |
+| Part   | State    | Property           | Token                         |
+| ------ | -------- | ------------------ | ----------------------------- |
+| `root` | rest     | `background-color` | `color.surface.brand`         |
+| `root` | rest     | `border-color`     | `color.border.brand`          |
+| `root` | rest     | `color`            | `color.text.on-color.dark`    |
+| `root` | hover    | `background-color` | `color.surface.brand-hover`   |
+| `root` | pressed  | `background-color` | `color.surface.brand-pressed` |
+| `root` | disabled | `background-color` | `color.surface.inset`         |
+| `root` | disabled | `border-color`     | `transparent`                 |
+| `root` | disabled | `color`            | `color.text.tertiary`         |
 
 `outline`, `neutral`:
 
-| Part   | State    | Property           | Token                  |
-| ------ | -------- | ------------------ | ---------------------- |
-| `root` | rest     | `background-color` | `transparent`          |
-| `root` | rest     | `border-color`     | `color.border.control` |
-| `root` | rest     | `color`            | `color.text.primary`   |
-| `root` | hover    | `background-color` | `color.surface.hover`  |
-| `root` | pressed  | `background-color` | `color.surface.hover`  |
-| `root` | disabled | `border-color`     | `color.border.subtle`  |
-| `root` | disabled | `color`            | `color.text.tertiary`  |
+| Part   | State    | Property           | Token                    |
+| ------ | -------- | ------------------ | ------------------------ |
+| `root` | rest     | `background-color` | `transparent`            |
+| `root` | rest     | `border-color`     | `color.border.control`   |
+| `root` | rest     | `color`            | `color.text.primary`     |
+| `root` | hover    | `background-color` | `color.surface.hover`    |
+| `root` | pressed  | `background-color` | `color.surface.selected` |
+| `root` | disabled | `border-color`     | `color.border.subtle`    |
+| `root` | disabled | `color`            | `color.text.tertiary`    |
 
 `outline`, `brand`:
 
-| Part   | State    | Property           | Token                 |
-| ------ | -------- | ------------------ | --------------------- |
-| `root` | rest     | `background-color` | `transparent`         |
-| `root` | rest     | `border-color`     | `color.border.brand`  |
-| `root` | rest     | `color`            | `color.text.brand`    |
-| `root` | hover    | `background-color` | `color.surface.hover` |
-| `root` | pressed  | `background-color` | `color.surface.hover` |
-| `root` | disabled | `border-color`     | `color.border.subtle` |
-| `root` | disabled | `color`            | `color.text.tertiary` |
+| Part   | State    | Property           | Token                    |
+| ------ | -------- | ------------------ | ------------------------ |
+| `root` | rest     | `background-color` | `transparent`            |
+| `root` | rest     | `border-color`     | `color.border.brand`     |
+| `root` | rest     | `color`            | `color.text.brand`       |
+| `root` | hover    | `background-color` | `color.surface.hover`    |
+| `root` | pressed  | `background-color` | `color.surface.selected` |
+| `root` | disabled | `border-color`     | `color.border.subtle`    |
+| `root` | disabled | `color`            | `color.text.tertiary`    |
 
-A brand outline button takes `color.surface.hover` on hover, as the neutral outline does, not `color.surface.brand-subtle`: `color.surface.hover` is the hover layer every control shares, and `brand-subtle` is a tinted background, not a state.
+A brand outline button takes `color.surface.hover` on hover and `color.surface.selected` while pressed, as the neutral outline does, not `color.surface.brand-subtle`: those are the hover and pressed layers every quiet control shares, and `brand-subtle` is a tinted background, not a state.
 
 A disabled brand button looks exactly like a disabled neutral one (solid: `color.surface.inset` with no edge; outline: a `color.border.subtle` edge), with `color.text.tertiary` text: disabled is a colour, and a yellow that can't be pressed shouldn't still mark the main action.
 
-The read-back shows no pressed state, which a native button has (`:active`). Pressed takes the hover row's tokens, in a rule outside `@media (hover: hover)` so a touch press shows too: no token is made for a pressed fill, and a press on a phone otherwise shows nothing.
+The read-back shows no pressed state, which a native button has (`:active`). Pressed is a step past hover, as [Semantic colours](../foundations/semantic-colours.md#surfaces) sets for every control: a solid button takes `color.surface.inverse-pressed` or `color.surface.brand-pressed`, and an outline one lays `color.surface.selected` where its hover lays `color.surface.hover`. With a mouse, the button is already hovered when it is pressed, so a pressed fill equal to the hover fill shows no press at all. The rule sits outside `@media (hover: hover)`, so a press on a touch screen shows too.
 
 ## Keyboard and ARIA
 
@@ -179,50 +181,59 @@ Rules for this component alone, numbered so the build and the review can cite th
 
 - **CR-11.** Every variant draws a `border.width.025` border, `transparent` on a neutral solid button and a disabled solid one, so all four looks share one width and height, the label sits in the same place, and Windows' forced colours draw an edge round every button: a border only some buttons carry makes a brand button 2 px wider than the same neutral one.
 - **CR-12.** The label stays on one line (`white-space: nowrap`), the button growing with it, rather than wrapping inside the fixed `size.button` height: a wrapped label would overflow it, and button labels are short by content design.
-- **CR-13.** Pressed (`:active`) takes the hover row's tokens, in a rule outside `@media (hover: hover)` so a press on a touch screen shows, and, like hover, never applies to a disabled button: the rule excludes `[data-disabled]`, since a button with `focusableWhenDisabled` has no native `disabled` and still matches `:active`.
+- **CR-13.** Pressed (`:active`) takes the pressed row's tokens, a step past hover so a press under the pointer still shows, in a rule outside `@media (hover: hover)` so a press on a touch screen shows, and, like hover, never applies to a disabled button: the rule excludes `[data-disabled]`, since a button with `focusableWhenDisabled` has no native `disabled` and still matches `:active`.
+- **CR-14.** The cursor is `pointer` on the root, as on Tabs, SegmentedControl, Switch and Checkbox, and `default` while `[data-disabled]`, so the pointer promises a click only where one runs.
 
 ## Stories
 
-The deferred design's variant properties, in this order: `variant` (`solid`, `outline`), `color` (`neutral`, `brand`), `size` (`medium`, `small`) and `State` (`default`, `hover`, `focus`, `disabled`). Each story is named by its variant name (`penpot/README.md`, "Conventions"), renders the label "Show departures", as the read-back does, and sets `disabled` for a `Disabled` story. The hover and focus stories render at rest: the visual check drives the state itself, and their `play` tests check it.
+The deferred design's variant properties, in this order: `variant` (`solid`, `outline`), `color` (`neutral`, `brand`), `size` (`medium`, `small`) and `State` (`default`, `hover`, `pressed`, `focus`, `disabled`). Each story is named by its variant name (`penpot/README.md`, "Conventions"), renders the label "Show departures", as the read-back does, and sets `disabled` for a `Disabled` story. The hover, pressed and focus stories render at rest: the visual check drives the state itself, and their `play` tests check it.
 
-`color` is a variant property, after `variant`, so the stories and a later drawing's exports are named `SolidNeutralMediumDefault` and `SolidBrandMediumDefault` rather than the read-back's `SolidMediumDefault`, 32 variants in all: the contract gives every action component `brand` beside `neutral`, and the design run that ends the deferral redraws the page with it.
+`color` is a variant property, after `variant`, so the stories and a later drawing's exports are named `SolidNeutralMediumDefault` and `SolidBrandMediumDefault` rather than the read-back's `SolidMediumDefault`, 40 variants in all: the contract gives every action component `brand` beside `neutral`, and the design run that ends the deferral redraws the page with it.
 
-| Story                          | Shows                                                                                              | `play` test                                                                                 |
-| ------------------------------ | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| `SolidNeutralMediumDefault`    | solid, neutral, medium, at rest                                                                    | Tab focuses the button, Enter and Space each fire `onClick` once, Shift+Tab returns focus   |
-| `SolidNeutralMediumHover`      | solid, neutral, medium, hover                                                                      | Hovering sets the `color.surface.inverse-hover` fill                                        |
-| `SolidNeutralMediumFocus`      | solid, neutral, medium, focus                                                                      | Tab gives the root `:focus-visible` and the ring                                            |
-| `SolidNeutralMediumDisabled`   | solid, neutral, medium, disabled                                                                   | The button has `disabled` and `data-disabled`, Tab skips it, and a click fires no `onClick` |
-| `SolidNeutralSmallDefault`     | solid, neutral, small, at rest                                                                     | none                                                                                        |
-| `SolidNeutralSmallHover`       | solid, neutral, small, hover                                                                       | none                                                                                        |
-| `SolidNeutralSmallFocus`       | solid, neutral, small, focus                                                                       | none                                                                                        |
-| `SolidNeutralSmallDisabled`    | solid, neutral, small, disabled                                                                    | none                                                                                        |
-| `SolidBrandMediumDefault`      | solid, brand, medium, at rest                                                                      | none                                                                                        |
-| `SolidBrandMediumHover`        | solid, brand, medium, hover                                                                        | Hovering sets the `color.surface.brand-hover` fill and keeps the `color.border.brand` edge  |
-| `SolidBrandMediumFocus`        | solid, brand, medium, focus                                                                        | none                                                                                        |
-| `SolidBrandMediumDisabled`     | solid, brand, medium, disabled                                                                     | none                                                                                        |
-| `SolidBrandSmallDefault`       | solid, brand, small, at rest                                                                       | none                                                                                        |
-| `SolidBrandSmallHover`         | solid, brand, small, hover                                                                         | none                                                                                        |
-| `SolidBrandSmallFocus`         | solid, brand, small, focus                                                                         | none                                                                                        |
-| `SolidBrandSmallDisabled`      | solid, brand, small, disabled                                                                      | none                                                                                        |
-| `OutlineNeutralMediumDefault`  | outline, neutral, medium, at rest                                                                  | none                                                                                        |
-| `OutlineNeutralMediumHover`    | outline, neutral, medium, hover                                                                    | Hovering lays `color.surface.hover` over the transparent fill                               |
-| `OutlineNeutralMediumFocus`    | outline, neutral, medium, focus                                                                    | none                                                                                        |
-| `OutlineNeutralMediumDisabled` | outline, neutral, medium, disabled                                                                 | none                                                                                        |
-| `OutlineNeutralSmallDefault`   | outline, neutral, small, at rest                                                                   | none                                                                                        |
-| `OutlineNeutralSmallHover`     | outline, neutral, small, hover                                                                     | none                                                                                        |
-| `OutlineNeutralSmallFocus`     | outline, neutral, small, focus                                                                     | none                                                                                        |
-| `OutlineNeutralSmallDisabled`  | outline, neutral, small, disabled                                                                  | none                                                                                        |
-| `OutlineBrandMediumDefault`    | outline, brand, medium, at rest                                                                    | none                                                                                        |
-| `OutlineBrandMediumHover`      | outline, brand, medium, hover                                                                      | none                                                                                        |
-| `OutlineBrandMediumFocus`      | outline, brand, medium, focus                                                                      | none                                                                                        |
-| `OutlineBrandMediumDisabled`   | outline, brand, medium, disabled                                                                   | none                                                                                        |
-| `OutlineBrandSmallDefault`     | outline, brand, small, at rest                                                                     | none                                                                                        |
-| `OutlineBrandSmallHover`       | outline, brand, small, hover                                                                       | none                                                                                        |
-| `OutlineBrandSmallFocus`       | outline, brand, small, focus                                                                       | none                                                                                        |
-| `OutlineBrandSmallDisabled`    | outline, brand, small, disabled                                                                    | none                                                                                        |
-| `WithIcons`                    | solid, neutral, medium, at rest, with a `startIcon` and an `endIcon` from `packages/perron/icons/` | The icon spans are `aria-hidden`, and the button's accessible name is the label alone       |
-| `FullWidth`                    | solid, brand, medium, at rest, `fullWidth` in a narrow container                                   | The root carries `data-full-width` and is as wide as its container                          |
+| Story                          | Shows                                                                                              | `play` test                                                                                                          |
+| ------------------------------ | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `SolidNeutralMediumDefault`    | solid, neutral, medium, at rest                                                                    | Tab focuses the button, Enter and Space each fire `onClick` once, Shift+Tab returns focus                            |
+| `SolidNeutralMediumHover`      | solid, neutral, medium, hover                                                                      | Hovering sets the `color.surface.inverse-hover` fill                                                                 |
+| `SolidNeutralMediumPressed`    | solid, neutral, medium, pressed                                                                    | Pressing sets the `color.surface.inverse-pressed` fill, a step past hover, and the cursor is `pointer`               |
+| `SolidNeutralMediumFocus`      | solid, neutral, medium, focus                                                                      | Tab gives the root `:focus-visible` and the ring                                                                     |
+| `SolidNeutralMediumDisabled`   | solid, neutral, medium, disabled                                                                   | The button has `disabled` and `data-disabled`, Tab skips it, a click fires no `onClick`, and the cursor is `default` |
+| `SolidNeutralSmallDefault`     | solid, neutral, small, at rest                                                                     | none                                                                                                                 |
+| `SolidNeutralSmallHover`       | solid, neutral, small, hover                                                                       | none                                                                                                                 |
+| `SolidNeutralSmallPressed`     | solid, neutral, small, pressed                                                                     | none                                                                                                                 |
+| `SolidNeutralSmallFocus`       | solid, neutral, small, focus                                                                       | none                                                                                                                 |
+| `SolidNeutralSmallDisabled`    | solid, neutral, small, disabled                                                                    | none                                                                                                                 |
+| `SolidBrandMediumDefault`      | solid, brand, medium, at rest                                                                      | none                                                                                                                 |
+| `SolidBrandMediumHover`        | solid, brand, medium, hover                                                                        | Hovering sets the `color.surface.brand-hover` fill and keeps the `color.border.brand` edge                           |
+| `SolidBrandMediumPressed`      | solid, brand, medium, pressed                                                                      | Pressing sets the `color.surface.brand-pressed` fill, a step past hover, and keeps the `color.border.brand` edge     |
+| `SolidBrandMediumFocus`        | solid, brand, medium, focus                                                                        | none                                                                                                                 |
+| `SolidBrandMediumDisabled`     | solid, brand, medium, disabled                                                                     | none                                                                                                                 |
+| `SolidBrandSmallDefault`       | solid, brand, small, at rest                                                                       | none                                                                                                                 |
+| `SolidBrandSmallHover`         | solid, brand, small, hover                                                                         | none                                                                                                                 |
+| `SolidBrandSmallPressed`       | solid, brand, small, pressed                                                                       | none                                                                                                                 |
+| `SolidBrandSmallFocus`         | solid, brand, small, focus                                                                         | none                                                                                                                 |
+| `SolidBrandSmallDisabled`      | solid, brand, small, disabled                                                                      | none                                                                                                                 |
+| `OutlineNeutralMediumDefault`  | outline, neutral, medium, at rest                                                                  | none                                                                                                                 |
+| `OutlineNeutralMediumHover`    | outline, neutral, medium, hover                                                                    | Hovering lays `color.surface.hover` over the transparent fill                                                        |
+| `OutlineNeutralMediumPressed`  | outline, neutral, medium, pressed                                                                  | Pressing lays `color.surface.selected`, denser than the hover layer                                                  |
+| `OutlineNeutralMediumFocus`    | outline, neutral, medium, focus                                                                    | none                                                                                                                 |
+| `OutlineNeutralMediumDisabled` | outline, neutral, medium, disabled                                                                 | none                                                                                                                 |
+| `OutlineNeutralSmallDefault`   | outline, neutral, small, at rest                                                                   | none                                                                                                                 |
+| `OutlineNeutralSmallHover`     | outline, neutral, small, hover                                                                     | none                                                                                                                 |
+| `OutlineNeutralSmallPressed`   | outline, neutral, small, pressed                                                                   | none                                                                                                                 |
+| `OutlineNeutralSmallFocus`     | outline, neutral, small, focus                                                                     | none                                                                                                                 |
+| `OutlineNeutralSmallDisabled`  | outline, neutral, small, disabled                                                                  | none                                                                                                                 |
+| `OutlineBrandMediumDefault`    | outline, brand, medium, at rest                                                                    | none                                                                                                                 |
+| `OutlineBrandMediumHover`      | outline, brand, medium, hover                                                                      | Hovering lays `color.surface.hover` over the transparent fill and keeps the `color.border.brand` edge                |
+| `OutlineBrandMediumPressed`    | outline, brand, medium, pressed                                                                    | Pressing lays `color.surface.selected` and keeps the `color.border.brand` edge                                       |
+| `OutlineBrandMediumFocus`      | outline, brand, medium, focus                                                                      | none                                                                                                                 |
+| `OutlineBrandMediumDisabled`   | outline, brand, medium, disabled                                                                   | none                                                                                                                 |
+| `OutlineBrandSmallDefault`     | outline, brand, small, at rest                                                                     | none                                                                                                                 |
+| `OutlineBrandSmallHover`       | outline, brand, small, hover                                                                       | none                                                                                                                 |
+| `OutlineBrandSmallPressed`     | outline, brand, small, pressed                                                                     | none                                                                                                                 |
+| `OutlineBrandSmallFocus`       | outline, brand, small, focus                                                                       | none                                                                                                                 |
+| `OutlineBrandSmallDisabled`    | outline, brand, small, disabled                                                                    | none                                                                                                                 |
+| `WithIcons`                    | solid, neutral, medium, at rest, with a `startIcon` and an `endIcon` from `packages/perron/icons/` | The icon spans are `aria-hidden`, and the button's accessible name is the label alone                                |
+| `FullWidth`                    | solid, brand, medium, at rest, `fullWidth` in a narrow container                                   | The root carries `data-full-width` and is as wide as its container                                                   |
 
 ## Do and don't
 

@@ -86,7 +86,7 @@ A `color` value is an intent: what the colour means. Each has its tokens; a comp
 | `danger`  | `color.text.danger`  | `color.surface.danger`       | `color.status.danger`      | none                                                   |
 | `info`    | `color.text.info`    | `color.surface.info`         | `color.status.info`        | none                                                   |
 
-`brand` is the primary colour: a brand button marks the main action, with `color.surface.brand-hover` on hover and a `color.border.brand` edge, and `color.text.brand` labels its outline. It is never a link. Each action component (Button, IconButton, a Toolbar's buttons) offers `brand` beside `neutral`; the default stays `neutral`, so a screen has one brand action at most. The status intents have no solid fill, because no text colour is measured on `color.status.*`.
+`brand` is the primary colour: a brand button marks the main action, with `color.surface.brand-hover` on hover, `color.surface.brand-pressed` while pressed and a `color.border.brand` edge, and `color.text.brand` labels its outline. It is never a link. Each action component (Button, IconButton, a Toolbar's buttons) offers `brand` beside `neutral`; the default stays `neutral`, so a screen has one brand action at most. The status intents have no solid fill, because no text colour is measured on `color.status.*`.
 
 ## State and events
 
@@ -151,6 +151,16 @@ Hover, focus, pressed, disabled, open and selected are CSS states, read from pse
 | Invalid     | `[data-invalid]`                                           |
 
 A component that draws its own focus ring uses `focus.width`, `focus.offset` and `color.border.focus`, as [Semantic spacing](../foundations/semantic-spacing.md#focus-ring) says.
+
+### Pointer feedback
+
+Every part a pointer presses to act or to change a value, such as a button, a tab, a chip, a switch, a checkbox or a row, answers the pointer three ways, unless its spec gives a reason in a `CR-n`:
+
+- **Hover** changes its look, inside `@media (hover: hover)`, by a step the eye sees.
+- **Pressed** changes it again, a step past hover, in a rule after the hover rule and outside the query, so a touch press shows too. A pointer that presses has already hovered, so a pressed look equal to the hover look shows no press. A solid ink part takes `color.surface.inverse-hover`, then `color.surface.inverse-pressed`; a solid brand part `color.surface.brand-hover`, then `color.surface.brand-pressed`; a quiet or outline part lays `color.surface.hover`, then `color.surface.selected` ([Semantic colours](../foundations/semantic-colours.md#surfaces)).
+- **Cursor** is `pointer` on the part, `default` while it is disabled or read-only, and `text` on a text box. A native `<a href>` has its pointer already.
+
+Neither hover nor pressed applies to a disabled or read-only part: the rules exclude `[data-disabled]` and `[data-readonly]`, since a part with `focusableWhenDisabled` has no native `disabled` and still matches `:hover` and `:active`. The spec's Tokens table has a hover row, a pressed row and the two cursor rows for each such part, and a `play` test checks the pressed fill, as written, renders apart from the hover one (`stateFill`, [Shared helpers](#shared-helpers)). The states change at once, as [Motion](#css) says; a transition on them takes a `duration.*` token, which reduced motion already shortens.
 
 ## CSS
 

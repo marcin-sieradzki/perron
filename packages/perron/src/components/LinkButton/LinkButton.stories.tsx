@@ -52,9 +52,12 @@ const follows: Play = async ({ args, canvasElement }) => {
   await expect(link).not.toHaveFocus()
 }
 
-/** Hovering sets the `fill` token's background, and changes neither the border nor the geometry. */
+/**
+ * Hovering sets the `fill` token's background, and changes neither the border nor the geometry;
+ * pressing sets the `pressed` token's, a step past it.
+ */
 const hoverFill =
-  (fill: string): Play =>
+  (fill: string, pressed: string): Play =>
   async ({ canvasElement }) => {
     const link = linkIn(canvasElement)
     const hover = stateRules(link, ':hover')
@@ -63,7 +66,8 @@ const hoverFill =
     for (const declarations of hover)
       for (const property of Array.from(declarations))
         await expect(['background-color']).toContain(property)
-    await expect(stateFill(link, ':active')).toBe(fill)
+    await expect(stateFill(link, ':active')).toBe(pressed)
+    await expect(resolve('backgroundColor', pressed)).not.toBe(resolve('backgroundColor', fill))
   }
 
 /** Tab gives the root `:focus-visible` and the ring perron.css draws; Shift+Tab leaves it. */
@@ -87,7 +91,10 @@ export const SolidMediumDefault: Story = {
 }
 export const SolidMediumHover: Story = {
   args: { variant: 'solid', size: 'medium' },
-  play: hoverFill('var(--perron-color-surface-inverse-hover)'),
+  play: hoverFill(
+    'var(--perron-color-surface-inverse-hover)',
+    'var(--perron-color-surface-inverse-pressed)',
+  ),
 }
 export const SolidMediumFocus: Story = {
   args: { variant: 'solid', size: 'medium' },
@@ -107,7 +114,7 @@ export const OutlineMediumDefault: Story = {
 }
 export const OutlineMediumHover: Story = {
   args: { variant: 'outline', size: 'medium' },
-  play: hoverFill('var(--perron-color-surface-hover)'),
+  play: hoverFill('var(--perron-color-surface-hover)', 'var(--perron-color-surface-selected)'),
 }
 export const OutlineMediumFocus: Story = {
   args: { variant: 'outline', size: 'medium' },

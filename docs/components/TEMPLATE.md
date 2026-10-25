@@ -47,13 +47,16 @@ In MUI's layout, one row per prop the docs page shows, slots last: each prop the
 
 ## Tokens
 
-One row per part, state and property. States are the contract's design states: rest, hover, highlighted, focus, pressed, disabled, open, selected, invalid. A value no token gives is `[PENDING] needs a token for <what>`, answered through the `design-tokens` skill.
+One row per part, state and property. States are the contract's design states: rest, hover, highlighted, focus, pressed, disabled, open, selected, invalid. A part a pointer presses has a hover row, a pressed row a step past it, and its cursor at rest and disabled ([Pointer feedback](README.md#pointer-feedback)). A value no token gives is `[PENDING] needs a token for <what>`, answered through the `design-tokens` skill.
 
-| Part     | State | Property           | Token                    |
-| -------- | ----- | ------------------ | ------------------------ |
-| `root`   | rest  | `background`       | `<color.surface.raised>` |
-| `root`   | hover | `background-image` | `<color.surface.hover>`  |
-| `<part>` | rest  | `<property>`       | `<token>`                |
+| Part     | State    | Property           | Token                       |
+| -------- | -------- | ------------------ | --------------------------- |
+| `root`   | rest     | `background`       | `<color.surface.raised>`    |
+| `root`   | hover    | `background-image` | `<color.surface.hover>`     |
+| `root`   | pressed  | `background-image` | `<color.surface.selected>`  |
+| `root`   | rest     | `cursor`           | none: the keyword `pointer` |
+| `root`   | disabled | `cursor`           | none: the keyword `default` |
+| `<part>` | rest     | `<property>`       | `<token>`                   |
 
 ## Keyboard and ARIA
 

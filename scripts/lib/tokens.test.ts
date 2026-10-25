@@ -147,8 +147,44 @@ describe('contrast', () => {
       expect(contrastRatio(t['color.text.brand'], t['color.surface.brand-subtle'])).toBeGreaterThan(
         4.5,
       )
-      for (const fill of ['color.surface.brand', 'color.surface.brand-hover'] as const)
+      for (const fill of [
+        'color.surface.brand',
+        'color.surface.brand-hover',
+        'color.surface.brand-pressed',
+      ] as const)
         expect(contrastRatio(t['color.text.on-color.dark'], t[fill])).toBeGreaterThan(4.5)
+      for (const fill of [
+        'color.surface.inverse',
+        'color.surface.inverse-hover',
+        'color.surface.inverse-pressed',
+      ] as const)
+        expect(contrastRatio(t['color.text.inverse'], t[fill])).toBeGreaterThan(4.5)
+    }
+  })
+
+  it('steps a solid fill 1.2:1 or more from rest to hover and from hover to pressed', () => {
+    for (const th of ['light', 'dark'] as const) {
+      const t = { ...base, ...theme[th] }
+      for (const fill of ['inverse', 'brand'] as const) {
+        const rest = t[`color.surface.${fill}`]
+        const hover = t[`color.surface.${fill}-hover`]
+        const pressed = t[`color.surface.${fill}-pressed`]
+        expect(contrastRatio(rest, hover), `${th} ${fill} hover`).toBeGreaterThanOrEqual(1.2)
+        expect(contrastRatio(hover, pressed), `${th} ${fill} pressed`).toBeGreaterThanOrEqual(1.2)
+        expect(contrastRatio(rest, pressed), `${th} ${fill} pressed`).toBeGreaterThan(
+          contrastRatio(rest, hover),
+        )
+      }
+    }
+  })
+
+  it('lays a pressed layer over a quiet control that is denser than its hover layer', () => {
+    for (const th of ['light', 'dark'] as const) {
+      const t = theme[th]
+      const ground = t['color.surface.default']
+      const hover = composite(t['color.surface.hover'], ground)
+      const pressed = composite(t['color.surface.selected'], ground)
+      expect(contrastRatio(pressed, ground)).toBeGreaterThan(contrastRatio(hover, ground))
     }
   })
 

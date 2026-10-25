@@ -18,6 +18,11 @@
           "$type": "color",
           "$value": "#A2ADB1"
         },
+        "400": {
+          "$type": "color",
+          "$value": "#8B979E",
+          "$description": "Pressed fill of a dark-theme primary button, between its hover step and the 500"
+        },
         "500": {
           "$type": "color",
           "$value": "#74818A"
@@ -144,10 +149,15 @@
           "$type": "color",
           "$value": "#D99A00"
         },
+        "550": {
+          "$type": "color",
+          "$value": "#C48A02",
+          "$description": "Hover fill of a light-theme brand button, halfway from the fill to the pressed step"
+        },
         "600": {
           "$type": "color",
           "$value": "#B07B05",
-          "$description": "Hover fill of a light-theme brand button, between the fill and the text step"
+          "$description": "Pressed fill of a light-theme brand button, the darkest yellow dark text still reads on at 4.5:1; also the dark-theme brand button's pressed fill"
         },
         "700": {
           "$type": "color",
@@ -1084,7 +1094,7 @@
         "selected": {
           "$type": "color",
           "$value": "rgba(18, 24, 27, 0.09)",
-          "$description": "Selected row"
+          "$description": "Selected row; the pressed layer of a quiet or outline control, over its hover"
         },
         "inverse": {
           "$type": "color",
@@ -1093,8 +1103,13 @@
         },
         "inverse-hover": {
           "$type": "color",
-          "$value": "{palette.neutral.800}",
-          "$description": "Hover fill of a primary button, one step from color.surface.inverse"
+          "$value": "{palette.neutral.700}",
+          "$description": "Hover fill of a primary button, a step from color.surface.inverse the eye sees"
+        },
+        "inverse-pressed": {
+          "$type": "color",
+          "$value": "{palette.neutral.600}",
+          "$description": "Pressed fill of a primary button, a step further from color.surface.inverse than its hover"
         },
         "success": {
           "$type": "color",
@@ -1123,8 +1138,13 @@
         },
         "brand-hover": {
           "$type": "color",
+          "$value": "{palette.yellow.550}",
+          "$description": "Hover fill of a brand button, a step from color.surface.brand the eye sees"
+        },
+        "brand-pressed": {
+          "$type": "color",
           "$value": "{palette.yellow.600}",
-          "$description": "Hover fill of a brand button, one step from color.surface.brand"
+          "$description": "Pressed fill of a brand button, a step further from color.surface.brand than its hover"
         },
         "brand-subtle": {
           "$type": "color",
@@ -1448,7 +1468,7 @@
         "selected": {
           "$type": "color",
           "$value": "rgba(235, 238, 235, 0.09)",
-          "$description": "Selected row"
+          "$description": "Selected row; the pressed layer of a quiet or outline control, over its hover"
         },
         "inverse": {
           "$type": "color",
@@ -1458,7 +1478,12 @@
         "inverse-hover": {
           "$type": "color",
           "$value": "{palette.neutral.300}",
-          "$description": "Hover fill of a primary button, one step from color.surface.inverse"
+          "$description": "Hover fill of a primary button, a step from color.surface.inverse the eye sees"
+        },
+        "inverse-pressed": {
+          "$type": "color",
+          "$value": "{palette.neutral.400}",
+          "$description": "Pressed fill of a primary button, a step further from color.surface.inverse than its hover"
         },
         "success": {
           "$type": "color",
@@ -1488,7 +1513,12 @@
         "brand-hover": {
           "$type": "color",
           "$value": "{palette.yellow.500}",
-          "$description": "Hover fill of a brand button, one step from color.surface.brand"
+          "$description": "Hover fill of a brand button, a step from color.surface.brand the eye sees"
+        },
+        "brand-pressed": {
+          "$type": "color",
+          "$value": "{palette.yellow.600}",
+          "$description": "Pressed fill of a brand button, a step further from color.surface.brand than its hover"
         },
         "brand-subtle": {
           "$type": "color",
