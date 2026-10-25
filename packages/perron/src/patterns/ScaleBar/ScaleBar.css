@@ -1,0 +1,40 @@
+/* ScaleBar: the distance over a bracket on Surface's glass (docs/patterns/scale-bar.md, Tokens).
+   Every row is at rest: nothing in the scale is interactive. The fill, backdrop, edge and shadow
+   are Surface's; this sets only its radius and padding (CR-2), and no position, inset, margin or
+   z-index: its screen places it (CR-8). Nothing transitions: the bar keeps up with the map (CR-9).
+   In forced colours the bar is a border, which the system paints CanvasText, so it needs no rule. */
+
+/* CR-4: the content box is the bar's longest length, 96 px, with the padding and edge outside it.
+   The variant in the selector meets Surface's own glass rule at its weight, and this file loads
+   after Surface's, so the radius and padding here win. */
+.pn-ScaleBar[data-variant='glass'] {
+  box-sizing: content-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  row-gap: var(--perron-space-050);
+  inline-size: calc(4 * var(--perron-space-600));
+  padding-block: var(--perron-space-100);
+  padding-inline: var(--perron-space-200);
+  border-radius: var(--perron-radius-md);
+}
+
+/* The distance, in the figures' role; it never breaks, and keeps one line's height while it holds
+   only the hidden "Scale" (CR-4, CR-6) */
+.pn-ScaleBar-label {
+  min-block-size: 1lh;
+  font: var(--perron-typography-data);
+  letter-spacing: var(--perron-typography-data-tracking);
+  white-space: nowrap;
+  color: var(--perron-color-text-secondary);
+}
+
+/* The bracket: open at the top, its ends space.150 tall, in the label's ink. Its length is the
+   distance's share, set inline (CR-5) */
+.pn-ScaleBar-bar {
+  display: block;
+  block-size: var(--perron-space-150);
+  border-block-start: none;
+  border-block-end: var(--perron-border-width-050) solid var(--perron-color-text-secondary);
+  border-inline: var(--perron-border-width-050) solid var(--perron-color-text-secondary);
+}
