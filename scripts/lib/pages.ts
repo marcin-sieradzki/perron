@@ -36,6 +36,7 @@ export const PAGES = [
   'docs/components/fact-list.md',
   'docs/components/kbd.md',
   'docs/components/stat.md',
+  'docs/components/tag.md',
   'docs/components/text.md',
   'docs/components/empty-state.md',
   'docs/components/section.md',
