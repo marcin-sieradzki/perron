@@ -325,6 +325,9 @@ export const ItemSelected: Story = {
         const other = row(popup, name, 'menuitemradio')
         await expect(other).toHaveAttribute('aria-checked', 'false')
         await expect(other).not.toHaveAttribute('data-checked')
+        await expect(getComputedStyle(other).backgroundColor).not.toBe(
+          colour('--perron-color-surface-selected'),
+        )
         await expect(tick(other)).toBeNull()
       }
     })

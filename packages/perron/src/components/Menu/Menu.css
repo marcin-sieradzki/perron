@@ -10,8 +10,9 @@
 }
 
 /* The menu and the submenu: at least as wide as the trigger, at most as wide and tall as the room
-   Base UI measures, scrolling inside when taller (CR-11); an edge as a border, kept by forced
-   colours when they drop the glass and the shadow (CR-13). */
+   Base UI measures, scrolling inside when taller (CR-11), the scroll padding keeping a row scrolled
+   to by the keys clear of the edge, its ring in view; an edge as a border, kept by forced colours
+   when they drop the glass and the shadow (CR-13). */
 .pn-Menu,
 .pn-MenuSubmenu-popup {
   box-sizing: border-box;
@@ -23,6 +24,7 @@
   padding: var(--perron-space-100);
   overflow-y: auto;
   overscroll-behavior: contain;
+  scroll-padding-block: var(--perron-space-100);
   border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
   border-radius: var(--perron-radius-lg);
   background-color: var(--perron-color-surface-overlay);
@@ -185,8 +187,10 @@
   margin-block: calc((1lh - var(--perron-icon-size-325)) / 2);
 }
 
+/* The chevron's holder takes its size and colour, never the <svg> itself (Icons). */
 .pn-MenuSubmenu-chevron {
   --perron-icon-size: var(--perron-icon-size-400);
+  display: inline-flex;
   flex: none;
   margin-block: calc((1lh - var(--perron-icon-size-400)) / 2);
   color: var(--perron-color-text-secondary);

@@ -665,20 +665,23 @@ export function MenuSubmenu({
         <RowContent row="MenuSubmenu" startIcon={startIcon}>
           {label}
         </RowContent>
-        {/* icons/chevron-right.svg, inlined, unchanged but for width and height */}
-        <svg
-          className="perron-icon pn-MenuSubmenu-chevron"
-          aria-hidden="true"
-          focusable="false"
-          viewBox="0 0 16 16"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="m6 3.5 4.5 4.5L6 12.5" />
-        </svg>
+        {/* icons/chevron-right.svg, inlined, unchanged but for width and height, in a holder that
+            takes its size and colour */}
+        <span className="pn-MenuSubmenu-chevron" aria-hidden="true">
+          <svg
+            className="perron-icon"
+            aria-hidden="true"
+            focusable="false"
+            viewBox="0 0 16 16"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="m6 3.5 4.5 4.5L6 12.5" />
+          </svg>
+        </span>
       </BaseMenu.SubmenuTrigger>
       <BaseMenu.Portal
         {...slotProps?.portal}
