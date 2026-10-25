@@ -3,8 +3,10 @@
 // Usage: node scripts/factory.ts <command> <Name> … [--json] (npm run factory -- …)
 //   next <Name>                                   what comes next; never writes
 //   begin <Name> <stage>                          records the stage as running, or refuses (exit 1)
-//   end <Name> <stage> <done|failed|pending> [--failing "<check and why>"]
-//                                                 checks the stage's gate, records it, prints next
+//   end <Name> <stage> <done|failed|pending> [--failing "<check and why>"] [--direction "<finding>"]…
+//                                                 checks the stage's gate, records it, prints next;
+//                                                 each --direction, and a pending run's --failing,
+//                                                 joins the pipeline's notes, which the PR carries
 //   approve <Name>                                the maintainer's design approval
 //   defer <Name>                                  runs the loop without design and visual (ADR 0010)
 //   unblock <Name>                                clears needs-human once the maintainer has acted
@@ -33,7 +35,7 @@ import {
 
 const USAGE = `usage: npm run factory -- next|approve|defer|unblock <Name> [--json]
        npm run factory -- begin <Name> <stage> [--json]
-       npm run factory -- end <Name> <stage> <done|failed|pending> [--failing "<check and why>"] [--json]
+       npm run factory -- end <Name> <stage> <done|failed|pending> [--failing "<check and why>"] [--direction "<finding>"]… [--json]
 stages: ${STAGES.join(', ')}`
 
 /** What a command prints and its exit code. */
@@ -51,9 +53,15 @@ const nextLines = (n: Next) =>
 /** Runs one factory command over the repo at `env.root`. */
 export function factory(argv: string[], env: Env): Printed {
   const json = argv.includes('--json')
-  const flag = argv.indexOf('--failing')
-  const failing = flag >= 0 ? argv[flag + 1] : undefined
-  const args = argv.filter((a, i) => a !== '--json' && (flag < 0 || (i !== flag && i !== flag + 1)))
+  // `--failing` once and `--direction` any number of times, each with the word after it
+  const valued: Record<string, string[]> = { '--failing': [], '--direction': [] }
+  const args: string[] = []
+  for (let i = 0; i < argv.length; i++) {
+    if (argv[i] in valued) valued[argv[i]].push(argv[++i] ?? '')
+    else if (argv[i] !== '--json') args.push(argv[i])
+  }
+  const failing = valued['--failing'].at(-1)
+  const direction = valued['--direction'].filter(Boolean)
   const [command, name, stage, outcome] = args
   const refuse = (why: string): Printed =>
     json
@@ -82,7 +90,7 @@ export function factory(argv: string[], env: Env): Printed {
       result = begin(p, stage as Stage, env)
       break
     case 'end':
-      result = end(p, stage as Stage, outcome as Outcome, failing, env)
+      result = end(p, stage as Stage, outcome as Outcome, failing, env, direction)
       break
     case 'approve':
       result = approve(p, env)
@@ -91,7 +99,7 @@ export function factory(argv: string[], env: Env): Printed {
       result = defer(p, env)
       break
     case 'unblock':
-      result = unblock(p)
+      result = unblock(p, env)
       break
     default:
       return refuse(`"${command ?? ''}" is not a command\n${USAGE}`)

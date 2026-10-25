@@ -1,0 +1,33 @@
+/* MapTooltip, from docs/components/map-tooltip.md. The Tooltips family's look and nothing more
+   (CR-7), with no transition (CR-9); Base UI places the positioner (CR-2). */
+
+.pn-MapTooltip-positioner {
+  z-index: var(--perron-z-index-dialog);
+}
+
+/* the card speaks of a point the reader can no longer see (CR-6) */
+.pn-MapTooltip-positioner[data-anchor-hidden] {
+  visibility: hidden;
+}
+
+/* a block: the caller's words flow as written and take its colour (CR-8) */
+.pn-MapTooltip {
+  box-sizing: border-box;
+  max-inline-size: var(--available-width);
+  padding-block: var(--perron-space-150);
+  padding-inline: var(--perron-space-200);
+  border-radius: var(--perron-radius-md);
+  background-color: var(--perron-color-surface-inverse);
+  box-shadow: none;
+  color: var(--perron-color-text-inverse);
+  font: var(--perron-typography-label-sm);
+  letter-spacing: var(--perron-typography-label-sm-tracking);
+  overflow-wrap: break-word;
+}
+
+/* forced colours replace the inverse fill with the map's own Canvas; an outline keeps the size (CR-10) */
+@media (forced-colors: active) {
+  .pn-MapTooltip {
+    outline: var(--perron-border-width-025) solid CanvasText;
+  }
+}

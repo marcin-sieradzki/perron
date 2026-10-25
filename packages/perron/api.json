@@ -113,6 +113,53 @@
       }
     }
   },
+  "Count": {
+    "extends": [
+      "Omit< useRender.ComponentProps<'span'>, 'children' | 'color' | 'ref' >"
+    ],
+    "props": {
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "color": {
+        "optional": true,
+        "type": [
+          "\"danger\"",
+          "\"info\"",
+          "\"neutral\"",
+          "\"success\"",
+          "\"warning\""
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLSpanElement>"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "unknownLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      }
+    }
+  },
   "DataStatePanel": {
     "extends": [
       "Omit<ComponentPropsWithRef<'div'>, 'children'>"
@@ -870,6 +917,59 @@
       }
     }
   },
+  "MapTooltip": {
+    "extends": [
+      "Omit<Tooltip.Popup.Props, 'children' | 'ref'>"
+    ],
+    "props": {
+      "anchorEl": {
+        "optional": false,
+        "type": [
+          "() => Element | VirtualElement | null",
+          "Element",
+          "RefObject<Element | null>",
+          "VirtualElement",
+          "null"
+        ]
+      },
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "defaultOpen": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "onClose": {
+        "optional": true,
+        "type": [
+          "(event: Event | MouseEvent | PointerEvent | TouchEvent | KeyboardEvent | FocusEvent, reason: TooltipRootChangeEventReason, details: TooltipRootChangeEventDetails) => void"
+        ]
+      },
+      "open": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ portal?: TooltipPortalProps | undefined; positioner?: TooltipPositionerProps | undefined; }"
+        ]
+      }
+    }
+  },
   "Section": {
     "extends": [
       "Omit< useRender.ComponentProps<'section'>, 'title' | 'children' >"
@@ -1322,6 +1422,54 @@
         "type": [
           "null",
           "string"
+        ]
+      }
+    }
+  },
+  "Tag": {
+    "extends": [
+      "Omit< useRender.ComponentProps<'span'>, 'children' | 'className' | 'style' | 'ref' >"
+    ],
+    "props": {
+      "children": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "color": {
+        "optional": true,
+        "type": [
+          "\"danger\"",
+          "\"info\"",
+          "\"neutral\"",
+          "\"success\"",
+          "\"warning\""
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLSpanElement>"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "variant": {
+        "optional": true,
+        "type": [
+          "\"dashed\"",
+          "\"filled\""
         ]
       }
     }

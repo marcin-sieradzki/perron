@@ -1,0 +1,29 @@
+# Written by npm run factory; never by hand.
+component: MapTooltip
+layer: component
+deferred:
+  at: 2026-10-25T00:10:58.185Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-25T00:19:18.195Z
+    ended: 2026-10-25T00:20:37.896Z
+  build:
+    runs: 4
+    status: done
+    started: 2026-10-25T00:54:02.693Z
+    ended: 2026-10-25T00:55:47.533Z
+  review:
+    rounds: 3
+    sentBack: 2
+    findings:
+      p1: 0
+      p2: 0
+      p3: 4
+    status: done
+    started: 2026-10-25T00:56:24.631Z
+    ended: 2026-10-25T01:00:34.637Z
+  docs:
+    status: done
+    started: 2026-10-25T01:00:40.632Z
+    ended: 2026-10-25T01:03:09.235Z

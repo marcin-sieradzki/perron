@@ -163,10 +163,11 @@ const media = (params: string) =>
 
 /**
  * A declaration that decides what a word longer than its line does: it breaks (`overflow-wrap` or
- * `word-break`), or the text stays on one line (`white-space: nowrap`, a choice its spec names).
+ * `word-break`), or the text stays on one line (`white-space: nowrap` or `pre`, a choice its spec
+ * names). `pre-wrap` and `pre-line` wrap at spaces only, so a long word still overflows.
  */
 const LONG_WORD =
-  /^(overflow-wrap|word-wrap):\s*(anywhere|break-word)|^word-break:\s*(break-all|break-word)|^white-space:\s*(nowrap|pre)\b/i
+  /^(overflow-wrap|word-wrap):\s*(anywhere|break-word)|^word-break:\s*(break-all|break-word)|^white-space:\s*(nowrap|pre)\s*$/i
 
 /** The first `pn-` class of a selector, and its root's: `pn-Button-label` has `pn-Button`. */
 const pnClass = (sel: string) => {
@@ -266,7 +267,7 @@ export function cssProblems(
         if (cls && !decided.has(cls.own) && !decided.has(cls.root))
           report(
             typeset,
-            `${selector(sel)} sets a typography role but not what a long word does: overflow-wrap: anywhere to break it, or white-space: nowrap to keep it on one line, on this rule or on .${cls.own === cls.root ? cls.own : `${cls.own} or .${cls.root}`} (${CONTRACT}, "CSS")`,
+            `${selector(sel)} sets a typography role but not what a long word does: overflow-wrap: anywhere (a box as wide as its container) or break-word (a box sized to its content in a row) to break it, or white-space: nowrap to keep it on one line, on this rule or on .${cls.own === cls.root ? cls.own : `${cls.own} or .${cls.root}`} (${CONTRACT}, "CSS", "Long words")`,
           )
       }
   })

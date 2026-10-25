@@ -44,8 +44,10 @@ export type Gate = 'design-approval' | 'pending-questions' | 'needs-human' | 'do
  * round with only P2s, usually a line or a sentence to fix, gets one round more before the loop
  * stops, where a P1 in the second round stops it. The build stage spends its 3 attempts inside one run, so the factory stops at the first failed
  * build run. A docs failure is a fault in a source the build wrote (code, types, JSDoc, stories)
- * or the spec, so the first goes back to build, as a review's P1 does; the build returns `failed`
- * when the fix is the spec's or the shared tooling's, and that stops the loop.
+ * or the spec, so the first goes back to build, as a review's P1 does. A build whose fix is a
+ * decision the spec leaves open returns `pending` with its questions and waits at
+ * `pending-questions`, like any stage that asks; one whose fix is the shared tooling's, the
+ * read-back's or a token's returns `failed`, and that stops the loop.
  */
 export const CAPS = { review: 2, reviewP2: 3, docs: 2, visual: 2 } as const
 
@@ -74,6 +76,20 @@ export interface StageState {
   failures?: number
 }
 
+/**
+ * One line the PR carries, kept across reruns: a Direction finding a stage returned, the questions
+ * a stage asked (answered by the maintainer, or in an unattended run by their recommended answers,
+ * so the PR's "Decisions to confirm"), or a `needs-human` stop that `unblock` cleared.
+ */
+export interface Note {
+  stage: Stage
+  at: string
+  direction?: string
+  questions?: string
+  /** The stop's reason; `unblock` resets that stage's cap, so the rounds after it start again */
+  unblocked?: string
+}
+
 /** `components/<name>/pipeline.yaml`. Phase 5.5's scorecard joins it later. */
 export interface Pipeline {
   component: string
@@ -85,6 +101,8 @@ export interface Pipeline {
   /** A cap was hit or a stage cannot go on: the maintainer acts, then runs `unblock` */
   needsHuman?: { stage: Stage; reason: string }
   stages: Partial<Record<Stage, StageState>>
+  /** What the PR carries, in the order it happened; never voided by a rerun */
+  notes?: Note[]
 }
 
 /** What the rules need from outside: the repo, a way to run a check, and the time. */
@@ -310,6 +328,7 @@ export function serializePipeline(p: Pipeline) {
     ...(p.deferred && { deferred: p.deferred }),
     ...(p.needsHuman && { needsHuman: p.needsHuman }),
     stages,
+    ...(p.notes?.length && { notes: p.notes }),
   }
   return `# Written by npm run factory; never by hand.\n${stringify(ordered, { lineWidth: 0, singleQuote: true })}`
 }
@@ -524,11 +543,15 @@ export function defer(p: Pipeline, env: Env): Result {
   return { ok: true, pipeline: out, said: `deferred the design of ${p.component}` }
 }
 
-/** Clears a needs-human stop once the maintainer has acted, resetting the cap it hit. */
-export function unblock(p: Pipeline): Result {
+/**
+ * Clears a needs-human stop once the maintainer has acted, resetting the cap it hit, and notes the
+ * stop, so the PR and a later review round see that the count started again there.
+ */
+export function unblock(p: Pipeline, env: Env): Result {
   if (!p.needsHuman) return { ok: false, why: `${p.component} is not at needs-human` }
   const out = clone(p)
   const stage = out.needsHuman!.stage
+  ;(out.notes ??= []).push({ stage, at: env.now(), unblocked: out.needsHuman!.reason })
   const s = stageOf(out, stage)
   if (stage === 'review') s.sentBack = 0
   if (stage === 'docs' || stage === 'visual') s.failures = 0
@@ -631,7 +654,8 @@ function freshReport(p: Pipeline, env: Env) {
 
 /**
  * Ends a running stage: checks its gate from the files (a stage's `done` is a claim, its `failed`
- * and `pending` are taken as said), records the result, and applies the caps and send-backs.
+ * and `pending` are taken as said), records the result, and applies the caps and send-backs. The
+ * run's Direction findings, and a `pending` run's questions, join the notes the PR carries.
  */
 export function end(
   p: Pipeline,
@@ -639,6 +663,7 @@ export function end(
   outcome: Outcome,
   failing: string | undefined,
   env: Env,
+  direction: string[] = [],
 ): Result {
   if (p.stages[stage]?.status !== 'running')
     return { ok: false, why: `${stage} is not running; begin it first` }
@@ -740,6 +765,12 @@ export function end(
   else delete s.failing
   if (verdict.pending) s.pending = verdict.pending
   else delete s.pending
+  const at = env.now()
+  const notes = [
+    ...direction.map((d) => ({ stage, at, direction: d })),
+    ...(verdict.outcome === 'pending' && failing ? [{ stage, at, questions: failing }] : []),
+  ]
+  if (notes.length) (out.notes ??= []).push(...notes)
   const why = verdict.failing ? `: ${verdict.failing}` : ''
   return { ok: true, pipeline: out, said: `ended ${stage}: ${verdict.outcome}${note}${why}` }
 }
