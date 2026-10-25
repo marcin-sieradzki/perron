@@ -15,7 +15,7 @@ describe('client-directive', () => {
     expect(fixture(name)).toBe(true)
   })
 
-  it.each(['missing.tsx', 'after-import.tsx'])('fails %s', (name) => {
+  it.each(['missing.tsx', 'after-import.tsx', 'after-string.tsx'])('fails %s', (name) => {
     expect(fixture(name)).toBe(false)
   })
 
@@ -36,7 +36,7 @@ describe('client-directive', () => {
       )
       for (const file of clientFiles(root)) cpSync(join(root, file), join(tree, file))
       const button = join(tree, 'packages/perron/src/components/Button/Button.tsx')
-      writeFileSync(button, readFileSync(button, 'utf8').replace("'use client'\n", ''))
+      writeFileSync(button, readFileSync(button, 'utf8').replace(/^'use client'\r?\n/, ''))
       expect(check.run(tree)).toEqual([
         {
           file: 'packages/perron/src/components/Button/Button.tsx',

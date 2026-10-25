@@ -2,7 +2,7 @@
 // over it, as a station's panel would hold it, or a pattern on the map by itself. On a phone the
 // sheet is an opaque bottom sheet and its actions fill its width.
 import { MapBackground } from '@/components/map/MapBackground.tsx'
-import { StationIcon } from '@/components/perron'
+import { StationIcon } from '@mylder/perron'
 import { getPreview, type PreviewProps } from '@/previews/index.ts'
 import type { ComponentApi } from '../../lib/api.ts'
 import type { RegistryEntry } from '../../lib/registry.ts'

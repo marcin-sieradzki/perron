@@ -1,5 +1,5 @@
 // The site's footer: the licence and the repository.
-import { Link } from '@/components/perron'
+import { Link } from '@mylder/perron'
 import { REPO_URL } from '../../lib/repo.ts'
 
 export function SiteFooter() {

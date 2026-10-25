@@ -2,7 +2,7 @@
 // linking to its section. The data states tile draws each state's VehicleDot beside its word.
 import NextLink from 'next/link'
 import type { ReactNode } from 'react'
-import { LineBadge, type LineBadgeProps, Tag } from '@/components/perron'
+import { LineBadge, type LineBadgeProps, Tag } from '@mylder/perron'
 import { dotsDrawn, StateDot, stateVariant } from '@/components/site/StateDot.tsx'
 import { siteRoute } from '@/lib/routes.ts'
 import { DATA_STATES_PAGE, type HomeFigures } from './figures.ts'

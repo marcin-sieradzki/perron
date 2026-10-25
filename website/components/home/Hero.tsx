@@ -2,7 +2,7 @@
 // and Browse components, and the MCP server's command. Get started is a solid LinkButton: a link
 // takes no brand colour (docs/components/link-button.md), so the hero has no brand yellow.
 import NextLink from 'next/link'
-import { LinkButton } from '@/components/perron'
+import { LinkButton } from '@mylder/perron'
 import { PageHeader } from '@/components/site/PageHeader.tsx'
 import { CopyCommand } from './CopyCommand.tsx'
 import type { HomeFigures } from './figures.ts'

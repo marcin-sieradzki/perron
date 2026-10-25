@@ -4,7 +4,7 @@
 // tile prints is the row's value. A page with no tile of its own gets a plain one.
 import NextLink from 'next/link'
 import type { CSSProperties, ReactNode } from 'react'
-import { LineBadge, type LineBadgeProps } from '@/components/perron'
+import { LineBadge, type LineBadgeProps } from '@mylder/perron'
 import { dotsDrawn, StateDot, stateVariant } from '@/components/site/StateDot.tsx'
 import type { FoundationPage } from '@/lib/foundations.ts'
 import { firstTable } from '@/lib/markdown.ts'

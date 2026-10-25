@@ -21,8 +21,8 @@ import {
   StationIcon,
   Tag,
   Text,
-} from '@/components/perron'
-import { DetailHeader, DisruptionCard, StopTimeline } from '@/components/perron/patterns'
+} from '@mylder/perron'
+import { DetailHeader, DisruptionCard, StopTimeline } from '@mylder/perron/patterns'
 import { PackageIcon } from '@/components/site/PackageIcon.tsx'
 import { dotsDrawn, StateDot, stateVariant } from '@/components/site/StateDot.tsx'
 import { siteRoute } from '@/lib/routes.ts'
