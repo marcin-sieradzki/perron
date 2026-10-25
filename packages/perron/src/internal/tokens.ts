@@ -13,7 +13,7 @@ export function tokenValue(property: `--perron-${string}`): string | undefined {
   return getComputedStyle(document.documentElement).getPropertyValue(property).trim() || undefined
 }
 
-/** The Tooltips family's positioner defaults in pixels, read from the tokens' custom properties. */
+/** A positioner's defaults in pixels, read from the tokens' custom properties. */
 export interface PositionerOffsets {
   sideOffset?: number
   collisionPadding?: number
@@ -24,9 +24,10 @@ let offsets: PositionerOffsets | undefined
 
 /**
  * `space.200` and `size.panel-gap` as pixel lengths, from `--perron-space-200` and
- * `--perron-size-panel-gap` by `tokenValue`, for a tooltip positioner's `sideOffset` and
- * `collisionPadding`. With no document, as on a server, or before a token stylesheet gives both in
- * pixels, each is left out, and Base UI's own default holds until they can be read.
+ * `--perron-size-panel-gap` in the document root's computed style: the gap a popup keeps from what
+ * opened it and from the screen's edge, for a positioner's `sideOffset` and `collisionPadding`.
+ * With no document, as on a server, or no token stylesheet yet, each is left out, and Base UI's own
+ * default holds until they can be read.
  */
 export function positionerOffsets(): PositionerOffsets {
   if (offsets === undefined) {
