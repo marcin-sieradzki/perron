@@ -14,6 +14,7 @@ import type { VehicleDotProps } from '../../components/VehicleDot/VehicleDot.tsx
 import { useOwnedStrings } from '../../PerronProvider.tsx'
 import { UnknownValue } from '../../internal/UnknownValue.tsx'
 import { classes, given } from '../../internal/nodes.ts'
+import { interpolate } from '../../internal/strings.ts'
 import { delayKnown, STATE_KEY } from '../../internal/vehicle-states.ts'
 import type { VehicleState } from '../../internal/vehicle-states.ts'
 import './DepartureRow.css'
@@ -92,15 +93,17 @@ export interface DepartureRowProps extends Omit<ComponentPropsWithRef<'div'>, 'c
    */
   cancelledLabel?: string
   /**
-   * Overrides "Every", before the interval's minutes, "Every 3 min"
+   * Overrides "Every {count} min", an interval of one number, "Every 3 min"; `{count}` is the whole
+   * minutes
    * @default The locale's
    */
   everyLabel?: string
   /**
-   * Overrides "to", between the two figures of an interval's range, "Every 3 to 4 min"
+   * Overrides "Every {from} to {to} min", an interval's range, "Every 3 to 4 min"; `{from}` and
+   * `{to}` are the fewest and the most whole minutes
    * @default The locale's
    */
-  rangeToLabel?: string
+  everyRangeLabel?: string
   /**
    * Overrides "Live", the state's word when `variant='live'`
    * @default The locale's
@@ -127,7 +130,7 @@ export interface DepartureRowProps extends Omit<ComponentPropsWithRef<'div'>, 'c
    */
   noSignalLabel?: string
   /**
-   * Overrides "min", the unit after the countdown's figure, the interval's and the delay's
+   * Overrides "min", the unit after the countdown's figure and the delay's
    * @default The locale's
    */
   minutesUnitLabel?: string
@@ -217,7 +220,7 @@ export function DepartureRow({
   unknownLabel,
   cancelledLabel,
   everyLabel,
-  rangeToLabel,
+  everyRangeLabel,
   liveLabel,
   ageingLabel,
   estimatedLabel,
@@ -237,7 +240,7 @@ export function DepartureRow({
     unknown: unknownLabel,
     cancelled: cancelledLabel,
     every: everyLabel,
-    rangeTo: rangeToLabel,
+    everyRange: everyRangeLabel,
     live: liveLabel,
     ageing: ageingLabel,
     estimated: estimatedLabel,
@@ -283,28 +286,17 @@ export function DepartureRow({
       </>
     )
 
-  // CR-14: "Every", the fewest minutes, "to" and the most when they differ, then the unit, each
-  // word a text run apart from the figures
+  // CR-14: the locale's template, the minutes filled in where its grammar puts them: one number,
+  // or the fewest and the most when they differ
   let every: ReactNode
   if (runsToInterval) {
     const [first, last] = typeof interval === 'number' ? [interval, interval] : interval
     const fewest = Math.round(Math.min(first, last))
     const most = Math.round(Math.max(first, last))
-    every =
-      Number.isFinite(fewest) && Number.isFinite(most) ? (
-        <>
-          {strings.every} <span>{fewest}</span>
-          {most !== fewest && (
-            <>
-              {' '}
-              {strings.rangeTo} <span>{most}</span>
-            </>
-          )}{' '}
-          {strings.minutesUnit}
-        </>
-      ) : (
-        <UnknownValue label={strings.unknown} />
-      )
+    if (!Number.isFinite(fewest) || !Number.isFinite(most))
+      every = <UnknownValue label={strings.unknown} />
+    else if (most === fewest) every = interpolate(strings.every, { count: fewest })
+    else every = interpolate(strings.everyRange, { from: fewest, to: most })
   }
 
   // CR-7: each part's slotProps first, its own props last, so they win; classes join by hand

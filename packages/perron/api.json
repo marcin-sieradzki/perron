@@ -736,6 +736,12 @@
           "string"
         ]
       },
+      "everyRangeLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
       "interval": {
         "optional": true,
         "type": [
@@ -812,12 +818,6 @@
         "optional": true,
         "type": [
           "ReactNode"
-        ]
-      },
-      "rangeToLabel": {
-        "optional": true,
-        "type": [
-          "string"
         ]
       },
       "slotProps": {
@@ -3335,6 +3335,12 @@
       "Omit< ComponentPropsWithoutRef<'ol'>, 'children' | 'className' | 'style' >"
     ],
     "props": {
+      "cancelledLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
       "className": {
         "optional": true,
         "type": [
@@ -3342,6 +3348,12 @@
         ]
       },
       "delayUnknownLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "expectedTimeLabel": {
         "optional": true,
         "type": [
           "string"

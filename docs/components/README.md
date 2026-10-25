@@ -120,7 +120,7 @@ Deprecate, never remove. An old prop or value keeps working: the component maps 
 
 `packages/perron/api.json` is the props API of every `stable` or `deprecated` component: each member its props type declares, whether it is optional, its type, and what the type extends. `npm run api` writes it from the code, and `npm run check` fails while it is stale.
 
-Against `api.json` at the last release tag, `@mylder/perron@<version>`, the API only grows: a new optional prop, a prop made optional, a wider union, a new base. A prop removed, narrowed or made required, a new required prop, a base dropped or a component removed is a break.
+Against `api.json` at the last release tag, `@mylder/perron@<version>`, the API only grows: a new optional prop, a prop made optional, a wider union, a new base, an object type such as `slotProps` gaining optional members. A prop removed, narrowed or made required, a new required prop, a base dropped or a component removed is a break.
 
 ### Breaking changes
 
@@ -264,6 +264,7 @@ Each of these is written once, in its file, and a component, pattern or story im
 | `typography`                     | `packages/perron/src/testing/stories.ts`         | The style of one typography role with its `-tracking` twin and no margin, for a story's own text                                                                                                             |
 | `heard`, `exposedText`, `textOf` | `packages/perron/src/testing/stories.ts`         | What a screen reader reads of an element: its text outside `aria-hidden`, white space collapsed                                                                                                              |
 | `mounted`, `mount`               | `packages/perron/src/testing/stories.ts`         | Renders a node apart from the story into a host it appends, runs a test on it, and unmounts it after, pass or fail                                                                                           |
+| `struck`                         | `packages/perron/src/testing/stories.ts`         | Whether an element is struck through, its computed `text-decoration-line` holding `line-through`, as a cancelled departure's or stop's times are                                                             |
 | `colour`                         | `packages/perron/src/testing/stories.ts`         | A colour custom property as it renders, the computed `color` of a probe, to compare with an element's                                                                                                        |
 | `rendered`                       | `packages/perron/src/testing/stories.ts`         | The value a token renders as on one CSS property, read from a probe with a solid border and outline, so a width shows; a colour as `color` is `colour`'s                                                     |
 | `onHover`                        | `packages/perron/src/testing/stories.ts`         | What the `(hover: hover)` rules set a property to on an element, as written, since a synthetic pointer can't hover                                                                                           |

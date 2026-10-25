@@ -3,11 +3,12 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { ReactElement } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { expect, isInaccessible, userEvent, within } from 'storybook/test'
+import { expect, isInaccessible, userEvent, waitFor, within } from 'storybook/test'
 import { Button } from '../../components/Button/Button.tsx'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { dictionaries, type Locale } from '../../locale/index.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
+import { colour, heard, mounted, struck } from '../../testing/stories.ts'
 import { StopTimeline } from './StopTimeline.tsx'
 import type { StopTimelineProps, StopTimelineStop } from './StopTimeline.tsx'
 
@@ -81,6 +82,38 @@ function renderOff(element: ReactElement) {
     /** The index of the stop with `aria-current`, or -1. */
     current: items.findIndex((item) => item.hasAttribute('aria-current')),
   }
+}
+
+/**
+ * What a screen reader reads of a stop: its parts in DOM order, each part's text apart, the hidden
+ * rail and marker left out.
+ */
+const readOf = (item: Element) =>
+  [...item.children]
+    .filter((part) => part.getAttribute('aria-hidden') !== 'true')
+    .map(heard)
+    .filter(Boolean)
+    .join(' ')
+
+/** The first element `selector` finds in `scope`, waited for, since `mounted` renders a tick later. */
+const found = (scope: Element, selector: string) =>
+  waitFor(() => {
+    const element = scope.querySelector<HTMLElement>(selector)
+    if (!element) throw new Error(`no ${selector} rendered`)
+    return element
+  })
+
+/** The number of columns the timeline's grid lays out. */
+const columnsOf = (list: Element) => getComputedStyle(list).gridTemplateColumns.split(' ').length
+
+/** Each locale's render of `element`, held to its dictionary and the caller's `words`. */
+function ownedStringsInEveryLocale(element: ReactElement, words: string[]) {
+  for (const locale of LOCALES)
+    expectOwnedStrings(
+      renderToStaticMarkup(<PerronProvider locale={locale}>{element}</PerronProvider>),
+      locale,
+      words,
+    )
 }
 
 /** The places `nextStopIndex` gives a trip of seven stops, as CR-2 reads it. */
@@ -315,6 +348,237 @@ export const TimetableOnly: Story = {
           args.stops.map((stop) => stop.name),
         )
       })
+  },
+}
+
+/** The trip with its call at Vesterport, the stop after the next, cancelled. */
+const CANCELLED: StopTimelineStop[] = TRIP.map((stop, index) =>
+  index === 4 ? { ...stop, cancelled: true } : stop,
+)
+
+/**
+ * A cancelled call stays in the list: "Cancelled" under its name in the danger colour, its time
+ * struck through and kept, and no Delay; the ear hears "Cancelled" before the time.
+ */
+export const Cancelled: Story = {
+  args: { stops: CANCELLED, nextStopIndex: 3 },
+  play: async ({ canvasElement, args, step }) => {
+    const canvas = within(canvasElement)
+    const list = canvas.getByRole('list')
+    const items = itemsOf(list)
+    const item = items[4]
+
+    await step('the call stays in the list, and only its item carries data-cancelled', async () => {
+      await expect(items).toHaveLength(7)
+      for (const [index, each] of items.entries())
+        if (index === 4) await expect(each).toHaveAttribute('data-cancelled', '')
+        else await expect(each).not.toHaveAttribute('data-cancelled')
+      await expect(item.querySelector('.pn-StopTimeline-marker')).not.toBeNull()
+      await expect(item.querySelector('.pn-StopTimeline-rail')).not.toBeNull()
+    })
+
+    await step('"Cancelled" is seen under the name, in the danger colour', async () => {
+      const word = within(item).getByText('Cancelled')
+      await expect(word).toHaveClass('pn-StopTimeline-cancelled')
+      await expect(isInaccessible(word)).toBe(false)
+      await expect(getComputedStyle(word).color).toBe(colour('--perron-color-text-danger'))
+      const name = within(item).getByText(CANCELLED[4].name)
+      await expect(word.getBoundingClientRect().top).toBeGreaterThanOrEqual(
+        name.getBoundingClientRect().bottom - 1,
+      )
+      await expect(canvas.getAllByText('Cancelled')).toHaveLength(1)
+    })
+
+    await step('its time is struck through, its text kept, and its name is not', async () => {
+      const time = item.querySelector('time')!
+      await expect(struck(time)).toBe(true)
+      await expect(time).toHaveTextContent('08:16')
+      await expect(time).toHaveAttribute('datetime', '08:16')
+      await expect(struck(within(item).getByText(CANCELLED[4].name))).toBe(false)
+      await expect(struck(items[5].querySelector('time')!)).toBe(false)
+    })
+
+    await step('no Delay renders, though its delay is 3', async () => {
+      await expect(item.querySelector('.pn-Delay')).toBeNull()
+      await expect(items[5].querySelector('.pn-Delay')).not.toBeNull()
+    })
+
+    await step('the stop reads "Cancelled" after its name, before its time', async () => {
+      await expect(readOf(item)).toBe('Vesterport Cancelled 08:16')
+    })
+
+    await step('a cancelled next stop says "Next stop", then "Cancelled" under it', () =>
+      mounted(canvasElement, <StopTimeline stops={CANCELLED} nextStopIndex={4} />, async (host) => {
+        const next = await found(host, 'li:nth-child(5)')
+        await expect(next).toHaveAttribute('aria-current', 'step')
+        await expect(readOf(next)).toBe('Vesterport Next stop Cancelled 08:16')
+        const below = within(next).getByText('Cancelled').getBoundingClientRect()
+        await expect(below.top).toBeGreaterThanOrEqual(
+          within(next).getByText('Next stop').getBoundingClientRect().bottom - 1,
+        )
+      }),
+    )
+
+    await step('a cancelled passed stop says "Passed", then "Cancelled"', async () => {
+      const { items: stops } = renderOff(<StopTimeline stops={CANCELLED} nextStopIndex={5} />)
+      await expect(readOf(stops[4])).toBe('Vesterport Passed Cancelled 08:16')
+    })
+
+    await step('with an expected time, both times are struck through, the "~" kept', () =>
+      mounted(
+        canvasElement,
+        <StopTimeline stops={[{ ...CANCELLED[4], expected: '08:19' }]} />,
+        async (host) => {
+          const expected = await found(host, '.pn-StopTimeline-expected')
+          await expect(struck(host.querySelector('.pn-StopTimeline-time')!)).toBe(true)
+          await expect(struck(expected)).toBe(true)
+          await expect(expected.textContent).toContain('~08:19')
+          await expect(readOf(itemsOf(host)[0])).toBe('Vesterport Cancelled 08:16 Expected 08:19')
+        },
+      ),
+    )
+
+    await step('cancelledLabel replaces the word', async () => {
+      const { items: stops } = renderOff(
+        <StopTimeline stops={CANCELLED} cancelledLabel="Not calling" />,
+      )
+      await expect(readOf(stops[4])).toBe('Vesterport Not calling 08:16')
+    })
+
+    await step('cancelled: false sets no data-cancelled and keeps the Delay', async () => {
+      const { items: stops } = renderOff(
+        <StopTimeline stops={[{ ...CANCELLED[4], cancelled: false }]} />,
+      )
+      await expect(stops[0]).not.toHaveAttribute('data-cancelled')
+      await expect(stops[0].querySelector('.pn-StopTimeline-cancelled')).toBeNull()
+      await expect(stops[0].querySelector('.pn-Delay')).not.toBeNull()
+    })
+
+    await step("in every locale, every word is the caller's or the dictionary's", () => {
+      ownedStringsInEveryLocale(
+        <StopTimeline {...(args as StopTimelineProps)} />,
+        args.stops.map((stop) => stop.name),
+      )
+    })
+  },
+}
+
+/**
+ * The trip with an expected time where real-time data gives one: at the passed Østerport, the next
+ * stop and two after it, and none at the last stop.
+ */
+const EXPECTED: StopTimelineStop[] = [
+  TRIP[0],
+  TRIP[1],
+  { ...TRIP[2], expected: '08:13' },
+  { ...TRIP[3], expected: '08:17' },
+  { ...TRIP[4], expected: '08:19' },
+  { ...TRIP[5], expected: '08:20' },
+  TRIP[6],
+]
+
+/**
+ * An expected time after the timetabled one, "~08:17" beside 08:14, in a column of its own: "~" to
+ * the eye, "Expected" to the ear.
+ */
+export const Expected: Story = {
+  args: { stops: EXPECTED, nextStopIndex: 3 },
+  play: async ({ canvasElement, args, step }) => {
+    const canvas = within(canvasElement)
+    const list = canvas.getByRole('list')
+    const items = itemsOf(list)
+    const parts = [...list.querySelectorAll<HTMLElement>('.pn-StopTimeline-expected')]
+
+    await step('each expected time shows "~" and its HH:MM, in a <time> of its own', async () => {
+      await expect(parts).toHaveLength(4)
+      for (const [index, part] of parts.entries()) {
+        const { expected } = EXPECTED[index + 2]
+        await expect(part.closest('li')).toBe(items[index + 2])
+        const tilde = part.querySelector('[aria-hidden="true"]')
+        await expect(tilde?.textContent).toBe('~')
+        await expect(tilde?.nextElementSibling?.tagName).toBe('TIME')
+        const time = part.querySelector('time')!
+        await expect(time.textContent).toBe(expected)
+        await expect(time).toHaveAttribute('datetime', expected)
+        await expect(time).toHaveAttribute('aria-hidden', 'true')
+        await expect(part.textContent).toContain(`~${expected}`)
+      }
+      await expect(items[0].querySelector('.pn-StopTimeline-expected')).toBeNull()
+      await expect(items[6].querySelector('.pn-StopTimeline-expected')).toBeNull()
+    })
+
+    await step('"Expected" and the time are heard, not seen, in place of the "~"', async () => {
+      for (const [index, part] of parts.entries()) {
+        const spoken = `Expected ${EXPECTED[index + 2].expected}`
+        await expectHeardNotSeen(within(part).getByText(spoken))
+        await expect(heard(part)).toBe(spoken)
+      }
+    })
+
+    await step('the next stop reads its time, then its expected time, then its delay', async () => {
+      await expect(readOf(items[3])).toBe('Nørreport Next stop 08:14 Expected 08:17 3 min late')
+      await expect(readOf(items[2])).toBe('Østerport Passed 08:11 Expected 08:13 2 min late')
+      await expect(readOf(items[6])).toBe('Dybbølsbro 08:20 1 min late')
+    })
+
+    await step('the expected times share a column after the time, before the delay', async () => {
+      await expect(columnsOf(list)).toBe(5)
+      const starts = parts.map((part) => part.getBoundingClientRect().left)
+      for (const start of starts) await expect(start).toBeCloseTo(starts[0], 0)
+      const delays = [...list.querySelectorAll('.pn-StopTimeline-delay')].map(
+        (delay) => delay.getBoundingClientRect().left,
+      )
+      // every delay lines up, the last stop's too, which has no expected time
+      for (const start of delays) await expect(start).toBeCloseTo(delays[0], 0)
+      const time = items[3].querySelector('.pn-StopTimeline-time')!.getBoundingClientRect()
+      await expect(starts[1]).toBeGreaterThan(time.right)
+      await expect(delays[3]).toBeGreaterThan(parts[1].getBoundingClientRect().right)
+    })
+
+    await step('a passed stop sets its expected time back, as its time', async () => {
+      await expect(parts[0]).toHaveAttribute('data-stop', 'passed')
+      await expect(getComputedStyle(parts[0]).color).toBe(colour('--perron-color-text-secondary'))
+      await expect(getComputedStyle(parts[1]).color).toBe(colour('--perron-color-text-primary'))
+      await expect(struck(parts[1])).toBe(false)
+    })
+
+    await step('with no expected time in the trip, no column is kept for one', () =>
+      mounted(canvasElement, <StopTimeline stops={TRIP} />, async (host) => {
+        const ol = await found(host, 'ol')
+        await expect(columnsOf(ol)).toBe(4)
+      }),
+    )
+
+    await step('a stop with only an expected time renders it alone', async () => {
+      const { items: stops } = renderOff(
+        <StopTimeline stops={[{ name: 'Sydhavn', expected: '08:23' }]} />,
+      )
+      await expect(stops[0].querySelector('.pn-StopTimeline-time')).toBeNull()
+      await expect(stops[0].querySelector('.pn-Delay')).toBeNull()
+      await expect(readOf(stops[0])).toBe('Sydhavn Expected 08:23')
+    })
+
+    await step('an empty expected time renders no expected part', async () => {
+      const { items: stops } = renderOff(
+        <StopTimeline stops={[{ name: 'Sydhavn', time: '08:21', expected: '' }]} />,
+      )
+      await expect(stops[0].querySelector('.pn-StopTimeline-expected')).toBeNull()
+      await expect(readOf(stops[0])).toBe('Sydhavn 08:21')
+    })
+
+    await step('expectedTimeLabel replaces the words, filled alike', async () => {
+      const { items: stops } = renderOff(
+        <StopTimeline stops={EXPECTED} expectedTimeLabel="Due at {time}" />,
+      )
+      await expect(readOf(stops[3])).toBe('Nørreport 08:14 Due at 08:17 3 min late')
+    })
+
+    await step("in every locale, every word is the caller's or the dictionary's", () => {
+      ownedStringsInEveryLocale(
+        <StopTimeline {...(args as StopTimelineProps)} />,
+        args.stops.map((stop) => stop.name),
+      )
+    })
   },
 }
 

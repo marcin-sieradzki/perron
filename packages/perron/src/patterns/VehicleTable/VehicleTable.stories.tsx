@@ -745,11 +745,11 @@ export const Sorted: Story = {
       }
     })
 
-    await step('aria-sort says the given sort on its header, and none on the others', async () => {
+    await step('aria-sort says the given sort on its header alone', async () => {
       await expect(headers.map((header) => header.getAttribute('aria-sort'))).toEqual([
-        'none',
-        'none',
-        'none',
+        null,
+        null,
+        null,
         'descending',
       ])
       // the arrow only on the sorted column, hidden from the ear, which aria-sort tells
@@ -806,9 +806,8 @@ export const Sorted: Story = {
               const cells = within(root).getAllByRole('columnheader')
               for (const cell of cells) {
                 const sorted = cell.getAttribute('data-column') === sort.column
-                await expect(cell).toHaveAttribute(
-                  'aria-sort',
-                  sorted ? (sort.direction === 'asc' ? 'ascending' : 'descending') : 'none',
+                await expect(cell.getAttribute('aria-sort')).toBe(
+                  sorted ? (sort.direction === 'asc' ? 'ascending' : 'descending') : null,
                 )
               }
               const icon = root.querySelector('.pn-VehicleTable-sortIcon')!
@@ -829,7 +828,7 @@ export const Sorted: Story = {
       },
     )
 
-    await step('with no sort given, every header says none and shows no arrow', async () => {
+    await step('with no sort given, no header carries aria-sort or an arrow', async () => {
       for (const sort of [undefined, null]) {
         const onSortChange = fn()
         await mounted(
@@ -843,7 +842,7 @@ export const Sorted: Story = {
           async (host) => {
             const root = await tableIn(host)
             for (const cell of within(root).getAllByRole('columnheader'))
-              await expect(cell).toHaveAttribute('aria-sort', 'none')
+              await expect(cell).not.toHaveAttribute('aria-sort')
             await expect(root.querySelector('.pn-VehicleTable-sortIcon')).toBeNull()
             await userEvent.click(within(root).getByRole('button', { name: 'Delay' }))
             await expect(lastAsked(onSortChange)).toEqual({ column: 'delay', direction: 'asc' })

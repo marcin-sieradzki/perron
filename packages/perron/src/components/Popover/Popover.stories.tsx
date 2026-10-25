@@ -27,7 +27,7 @@ const LONG_TITLE = 'Realtidspositionsopdateringsintervalindstillinger'
 const PARAGRAPHS = Array.from(
   { length: 12 },
   (_, i) =>
-    `Note ${i + 1}: a vehicle that has not reported for two minutes shows its last known position. Its dot turns grey, and the departure list marks its times as planned rather than live.`,
+    `Note ${i + 1}: a vehicle that has stopped reporting keeps moving on the timetable from where it was last seen. Its dot turns grey, and the departure list marks its times as planned rather than live.`,
 )
 
 const meta = {

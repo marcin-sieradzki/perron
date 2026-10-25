@@ -123,14 +123,26 @@ export const en = {
    * state, its times struck through.
    */
   cancelled: 'Cancelled',
-  /** A line that runs to an interval: before the minutes between departures, as in "Every 3 min". */
-  every: 'Every',
-  /** Between the two figures of a range, as in "Every 3 to 4 min". */
-  rangeTo: 'to',
+  /**
+   * A line that runs to an interval: the minutes between departures, as in "Every 3 min". `{count}`
+   * is the whole minutes.
+   */
+  every: 'Every {count} min',
+  /**
+   * A line that runs to an interval that varies: the fewest and the most minutes between
+   * departures, as in "Every 3 to 4 min". `{from}` and `{to}` are the whole minutes, `{from}` the
+   * smaller.
+   */
+  everyRange: 'Every {from} to {to} min',
   /** A stop timeline: under the stop the vehicle reaches next. */
   nextStop: 'Next stop',
   /** A stop timeline: heard after the name of a stop the vehicle has passed. */
   passed: 'Passed',
+  /**
+   * A stop timeline: a stop's expected time, heard in place of the "~" and the time the eye reads,
+   * as in "08:13, Expected 08:16". `{time}` is the expected time.
+   */
+  expectedTime: 'Expected {time}',
   /** A vehicle table: the header of the column of each vehicle's line. */
   lineColumn: 'Line',
   /** A vehicle table: the header of the column of where each vehicle is going. */

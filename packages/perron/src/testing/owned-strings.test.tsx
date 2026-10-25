@@ -94,6 +94,37 @@ describe('expectOwnedStrings', () => {
     ).toThrow(/"Nørreport, Kongens Nytorv"/)
   })
 
+  it("matches a run against one template's own words, in their order", () => {
+    const filled = (text: string) => render('en', <p>{text}</p>)
+    const stops = ['Nørreport', 'Kongens Nytorv', 'Hellerup', 'Klampenborg']
+    // each template whole, its placeholders holding figures, the caller's strings or another
+    // template filled
+    for (const run of [
+      'Every 3 min',
+      'Every 3 to 4 min',
+      'Between Hellerup and Klampenborg',
+      '06:00 to 22:00',
+      'Affects Nørreport and Kongens Nytorv',
+      'Affects Nørreport, Kongens Nytorv and 3 more',
+    ])
+      expect(() => expectOwnedStrings(filled(run), 'en', stops)).not.toThrow()
+    // a placeholder left empty, the words out of order, two templates' words mixed, words before
+    // or after a template, and a template's words repeated are each strays
+    for (const run of [
+      'to 3',
+      'Every min',
+      'more Nørreport Affects',
+      'Nørreport Affects',
+      'Affects and 3 more',
+      'Every 3 and 4 more',
+      'Between Hellerup to Klampenborg',
+      'Hellerup Every 3 min',
+      'Every 3 min min',
+      'Every Every 3 min',
+    ])
+      expect(() => expectOwnedStrings(filled(run), 'en', stops)).toThrow(`"${run}"`)
+  })
+
   it('skips the "x" Base UI appends to a meter, and nothing that only looks like it', () => {
     const meter = render(
       'da',

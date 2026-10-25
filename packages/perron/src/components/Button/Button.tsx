@@ -104,8 +104,8 @@ export function Button({
       data-size={size}
       data-full-width={fullWidth ? '' : undefined}
       // CR-15: a toggle only when `selected` is given, so a plain button has no aria-pressed of
-      // its own, and a caller's `aria-pressed` still reaches the root
-      aria-pressed={selected ?? rest['aria-pressed']}
+      // its own, and a caller's `aria-pressed`, spread with the rest, still reaches the root
+      {...(selected !== undefined && { 'aria-pressed': selected })}
       data-selected={selected ? '' : undefined}
     >
       {rendersSomething(startIcon) && (
