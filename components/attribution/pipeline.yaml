@@ -3,4 +3,8 @@ component: Attribution
 layer: component
 deferred:
   at: 2026-10-25T00:58:17.210Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-25T00:58:21.864Z
+    ended: 2026-10-25T01:03:51.183Z
