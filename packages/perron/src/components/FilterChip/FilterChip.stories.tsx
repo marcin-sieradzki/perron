@@ -119,6 +119,24 @@ export const Default: Story = {
       false,
       expect.objectContaining({ reason: 'none' }),
     )
+    await userEvent.keyboard('{Enter}')
+    await expect(root).toHaveAttribute('aria-pressed', 'true')
+    await expect(root).toHaveAttribute('data-pressed')
+    await expect(onChange).toHaveBeenCalledTimes(3)
+    await expect(onChange).toHaveBeenLastCalledWith(
+      expect.any(Event),
+      true,
+      expect.objectContaining({ reason: 'none' }),
+    )
+    await userEvent.keyboard('{Enter}')
+    await expect(root).toHaveAttribute('aria-pressed', 'false')
+    await expect(root).not.toHaveAttribute('data-pressed')
+    await expect(onChange).toHaveBeenCalledTimes(4)
+    await expect(onChange).toHaveBeenLastCalledWith(
+      expect.any(Event),
+      false,
+      expect.objectContaining({ reason: 'none' }),
+    )
     root.blur()
   },
 }

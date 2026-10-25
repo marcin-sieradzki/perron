@@ -9,19 +9,17 @@ stages:
     started: 2026-10-25T01:20:17.725Z
     ended: 2026-10-25T01:21:25.932Z
   build:
-    runs: 1
-    failing: review round 1 found 1 P1 and 4 P2 (components/filter-chip/review.md)
+    runs: 2
+    status: done
+    started: 2026-10-25T01:37:53.915Z
+    ended: 2026-10-25T01:41:55.733Z
   review:
-    status: failed
-    started: 2026-10-25T01:30:43.778Z
     rounds: 1
+    sentBack: 1
     findings:
       p1: 1
       p2: 4
       p3: 5
-    sentBack: 1
-    ended: 2026-10-25T01:37:48.527Z
-    failing: review round 1 found 1 P1 and 4 P2 (components/filter-chip/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T01:19:52.654Z
@@ -63,3 +61,9 @@ notes:
   - stage: build
     at: 2026-10-25T01:30:28.173Z
     direction: "Contract, Design states: in forced colours, a component that sets `forced-color-adjust: none` to keep a selected fill also loses the system's colour for its focus ring. FilterChip now gives the ring `CanvasText`. HighlightChip and SegmentedControl will hit the same case, so the contract could state the rule once."
+  - stage: build
+    at: 2026-10-25T01:41:55.733Z
+    direction: "Contract, Design states: when a component sets forced-color-adjust: none to keep a selected fill, the setting is inherited, so composed children such as Count keep the theme's colours unless they set forced-color-adjust: auto, and hover rules of higher specificity can bring the theme's colours back. HighlightChip and SegmentedControl will hit the same thing, so the contract could state the rule once, next to the focus-ring note from build run 1."
+  - stage: build
+    at: 2026-10-25T01:41:55.733Z
+    direction: "Spec, Tokens (selected, disabled): outside forced colours, the disabled on chip's color.surface.inset fill is still the same colour as the Count's pill (review P3-5). This run did not change it."

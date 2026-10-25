@@ -78,15 +78,19 @@
   color: var(--perron-color-text-tertiary);
 }
 
-/* CR-9: the one rule that reaches inside the Count */
+/* CR-9: the one rule that reaches inside the Count, but for CR-11's in forced colours */
 .pn-FilterChip[data-disabled] .pn-FilterChip-count {
   color: var(--perron-color-text-tertiary);
 }
 
-/* CR-11: forced colours drop the inverse fill, so a selected chip keeps the system's; a disabled
-   chip, on or off, takes GrayText, as the Tokens table's "selected, disabled" is a state apart */
+/* CR-11: forced colours drop the inverse fill, so a selected chip keeps a system fill of its own,
+   Highlight, or GrayText when it is disabled too, and the selected state still shows beside a
+   disabled chip that is off, which takes GrayText words and edge on Canvas */
 @media (forced-colors: active) {
-  .pn-FilterChip[data-pressed]:not([data-disabled]) {
+  /* :hover and :active too, at the hover rules' specificity and after them, so the theme's
+     inverse-hover never shows inside forced-color-adjust: none */
+  .pn-FilterChip[data-pressed]:not([data-disabled]),
+  .pn-FilterChip[data-pressed]:not([data-disabled]):is(:hover, :active) {
     forced-color-adjust: none;
     background-color: Highlight;
     color: HighlightText;
@@ -98,9 +102,26 @@
     outline-color: CanvasText;
   }
 
-  .pn-FilterChip[data-disabled],
-  .pn-FilterChip[data-disabled] .pn-FilterChip-count {
+  .pn-FilterChip[data-disabled] {
     border-color: GrayText;
+    color: GrayText;
+  }
+
+  .pn-FilterChip[data-pressed][data-disabled] {
+    forced-color-adjust: none;
+    border-color: transparent;
+    background-color: GrayText;
+    color: Canvas;
+  }
+
+  /* forced-color-adjust is inherited: the Count is not part of the fill, so the system draws it
+     as it draws every Count, a Canvas pill with its CanvasText outline (Count's CR-7) */
+  .pn-FilterChip[data-pressed] .pn-FilterChip-count {
+    forced-color-adjust: auto;
+  }
+
+  .pn-FilterChip[data-disabled] .pn-FilterChip-count {
+    outline-color: GrayText;
     color: GrayText;
   }
 }
