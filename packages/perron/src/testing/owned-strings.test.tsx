@@ -109,7 +109,10 @@ describe('expectOwnedStrings', () => {
     ])
       expect(() => expectOwnedStrings(filled(run), 'en', stops)).not.toThrow()
     // a placeholder left empty, the words out of order, two templates' words mixed, words before
-    // or after a template, and a template's words repeated are each strays
+    // a template ("Hellerup Every 3 min") or after it ("Every 3 min ago"), and a template's words
+    // repeated ("Every Every 3 min") are each strays. A unit repeated after the template, "Every
+    // 3 min min", is no longer one: with "{minutes} min" owned it reads as that template filled
+    // inside "Every {minutes} min"
     for (const run of [
       'to 3',
       'Every min',

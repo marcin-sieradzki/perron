@@ -46,7 +46,7 @@ export const da: OwnedStrings = {
   brandName: 'Mylder',
   now: 'Nu',
   cancelled: 'Aflyst',
-  every: 'Hvert {count}. min',
+  every: 'Hvert {minutes}. min',
   everyRange: 'Hvert {from}. til {to}. min',
   nextStop: 'Næste stop',
   passed: 'Passeret',

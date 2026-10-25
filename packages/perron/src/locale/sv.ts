@@ -46,7 +46,7 @@ export const sv: OwnedStrings = {
   brandName: 'Mylder',
   now: 'Nu',
   cancelled: 'Inställd',
-  every: 'Var {count} min',
+  every: 'Var {minutes} min',
   everyRange: 'Var {from} till {to} min',
   nextStop: 'Nästa hållplats',
   passed: 'Passerad',

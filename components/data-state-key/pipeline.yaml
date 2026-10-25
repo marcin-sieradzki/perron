@@ -3,14 +3,22 @@ component: DataStateKey
 layer: pattern
 deferred:
   at: 2026-10-25T17:49:32.921Z
+needsHuman:
+  stage: build
+  reason: 'build failed: npm run check failed:        |   ^ /      26|     const rows = propRows(gaugeArgTypes()) /      27|     const declared = rows.filter((r) => OWN.includes(r.name) || r.name… /  / ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯'
 stages:
   brief:
     status: done
     started: 2026-10-25T17:56:21.302Z
     ended: 2026-10-25T17:56:40.084Z
   build:
-    runs: 5
-    failing: review round 2 found 1 P2 (components/data-state-key/review.md)
+    runs: 6
+    status: failed
+    started: 2026-10-25T19:02:03.791Z
+    begun: 19c18805c1aac4c46e45f4847f2c9b2f65919953508551c3ad0dff011e3903aa
+    spec: 54b2692c4988282f2e3d4da607f8b267a7daf9dc8876f40cc402b5daeedb34e9
+    ended: 2026-10-25T19:10:31.877Z
+    failing: 'npm run check failed:        |   ^ /      26|     const rows = propRows(gaugeArgTypes()) /      27|     const declared = rows.filter((r) => OWN.includes(r.name) || r.name… /  / ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯'
   review:
     rounds: 2
     sentBack: 2
@@ -19,10 +27,6 @@ stages:
       p1: 0
       p2: 1
       p3: 5
-    status: failed
-    started: 2026-10-25T18:54:29.816Z
-    ended: 2026-10-25T19:01:54.784Z
-    failing: review round 2 found 1 P2 (components/data-state-key/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T17:55:46.713Z

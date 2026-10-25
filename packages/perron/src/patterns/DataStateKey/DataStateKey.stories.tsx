@@ -518,6 +518,7 @@ export const Thresholds: Story = {
         [150_000, '2.5 min'],
         [240_000, '4 min'],
         [-0, '0 s'],
+        [60_060_000, '1001 min'],
       ]
       for (const [ms, written] of figures) {
         const [live] = await sentencesAt(canvasElement, { liveThreshold: ms, ageingThreshold: ms })

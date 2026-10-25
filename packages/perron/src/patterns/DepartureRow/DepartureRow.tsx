@@ -93,7 +93,7 @@ export interface DepartureRowProps extends Omit<ComponentPropsWithRef<'div'>, 'c
    */
   cancelledLabel?: string
   /**
-   * Overrides "Every {count} min", an interval of one number, "Every 3 min"; `{count}` is the whole
+   * Overrides "Every {minutes} min", an interval of one number, "Every 3 min"; `{minutes}` is the whole
    * minutes
    * @default The locale's
    */
@@ -295,7 +295,7 @@ export function DepartureRow({
     const most = Math.round(Math.max(first, last))
     if (!Number.isFinite(fewest) || !Number.isFinite(most))
       every = <UnknownValue label={strings.unknown} />
-    else if (most === fewest) every = interpolate(strings.every, { count: fewest })
+    else if (most === fewest) every = interpolate(strings.every, { minutes: fewest })
     else every = interpolate(strings.everyRange, { from: fewest, to: most })
   }
 

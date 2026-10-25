@@ -232,11 +232,11 @@ export function DataStateKey({
     minutesDuration: minutesDurationLabel,
     unknown: unknownLabel,
   })
-  // CR-7: the figures in the locale's decimal mark, at most one fraction digit, built once per
-  // locale, as Slider builds its formatter
+  // CR-7: the figures in the locale's decimal mark, at most one fraction digit and no grouping,
+  // built once per locale, as Slider builds its formatter
   const locale = useLocale()
   const format = useMemo(
-    () => new Intl.NumberFormat(locale, { maximumFractionDigits: 1 }),
+    () => new Intl.NumberFormat(locale, { maximumFractionDigits: 1, useGrouping: false }),
     [locale],
   )
   const figures = {

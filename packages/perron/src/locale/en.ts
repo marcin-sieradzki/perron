@@ -111,7 +111,8 @@ export const en = {
   /**
    * Stat, FactList, Count, Meter, ScaleBar, VehicleTable, ReportStrip, DataStateKey: no data gives
    * the figure, value, count, distance, last-seen time or threshold; heard in place of "—", as a
-   * meter's value text, after "Scale" on the map's scale, or inside a data state key's sentence.
+   * meter's value text, after "Scale" on the map's scale, or in place of a data state key's whole
+   * sentence when a threshold it holds is unknown.
    */
   unknown: 'Unknown',
   /** Brand: the brand name, a name and never translated; the wordmark shows it lowercase. */
@@ -127,10 +128,10 @@ export const en = {
    */
   cancelled: 'Cancelled',
   /**
-   * A line that runs to an interval: the minutes between departures, as in "Every 3 min". `{count}`
+   * A line that runs to an interval: the minutes between departures, as in "Every 3 min". `{minutes}`
    * is the whole minutes.
    */
-  every: 'Every {count} min',
+  every: 'Every {minutes} min',
   /**
    * A line that runs to an interval that varies: the fewest and the most minutes between
    * departures, as in "Every 3 to 4 min". `{from}` and `{to}` are the whole minutes, `{from}` the
