@@ -714,6 +714,109 @@
       }
     }
   },
+  "Sheet": {
+    "extends": [
+      "Omit<Drawer.Popup.Props, 'children' | 'title'>"
+    ],
+    "props": {
+      "anchor": {
+        "optional": true,
+        "type": [
+          "\"bottom\"",
+          "\"left\"",
+          "\"right\""
+        ]
+      },
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "closeLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "defaultOpen": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "defaultSnapPoint": {
+        "optional": true,
+        "type": [
+          "null",
+          "number",
+          "string"
+        ]
+      },
+      "modal": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "onClose": {
+        "optional": true,
+        "type": [
+          "(event: MouseEvent | Event | PointerEvent | TouchEvent | KeyboardEvent | FocusEvent, reason: DrawerRootChangeEventReason, details: DrawerRootChangeEventDetails) => void"
+        ]
+      },
+      "onOpen": {
+        "optional": true,
+        "type": [
+          "(event: MouseEvent | Event | PointerEvent | TouchEvent | KeyboardEvent | FocusEvent, details: DrawerRootChangeEventDetails) => void"
+        ]
+      },
+      "onSnapPointChange": {
+        "optional": true,
+        "type": [
+          "(event: MouseEvent | Event | PointerEvent | TouchEvent | KeyboardEvent | FocusEvent, snapPoint: DrawerSnapPoint | null, details: DrawerRootSnapPointChangeEventDetails) => void"
+        ]
+      },
+      "open": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ trigger?: Props<unknown> | undefined; portal?: DrawerPortalProps | undefined; backdrop?: DrawerBackdropProps | undefined; viewport?: DrawerViewportProps | undefined; title?: DrawerTitleProps | undefined; close?: DrawerCloseProps | undefined; content?: DrawerContentProps | undefined; }"
+        ]
+      },
+      "snapPoint": {
+        "optional": true,
+        "type": [
+          "null",
+          "number",
+          "string"
+        ]
+      },
+      "snapPoints": {
+        "optional": true,
+        "type": [
+          "DrawerSnapPoint[]"
+        ]
+      },
+      "title": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "trigger": {
+        "optional": true,
+        "type": [
+          "ReactElement<unknown, string | JSXElementConstructor<any>>"
+        ]
+      }
+    }
+  },
   "Stat": {
     "extends": [
       "Omit<useRender.ComponentProps<'div'>, 'children'>"
