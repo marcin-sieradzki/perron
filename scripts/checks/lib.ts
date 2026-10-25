@@ -166,17 +166,27 @@ export const media = (params: string) =>
     .replace(/\s*:\s*/g, ': ')
     .trim()
 
-/** Whether `node` sits in a `@media` whose query holds `query`, as `media` spells it. */
+/**
+ * Whether `node` sits in a `@media` whose query holds `query`, as `media` spells it, and doesn't
+ * negate it: `not all and (hover: hover)` holds on the devices `(hover: hover)` leaves out.
+ */
 export const inMedia = (node: Node, query: string) => {
   for (let p = node.parent; p; p = p.parent)
-    if (p.type === 'atrule' && (p as AtRule).name.toLowerCase() === 'media')
-      if (media((p as AtRule).params).includes(query)) return true
+    if (p.type === 'atrule' && (p as AtRule).name.toLowerCase() === 'media') {
+      const q = media((p as AtRule).params)
+      if (q.includes(query) && !/(^|[\s,])not\s/.test(q)) return true
+    }
   return false
 }
 
 /**
- * A selector with one spacing: white space collapsed, and none inside parentheses' edges or before
- * a comma, so two spellings of one selector, one wrapped across lines, compare equal.
+ * A selector with one spacing: white space collapsed, none inside parentheses' edges and one
+ * after a comma, so two spellings of one selector, one wrapped across lines, compare equal.
  */
 export const selector = (text: string) =>
-  text.replace(/\s+/g, ' ').replace(/\(\s/g, '(').replace(/\s\)/g, ')').replace(/\s,/g, ',').trim()
+  text
+    .replace(/\s+/g, ' ')
+    .replace(/\(\s/g, '(')
+    .replace(/\s\)/g, ')')
+    .replace(/\s?,\s?/g, ', ')
+    .trim()

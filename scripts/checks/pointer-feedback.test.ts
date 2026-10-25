@@ -33,7 +33,7 @@ describe('pointer-feedback', () => {
       lint(`${BASE}
 .pn-X:active { background-color: var(--a-pressed); }
 @media (hover: hover) { .pn-X:hover { background-color: var(--a-hover); } }`),
-    ).toEqual([expect.stringMatching(/comes before its hover rule/)])
+    ).toEqual([expect.stringMatching(/comes before a hover rule/)])
   })
 
   it('fails a press that repeats part of the hover, and passes one that changes a paint of it', () => {
@@ -66,6 +66,28 @@ describe('pointer-feedback', () => {
       lint(`${BASE}
 @media (hover: hover) { .pn-X:hover { border-color: var(--a); } }
 .pn-X:active { border-color: var(--a); }`),
+    ).toEqual([expect.stringMatching(/paints only what its hover rule already paints/)])
+  })
+
+  it('reads a hover or a press split over rules as one, and a guard as no pinned edge', () => {
+    const split = `${BASE}
+@media (hover: hover) { .pn-X:hover { background-color: var(--a); } }
+.pn-X:active { background-color: var(--b); }
+@media (hover: hover) { .pn-X:hover { color: var(--c); } }`
+    expect(lint(split)).toEqual([])
+    expect(lint(`${split}\n.pn-X:active { background-color: var(--a); color: var(--c); }`)).toEqual(
+      [expect.stringMatching(/paints only what its hover rule already paints/)],
+    )
+    expect(
+      lint(`${BASE}
+@media (hover: hover) { .pn-X:hover { color: var(--a); } }
+.pn-X:active { background: var(--b); }
+@media (hover: hover) { .pn-X:hover { background-color: var(--b); } }`),
+    ).toEqual([expect.stringMatching(/comes before a hover rule/)])
+    expect(
+      lint(`${BASE}
+@media (hover: hover) { .pn-X:not([data-invalid],[data-a]):hover { background-color: var(--a); } }
+.pn-X:not([data-invalid], [data-a]):active { background-color: var(--a); }`),
     ).toEqual([expect.stringMatching(/paints only what its hover rule already paints/)])
   })
 
@@ -104,7 +126,7 @@ describe('pointer-feedback', () => {
     const pair = `@media (hover: hover) { .pn-X:not([data-disabled], [data-readonly]):hover { color: var(--a); } }
 .pn-X:not([data-disabled], [data-readonly]):active { color: var(--b); }`
     expect(lint(`.pn-X[data-disabled] { color: var(--t); }\n${pair}`)).toEqual([
-      expect.stringMatching(/\.pn-X styles a disabled or read-only state that keeps the pointer/),
+      expect.stringMatching(/\.pn-X styles a disabled state that keeps the pointer/),
       expect.stringMatching(/\.pn-X has a hover look and no cursor: pointer/),
     ])
     // another part's pointer, or a cursor the contract does not name, does not count
@@ -132,6 +154,13 @@ ${pair}`),
         lint(`@media (hover: hover) { ${hovered}:hover { color: var(--a); } }
 ${hovered}:active { color: var(--b); }`),
       ).toEqual([expect.stringMatching(/no cursor: pointer/)])
+    // each still state takes the default cursor of its own
+    expect(
+      lint(`.pn-X { cursor: pointer; }
+.pn-X[data-disabled] { cursor: default; }
+.pn-X[data-readonly] { color: var(--t); }
+${pair}`),
+    ).toEqual([expect.stringMatching(/styles a read-only state that keeps the pointer/)])
     // the row that holds a part sets its cursor in its own file
     expect(
       lint(`@media (hover: hover) { [role]:hover > .pn-X { color: var(--a); } }
@@ -145,7 +174,8 @@ ${hovered}:active { color: var(--b); }`),
 @media (hover: hover) {
   /* perron-allow(pointer-feedback): a text box takes the focus ring on press */
   .pn-X:hover { background-image: var(--a); }
-}`),
+}
+.pn-X:active { background-image: var(--a); }`),
     ).toEqual([])
   })
 

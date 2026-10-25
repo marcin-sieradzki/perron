@@ -107,15 +107,26 @@ export function stateRules(element: Element, pseudo: ':hover' | ':active' | ':vi
  */
 export function pressedAfterHover(element: Element) {
   let [index, hover, active] = [0, -1, -1]
+  // the properties the pointer-feedback check reads as paint (scripts/checks/pointer-feedback.ts)
   const paints = (style: CSSStyleDeclaration) =>
-    ['background-color', 'background-image', 'color', 'border-color'].some((p) =>
-      style.getPropertyValue(p),
-    )
+    [
+      'background',
+      'background-color',
+      'background-image',
+      'border-color',
+      'color',
+      'box-shadow',
+      'outline-color',
+    ].some((p) => style.getPropertyValue(p))
   const visit = (rules: CSSRuleList, inQuery: boolean) => {
     for (const rule of Array.from(rules))
       if (rule instanceof CSSMediaRule) {
-        if (!rule.conditionText.includes('forced-colors'))
-          visit(rule.cssRules, inQuery || rule.conditionText.includes('(hover: hover)'))
+        const query = rule.conditionText.replace(/\s+/g, ' ')
+        if (!query.includes('forced-colors: active'))
+          visit(
+            rule.cssRules,
+            inQuery || (query.includes('(hover: hover)') && !/\bnot\b/.test(query)),
+          )
       } else if (rule instanceof CSSGroupingRule && !(rule instanceof CSSStyleRule))
         visit(rule.cssRules, inQuery)
       else if (rule instanceof CSSStyleRule && paints(rule.style)) {
