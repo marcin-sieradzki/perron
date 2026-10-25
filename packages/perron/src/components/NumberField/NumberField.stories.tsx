@@ -16,6 +16,7 @@ import {
   lines,
   mounted,
   onHover,
+  pressedAfterHover,
   rendered,
   resolve,
   stateFill,
@@ -259,13 +260,19 @@ export const Steppers: Story = {
         await expect(box.height).toBe(control)
       }
     })
-    await step('hover gives the hover fill and the primary ink; pressed the selected', async () => {
-      for (const button of [decrease, increase]) {
-        await expect(onHover(button, 'background-color')).toBe('var(--perron-color-surface-hover)')
-        await expect(onHover(button, 'color')).toBe('var(--perron-color-text-primary)')
-        await expect(stateFill(button, ':active')).toBe('var(--perron-color-surface-selected)')
-      }
-    })
+    await step(
+      'hover gives the hover fill and the primary ink; pressed the selected, in a rule after it',
+      async () => {
+        for (const button of [decrease, increase]) {
+          await expect(onHover(button, 'background-color')).toBe(
+            'var(--perron-color-surface-hover)',
+          )
+          await expect(onHover(button, 'color')).toBe('var(--perron-color-text-primary)')
+          await expect(stateFill(button, ':active')).toBe('var(--perron-color-surface-selected)')
+          await expect(pressedAfterHover(button)).toBe(true)
+        }
+      },
+    )
     await step('a press on Increase makes it 9, and leaves focus on the input', async () => {
       await userEvent.click(increase)
       await expect(input).toHaveValue('9')
