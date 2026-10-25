@@ -17,7 +17,6 @@
   gap: var(--perron-space-050);
   inline-size: 100%;
   block-size: var(--perron-size-input);
-  padding-inline-start: var(--perron-space-300);
   padding-inline-end: var(--perron-space-050);
   border: var(--perron-border-width-025) solid var(--perron-color-border-control);
   border-radius: var(--perron-radius-md);
@@ -47,12 +46,16 @@
 }
 
 /* Transparent inside the box, which draws the fill, the edge and the ring; one line of figures
-   that keep their widths as the number steps, and scroll, as a native input does (CR-10). */
+   that keep their widths as the number steps, and scroll, as a native input does (CR-10). It fills
+   the box from its start edge to the buttons, top to bottom, so a press anywhere but a button lands
+   on it and focuses it, and its start padding sets the number where the Fields' words start. */
 .pn-NumberField-input {
   flex: 1;
+  align-self: stretch;
   min-inline-size: 0;
   margin: 0;
   padding: 0;
+  padding-inline-start: var(--perron-space-300);
   border: 0;
   background: transparent;
   outline: none;
