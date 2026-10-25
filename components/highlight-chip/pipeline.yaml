@@ -3,4 +3,35 @@ component: HighlightChip
 layer: component
 deferred:
   at: 2026-10-25T01:16:43.640Z
-stages: {}
+stages:
+  brief:
+    status: pending
+    started: 2026-10-25T01:16:48.653Z
+    ended: 2026-10-25T01:23:29.991Z
+notes:
+  - stage: brief
+    at: 2026-10-25T01:23:29.991Z
+    direction: "FilterChip's brief runs in parallel on Base UI's Toggle: its pressed-state prop names (pressed/defaultPressed/onChange) and pressed fill should be held to HighlightChip's by api-consistency before either merges."
+  - stage: brief
+    at: 2026-10-25T01:23:29.991Z
+    direction: The chip's purpose (a single map-highlight toggle, not a filter) comes only from Layout's stacking table, Accessibility's Esc order and the close icon's use line; no prototype was reachable, so confirm it matches Mylder.
+  - stage: brief
+    at: 2026-10-25T01:23:29.991Z
+    direction: No close mark on a pressed chip, since the close icon belongs to CloseButton alone; if Mylder's chip showed one, it needs a new shared part through the contract.
+  - stage: brief
+    at: 2026-10-25T01:23:29.991Z
+    direction: size.control's description names only icon buttons and filter chips; it could also name highlight chips (a design-tokens change).
+  - stage: brief
+    at: 2026-10-25T01:23:29.991Z
+    direction: 'Forced colours: the pressed state relies on CR-5 (Highlight/HighlightText), since the inverse fill is dropped in Windows contrast themes.'
+  - stage: brief
+    at: 2026-10-25T01:23:29.991Z
+    questions: |-
+      1. Is HighlightChip the one toggle floating alone over the map that turns one map highlight on and off, while FilterChip changes what the map and lists show? Recommended: yes.
+      2. Does the chip show no close mark while pressed, its state told by the color.surface.inverse fill and aria-pressed? Recommended: yes.
+      3. Does the chip take pressed, defaultPressed and onChange(event, value, details), value the next pressed boolean? Recommended: yes.
+      4. Does the chip come in one look, with no variant, color, size or startIcon? Recommended: yes.
+      5. Is the chip glass at rest (color.surface.overlay, glass blur/saturate, shadow.panel, border.width.025 in color.border.subtle) and color.surface.inverse with color.text.inverse while pressed, keeping its shadow, edge transparent? Recommended: yes.
+      6. Is the chip at least size.control tall and wide, space.300 at the sides, space.150 gap, typography.label, icon.size.400? Recommended: yes.
+      7. Does a pressed disabled chip take color.surface.inset with color.text.tertiary, a disabled chip at rest keeping its glass with color.text.tertiary? Recommended: yes.
+      8. Does the chip tell its state through aria-pressed and the pressed fill, with no owned word, the caller free to change children with the state? Recommended: yes.
