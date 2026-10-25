@@ -8,6 +8,11 @@ stages:
     status: done
     started: 2026-10-25T01:20:17.725Z
     ended: 2026-10-25T01:21:25.932Z
+  build:
+    status: done
+    started: 2026-10-25T01:21:26.193Z
+    runs: 1
+    ended: 2026-10-25T01:30:28.172Z
 notes:
   - stage: brief
     at: 2026-10-25T01:19:52.654Z
@@ -40,3 +45,12 @@ notes:
       8. (Tokens) Is the chip's icon `icon.size.325`? Recommended: yes. It is the size for icons inline with label text, and the disruption icons are drawn on that grid.
       9. (Tokens) Does a selected chip show its state by its fill alone, with no tick? Recommended: yes. `aria-pressed` tells the ear, forced colours get `Highlight`, and a tick appearing would widen the chip.
       10. (Stories) Do the selected chip's hover and its disabled look get a `SelectedDisabled` story and a hover check in `Selected`'s play test, with no Penpot variant of their own, and the drawing keeping one `State` property (default, hover, focus, selected, disabled)? Recommended: yes.
+  - stage: build
+    at: 2026-10-25T01:30:28.173Z
+    direction: "Contract, State and events: the props gate requires `onChange(event, value, details)` by parameter name, so a toggle's boolean arrives as `value`. MUI's Checkbox and Switch name it `checked`, and MUI's ToggleButton passes the button's own `value` instead. Either the contract names the boolean case (for example `onChange(event, selected, details)` for FilterChip, HighlightChip and Switch) or it keeps `value` for every control."
+  - stage: build
+    at: 2026-10-25T01:30:28.173Z
+    direction: "Spec, Tokens (selected, disabled): the disabled selected chip's `color.surface.inset` fill is the same colour as the Count's inset pill, so the count's pill disappears and only its tertiary figure is left. A different pill for the count when the chip is disabled, or a different fill for the chip, would keep the count's shape."
+  - stage: build
+    at: 2026-10-25T01:30:28.173Z
+    direction: "Contract, Design states: in forced colours, a component that sets `forced-color-adjust: none` to keep a selected fill also loses the system's colour for its focus ring. FilterChip now gives the ring `CanvasText`. HighlightChip and SegmentedControl will hit the same case, so the contract could state the rule once."

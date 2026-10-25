@@ -1,0 +1,106 @@
+/* FilterChip, from docs/components/filter-chip.md. Off is Button's neutral outline and on, read
+   from Toggle's data-pressed (CR-4), its neutral solid, on a pill. Every state changes colours
+   only (CR-5), at once (CR-12), and the colour is set on the root, which the label and the icon
+   take (CR-8). */
+
+.pn-FilterChip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--perron-space-150);
+  box-sizing: border-box;
+  block-size: var(--perron-size-control);
+  margin: 0;
+  padding-block: 0;
+  padding-inline: var(--perron-space-300);
+  /* every state has the edge, transparent when selected, so on and off share one box (CR-5) */
+  border: var(--perron-border-width-025) solid var(--perron-color-border-control);
+  border-radius: var(--perron-radius-full);
+  background-color: transparent;
+  color: var(--perron-color-text-primary);
+  /* CR-10: the label stays on one line and the chip grows with it; the row of chips wraps */
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.pn-FilterChip-label {
+  font: var(--perron-typography-label);
+  letter-spacing: var(--perron-typography-label-tracking);
+}
+
+.pn-FilterChip-startIcon {
+  display: inline-flex;
+  flex: none;
+  --perron-icon-size: var(--perron-icon-size-325);
+}
+
+/* off: the hover layer every control shares, inside (hover: hover); the press outside it, so a
+   touch press shows (CR-6) */
+
+@media (hover: hover) {
+  .pn-FilterChip:not([data-pressed], [data-disabled]):hover {
+    background-color: var(--perron-color-surface-hover);
+  }
+}
+
+.pn-FilterChip:not([data-pressed], [data-disabled]):active {
+  background-color: var(--perron-color-surface-hover);
+}
+
+/* on: the selected design state */
+
+.pn-FilterChip[data-pressed] {
+  border-color: transparent;
+  background-color: var(--perron-color-surface-inverse);
+  color: var(--perron-color-text-inverse);
+}
+
+@media (hover: hover) {
+  .pn-FilterChip[data-pressed]:not([data-disabled]):hover {
+    background-color: var(--perron-color-surface-inverse-hover);
+  }
+}
+
+.pn-FilterChip[data-pressed]:not([data-disabled]):active {
+  background-color: var(--perron-color-surface-inverse-hover);
+}
+
+/* disabled, off and on: a colour, never an opacity. After the colours, which it ties. */
+
+.pn-FilterChip[data-disabled] {
+  border-color: var(--perron-color-border-subtle);
+  background-color: transparent;
+  color: var(--perron-color-text-tertiary);
+}
+
+.pn-FilterChip[data-pressed][data-disabled] {
+  border-color: transparent;
+  background-color: var(--perron-color-surface-inset);
+  color: var(--perron-color-text-tertiary);
+}
+
+/* CR-9: the one rule that reaches inside the Count */
+.pn-FilterChip[data-disabled] .pn-FilterChip-count {
+  color: var(--perron-color-text-tertiary);
+}
+
+/* CR-11: forced colours drop the inverse fill, so a selected chip keeps the system's; a disabled
+   chip, on or off, takes GrayText, as the Tokens table's "selected, disabled" is a state apart */
+@media (forced-colors: active) {
+  .pn-FilterChip[data-pressed]:not([data-disabled]) {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    color: HighlightText;
+  }
+
+  /* forced-color-adjust: none keeps the ring in the theme's ink too, which a dark contrast theme's
+     Canvas would hide, so the ring takes a system colour that shows on Canvas (CR-7, CR-11) */
+  .pn-FilterChip[data-pressed]:not([data-disabled]):focus-visible {
+    outline-color: CanvasText;
+  }
+
+  .pn-FilterChip[data-disabled],
+  .pn-FilterChip[data-disabled] .pn-FilterChip-count {
+    border-color: GrayText;
+    color: GrayText;
+  }
+}

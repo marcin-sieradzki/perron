@@ -40,6 +40,7 @@ export const PAGES = [
   'docs/components/tag.md',
   'docs/components/text.md',
   'docs/components/empty-state.md',
+  'docs/components/filter-chip.md',
   'docs/components/section.md',
   'docs/components/surface.md',
   'docs/components/map-controls.md',
