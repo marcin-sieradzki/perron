@@ -1,3 +1,4 @@
+'use client'
 // Alert: a message set into the page, in one of the intents' tinted colours, with an optional title,
 // an action and a close button. No Base UI component has behaviour for it, so every part but the
 // close button renders through useRender, and the close button is the CloseButton shared part.

@@ -16,6 +16,7 @@ describe('the gates', () => {
   it('load one check per rule of the contract', async () => {
     expect((await loadChecks()).map((c) => c.rule).sort()).toEqual([
       'api-compatibility',
+      'client-directive',
       'component-css',
       'docs',
       'paths',
@@ -32,7 +33,7 @@ describe('the gates', () => {
     expect(selectChecks(checks, []).length).toBe(checks.length)
     expect(selectChecks(checks, ['props']).map((c) => c.rule)).toEqual(['props'])
     expect(() => selectChecks(checks, ['props', 'prop'])).toThrow(
-      /^no check has the rule "prop"; the rules are api-compatibility, component-css/,
+      /^no check has the rule "prop"; the rules are api-compatibility, client-directive, component-css/,
     )
   })
 

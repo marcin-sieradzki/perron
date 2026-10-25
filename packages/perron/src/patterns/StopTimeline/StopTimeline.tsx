@@ -1,3 +1,4 @@
+'use client'
 // StopTimeline: the stops of one vehicle's trip, in order, on a rail in its line's colour, with each
 // stop's name, time and delay, the passed stops set back and the next stop marked.
 // Spec: docs/patterns/stop-timeline.md.

@@ -1,3 +1,4 @@
+'use client'
 // MapTooltip: the map's hover card, a small inverse card of the caller's words, placed against a
 // point the map projects or an element, and opened and closed by the caller. On Base UI's Tooltip,
 // with no Provider and no Trigger (CR-1). Spec: docs/components/map-tooltip.md.

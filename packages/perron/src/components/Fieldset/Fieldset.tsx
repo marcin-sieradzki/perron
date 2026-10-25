@@ -1,3 +1,4 @@
+'use client'
 // Fieldset: a named group of related controls, on Base UI's Fieldset. A native <fieldset> named by
 // its legend, the caller's controls straight after it, and one switch that disables them all. Base
 // UI names the group, disables it and shares the state with the fields and groups inside; nothing

@@ -1,3 +1,4 @@
+'use client'
 // TextArea: the box a person types several lines of words into, framed by Perron's Field, which
 // gives it its label, its line of help and its error. The root is the native <textarea> itself, Base
 // UI's Field.Control rendered as one, so React's own onChange, value and defaultValue, and a form

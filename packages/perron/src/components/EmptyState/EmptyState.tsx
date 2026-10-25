@@ -1,3 +1,4 @@
+'use client'
 // EmptyState: stands in for a list or panel with nothing to show, saying what is empty, why, and
 // what to try. No Base UI component has behaviour for it, so every part renders through useRender.
 // Spec: docs/components/empty-state.md.

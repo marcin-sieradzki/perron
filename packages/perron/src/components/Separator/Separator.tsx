@@ -1,3 +1,4 @@
+'use client'
 // Separator: a hairline between two groups of content, announced as a break, on Base UI's
 // Separator (docs/components/separator.md). Base UI sets the role, aria-orientation and
 // data-orientation from orientation (CR-1); Perron adds its class, and the CSS draws the line.

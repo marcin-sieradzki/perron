@@ -1,3 +1,4 @@
+'use client'
 // Tabs: a row of tabs that switches between views of one thing, one panel showing at a time, on
 // Base UI's Tabs. Its list, tab and panel live here too: Base UI's parts read the root's context,
 // so they can't be built or shown apart (docs/components/tabs.md, Anatomy). Base UI gives the

@@ -1,3 +1,4 @@
+'use client'
 // CheckboxGroup: a named set of checkboxes that answer one question together, on Base UI's
 // CheckboxGroup and Field. One element is the field, Perron's Fieldset and Base UI's group at once:
 // Field.Root renders as the Fieldset, and the Fieldset as Base UI's CheckboxGroup, so the

@@ -1,3 +1,4 @@
+'use client'
 // IconButton: a native <button> from Base UI's Button that runs one action and shows it as an icon
 // alone, named by its required label in a VisuallyHidden span. The spec is
 // docs/components/icon-button.md.

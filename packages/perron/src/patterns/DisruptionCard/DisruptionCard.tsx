@@ -1,3 +1,4 @@
+'use client'
 // DisruptionCard: one disruption on Copenhagen's network as a raised card: its kind, the lines it
 // touches, a short title and a plain sentence. A pattern: it composes Surface, SeverityLabel,
 // LineBadge, Text and the VisuallyHidden part, and imports nothing from Base UI.

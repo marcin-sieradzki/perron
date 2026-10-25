@@ -1,3 +1,4 @@
+'use client'
 // VehicleDot: one vehicle drawn as a dot in its line's colour, its shape saying how fresh the
 // vehicle's data is. No Base UI component: a <span role="img"> rendered through useRender, so the
 // contract's render prop works (docs/components/vehicle-dot.md).

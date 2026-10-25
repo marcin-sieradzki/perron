@@ -1,3 +1,4 @@
+'use client'
 // Dialog: a modal panel over the map and a scrim, on Base UI's Dialog. It holds focus until it
 // closes, then gives it back to the button that opened it. One component that takes its words and
 // controls as props and renders every Base UI part itself, the popup as its root. The spec is

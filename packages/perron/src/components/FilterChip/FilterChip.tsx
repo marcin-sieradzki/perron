@@ -1,3 +1,4 @@
+'use client'
 // FilterChip: a pill that turns one filter on and off, on Base UI's Toggle, with an optional icon
 // before its words and a Count after them, in ink when it is on. Base UI gives the button, the
 // keys, the state and aria-pressed; nothing here adds a key handler (CR-1). The spec is

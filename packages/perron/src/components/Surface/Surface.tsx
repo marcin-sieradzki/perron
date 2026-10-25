@@ -1,3 +1,4 @@
+'use client'
 // Surface: a box on one step of the surface ladder, glass or an opaque panel over the map, a raised
 // card inside a panel, or an inset box, holding the caller's content. Spec: docs/components/surface.md.
 import type { CSSProperties, ReactNode, Ref } from 'react'

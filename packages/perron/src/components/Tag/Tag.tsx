@@ -1,3 +1,4 @@
+'use client'
 // Tag: a short word or two on a pill that marks a property of what it sits beside, such as "Night
 // bus" or "Cancelled", set in capitals in one of the intents' colours. Spec: docs/components/tag.md.
 // No Base UI component: a <span> rendered through useRender, so the contract's render prop works.

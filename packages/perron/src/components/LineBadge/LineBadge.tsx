@@ -1,3 +1,4 @@
+'use client'
 // LineBadge: a small filled label that names one Copenhagen line in the operator's own colours.
 // No Base UI component: a <span> rendered through useRender, so the contract's render prop works.
 import type { ReactNode } from 'react'

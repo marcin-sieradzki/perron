@@ -1,3 +1,4 @@
+'use client'
 // KioskBar: the bar a Mylder screen in kiosk mode shows over the map, read from across a room and
 // never touched: the brand, a few key figures about the network, and the clock, large. A pattern:
 // Perron's Surface, Brand and Stat over plain elements, never Base UI (CR-1).

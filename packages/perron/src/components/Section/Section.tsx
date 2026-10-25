@@ -1,3 +1,4 @@
+'use client'
 // Section: a titled group of content inside a panel or a page, such as a stop's departures. No Base
 // UI component has behaviour for it, so every part renders through useRender.
 // Spec: docs/components/section.md.

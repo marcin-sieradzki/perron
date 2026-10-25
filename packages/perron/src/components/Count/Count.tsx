@@ -1,3 +1,4 @@
+'use client'
 // Count: a small pill holding how many there are, such as the "3" after "Delays" in a filter chip,
 // set in tabular figures on an inset or tinted surface. No Base UI component has behaviour for it,
 // so the root renders through useRender. Spec: docs/components/count.md.

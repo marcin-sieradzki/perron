@@ -1,3 +1,4 @@
+'use client'
 // StationIcon: a round marker that stands for a stop beside its name, in the colour of the line
 // that serves it. Decorative, so always hidden from assistive technology (docs/components/station-icon.md).
 import type { CSSProperties, Ref } from 'react'

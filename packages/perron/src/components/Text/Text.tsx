@@ -1,3 +1,4 @@
+'use client'
 // Text: a piece of text in one typography role and one text colour, on the element the caller's
 // document needs. It renders through Base UI's useRender, so `render` swaps the element and keeps
 // Perron's class, data attributes and ref (docs/components/text.md).

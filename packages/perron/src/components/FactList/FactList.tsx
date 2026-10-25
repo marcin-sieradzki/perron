@@ -1,3 +1,4 @@
+'use client'
 // FactList: a short list of facts about one thing, each a name and what it is, such as
 // "Operator: Movia", set as a description list. No Base UI component has behaviour for it, so
 // every part renders through useRender. Spec: docs/components/fact-list.md.

@@ -1,3 +1,4 @@
+'use client'
 // Meter: a bar that shows where one measured value sits within a known range, with the words that
 // name it and the figure it reaches, such as "Reporting live" at "82%". Base UI's Meter gives the
 // role, the aria-value* attributes, the clamping, the formatting and the label's id; nothing here

@@ -1,3 +1,4 @@
+'use client'
 // AlertDialog: a modal question over the map and a scrim, on Base UI's AlertDialog, that one of its
 // actions or Esc answers. It moves focus to the first action, Cancel, wraps Tab inside the popup
 // while focus is in it, and on close gives focus back to the button that opened it. One component

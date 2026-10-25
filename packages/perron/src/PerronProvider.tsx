@@ -1,3 +1,4 @@
+'use client'
 // PerronProvider sets the locale for the components inside it, useOwnedStrings gives a component
 // its owned strings in that locale, with any *Label props laid over them, and useLocale gives it the
 // locale itself, such as for formatting a number. It also holds the one Tooltip.Provider of the app,
