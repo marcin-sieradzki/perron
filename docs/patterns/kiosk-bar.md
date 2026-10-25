@@ -2,6 +2,8 @@
 
 The bar a Mylder screen in kiosk mode shows over the map, for a display people read from across a room and never touch: the Mylder brand, a few key figures about the network, and the clock, large.
 
+<!-- run notes -->
+
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): this spec decides what the drawing would, from the [contract](../components/README.md) and its Patterns section, the [foundations](../foundations/README.md), [content design](../content-design.md), the tokens and the specs of the three components it composes, [Surface](../components/surface.md), [Brand](../components/brand.md) and [Stat](../components/stat.md). The extracted prototype is not reachable from this branch, so nothing here rests on it. What the foundations already say of the kiosk bar is that it stacks at `z-index.sheet` with the overview sheet ([Layout](../foundations/layout.md#stacking)), that its clock is set in `typography.data-xl` ([Typography](../foundations/typography.md#roles)), and that Brand and Stat were drawn to sit in it.
 
 ## Anatomy

@@ -10,9 +10,17 @@ const lint = (fixture: string) =>
   partProblems(root, `scripts/checks/fixtures/shared-parts/${fixture}`)
 
 describe('shared-parts', () => {
-  it("reads the parts from the contract's table", () => {
-    const parts = readParts(readFileSync(join(root, 'docs/components/README.md'), 'utf8'))
-    expect(parts).toEqual([
+  it("reads a part's classes, icons and declarations from its row", () => {
+    const contract = [
+      '## Shared parts',
+      '',
+      '| Part | Draws | Composed in | Only its folder holds |',
+      '| ---- | ----- | ----------- | --------------------- |',
+      '| `VisuallyHidden` | Text | Any | `pn-VisuallyHidden`, and `clip-path: inset(50%)` or `clip:` |',
+      '| `CheckboxIndicator` | A box | `Checkbox.Indicator` | `pn-CheckboxIndicator`, and the tick and the `dash` icon |',
+      '',
+    ].join('\n')
+    expect(readParts(contract)).toEqual([
       {
         name: 'VisuallyHidden',
         classes: ['pn-VisuallyHidden'],
@@ -22,12 +30,32 @@ describe('shared-parts', () => {
       {
         name: 'CheckboxIndicator',
         classes: ['pn-CheckboxIndicator'],
-        icons: ['tick'],
+        icons: ['dash'],
         declarations: [],
       },
-      { name: 'SelectedMark', classes: ['pn-SelectedMark'], icons: ['tick'], declarations: [] },
-      { name: 'CloseButton', classes: ['pn-CloseButton'], icons: ['close'], declarations: [] },
     ])
+  })
+
+  // the table's shape, not its words, so a component may add a row, an icon or a declaration
+  it("reads every row of the contract's table as a part with its own class and real icons", () => {
+    const parts = readParts(readFileSync(join(root, 'docs/components/README.md'), 'utf8'))
+    const manifest = JSON.parse(
+      readFileSync(join(root, 'packages/perron/icons/icons.json'), 'utf8'),
+    )
+    const icons = Object.values(manifest).flatMap((group) => Object.keys(group as object))
+    expect(parts.map((p) => p.name)).toEqual(
+      expect.arrayContaining([
+        'VisuallyHidden',
+        'CheckboxIndicator',
+        'SelectedMark',
+        'CloseButton',
+      ]),
+    )
+    for (const part of parts) {
+      expect(part.classes).toContain(`pn-${part.name}`)
+      for (const icon of part.icons) expect(icons).toContain(icon)
+    }
+    expect(parts.find((p) => p.name === 'VisuallyHidden')?.declarations.length).toBeGreaterThan(0)
   })
 
   it.each([

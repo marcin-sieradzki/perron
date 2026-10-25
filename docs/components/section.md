@@ -2,6 +2,8 @@
 
 A titled group of content inside a panel or a page, such as a stop's departures or the lines that call at it: a small heading in capitals, an optional action beside it, and the caller's content below.
 
+<!-- run notes -->
+
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): this spec decides what the drawing would, from the [contract](README.md), the [foundations](../foundations/README.md), [content design](../content-design.md) and the tokens. Section has no Base UI component and nothing in `dependsOn`, and the extracted prototype is not reachable from this branch, so nothing here rests on it. Its one firm source is the token `typography.overline`, whose description is "Section headings and tags, set in capitals".
 
 ## Anatomy

@@ -2,6 +2,8 @@
 
 A bar of actions that is one tab stop, moved through with the arrow keys, such as the map's zoom and locate controls or a glass group in the top bar.
 
+<!-- run notes -->
+
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the contract, the foundations, the tokens and the Base UI reference. The extracted prototype component is not in any branch this run can reach.
 
 ## Anatomy

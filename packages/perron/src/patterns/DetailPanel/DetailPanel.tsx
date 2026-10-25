@@ -10,8 +10,6 @@ import { DetailHeader, type DetailHeaderProps } from '../DetailHeader/DetailHead
 import { classes, withClass } from '../../internal/nodes.ts'
 import './DetailPanel.css'
 
-type SheetSlots = NonNullable<SheetProps['slotProps']>
-
 export interface DetailPanelProps extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children'> {
   /**
    * What the panel shows, as DetailHeader's `variant`: `line` for a vehicle or a line, headed by
@@ -137,15 +135,15 @@ export interface DetailPanelProps extends Omit<ComponentPropsWithRef<'div'>, 'ti
       'variant' | 'line' | 'lineName' | 'title' | 'subheader' | 'action'
     >
     /** Props for the `trigger` part, given to the Sheet's */
-    trigger?: SheetSlots['trigger']
+    trigger?: NonNullable<SheetProps['slotProps']>['trigger']
     /** Props for the `portal` part, given to the Sheet's: its `container`, such as the map screen's shell */
-    portal?: SheetSlots['portal']
+    portal?: NonNullable<SheetProps['slotProps']>['portal']
     /** Props for the `viewport` part, given to the Sheet's */
-    viewport?: SheetSlots['viewport']
+    viewport?: NonNullable<SheetProps['slotProps']>['viewport']
     /** Props for the `close` part, given to the Sheet's */
-    close?: SheetSlots['close']
+    close?: NonNullable<SheetProps['slotProps']>['close']
     /** Props for the `content` part, given to the Sheet's */
-    content?: SheetSlots['content']
+    content?: NonNullable<SheetProps['slotProps']>['content']
   }
 }
 

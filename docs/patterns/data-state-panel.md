@@ -2,9 +2,11 @@
 
 Holds a data view, such as a vehicle table or a day's chart, and shows the caller's content once its data is in, or in its place a calm message while the data loads, when there is none, or when it could not be loaded.
 
-The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): this spec decides what the drawing would, from the [contract](../components/README.md), the [foundations](../foundations/README.md), [content design](../content-design.md), the tokens and the spec of [EmptyState](../components/empty-state.md), the one entry in its `dependsOn`. The ROADMAP names it among the patterns (7.2) and the registry files it under Data, beside ReportStrip, VehicleTable and DayProfileChart, the views it is for. As a pattern it imports only Perron's components and parts, never `@base-ui/react`.
-
 DataStatePanel is the wrapper that shows a data view's loading, empty and error messages in place of its content, built on EmptyState. The words "data state" elsewhere name the five Prik states, which PrikLegend explains, and its docs say once that its `status` is not a Prik data state.
+
+<!-- run notes -->
+
+The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): this spec decides what the drawing would, from the [contract](../components/README.md), the [foundations](../foundations/README.md), [content design](../content-design.md), the tokens and the spec of [EmptyState](../components/empty-state.md), the one entry in its `dependsOn`. The ROADMAP names it among the patterns (7.2) and the registry files it under Data, beside ReportStrip, VehicleTable and DayProfileChart, the views it is for. As a pattern it imports only Perron's components and parts, never `@base-ui/react`.
 
 ## Anatomy
 

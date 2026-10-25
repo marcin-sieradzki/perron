@@ -2,6 +2,8 @@
 
 A small glass panel anchored to the button that opens it, such as a short explanation of the data or a few settings, which leaves the map and the rest of the screen usable while it is open and gives focus back to its button when it closes.
 
+<!-- run notes -->
+
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the contract, the foundations, the tokens and the Base UI reference. No ROADMAP line names Popover; its registry entry, in the Overlays category with no `dependsOn`, is the source for its parts. The `CloseButton` shared part gives the close button its look, the [Dialog](dialog.md) spec the shape of the API, the [MapTooltip](map-tooltip.md) spec the positioner's defaults, and the [Button](button.md) spec the trigger in the stories.
 
 ## Anatomy

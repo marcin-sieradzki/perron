@@ -11,8 +11,6 @@ import { given, withClass } from '../../internal/nodes.ts'
 import { CloseButton } from '../../parts/CloseButton/CloseButton.tsx'
 import './Dialog.css'
 
-type ChangeDetails = BaseDialog.Root.ChangeEventDetails
-
 export interface DialogProps extends Omit<
   BaseDialog.Popup.Props,
   'children' | 'title' | 'className' | 'style' | 'ref'
@@ -53,7 +51,7 @@ export interface DialogProps extends Omit<
    * Called when the dialog asks to open, from its trigger. `details` is Base UI's, with its
    * `reason` and `cancel()`.
    */
-  onOpen?: (event: Event, details: ChangeDetails) => void
+  onOpen?: (event: Event, details: BaseDialog.Root.ChangeEventDetails) => void
   /**
    * Called when the dialog asks to close: `reason` is `'escape-key'`, `'outside-press'`,
    * `'close-press'` or another of Base UI's reasons, and `details.cancel()` keeps it open.
@@ -61,7 +59,7 @@ export interface DialogProps extends Omit<
   onClose?: (
     event: Event,
     reason: BaseDialog.Root.ChangeEventReason,
-    details: ChangeDetails,
+    details: BaseDialog.Root.ChangeEventDetails,
   ) => void
   /**
    * Overrides "Close", the close button's name.
@@ -113,7 +111,7 @@ export function Dialog({
   const generatedId = useId()
 
   // CR-4: Base UI's one handler becomes MUI's two
-  const handleOpenChange = (next: boolean, details: ChangeDetails) => {
+  const handleOpenChange = (next: boolean, details: BaseDialog.Root.ChangeEventDetails) => {
     if (next) onOpen?.(details.event, details)
     else onClose?.(details.event, details.reason, details)
   }
@@ -146,11 +144,11 @@ export function Dialog({
         />
       ) : null}
       <BaseDialog.Portal
-        {...mergeProps<typeof BaseDialog.Portal>(slotProps?.portal, undefined)}
+        {...slotProps?.portal}
         className={withClass('pn-Dialog-portal', slotProps?.portal?.className)}
       >
         <BaseDialog.Backdrop
-          {...mergeProps<typeof BaseDialog.Backdrop>(slotProps?.backdrop, undefined)}
+          {...slotProps?.backdrop}
           className={withClass('pn-Dialog-backdrop', slotProps?.backdrop?.className)}
         />
         <BaseDialog.Popup
@@ -161,7 +159,7 @@ export function Dialog({
         >
           <div className="pn-Dialog-header">
             <BaseDialog.Title
-              {...mergeProps<typeof BaseDialog.Title>(slotProps?.title, undefined)}
+              {...slotProps?.title}
               className={withClass('pn-Dialog-title', slotProps?.title?.className)}
             >
               {title}
@@ -175,7 +173,7 @@ export function Dialog({
           </div>
           {given(description) ? (
             <BaseDialog.Description
-              {...mergeProps<typeof BaseDialog.Description>(slotProps?.description, undefined)}
+              {...slotProps?.description}
               className={withClass('pn-Dialog-description', slotProps?.description?.className)}
             >
               {description}

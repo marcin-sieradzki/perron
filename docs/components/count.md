@@ -2,6 +2,8 @@
 
 A small pill holding how many there are, such as the "3" after "Delays" in a filter chip or the "12" after "Lines" on a tab, set in tabular figures on an inset or tinted surface.
 
+<!-- run notes -->
+
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): this spec decides what the drawing would, from the [contract](README.md), the [foundations](../foundations/README.md), [content design](../content-design.md), the tokens and the specs of its Display siblings, [Stat](stat.md)'s, [Text](text.md)'s and [LineBadge](line-badge.md)'s. Count has no Base UI component and nothing in `dependsOn`, and the extracted prototype is not reachable from this branch, so nothing here rests on it. The foundations already name its look: [Typography](../foundations/typography.md#roles) gives `typography.data-sm` to "counts in chips and tabs", [Elevation](../foundations/elevation.md) puts counts on `color.surface.inset`, [Semantic spacing](../foundations/semantic-spacing.md#radius) rounds them with `radius.full`, and [Semantic colours](../foundations/semantic-colours.md) gives `color.surface.warning` to "a warning message or count".
 
 ## Anatomy
