@@ -9,8 +9,12 @@ stages:
     started: 2026-10-25T07:13:13.551Z
     ended: 2026-10-25T07:14:59.750Z
   build:
-    runs: 3
-    failing: review round 3 found 1 P2 (components/slider/review.md)
+    runs: 4
+    status: done
+    started: 2026-10-25T07:59:46.673Z
+    begun: be4c5b9bb88e6d66df6b8e7fd6201302be752e2e4f95a930943777328d0d26ba
+    spec: 6d30ea0021f1566b74f56d21d32b16120ad869434ee27ef58a346f6835c33a17
+    ended: 2026-10-25T08:09:34.839Z
   review:
     rounds: 3
     sentBack: 0
@@ -49,3 +53,6 @@ notes:
   - stage: review
     at: 2026-10-25T07:59:46.114Z
     unblocked: '3 review rounds found a P1 or a P2; the last: review round 3 found 1 P2 (components/slider/review.md)'
+  - stage: build
+    at: 2026-10-25T08:09:34.839Z
+    direction: "Slider's stories define three helpers other components could use: setInput (sets a hidden range input with no key, so Base UI reports 'input-change'), still (an element runs no transition or animation) and pointerAt (a pointer event at a point). The next control on a hidden input, or with a no-motion rule, could take them from packages/perron/src/testing/stories.ts."

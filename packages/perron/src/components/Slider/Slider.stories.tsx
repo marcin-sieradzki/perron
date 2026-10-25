@@ -2,7 +2,7 @@
 // Invalid, and the stories of content and behaviour the spec's Stories table names
 // (docs/components/slider.md), each in a 320 px container. Hover, focus and pressed render at rest;
 // their plays drive them.
-import { useState } from 'react'
+import { createRef, useState } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
@@ -93,13 +93,22 @@ const call = (handler: unknown, index = -1) => {
   return { value, reason: details.reason }
 }
 
+/** The event and the details of a spy's call, by its index, for CR-6. */
+const eventOf = (handler: unknown, index = -1) => {
+  const [event, , details] = spy(handler).mock.calls.at(index) as [
+    Event,
+    SliderProps['value'],
+    { event: Event },
+  ]
+  return { event, details }
+}
+
 /**
- * A mouse event at a fraction of the way along `track`, dispatched on `target`. Base UI's control
- * reads only `clientX`, `clientY`, the button and the buttons held; a pointer id of 0 asks it to
- * capture no pointer, which a synthetic event has none of.
+ * A mouse event at `clientX`, `clientY`, dispatched on `target`. Base UI's control reads only
+ * `clientX`, `clientY`, the button and the buttons held; a pointer id of 0 asks it to capture no
+ * pointer, which a synthetic event has none of.
  */
-function pointer(type: string, target: Element, track: Element, along: number) {
-  const box = track.getBoundingClientRect()
+function pointerAt(type: string, target: Element, clientX: number, clientY: number) {
   target.dispatchEvent(
     new PointerEvent(type, {
       bubbles: true,
@@ -109,10 +118,41 @@ function pointer(type: string, target: Element, track: Element, along: number) {
       isPrimary: true,
       button: 0,
       buttons: type === 'pointerup' ? 0 : 1,
-      clientX: box.left + box.width * along,
-      clientY: box.top + box.height / 2,
+      clientX,
+      clientY,
     }),
   )
+}
+
+/** A mouse event at a fraction of the way along `track`, dispatched on `target`. */
+function pointer(type: string, target: Element, track: Element, along: number) {
+  const box = track.getBoundingClientRect()
+  pointerAt(type, target, box.left + box.width * along, box.top + box.height / 2)
+}
+
+/**
+ * Sets a thumb's hidden range input as a screen reader or the browser does, with no key: its value
+ * through the native setter, then an `input` event, which Base UI reads as `'input-change'`.
+ */
+function setInput(input: HTMLInputElement, value: number) {
+  Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!.call(
+    input,
+    String(value),
+  )
+  input.dispatchEvent(new Event('input', { bubbles: true }))
+}
+
+/** Whether every duration `element` transitions or animates over is zero, and it runs none (CR-15). */
+function still(element: Element) {
+  const style = getComputedStyle(element)
+  const zero = (durations: string) => durations.split(',').every((d) => Number.parseFloat(d) === 0)
+  return zero(style.transitionDuration) && style.animationName === 'none'
+}
+
+/** A slider that turns disabled at its first change, while its thumb has focus. */
+function DisablesOnChange(props: SliderProps) {
+  const [disabled, setDisabled] = useState(false)
+  return <Slider {...props} disabled={disabled} onChange={() => setDisabled(true)} />
 }
 
 /** The subject story, State default: the label, the help, the track filled to 5 of 10 and "5". */
@@ -120,6 +160,8 @@ export const Default: Story = {
   play: async ({ args, canvasElement, step }) => {
     const slider = sliderIn(canvasElement)
     const root = within(canvasElement).getByRole('group', { name: LABEL })
+    const control = part(canvasElement, 'control')
+    const value = part(canvasElement, 'value')
     await step('the group in its frame, named by the label, holds one slider', async () => {
       await expect(root).toHaveClass('pn-Slider')
       await expect(root.closest('.pn-Field')).toHaveClass('pn-Field', 'pn-Slider-field')
@@ -136,12 +178,43 @@ export const Default: Story = {
       await expect(slider).toHaveAttribute('aria-valuenow', '5')
       await expect(slider).toHaveAttribute('min', '0')
       await expect(slider).toHaveAttribute('max', '10')
+      await expect(slider).toHaveAttribute('aria-orientation', 'horizontal')
       await expect(figure(canvasElement)).toBe('5')
-      await expect(part(canvasElement, 'control')).toHaveAttribute('data-base-ui-swipe-ignore', 'x')
+      await expect(control).toHaveAttribute('data-base-ui-swipe-ignore', 'x')
+    })
+    await step('a single thumb gets no name or value text of Slider’s own (CR-7)', async () => {
+      await expect(slider).not.toHaveAttribute('aria-label')
+      await expect(slider).not.toHaveAttribute('aria-valuetext')
+    })
+    await step(
+      'the parts in order, the control as tall as the smallest target (CR-3)',
+      async () => {
+        const track = part(canvasElement, 'track')
+        await expect(Array.from(track.children)).toEqual([
+          part(canvasElement, 'indicator'),
+          part(canvasElement, 'thumb'),
+        ])
+        await expect(control.nextElementSibling).toBe(value)
+        await expect(getComputedStyle(control).blockSize).toBe(
+          rendered('size-target-min', 'block-size'),
+        )
+      },
+    )
+    await step('the figure is an output read in place, its sizers hidden (CR-8)', async () => {
+      await expect(value.tagName).toBe('OUTPUT')
+      await expect(value).toHaveAttribute('aria-live', 'off')
+      await expect(value.getAttribute('for')).toBe(slider.id)
+      const sizers = Array.from(value.querySelectorAll('.pn-Slider-valueSizer'))
+      await expect(sizers.map((sizer) => sizer.textContent)).toEqual(['0', '10'])
+      for (const sizer of sizers) {
+        await expect(sizer).toHaveAttribute('aria-hidden', 'true')
+        await expect(getComputedStyle(sizer).visibility).toBe('hidden')
+      }
     })
     await step(
       'Tab focuses the slider; ArrowRight steps it and calls each handler once',
       async () => {
+        await expect(root).not.toHaveAttribute('data-touched')
         await userEvent.tab()
         await expect(slider).toHaveFocus()
         await userEvent.keyboard('{ArrowRight}')
@@ -150,9 +223,31 @@ export const Default: Story = {
         await expect(spy(args.onChange)).toHaveBeenCalledTimes(1)
         await expect(call(args.onChange)).toEqual({ value: 6, reason: 'keyboard' })
         await expect(spy(args.onChangeCommitted)).toHaveBeenCalledTimes(1)
-        await expect(call(args.onChangeCommitted).value).toBe(6)
+        await expect(call(args.onChangeCommitted)).toEqual({ value: 6, reason: 'keyboard' })
+        // Base UI marks the field touched at a change
+        await waitFor(() => expect(root).toHaveAttribute('data-touched'))
+        await expect(part(canvasElement, 'thumb')).toHaveAttribute('data-touched')
       },
     )
+    await step(
+      'each event is the details’ event, its target the value and name (CR-6)',
+      async () => {
+        for (const handler of [args.onChange, args.onChangeCommitted]) {
+          const { event, details } = eventOf(handler)
+          await expect(event).toBe(details.event)
+        }
+        const { event } = eventOf(args.onChange)
+        await expect(event.target).toEqual({ value: 6, name: undefined })
+      },
+    )
+    await step('the input set with no key changes and commits with input-change', async () => {
+      setInput(slider, 7)
+      await waitFor(() => expect(slider).toHaveAttribute('aria-valuenow', '7'))
+      await expect(call(args.onChange)).toEqual({ value: 7, reason: 'input-change' })
+      await expect(call(args.onChangeCommitted)).toEqual({ value: 7, reason: 'input-change' })
+      setInput(slider, 6)
+      await waitFor(() => expect(slider).toHaveAttribute('aria-valuenow', '6'))
+    })
     await step('End, then a step down and back, keeps the track’s width (CR-8)', async () => {
       await userEvent.keyboard('{End}')
       await expect(slider).toHaveAttribute('aria-valuenow', '10')
@@ -163,6 +258,14 @@ export const Default: Story = {
       await expect(figure(canvasElement)).toBe('10')
       await expect(part(canvasElement, 'track').getBoundingClientRect().width).toBe(width)
     })
+    await step('ArrowRight at max changes nothing and calls neither handler', async () => {
+      const changes = spy(args.onChange).mock.calls.length
+      const commits = spy(args.onChangeCommitted).mock.calls.length
+      await userEvent.keyboard('{ArrowRight}')
+      await expect(slider).toHaveAttribute('aria-valuenow', '10')
+      await expect(spy(args.onChange)).toHaveBeenCalledTimes(changes)
+      await expect(spy(args.onChangeCommitted)).toHaveBeenCalledTimes(commits)
+    })
     await step('Home, PageUp and PageDown move to the ends and by one large step', async () => {
       await userEvent.keyboard('{Home}')
       await expect(slider).toHaveAttribute('aria-valuenow', '0')
@@ -171,7 +274,7 @@ export const Default: Story = {
       await userEvent.keyboard('{PageDown}')
       await expect(slider).toHaveAttribute('aria-valuenow', '0')
     })
-    await step('ArrowUp and ArrowDown step it; with Shift, by one large step', async () => {
+    await step('the arrows step it; with Shift, by one large step', async () => {
       await userEvent.keyboard('{ArrowUp}')
       await expect(slider).toHaveAttribute('aria-valuenow', '1')
       await userEvent.keyboard('{ArrowDown}')
@@ -180,6 +283,10 @@ export const Default: Story = {
       await expect(slider).toHaveAttribute('aria-valuenow', '10')
       await userEvent.keyboard('{Shift>}{ArrowDown}{/Shift}')
       await expect(slider).toHaveAttribute('aria-valuenow', '0')
+      await userEvent.keyboard('{Shift>}{ArrowRight}{/Shift}')
+      await expect(slider).toHaveAttribute('aria-valuenow', '10')
+      await userEvent.keyboard('{Shift>}{ArrowLeft}{/Shift}')
+      await expect(slider).toHaveAttribute('aria-valuenow', '0')
     })
     await step('five steps bring it back to 5, and Shift+Tab moves focus out', async () => {
       await userEvent.keyboard('{ArrowRight>5/}')
@@ -187,6 +294,45 @@ export const Default: Story = {
       await userEvent.tab({ shift: true })
       await expect(slider).not.toHaveFocus()
     })
+    await step('a press on the label focuses the slider', async () => {
+      await userEvent.click(fieldPart(canvasElement, 'label')!)
+      await expect(slider).toHaveFocus()
+      await expect(slider).toHaveAttribute('aria-valuenow', '5')
+      slider.blur()
+    })
+    await step(
+      'the caller’s props reach the root, and a slot’s class follows its own (CR-4)',
+      async () => {
+        const ref = createRef<HTMLDivElement>()
+        await mounted(
+          canvasElement,
+          <PerronProvider locale="en">
+            <Slider
+              label="Probe"
+              ref={ref}
+              id="probe"
+              data-testid="probe"
+              className="caller"
+              style={{ marginBlockStart: 1 }}
+              slotProps={{ control: { className: 'caller-control' } }}
+            />
+          </PerronProvider>,
+          async (host) => {
+            const probe = await waitFor(() => within(host).getByRole('group', { name: 'Probe' }))
+            await expect(ref.current).toBe(probe)
+            await expect(probe).toHaveAttribute('id', 'probe')
+            await expect(probe).toHaveAttribute('data-testid', 'probe')
+            await expect(probe.className).toBe('pn-Slider caller')
+            await expect(probe.style.marginBlockStart).toBe('1px')
+            await expect(part(host, 'control').className).toContain(
+              'pn-Slider-control caller-control',
+            )
+            // with no defaultValue, a single thumb starts at min
+            await expect(sliderIn(host, 'Probe')).toHaveAttribute('aria-valuenow', '0')
+          },
+        )
+      },
+    )
   },
 }
 
@@ -200,6 +346,13 @@ export const Hover: Story = {
     await expect(getComputedStyle(thumb).backgroundColor).toBe(fill('color-surface-raised'))
     await expect(getComputedStyle(part(canvasElement, 'control')).cursor).toBe('pointer')
     await expect(getComputedStyle(thumb).cursor).toBe('pointer')
+    // the thumb alone takes a hover look (CR-12)
+    for (const name of ['control', 'track', 'indicator', 'value'] as const)
+      for (const property of ['background-color', 'background-image', 'border-color', 'color'])
+        await expect(onHover(part(canvasElement, name), property)).toBe('')
+    // the thumb and the fill change at once, with no transition or animation (CR-15)
+    await expect(still(thumb)).toBe(true)
+    await expect(still(part(canvasElement, 'indicator'))).toBe(true)
   },
 }
 
@@ -245,23 +398,54 @@ export const Pressed: Story = {
       await expect(call(args.onChange)).toEqual({ value: 8, reason: 'track-press' })
       await waitFor(() => expect(thumb).toHaveAttribute('data-dragging'))
     })
+    await step('the press focuses the thumb’s input without the ring (CR-9)', async () => {
+      await waitFor(() => expect(slider).toHaveFocus())
+      await expect(slider.matches(':focus-visible')).toBe(false)
+      await expect(getComputedStyle(thumb).outlineStyle).toBe('none')
+    })
     await step('moving the pointer, still pressed, to 30% drags the value to 3', async () => {
       pointer('pointermove', control, track, 0.3)
       await waitFor(() => expect(slider).toHaveAttribute('aria-valuenow', '3'))
       await expect(call(args.onChange)).toEqual({ value: 3, reason: 'drag' })
       await expect(spy(args.onChangeCommitted)).not.toHaveBeenCalled()
     })
-    await step('releasing commits 3 once, and the drag ends', async () => {
+    await step('releasing commits 3 once, with drag, and the drag ends', async () => {
       pointer('pointerup', control, track, 0.3)
       await waitFor(() => expect(thumb).not.toHaveAttribute('data-dragging'))
       await expect(spy(args.onChangeCommitted)).toHaveBeenCalledTimes(1)
-      await expect(call(args.onChangeCommitted).value).toBe(3)
+      await expect(call(args.onChangeCommitted)).toEqual({ value: 3, reason: 'drag' })
     })
-    await step('a press and release at the middle puts it back at 5', async () => {
+    await step('a key pressed after the press brings the ring back (CR-9)', async () => {
+      await userEvent.keyboard('{ArrowRight}')
+      await expect(slider).toHaveAttribute('aria-valuenow', '4')
+      await expect(slider).toHaveFocus()
+      await expect(slider.matches(':focus-visible')).toBe(true)
+      await expect(getComputedStyle(thumb).outlineStyle).toBe('solid')
+      await userEvent.keyboard('{ArrowLeft}')
+      await expect(slider).toHaveAttribute('aria-valuenow', '3')
+    })
+    await step(
+      'a press in the control’s padding moves the thumb to the nearer end (CR-10)',
+      async () => {
+        const box = control.getBoundingClientRect()
+        const middle = box.top + box.height / 2
+        pointerAt('pointerdown', control, box.left + 1, middle)
+        pointerAt('pointerup', control, box.left + 1, middle)
+        await waitFor(() => expect(slider).toHaveAttribute('aria-valuenow', '0'))
+        await expect(call(args.onChangeCommitted)).toEqual({ value: 0, reason: 'track-press' })
+        pointerAt('pointerdown', control, box.right - 1, middle)
+        pointerAt('pointerup', control, box.right - 1, middle)
+        await waitFor(() => expect(slider).toHaveAttribute('aria-valuenow', '10'))
+      },
+    )
+    await step('a press and release at the middle commits 5, with track-press', async () => {
+      const commits = spy(args.onChangeCommitted).mock.calls.length
       pointer('pointerdown', control, track, 0.5)
       pointer('pointerup', control, track, 0.5)
       await waitFor(() => expect(slider).toHaveAttribute('aria-valuenow', '5'))
       await waitFor(() => expect(thumb).not.toHaveAttribute('data-dragging'))
+      await expect(spy(args.onChangeCommitted)).toHaveBeenCalledTimes(commits + 1)
+      await expect(call(args.onChangeCommitted)).toEqual({ value: 5, reason: 'track-press' })
       slider.blur()
     })
   },
@@ -276,32 +460,84 @@ export const Disabled: Story = {
     // axe's contrast rule is off for this story alone
     a11y: { options: { rules: { 'color-contrast': { enabled: false } } } },
   },
-  play: async ({ args, canvasElement }) => {
+  play: async ({ args, canvasElement, step }) => {
     const slider = sliderIn(canvasElement)
     const root = within(canvasElement).getByRole('group', { name: LABEL })
     const thumb = part(canvasElement, 'thumb')
     const control = part(canvasElement, 'control')
-    await expect(slider).toBeDisabled()
-    await expect(root).toHaveAttribute('data-disabled')
-    await expect(thumb).toHaveAttribute('data-disabled')
-    await userEvent.tab()
-    await expect(slider).not.toHaveFocus()
-    const tertiary = colour('--perron-color-text-tertiary')
-    await expect(getComputedStyle(part(canvasElement, 'indicator')).backgroundColor).toBe(
-      fill('color-text-tertiary'),
+    await step('the input is disabled, and Tab passes it by', async () => {
+      await expect(slider).toBeDisabled()
+      await expect(root).toHaveAttribute('data-disabled')
+      await expect(thumb).toHaveAttribute('data-disabled')
+      await userEvent.tab()
+      await expect(slider).not.toHaveFocus()
+      await userEvent.tab({ shift: true })
+    })
+    await step(
+      'every part in the tertiary ink, the thumb with no hover or pressed layer',
+      async () => {
+        const tertiary = colour('--perron-color-text-tertiary')
+        await expect(getComputedStyle(part(canvasElement, 'indicator')).backgroundColor).toBe(
+          fill('color-text-tertiary'),
+        )
+        await expect(getComputedStyle(thumb).borderColor).toBe(edge('color-text-tertiary'))
+        await expect(getComputedStyle(thumb).backgroundColor).toBe(fill('color-surface-raised'))
+        await expect(getComputedStyle(part(canvasElement, 'value')).color).toBe(tertiary)
+        await expect(getComputedStyle(fieldPart(canvasElement, 'label')!).color).toBe(tertiary)
+        await expect(getComputedStyle(fieldPart(canvasElement, 'description')!).color).toBe(
+          tertiary,
+        )
+        await expect(getComputedStyle(control).cursor).toBe('default')
+        // CR-12: the hover and pressed rules pass a disabled thumb by
+        await expect(onHover(thumb, 'background-image')).toBe('')
+        await expect(
+          stateRules(thumb, ':active')
+            .map((s) => s.getPropertyValue('background-image'))
+            .filter(Boolean),
+        ).toEqual([])
+      },
     )
-    await expect(getComputedStyle(thumb).borderColor).toBe(edge('color-text-tertiary'))
-    await expect(getComputedStyle(thumb).backgroundColor).toBe(fill('color-surface-raised'))
-    await expect(getComputedStyle(part(canvasElement, 'value')).color).toBe(tertiary)
-    await expect(getComputedStyle(fieldPart(canvasElement, 'label')!).color).toBe(tertiary)
-    await expect(getComputedStyle(fieldPart(canvasElement, 'description')!).color).toBe(tertiary)
-    await expect(getComputedStyle(control).cursor).toBe('default')
-    pointer('pointerdown', control, part(canvasElement, 'track'), 0.8)
-    pointer('pointerup', control, part(canvasElement, 'track'), 0.8)
-    await expect(slider).toHaveAttribute('aria-valuenow', '5')
-    await expect(spy(args.onChange)).not.toHaveBeenCalled()
-    await expect(spy(args.onChangeCommitted)).not.toHaveBeenCalled()
-    await userEvent.tab({ shift: true })
+    await step('a press on the control changes nothing and calls no handler', async () => {
+      pointer('pointerdown', control, part(canvasElement, 'track'), 0.8)
+      pointer('pointerup', control, part(canvasElement, 'track'), 0.8)
+      await expect(slider).toHaveAttribute('aria-valuenow', '5')
+      await expect(spy(args.onChange)).not.toHaveBeenCalled()
+      await expect(spy(args.onChangeCommitted)).not.toHaveBeenCalled()
+    })
+    await step(
+      'inside an invalid field, it keeps its disabled look and is not invalid',
+      async () => {
+        await mounted(
+          canvasElement,
+          <PerronProvider locale="en">
+            <Slider label="Disabled and invalid" disabled error="Choose 8 minutes or fewer" />
+          </PerronProvider>,
+          async (host) => {
+            const input = await waitFor(() => sliderIn(host, 'Disabled and invalid'))
+            await expect(input).not.toHaveAttribute('aria-invalid')
+            await expect(getComputedStyle(part(host, 'thumb')).borderColor).toBe(
+              edge('color-text-tertiary'),
+            )
+          },
+        )
+      },
+    )
+    await step('a focused thumb that turns disabled loses focus', async () => {
+      await mounted(
+        canvasElement,
+        <PerronProvider locale="en">
+          <DisablesOnChange label="Turns disabled" min={0} max={10} defaultValue={5} />
+        </PerronProvider>,
+        async (host) => {
+          const input = await waitFor(() => sliderIn(host, 'Turns disabled'))
+          input.focus()
+          await expect(input).toHaveFocus()
+          await userEvent.keyboard('{ArrowRight}')
+          await waitFor(() => expect(input).toBeDisabled())
+          await expect(input).not.toHaveFocus()
+        },
+      )
+    })
   },
 }
 
@@ -327,6 +563,35 @@ export const Invalid: Story = {
     await expect(getComputedStyle(thumb).borderColor).toBe(edge('color-status-danger'))
     await expect(getComputedStyle(part(canvasElement, 'indicator')).backgroundColor).toBe(
       fill('color-text-primary'),
+    )
+    // with no error given, the field's own check shows its message when it fails
+    await mounted(
+      canvasElement,
+      <PerronProvider locale="en">
+        <Slider
+          label="Checked"
+          min={0}
+          max={10}
+          defaultValue={8}
+          slotProps={{
+            field: {
+              validationMode: 'onChange',
+              validate: (value) => ((value as number) > 8 ? 'Choose 8 minutes or fewer' : null),
+            },
+          }}
+        />
+      </PerronProvider>,
+      async (host) => {
+        const checked = await waitFor(() => sliderIn(host, 'Checked'))
+        await expect(fieldPart(host, 'error')).toBeNull()
+        checked.focus()
+        await userEvent.keyboard('{ArrowRight}')
+        await waitFor(() =>
+          expect(fieldPart(host, 'error')).toHaveTextContent('Choose 8 minutes or fewer'),
+        )
+        await expect(checked).toHaveAttribute('aria-invalid', 'true')
+        checked.blur()
+      },
     )
   },
 }
@@ -373,6 +638,114 @@ export const Range: Story = {
         await expect(root.contains(document.activeElement)).toBe(false)
       },
     )
+    await step('the figure’s sizers write each end twice (CR-8)', async () => {
+      const sizers = part(canvasElement, 'value').querySelectorAll('.pn-Slider-valueSizer')
+      await expect(Array.from(sizers, (sizer) => sizer.textContent)).toEqual(['0 – 0', '30 – 30'])
+    })
+    await step('a press on the label focuses nothing', async () => {
+      await userEvent.click(fieldPart(canvasElement, 'label')!)
+      await expect(root.contains(document.activeElement)).toBe(false)
+    })
+    await step(
+      'Home on the upper thumb and End on the lower stop at the other, less the steps between',
+      async () => {
+        await mounted(
+          canvasElement,
+          <PerronProvider locale="en">
+            <Slider {...RANGE} label="Spaced" minStepsBetweenValues={2} />
+          </PerronProvider>,
+          async (host) => {
+            const lower = await waitFor(() => sliderIn(host, 'Minimum'))
+            const upper = sliderIn(host, 'Maximum')
+            upper.focus()
+            await userEvent.keyboard('{Home}')
+            await expect(figure(host)).toBe('4 – 6')
+            await userEvent.keyboard('{End}')
+            await expect(figure(host)).toBe('4 – 30')
+            lower.focus()
+            await userEvent.keyboard('{End}')
+            await expect(figure(host)).toBe('28 – 30')
+            await userEvent.keyboard('{Home}')
+            await expect(figure(host)).toBe('0 – 30')
+            lower.blur()
+          },
+        )
+      },
+    )
+    await step('dragging the lower thumb past the upper pushes it; a range is sorted', async () => {
+      const onChange = fn()
+      const onChangeCommitted = fn()
+      await mounted(
+        canvasElement,
+        <PerronProvider locale="en">
+          <Slider
+            {...RANGE}
+            label="Pushed"
+            onChange={onChange}
+            onChangeCommitted={onChangeCommitted}
+          />
+          <Slider {...RANGE} label="Sorted" defaultValue={[12, 4]} />
+        </PerronProvider>,
+        async (host) => {
+          const [pushed, sorted] = await waitFor(() => {
+            const fields = Array.from(host.querySelectorAll<HTMLElement>('.pn-Slider-field'))
+            expect(fields).toHaveLength(2)
+            return fields
+          })
+          await expect(figure(sorted)).toBe('4 – 12')
+          const control = part(pushed, 'control')
+          const track = part(pushed, 'track')
+          pointer('pointerdown', control, track, 4 / 30)
+          pointer('pointermove', control, track, 20 / 30)
+          await waitFor(() => expect(figure(pushed)).toBe('20 – 20'))
+          await expect(call(onChange)).toEqual({ value: [20, 20], reason: 'drag' })
+          pointer('pointerup', control, track, 20 / 30)
+          await waitFor(() => expect(onChangeCommitted).toHaveBeenCalledTimes(1))
+          await expect(call(onChangeCommitted)).toEqual({ value: [20, 20], reason: 'drag' })
+          ;(document.activeElement as HTMLElement | null)?.blur()
+        },
+      )
+    })
+    await step('the caller’s own thumb names and value texts win (CR-7)', async () => {
+      await mounted(
+        canvasElement,
+        <PerronProvider locale="en">
+          <Slider
+            {...RANGE}
+            label="Own words"
+            slotProps={{
+              thumb: {
+                getAriaLabel: (index) => (index === 0 ? 'From' : 'To'),
+                getAriaValueText: (formatted) => `${formatted} departures`,
+              },
+            }}
+          />
+          <Slider
+            {...RANGE}
+            label="Own label"
+            slotProps={{ thumb: { 'aria-label': 'Bound', 'aria-valuetext': 'Any' } }}
+          />
+          <span id="slider-ends">Ends</span>
+          <Slider
+            {...RANGE}
+            label="Labelled by"
+            slotProps={{ thumb: { 'aria-labelledby': 'slider-ends' } }}
+          />
+        </PerronProvider>,
+        async (host) => {
+          const from = await waitFor(() => sliderIn(host, 'From'))
+          await expect(from).toHaveAttribute('aria-valuetext', '4 departures')
+          await expect(sliderIn(host, 'To')).toHaveAttribute('aria-valuetext', '12 departures')
+          const bound = within(host).getAllByRole('slider', { name: 'Bound' })
+          await expect(bound).toHaveLength(2)
+          for (const input of bound) await expect(input).toHaveAttribute('aria-valuetext', 'Any')
+          await expect(within(host).getAllByRole('slider', { name: 'Ends' })).toHaveLength(2)
+          await expect(within(host).queryAllByRole('slider', { name: /Minimum|Maximum/ })).toEqual(
+            [],
+          )
+        },
+      )
+    })
     await step('minimumLabel and maximumLabel name the thumbs', async () => {
       await mounted(
         canvasElement,
@@ -419,6 +792,8 @@ export const Units: Story = {
       canvasElement.querySelectorAll<HTMLElement>('.pn-Slider-field'),
     )
     const slider = sliderIn(english, UNITS.label)
+    // with no description given, none is rendered
+    await expect(fieldPart(english, 'description')).toBeNull()
     await expect(figure(english)).toBe('1.5 km')
     await expect(slider).toHaveAttribute('aria-valuetext', '1.5 km')
     await expect(figure(danish)).toBe('1,5 km')
@@ -481,7 +856,8 @@ export const Controlled: Story = {
         },
       )
     })
-    await step('details.cancel() keeps an uncontrolled value', async () => {
+    await step('details.cancel() keeps an uncontrolled value, and commits nothing', async () => {
+      const commits = spy(args.onChangeCommitted).mock.calls.length
       await mounted(
         canvasElement,
         <PerronProvider locale="en">
@@ -493,6 +869,7 @@ export const Controlled: Story = {
           await userEvent.keyboard('{ArrowRight}')
           await expect(cancelled).toHaveAttribute('aria-valuenow', '5')
           await expect(figure(host)).toBe('5')
+          await expect(spy(args.onChangeCommitted)).toHaveBeenCalledTimes(commits)
         },
       )
     })
@@ -540,7 +917,7 @@ export const InForm: Story = {
       </div>
     </form>
   ),
-  play: async ({ canvasElement }) => {
+  play: async ({ args, canvasElement }) => {
     const form = canvasElement.querySelector('form')!
     await expect(new FormData(form).get('trail')).toBe('5')
     await expect(new FormData(form).getAll('departures')).toEqual(['4', '12'])
@@ -548,6 +925,8 @@ export const InForm: Story = {
     slider.focus()
     await userEvent.keyboard('{ArrowRight}')
     await expect(new FormData(form).get('trail')).toBe('6')
+    // a form library reads the value and the name from the event's target (CR-6)
+    await expect(eventOf(args.onChange).event.target).toEqual({ value: 6, name: 'trail' })
     await userEvent.keyboard('{ArrowLeft}')
     await expect(new FormData(form).get('trail')).toBe('5')
     slider.blur()
@@ -573,5 +952,25 @@ export const LongWords: Story = {
     const control = part(canvasElement, 'control').getBoundingClientRect()
     await expect(control.right).toBeLessThanOrEqual(container.getBoundingClientRect().right + 0.5)
     await expect(container.scrollWidth).toBe(container.clientWidth)
+    // the label, the help and the error render an element and a list as a string
+    await mounted(
+      canvasElement,
+      <PerronProvider locale="en">
+        <Slider
+          label={
+            <span>
+              Trail <em>length</em>
+            </span>
+          }
+          description={['Minutes of movement', ' drawn behind each vehicle']}
+          error={<strong>Choose 8 minutes or fewer</strong>}
+        />
+      </PerronProvider>,
+      async (host) => {
+        const input = await waitFor(() => sliderIn(host, LABEL))
+        await expect(within(host).getByRole('group')).toHaveAccessibleName(LABEL)
+        await expect(input).toHaveAccessibleDescription(`${DESCRIPTION} Choose 8 minutes or fewer`)
+      },
+    )
   },
 }
