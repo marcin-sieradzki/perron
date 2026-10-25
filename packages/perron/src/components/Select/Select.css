@@ -59,6 +59,14 @@
   color: var(--perron-color-text-tertiary);
 }
 
+/* Forced colours drop the tertiary ink, so the placeholder takes the system's (CR-14) and never
+   reads as a chosen value. */
+@media (forced-colors: active) {
+  .pn-Select-value[data-placeholder] {
+    color: GrayText;
+  }
+}
+
 /* The chevron, decoration beside the value; it doesn't turn while open (CR-12). */
 .pn-Select-icon {
   --perron-icon-size: var(--perron-icon-size-400);
@@ -184,11 +192,16 @@
   color: var(--perron-color-text-tertiary);
 }
 
-/* Forced colours drop the hover surface, so the highlighted row takes the system's (CR-13), and
-   keeps it: left to adjust, the browser backs each line of text with Canvas. The chosen row's rule
-   is matched too, so its selected fill never shows under HighlightText; the tick follows the
-   row's ink. */
+/* Forced colours drop the tertiary ink and the hover surface (CR-13). A disabled row takes the
+   system's GrayText, as Checkbox's label does. The highlighted row takes the system's highlight,
+   after it so a disabled highlighted row keeps HighlightText, and keeps it: left to adjust, the
+   browser backs each line of text with Canvas. The chosen row's rule is matched too, so its
+   selected fill never shows under HighlightText; the tick follows the row's ink. */
 @media (forced-colors: active) {
+  .pn-Select-item[data-disabled] {
+    color: GrayText;
+  }
+
   .pn-Select-item[data-highlighted],
   .pn-Select-item[data-selected][data-highlighted] {
     forced-color-adjust: none;

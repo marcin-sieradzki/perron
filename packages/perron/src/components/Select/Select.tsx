@@ -75,7 +75,8 @@ export interface SelectProps extends Omit<
   onOpen?: (event: Event, details: BaseSelect.Root.OpenChangeEventDetails) => void
   /**
    * Called when the list asks to close: `reason` is `'item-press'`, `'escape-key'`,
-   * `'outside-press'`, `'trigger-press'` or `'focus-out'`; `details.cancel()` keeps it open.
+   * `'outside-press'`, `'trigger-press'`, `'focus-out'`, `'cancel-open'` or another of Base UI's
+   * reasons; `details.cancel()` keeps it open.
    */
   onClose?: (
     event: Event,
@@ -177,8 +178,7 @@ export function Select({
   ...rest
 }: SelectProps) {
   // CR-6: one id names the trigger, through Base UI, and the list, through Perron
-  const ownLabelId = useId()
-  const labelId = slotProps?.label?.id ?? ownLabelId
+  const labelId = useId()
 
   // CR-4: the options flattened, groups and all, so the value shows the chosen option's label
   const flat = useMemo(
@@ -210,7 +210,7 @@ export function Select({
       className={withClass('pn-Select-item', slotProps?.item?.className)}
     >
       <BaseSelect.ItemText
-        {...mergeProps<typeof BaseSelect.ItemText>(slotProps?.itemText, undefined)}
+        {...slotProps?.itemText}
         className={withClass('pn-Select-itemText', slotProps?.itemText?.className)}
       >
         {item.label}
@@ -229,12 +229,13 @@ export function Select({
       {...rest}
       className={withClass('pn-Select', className)}
       slotProps={{
-        // CR-5: Select's own label props under the caller's, so a caller's id or render wins
+        // CR-5: Select's own label props last, so the label stays a non-native <div> with its id
         // (mergeProps types the ref as an HTMLElement's, where Field's slot takes a <label>'s)
-        label: mergeProps<typeof BaseField.Label>(
-          { id: ownLabelId, render: <div />, nativeLabel: false },
-          slotProps?.label,
-        ) as BaseField.Label.Props,
+        label: mergeProps<typeof BaseField.Label>(slotProps?.label, {
+          id: labelId,
+          render: <div />,
+          nativeLabel: false,
+        }) as BaseField.Label.Props,
         description: slotProps?.description,
         error: slotProps?.error,
       }}
@@ -254,7 +255,7 @@ export function Select({
         onOpenChange={handleOpenChange}
       >
         <BaseSelect.Trigger
-          {...mergeProps<typeof BaseSelect.Trigger>(slotProps?.trigger, undefined)}
+          {...slotProps?.trigger}
           className={withClass('pn-Select-trigger', slotProps?.trigger?.className)}
         >
           <BaseSelect.Value
@@ -267,7 +268,7 @@ export function Select({
           />
         </BaseSelect.Trigger>
         <BaseSelect.Portal
-          {...mergeProps<typeof BaseSelect.Portal>(slotProps?.portal, undefined)}
+          {...slotProps?.portal}
           className={withClass('pn-Select-portal', slotProps?.portal?.className)}
         >
           <BaseSelect.Positioner
@@ -278,7 +279,7 @@ export function Select({
             className={withClass('pn-Select-positioner', slotProps?.positioner?.className)}
           >
             <BaseSelect.Popup
-              {...mergeProps<typeof BaseSelect.Popup>(slotProps?.popup, undefined)}
+              {...slotProps?.popup}
               className={withClass('pn-Select-popup', slotProps?.popup?.className)}
             >
               <BaseSelect.List
@@ -293,10 +294,7 @@ export function Select({
                       index > 0 ? (
                         <BaseSelect.Separator
                           key={`separator-${group.label}`}
-                          {...mergeProps<typeof BaseSelect.Separator>(
-                            slotProps?.separator,
-                            undefined,
-                          )}
+                          {...slotProps?.separator}
                           className={withClass(
                             'pn-Select-separator',
                             slotProps?.separator?.className,
@@ -305,14 +303,11 @@ export function Select({
                       ) : null,
                       <BaseSelect.Group
                         key={group.label}
-                        {...mergeProps<typeof BaseSelect.Group>(slotProps?.group, undefined)}
+                        {...slotProps?.group}
                         className={withClass('pn-Select-group', slotProps?.group?.className)}
                       >
                         <BaseSelect.GroupLabel
-                          {...mergeProps<typeof BaseSelect.GroupLabel>(
-                            slotProps?.groupLabel,
-                            undefined,
-                          )}
+                          {...slotProps?.groupLabel}
                           className={withClass(
                             'pn-Select-groupLabel',
                             slotProps?.groupLabel?.className,

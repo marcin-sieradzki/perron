@@ -9,19 +9,19 @@ stages:
     started: 2026-10-25T05:46:03.147Z
     ended: 2026-10-25T05:47:29.658Z
   build:
-    runs: 2
-    failing: review round 1 found 1 P1 and 4 P2 (components/select/review.md)
+    runs: 3
+    status: done
+    started: 2026-10-25T06:22:10.566Z
+    begun: 045c083f8c52c6996135e3c8b1d84c787703eaa74240a9a6d59a4d036b30705b
+    spec: c09cbf61093a251d493aa01c1bee325b0db29bdec3f81a078d6539d16fdbb008
+    ended: 2026-10-25T06:27:07.661Z
   review:
-    status: failed
-    started: 2026-10-25T06:10:59.920Z
     rounds: 1
+    sentBack: 1
     findings:
       p1: 1
       p2: 4
       p3: 6
-    sentBack: 1
-    ended: 2026-10-25T06:22:06.285Z
-    failing: review round 1 found 1 P1 and 4 P2 (components/select/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T05:44:48.986Z
@@ -74,3 +74,9 @@ notes:
   - stage: build
     at: 2026-10-25T06:10:29.349Z
     direction: Factory runs in parallel share one scratchpad folder, so a log with a fixed name such as check.log can be overwritten by another worktree's run. The audit skills' rendering guide could tell each run to name its scratch files after its component.
+  - stage: build
+    at: 2026-10-25T06:27:07.661Z
+    direction: Playwright's emulated forced colours draw GrayText as a dark red (rgb(96, 0, 0)), not the grey Windows uses, so forced-colour screenshots in the audit skills show the right contrast between system colours but not their true hues. design-qa/rendering.md could warn about this.
+  - stage: build
+    at: 2026-10-25T06:27:07.661Z
+    direction: CR-5 now lists which Select parts are merged and which are spread as they are. The list must change whenever Select starts or stops setting props on a part, so the contract could ask specs to state the rule rather than list the parts.
