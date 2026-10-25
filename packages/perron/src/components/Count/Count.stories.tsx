@@ -32,8 +32,8 @@ function heard(element: Element) {
 }
 
 /**
- * A status story's render: the caller's words, then the pill, so the tint is never the only sign
- * (CR-9). The args stay Count's alone, so the subject story still renders the subject alone.
+ * A story's render: the caller's words, then the pill, so the tint is never the only sign (CR-9)
+ * and the dash of an unknown count sits next to stronger text. The args stay Count's alone, so the subject story still renders the subject alone.
  */
 const after =
   (words: string): Story['render'] =>
@@ -107,6 +107,7 @@ export const Warning: Story = {
 /** No count: "—", heard as "Unknown", untinted (CR-4 to CR-6). */
 export const Unknown: Story = {
   args: { color: 'neutral' },
+  render: after('Delays'),
   play: async ({ canvasElement }) => {
     const root = rootIn(canvasElement)
     await expect(root).toHaveAttribute('data-unknown', '')
