@@ -5,6 +5,7 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
+import { attribute } from '../../testing/markup.ts'
 import { Brand } from './Brand.tsx'
 
 const logo = readFileSync(
@@ -12,22 +13,23 @@ const logo = readFileSync(
   'utf8',
 )
 
-/** An attribute's value inside one tag, or undefined. */
-const attr = (tag: string, name: string) => tag.match(new RegExp(`\\s${name}="([^"]*)"`))?.[1]
-
 /** The svg's box: its viewBox, width and height. */
 const box = (markup: string) => {
   const svg = markup.match(/<svg\b[^>]*>/)![0]
-  return { viewBox: attr(svg, 'viewBox'), width: attr(svg, 'width'), height: attr(svg, 'height') }
+  return {
+    viewBox: attribute(svg, 'viewBox'),
+    width: attribute(svg, 'width'),
+    height: attribute(svg, 'height'),
+  }
 }
 
 /** Each circle's geometry, in order. */
 const circles = (markup: string) =>
   (markup.match(/<circle\b[^>]*>/g) ?? []).map((tag) => ({
-    cx: attr(tag, 'cx'),
-    cy: attr(tag, 'cy'),
-    r: attr(tag, 'r'),
-    strokeWidth: attr(tag, 'stroke-width'),
+    cx: attribute(tag, 'cx'),
+    cy: attribute(tag, 'cy'),
+    r: attribute(tag, 'r'),
+    strokeWidth: attribute(tag, 'stroke-width'),
   }))
 
 describe('Brand', () => {
@@ -44,8 +46,8 @@ describe('Brand', () => {
 
   it('keeps every colour out of the markup, for Brand.css to set from the tokens (CR-3)', () => {
     for (const tag of markup.match(/<circle\b[^>]*>/g) ?? []) {
-      expect(attr(tag, 'fill')).toBeUndefined()
-      expect(attr(tag, 'stroke')).toBeUndefined()
+      expect(attribute(tag, 'fill')).toBeUndefined()
+      expect(attribute(tag, 'stroke')).toBeUndefined()
     }
   })
 
