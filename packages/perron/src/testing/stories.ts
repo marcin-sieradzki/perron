@@ -99,20 +99,24 @@ export function stateRules(element: Element, pseudo: ':hover' | ':active' | ':vi
 }
 
 /**
- * Whether `element` has a `(hover: hover)` rule and an `:active` rule that set its background, a
- * colour or a layer, and the last `:active` one, outside the query, comes after the last hover one in source order. The
+ * Whether `element` has a `(hover: hover)` rule and an `:active` rule that paint it, a fill, a
+ * layer, an ink or an edge, and the last `:active` one, outside the query, comes after the last
+ * hover one in source order. Forced colours' rules are left out, as they replace both. The
  * contract's selectors make the two as specific, so the later one wins while a mouse presses, and a
- * press written first shows the hover fill.
+ * press written first shows the hover look.
  */
 export function pressedAfterHover(element: Element) {
   let [index, hover, active] = [0, -1, -1]
   const paints = (style: CSSStyleDeclaration) =>
-    style.getPropertyValue('background-color') || style.getPropertyValue('background-image')
+    ['background-color', 'background-image', 'color', 'border-color'].some((p) =>
+      style.getPropertyValue(p),
+    )
   const visit = (rules: CSSRuleList, inQuery: boolean) => {
     for (const rule of Array.from(rules))
-      if (rule instanceof CSSMediaRule)
-        visit(rule.cssRules, inQuery || rule.conditionText.includes('(hover: hover)'))
-      else if (rule instanceof CSSGroupingRule && !(rule instanceof CSSStyleRule))
+      if (rule instanceof CSSMediaRule) {
+        if (!rule.conditionText.includes('forced-colors'))
+          visit(rule.cssRules, inQuery || rule.conditionText.includes('(hover: hover)'))
+      } else if (rule instanceof CSSGroupingRule && !(rule instanceof CSSStyleRule))
         visit(rule.cssRules, inQuery)
       else if (rule instanceof CSSStyleRule && paints(rule.style)) {
         index++

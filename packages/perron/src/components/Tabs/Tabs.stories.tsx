@@ -5,7 +5,7 @@ import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import { Button } from '../Button/Button.tsx'
-import { colour, onHover, rendered, stateFill } from '../../testing/stories.ts'
+import { colour, onHover, pressedAfterHover, rendered, stateFill } from '../../testing/stories.ts'
 import { Tab, Tabs, TabsList, TabsPanel, type TabsProps } from './Tabs.tsx'
 
 /** The underline of the list in `canvasElement`, once Base UI has measured the selected tab. */
@@ -135,6 +135,7 @@ export const TabHover: Story = {
     await expect(onHover(lines, 'color')).toBe('var(--perron-color-text-primary)')
     // pressed lays the hover layer behind the inked label, a step past hover
     await expect(stateFill(lines, ':active')).toBe('var(--perron-color-surface-hover)')
+    await expect(pressedAfterHover(lines)).toBe(true)
   },
 }
 
