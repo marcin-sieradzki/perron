@@ -9,8 +9,12 @@ stages:
     started: 2026-10-25T12:38:42.851Z
     ended: 2026-10-25T12:39:52.829Z
   build:
-    runs: 2
-    failing: review round 2 found 1 P2 (components/vehicle-dot-label/review.md)
+    runs: 3
+    status: done
+    started: 2026-10-25T13:03:00.152Z
+    begun: 284193da1b780cd7f52048539359490d81862b8962cfabd8c3f387a29a4098d5
+    spec: 3f48128ad0bb763089cce201b0616ca5a13153e857768afe6be65c5416cfec0b
+    ended: 2026-10-25T13:04:49.048Z
   review:
     rounds: 2
     sentBack: 2
@@ -19,10 +23,6 @@ stages:
       p1: 0
       p2: 1
       p3: 1
-    status: failed
-    started: 2026-10-25T13:00:35.728Z
-    ended: 2026-10-25T13:02:56.672Z
-    failing: review round 2 found 1 P2 (components/vehicle-dot-label/review.md)
 notes:
   - stage: brief
     at: 2026-10-25T12:38:27.446Z
