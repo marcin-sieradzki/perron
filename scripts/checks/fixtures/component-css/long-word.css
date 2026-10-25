@@ -36,3 +36,10 @@
   font: var(--perron-typography-heading-md);
   letter-spacing: var(--perron-typography-heading-md-tracking);
 }
+
+/* wraps at spaces only: a long word still runs past its line */
+.pn-Note {
+  font: var(--perron-typography-body);
+  letter-spacing: var(--perron-typography-body-tracking);
+  white-space: pre-wrap;
+}

@@ -2,11 +2,11 @@
 // each open at first render beside the trigger that opens it again, with the play tests the spec's
 // Stories table names (docs/components/dialog.md).
 import { useState } from 'react'
-import { createRoot } from 'react-dom/client'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, screen, userEvent, waitFor, within } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
+import { mounted } from '../../testing/stories.ts'
 import { Button } from '../Button/Button.tsx'
 import { Text } from '../Text/Text.tsx'
 import { Dialog } from './Dialog.tsx'
@@ -272,23 +272,20 @@ export const CloseLabel: Story = {
       trigger.blur()
     })
     await step('in da with no override, it is named "Luk", and every word is known', async () => {
-      const host = document.createElement('div')
-      document.body.append(host)
-      const root = createRoot(host)
-      root.render(
+      const ui = (
         <PerronProvider locale="da">
           <Dialog {...args} closeLabel={undefined} data-testid="dialog-da" />
-        </PerronProvider>,
+        </PerronProvider>
       )
-      const da = await waitFor(() => {
-        const found = document.querySelector('[data-testid="dialog-da"]')
-        expect(found).not.toBeNull()
-        return found as HTMLElement
+      await mounted(document.body, ui, async () => {
+        const da = await waitFor(() => {
+          const found = document.querySelector('[data-testid="dialog-da"]')
+          expect(found).not.toBeNull()
+          return found as HTMLElement
+        })
+        await expect(within(da).getByRole('button', { name: 'Luk' })).toBeInTheDocument()
+        expectOwnedStrings(da.outerHTML, 'da', [TITLE, DESCRIPTION, CONTENT])
       })
-      await expect(within(da).getByRole('button', { name: 'Luk' })).toBeInTheDocument()
-      expectOwnedStrings(da.outerHTML, 'da', [TITLE, DESCRIPTION, CONTENT])
-      root.unmount()
-      host.remove()
       await closed()
     })
   },
