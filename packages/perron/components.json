@@ -449,7 +449,7 @@
     "name": "TextField",
     "layer": "component",
     "category": "Inputs",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": [
       "Field.Root",
       "Field.Label",
@@ -512,7 +512,7 @@
     "name": "RadioGroup",
     "layer": "component",
     "category": "Inputs",
-    "status": "designing",
+    "status": "stable",
     "baseUiParts": ["RadioGroup", "Radio.Root", "Radio.Indicator"],
     "penpotPath": "Components/RadioGroup",
     "dependsOn": ["Fieldset"]

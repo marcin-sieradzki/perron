@@ -1633,6 +1633,97 @@
       }
     }
   },
+  "RadioGroup": {
+    "extends": [
+      "Omit< BaseRadioGroup.Props<string>, | 'value' | 'defaultValue' | 'onValueChange' | 'onChange' | 'disabled' | 'readOnly' | 'required' | 'name' | 'className' | 'style' | 'children' | 'ref' >"
+    ],
+    "props": {
+      "children": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "defaultValue": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "disabled": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "hiddenLabel": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "label": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "name": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "onChange": {
+        "optional": true,
+        "type": [
+          "(event: Event, value: string, details: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) => void"
+        ]
+      },
+      "readOnly": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "required": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ legend?: FieldsetLegendProps | undefined; }"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "value": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      }
+    }
+  },
   "ScaleBar": {
     "extends": [
       "Omit<ComponentPropsWithRef<'div'>, 'children'>"
@@ -2504,6 +2595,113 @@
           "\"label-sm\"",
           "\"overline\"",
           "\"stat\""
+        ]
+      }
+    }
+  },
+  "TextField": {
+    "extends": [
+      "Omit< BaseField.Control.Props, 'onValueChange' | 'ref' | 'disabled' | 'children' | 'dangerouslySetInnerHTML' >"
+    ],
+    "props": {
+      "defaultValue": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "description": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "disabled": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "error": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "hiddenLabel": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "label": {
+        "optional": false,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "name": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "onChange": {
+        "optional": true,
+        "type": [
+          "(event: ChangeEvent<HTMLInputElement, Element>) => void"
+        ]
+      },
+      "optional": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "optionalLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "placeholder": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLInputElement>"
+        ]
+      },
+      "required": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ field?: Omit<FieldRootProps, \"children\" | \"disabled\" | \"name\"> | undefined; label?: FieldLabelProps | undefined; description?: FieldDescriptionProps | undefined; error?: FieldErrorProps | undefined; }"
+        ]
+      },
+      "type": {
+        "optional": true,
+        "type": [
+          "\"email\"",
+          "\"password\"",
+          "\"tel\"",
+          "\"text\"",
+          "\"url\""
+        ]
+      },
+      "value": {
+        "optional": true,
+        "type": [
+          "string"
         ]
       }
     }
