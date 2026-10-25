@@ -114,7 +114,13 @@ export function TextField({
   description,
   error,
   disabled = false,
+  name,
   type = 'text',
+  placeholder,
+  required,
+  value,
+  defaultValue,
+  onChange,
   slotProps,
   className,
   ref,
@@ -148,12 +154,18 @@ export function TextField({
         },
       }}
     >
-      {/* CR-3, CR-4: the input takes the rest as given, React's own onChange among it; CR-10:
-          its type in every render */}
+      {/* CR-3, CR-4: the input takes the rest as given, then its declared props, React's own
+          onChange among them; CR-10: its type in every render */}
       <BaseField.Control
         {...rest}
         ref={ref}
+        name={name}
         type={type}
+        placeholder={placeholder}
+        required={required}
+        value={value}
+        defaultValue={defaultValue}
+        onChange={onChange}
         className={withClass('pn-TextField', className)}
       />
     </Field>
