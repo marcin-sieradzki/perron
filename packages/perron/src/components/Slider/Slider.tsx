@@ -29,7 +29,8 @@ export interface SliderProps extends Omit<
 > {
   /**
    * Required. What the number is, in sentence case, such as "Trail length": shown above the
-   * slider, and the name of the slider and of each thumb.
+   * slider, and the name of the slider's group and of a single thumb; a range's thumbs are named
+   * "Minimum" and "Maximum".
    */
   label: ReactNode
   /**
