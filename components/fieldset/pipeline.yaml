@@ -24,6 +24,10 @@ stages:
     status: done
     started: 2026-10-25T05:01:22.254Z
     ended: 2026-10-25T05:05:01.184Z
+  docs:
+    status: done
+    started: 2026-10-25T05:05:11.383Z
+    ended: 2026-10-25T05:07:34.868Z
 notes:
   - stage: brief
     at: 2026-10-25T04:44:49.699Z
@@ -64,3 +68,6 @@ notes:
   - stage: build
     at: 2026-10-25T05:01:17.866Z
     direction: "Inherited render rows are split across specs: Button, SegmentedControl, Tabs and Fieldset paraphrase Base UI's description, while SearchField, HighlightChip and EmptyState quote it, as the contract and TEMPLATE.md ask. The maintainer may want to pick one form."
+  - stage: docs
+    at: 2026-10-25T05:07:34.868Z
+    direction: The docs page shows the spec's whole introduction, so readers see its second paragraph's notes about the run (ADR 0010, the design being deferred, 'not in any branch this run can reach'). Those notes may belong further down the spec, so the docs page opens with the component's purpose; a question for the brief or the spec template.
