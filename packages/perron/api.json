@@ -415,19 +415,37 @@
   },
   "FactList": {
     "extends": [
-      "Omit<useRender.ComponentProps<'dl'>, 'children'>"
+      "Omit<useRender.ComponentProps<'dl'>, 'children' | 'ref'>"
     ],
     "props": {
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
       "items": {
         "optional": false,
         "type": [
           "readonly FactListItem[]"
         ]
       },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDListElement>"
+        ]
+      },
       "slotProps": {
         "optional": true,
         "type": [
           "{ item?: ComponentProps<\"div\", {}, HTMLProps> | undefined; label?: ComponentProps<\"dt\", {}, HTMLProps> | undefined; value?: ComponentProps<\"dd\", {}, HTMLProps> | undefined; }"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
         ]
       },
       "unknownLabel": {

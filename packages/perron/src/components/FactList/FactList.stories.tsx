@@ -1,5 +1,8 @@
 // FactList's stories: one per row of the spec's Stories table (docs/components/fact-list.md), with
 // the design deferred, and their play tests, which read what the eye sees and what the ear hears.
+import { createRef } from 'react'
+import { flushSync } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, userEvent } from 'storybook/test'
@@ -9,7 +12,7 @@ import { expectOwnedStrings } from '../../testing/owned-strings.ts'
 import { FactList, type FactListItem } from './FactList.tsx'
 
 /** Four facts about a bus, every one known. */
-const BUS: FactListItem[] = [
+const BUS: ReadonlyArray<FactListItem> = [
   { label: 'Operator', value: 'Movia' },
   { label: 'Vehicle', value: '8412' },
   { label: 'Speed', value: '32 km/h' },
@@ -17,7 +20,7 @@ const BUS: FactListItem[] = [
 ]
 
 /** Three facts about a bus, its speed unknown. */
-const BUS_UNKNOWN_SPEED: FactListItem[] = [
+const BUS_UNKNOWN_SPEED: ReadonlyArray<FactListItem> = [
   { label: 'Operator', value: 'Movia' },
   { label: 'Speed' },
   { label: 'Last report', value: '08:14' },
@@ -52,9 +55,27 @@ async function expectNoFocus(root: HTMLElement) {
   await userEvent.tab({ shift: true })
 }
 
+/**
+ * Render an empty FactList with a `ref` into the DOM beside `canvas`, and expect the `ref` and
+ * `className` to land on its empty `dl` (CR-8).
+ */
+async function expectEmptyListTakesRef(canvas: HTMLElement) {
+  const ref = createRef<HTMLDListElement>()
+  const container = document.createElement('div')
+  canvas.append(container)
+  const root = createRoot(container)
+  flushSync(() => root.render(<FactList items={[]} ref={ref} className="mine" />))
+  const list = container.firstElementChild
+  await expect(list?.tagName).toBe('DL')
+  await expect(ref.current).toBe(list)
+  await expect(list).toHaveClass('pn-FactList', 'mine')
+  await expect(list?.childElementCount).toBe(0)
+  root.unmount()
+  container.remove()
+}
+
 /** Four facts about a bus, each a name and its value. */
 export const Default: Story = {
-  args: { items: BUS },
   play: async ({ canvasElement }) => {
     const root = rootIn(canvasElement)
     await expect(root.tagName).toBe('DL')
@@ -74,6 +95,7 @@ export const Default: Story = {
     const value = root.querySelector('.pn-FactList-value')!
     await expect(getComputedStyle(value).fontVariantNumeric).toBe('tabular-nums')
     await expectNoFocus(root)
+    await expectEmptyListTakesRef(canvasElement)
   },
 }
 

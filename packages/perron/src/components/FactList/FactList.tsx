@@ -1,7 +1,7 @@
 // FactList: a short list of facts about one thing, each a name and what it is, such as
 // "Operator: Movia", set as a description list. No Base UI component has behaviour for it, so
 // every part renders through useRender. Spec: docs/components/fact-list.md.
-import type { Key, ReactNode } from 'react'
+import type { CSSProperties, Key, ReactNode, Ref } from 'react'
 import { mergeProps } from '@base-ui/react/merge-props'
 import { useRender } from '@base-ui/react/use-render'
 import { VisuallyHidden } from '../../parts/VisuallyHidden/VisuallyHidden.tsx'
@@ -24,7 +24,7 @@ export interface FactListItem {
   key?: Key
 }
 
-export interface FactListProps extends Omit<useRender.ComponentProps<'dl'>, 'children'> {
+export interface FactListProps extends Omit<useRender.ComponentProps<'dl'>, 'children' | 'ref'> {
   /**
    * The facts, in reading order, each `{ label, value, key }`: `label` names the fact, `value` says
    * what it is, and `key` is its React key when the facts change order. Required
@@ -47,6 +47,12 @@ export interface FactListProps extends Omit<useRender.ComponentProps<'dl'>, 'chi
     /** Props for every `value` part */
     value?: useRender.ComponentProps<'dd'>
   }
+  /** Joined after `pn-FactList` on the root */
+  className?: string
+  /** Reaches the root */
+  style?: CSSProperties
+  /** Reaches the root element */
+  ref?: Ref<HTMLDListElement>
 }
 
 /**
