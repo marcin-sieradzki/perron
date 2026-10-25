@@ -7,6 +7,7 @@ import { expect } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { dictionaries, type Locale } from '../../locale/index.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
+import { heard } from '../../testing/stories.ts'
 import { Delay } from './Delay.tsx'
 
 const meta = {
@@ -25,13 +26,6 @@ const rootIn = (canvas: HTMLElement) => canvas.querySelector<HTMLElement>('.pn-D
 function seen(root: HTMLElement) {
   const parts = root.querySelectorAll('.pn-Delay-value, .pn-Delay-unit')
   return [...parts].map((part) => part.textContent).join(' ')
-}
-
-/** What a screen reader reads: the text outside `aria-hidden`. */
-function heard(root: HTMLElement) {
-  const copy = root.cloneNode(true) as HTMLElement
-  for (const hidden of copy.querySelectorAll('[aria-hidden="true"]')) hidden.remove()
-  return copy.textContent!.replace(/\s+/g, ' ').trim()
 }
 
 /** A Delay rendered apart from the story, as its root element. */

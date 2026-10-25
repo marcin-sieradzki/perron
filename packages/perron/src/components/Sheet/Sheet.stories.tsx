@@ -2,11 +2,11 @@
 // by defaultOpen with the trigger that opens it again, with play tests for dismissal, focus and the
 // keys, and every shape `title` and `children` take in each anchor (docs/components/sheet.md).
 import type { ReactNode } from 'react'
-import { createRoot } from 'react-dom/client'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, screen, userEvent, waitFor, within } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
+import { mounted } from '../../testing/stories.ts'
 import { Sheet } from './Sheet.tsx'
 import type { SheetProps } from './Sheet.tsx'
 
@@ -53,18 +53,6 @@ const sheet = () => screen.findByRole('dialog', { name: TITLE })
 /** Resolves once no sheet is open. */
 const closed = () => waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
 
-/** Renders `ui` in a root of its own at the end of `<body>`, and returns what unmounts it. */
-function mount(ui: ReactNode) {
-  const host = document.createElement('div')
-  document.body.append(host)
-  const root = createRoot(host)
-  root.render(ui)
-  return () => {
-    root.unmount()
-    host.remove()
-  }
-}
-
 /** The element with `data-testid` `id`, once it has rendered. */
 const byTestId = (id: string) =>
   waitFor(() => {
@@ -106,16 +94,17 @@ const SHAPES: { title: ReactNode; children: ReactNode; shown: [string, string] }
 async function expectEveryShape(anchor: SheetProps['anchor']) {
   const before = document.activeElement
   for (const { title, children, shown } of SHAPES) {
-    const unmount = mount(
+    const ui = (
       <Sheet anchor={anchor} title={title} defaultOpen data-testid="sheet-shape">
         {children}
-      </Sheet>,
+      </Sheet>
     )
-    const dialog = await byTestId('sheet-shape')
-    await expect(dialog).toHaveAccessibleName(TITLE)
-    await expect(dialog.querySelector('.pn-Sheet-title')?.innerHTML).toBe(shown[0])
-    await expect(dialog.querySelector('.pn-Sheet-content')?.innerHTML).toBe(shown[1])
-    unmount()
+    await mounted(document.body, ui, async () => {
+      const dialog = await byTestId('sheet-shape')
+      await expect(dialog).toHaveAccessibleName(TITLE)
+      await expect(dialog.querySelector('.pn-Sheet-title')?.innerHTML).toBe(shown[0])
+      await expect(dialog.querySelector('.pn-Sheet-content')?.innerHTML).toBe(shown[1])
+    })
   }
   await closed()
   // Base UI hands focus back on the next frame, to the element focused last, which can be the
@@ -132,14 +121,15 @@ export const Left: Story = {
     const trigger = within(canvasElement).getByRole('button', { name: TRIGGER })
     await sheet()
     await step('the open sheet holds only owned and caller words, in da (CR-12)', async () => {
-      const unmount = mount(
+      const ui = (
         <PerronProvider locale="da">
           <Sheet {...args} data-testid="sheet-da" />
-        </PerronProvider>,
+        </PerronProvider>
       )
-      const da = await byTestId('sheet-da')
-      expectOwnedStrings(da.outerHTML, 'da', [TITLE, ...LINES, TRIGGER])
-      unmount()
+      await mounted(document.body, ui, async () => {
+        const da = await byTestId('sheet-da')
+        expectOwnedStrings(da.outerHTML, 'da', [TITLE, ...LINES, TRIGGER])
+      })
     })
     await step(
       'Esc closes it with reason escape-key, and focus returns to the trigger',

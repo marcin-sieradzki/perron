@@ -65,7 +65,7 @@ For a pattern, read `docs/patterns/<name>.md` for the spec, `packages/perron/src
 
 ## Returns
 
-The run ends with one outcome and a short summary.
+The run ends with one outcome and a short summary. Whatever the outcome, a Direction finding met on the way, a choice the maintainer may want to revisit, goes in `direction`, one line each, for the PR.
 
 - **`done`**: the page's path, and the entry now `stable`.
 - **`failed`**: the fault in a source, with the source or the red check, the line or the output, the mismatch, and the stage it belongs to. The build's next run fixes it from this text, so name the fix where you can ("add `@default 'plain'` to `tone`'s JSDoc").

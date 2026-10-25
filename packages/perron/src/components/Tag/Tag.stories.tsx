@@ -1,7 +1,7 @@
 // Tag's stories: one per variant of the deferred design, every `variant` with every `color`.
-import { createRoot } from 'react-dom/client'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, getRoles, waitFor, within } from 'storybook/test'
+import { mounted } from '../../testing/stories.ts'
 import { Tag } from './Tag.tsx'
 import type { TagProps } from './Tag.tsx'
 
@@ -29,16 +29,7 @@ async function withTag(
   props: TagProps,
   test: (tag: HTMLElement) => Promise<void>,
 ) {
-  const host = document.createElement('div')
-  parent.append(host)
-  const root = createRoot(host)
-  root.render(<Tag {...props} />)
-  try {
-    await test(await waitFor(() => tagIn(host)))
-  } finally {
-    root.unmount()
-    host.remove()
-  }
+  await mounted(parent, <Tag {...props} />, async (host) => test(await waitFor(() => tagIn(host))))
 }
 
 /**

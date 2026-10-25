@@ -8,6 +8,7 @@ import { expect, userEvent, within } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { dictionaries, type Locale } from '../../locale/index.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
+import { heard } from '../../testing/stories.ts'
 import { KioskBar } from './KioskBar.tsx'
 import type { KioskBarStat } from './KioskBar.tsx'
 
@@ -56,13 +57,6 @@ type Story = StoryObj<typeof meta>
 
 /** The bar rendered inside `canvas`. */
 const rootIn = (canvas: HTMLElement) => canvas.querySelector<HTMLElement>('.pn-KioskBar')!
-
-/** What a screen reader reads of `element`: its text outside `aria-hidden`. */
-function heard(element: Element) {
-  const copy = element.cloneNode(true) as HTMLElement
-  for (const hidden of copy.querySelectorAll('[aria-hidden="true"]')) hidden.remove()
-  return copy.textContent!.replace(/\s+/g, ' ').trim()
-}
 
 /** What the ear hears of each figure, its label then its figure. */
 const heardFigures = (canvas: HTMLElement) =>

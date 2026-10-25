@@ -76,7 +76,11 @@ describe('component-css', () => {
     ['loop.css', /prefers-reduced-motion/, 1],
     ['loop-elsewhere.css', /in a rule for \.pn-Fixture that sets its animation/, 1],
     ['disabled-opacity.css', /never an opacity/, 1],
-    ['long-word.css', /^\.pn-Card-title sets a typography role but not what a long word does/, 1],
+    [
+      'long-word.css',
+      /^\.pn-(Card-title|Note) sets a typography role but not what a long word does/,
+      2,
+    ],
   ])('fails %s', (fixture, message, count) => {
     const problems = lint(fixture)
     expect(problems).toHaveLength(count)
