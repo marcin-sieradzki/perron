@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import { fold, searchEntries } from '../components/site/SiteSearchMatch.ts'
 import { SECTIONS } from '../components/site/sections.ts'
+import { readChangelogs, releaseAnchor, versionOf } from './changelog.ts'
 import { readFoundations } from './foundations.ts'
 import { routedEntries } from './registry.ts'
-import { buildSearchIndex, plainHeading, type SearchEntry } from './search-index.ts'
+import { buildSearchIndex, type SearchEntry } from './search-index.ts'
 
-const index = buildSearchIndex()
+const index = await buildSearchIndex()
 const at = (href: string) => index.filter((e) => e.href === href)
 
 describe('buildSearchIndex', () => {
@@ -29,44 +30,65 @@ describe('buildSearchIndex', () => {
         expect(at(e.route ?? '')).toContainEqual({ title: e.name, href: e.route, section })
   })
 
-  it("has each page's headings, in its own words, at their anchors", () => {
+  it("has each page's places, in its own words, at the ids the page gives them", () => {
+    // a foundation page's heading, at the id Markdown gives it
     expect(index).toContainEqual({
       title: 'Durations',
       href: '/foundations/motion#durations',
       page: 'Motion',
       section: 'Foundations',
     })
+    // a gallery's category, at its heading's id
+    expect(index).toContainEqual({
+      title: 'Map',
+      href: '/foundations/icons#fd-icons-Map',
+      page: 'Icons',
+      section: 'Foundations',
+    })
+    // a tool, by the name the server lists it under, at its card
     expect(index).toContainEqual({
       title: 'list_tokens',
-      // Markdown's heading ids drop the underscore, so the anchor does too
-      href: '/agents#listtokens',
+      href: '/agents#list-tokens',
       page: 'Agents',
       section: 'Agents',
     })
+    // a step of Get started, at its section
     expect(index).toContainEqual({
-      title: 'Using the tokens',
-      href: '/get-started#using-the-tokens',
+      title: 'Use the tokens',
+      href: '/get-started#tokens',
       page: 'Get started',
       section: 'Get started',
     })
-  })
-
-  it("leaves out the spec template's headings and keeps a spec's own", () => {
-    const specs = index.filter((e) => /^\/(components|patterns)\/./.test(e.href) && e.page)
-    expect(specs.map((e) => e.title)).not.toContain('Props')
-    expect(specs.map((e) => e.title)).not.toContain("Do and don't")
     expect(index).toContainEqual({
-      title: 'MenuItem',
-      href: '/components/menu#menuitem',
-      page: 'Menu',
-      section: 'Components',
+      title: 'Using the tokens',
+      href: '/foundations#using-the-tokens',
+      page: 'Foundations',
+      section: 'Foundations',
     })
   })
 
-  it('has each version of both changelogs on the Release log', () => {
+  it("leaves out a spec's headings its page does not draw, and the template's", () => {
+    const specs = index.filter((e) => /^\/(components|patterns)\/./.test(e.href) && e.page)
+    const titles = specs.map((e) => e.title)
+    expect(titles).not.toContain('Props')
+    expect(titles).not.toContain("Do and don't")
+    // a part's props table, which the page leaves out
+    expect(titles).not.toContain('MenuItem')
+    expect(index.map((e) => e.href)).not.toContain('/components/menu#menuitem')
+  })
+
+  it('has each version of both changelogs at its place on the Release log', () => {
     const versions = index.filter((e) => e.page === 'Release log')
-    expect(versions.length).toBeGreaterThan(0)
+    expect(versions.length).toBe(readChangelogs().flatMap((l) => l.releases).length)
     expect(versions.every((e) => /^@mylder\/perron(-mcp)? \S+$/.test(e.title))).toBe(true)
+    const [perron] = readChangelogs()
+    const { version } = versionOf(perron.releases[0].version)
+    expect(versions).toContainEqual({
+      title: `@mylder/perron ${version}`,
+      href: `/releases#${releaseAnchor('@mylder/perron', version)}`,
+      page: 'Release log',
+      section: 'Release log',
+    })
   })
 
   it('gives no two entries the same words and link, so each result has its own key', () => {
@@ -74,17 +96,8 @@ describe('buildSearchIndex', () => {
     expect(new Set(keys).size).toBe(keys.length)
   })
 
-  it('reaches the browser as props: plain data that survives JSON', () => {
+  it('is served as JSON: plain data that survives it', () => {
     expect(JSON.parse(JSON.stringify(index))).toEqual(index)
-  })
-})
-
-describe('plainHeading', () => {
-  it("drops a heading's inline markdown and keeps its words", () => {
-    expect(plainHeading('The `size` prop')).toBe('The size prop')
-    expect(plainHeading('[Motion](motion.md) and **easing**')).toBe('Motion and easing')
-    expect(plainHeading('`search_docs`')).toBe('search_docs')
-    expect(plainHeading('_Quiet_ panels')).toBe('Quiet panels')
   })
 })
 

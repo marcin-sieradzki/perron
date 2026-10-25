@@ -9,15 +9,14 @@ import { readComponentApi } from '../../lib/api.ts'
 import type { RegistryEntry } from '../../lib/registry.ts'
 import { readRepoFile } from '../../lib/repo.ts'
 import {
-  PROSE_SECTIONS,
   bareDefault,
   entryStateStyles,
+  proseSections,
   readShippedCss,
   sizeSpecs,
   specBody,
   specIntro,
   specPropsTable,
-  specSections,
   stateMatrix,
   unionValues,
 } from '../../lib/spec.ts'
@@ -34,14 +33,6 @@ import './spec.css'
 
 /** The class the matrix's state styles are scoped to. */
 const SCOPE = 'spec-states'
-
-/** A heading's anchor: `Do and don't` as `do-and-dont`. */
-const anchor = (heading: string) =>
-  heading
-    .toLowerCase()
-    .replace(/['’]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '')
 
 export function SpecPage({ entry }: { entry: RegistryEntry }) {
   const markdown = readRepoFile(entry.specPath)
@@ -61,7 +52,7 @@ export function SpecPage({ entry }: { entry: RegistryEntry }) {
     : []
   const icons =
     api && drawn ? (['startIcon', 'endIcon'] as const).filter((p) => p in api.props) : []
-  const prose = entry.built ? specSections(markdown, PROSE_SECTIONS) : []
+  const prose = entry.built ? proseSections(markdown) : []
 
   const toc: TocItem[] = [
     { id: 'overview', label: 'Overview' },
@@ -70,7 +61,7 @@ export function SpecPage({ entry }: { entry: RegistryEntry }) {
     ...(icons.length ? [{ id: 'icons', label: 'With icons' }] : []),
     ...(api && entry.built ? [{ id: 'props', label: 'Props' }] : []),
     ...(entry.built ? [{ id: 'install', label: 'Use it' }] : []),
-    ...prose.map((s) => ({ id: anchor(s.heading), label: s.heading })),
+    ...prose.map((s) => ({ id: s.id, label: s.heading })),
   ]
 
   return (
@@ -110,12 +101,12 @@ export function SpecPage({ entry }: { entry: RegistryEntry }) {
 
             {prose.map((s) => (
               <section
-                key={s.heading}
-                id={anchor(s.heading)}
+                key={s.id}
+                id={s.id}
                 className="spec-section spec-prose"
-                aria-labelledby={`${anchor(s.heading)}-heading`}
+                aria-labelledby={`${s.id}-heading`}
               >
-                <h2 id={`${anchor(s.heading)}-heading`} className="spec-heading">
+                <h2 id={`${s.id}-heading`} className="spec-heading">
                   {s.heading}
                 </h2>
                 <Markdown source={s.markdown.replace(/^## .*\n?/, '')} path={entry.specPath} />

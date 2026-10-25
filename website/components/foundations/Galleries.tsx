@@ -4,7 +4,7 @@
 import type { CSSProperties } from 'react'
 import { cssVar } from '@/lib/tokens.ts'
 import type { Segment } from '@/lib/foundations.ts'
-import { spaced, words } from './data.ts'
+import { galleryId, spaced, words } from './data.ts'
 
 type Icons = Extract<Segment, { kind: 'icons' }>['categories']
 type Logos = Extract<Segment, { kind: 'logos' }>['categories']
@@ -16,8 +16,8 @@ const svg = (markup: string, className = '') => ({
 
 export function IconGallery({ categories }: { categories: Icons }) {
   return categories.map((c) => (
-    <section key={c.name} className="fd-gallery-group" aria-labelledby={`fd-icons-${c.name}`}>
-      <h3 id={`fd-icons-${c.name}`} className="fd-gallery-title">
+    <section key={c.name} className="fd-gallery-group" aria-labelledby={galleryId('icons', c.name)}>
+      <h3 id={galleryId('icons', c.name)} className="fd-gallery-title">
         {c.name}
       </h3>
       <ul className="fd-gallery">
@@ -43,8 +43,8 @@ export function IconGallery({ categories }: { categories: Icons }) {
 
 export function LogoGallery({ categories }: { categories: Logos }) {
   return categories.map((c) => (
-    <section key={c.name} className="fd-gallery-group" aria-labelledby={`fd-logos-${c.name}`}>
-      <h3 id={`fd-logos-${c.name}`} className="fd-gallery-title">
+    <section key={c.name} className="fd-gallery-group" aria-labelledby={galleryId('logos', c.name)}>
+      <h3 id={galleryId('logos', c.name)} className="fd-gallery-title">
         {c.name}
       </h3>
       <ul className="fd-gallery fd-gallery-logos">

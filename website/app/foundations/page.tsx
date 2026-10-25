@@ -2,7 +2,13 @@
 // values, one tile per page drawn from its own tokens, the pages only a live map needs, and how to
 // use the tokens. Everything is read from docs/foundations/ and the token data at build time.
 import type { Metadata } from 'next'
-import { foundationGroups, introOf, plain, sentences } from '@/components/foundations/data.ts'
+import {
+  foundationGroups,
+  groupId,
+  introOf,
+  plain,
+  sentences,
+} from '@/components/foundations/data.ts'
 import { BrandValues, TokenMeta, UsingTheTokens } from '@/components/foundations/IndexParts.tsx'
 import { Crumbs, FoundationsNav, PageNav } from '@/components/foundations/Navigation.tsx'
 import { FoundationTile } from '@/components/foundations/Tiles.tsx'
@@ -39,8 +45,8 @@ export default function FoundationsPage() {
           ))}
         </section>
         {more.map((group, i) => (
-          <section key={group.label} aria-labelledby={`fd-group-${i}`} className="fd-group">
-            <h2 id={`fd-group-${i}`} className="fd-section-title">
+          <section key={group.label} aria-labelledby={groupId(i)} className="fd-group">
+            <h2 id={groupId(i)} className="fd-section-title">
               {group.label}
             </h2>
             <div className="fd-tiles">

@@ -2,19 +2,18 @@
 // The docs search's dialog: Perron's Dialog, opened by the header's button or the / key, holding
 // a SearchField and the results as links. ↓ in the field moves to the first result, the arrows move
 // through them, Enter opens one (in the field, the first), and Esc closes the dialog, which gives
-// focus back to the button. An empty query lists the sections.
+// focus back to the button. An empty query lists the sections. The index of every page's title and
+// headings is a static file (app/search-index.json), fetched once, when the dialog first opens.
 import { Button, Dialog, Kbd, SearchField } from '@mylder/perron'
 import NextLink from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { KeyboardEvent, ReactNode } from 'react'
 import type { SearchEntry } from '../../lib/search-index.ts'
 import { SECTIONS } from './sections.ts'
 import { searchEntries } from './SiteSearchMatch.ts'
 
 export interface SiteSearchDialogProps {
-  /** Every route's title and headings, from website/lib/search-index.ts */
-  index: SearchEntry[]
   /** The button's words, the dialog's title and the field's name */
   label: string
   /** The search icon, rendered on the server */
@@ -30,6 +29,9 @@ const SECTION_ENTRIES: SearchEntry[] = SECTIONS.map((s) => ({
 
 const SECTION_HREFS = new Set(SECTIONS.map((s) => s.href))
 
+/** Where the index is served, built by website/lib/search-index.ts. */
+const INDEX_URL = '/search-index.json'
+
 /** Where focus is typing, or inside another dialog, so / is a character there, not the shortcut. */
 const TYPING =
   'input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="dialog"]'
@@ -40,16 +42,37 @@ function contextOf(entry: SearchEntry) {
   return SECTION_HREFS.has(entry.href) ? undefined : entry.section
 }
 
-export function SiteSearchDialog({ index, label, icon }: SiteSearchDialogProps) {
+export function SiteSearchDialog({ label, icon }: SiteSearchDialogProps) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
+  // the index once it is here, or `failed` when it could not be fetched
+  const [index, setIndex] = useState<SearchEntry[] | 'failed'>()
+  const requested = useRef(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const listRef = useRef<HTMLUListElement>(null)
   const router = useRouter()
 
   const words = query.trim()
-  const results = useMemo(() => searchEntries(index, words), [index, words])
+  const entries = Array.isArray(index) ? index : undefined
+  const results = useMemo(() => (entries ? searchEntries(entries, words) : []), [entries, words])
   const shown = words ? results : SECTION_ENTRIES
+
+  // opening fetches the index the first time, and again after a failed try
+  const openSearch = useCallback(() => {
+    setOpen(true)
+    if (requested.current) return
+    requested.current = true
+    setIndex(undefined)
+    fetch(INDEX_URL)
+      .then((response) => {
+        if (!response.ok) throw new Error(`${INDEX_URL}: ${response.status}`)
+        return response.json() as Promise<SearchEntry[]>
+      })
+      .then(setIndex, () => {
+        requested.current = false
+        setIndex('failed')
+      })
+  }, [])
 
   useEffect(() => {
     const onKeyDown = (event: globalThis.KeyboardEvent) => {
@@ -57,11 +80,11 @@ export function SiteSearchDialog({ index, label, icon }: SiteSearchDialogProps) 
       if (event.metaKey || event.ctrlKey || event.altKey) return
       if (event.target instanceof Element && event.target.closest(TYPING)) return
       event.preventDefault()
-      setOpen(true)
+      openSearch()
     }
     document.addEventListener('keydown', onKeyDown)
     return () => document.removeEventListener('keydown', onKeyDown)
-  }, [])
+  }, [openSearch])
 
   const close = () => {
     setOpen(false)
@@ -100,19 +123,26 @@ export function SiteSearchDialog({ index, label, icon }: SiteSearchDialogProps) 
     to.focus()
   }
 
-  const status = !words
-    ? ''
-    : results.length === 0
-      ? `No page matches “${words}”.`
-      : results.length === 1
-        ? '1 result'
-        : `${results.length} results`
+  const status =
+    index === 'failed'
+      ? 'The pages to search didn’t load. Close the search and open it again.'
+      : !words
+        ? ''
+        : !entries
+          ? 'Loading the pages to search.'
+          : results.length === 0
+            ? `No page matches “${words}”.`
+            : results.length === 1
+              ? '1 result'
+              : `${results.length} results`
+  // the count is heard and not seen; loading, a miss and a failure are seen and heard
+  const seen = index === 'failed' || (words !== '' && results.length === 0)
 
   return (
     <Dialog
       title={label}
       open={open}
-      onOpen={() => setOpen(true)}
+      onOpen={openSearch}
       onClose={close}
       initialFocus={inputRef}
       className="site-search-dialog"
@@ -143,11 +173,8 @@ export function SiteSearchDialog({ index, label, icon }: SiteSearchDialogProps) 
         />
         <div className="site-search-results">
           {words ? null : <h3 className="site-search-group">Sections</h3>}
-          {/* one live region: the count, heard and not seen, or the miss, seen and heard */}
-          <p
-            role="status"
-            className={words && !results.length ? 'site-search-empty' : 'site-visually-hidden'}
-          >
+          {/* one live region for the count, the loading, a miss and a failure */}
+          <p role="status" className={seen ? 'site-search-empty' : 'site-visually-hidden'}>
             {status}
           </p>
           {shown.length ? (

@@ -3,6 +3,7 @@
 // note saying how much, its raw text behind "Show the raw answer". A tool with no example yet
 // shows its input schema instead.
 import { Markdown } from '@/components/site/Markdown.tsx'
+import { toolAnchor } from '../../lib/anchors.ts'
 import {
   answerMarkdown,
   answerTokens,
@@ -14,9 +15,6 @@ import './agents.css'
 
 /** Where the server's descriptions are written, which a relative link in one starts from. */
 const SERVER = 'packages/mcp/src/server.ts'
-
-/** A tool's anchor on the page: `list-tokens` for `list_tokens`. */
-export const toolAnchor = (name: string) => name.replaceAll('_', '-')
 
 const count = (n: number) => n.toLocaleString('en-GB')
 const plural = (n: number, one: string, many: string) => `${count(n)} ${n === 1 ? one : many}`

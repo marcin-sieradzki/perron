@@ -4,7 +4,7 @@
 import { Markdown } from '@/components/site/Markdown.tsx'
 import { PACKAGES, readPackage, readRepoJson } from '@/lib/repo.ts'
 import { cssVar, readResolvedTokens, readToken, tokenCount } from '@/lib/tokens.ts'
-import { brandValues, CONTENTS, usingTheTokens } from './data.ts'
+import { brandValues, CONTENTS, INDEX_SECTIONS, usingTheTokens } from './data.ts'
 import { Rich } from './Rich.tsx'
 
 /** The resolver that names the format the tokens follow. */
@@ -24,8 +24,9 @@ export function TokenMeta() {
 
 /** The brand's values, from the Contents page's "The brand". */
 export function BrandValues() {
+  const { brand } = INDEX_SECTIONS
   return (
-    <section aria-label="The brand" className="fd-brand">
+    <section id={brand.id} aria-label={brand.title} className="fd-brand">
       {brandValues().map((v) => (
         <div key={v.name} className="fd-brand-value glass">
           <p className="fd-brand-name">{v.name}</p>
@@ -47,11 +48,12 @@ function property(name: string) {
 /** The Contents page's "Using the tokens", with a stylesheet that uses three of them. */
 export function UsingTheTokens() {
   const { name } = readPackage(PACKAGES.perron)
+  const { using } = INDEX_SECTIONS
   return (
-    <section aria-labelledby="fd-using" className="fd-using glass">
+    <section id={using.id} aria-labelledby={`${using.id}-h`} className="fd-using glass">
       <div className="fd-using-text">
-        <h2 id="fd-using" className="fd-section-title">
-          Using the tokens
+        <h2 id={`${using.id}-h`} className="fd-section-title">
+          {using.title}
         </h2>
         <Markdown source={usingTheTokens()} path={CONTENTS} />
       </div>

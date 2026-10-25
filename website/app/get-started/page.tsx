@@ -11,6 +11,7 @@ import { copyLabel, SetupSteps } from '@/components/agents/SetupSteps.tsx'
 import { Button, Link } from '@/components/perron'
 import { Markdown } from '@/components/site/Markdown.tsx'
 import { PageHeader } from '@/components/site/PageHeader.tsx'
+import { GET_STARTED_STEPS } from '../../lib/anchors.ts'
 import { readDoc, stripTitle } from '../../lib/markdown.ts'
 import { MCP_README, readSetup, sectionText, segments } from '../../lib/mcp.ts'
 import { readRepoFile } from '../../lib/repo.ts'
@@ -28,22 +29,15 @@ export function StopActions() {
   return <Button>Show departures</Button>
 }`
 
-const STEPS = [
-  { id: 'install', label: 'Install and load Perron' },
-  { id: 'component', label: 'Use a first component' },
-  { id: 'tokens', label: 'Use the tokens' },
-  { id: 'mcp', label: 'Add the MCP server' },
-] as const
-
 function Step({ n, children }: { n: number; children: ReactNode }) {
-  const { id, label } = STEPS[n]
+  const { id, title } = GET_STARTED_STEPS[n]
   return (
     <section id={id} aria-labelledby={`${id}-h`} className="agents-section">
       <h2 id={`${id}-h`} className="agents-step-title">
         <span className="agents-step-number" aria-hidden="true">
           {n + 1}
         </span>
-        {label}
+        {title}
       </h2>
       {children}
     </section>
@@ -61,7 +55,7 @@ export default function GetStartedPage() {
     <DocLayout
       route="/get-started"
       name="Get started"
-      nav={[{ links: STEPS.map((s) => ({ label: s.label, href: `#${s.id}` })) }]}
+      nav={[{ links: GET_STARTED_STEPS.map((s) => ({ label: s.title, href: `#${s.id}` })) }]}
     >
       <PageHeader
         title="Get started"

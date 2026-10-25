@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "npm run build -w @mylder/perron && next dev",
-    "build": "npm run build -w @mylder/perron && next build",
+    "build": "npm run build -w @mylder/perron && next build && node scripts/check-anchors.ts",
     "start": "next start"
   },
   "dependencies": {

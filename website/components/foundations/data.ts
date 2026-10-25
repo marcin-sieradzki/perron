@@ -9,6 +9,7 @@ import {
   type FoundationPage,
   type Segment,
 } from '../../lib/foundations.ts'
+import { markdownHeadings, type Anchor, type Heading } from '../../lib/anchors.ts'
 import { firstParagraph, sectionBody, stripTitle, tables } from '../../lib/markdown.ts'
 
 export type TokenSegment = Extract<Segment, { kind: 'tokens' }>
@@ -98,6 +99,51 @@ export function withoutIntro(markdown: string, intro: string) {
   const body = stripTitle(markdown)
   const [first, ...rest] = body.split(/\n\s*\n/)
   return first?.trim().replace(/\s*\n\s*/g, ' ') === intro ? rest.join('\n\n') : body
+}
+
+/** A page's segments as its body draws them: the first prose without the title and the intro. */
+export function bodySegments(page: FoundationPage): Segment[] {
+  const intro = introOf(page)
+  return page.segments.map((segment, i) =>
+    i === 0 && segment.kind === 'prose'
+      ? { kind: 'prose', markdown: withoutIntro(segment.markdown, intro) }
+      : segment,
+  )
+}
+
+/** A gallery category's heading id: `fd-icons-Map`. */
+export const galleryId = (kind: 'icons' | 'logos', category: string) => `fd-${kind}-${category}`
+
+/**
+ * The headings a page's body draws, each with its id: each prose segment's, as Markdown renders it,
+ * and each gallery's categories.
+ */
+export function bodyHeadings(page: FoundationPage): Heading[] {
+  return bodySegments(page).flatMap((s): Heading[] => {
+    if (s.kind === 'prose') return markdownHeadings(s.markdown)
+    if (s.kind === 'icons' || s.kind === 'logos')
+      return s.categories.map((c) => ({ level: 3, title: c.name, id: galleryId(s.kind, c.name) }))
+    return []
+  })
+}
+
+/** The Foundations index's sections that carry a name of their own. */
+export const INDEX_SECTIONS = {
+  brand: { id: 'the-brand', title: 'The brand' },
+  using: { id: 'using-the-tokens', title: 'Using the tokens' },
+} as const satisfies Record<string, Anchor>
+
+/** The heading id of the Foundations index's group after the main tiles, by its place. */
+export const groupId = (i: number) => `fd-group-${i}`
+
+/** The Foundations index's places, in order: the brand, each group past the main one, the tokens. */
+export function indexAnchors(): Anchor[] {
+  const [, ...more] = foundationGroups()
+  return [
+    INDEX_SECTIONS.brand,
+    ...more.map((g, i) => ({ title: g.label ?? '', id: groupId(i) })),
+    INDEX_SECTIONS.using,
+  ]
 }
 
 // Token rows

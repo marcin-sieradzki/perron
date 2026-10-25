@@ -5,9 +5,10 @@ import type { Metadata } from 'next'
 import { Fragment } from 'react'
 import { DocLayout } from '@/components/agents/DocLayout.tsx'
 import { SetupSteps } from '@/components/agents/SetupSteps.tsx'
-import { ToolCard, toolAnchor } from '@/components/agents/ToolCard.tsx'
+import { ToolCard } from '@/components/agents/ToolCard.tsx'
 import { Markdown } from '@/components/site/Markdown.tsx'
 import { PageHeader } from '@/components/site/PageHeader.tsx'
+import { AGENTS_SECTIONS as SECTIONS, toolAnchor } from '../../lib/anchors.ts'
 import { loadTools, MCP_README, readSetup, readSources } from '../../lib/mcp.ts'
 import { PACKAGES, readPackage } from '../../lib/repo.ts'
 import { siteHref } from '../../lib/routes.ts'
@@ -19,7 +20,7 @@ const CONTRACT = '/docs/components/README.md'
 
 export default async function AgentsPage() {
   const [tools, sources] = await Promise.all([loadTools(), readSources()])
-  const setup = readSetup()
+  const readme = readSetup()
   const mcp = readPackage(PACKAGES.mcp)
   const [data, ...libraries] = sources
 
@@ -28,15 +29,15 @@ export default async function AgentsPage() {
       route="/agents"
       name="The MCP server"
       nav={[
-        { links: [{ label: 'Set it up', href: '#setup' }] },
+        { links: [{ label: SECTIONS.setup.title, href: `#${SECTIONS.setup.id}` }] },
         {
-          title: 'Tools',
+          title: SECTIONS.tools.title,
           links: tools.map((t) => ({ label: t.name, href: `#${toolAnchor(t.name)}`, code: true })),
         },
         {
           title: 'More',
           links: [
-            { label: 'Where the answers come from', href: '#sources' },
+            { label: SECTIONS.sources.title, href: `#${SECTIONS.sources.id}` },
             { label: 'The component contract', href: siteHref(CONTRACT, MCP_README) },
           ],
         },
@@ -49,24 +50,32 @@ export default async function AgentsPage() {
         />
         <p className="agents-tagline">Small, exact answers for your coding agent</p>
         <p className="lead">
-          <Markdown source={setup.intro} path={MCP_README} inline />
+          <Markdown source={readme.intro} path={MCP_README} inline />
         </p>
       </div>
 
-      <section id="setup" aria-labelledby="setup-h" className="agents-section">
-        <h2 id="setup-h">Set it up</h2>
+      <section
+        id={SECTIONS.setup.id}
+        aria-labelledby={`${SECTIONS.setup.id}-h`}
+        className="agents-section"
+      >
+        <h2 id={`${SECTIONS.setup.id}-h`}>{SECTIONS.setup.title}</h2>
         <SetupSteps
-          steps={setup.steps}
+          steps={readme.steps}
           headings={['Run the server', "Or add it to the project's .mcp.json"]}
         />
       </section>
 
-      <section aria-labelledby="tools-h" className="agents-section">
-        <h2 id="tools-h">
-          Tools <span className="agents-count">{tools.length}</span>
+      <section
+        id={SECTIONS.tools.id}
+        aria-labelledby={`${SECTIONS.tools.id}-h`}
+        className="agents-section"
+      >
+        <h2 id={`${SECTIONS.tools.id}-h`}>
+          {SECTIONS.tools.title} <span className="agents-count">{tools.length}</span>
         </h2>
         <p className="agents-note">
-          <Markdown source={setup.toolsIntro} path={MCP_README} inline />
+          <Markdown source={readme.toolsIntro} path={MCP_README} inline />
         </p>
         {tools.map((tool) => (
           <ToolCard key={tool.name} tool={tool} />
@@ -74,14 +83,14 @@ export default async function AgentsPage() {
       </section>
 
       <section
-        id="sources"
-        aria-labelledby="sources-h"
+        id={SECTIONS.sources.id}
+        aria-labelledby={`${SECTIONS.sources.id}-h`}
         className="agents-section agents-panel glass"
       >
-        <h2 id="sources-h">Where the answers come from</h2>
-        {setup.notes ? (
+        <h2 id={`${SECTIONS.sources.id}-h`}>{SECTIONS.sources.title}</h2>
+        {readme.notes ? (
           <p className="agents-note">
-            <Markdown source={setup.notes} path={MCP_README} inline />
+            <Markdown source={readme.notes} path={MCP_README} inline />
           </p>
         ) : null}
         <div className="agents-cards">

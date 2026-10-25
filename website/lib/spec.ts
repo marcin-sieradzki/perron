@@ -5,6 +5,7 @@
 import postcss, { type AtRule, type ChildNode, type Container, type Rule } from 'postcss'
 import { specProse } from '../../storybook/blocks/component-page.ts'
 import { folderOf, kebab, type Layer } from '../../scripts/lib/entry.ts'
+import { markdownHeadings, type Heading } from './anchors.ts'
 import type { ComponentApi } from './api.ts'
 import { firstTable, sections } from './markdown.ts'
 import type { RegistryEntry } from './registry.ts'
@@ -39,6 +40,28 @@ export function specSections(markdown: string, headings: readonly string[]) {
 export function specBody(markdown: string) {
   const [, ...rest] = markdown.split(/^(?=## )/m)
   return rest.join('').trim()
+}
+
+/** A prose section's anchor: `Do and don't` as `do-and-dont`. */
+export const sectionAnchor = (heading: string) =>
+  heading
+    .toLowerCase()
+    .replace(/['’]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+
+/** The prose sections a built entry's page shows after its props, each with its anchor. */
+export const proseSections = (markdown: string) =>
+  specSections(markdown, PROSE_SECTIONS).map((s) => ({ ...s, id: sectionAnchor(s.heading) }))
+
+/**
+ * The spec's headings its page draws, each with its id: a built entry's prose sections, or every
+ * heading of the spec an entry in design shows whole. The sections the page makes itself, such as
+ * its states and props, are the same on every page.
+ */
+export function specHeadings(entry: Pick<RegistryEntry, 'built'>, markdown: string): Heading[] {
+  if (!entry.built) return markdownHeadings(specBody(markdown))
+  return proseSections(markdown).map((s) => ({ level: 2, title: s.heading, id: s.id }))
 }
 
 /* The spec's props table */

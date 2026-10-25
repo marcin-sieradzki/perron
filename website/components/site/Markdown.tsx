@@ -2,11 +2,13 @@
 // the data family, tables in a sideways-scrolling frame, task lists as plain lists, a repo image
 // inlined, and every link rewritten by website/lib/routes.ts: a doc the site shows to its route,
 // any other repo file to GitHub. A leading `#` heading is dropped, since the page's PageHeader
-// shows the title. A server component: it compiles the markdown at build time.
+// shows the title. Its headings' ids are markdown-to-jsx's, which lib/anchors.ts reads for the docs
+// search. A server component: it compiles the markdown at build time.
 import { compiler, type MarkdownToJSX } from 'markdown-to-jsx/react'
 import NextLink from 'next/link'
 import type { ComponentProps } from 'react'
 import { Link } from '@/components/perron'
+import { withoutLeadingTitle } from '../../lib/anchors.ts'
 import { assetSrc, siteHref } from '../../lib/routes.ts'
 
 export interface MarkdownProps {
@@ -47,8 +49,6 @@ function TaskBox() {
   return null
 }
 
-const LEADING_TITLE = /^\s*# [^\n]*\n?/
-
 export function Markdown({ source, path, inline = false }: MarkdownProps) {
   const options: MarkdownToJSX.Options = {
     overrides: {
@@ -60,6 +60,6 @@ export function Markdown({ source, path, inline = false }: MarkdownProps) {
     wrapper: null,
     ...(inline ? { forceInline: true } : { forceBlock: true }),
   }
-  const content = compiler(inline ? source : source.replace(LEADING_TITLE, ''), options)
+  const content = compiler(inline ? source : withoutLeadingTitle(source), options)
   return inline ? <>{content}</> : <div className="markdown">{content}</div>
 }
