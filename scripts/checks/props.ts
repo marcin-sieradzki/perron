@@ -95,8 +95,9 @@ function typeBreach(
   if (isBool && /^(is|has|should)[A-Z]/.test(name)) return prefix(name)
   if ((name === 'startIcon' || name === 'endIcon') && !isReactNode(decl))
     return `${name} is a ReactNode, not ${text}`
+  // a `*Label` boolean, such as `hiddenLabel`, says how the label shows; it overrides no owned string
   if (
-    (name === 'name' || /^[a-z]\w*Label$/.test(name)) &&
+    (name === 'name' || (/^[a-z]\w*Label$/.test(name) && !isBool)) &&
     !(ps.length === 1 && ps[0].flags & ts.TypeFlags.String)
   )
     return `${name} is a string, not ${text}`
