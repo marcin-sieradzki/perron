@@ -1,0 +1,155 @@
+/* Slider, from docs/components/slider.md: an inset track with an ink fill and a raised thumb with an
+   ink edge, the figure at the row's inline end. The frame, its label, its help and its error are
+   Field's, whose CSS this file never writes again. The thumb alone answers hover and a press
+   (CR-12); every state changes at once, with no transition (CR-15). */
+
+/* The control takes the rest of the field's width, the figure its own column at the inline end. */
+.pn-Slider {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: var(--perron-space-300);
+  min-inline-size: 0;
+  margin: 0;
+}
+
+/* The press target: size.target-min tall across its column, padded by half the thumb at each end,
+   so a thumb at min or max stays inside the field's box (CR-10). A drag never scrolls or selects. */
+.pn-Slider-control {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  block-size: var(--perron-size-target-min);
+  margin: 0;
+  padding-block: 0;
+  padding-inline: calc(
+    (
+        var(--perron-size-target-min) - 2 * var(--perron-space-050) - 2 *
+          var(--perron-border-width-025)
+      ) /
+      2
+  );
+  touch-action: none;
+  user-select: none;
+  cursor: pointer;
+}
+
+.pn-Slider-control[data-disabled] {
+  cursor: default;
+}
+
+/* The whole range, an inset pill with no edge of its own; the thumbs overflow it. */
+.pn-Slider-track {
+  inline-size: 100%;
+  block-size: var(--perron-size-meter-track);
+  margin: 0;
+  border-radius: var(--perron-radius-full);
+  background-color: var(--perron-color-surface-inset);
+}
+
+/* The chosen part of the range, Meter's neutral fill; Base UI sets its place and width. */
+.pn-Slider-indicator {
+  margin: 0;
+  border-radius: var(--perron-radius-full);
+  background-color: var(--perron-color-text-primary);
+}
+
+.pn-Slider-indicator[data-disabled] {
+  background-color: var(--perron-color-text-tertiary);
+}
+
+/* The thumb: Switch's thumb size, raised, with an ink edge inside its size and no shadow. Its
+   cursor is the control's, set on it as well, since the thumb is the part that hovers. */
+.pn-Slider-thumb {
+  box-sizing: border-box;
+  block-size: calc(
+    var(--perron-size-target-min) - 2 * var(--perron-space-050) - 2 * var(--perron-border-width-025)
+  );
+  inline-size: calc(
+    var(--perron-size-target-min) - 2 * var(--perron-space-050) - 2 * var(--perron-border-width-025)
+  );
+  margin: 0;
+  border: var(--perron-border-width-050) solid var(--perron-color-surface-inverse);
+  border-radius: var(--perron-radius-full);
+  background-color: var(--perron-color-surface-raised);
+  cursor: pointer;
+}
+
+/* Hover lays the quiet part's layer over the thumb's fill (CR-12), never on a disabled slider. */
+@media (hover: hover) {
+  .pn-Slider-thumb:not([data-disabled]):hover {
+    background-image: linear-gradient(
+      var(--perron-color-surface-hover),
+      var(--perron-color-surface-hover)
+    );
+  }
+}
+
+/* Pressed, a step past hover, after it and outside the query: the thumb under the pointer, and the
+   thumb a press on the track drags, which its :active never sees. */
+.pn-Slider-thumb:not([data-disabled]):active,
+.pn-Slider-thumb[data-dragging]:not([data-disabled]):focus-within {
+  background-image: linear-gradient(
+    var(--perron-color-surface-selected),
+    var(--perron-color-surface-selected)
+  );
+}
+
+/* CR-9: the input that takes focus is visually hidden, so the thumb draws the ring round itself. */
+.pn-Slider-thumb:has(:focus-visible) {
+  outline: var(--perron-focus-width) solid var(--perron-color-border-focus);
+  outline-offset: var(--perron-focus-offset);
+}
+
+/* Disabled is a colour, never an opacity; the thumb keeps its raised fill. */
+.pn-Slider-thumb[data-disabled] {
+  border-color: var(--perron-color-text-tertiary);
+  cursor: default;
+}
+
+/* The danger edge, the Fields' invalid look, never on a disabled slider. */
+.pn-Slider-thumb[data-invalid]:not([data-disabled]) {
+  border-color: var(--perron-color-status-danger);
+}
+
+/* The figure, Meter's: tabular, on one line, so "1.5 km" never breaks from its unit and "4 – 12"
+   stays whole; its text and the two sizers share one cell, as wide as the widest (CR-8). */
+.pn-Slider-value {
+  display: grid;
+  margin: 0;
+  font: var(--perron-typography-data);
+  letter-spacing: var(--perron-typography-data-tracking);
+  color: var(--perron-color-text-primary);
+  white-space: nowrap;
+  text-align: end;
+}
+
+.pn-Slider-value[data-disabled] {
+  color: var(--perron-color-text-tertiary);
+}
+
+.pn-Slider-valueText,
+.pn-Slider-valueSizer {
+  grid-area: 1 / 1;
+}
+
+.pn-Slider-valueSizer {
+  visibility: hidden;
+}
+
+/* Forced colours drop backgrounds, so the track draws an outline and the fill keeps its own colour,
+   as Meter's; an outline takes no space, so the geometry holds. */
+@media (forced-colors: active) {
+  .pn-Slider-track {
+    outline: var(--perron-border-width-025) solid CanvasText;
+  }
+
+  .pn-Slider-indicator {
+    forced-color-adjust: none;
+    background-color: CanvasText;
+  }
+
+  .pn-Slider-indicator[data-disabled] {
+    background-color: GrayText;
+  }
+}

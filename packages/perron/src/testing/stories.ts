@@ -176,6 +176,13 @@ export const stateFill = (element: Element, pseudo: ':hover' | ':active' = ':hov
     .filter(Boolean)
     .at(-1) ?? ''
 
+/** The last background layer a state's rules give `element`, as written, or '' when none does. */
+export const stateLayer = (element: Element, pseudo: ':hover' | ':active' = ':hover') =>
+  stateRules(element, pseudo)
+    .map((s) => s.getPropertyValue('background-image'))
+    .filter(Boolean)
+    .at(-1) ?? ''
+
 /**
  * What the `(hover: hover)` rules set `property` to when `element` is hovered, as written. A
  * synthetic pointer doesn't reach `:hover`, so this reads the rule the real pointer would apply.
