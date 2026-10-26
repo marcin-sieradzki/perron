@@ -3,9 +3,6 @@ component: TopBar
 layer: pattern
 deferred:
   at: 2026-10-26T02:10:47.486Z
-needsHuman:
-  stage: review
-  reason: '3 review rounds found a P1 or a P2; the last: review round 3 found 1 P2 (components/top-bar/review.md)'
 stages:
   brief:
     status: done
@@ -13,11 +10,7 @@ stages:
     ended: 2026-10-26T02:20:56.299Z
   build:
     runs: 3
-    status: done
-    started: 2026-10-26T03:11:18.909Z
-    begun: 5dd49490ea609183704a1676eed2b1ed6cf7e5644f6eefe07665b6c8cdbec792
-    spec: c2b265874039f166c42641ee3bd5c721034dd53d6cb41880275453680396cf8a
-    ended: 2026-10-26T03:17:51.159Z
+    failing: review round 3 found 1 P2 (components/top-bar/review.md)
   review:
     rounds: 3
     sentBack: 3
@@ -26,10 +19,7 @@ stages:
       p1: 0
       p2: 1
       p3: 1
-    status: failed
-    started: 2026-10-26T03:18:36.087Z
-    ended: 2026-10-26T03:27:23.431Z
-    failing: review round 3 found 1 P2 (components/top-bar/review.md)
+    granted: 4
 notes:
   - stage: brief
     at: 2026-10-26T02:19:59.973Z
@@ -68,3 +58,6 @@ notes:
   - stage: build
     at: 2026-10-26T03:17:51.159Z
     direction: "Shared tooling gap for the retro: the visual stage (scripts/visual.ts, drive) hovers and presses a State variant's story on the root, .pn-TopBar, at its centre, so for TopBar's MediumHover and MediumPressed it would hover a chip, not the brand link whose looks the State names; a code map that names the part a State drives on would let it check a pattern whose interactive part is inside it."
+  - stage: review
+    at: 2026-10-26T03:27:30.346Z
+    unblocked: '3 review rounds found a P1 or a P2; the last: review round 3 found 1 P2 (components/top-bar/review.md)'
