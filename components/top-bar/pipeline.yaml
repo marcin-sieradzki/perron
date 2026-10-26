@@ -9,8 +9,12 @@ stages:
     started: 2026-10-26T02:20:36.146Z
     ended: 2026-10-26T02:20:56.299Z
   build:
-    runs: 3
-    failing: review round 3 found 1 P2 (components/top-bar/review.md)
+    runs: 4
+    status: done
+    started: 2026-10-26T03:27:39.747Z
+    begun: c2b265874039f166c42641ee3bd5c721034dd53d6cb41880275453680396cf8a
+    spec: 06f89857896accf53ee535c73f49ef874d90324cc3ea666ac0dbcaf2beb0a4fe
+    ended: 2026-10-26T03:33:41.983Z
   review:
     rounds: 3
     sentBack: 3
