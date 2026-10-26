@@ -15,6 +15,7 @@ export const da: OwnedStrings = {
   estimated: 'Beregnet',
   timetableOnly: 'Kun køreplan',
   noSignal: 'Intet signal',
+  aircraft: 'Fly',
   liveDescription: 'Meldt af køretøjet inden for de seneste {liveThreshold}',
   ageingDescription: 'Sidst meldt for {liveThreshold} til {ageingThreshold} siden',
   estimatedDescription: 'Placeret ud fra køreplanen og den seneste forsinkelse',

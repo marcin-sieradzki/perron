@@ -998,6 +998,30 @@
           "$description": "Regional train dot radius on the map at the default zoom"
         }
       },
+      "aircraft-size": {
+        "air": {
+          "$type": "dimension",
+          "$value": "18px",
+          "$description": "Aircraft glyph box on the map at the default zoom, in the air"
+        },
+        "ground": {
+          "$type": "dimension",
+          "$value": "14px",
+          "$description": "Aircraft glyph box on the map at the default zoom, on the ground"
+        }
+      },
+      "aircraft-stroke-width": {
+        "ageing": {
+          "$type": "dimension",
+          "$value": "1px",
+          "$description": "Rim of an ageing aircraft, inside its outline"
+        },
+        "estimated": {
+          "$type": "dimension",
+          "$value": "1.2px",
+          "$description": "Outline of an estimated aircraft, inside its outline"
+        }
+      },
       "line-width": {
         "metro": {
           "$type": "dimension",
@@ -1433,6 +1457,11 @@
           "$type": "color",
           "$value": "#5F7A88",
           "$description": "Water names"
+        },
+        "aircraft": {
+          "$type": "color",
+          "$value": "#B3127A",
+          "$description": "The aircraft glyph on the map, and nothing else; a no-signal aircraft is grey"
         }
       }
     },
@@ -1812,6 +1841,11 @@
           "$type": "color",
           "$value": "#4B6774",
           "$description": "Water names"
+        },
+        "aircraft": {
+          "$type": "color",
+          "$value": "#F27BC8",
+          "$description": "The aircraft glyph on the map, and nothing else; a no-signal aircraft is grey"
         }
       }
     },

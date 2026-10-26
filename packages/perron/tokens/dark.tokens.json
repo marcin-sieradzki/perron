@@ -375,6 +375,15 @@
           "hex": "#4B6774"
         },
         "$description": "Water names"
+      },
+      "aircraft": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.949, 0.4824, 0.7843],
+          "hex": "#F27BC8"
+        },
+        "$description": "The aircraft glyph on the map, and nothing else; a no-signal aircraft is grey"
       }
     }
   },

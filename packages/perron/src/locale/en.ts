@@ -27,6 +27,8 @@ export const en = {
   timetableOnly: 'Timetable only',
   /** Data state: silent past the ageing threshold, moved on by the timetable. */
   noSignal: 'No signal',
+  /** The planes on the map, the aircraft: their entry in the map's legend, after the data states. */
+  aircraft: 'Planes',
   /**
    * Data state key: what a live vehicle means, as in "Reported by the vehicle in the last 2.5 min".
    * `{liveThreshold}` is the app's live threshold, written by `secondsDuration` or `minutesDuration`.

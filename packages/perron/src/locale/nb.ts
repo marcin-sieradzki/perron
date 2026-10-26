@@ -15,6 +15,7 @@ export const nb: OwnedStrings = {
   estimated: 'Beregnet',
   timetableOnly: 'Kun rutetabell',
   noSignal: 'Ingen signal',
+  aircraft: 'Fly',
   liveDescription: 'Meldt av kjøretøyet i løpet av de siste {liveThreshold}',
   ageingDescription: 'Sist meldt for {liveThreshold} til {ageingThreshold} siden',
   estimatedDescription: 'Plassert ut fra rutetabellen og den siste forsinkelsen',

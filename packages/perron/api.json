@@ -4642,6 +4642,18 @@
           "string"
         ]
       },
+      "aircraftLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "aircraftVisible": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
       "className": {
         "optional": true,
         "type": [

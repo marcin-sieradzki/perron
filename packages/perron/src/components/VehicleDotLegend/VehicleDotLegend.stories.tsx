@@ -1,6 +1,6 @@
-// VehicleDotLegend's stories: the legend as it rests, in Swedish in a narrow container, and in
-// forced colours, each with a play test that reads the accessibility tree and the drawing
-// (docs/components/vehicle-dot-legend.md).
+// VehicleDotLegend's stories: the legend as it rests, with the aircraft, in Swedish in a narrow
+// container, and in forced colours, each with a play test that reads the accessibility tree and the
+// drawing (docs/components/vehicle-dot-legend.md).
 import { createRef } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, isInaccessible, userEvent, waitFor, within } from 'storybook/test'
@@ -254,6 +254,96 @@ export const Default: Story = {
           await expect(dotsOf(swapped)).toHaveLength(STATES.length)
         },
       )
+    })
+  },
+}
+
+/** The legend with `aircraftVisible`: the five states, then the aircraft glyph beside "Planes". */
+export const Aircraft: Story = {
+  args: { aircraftVisible: true },
+  play: async ({ canvasElement, step }) => {
+    const list = await legendIn(canvasElement)
+    const items = within(list).getAllByRole('listitem')
+    await step('six items: the five states, then "Planes" (CR-1, CR-10)', async () => {
+      await expect(items.map(heard)).toEqual([...WORDS, 'Planes'])
+      await expect(list.children).toHaveLength(STATES.length + 1)
+      await expect(dotsOf(list)).toHaveLength(STATES.length)
+    })
+    await step(
+      'the glyph: the aircraft icon in the dots’ box, hidden, filled in the ink',
+      async () => {
+        const item = items.at(-1)!
+        const glyph = item.querySelector<SVGSVGElement>('.pn-VehicleDotLegend-aircraft')!
+        await expect(glyph).not.toBeNull()
+        await expect(glyph.parentElement).toBe(item)
+        await expect(glyph.nextElementSibling).toHaveClass('pn-VehicleDotLegend-label')
+        await expect(glyph.getAttribute('class')).toBe('perron-icon pn-VehicleDotLegend-aircraft')
+        await expect(glyph).toHaveAttribute('aria-hidden', 'true')
+        await expect(glyph).toHaveAttribute('focusable', 'false')
+        await expect(isInaccessible(glyph)).toBe(true)
+        const side = Number.parseFloat(rendered('icon-size-325', 'width'))
+        const box = glyph.getBoundingClientRect()
+        await expect(box.width).toBeCloseTo(side, 3)
+        await expect(box.height).toBeCloseTo(side, 3)
+        const style = getComputedStyle(glyph)
+        await expect(style.fill).toBe(colour(INK))
+        await expect(style.stroke).toBe('none')
+        await expect(within(list).queryAllByRole('img')).toHaveLength(0)
+      },
+    )
+    await step(
+      'in forced colours, the glyph fills in the colour they give the text (CR-3)',
+      async () => {
+        // a play test cannot turn forced colours on; they set the root's colour to CanvasText, and
+        // the glyph, filled in currentColor, follows it with no rule of the legend's own
+        const glyph = list.querySelector<SVGSVGElement>('.pn-VehicleDotLegend-aircraft')!
+        list.style.color = 'CanvasText'
+        try {
+          await expect(getComputedStyle(glyph).fill).toBe(resolve('color', 'CanvasText'))
+        } finally {
+          list.style.removeProperty('color')
+        }
+        await expect(getComputedStyle(glyph).fill).toBe(colour(INK))
+      },
+    )
+    await step('aircraftLabel replaces only “Planes”', async () => {
+      await mounted(
+        canvasElement,
+        <VehicleDotLegend aircraftVisible aircraftLabel="Aircraft" />,
+        async (host) => {
+          const own = await legendIn(host)
+          await expect(wordsOf(own)).toEqual([...WORDS, 'Aircraft'])
+        },
+      )
+    })
+    await step('in Danish, “Fly”', async () => {
+      await mounted(
+        canvasElement,
+        <PerronProvider locale="da">
+          <VehicleDotLegend aircraftVisible />
+        </PerronProvider>,
+        async (host) => {
+          const own = await legendIn(host)
+          await expect(wordsOf(own).at(-1)).toBe('Fly')
+        },
+      )
+    })
+    await step('its props never reach the DOM (CR-6)', async () => {
+      await mounted(
+        canvasElement,
+        <VehicleDotLegend aircraftVisible aircraftLabel="Aircraft" />,
+        async (host) => {
+          const own = await legendIn(host)
+          await expect(own.getAttributeNames()).toEqual(['class'])
+        },
+      )
+    })
+    await step('without aircraftVisible, no glyph and no word', async () => {
+      await mounted(canvasElement, <VehicleDotLegend aircraftLabel="Aircraft" />, async (host) => {
+        const own = await legendIn(host)
+        await expect(wordsOf(own)).toEqual(WORDS)
+        await expect(own.querySelector('.pn-VehicleDotLegend-aircraft')).toBeNull()
+      })
     })
   },
 }

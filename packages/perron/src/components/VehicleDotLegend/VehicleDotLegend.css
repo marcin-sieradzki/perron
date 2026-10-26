@@ -1,5 +1,5 @@
 /* VehicleDotLegend: the five data states in one row that wraps between items, each a dot beside its
-   word, all in one ink (docs/components/vehicle-dot-legend.md). It draws no surface and places
+   word, and the aircraft when asked, all in one ink (docs/components/vehicle-dot-legend.md). It draws no surface and places
    nothing: the screen puts it on its surface (CR-5). */
 .pn-VehicleDotLegend {
   display: flex;
@@ -21,4 +21,12 @@
   display: flex;
   align-items: center;
   column-gap: var(--perron-space-100);
+}
+
+/* CR-10: the aircraft glyph in the dots' small box, its outline filled and unstroked, as a live
+   aircraft is drawn on the map, in the legend's ink (CR-3). */
+.pn-VehicleDotLegend-aircraft {
+  --perron-icon-size: var(--perron-icon-size-325);
+  fill: currentColor;
+  stroke: none;
 }

@@ -2,7 +2,7 @@ import { readdirSync, readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
-import { composite, contrastRatio } from './color.ts'
+import { colourDistance, composite, contrastRatio } from './color.ts'
 import { buildDocs, documentedTokens } from './docs.ts'
 import { PACKAGE } from './paths.ts'
 import { base, theme } from '../../packages/perron/tokens/generated/tokens.ts'
@@ -215,6 +215,26 @@ describe('contrast', () => {
             failures.push(`${th} ${mark} on ${ground}`)
     }
     expect(failures).toEqual([])
+  })
+
+  it('draws aircraft at 3:1 on every map ground, apart from every line, status and the brand', () => {
+    // docs/foundations/map.md#aircraft: a mark that carries meaning, never mistaken for a line, a
+    // mode, a status, a delay, a kind of disruption, the brand, no signal or the chart's series
+    const grounds = ['land', 'water', 'park', 'airport', 'runway'].map((g) => `color.map.${g}`)
+    for (const th of ['light', 'dark'] as const) {
+      const t: Record<string, string> = { ...base, ...theme[th] }
+      const aircraft = t['color.map.aircraft']
+      for (const ground of grounds)
+        expect(contrastRatio(aircraft, t[ground]), `${th} on ${ground}`).toBeGreaterThanOrEqual(3)
+      const others = Object.keys(t).filter((k) =>
+        /^color\.(transit\.((line|mode)\.[a-z0-9]+|delay\.[a-z-]+|severity\.[a-z]+)$|status\.|surface\.brand$|data-state\.no-signal$|chart\.series$)/.test(
+          k,
+        ),
+      )
+      expect(others.length).toBeGreaterThan(25)
+      for (const other of others)
+        expect(colourDistance(aircraft, t[other]), `${th} from ${other}`).toBeGreaterThan(0.12)
+    }
   })
 
   it('sets inset surfaces apart from raised ones in both themes', () => {
