@@ -131,7 +131,8 @@
 
 /* CR-16: under breakpoint.phone, a responsive bar is the phone's, the small rules above again,
    with the filters placed after the tools by order and kept to one row. A media query can't read
-   the token, so it repeats 760px less 0.02px, as the website's CSS does (contract, Media queries) */
+   the token, so it repeats 760px less 0.02px, as the CSS of Perron's docs website does: a breakpoint
+   is the width below which the screen changes (contract, Media queries; foundations, Layout) */
 @media (max-width: 759.98px) {
   .pn-TopBar[data-size='responsive'] {
     min-block-size: var(--perron-size-top-bar-phone);

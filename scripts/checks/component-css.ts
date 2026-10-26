@@ -35,6 +35,9 @@ const ICON_SIZE = '--perron-icon-size'
 const REDUCED_MOTION = '(prefers-reduced-motion: reduce)'
 const FORCED_COLORS = '(forced-colors: active)'
 
+/** What every rule inside a pattern-only query selects: a pattern's `size='responsive'`. */
+const RESPONSIVE = /\[data-size=(['"]?)responsive\1\]/
+
 /** What the contract lets CSS read and query. */
 export interface CssRules {
   /** Per layer, the tokens it reads: `color.text.*` is a family, `z-index.dialog` one token */
@@ -231,6 +234,15 @@ export function cssProblems(
         rule,
         `@media ${rule.params} is not one of the queries ${layer === 'pattern' ? 'patterns' : 'components'} use: ${queries.join(', ')}`,
       )
+    if (layer === 'pattern' && rules.patternMedia.includes(query))
+      rule.walkRules((inner) => {
+        for (const sel of inner.selectors)
+          if (!RESPONSIVE.test(sel))
+            report(
+              inner,
+              `${selector(sel)} is inside @media ${rule.params}, which only lays out a pattern's size='responsive': select [data-size='responsive']`,
+            )
+      })
     if (query === REDUCED_MOTION)
       rule.walkDecls(/^animation(-name|-iteration-count)?$/i, (d) => {
         if (d.parent?.type === 'rule') stopped.add(selector((d.parent as Rule).selector))

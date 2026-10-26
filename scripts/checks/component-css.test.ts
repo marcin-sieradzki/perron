@@ -108,6 +108,16 @@ describe('component-css', () => {
     )
   })
 
+  it("fails a rule inside the phone query that doesn't select size='responsive'", () => {
+    const problems = lint('phone-query-other-size.css', 'pattern')
+    expect(problems.map((p) => p.message.split(' is inside')[0])).toEqual([
+      ".pn-Fixture[data-size='small']",
+      '.pn-Fixture-part',
+    ])
+    for (const p of problems) expect(p.message).toMatch(/select \[data-size='responsive'\]/)
+    expect(problems.every((p) => p.line)).toBe(true)
+  })
+
   it('takes a perron-allow exemption', () => {
     expect(lint('allowed.css')).toEqual([])
   })

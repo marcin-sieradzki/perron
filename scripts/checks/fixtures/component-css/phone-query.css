@@ -1,6 +1,10 @@
 /* A pattern's phone layout, under breakpoint.phone: a pattern may write it, a component may not */
 @media (max-width: 759.98px) {
-  .pn-Fixture {
+  .pn-Fixture[data-size='responsive'] {
     padding-inline: var(--perron-space-300);
+  }
+
+  .pn-Fixture[data-size='responsive'] .pn-Fixture-part {
+    order: 1;
   }
 }

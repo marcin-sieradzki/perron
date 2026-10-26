@@ -1123,7 +1123,7 @@
   },
   "breakpoint": {
     "$type": "dimension",
-    "$description": "Max-width breakpoints. CSS media queries cannot read custom properties, so components repeat these values; tokens.ts exports them for JS.",
+    "$description": "Each is the width below which the screen changes. CSS media queries cannot read custom properties, so a query repeats the value less 0.02 px, (max-width: 759.98px) for 760 px, leaving the breakpoint itself above it; tokens.ts exports them for JS.",
     "compact-phone": {
       "$type": "dimension",
       "$value": {
