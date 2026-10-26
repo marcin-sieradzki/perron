@@ -3,6 +3,9 @@ component: TopBar
 layer: pattern
 deferred:
   at: 2026-10-26T02:10:47.486Z
+needsHuman:
+  stage: review
+  reason: '3 review rounds found a P1 or a P2; the last: review round 3 found 1 P2 (components/top-bar/review.md)'
 stages:
   brief:
     status: done
@@ -16,13 +19,17 @@ stages:
     spec: c2b265874039f166c42641ee3bd5c721034dd53d6cb41880275453680396cf8a
     ended: 2026-10-26T03:17:51.159Z
   review:
-    rounds: 2
-    sentBack: 2
-    reviewed: 07788bf25f5a7f5eb13dadf6a6dce81c673cdb0e
+    rounds: 3
+    sentBack: 3
+    reviewed: ea5fa49ba8209184c32f7090885ec30d086c09a9
     findings:
       p1: 0
       p2: 1
-      p3: 2
+      p3: 1
+    status: failed
+    started: 2026-10-26T03:18:36.087Z
+    ended: 2026-10-26T03:27:23.431Z
+    failing: review round 3 found 1 P2 (components/top-bar/review.md)
 notes:
   - stage: brief
     at: 2026-10-26T02:19:59.973Z
