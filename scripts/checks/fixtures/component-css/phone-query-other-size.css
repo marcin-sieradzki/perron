@@ -1,4 +1,5 @@
-/* The phone query lays out size='responsive' alone: a small bar's rules, or a bare class, fail */
+/* The phone query lays out size='responsive' alone: a small bar's rules, a bare class, or a
+   selector that leaves responsive out with :not(), fail */
 @media (max-width: 759.98px) {
   .pn-Fixture[data-size='small'] {
     padding-inline: var(--perron-space-300);
@@ -7,5 +8,9 @@
   .pn-Fixture-part,
   .pn-Fixture[data-size='responsive'] .pn-Fixture-part {
     order: 1;
+  }
+
+  .pn-Fixture:not([data-size='responsive']) .pn-Fixture-part {
+    order: 0;
   }
 }

@@ -59,6 +59,8 @@ describe('props', () => {
       'Allowed',
       'patterns/Responsive',
     ].map(fixture),
+    // the fixtures' own patterns folder, as the real run's is the package's
+    'scripts/checks/fixtures/props/patterns/',
   )
   const of = (name: string) => problems.filter((p) => p.file === fixture(name))
 
@@ -77,6 +79,20 @@ describe('props', () => {
 
   it("lets only a pattern's size be 'responsive'", () => {
     expect(of('patterns/Responsive')).toEqual([])
+    // a folder named patterns outside the package's is no pattern's
+    const outside = propsProblems(root, [fixture('patterns/Responsive')])
+    expect(outside).toHaveLength(1)
+    expect(outside[0].message).toMatch(/size takes only small, medium, large; not 'responsive'/)
+  })
+
+  it("throws, naming the contract's size row, when its first code span has no 'medium'", () => {
+    const contract = readFileSync(join(root, 'docs/components/README.md'), 'utf8')
+    const row = /^\| `size` +\| [^|]*'small' \\\| 'medium' \\\| 'large'`/m
+    expect(contract).toMatch(row)
+    for (const type of ["`'responsive'`", 'A subset of the sizes'])
+      expect(() =>
+        readPropRules(contract.replace(row, (cell) => cell.replace(/`[^`]*`$/, type))),
+      ).toThrow(/"Props", size row: .*'medium' among them/)
   })
 
   it('takes a perron-allow exemption', () => {
