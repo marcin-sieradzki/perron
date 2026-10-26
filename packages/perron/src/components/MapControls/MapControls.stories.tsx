@@ -71,12 +71,12 @@ const pausableBar = (props: MapControlsProps) => (
 )
 
 /**
- * A zoom limit leaves the pause button enabled: mounted beside the story's bar at `limit`, it is
+ * A button's limit leaves the pause button enabled: mounted beside the story's bar at `limit`, it is
  * neither dimmed nor announced as dimmed, and a click fires `onPausedChange` once.
  */
 const pauseEnabledAt = (
   canvasElement: HTMLElement,
-  limit: Pick<MapControlsProps, 'zoomInDisabled' | 'zoomOutDisabled'>,
+  limit: Pick<MapControlsProps, 'zoomInDisabled' | 'zoomOutDisabled' | 'centerMapDisabled'>,
 ) =>
   mounted(canvasElement, pausableBar(limit), async (host) => {
     onPausedChange.mockClear()
@@ -231,6 +231,31 @@ export const ZoomOutDisabled: Story = {
     await expect(onZoomIn).toHaveBeenCalledTimes(1)
     await leave(canvasElement)
     await pauseEnabledAt(canvasElement, { zoomOutDisabled: true })
+  },
+}
+
+/** Before the map can be moved: the centre button is dimmed, the pause button still pressable. */
+export const CenterMapDisabled: Story = {
+  args: { centerMapDisabled: true },
+  play: async ({ canvasElement }) => {
+    clearHandlers()
+    const { zoomIn, zoomOut, centerMap } = buttonsIn(canvasElement)
+    await expect(centerMap).toHaveAttribute('aria-disabled', 'true')
+    await expect(centerMap).toHaveAttribute('data-disabled')
+    await expect(zoomIn).not.toHaveAttribute('data-disabled')
+    await expect(zoomOut).not.toHaveAttribute('data-disabled')
+    await enter()
+    await userEvent.keyboard('{ArrowUp}')
+    await expect(centerMap).toHaveFocus()
+    await userEvent.keyboard('{Enter}')
+    await userEvent.click(centerMap)
+    await expect(onCenterMap).not.toHaveBeenCalled()
+    await userEvent.click(zoomIn)
+    await expect(onZoomIn).toHaveBeenCalledTimes(1)
+    await userEvent.click(zoomOut)
+    await expect(onZoomOut).toHaveBeenCalledTimes(1)
+    await leave(canvasElement)
+    await pauseEnabledAt(canvasElement, { centerMapDisabled: true })
   },
 }
 
