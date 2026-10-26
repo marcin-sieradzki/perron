@@ -449,7 +449,7 @@ export const SmallDefault: Story = {
       await expect(Number.parseFloat(style.paddingRight)).toBe(room)
       await expect(Number.parseFloat(style.marginTop)).toBe(-room)
       await expect(Number.parseFloat(style.marginLeft)).toBe(-room)
-      // the chips' row starts where the bar's content does: the room moves nothing
+      // the chips' row starts where the bar's content does: the margin keeps the chips in place
       const content =
         bar.getBoundingClientRect().left +
         Number.parseFloat(getComputedStyle(bar).paddingLeft) +
