@@ -3398,6 +3398,12 @@
           "{ paused?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; source?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; name?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; separator?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; time?: DetailedHTMLProps<TimeHTMLAttributes<HTMLTimeElement>, HTMLTimeElement> | undefined; }"
         ]
       },
+      "sourceLabelOutOfDateLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
       "sourceOutOfDateLabel": {
         "optional": true,
         "type": [

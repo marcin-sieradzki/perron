@@ -75,6 +75,7 @@ export const sv: OwnedStrings = {
   sourceUpdated: 'uppdaterad {time}',
   sourcePaused: 'Pausad',
   sourceOutOfDate: 'uppdaterad {time}, kan vara inaktuell',
+  sourceLabelOutOfDate: '{label}, kan vara inaktuell',
   topBarUpdated: 'Uppdaterad {time}',
   topBarUpdatedOutOfDate: 'Uppdaterad {time}, kan vara inaktuell',
   topBarFilters: 'Filter',
