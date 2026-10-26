@@ -103,7 +103,10 @@ export interface SourceLineProps extends Omit<ComponentPropsWithRef<'p'>, 'child
     name?: ComponentPropsWithRef<'span'>
     /** Props for every `separator` part, each "·" */
     separator?: ComponentPropsWithRef<'span'>
-    /** Props for every `time` part, each source's phrase and time */
+    /**
+     * Props for every `time` part, each source's phrase and time: a `<time>`, or a `<span>`, given
+     * these props but `dateTime`, for a phrase that shows no time
+     */
     time?: ComponentPropsWithRef<'time'>
   }
 }
@@ -131,6 +134,17 @@ function phraseOf(source: SourceLineSource, strings: Phrases) {
     return interpolate(source.outOfDate ? strings.sourceOutOfDate : strings.sourceUpdated, { time })
   const label = interpolate(source.label!, { time })
   return source.outOfDate ? interpolate(strings.sourceLabelOutOfDate, { label }) : label
+}
+
+/**
+ * The machine-readable time a source's phrase shows: its `dateTime`, or its `time`, when it has a
+ * time and its phrase shows it, the owned one or a `label` with `{time}`; none for a label with no
+ * `{time}` or a source with no time, whose phrase is then no `<time>` at all (CR-3).
+ */
+function shownTime(source: SourceLineSource) {
+  if (!given(source.time)) return undefined
+  if (given(source.label) && !source.label!.includes('{time}')) return undefined
+  return source.dateTime || source.time
 }
 
 /**
@@ -165,6 +179,8 @@ export function SourceLine({
     separator: separatorProps,
     time: timeProps,
   } = slotProps ?? {}
+  // CR-3: a phrase that shows no time is a <span>, given the time slot's props but its dateTime
+  const { dateTime: _dateTime, ref: timeRef, ...plainTimeProps } = timeProps ?? {}
 
   // CR-1: a "·" with a no-break space before it and a space after it, so the line wraps after a
   // "·" and never starts a line with one
@@ -231,14 +247,24 @@ export function SourceLine({
             )}
             {/* CR-2, CR-3, CR-6, CR-15: the time in one phrase, filled by interpolate, never an owned
                 word joined to the caller's time; the caller's time as it is, with no timer, clock
-                or formatting of its own */}
-            <time
-              {...timeProps}
-              className={classes('pn-SourceLine-time', timeProps?.className)}
-              dateTime={source.dateTime || source.time || undefined}
-            >
-              {phraseOf(source, strings)}
-            </time>
+                or formatting of its own; a <time> only when the phrase shows a time */}
+            {shownTime(source) === undefined ? (
+              <span
+                {...plainTimeProps}
+                ref={timeRef as Ref<HTMLSpanElement> | undefined}
+                className={classes('pn-SourceLine-time', timeProps?.className)}
+              >
+                {phraseOf(source, strings)}
+              </span>
+            ) : (
+              <time
+                {...timeProps}
+                className={classes('pn-SourceLine-time', timeProps?.className)}
+                dateTime={shownTime(source)}
+              >
+                {phraseOf(source, strings)}
+              </time>
+            )}
           </span>
         </Fragment>
       ))}

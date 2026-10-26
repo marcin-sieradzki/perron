@@ -225,6 +225,8 @@ const partsOf = (line: Element) => {
     separators: all('separator'),
     between: all('separator').filter((s) => !s.closest('.pn-SourceLine-source')),
     times: [...line.querySelectorAll<HTMLTimeElement>('time.pn-SourceLine-time')],
+    // every source's phrase, a <time> or, for a phrase that shows no time, a <span>
+    phrases: all('time'),
   }
 }
 
@@ -666,10 +668,32 @@ export const SourceLabels: Story = {
       await expect(timetable.times[0]).toHaveAttribute('dateTime', '08:14:05')
       await expect(heard(departures.sources[0])).toBe('Rejseplanen · departures 08:14:20')
     })
-    await step('a fact with no time is a <time> with no dateTime (CR-3)', async () => {
-      const [, plain] = detailTimetable.times
+    await step('a fact with no time is a <span>, not a <time> (CR-3)', async () => {
+      const [, plain] = detailTimetable.phrases
+      await expect(plain.tagName).toBe('SPAN')
       await expect(plain).toHaveTextContent(/^times from the timetable$/)
       await expect(plain).not.toHaveAttribute('dateTime')
+      await expect(plain.childNodes).toHaveLength(1)
+      await expect(detailTimetable.times).toEqual([detailTimetable.phrases[0]])
+      await expect([...detailTimetable.sources[1].children]).toEqual([plain])
+    })
+    await step('a label with no {time} shows no time and carries none (CR-3)', async () => {
+      await mounted(
+        canvasElement,
+        <SourceLine
+          sources={[POSITION, { ...TIMES_FROM_TIMETABLE, time: '08:14:20' }]}
+          slotProps={{ time: { className: 'caller-time', dateTime: '23:59' } }}
+        />,
+        async (host) => {
+          const own = partsOf(await lineIn(host))
+          await expect(heard(own.sources[1])).toBe('times from the timetable')
+          await expect(own.phrases[1].tagName).toBe('SPAN')
+          await expect(own.phrases[1]).not.toHaveAttribute('dateTime')
+          await expect(own.phrases[1].className).toBe('pn-SourceLine-time caller-time')
+          // the <time> keeps the pattern's own dateTime over the slot's (CR-11)
+          await expect(own.times.map((time) => time.dateTime)).toEqual(['08:14:05'])
+        },
+      )
     })
     await step('a date takes its dateTime from the caller (CR-3)', async () => {
       const [, date] = pulse.times
@@ -679,8 +703,8 @@ export const SourceLabels: Story = {
     await step('nothing is out of date, and the ink is the line\u2019s (CR-6)', async () => {
       for (const line of found) {
         await expect(line.querySelector('[data-out-of-date]')).toBeNull()
-        for (const time of partsOf(line).times)
-          await expect(getComputedStyle(time).color).toBe(colour(SECONDARY))
+        for (const phrase of partsOf(line).phrases)
+          await expect(getComputedStyle(phrase).color).toBe(colour(SECONDARY))
       }
     })
     await step('a phrase with {time} and no time fills it with "—"', async () => {
@@ -690,7 +714,10 @@ export const SourceLabels: Story = {
         async (host) => {
           const own = await lineIn(host)
           await expect(heard(own)).toBe('Rejseplanen · departures —')
-          await expect(partsOf(own).times[0]).not.toHaveAttribute('dateTime')
+          // "—" is no time, so the phrase is a <span>
+          await expect(partsOf(own).times).toHaveLength(0)
+          await expect(partsOf(own).phrases[0].tagName).toBe('SPAN')
+          await expect(partsOf(own).phrases[0]).not.toHaveAttribute('dateTime')
         },
       )
     })
@@ -742,15 +769,15 @@ export const SourceLabelsOutOfDate: Story = {
       'only the stale source carries the state, in warning ink (CR-6, CR-15)',
       async () => {
         for (const [index, line] of found.entries()) {
-          const { sources, times } = partsOf(line)
+          const { sources, phrases } = partsOf(line)
           for (const [at, source] of MYLDER_LINES_OUT_OF_DATE[index].sources.entries()) {
             const old = source.outOfDate === true
             await expect(sources[at].hasAttribute('data-out-of-date')).toBe(old)
-            await expect(getComputedStyle(times[at]).color).toBe(
+            await expect(getComputedStyle(phrases[at]).color).toBe(
               colour(old ? '--perron-color-text-warning' : SECONDARY),
             )
             // the caller's words and the owned words after them, filled by interpolate: one text run
-            await expect(times[at].childNodes).toHaveLength(1)
+            await expect(phrases[at].childNodes).toHaveLength(1)
           }
         }
       },
