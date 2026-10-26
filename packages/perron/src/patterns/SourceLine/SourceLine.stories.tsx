@@ -20,13 +20,134 @@ import { SourceLine } from './SourceLine.tsx'
 import type { SourceLineProps, SourceLineSource } from './SourceLine.tsx'
 
 /** The departures' source, fresh. */
-const REJSEPLANEN: SourceLineSource = { name: 'Rejseplanen', time: '08:14:05' }
+const REJSEPLANEN = { name: 'Rejseplanen', time: '08:14:05' } satisfies SourceLineSource
 
 /** A second source, fresh, a few seconds older than the first. */
 const POSITIONS: SourceLineSource = { name: 'Vehicle positions', time: '08:13:58' }
 
 /** The second source gone stale under a fresh first one: the case the line exists for. */
-const STALE: SourceLineSource = { name: 'Vehicle positions', time: '08:09:40', outOfDate: true }
+const STALE = {
+  name: 'Vehicle positions',
+  time: '08:09:40',
+  outOfDate: true,
+} satisfies SourceLineSource
+
+/**
+ * The sources of Mylder's own lines, each in the app's words of what its time is of (CR-15): one
+ * provider's name before its facts, a fact with no name of its own, a fact with no time, and a date
+ * where a time usually goes.
+ */
+const POSITION: SourceLineSource = {
+  name: 'Rejseplanen',
+  time: '08:14:05',
+  label: 'position {time}',
+}
+const TIMES: SourceLineSource = { time: '08:14:20', label: 'times {time}' }
+const TIMES_FROM_TIMETABLE: SourceLineSource = { label: 'times from the timetable' }
+const DEPARTURES: SourceLineSource = {
+  name: 'Rejseplanen',
+  time: '08:14:20',
+  label: 'departures {time}',
+}
+const TIMETABLE_AND_POSITIONS: SourceLineSource = {
+  time: '08:14:05',
+  label: 'Timetable and positions {time}',
+}
+const FLEET_POSITIONS: SourceLineSource = {
+  name: 'Rejseplanen',
+  time: '08:14:05',
+  label: 'positions {time}',
+}
+const TIMETABLE_OF: SourceLineSource = {
+  time: '12 October',
+  dateTime: '2026-10-12',
+  label: 'timetable of {time}',
+}
+
+/** A source gone out of date, as the app judges it. */
+const stale = (source: SourceLineSource): SourceLineSource => ({ ...source, outOfDate: true })
+
+/** One of Mylder's source lines: the screen it is on, its sources, and how it is heard. */
+interface MylderLine {
+  screen: string
+  sources: SourceLineProps['sources']
+  heard: string
+}
+
+/** Each of Mylder's source lines, as its screens word them. */
+const MYLDER_LINES: readonly MylderLine[] = [
+  {
+    screen: 'vehicle-detail',
+    sources: [POSITION, TIMES],
+    heard: 'Rejseplanen · position 08:14:05 · times 08:14:20',
+  },
+  {
+    screen: 'vehicle-detail-timetable',
+    sources: [POSITION, TIMES_FROM_TIMETABLE],
+    heard: 'Rejseplanen · position 08:14:05 · times from the timetable',
+  },
+  {
+    screen: 'stop-departures',
+    sources: [DEPARTURES],
+    heard: 'Rejseplanen · departures 08:14:20',
+  },
+  {
+    screen: 'stop-departures-timetable',
+    sources: [TIMETABLE_AND_POSITIONS],
+    heard: 'Timetable and positions 08:14:05',
+  },
+  {
+    screen: 'city-pulse',
+    sources: [FLEET_POSITIONS, TIMETABLE_OF],
+    heard: 'Rejseplanen · positions 08:14:05 · timetable of 12 October',
+  },
+  {
+    screen: 'vehicles-list',
+    sources: [FLEET_POSITIONS],
+    heard: 'Rejseplanen · positions 08:14:05',
+  },
+]
+
+/** `MYLDER_LINES`, with the answer of one source on each older than its refresh. */
+const MYLDER_LINES_OUT_OF_DATE: readonly MylderLine[] = [
+  {
+    screen: 'vehicle-detail',
+    sources: [POSITION, stale(TIMES)],
+    heard: 'Rejseplanen · position 08:14:05 · times 08:14:20, may be out of date',
+  },
+  {
+    screen: 'vehicle-detail-timetable',
+    sources: [stale(POSITION), TIMES_FROM_TIMETABLE],
+    heard: 'Rejseplanen · position 08:14:05, may be out of date · times from the timetable',
+  },
+  {
+    screen: 'stop-departures',
+    sources: [stale(DEPARTURES)],
+    heard: 'Rejseplanen · departures 08:14:20, may be out of date',
+  },
+  {
+    screen: 'stop-departures-timetable',
+    sources: [stale(TIMETABLE_AND_POSITIONS)],
+    heard: 'Timetable and positions 08:14:05, may be out of date',
+  },
+  {
+    screen: 'city-pulse',
+    sources: [stale(FLEET_POSITIONS), TIMETABLE_OF],
+    heard: 'Rejseplanen · positions 08:14:05, may be out of date · timetable of 12 October',
+  },
+  {
+    screen: 'vehicles-list',
+    sources: [stale(FLEET_POSITIONS)],
+    heard: 'Rejseplanen · positions 08:14:05, may be out of date',
+  },
+]
+
+/** What a caller gives for its sources: each name, and each label with its time filled in. */
+const callerWords = (sources: readonly SourceLineSource[]) =>
+  sources.flatMap((source) => [
+    ...(source.name ? [source.name] : []),
+    ...(source.label ? [source.label.replace('{time}', source.time ?? '')] : []),
+  ])
 
 /**
  * Each of the line's owned strings overridden: the prop, the caller's own string, and how the
@@ -314,6 +435,7 @@ export const Default: Story = {
           paused
           className="caller"
           {...OWN_LABELS}
+          sourceLabelOutOfDateLabel="{label}, could be old"
           slotProps={{
             paused: {},
             source: {},
@@ -503,6 +625,154 @@ export const OutOfDate: Story = {
   },
 }
 
+/** A stack of lines, one for each of `mylder`, each with `args` laid under its own sources. */
+const linesOf = (mylder: readonly MylderLine[], args: Partial<SourceLineProps>) => (
+  <div style={{ display: 'grid', gap: 'var(--perron-space-200)' }}>
+    {mylder.map(({ screen, sources }) => (
+      <SourceLine key={screen} {...args} sources={sources} data-testid={screen} />
+    ))}
+  </div>
+)
+
+/** Each line of `mylder` in `scope`, by its screen, once it has rendered. */
+const linesIn = (scope: HTMLElement, mylder: readonly MylderLine[]) =>
+  Promise.all(mylder.map(({ screen }) => waitFor(() => within(scope).getByTestId(screen))))
+
+/**
+ * Mylder's source lines, each source in the app's own words of what its time is of: the vehicle
+ * detail's two, the stop departures' two, the city pulse's and the vehicles list's.
+ */
+export const SourceLabels: Story = {
+  args: { sources: MYLDER_LINES[0].sources },
+  render: ({ sources: _first, ...args }) => linesOf(MYLDER_LINES, args),
+  play: async ({ canvasElement, step }) => {
+    const found = await linesIn(canvasElement, MYLDER_LINES)
+    const [detail, detailTimetable, departures, timetable, pulse] = found.map(partsOf)
+    await step('each line reads as its screen words it (CR-15)', async () => {
+      await expect(found.map(heard)).toEqual(MYLDER_LINES.map((line) => line.heard))
+    })
+    await step('a source with no name shows its phrase alone, after a "·" (CR-2)', async () => {
+      await expect(detail.names.map((name) => name.textContent)).toEqual(['Rejseplanen'])
+      await expect([...detail.sources[1].children]).toEqual([detail.times[1]])
+      await expect(detail.between).toHaveLength(1)
+      await expect(detail.separators).toHaveLength(2)
+      // the line's own phrase, filled by interpolate: one text run
+      for (const time of detail.times) await expect(time.childNodes).toHaveLength(1)
+      await expect(detail.times.map((time) => time.dateTime)).toEqual(['08:14:05', '08:14:20'])
+      // a line of one source with no name has no "·" at all
+      await expect(timetable.names).toHaveLength(0)
+      await expect(timetable.separators).toHaveLength(0)
+      await expect(heard(timetable.sources[0])).toBe('Timetable and positions 08:14:05')
+      await expect(timetable.times[0]).toHaveAttribute('dateTime', '08:14:05')
+      await expect(heard(departures.sources[0])).toBe('Rejseplanen · departures 08:14:20')
+    })
+    await step('a fact with no time is a <time> with no dateTime (CR-3)', async () => {
+      const [, plain] = detailTimetable.times
+      await expect(plain).toHaveTextContent(/^times from the timetable$/)
+      await expect(plain).not.toHaveAttribute('dateTime')
+    })
+    await step('a date takes its dateTime from the caller (CR-3)', async () => {
+      const [, date] = pulse.times
+      await expect(date).toHaveTextContent(/^timetable of 12 October$/)
+      await expect(date).toHaveAttribute('dateTime', '2026-10-12')
+    })
+    await step('nothing is out of date, and the ink is the line\u2019s (CR-6)', async () => {
+      for (const line of found) {
+        await expect(line.querySelector('[data-out-of-date]')).toBeNull()
+        for (const time of partsOf(line).times)
+          await expect(getComputedStyle(time).color).toBe(colour(SECONDARY))
+      }
+    })
+    await step('a phrase with {time} and no time fills it with "—"', async () => {
+      await mounted(
+        canvasElement,
+        <SourceLine sources={[{ name: 'Rejseplanen', label: 'departures {time}' }]} />,
+        async (host) => {
+          const own = await lineIn(host)
+          await expect(heard(own)).toBe('Rejseplanen · departures —')
+          await expect(partsOf(own).times[0]).not.toHaveAttribute('dateTime')
+        },
+      )
+    })
+    await step('a source with neither name nor label keeps the owned phrase', async () => {
+      await mounted(
+        canvasElement,
+        <SourceLine sources={[{ time: '08:14:05' }]} />,
+        async (host) => {
+          const own = await lineIn(host)
+          await expect(heard(own)).toBe('updated 08:14:05')
+          await expect(partsOf(own).separators).toHaveLength(0)
+        },
+      )
+    })
+    await step(
+      'only the caller\u2019s words and the dictionary\u2019s, paused, in every locale',
+      async () => {
+        for (const locale of Object.keys(dictionaries) as Locale[])
+          expectOwnedStrings(
+            renderToStaticMarkup(
+              <PerronProvider locale={locale}>
+                {linesOf(MYLDER_LINES, { paused: true })}
+              </PerronProvider>,
+            ),
+            locale,
+            MYLDER_LINES.flatMap((line) => callerWords(line.sources)),
+          )
+      },
+    )
+  },
+}
+
+/**
+ * `SourceLabels`' lines, each with one source whose answer is older than its refresh, as the app
+ * judges it: its own words, then "may be out of date".
+ */
+export const SourceLabelsOutOfDate: Story = {
+  args: { sources: MYLDER_LINES_OUT_OF_DATE[0].sources },
+  render: ({ sources: _first, ...args }) => linesOf(MYLDER_LINES_OUT_OF_DATE, args),
+  play: async ({ canvasElement, step }) => {
+    const found = await linesIn(canvasElement, MYLDER_LINES_OUT_OF_DATE)
+    await step(
+      'each line adds "may be out of date" after the stale source\u2019s words',
+      async () => {
+        await expect(found.map(heard)).toEqual(MYLDER_LINES_OUT_OF_DATE.map((line) => line.heard))
+      },
+    )
+    await step(
+      'only the stale source carries the state, in warning ink (CR-6, CR-15)',
+      async () => {
+        for (const [index, line] of found.entries()) {
+          const { sources, times } = partsOf(line)
+          for (const [at, source] of MYLDER_LINES_OUT_OF_DATE[index].sources.entries()) {
+            const old = source.outOfDate === true
+            await expect(sources[at].hasAttribute('data-out-of-date')).toBe(old)
+            await expect(getComputedStyle(times[at]).color).toBe(
+              colour(old ? '--perron-color-text-warning' : SECONDARY),
+            )
+            // the caller's words and the owned words after them, filled by interpolate: one text run
+            await expect(times[at].childNodes).toHaveLength(1)
+          }
+        }
+      },
+    )
+    await step('in every locale, the dictionary\u2019s words after the caller\u2019s', async () => {
+      for (const locale of Object.keys(dictionaries) as Locale[]) {
+        const markup = renderToStaticMarkup(
+          <PerronProvider locale={locale}>{linesOf(MYLDER_LINES_OUT_OF_DATE, {})}</PerronProvider>,
+        )
+        expectOwnedStrings(
+          markup,
+          locale,
+          MYLDER_LINES_OUT_OF_DATE.flatMap((line) => callerWords(line.sources)),
+        )
+        await expect(markup).toContain(
+          dictionaries[locale].sourceLabelOutOfDate.replace('{label}', 'departures 08:14:20'),
+        )
+      }
+    })
+  },
+}
+
 /** `OutOfDate`'s sources, paused, in Swedish, in a 320 px container. */
 export const Narrow: Story = {
   args: { sources: [REJSEPLANEN, STALE], paused: true },
@@ -543,6 +813,23 @@ export const Narrow: Story = {
           await expectWrapsInside(box, own)
         },
       )
+    // a line in the app's own words, a stale source among them, wraps as the owned one does
+    await mounted(
+      canvasElement,
+      <PerronProvider locale="sv">
+        <div data-testid="narrow-labels" style={{ inlineSize: 320 }}>
+          <SourceLine sources={[POSITION, stale(TIMES)]} paused />
+        </div>
+      </PerronProvider>,
+      async (host) => {
+        const box = await waitFor(() => within(host).getByTestId('narrow-labels'))
+        const own = await lineIn(box)
+        await expect(heard(own)).toBe(
+          'Pausad · Rejseplanen · position 08:14:05 · times 08:14:20, kan vara inaktuell',
+        )
+        await expectWrapsInside(box, own)
+      },
+    )
     // a name longer than the container's line breaks inside itself
     await mounted(
       canvasElement,
@@ -587,5 +874,30 @@ export const Labels: Story = {
           },
         )
       })
+    await step('sourceLabelOutOfDateLabel replaces only its own string (CR-15)', async () => {
+      await mounted(
+        canvasElement,
+        <SourceLine
+          sources={[REJSEPLANEN, stale(TIMES)]}
+          sourceLabelOutOfDateLabel="{label}, could be old"
+        />,
+        async (host) => {
+          await expect(heard(await lineIn(host))).toBe(
+            'Rejseplanen · updated 08:14:05 · times 08:14:20, could be old',
+          )
+        },
+      )
+    })
+    await step('a source\u2019s own label wins over sourceUpdatedLabel (CR-15)', async () => {
+      await mounted(
+        canvasElement,
+        <SourceLine sources={[POSITION, STALE]} {...OWN_LABELS} />,
+        async (host) => {
+          await expect(heard(await lineIn(host))).toBe(
+            'Rejseplanen · position 08:14:05 · Vehicle positions · as of 08:09:40, could be old',
+          )
+        },
+      )
+    })
   },
 }

@@ -202,6 +202,12 @@ export const en = {
    */
   sourceOutOfDate: 'updated {time}, may be out of date',
   /**
+   * A source line: the app's own words of what a source's time is of, when the app judges it may
+   * be out of date, as in "Rejseplanen · departures 08:14:20, may be out of date". `{label}` is the
+   * caller's label, its time filled in.
+   */
+  sourceLabelOutOfDate: '{label}, may be out of date',
+  /**
    * A status line: the time of the data a screen shows, first in its line, as in "Updated
    * 08:14:05". `{time}` is the caller's time, or "—" while it is unknown.
    */
