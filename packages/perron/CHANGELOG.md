@@ -1,5 +1,16 @@
 # @mylder/perron
 
+## 0.6.0
+
+### Minor Changes
+
+- 7d84b46: `DepartureRow` gains the optional `expected` prop, the time real-time data expects the departure to leave, `HH:MM`, as `StopTimeline`'s stops take it. For a `live`, `ageing` or `estimated` row it shows in the timetabled time's place, after a "~" when `estimated`, with the timetabled `time` struck through before it when the two differ, "~~08:14~~ 08:16", heard as "Timetabled 08:14" and then the time; a `timetable-only`, `no-signal` or cancelled row, or one with an `interval`, shows `time` as before. New `slotProps.expected` and the label prop `timetabledTimeLabel`. Adds the owned string `timetabledTime` to every locale; a caller that supplies its own dictionaries adds it too.
+- 9873522: `MapControls` takes an optional pause button for the map's motion: given `onPausedChange(event, paused)`, the bar adds it after the centre button, past a second separator, in the same bar and arrow-key order, so the map's controls stay one tab stop. The screen holds `paused` (default `false`); the button shows the `pause` icon and is named "Pause" while the map moves, and the `play` icon and "Resume" while it is paused, with no `aria-pressed`. New owned strings `pause` and `resume`, in all four locales (a caller that supplies its own dictionaries adds them too), overridden by the new `pauseLabel` and `resumeLabel` props. Without `onPausedChange` the bar renders as before.
+- 7d84b46: `SourceLine`'s sources can say what each time is of, in the app's own words: a source's new `label` is a template with a `{time}` placeholder, such as `'position {time}'`, shown in place of "updated {time}", and `dateTime` gives the `<time>` element a machine-readable value for a time written as a date, such as `'12 October'`. `name` and `time` are now optional, so one provider's name can stand before two facts, "Rejseplanen · position 08:14:05 · times 08:14:20", and a fact can have no time, "times from the timetable". A labelled source whose `outOfDate` is set adds "may be out of date" after its label, through the new owned string `sourceLabelOutOfDate`, "{label}, may be out of date", overridden by the new `sourceLabelOutOfDateLabel` prop. Lines without a `label` render as before.
+- 9873522: `TopBar`'s `size` takes `'responsive'`: one render that is the phone's layout, `small`, under `breakpoint.phone` and the wide one, `medium`, above it, switched by a media query with no JavaScript, for a page rendered before it knows the viewport's width. The groups keep the wide order in the DOM at both widths, and on a phone CSS places the tools on the first row and the filters on the second, with `reading-flow: flex-visual` so that a browser that supports it tabs in the order on screen. `'medium'` and `'small'` render as before, and the default is still `'medium'`. No new owned strings.
+
+  The `breakpoint` tokens' description now says what each one is, the width below which the screen changes, and how a media query writes it, `(max-width: 759.98px)` for `breakpoint.phone`'s 760 px; no value changes.
+
 ## 0.5.0
 
 ### Minor Changes

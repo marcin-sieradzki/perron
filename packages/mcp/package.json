@@ -1,6 +1,6 @@
 {
   "name": "@mylder/perron-mcp",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "The Perron MCP server: Perron's tokens, docs and pinned library references for agents.",
   "license": "MIT",
   "type": "module",
@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.32.2",
-    "@mylder/perron": "^0.5.0",
+    "@mylder/perron": "^0.6.0",
     "zod": "^4.6.7"
   },
   "publishConfig": {
