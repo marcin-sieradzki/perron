@@ -8,6 +8,13 @@ stages:
     status: done
     started: 2026-10-26T02:20:36.146Z
     ended: 2026-10-26T02:20:56.299Z
+  build:
+    status: done
+    started: 2026-10-26T02:21:02.799Z
+    runs: 1
+    begun: 8cc848812b887924e0718e095184ee0031042f4c589bf3dc040b146db7e23659
+    spec: 107179e4d4b6c6db92c676ac1c90087e7dc8902f47b918b7aa71424327f99b1e
+    ended: 2026-10-26T02:39:39.371Z
 notes:
   - stage: brief
     at: 2026-10-26T02:19:59.973Z
@@ -31,3 +38,9 @@ notes:
       8. Tokens: Is the status line in typography.data-sm and color.text.secondary, with 'Paused' in color.text.primary and the whole out-of-date phrase in color.text.warning, and no icon? Recommended: yes.
       9. Owned strings: Are the new keys updated 'Updated {time}', updatedOutOfDate 'Updated {time}, may be out of date' and filters 'Filters', with sourcePaused and brandName reused? Recommended: yes.
       10. Component rules: With size='small', are the groups in the DOM in the order identity, tools, filters, the order on screen, rather than Mylder's one DOM order with CSS order? Recommended: yes.
+  - stage: build
+    at: 2026-10-26T02:39:39.371Z
+    direction: The groups are keyed and reordered as an array, so a screen that switches size at breakpoint.phone moves the filters and tools groups rather than remounting them, keeping focus and any uncontrolled chip state.
+  - stage: build
+    at: 2026-10-26T02:39:39.371Z
+    direction: "The small bar's chips row scrolls with no visible scrollbar (scrollbar-width: none, as Mylder has it), so a phone shows no cue that more chips lie past the edge beyond the last chip being cut; a design run may want a fade or a peek."

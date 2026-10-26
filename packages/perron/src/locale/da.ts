@@ -75,4 +75,7 @@ export const da: OwnedStrings = {
   sourceUpdated: 'opdateret {time}',
   sourcePaused: 'Sat på pause',
   sourceOutOfDate: 'opdateret {time}, måske forældet',
+  updated: 'Opdateret {time}',
+  updatedOutOfDate: 'Opdateret {time}, måske forældet',
+  filters: 'Filtre',
 }

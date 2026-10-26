@@ -95,6 +95,7 @@ export const PAGES = [
   'docs/patterns/disruption-card.md',
   'docs/patterns/scale-bar.md',
   'docs/patterns/kiosk-bar.md',
+  'docs/patterns/top-bar.md',
   // registry:specs end
 ]
 
