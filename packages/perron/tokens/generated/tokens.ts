@@ -204,6 +204,16 @@ export const base = {
   "map.track-spacing.metro": "3.4px",
   "map.track-spacing.stog": "2.8px",
   "map.track-spacing.regional": "2.8px",
+  "map.strand.m1": "-0.5",
+  "map.strand.m2": "0.5",
+  "map.strand.m3": "-0.5",
+  "map.strand.m4": "0.5",
+  "map.strand.a": "-2",
+  "map.strand.b": "-1",
+  "map.strand.c": "0",
+  "map.strand.e": "1",
+  "map.strand.f": "0",
+  "map.strand.h": "2",
 } as const
 
 /** Theme tokens as CSS values, per theme. Use these where CSS variables cannot reach, such as canvas. */
@@ -460,6 +470,16 @@ export const numeric = {
   "map.track-spacing.metro": 3.4,
   "map.track-spacing.stog": 2.8,
   "map.track-spacing.regional": 2.8,
+  "map.strand.m1": -0.5,
+  "map.strand.m2": 0.5,
+  "map.strand.m3": -0.5,
+  "map.strand.m4": 0.5,
+  "map.strand.a": -2,
+  "map.strand.b": -1,
+  "map.strand.c": 0,
+  "map.strand.e": 1,
+  "map.strand.f": 0,
+  "map.strand.h": 2,
 } as const
 
 /**

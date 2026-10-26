@@ -27,22 +27,34 @@ Land, water, parks, streets, rail, buildings and labels each have a colour per t
 
 Line widths, dot sizes and the gap between lines that share a track are canvas measures, in px at the default zoom.
 
+Where lines share a track, such as A, B, C, E and H through the centre or M1 and M2, each is drawn as its own strand beside the others, never on top of them. A line's `map.strand.*` is its place from the track's centre, in steps of its mode's `map.track-spacing`: the app multiplies the two for the line's offset, such as MapLibre's `line-offset`, and gives a vehicle on that line the same offset, so it stays on its strand. The order keeps each line on one side of every track it shares, so a strand never crosses another: A, B, C, E, H from one side to the other through the centre, M1 beside M2 and M3 beside M4. Which stretches are shared comes from the app's own timetable, so a line alone on its track is drawn on the centre, whatever its strand.
+
 <!-- tokens: map.* -->
 
-| Token                        | Value   | Use                                                      |
-| ---------------------------- | ------- | -------------------------------------------------------- |
-| `map.dot-radius.bus`         | `3.3px` | Bus dot radius on the map at the default zoom            |
-| `map.dot-radius.metro`       | `4.6px` | Metro dot radius on the map at the default zoom          |
-| `map.dot-radius.stog`        | `4.8px` | S-tog dot radius on the map at the default zoom          |
-| `map.dot-radius.regional`    | `5.3px` | Regional train dot radius on the map at the default zoom |
-| `map.line-width.metro`       | `3.2px` | Metro line stroke on the map                             |
-| `map.line-width.stog`        | `2.5px` | S-tog line stroke on the map                             |
-| `map.line-width.regional`    | `2.1px` | Regional line stroke on the map                          |
-| `map.line-width.focus-extra` | `1.6px` | Added to the width of a focused line                     |
-| `map.line-width.bus-focus`   | `4px`   | Bus route drawn only when focused                        |
-| `map.track-spacing.metro`    | `3.4px` | Gap between parallel metro lines sharing a track         |
-| `map.track-spacing.stog`     | `2.8px` | Gap between parallel S-tog lines sharing a track         |
-| `map.track-spacing.regional` | `2.8px` | Gap between parallel regional lines sharing a track      |
+| Token                        | Value   | Use                                                                   |
+| ---------------------------- | ------- | --------------------------------------------------------------------- |
+| `map.dot-radius.bus`         | `3.3px` | Bus dot radius on the map at the default zoom                         |
+| `map.dot-radius.metro`       | `4.6px` | Metro dot radius on the map at the default zoom                       |
+| `map.dot-radius.stog`        | `4.8px` | S-tog dot radius on the map at the default zoom                       |
+| `map.dot-radius.regional`    | `5.3px` | Regional train dot radius on the map at the default zoom              |
+| `map.line-width.metro`       | `3.2px` | Metro line stroke on the map                                          |
+| `map.line-width.stog`        | `2.5px` | S-tog line stroke on the map                                          |
+| `map.line-width.regional`    | `2.1px` | Regional line stroke on the map                                       |
+| `map.line-width.focus-extra` | `1.6px` | Added to the width of a focused line                                  |
+| `map.line-width.bus-focus`   | `4px`   | Bus route drawn only when focused                                     |
+| `map.track-spacing.metro`    | `3.4px` | Gap between parallel metro lines sharing a track                      |
+| `map.track-spacing.stog`     | `2.8px` | Gap between parallel S-tog lines sharing a track                      |
+| `map.track-spacing.regional` | `2.8px` | Gap between parallel regional lines sharing a track                   |
+| `map.strand.m1`              | `-0.5`  | Line M1's strand on a shared track, in track spacings from its centre |
+| `map.strand.m2`              | `0.5`   | Line M2's strand on a shared track, in track spacings from its centre |
+| `map.strand.m3`              | `-0.5`  | Line M3's strand on a shared track, in track spacings from its centre |
+| `map.strand.m4`              | `0.5`   | Line M4's strand on a shared track, in track spacings from its centre |
+| `map.strand.a`               | `-2`    | Line A's strand on a shared track, in track spacings from its centre  |
+| `map.strand.b`               | `-1`    | Line B's strand on a shared track, in track spacings from its centre  |
+| `map.strand.c`               | `0`     | Line C's strand on a shared track, in track spacings from its centre  |
+| `map.strand.e`               | `1`     | Line E's strand on a shared track, in track spacings from its centre  |
+| `map.strand.f`               | `0`     | Line F's strand on a shared track, in track spacings from its centre  |
+| `map.strand.h`               | `2`     | Line H's strand on a shared track, in track spacings from its centre  |
 
 <!-- /tokens -->
 

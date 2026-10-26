@@ -11,6 +11,14 @@
     "locate": {
       "size": "icon.size.400",
       "use": "Centre the map on the network"
+    },
+    "pause": {
+      "size": "icon.size.400",
+      "use": "Stop the vehicles moving on the map"
+    },
+    "play": {
+      "size": "icon.size.400",
+      "use": "Set the vehicles moving again"
     }
   },
   "Actions": {
