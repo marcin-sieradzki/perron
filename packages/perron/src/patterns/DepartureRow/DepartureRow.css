@@ -1,7 +1,8 @@
 /* DepartureRow: a grid of three columns and two lines (docs/patterns/departure-row.md, Tokens): the
    badge at the start across both lines, the destination over the state in the middle, the
-   countdown, or the interval, over the timetabled time and the delay at the end. No fill, border or radius: a
-   divider between rows is the list's. LineBadge, VehicleDot and Delay keep their own colours. */
+   countdown, or the interval, over the timetabled time, or the expected time, and the delay at the
+   end. No fill, border or radius: a divider between rows is the list's. LineBadge, VehicleDot and
+   Delay keep their own colours. */
 .pn-DepartureRow {
   display: grid;
   /* CR-9: the middle column shrinks and wraps; the badge's and the countdown's never do */
@@ -75,12 +76,21 @@
   white-space: nowrap;
 }
 
-.pn-DepartureRow-time {
+/* CR-16: the expected time takes the timetabled time's type and colour, so the time the row shows
+   reads alike down the list, whichever of the two it is */
+.pn-DepartureRow-time,
+.pn-DepartureRow-expected {
   font: var(--perron-typography-data-sm);
   letter-spacing: var(--perron-typography-data-sm-tracking);
   font-variant-numeric: tabular-nums;
   color: var(--perron-color-text-secondary);
   white-space: nowrap;
+}
+
+/* CR-16: the timetabled time the expected one replaces stays, struck through, before it, which a
+   hidden "Timetabled" says to the ear */
+.pn-DepartureRow-time[data-superseded] {
+  text-decoration-line: line-through;
 }
 
 /* CR-12: the time's type, in a selector that outranks .pn-Delay's whichever stylesheet loads

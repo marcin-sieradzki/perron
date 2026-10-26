@@ -1,9 +1,10 @@
 'use client'
 // DepartureRow: one departure from a stop, as one row of the stop's list of departures: the line's
 // badge and where it goes, how fresh the vehicle's data is, and how soon it leaves, with its
-// timetabled time and how late it runs, or how often its line runs; a cancelled departure stays,
-// marked so, and a platform or track can join the second line. A pattern: plain elements over LineBadge, VehicleDot and
-// Delay, never Base UI (CR-1). Spec: docs/patterns/departure-row.md.
+// timetabled time, or its expected time beside the timetabled one struck through, and how late it
+// runs, or how often its line runs; a cancelled departure stays, marked so, and a platform or track
+// can join the second line. A pattern: plain elements over LineBadge, VehicleDot and Delay, never
+// Base UI (CR-1). Spec: docs/patterns/departure-row.md.
 import type { ComponentPropsWithRef, ReactNode } from 'react'
 import { Delay } from '../../components/Delay/Delay.tsx'
 import type { DelayProps } from '../../components/Delay/Delay.tsx'
@@ -12,6 +13,7 @@ import type { LineBadgeProps } from '../../components/LineBadge/LineBadge.tsx'
 import { VehicleDot } from '../../components/VehicleDot/VehicleDot.tsx'
 import type { VehicleDotProps } from '../../components/VehicleDot/VehicleDot.tsx'
 import { useOwnedStrings } from '../../PerronProvider.tsx'
+import { VisuallyHidden } from '../../parts/VisuallyHidden/VisuallyHidden.tsx'
 import { UnknownValue } from '../../internal/UnknownValue.tsx'
 import { classes, given } from '../../internal/nodes.ts'
 import { interpolate } from '../../internal/strings.ts'
@@ -67,9 +69,18 @@ export interface DepartureRowProps extends Omit<ComponentPropsWithRef<'div'>, 'c
   platform?: ReactNode
   /**
    * The timetabled time of the departure, 24-hour `HH:MM`, such as `'08:14'`, shown under the
-   * countdown. Left out, the row shows no time.
+   * countdown, or struck through before the `expected` time when the row shows one that differs.
+   * Left out, the row shows no timetabled time.
    */
   time?: string
+  /**
+   * The time real-time data expects the departure to leave, 24-hour `HH:MM`, such as `'08:16'`, as
+   * StopTimeline's stops take it. For `live`, `ageing` and `estimated`, shown in the timetabled
+   * time's place, after a "~" for `estimated`, with `time` struck through before it when the two
+   * differ. Not shown for `timetable-only` or `no-signal`, whose expected time is unknown, when
+   * `cancelled`, or when `interval` is given; the row then shows `time` alone.
+   */
+  expected?: string
   /**
    * How late the departure runs, in minutes, as Delay's `minutes` takes it: positive late,
    * negative early, `0` on time, `null` unknown. Left out, no Delay, except for a `timetable-only`
@@ -87,6 +98,12 @@ export interface DepartureRowProps extends Omit<ComponentPropsWithRef<'div'>, 'c
    * @default The locale's
    */
   unknownLabel?: string
+  /**
+   * Overrides "Timetabled {time}", heard in place of the timetabled time struck through before the
+   * expected one, "Timetabled 08:14"; `{time}` is the timetabled time
+   * @default The locale's
+   */
+  timetabledTimeLabel?: string
   /**
    * Overrides "Cancelled", shown and heard in place of the state's word when `cancelled`
    * @default The locale's
@@ -183,10 +200,12 @@ export interface DepartureRowProps extends Omit<ComponentPropsWithRef<'div'>, 'c
     countdown?: ComponentPropsWithRef<'span'>
     /** Props for the `interval` part */
     interval?: ComponentPropsWithRef<'span'>
-    /** Props for the `schedule` part, the time and the delay */
+    /** Props for the `schedule` part, the time, the expected time and the delay */
     schedule?: ComponentPropsWithRef<'div'>
     /** Props for the `time` part */
     time?: ComponentPropsWithRef<'time'>
+    /** Props for the `expected` part */
+    expected?: ComponentPropsWithRef<'time'>
     /** Props for the `delay` part, the Delay */
     delay?: Omit<
       DelayProps,
@@ -202,8 +221,8 @@ export interface DepartureRowProps extends Omit<ComponentPropsWithRef<'div'>, 'c
 
 /**
  * One departure from a stop, as one row of the stop's list: the line's badge and where it goes, how
- * fresh the vehicle's data is, and how soon it leaves, with its timetabled time and how late it
- * runs, or how often its line runs.
+ * fresh the vehicle's data is, and how soon it leaves, with its timetabled time, or its expected
+ * time beside the timetabled one struck through, and how late it runs, or how often its line runs.
  */
 export function DepartureRow({
   variant = 'live',
@@ -212,12 +231,14 @@ export function DepartureRow({
   destination,
   countdown,
   time,
+  expected,
   delay,
   interval,
   cancelled = false,
   platform,
   nowLabel,
   unknownLabel,
+  timetabledTimeLabel,
   cancelledLabel,
   everyLabel,
   everyRangeLabel,
@@ -238,6 +259,7 @@ export function DepartureRow({
   const strings = useOwnedStrings({
     now: nowLabel,
     unknown: unknownLabel,
+    timetabledTime: timetabledTimeLabel,
     cancelled: cancelledLabel,
     every: everyLabel,
     everyRange: everyRangeLabel,
@@ -258,6 +280,7 @@ export function DepartureRow({
     interval: intervalProps,
     schedule: scheduleProps,
     time: timeProps,
+    expected: expectedProps,
     delay: delayProps,
   } = slotProps ?? {}
 
@@ -269,7 +292,15 @@ export function DepartureRow({
   // CR-5: these two states never know the delay; CR-13: a cancelled departure runs no delay
   const delayUnknown = !delayKnown(variant)
   const showsDelay = !runsToInterval && !cancelled && (delayUnknown || delay !== undefined)
+  // CR-16: the expected time counts where the state knows it; it takes a part of its own only when
+  // it differs from the timetabled time, which then stays before it, struck through, or when there
+  // is no timetabled time; the same as it, the timetabled time's part shows it
+  const followsExpected = !runsToInterval && !cancelled && !delayUnknown && given(expected)
+  const superseded = followsExpected && given(time) && time !== expected
+  const showsExpected = followsExpected && (superseded || !given(time))
   const showsTime = !runsToInterval && given(time)
+  // CR-4, CR-16: the time shown is an estimate, the expected time of an estimated row
+  const timeEstimate = estimate && followsExpected && !superseded
 
   // CR-3: unknown, "Now" under 45 seconds, or whole minutes, the figure and the unit apart
   let shown: ReactNode
@@ -377,18 +408,44 @@ export function DepartureRow({
         </span>
       )}
       {/* CR-10: the second line at the end only when it holds a time or a Delay */}
-      {(showsTime || showsDelay) && (
+      {(showsTime || showsExpected || showsDelay) && (
         <div
           {...scheduleProps}
           className={classes('pn-DepartureRow-schedule', scheduleProps?.className)}
         >
+          {/* CR-16: the ear hears the locale's template filled with the struck time, which says
+              what the strike-through tells the eye, and then the expected time; the struck time
+              itself is hidden from the ear, so it is heard once */}
+          {/* the text spaces keep the hidden words, the struck time and the expected one three
+              runs apart in `textContent`; the flex row draws no space of its own */}
+          {superseded && (
+            <>
+              <VisuallyHidden>{interpolate(strings.timetabledTime, { time })}</VisuallyHidden>{' '}
+            </>
+          )}
           {showsTime && (
             <time
               {...timeProps}
               className={classes('pn-DepartureRow-time', timeProps?.className)}
               dateTime={time}
+              // only when the expected time takes its place, so a caller's own `aria-hidden` stays
+              // otherwise; `data-superseded` is a bare attribute
+              {...(superseded ? { 'aria-hidden': true, 'data-superseded': '' } : {})}
             >
+              {timeEstimate && <span aria-hidden="true">~</span>}
               {time}
+            </time>
+          )}
+          {superseded && ' '}
+          {showsExpected && (
+            <time
+              {...expectedProps}
+              className={classes('pn-DepartureRow-expected', expectedProps?.className)}
+              dateTime={expected}
+            >
+              {/* CR-4, CR-16: an estimated time's "~", which the state's word says to the ear */}
+              {estimate && <span aria-hidden="true">~</span>}
+              {expected}
             </time>
           )}
           {showsDelay && (

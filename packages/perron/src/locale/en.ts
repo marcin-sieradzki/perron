@@ -147,6 +147,12 @@ export const en = {
    * as in "08:13, Expected 08:16". `{time}` is the expected time.
    */
   expectedTime: 'Expected {time}',
+  /**
+   * A departure row: its timetabled time, struck through before the expected time, heard in place
+   * of the struck time the eye reads, as in "Timetabled 08:14 08:16". `{time}` is the timetabled
+   * time.
+   */
+  timetabledTime: 'Timetabled {time}',
   /** A vehicle table: the header of the column of each vehicle's line. */
   lineColumn: 'Line',
   /** A vehicle table: the header of the column of where each vehicle is going. */
@@ -201,6 +207,12 @@ export const en = {
    * "Vehicle positions · updated 08:09:40, may be out of date".
    */
   sourceOutOfDate: 'updated {time}, may be out of date',
+  /**
+   * A source line: the app's own words of what a source's time is of, when the app judges it may
+   * be out of date, as in "Rejseplanen · departures 08:14:20, may be out of date". `{label}` is the
+   * caller's label, its time filled in.
+   */
+  sourceLabelOutOfDate: '{label}, may be out of date',
   /**
    * A status line: the time of the data a screen shows, first in its line, as in "Updated
    * 08:14:05". `{time}` is the caller's time, or "—" while it is unknown.

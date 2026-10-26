@@ -869,6 +869,12 @@
           "string"
         ]
       },
+      "expected": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
       "interval": {
         "optional": true,
         "type": [
@@ -950,7 +956,7 @@
       "slotProps": {
         "optional": true,
         "type": [
-          "{ badge?: Omit<LineBadgeProps, \"children\" | \"line\" | \"size\"> | undefined; destination?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; status?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; dot?: Omit<VehicleDotProps, \"ageingLabel\" | \"estimatedLabel\" | \"line\" | \"liveLabel\" | \"noSignalLabel\" | \"size\" | \"timetableOnlyLabel\" | \"variant\"> | undefined; platform?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; countdown?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; interval?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; schedule?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; time?: DetailedHTMLProps<TimeHTMLAttributes<HTMLTimeElement>, HTMLTimeElement> | undefined; delay?: Omit<DelayProps, \"delayUnknownLabel\" | \"minutes\" | \"minutesEarlyLabel\" | \"minutesLateLabel\" | \"minutesUnitLabel\" | \"onTimeLabel\"> | undefined; }"
+          "{ badge?: Omit<LineBadgeProps, \"children\" | \"line\" | \"size\"> | undefined; destination?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; status?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; dot?: Omit<VehicleDotProps, \"ageingLabel\" | \"estimatedLabel\" | \"line\" | \"liveLabel\" | \"noSignalLabel\" | \"size\" | \"timetableOnlyLabel\" | \"variant\"> | undefined; platform?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; countdown?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; interval?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; schedule?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; time?: DetailedHTMLProps<TimeHTMLAttributes<HTMLTimeElement>, HTMLTimeElement> | undefined; expected?: DetailedHTMLProps<TimeHTMLAttributes<HTMLTimeElement>, HTMLTimeElement> | undefined; delay?: Omit<DelayProps, \"delayUnknownLabel\" | \"minutes\" | \"minutesEarlyLabel\" | \"minutesLateLabel\" | \"minutesUnitLabel\" | \"onTimeLabel\"> | undefined; }"
         ]
       },
       "time": {
@@ -960,6 +966,12 @@
         ]
       },
       "timetableOnlyLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "timetabledTimeLabel": {
         "optional": true,
         "type": [
           "string"
@@ -3396,6 +3408,12 @@
         "optional": true,
         "type": [
           "{ paused?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; source?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; name?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; separator?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; time?: DetailedHTMLProps<TimeHTMLAttributes<HTMLTimeElement>, HTMLTimeElement> | undefined; }"
+        ]
+      },
+      "sourceLabelOutOfDateLabel": {
+        "optional": true,
+        "type": [
+          "string"
         ]
       },
       "sourceOutOfDateLabel": {
