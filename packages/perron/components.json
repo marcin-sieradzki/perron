@@ -446,6 +446,15 @@
     "dependsOn": ["Brand", "Stat", "Surface"]
   },
   {
+    "name": "TopBar",
+    "layer": "pattern",
+    "category": "Shell",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Patterns/TopBar",
+    "dependsOn": ["Surface", "Brand", "Text", "FilterChip", "IconButton", "LinkButton"]
+  },
+  {
     "name": "Field",
     "layer": "component",
     "category": "Inputs",
