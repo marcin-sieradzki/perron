@@ -166,6 +166,192 @@ export const Estimated: Story = {
   },
 }
 
+/**
+ * What a screen reader reads of a row's schedule: its children in DOM order, each one's text apart,
+ * those hidden from the ear left out.
+ */
+const scheduleRead = (row: Element) =>
+  [...(part(row, 'schedule')?.children ?? [])]
+    .filter((child) => !isInaccessible(child))
+    .map(heard)
+    .join(' ')
+
+/**
+ * A bus running two minutes late: its expected time in the timetabled time's place, the timetabled
+ * one struck through before it.
+ */
+export const Expected: Story = {
+  args: { variant: 'live', countdown: 360, expected: '08:16', delay: 2 },
+  play: async ({ canvasElement, args, step }) => {
+    const row = rowIn(canvasElement)
+    const shows = (props: Partial<DepartureRowProps>) =>
+      staticRow(<DepartureRow {...args} {...props} />)
+    await step(
+      'the timetabled time is struck through before the expected one (CR-16)',
+      async () => {
+        const time = part(row, 'time')!
+        const expected = part(row, 'expected')!
+        await expect(time.tagName).toBe('TIME')
+        await expect(time).toHaveAttribute('datetime', '08:14')
+        await expect(time).toHaveAttribute('data-superseded', '')
+        await expect(struck(time)).toBe(true)
+        await expect(expected.tagName).toBe('TIME')
+        await expect(expected).toHaveAttribute('datetime', '08:16')
+        await expect(expected.textContent).toBe('08:16')
+        await expect(struck(expected)).toBe(false)
+        await expect(time.compareDocumentPosition(expected)).toBe(Node.DOCUMENT_POSITION_FOLLOWING)
+        await expect(part(row, 'schedule')!.lastElementChild).toBe(part(row, 'delay'))
+      },
+    )
+    await step('it is heard "Timetabled 08:14", then the expected time', async () => {
+      await expect(isInaccessible(part(row, 'time')!)).toBe(true)
+      await expect(scheduleRead(row)).toBe('Timetabled 08:14 08:16 2 min late')
+      await expect(heard(part(row, 'expected')!)).toBe('08:16')
+    })
+    await step(
+      'the expected time takes the time\'s type and colour, and no "~" when live',
+      async () => {
+        const time = getComputedStyle(part(row, 'time')!)
+        const expected = getComputedStyle(part(row, 'expected')!)
+        for (const property of [
+          'font-size',
+          'line-height',
+          'font-weight',
+          'letter-spacing',
+          'color',
+        ])
+          await expect(expected.getPropertyValue(property)).toBe(time.getPropertyValue(property))
+        await expect(expected.color).toBe(colour('--perron-color-text-secondary'))
+        await expect(expected.fontVariantNumeric).toBe('tabular-nums')
+        await expect(expected.whiteSpace).toBe('nowrap')
+        await expect(row.textContent).not.toContain('~')
+      },
+    )
+    await step('ageing shows it alike, and estimated puts a hidden "~" before it', async () => {
+      const ageing = shows({ variant: 'ageing' })
+      await expect(part(ageing, 'time')).toHaveAttribute('data-superseded', '')
+      await expect(scheduleRead(ageing)).toBe('Timetabled 08:14 08:16 2 min late')
+      const estimated = shows({ variant: 'estimated' })
+      const expected = part(estimated, 'expected')!
+      await expect(expected.textContent).toBe('~08:16')
+      await expect(expected.firstElementChild).toHaveAttribute('aria-hidden', 'true')
+      await expect(expected).toHaveAttribute('datetime', '08:16')
+      await expect(scheduleRead(estimated)).toBe('Timetabled 08:14 08:16 2 min late')
+      await expect(heard(part(estimated, 'status')!)).toBe('Estimated')
+    })
+    await step('timetable-only and no-signal show the timetabled time alone', async () => {
+      for (const variant of ['timetable-only', 'no-signal'] as const) {
+        const root = shows({ variant })
+        await expect(part(root, 'expected')).toBeNull()
+        await expect(part(root, 'time')).not.toHaveAttribute('data-superseded')
+        await expect(part(root, 'time')).not.toHaveAttribute('aria-hidden')
+        await expect(scheduleRead(root)).toBe('08:14 Delay unknown')
+      }
+    })
+    await step('an expected time the same as the timetabled one shows once, unstruck', async () => {
+      const same = shows({ expected: '08:14', delay: 0 })
+      await expect(part(same, 'time')).toBeNull()
+      await expect(part(same, 'expected')!.textContent).toBe('08:14')
+      await expect(same.querySelector('[data-superseded]')).toBeNull()
+      await expect(scheduleRead(same)).toBe('08:14 On time')
+      await expect(
+        part(shows({ variant: 'estimated', expected: '08:14' }), 'expected')!.textContent,
+      ).toBe('~08:14')
+    })
+    await step('with time left out, the expected time stands alone', async () => {
+      const { time: _, ...rest } = args
+      const root = staticRow(<DepartureRow {...rest} />)
+      await expect(part(root, 'time')).toBeNull()
+      await expect(scheduleRead(root)).toBe('08:16 2 min late')
+    })
+    await step('an empty expected time is left out, and the timetabled time stays', async () => {
+      const root = shows({ expected: '' })
+      await expect(part(root, 'expected')).toBeNull()
+      await expect(part(root, 'time')).not.toHaveAttribute('data-superseded')
+      await expect(scheduleRead(root)).toBe('08:14 2 min late')
+    })
+    await step('a cancelled row strikes its timetabled time as before, and no expected time', () =>
+      mounted(canvasElement, <DepartureRow {...args} cancelled />, async (host) => {
+        const found = await waitFor(() => rowIn(host))
+        const time = part(found, 'time')!
+        await expect(part(found, 'expected')).toBeNull()
+        await expect(time).not.toHaveAttribute('data-superseded')
+        await expect(isInaccessible(time)).toBe(false)
+        await expect(struck(time)).toBe(true)
+        await expect(struck(part(found, 'countdown')!)).toBe(true)
+        await expect(readOf(found)).toBe('5C Husum Torv Cancelled 6 min 08:14')
+      }),
+    )
+    await step('with an interval, no time renders at all (CR-14)', async () => {
+      const root = shows({ interval: [3, 4] })
+      await expect(part(root, 'schedule')).toBeNull()
+      await expect(root.querySelector('time')).toBeNull()
+    })
+    await step('timetabledTimeLabel replaces the words heard, filled alike', async () => {
+      const root = shows({ timetabledTimeLabel: 'Planned {time}' })
+      await expect(scheduleRead(root)).toBe('Planned 08:14 08:16 2 min late')
+    })
+    await step(
+      "slotProps.expected's and slotProps.time's classes join after the parts' own",
+      async () => {
+        const root = shows({
+          slotProps: {
+            time: { className: 'caller-time' },
+            expected: { className: 'caller-expected' },
+          },
+        })
+        await expect([...part(root, 'expected')!.classList]).toEqual([
+          'pn-DepartureRow-expected',
+          'caller-expected',
+        ])
+        await expect([...part(root, 'time')!.classList]).toEqual([
+          'pn-DepartureRow-time',
+          'caller-time',
+        ])
+      },
+    )
+    await step('expected does not reach the root (CR-2)', async () => {
+      await expect(rootAttributes(<DepartureRow {...args} />)).toEqual(['class', 'data-variant'])
+    })
+    await step('in a 320 px container, the times and the delay stay on one line', () =>
+      mounted(
+        canvasElement,
+        <div style={{ inlineSize: 320 }}>
+          <DepartureRow
+            {...args}
+            variant="estimated"
+            destination="Københavns Lufthavn (Kastrup) Lufthavnsterminalen"
+            delay={12}
+            expected="08:26"
+          />
+        </div>,
+        async (host) => {
+          const found = await waitFor(() => rowIn(host))
+          const schedule = part(found, 'schedule')!
+          await expect(lines(part(found, 'time')!)).toBeLessThan(1.5)
+          await expect(lines(part(found, 'expected')!)).toBeLessThan(1.5)
+          await expect(part(found, 'delay')!.getBoundingClientRect().top).toBeLessThan(
+            part(found, 'time')!.getBoundingClientRect().bottom,
+          )
+          await expect(part(found, 'status')!.getBoundingClientRect().right).toBeLessThanOrEqual(
+            schedule.getBoundingClientRect().left,
+          )
+          await expect(found.scrollWidth).toBeLessThanOrEqual(found.clientWidth)
+        },
+      ),
+    )
+    await step("in every locale, every word is the dictionary's", () => {
+      for (const variant of ['live', 'estimated'] as const)
+        ownedStringsInEveryLocale(<DepartureRow {...args} variant={variant} />, [
+          '5C',
+          'Husum Torv',
+          '08:14',
+          '08:16',
+        ])
+    })
+  },
+}
+
 /** Every own prop at once, for the check that none reaches the root as an attribute (CR-2). */
 const EVERY_PROP = {
   variant: 'live',
@@ -174,10 +360,12 @@ const EVERY_PROP = {
   destination: 'Husum Torv',
   countdown: 240,
   time: '08:14',
+  expected: '08:14',
   delay: 0,
   cancelled: false,
   nowLabel: 'Leaving',
   unknownLabel: 'Not known',
+  timetabledTimeLabel: 'Planned {time}',
   cancelledLabel: 'Not running',
   everyLabel: 'Each {minutes} mins',
   everyRangeLabel: 'Each {from} or {to} mins',
@@ -826,6 +1014,7 @@ const DEPARTURES: (DepartureRowProps & { key: string })[] = [
     destination: 'Cityringen',
     countdown: 260,
     time: '08:13',
+    expected: '08:14',
     delay: 1,
   },
   {
@@ -836,6 +1025,7 @@ const DEPARTURES: (DepartureRowProps & { key: string })[] = [
     destination: 'Hellerup',
     countdown: 540,
     time: '08:15',
+    expected: '08:19',
     delay: 4,
   },
   {

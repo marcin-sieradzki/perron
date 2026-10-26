@@ -51,6 +51,7 @@ export const da: OwnedStrings = {
   nextStop: 'Næste stop',
   passed: 'Passeret',
   expectedTime: 'Forventet {time}',
+  timetabledTime: 'Planlagt {time}',
   lineColumn: 'Linje',
   destinationColumn: 'Destination',
   positionColumn: 'Position',
