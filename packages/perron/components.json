@@ -452,7 +452,7 @@
     "status": "designing",
     "baseUiParts": [],
     "penpotPath": "Patterns/TopBar",
-    "dependsOn": ["Surface", "Brand", "Text", "FilterChip", "IconButton", "LinkButton"]
+    "dependsOn": ["Surface", "Brand", "Text"]
   },
   {
     "name": "Field",

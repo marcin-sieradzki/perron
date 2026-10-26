@@ -1,0 +1,34 @@
+# Written by npm run factory; never by hand.
+component: TopBar
+layer: pattern
+deferred:
+  at: 2026-10-26T02:10:47.486Z
+stages:
+  brief:
+    status: pending
+    started: 2026-10-26T02:10:54.293Z
+    ended: 2026-10-26T02:19:59.973Z
+    pending: 10
+notes:
+  - stage: brief
+    at: 2026-10-26T02:19:59.973Z
+    direction: "Mylder's composition clips a chip's focus ring in its phone filters row, whose overflow-x: auto leaves no room above or at the sides; TopBar keeps focus.width plus focus.offset of room there, taken back by a negative margin, so the swap fixes it with nothing else moved."
+  - stage: brief
+    at: 2026-10-26T02:19:59.973Z
+    direction: Layout's page shell says the top bar is 'glass groups' holding a clock, and Typography gives typography.data-lg to the 'Top bar clock', but Mylder's composition is one glass panel with an 'Updated 08:14:05' line in typography.data-sm and no clock; a design run should settle the bar against those two pages and reword whichever it departs from.
+  - stage: brief
+    at: 2026-10-26T02:19:59.973Z
+    direction: TopBar's unknown time reads 'Updated —' with the dash as text, heard as the screen reader names it, rather than UnknownValue's 'Unknown' for the ear, because expectOwnedStrings can't read an owned phrase whose placeholder is filled with an element.
+  - stage: brief
+    at: 2026-10-26T02:19:59.973Z
+    questions: |-
+      1. Anatomy: Is the root a plain div on Surface's glass, not a header landmark, with the screen wrapping the bar in its header, as KioskBar leaves its landmark to its screen? Recommended: yes.
+      2. Anatomy: Is the bar one glass Surface holding every part, as Mylder's composition has it, rather than a glass group for each part as Layout's page shell words it? Recommended: yes.
+      3. Props: Does TopBar take a size of 'medium' | 'small', default 'medium', that the screen sets to small under breakpoint.phone, in place of Mylder's two media queries at 760 px? Recommended: yes.
+      4. Props: Does TopBar take its filters and tools as the caller's elements (the filters and tools slots) rather than data it renders into FilterChips, an IconButton and a LinkButton, so that its dependsOn is Surface, Brand and Text? Recommended: yes.
+      5. Props: Does the status line match SourceLine rather than compose it: its own time, paused and outOfDate props, SourceLine's words, order, separator and inks, but no source name and Mylder's typography.data-sm? Recommended: yes.
+      6. Props: Is time optional, the line reading 'Updated —' while it is left out, the '—' filling {time} as text with no dateTime? Recommended: yes.
+      7. Props: Does TopBar take a brandHref and render the Brand as <a href={brandHref}> when it is given, the brand alone when not? Recommended: yes.
+      8. Tokens: Is the status line in typography.data-sm and color.text.secondary, with 'Paused' in color.text.primary and the whole out-of-date phrase in color.text.warning, and no icon? Recommended: yes.
+      9. Owned strings: Are the new keys updated 'Updated {time}', updatedOutOfDate 'Updated {time}, may be out of date' and filters 'Filters', with sourcePaused and brandName reused? Recommended: yes.
+      10. Component rules: With size='small', are the groups in the DOM in the order identity, tools, filters, the order on screen, rather than Mylder's one DOM order with CSS order? Recommended: yes.
