@@ -70,6 +70,23 @@ const pausableBar = (props: MapControlsProps) => (
   </PerronProvider>
 )
 
+/**
+ * A zoom limit leaves the pause button enabled: mounted beside the story's bar at `limit`, it is
+ * neither dimmed nor announced as dimmed, and a click fires `onPausedChange` once.
+ */
+const pauseEnabledAt = (
+  canvasElement: HTMLElement,
+  limit: Pick<MapControlsProps, 'zoomInDisabled' | 'zoomOutDisabled'>,
+) =>
+  mounted(canvasElement, pausableBar(limit), async (host) => {
+    onPausedChange.mockClear()
+    const pause = await waitFor(() => within(host).getByRole('button', { name: 'Pause' }))
+    await expect(pause).not.toHaveAttribute('data-disabled')
+    await expect(pause).not.toHaveAttribute('aria-disabled', 'true')
+    await userEvent.click(pause)
+    await expect(onPausedChange).toHaveBeenCalledTimes(1)
+  })
+
 /** Tab into the bar from the top of the page, whatever a story before left focused. */
 const enter = async () => {
   ;(document.activeElement as HTMLElement | null)?.blur()
@@ -196,14 +213,7 @@ export const ZoomInDisabled: Story = {
     await userEvent.click(centerMap)
     await expect(onCenterMap).toHaveBeenCalledTimes(1)
     await leave(canvasElement)
-    // A zoom limit leaves the pause button enabled.
-    await mounted(canvasElement, pausableBar({ zoomInDisabled: true }), async (host) => {
-      const pause = await waitFor(() => within(host).getByRole('button', { name: 'Pause' }))
-      await expect(pause).not.toHaveAttribute('data-disabled')
-      await expect(pause).not.toHaveAttribute('aria-disabled', 'true')
-      await userEvent.click(pause)
-      await expect(onPausedChange).toHaveBeenCalledTimes(1)
-    })
+    await pauseEnabledAt(canvasElement, { zoomInDisabled: true })
   },
 }
 
@@ -220,13 +230,7 @@ export const ZoomOutDisabled: Story = {
     await userEvent.click(zoomIn)
     await expect(onZoomIn).toHaveBeenCalledTimes(1)
     await leave(canvasElement)
-    // A zoom limit leaves the pause button enabled.
-    await mounted(canvasElement, pausableBar({ zoomOutDisabled: true }), async (host) => {
-      const pause = await waitFor(() => within(host).getByRole('button', { name: 'Pause' }))
-      await expect(pause).not.toHaveAttribute('data-disabled')
-      await userEvent.click(pause)
-      await expect(onPausedChange).toHaveBeenCalledTimes(1)
-    })
+    await pauseEnabledAt(canvasElement, { zoomOutDisabled: true })
   },
 }
 
