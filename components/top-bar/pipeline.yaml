@@ -3,9 +3,6 @@ component: TopBar
 layer: pattern
 deferred:
   at: 2026-10-26T02:10:47.486Z
-needsHuman:
-  stage: review
-  reason: 'review round 4 found a P1 or a P2 after unblock granted one round past the cap (round 4): review round 4 found 1 P2 (components/top-bar/review.md)'
 stages:
   brief:
     status: done
@@ -13,11 +10,7 @@ stages:
     ended: 2026-10-26T02:20:56.299Z
   build:
     runs: 4
-    status: done
-    started: 2026-10-26T03:27:39.747Z
-    begun: c2b265874039f166c42641ee3bd5c721034dd53d6cb41880275453680396cf8a
-    spec: 06f89857896accf53ee535c73f49ef874d90324cc3ea666ac0dbcaf2beb0a4fe
-    ended: 2026-10-26T03:33:41.983Z
+    failing: review round 4 found 1 P2 (components/top-bar/review.md)
   review:
     rounds: 4
     sentBack: 4
@@ -26,11 +19,7 @@ stages:
       p1: 0
       p2: 1
       p3: 2
-    granted: 4
-    status: failed
-    started: 2026-10-26T03:34:24.439Z
-    ended: 2026-10-26T03:40:43.158Z
-    failing: review round 4 found 1 P2 (components/top-bar/review.md)
+    granted: 5
 notes:
   - stage: brief
     at: 2026-10-26T02:19:59.973Z
@@ -72,3 +61,6 @@ notes:
   - stage: review
     at: 2026-10-26T03:27:30.346Z
     unblocked: '3 review rounds found a P1 or a P2; the last: review round 3 found 1 P2 (components/top-bar/review.md)'
+  - stage: review
+    at: 2026-10-26T03:40:51.340Z
+    unblocked: 'review round 4 found a P1 or a P2 after unblock granted one round past the cap (round 4): review round 4 found 1 P2 (components/top-bar/review.md)'
