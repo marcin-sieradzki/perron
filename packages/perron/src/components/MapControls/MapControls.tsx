@@ -85,6 +85,13 @@ export interface MapControlsProps extends Omit<
    */
   zoomOutDisabled?: boolean
   /**
+   * Whether the centre button is disabled, such as before the map can be moved, while the pause
+   * button stays enabled. It stays focusable and announces that it is dimmed, and a click fires no
+   * `onCenterMap`.
+   * @default false
+   */
+  centerMapDisabled?: boolean
+  /**
    * Called when the zoom in button is pressed, by click, Enter or Space, with the click event. The
    * screen zooms the map in by one step.
    */
@@ -160,6 +167,7 @@ export function MapControls({
   disabled = false,
   zoomInDisabled = false,
   zoomOutDisabled = false,
+  centerMapDisabled = false,
   onZoomIn,
   onZoomOut,
   onCenterMap,
@@ -214,7 +222,7 @@ export function MapControls({
         color="neutral"
         startIcon={LOCATE}
         aria-label={strings.centerMap}
-        disabled={disabled}
+        disabled={disabled || centerMapDisabled}
         onClick={onCenterMap}
       />
       {/* The pause button is the screen's to ask for: with no handler, the bar is its three buttons. */}

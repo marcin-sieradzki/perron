@@ -2014,6 +2014,12 @@
       "Omit< ToolbarProps, 'orientation' | 'disabled' | 'children' | 'className' | 'style' | 'ref' >"
     ],
     "props": {
+      "centerMapDisabled": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
       "centerMapLabel": {
         "optional": true,
         "type": [
