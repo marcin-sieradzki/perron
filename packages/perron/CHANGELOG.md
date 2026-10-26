@@ -1,5 +1,13 @@
 # @mylder/perron
 
+## 0.5.0
+
+### Minor Changes
+
+- 22f5566: Adds `map.strand.*`, one number per line (M1 to M4, A, B, C, E, F, H): its place from a shared track's centre, in steps of its mode's `map.track-spacing`, so an app draws lines that share a track side by side, in a fixed order, instead of on top of each other.
+- 22f5566: Adds the `pause` and `play` icons to the Map set, on the 16 px grid at `icon.size.400`, for the map's control that stops the vehicles moving and sets them moving again.
+- dfc0d48: Adds `TopBar`, and the owned strings `topBarUpdated`, `topBarUpdatedOutOfDate` and `topBarFilters`, in all four locales; a caller that supplies its own dictionaries adds them too.
+
 ## 0.4.0
 
 ### Minor Changes
