@@ -149,7 +149,7 @@ export const en = {
   expectedTime: 'Expected {time}',
   /**
    * A departure row: its timetabled time, struck through before the expected time, heard in place
-   * of the struck time the eye reads, as in "Timetabled 08:14, 08:16". `{time}` is the timetabled
+   * of the struck time the eye reads, as in "Timetabled 08:14 08:16". `{time}` is the timetabled
    * time.
    */
   timetabledTime: 'Timetabled {time}',

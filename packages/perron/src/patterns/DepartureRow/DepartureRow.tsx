@@ -292,11 +292,15 @@ export function DepartureRow({
   // CR-5: these two states never know the delay; CR-13: a cancelled departure runs no delay
   const delayUnknown = !delayKnown(variant)
   const showsDelay = !runsToInterval && !cancelled && (delayUnknown || delay !== undefined)
-  // CR-16: the expected time shows where the state knows it, in the timetabled time's place, and
-  // the timetabled time stays beside it, struck through, only when the two differ
-  const showsExpected = !runsToInterval && !cancelled && !delayUnknown && given(expected)
-  const superseded = showsExpected && given(time) && time !== expected
-  const showsTime = !runsToInterval && given(time) && (!showsExpected || superseded)
+  // CR-16: the expected time counts where the state knows it; it takes a part of its own only when
+  // it differs from the timetabled time, which then stays before it, struck through, or when there
+  // is no timetabled time; the same as it, the timetabled time's part shows it
+  const followsExpected = !runsToInterval && !cancelled && !delayUnknown && given(expected)
+  const superseded = followsExpected && given(time) && time !== expected
+  const showsExpected = followsExpected && (superseded || !given(time))
+  const showsTime = !runsToInterval && given(time)
+  // CR-4, CR-16: the time shown is an estimate, the expected time of an estimated row
+  const timeEstimate = estimate && followsExpected && !superseded
 
   // CR-3: unknown, "Now" under 45 seconds, or whole minutes, the figure and the unit apart
   let shown: ReactNode
@@ -412,23 +416,26 @@ export function DepartureRow({
           {/* CR-16: the ear hears the locale's template filled with the struck time, which says
               what the strike-through tells the eye, and then the expected time; the struck time
               itself is hidden from the ear, so it is heard once */}
+          {/* the text spaces keep the hidden words, the struck time and the expected one three
+              runs apart in `textContent`; the flex row draws no space of its own */}
           {superseded && (
-            <VisuallyHidden>{interpolate(strings.timetabledTime, { time })}</VisuallyHidden>
+            <>
+              <VisuallyHidden>{interpolate(strings.timetabledTime, { time })}</VisuallyHidden>{' '}
+            </>
           )}
           {showsTime && (
             <time
               {...timeProps}
               className={classes('pn-DepartureRow-time', timeProps?.className)}
               dateTime={time}
-              aria-hidden={superseded ? 'true' : undefined}
-              // a bare attribute, only when the expected time takes its place
-              data-superseded={superseded ? '' : undefined}
+              // only when the expected time takes its place, so a caller's own `aria-hidden` stays
+              // otherwise; `data-superseded` is a bare attribute
+              {...(superseded ? { 'aria-hidden': true, 'data-superseded': '' } : {})}
             >
+              {timeEstimate && <span aria-hidden="true">~</span>}
               {time}
             </time>
           )}
-          {/* a text space, so the struck time and the expected one are two words to
-              `textContent`; the flex row draws no space of its own */}
           {superseded && ' '}
           {showsExpected && (
             <time

@@ -207,6 +207,8 @@ export const Expected: Story = {
       await expect(isInaccessible(part(row, 'time')!)).toBe(true)
       await expect(scheduleRead(row)).toBe('Timetabled 08:14 08:16 2 min late')
       await expect(heard(part(row, 'expected')!)).toBe('08:16')
+      // the hidden words, the struck time and the expected one stay apart in the text
+      await expect(part(row, 'schedule')!.textContent).toMatch(/^Timetabled 08:14 08:14 08:16/)
     })
     await step(
       'the expected time takes the time\'s type and colour, and no "~" when live',
@@ -250,13 +252,31 @@ export const Expected: Story = {
     })
     await step('an expected time the same as the timetabled one shows once, unstruck', async () => {
       const same = shows({ expected: '08:14', delay: 0 })
-      await expect(part(same, 'time')).toBeNull()
-      await expect(part(same, 'expected')!.textContent).toBe('08:14')
+      await expect(part(same, 'expected')).toBeNull()
+      await expect(part(same, 'time')!.textContent).toBe('08:14')
+      await expect(part(same, 'time')).not.toHaveAttribute('aria-hidden')
       await expect(same.querySelector('[data-superseded]')).toBeNull()
       await expect(scheduleRead(same)).toBe('08:14 On time')
-      await expect(
-        part(shows({ variant: 'estimated', expected: '08:14' }), 'expected')!.textContent,
-      ).toBe('~08:14')
+      // the time part shows the time the state shows, an estimated one after its hidden "~"
+      const estimated = part(shows({ variant: 'estimated', expected: '08:14' }), 'time')!
+      await expect(estimated.textContent).toBe('~08:14')
+      await expect(estimated.firstElementChild).toHaveAttribute('aria-hidden', 'true')
+      await expect(heard(estimated)).toBe('08:14')
+      // with no expected time, an estimated row's timetabled time takes no "~"
+      await expect(part(shows({ variant: 'estimated', expected: '' }), 'time')!.textContent).toBe(
+        '08:14',
+      )
+    })
+    await step("a caller's slotProps.time aria-hidden stays where no time is struck", async () => {
+      for (const props of [
+        { expected: '08:14' },
+        { expected: '' },
+        { variant: 'timetable-only' as const },
+      ]) {
+        const root = shows({ ...props, slotProps: { time: { 'aria-hidden': true } } })
+        await expect(part(root, 'time')).toHaveAttribute('aria-hidden', 'true')
+        await expect(part(root, 'time')).not.toHaveAttribute('data-superseded')
+      }
     })
     await step('with time left out, the expected time stands alone', async () => {
       const { time: _, ...rest } = args
