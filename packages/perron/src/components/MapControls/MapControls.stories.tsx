@@ -1,6 +1,7 @@
 // MapControls' stories: the bar in each orientation, at each zoom limit, disabled, with its pause
-// button moving and paused, and with its words overridden. The buttons' hover, focus and pressed looks are ToolbarButton's, storied on the
-// Toolbar page; these render at rest, and their play tests check the behaviour.
+// button moving and paused, and with its words overridden. The buttons' hover, focus and pressed
+// looks are ToolbarButton's, storied on the Toolbar page; these render at rest, and their play
+// tests check the behaviour.
 import { useState } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Meta, StoryObj } from '@storybook/react-vite'
@@ -61,6 +62,13 @@ const buttonsIn = (canvasElement: HTMLElement) => {
     centerMap: canvas.getByRole('button', { name: 'Centre the map' }),
   }
 }
+
+/** A bar with the pause button, mounted beside the story's own, in English. */
+const pausableBar = (props: MapControlsProps) => (
+  <PerronProvider locale="en">
+    <MapControls {...props} onPausedChange={onPausedChange} />
+  </PerronProvider>
+)
 
 /** Tab into the bar from the top of the page, whatever a story before left focused. */
 const enter = async () => {
@@ -136,6 +144,30 @@ export const Horizontal: Story = {
     await userEvent.keyboard('{ArrowLeft}')
     await expect(zoomOut).toHaveFocus()
     await leave(canvasElement)
+    // With the pause button, the row's arrows reach it too, and both separators stand upright.
+    await mounted(canvasElement, pausableBar({ orientation: 'horizontal' }), async (host) => {
+      const bar = await waitFor(() => within(host).getByRole('toolbar'))
+      const [hostZoomIn, , hostCenterMap, pause] = within(bar).getAllByRole('button')
+      await expect(pause).toHaveAccessibleName('Pause')
+      for (const separator of within(bar).getAllByRole('separator'))
+        await expect(separator).toHaveAttribute('aria-orientation', 'vertical')
+      await expect(bar.querySelector('.pn-MapControls-pauseSeparator')).toHaveAttribute(
+        'aria-orientation',
+        'vertical',
+      )
+      hostZoomIn.focus()
+      await userEvent.keyboard('{ArrowLeft}')
+      await expect(pause).toHaveFocus()
+      await userEvent.keyboard('{ArrowLeft}')
+      await expect(hostCenterMap).toHaveFocus()
+      await userEvent.keyboard('{ArrowRight}')
+      await expect(pause).toHaveFocus()
+      await userEvent.keyboard('{ArrowDown}')
+      await expect(pause).toHaveFocus()
+      await userEvent.keyboard('{ArrowRight}')
+      await expect(hostZoomIn).toHaveFocus()
+      hostZoomIn.blur()
+    })
   },
 }
 
@@ -164,6 +196,14 @@ export const ZoomInDisabled: Story = {
     await userEvent.click(centerMap)
     await expect(onCenterMap).toHaveBeenCalledTimes(1)
     await leave(canvasElement)
+    // A zoom limit leaves the pause button enabled.
+    await mounted(canvasElement, pausableBar({ zoomInDisabled: true }), async (host) => {
+      const pause = await waitFor(() => within(host).getByRole('button', { name: 'Pause' }))
+      await expect(pause).not.toHaveAttribute('data-disabled')
+      await expect(pause).not.toHaveAttribute('aria-disabled', 'true')
+      await userEvent.click(pause)
+      await expect(onPausedChange).toHaveBeenCalledTimes(1)
+    })
   },
 }
 
@@ -180,6 +220,13 @@ export const ZoomOutDisabled: Story = {
     await userEvent.click(zoomIn)
     await expect(onZoomIn).toHaveBeenCalledTimes(1)
     await leave(canvasElement)
+    // A zoom limit leaves the pause button enabled.
+    await mounted(canvasElement, pausableBar({ zoomOutDisabled: true }), async (host) => {
+      const pause = await waitFor(() => within(host).getByRole('button', { name: 'Pause' }))
+      await expect(pause).not.toHaveAttribute('data-disabled')
+      await userEvent.click(pause)
+      await expect(onPausedChange).toHaveBeenCalledTimes(1)
+    })
   },
 }
 
@@ -255,6 +302,7 @@ export const Pausable: Story = {
         await expect(pause.button).toHaveClass('pn-ToolbarButton', 'pn-MapControls-pause')
         await expect(pause.path).toBe(PAUSE_PATH)
         await expect(pause.button).not.toHaveAttribute('aria-pressed')
+        await expect(pause.button).not.toHaveAttribute('data-pressed')
         await expect(
           pause.button.querySelector('svg')?.closest('[aria-hidden="true"]'),
         ).not.toBeNull()
@@ -285,6 +333,8 @@ export const Pausable: Story = {
         await expect(resume.button).toBe(pause.button)
         await expect(resume.path).toBe(PLAY_PATH)
         await expect(resume.button).toHaveFocus()
+        await expect(resume.button).not.toHaveAttribute('aria-pressed')
+        await expect(resume.button).not.toHaveAttribute('data-pressed')
       },
     )
     await step('Space asks to resume; the button is Pause again', async () => {
@@ -312,6 +362,7 @@ export const Paused: Story = {
       await expect(canvas.queryByRole('button', { name: 'Pause' })).toBeNull()
       await expect(resume.path).toBe(PLAY_PATH)
       await expect(resume.button).not.toHaveAttribute('aria-pressed')
+      await expect(resume.button).not.toHaveAttribute('data-pressed')
     })
     await step('a click asks to resume; the name waits for the screen to pass paused', async () => {
       await userEvent.click(resume.button)
