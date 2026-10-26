@@ -23,6 +23,7 @@ Every icon renders at one of three steps, set with `--perron-icon-size` (one of 
 - The `.perron-icon` class in `perron.css` sizes an inline SVG icon from `--perron-icon-size`, and keeps it from shrinking in a flex row.
 - An icon sits next to a word or inside a labelled button; it never carries meaning alone. Next to text it is hidden from screen readers (`aria-hidden="true"`). Alone, it needs an accessible name.
 - No icon font, no emoji, no third-party icon set. A new icon follows this page, joins `icons.json`, and the check confirms its grid, stroke and colour.
+- `aircraft` is also the map's aircraft glyph. The file is an icon like the others, a stroke on its 14 px grid; the map and the map's legend fill or rim its outline by data state and draw it at the map's own sizes, `map.aircraft-size.*`, as [Map](map.md#aircraft) says. That drawing is a map glyph, as a vehicle dot is, not an icon, so the fill and the sizes above don't bind it.
 
 ## The set
 
@@ -30,13 +31,14 @@ Every icon renders at one of three steps, set with `--perron-icon-size` (one of 
 
 ### Map
 
-| Icon                                                      | Name     | Grid  | Size                   | Use                                 |
-| --------------------------------------------------------- | -------- | ----- | ---------------------- | ----------------------------------- |
-| <img src="../../packages/perron/icons/plus.svg" alt="">   | `plus`   | 16 px | `icon.size.400`, 16 px | Zoom in; step a number field up     |
-| <img src="../../packages/perron/icons/minus.svg" alt="">  | `minus`  | 16 px | `icon.size.400`, 16 px | Zoom out; step a number field down  |
-| <img src="../../packages/perron/icons/locate.svg" alt=""> | `locate` | 16 px | `icon.size.400`, 16 px | Centre the map on the network       |
-| <img src="../../packages/perron/icons/pause.svg" alt="">  | `pause`  | 16 px | `icon.size.400`, 16 px | Stop the vehicles moving on the map |
-| <img src="../../packages/perron/icons/play.svg" alt="">   | `play`   | 16 px | `icon.size.400`, 16 px | Set the vehicles moving again       |
+| Icon                                                        | Name       | Grid  | Size                   | Use                                                                                                   |
+| ----------------------------------------------------------- | ---------- | ----- | ---------------------- | ----------------------------------------------------------------------------------------------------- |
+| <img src="../../packages/perron/icons/plus.svg" alt="">     | `plus`     | 16 px | `icon.size.400`, 16 px | Zoom in; step a number field up                                                                       |
+| <img src="../../packages/perron/icons/minus.svg" alt="">    | `minus`    | 16 px | `icon.size.400`, 16 px | Zoom out; step a number field down                                                                    |
+| <img src="../../packages/perron/icons/locate.svg" alt="">   | `locate`   | 16 px | `icon.size.400`, 16 px | Centre the map on the network                                                                         |
+| <img src="../../packages/perron/icons/pause.svg" alt="">    | `pause`    | 16 px | `icon.size.400`, 16 px | Stop the vehicles moving on the map                                                                   |
+| <img src="../../packages/perron/icons/play.svg" alt="">     | `play`     | 16 px | `icon.size.400`, 16 px | Set the vehicles moving again                                                                         |
+| <img src="../../packages/perron/icons/aircraft.svg" alt=""> | `aircraft` | 14 px | `icon.size.325`, 13 px | An aircraft seen from above, pointing north: on the map, turned to its track, and in the map's legend |
 
 ### Actions
 

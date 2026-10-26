@@ -14,6 +14,7 @@ Every vehicle is a vehicle dot, drawn in its line colour in one of five states. 
 - `color.data-state.no-signal` means a vehicle has gone silent. Use it for that alone.
 - No signal is the one state cut by a slash: a diagonal gap, `vehicle-dot.no-signal.cut-width` wide, from the top left of the dot to the bottom right, which shows the surface beneath. Live and no signal are both solid dots, so without the cut they would differ by colour alone, and they would look the same in forced colours, where Windows' contrast themes replace every colour. The cut takes ink away rather than adding it, so the map grows no busier, and it reads down to the smallest dot.
 - On the map, draw dots on a canvas, with a halo of `color.data-state.halo` and, for light line colours on the light map, a hairline of `color.data-state.outline`.
+- Aircraft carry these states too, all but timetable only, in a glyph of their own rather than a dot, with the same fill strength, grey and cut: see [Map](map.md#aircraft).
 
 ## No signal keeps moving
 

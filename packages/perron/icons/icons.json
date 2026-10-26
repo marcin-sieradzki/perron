@@ -19,6 +19,10 @@
     "play": {
       "size": "icon.size.400",
       "use": "Set the vehicles moving again"
+    },
+    "aircraft": {
+      "size": "icon.size.325",
+      "use": "An aircraft seen from above, pointing north: on the map, turned to its track, and in the map's legend"
     }
   },
   "Actions": {

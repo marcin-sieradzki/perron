@@ -208,6 +208,10 @@
   --perron-map-dot-radius-metro: 4.6px;
   --perron-map-dot-radius-stog: 4.8px;
   --perron-map-dot-radius-regional: 5.3px;
+  --perron-map-aircraft-size-air: 18px;
+  --perron-map-aircraft-size-ground: 14px;
+  --perron-map-aircraft-stroke-width-ageing: 1px;
+  --perron-map-aircraft-stroke-width-estimated: 1.2px;
   --perron-map-line-width-metro: 3.2px;
   --perron-map-line-width-stog: 2.5px;
   --perron-map-line-width-regional: 2.1px;
@@ -294,6 +298,7 @@
   --perron-color-map-rail: #BCC4C1;
   --perron-color-map-label: #66737A;
   --perron-color-map-water-label: #5F7A88;
+  --perron-color-map-aircraft: #B3127A;
   --perron-shadow-panel: 0px 1px 2px 0px rgba(18, 24, 27, 0.06), 0px 10px 30px 0px rgba(18, 24, 27, 0.1);
   --perron-shadow-thumb: 0px 1px 2px 0px rgba(0, 0, 0, 0.14);
 }
@@ -364,6 +369,7 @@
     --perron-color-map-rail: #323C41;
     --perron-color-map-label: #7E8B91;
     --perron-color-map-water-label: #4B6774;
+    --perron-color-map-aircraft: #F27BC8;
     --perron-shadow-panel: 0px 1px 2px 0px rgba(0, 0, 0, 0.35), 0px 14px 36px 0px rgba(0, 0, 0, 0.38);
     --perron-shadow-thumb: 0px 1px 2px 0px rgba(0, 0, 0, 0.4);
   }
@@ -434,6 +440,7 @@
   --perron-color-map-rail: #323C41;
   --perron-color-map-label: #7E8B91;
   --perron-color-map-water-label: #4B6774;
+  --perron-color-map-aircraft: #F27BC8;
   --perron-shadow-panel: 0px 1px 2px 0px rgba(0, 0, 0, 0.35), 0px 14px 36px 0px rgba(0, 0, 0, 0.38);
   --perron-shadow-thumb: 0px 1px 2px 0px rgba(0, 0, 0, 0.4);
 }

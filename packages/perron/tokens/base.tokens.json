@@ -1513,6 +1513,46 @@
         "$description": "Regional train dot radius on the map at the default zoom"
       }
     },
+    "aircraft-size": {
+      "$type": "dimension",
+      "$description": "The side of the aircraft glyph's box on the map at the default zoom: the icon's 14 px grid drawn at this size",
+      "air": {
+        "$type": "dimension",
+        "$value": {
+          "value": 18,
+          "unit": "px"
+        },
+        "$description": "Aircraft glyph box on the map at the default zoom, in the air"
+      },
+      "ground": {
+        "$type": "dimension",
+        "$value": {
+          "value": 14,
+          "unit": "px"
+        },
+        "$description": "Aircraft glyph box on the map at the default zoom, on the ground"
+      }
+    },
+    "aircraft-stroke-width": {
+      "$type": "dimension",
+      "$description": "Rim of the aircraft glyph, drawn inside its outline so the glyph keeps its outer size",
+      "ageing": {
+        "$type": "dimension",
+        "$value": {
+          "value": 1,
+          "unit": "px"
+        },
+        "$description": "Rim of an ageing aircraft, inside its outline"
+      },
+      "estimated": {
+        "$type": "dimension",
+        "$value": {
+          "value": 1.2,
+          "unit": "px"
+        },
+        "$description": "Outline of an estimated aircraft, inside its outline"
+      }
+    },
     "line-width": {
       "$type": "dimension",
       "metro": {

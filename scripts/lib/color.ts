@@ -3,14 +3,18 @@ const channel = (v: number) => {
   return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4
 }
 
-/** WCAG relative luminance of a `#RRGGBB` colour, 0 (black) to 1 (white). */
-export function relativeLuminance(hex: string) {
+/** The linear red, green and blue of a `#RRGGBB` colour, 0 to 1 each. */
+function linear(hex: string) {
   const m = /^#?([0-9a-f]{6})$/i.exec(hex)
   if (!m) throw new Error(`Expected #RRGGBB, got ${hex}`)
   const n = parseInt(m[1], 16)
-  return (
-    0.2126 * channel((n >> 16) & 255) + 0.7152 * channel((n >> 8) & 255) + 0.0722 * channel(n & 255)
-  )
+  return [16, 8, 0].map((shift) => channel((n >> shift) & 255))
+}
+
+/** WCAG relative luminance of a `#RRGGBB` colour, 0 (black) to 1 (white). */
+export function relativeLuminance(hex: string) {
+  const [r, g, b] = linear(hex)
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b
 }
 
 /** WCAG contrast ratio between two `#RRGGBB` colours, 1 to 21. */
@@ -39,4 +43,28 @@ export function composite(color: string, background: string) {
     })
     .join('')
     .toUpperCase()}`
+}
+
+/** A `#RRGGBB` colour in OKLab, where equal distances look about equally different. */
+function oklab(hex: string) {
+  const [r, g, b] = linear(hex)
+  const [l, m, s] = [
+    0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b,
+    0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b,
+    0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b,
+  ].map(Math.cbrt)
+  return [
+    0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s,
+    1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s,
+    0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s,
+  ]
+}
+
+/**
+ * How different two `#RRGGBB` colours look: their distance in OKLab, 0 for the same colour. The
+ * eye just tells apart about 0.02.
+ */
+export function colourDistance(a: string, b: string) {
+  const [p, q] = [oklab(a), oklab(b)]
+  return Math.hypot(p[0] - q[0], p[1] - q[1], p[2] - q[2])
 }
