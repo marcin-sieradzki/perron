@@ -87,7 +87,7 @@ const TOOLS = (
   </>
 )
 
-/** What the caller gives `Default`: every word the bar shows that isn't its own. */
+/** What the caller gives `MediumDefault`: every word the bar shows that isn't its own. */
 const CALLER_WORDS = [...MODES.map((mode) => mode.label), 'Dansk', 'About Mylder']
 
 const meta = {
@@ -172,7 +172,7 @@ const everySlot = (props: (name: string) => object) =>
  * The wide screen's bar at 08:14:05 with the five mode chips, the language link and About, in a
  * 1024 px container; the contract story renders it.
  */
-export const Default: Story = {
+export const MediumDefault: Story = {
   decorators: [inside(1024)],
   play: async ({ canvasElement, step }) => {
     const bar = await barIn(canvasElement)
@@ -394,8 +394,28 @@ export const Default: Story = {
   },
 }
 
-/** `Default`'s args on a phone: `size` small, in a 375 px container. */
-export const Small: Story = {
+/** The brand link of a wide bar under the pointer, at rest: the visual stage drives the hover. */
+export const MediumHover: Story = {
+  decorators: [inside(1024)],
+  play: async ({ canvasElement }) => {
+    const brand = part(await barIn(canvasElement), 'brand')!
+    await expect(stateFill(brand)).toBe('var(--perron-color-surface-hover)')
+    await expect(getComputedStyle(brand).cursor).toBe('pointer')
+  },
+}
+
+/** The brand link of a wide bar pressed, at rest: the visual stage drives the press. */
+export const MediumPressed: Story = {
+  decorators: [inside(1024)],
+  play: async ({ canvasElement }) => {
+    const brand = part(await barIn(canvasElement), 'brand')!
+    await expect(stateFill(brand, ':active')).toBe('var(--perron-color-surface-selected)')
+    await expect(pressedAfterHover(brand)).toBe(true)
+  },
+}
+
+/** `MediumDefault`'s args on a phone: `size` small, in a 375 px container. */
+export const SmallDefault: Story = {
   args: { size: 'small' },
   decorators: [inside(375)],
   play: async ({ canvasElement, step }) => {
@@ -498,7 +518,7 @@ export const Small: Story = {
   },
 }
 
-/** `Default`'s args with `paused`: "Paused · Updated 08:14:05". */
+/** `MediumDefault`'s args with `paused`: "Paused · Updated 08:14:05". */
 export const Paused: Story = {
   args: { paused: true },
   play: async ({ canvasElement }) => {
@@ -520,7 +540,7 @@ export const Paused: Story = {
   },
 }
 
-/** `Default`'s args with `time` 08:09:40 and `outOfDate`: "Updated 08:09:40, may be out of date". */
+/** `MediumDefault`'s args with `time` 08:09:40 and `outOfDate`: "Updated 08:09:40, may be out of date". */
 export const OutOfDate: Story = {
   args: { time: '08:09:40', outOfDate: true },
   play: async ({ canvasElement, step }) => {
@@ -577,7 +597,7 @@ export const OutOfDate: Story = {
   },
 }
 
-/** `Default`'s args with no `time`: the bar before the first answer, "Updated —". */
+/** `MediumDefault`'s args with no `time`: the bar before the first answer, "Updated —". */
 export const UnknownTime: Story = {
   args: { time: undefined },
   play: async ({ canvasElement }) => {
@@ -588,7 +608,7 @@ export const UnknownTime: Story = {
   },
 }
 
-/** `Default`'s args with no `brandHref` and no `filters`: the bar while the timetable loads. */
+/** `MediumDefault`'s args with no `brandHref` and no `filters`: the bar while the timetable loads. */
 export const NoFilters: Story = {
   args: { brandHref: undefined, filters: undefined },
   play: async ({ canvasElement }) => {
@@ -670,7 +690,7 @@ const LABELS = {
 } satisfies Partial<TopBarProps>
 
 /** `Paused`'s args with `outOfDate`, and every `*Label` given. */
-export const Labels: Story = {
+export const WithLabels: Story = {
   args: { paused: true, outOfDate: true, ...LABELS },
   play: async ({ canvasElement }) => {
     const bar = await barIn(canvasElement)

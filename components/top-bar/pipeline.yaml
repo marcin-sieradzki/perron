@@ -9,8 +9,12 @@ stages:
     started: 2026-10-26T02:20:36.146Z
     ended: 2026-10-26T02:20:56.299Z
   build:
-    runs: 2
-    failing: review round 2 found 1 P2 (components/top-bar/review.md)
+    runs: 3
+    status: done
+    started: 2026-10-26T03:11:18.909Z
+    begun: 5dd49490ea609183704a1676eed2b1ed6cf7e5644f6eefe07665b6c8cdbec792
+    spec: c2b265874039f166c42641ee3bd5c721034dd53d6cb41880275453680396cf8a
+    ended: 2026-10-26T03:17:51.159Z
   review:
     rounds: 2
     sentBack: 2
@@ -19,10 +23,6 @@ stages:
       p1: 0
       p2: 1
       p3: 2
-    status: failed
-    started: 2026-10-26T03:02:15.488Z
-    ended: 2026-10-26T03:10:45.562Z
-    failing: review round 2 found 1 P2 (components/top-bar/review.md)
 notes:
   - stage: brief
     at: 2026-10-26T02:19:59.973Z
@@ -58,3 +58,6 @@ notes:
   - stage: build
     at: 2026-10-26T03:01:08.509Z
     direction: "Retro: a glass pattern's padding, and TopBar's overflow-wrap over Text's, win over Surface's and Text's rules only by stylesheet order, since the contract's one-class-then-attributes selectors tie in specificity; a consumer bundler that reorders CSS chunks would flip them. A cascade layer for component CSS, or a Glass line that says how a pattern's padding wins, would make it hold."
+  - stage: build
+    at: 2026-10-26T03:17:51.159Z
+    direction: "Shared tooling gap for the retro: the visual stage (scripts/visual.ts, drive) hovers and presses a State variant's story on the root, .pn-TopBar, at its centre, so for TopBar's MediumHover and MediumPressed it would hover a chip, not the brand link whose looks the State names; a code map that names the part a State drives on would let it check a pattern whose interactive part is inside it."

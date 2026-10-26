@@ -1,8 +1,9 @@
 /* TopBar: the brand and the status line, the filters and the tools in one wrapping row on Surface's
-   glass (docs/patterns/top-bar.md, Tokens), one row on a wide screen and two on a phone. Every row
-   is at rest: the bar draws no interactive part of its own. No fill, edge, radius or shadow beyond
-   Surface's, which it only pads, and no position, inset, outer margin or z-index: the bar sizes to
-   its container and its screen places it (CR-2, CR-14, CR-15). */
+   glass (docs/patterns/top-bar.md, Tokens), one row on a wide screen and two on a phone. The one
+   part it draws that a pointer presses is the brand as a link, with its hover and pressed fills on
+   a radius.md box; every other part is at rest. No fill, edge, radius or shadow beyond Surface's,
+   which it only pads, and no position, inset, outer margin or z-index: the bar sizes to its
+   container and its screen places it (CR-2, CR-14, CR-15). */
 
 .pn-TopBar {
   display: flex;
