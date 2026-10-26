@@ -12,10 +12,11 @@
   row-gap: var(--perron-space-100);
 }
 
-/* One row on a wide screen, flush top and bottom */
+/* One row on a wide screen */
 .pn-TopBar[data-size='medium'] {
   min-block-size: var(--perron-size-top-bar);
-  padding-block: 0;
+  /* a wrapped bar's first and last rows keep off the glass's edge; one row stays size.top-bar */
+  padding-block: var(--perron-space-100);
   padding-inline: var(--perron-space-400);
 }
 
@@ -34,8 +35,30 @@
 }
 
 .pn-TopBar[data-size='small'] .pn-TopBar-identity {
+  /* CR-3: it takes the room the tools leave, so the tools keep the first row */
+  flex: 1 1 0;
   flex-direction: column;
   align-items: flex-start;
+  min-inline-size: 0;
+}
+
+/* The brand as a link, with brandHref: a quiet control's pointer feedback, on a box padded at its
+   sides and taken back by the margin, so the lockup stays where it was (Pointer feedback) */
+.pn-TopBar-brand[href] {
+  margin-inline: calc(-1 * var(--perron-space-100));
+  padding-inline: var(--perron-space-100);
+  border-radius: var(--perron-radius-md);
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .pn-TopBar-brand[href]:hover {
+    background-color: var(--perron-color-surface-hover);
+  }
+}
+
+.pn-TopBar-brand[href]:active {
+  background-color: var(--perron-color-surface-selected);
 }
 
 /* CR-10: the line breaks at its spaces only when it is wider than the bar, keeping whole words */
@@ -48,7 +71,7 @@
 }
 
 /* The whole out-of-date phrase, one owned string, in warning ink */
-.pn-TopBar-status[data-out-of-date] .pn-TopBar-time {
+.pn-TopBar[data-out-of-date] .pn-TopBar-time {
   color: var(--perron-color-text-warning);
 }
 

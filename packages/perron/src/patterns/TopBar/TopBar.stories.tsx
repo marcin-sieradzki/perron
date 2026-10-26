@@ -14,7 +14,17 @@ import { LinkButton } from '../../components/LinkButton/LinkButton.tsx'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { dictionaries, type Locale } from '../../locale/index.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
-import { colour, frames, heard, icon, lines, mounted, resolve } from '../../testing/stories.ts'
+import {
+  colour,
+  frames,
+  heard,
+  icon,
+  lines,
+  mounted,
+  pressedAfterHover,
+  resolve,
+  stateFill,
+} from '../../testing/stories.ts'
 import { TopBar } from './TopBar.tsx'
 import type { TopBarProps } from './TopBar.tsx'
 
@@ -192,6 +202,15 @@ export const Default: Story = {
       await expect(brand).toHaveClass('pn-Brand')
       await expect(brand).toHaveAttribute('data-variant', 'full')
       await expect(within(canvasElement).getByRole('link', { name: 'Mylder' })).toBe(brand)
+      // a quiet control's pointer feedback, the press a step past the hover (Pointer feedback)
+      await expect(stateFill(brand)).toBe('var(--perron-color-surface-hover)')
+      await expect(stateFill(brand, ':active')).toBe('var(--perron-color-surface-selected)')
+      await expect(pressedAfterHover(brand)).toBe(true)
+      await expect(getComputedStyle(brand).cursor).toBe('pointer')
+      // the box padded at its sides and taken back, so the lockup sits where the identity starts
+      const mark = brand.querySelector('.pn-Brand-mark')!.getBoundingClientRect()
+      const start = part(bar, 'identity')!.getBoundingClientRect().left
+      await expect(mark.left).toBeCloseTo(start, 0)
     })
     await step(
       'the status line: "Updated 08:14:05" in data-sm and secondary ink (CR-4)',
@@ -214,8 +233,8 @@ export const Default: Story = {
         // one owned phrase, one text run
         await expect(time.childNodes).toHaveLength(1)
         await expect(time.firstChild?.nodeType).toBe(Node.TEXT_NODE)
-        await expect(status).not.toHaveAttribute('data-paused')
-        await expect(status).not.toHaveAttribute('data-out-of-date')
+        await expect(bar).not.toHaveAttribute('data-paused')
+        await expect(bar).not.toHaveAttribute('data-out-of-date')
         await expect(part(bar, 'paused')).toBeNull()
       },
     )
@@ -312,7 +331,7 @@ export const Default: Story = {
         async (host) => {
           const own = await barIn(host)
           await expect(own.getAttributeNames().sort()).toEqual(
-            ['class', 'data-size', 'data-variant'].sort(),
+            ['class', 'data-out-of-date', 'data-paused', 'data-size', 'data-variant'].sort(),
           )
         },
       )
@@ -351,7 +370,7 @@ export const Default: Story = {
             {
               paused: { children: 'Caller paused' },
               separator: { children: 'Caller separator' },
-              status: { 'data-paused': 'caller', children: 'Caller status' },
+              status: { children: 'Caller status' },
               time: { dateTime: '23:59:59', children: 'Caller time' },
               filters: { 'aria-label': 'Caller filters', children: 'Caller filters' },
               tools: { children: 'Caller tools' },
@@ -363,7 +382,7 @@ export const Default: Story = {
           const own = await barIn(host)
           await expect(own.textContent).not.toContain('Caller')
           await expect(heard(part(own, 'status')!)).toBe('Paused · Updated 08:14:05')
-          await expect(part(own, 'status')).toHaveAttribute('data-paused', '')
+          await expect(own).toHaveAttribute('data-paused', '')
           await expect(part(own, 'time')).toHaveAttribute('dateTime', '08:14:05')
           await expect(part(own, 'filters')).toHaveAttribute('aria-label', 'Filters')
           // the brand's variant is the slot's to pick (CR-5)
@@ -392,7 +411,8 @@ export const Small: Story = {
       await expect(groupsOf(bar)).toEqual(['identity', 'tools', 'filters'])
       // the status line under the brand
       await expect(status.top).toBeGreaterThanOrEqual(brand.bottom - 1)
-      await expect(status.left).toBeCloseTo(brand.left, 0)
+      const mark = part(bar, 'brand')!.querySelector('.pn-Brand-mark')!.getBoundingClientRect()
+      await expect(status.left).toBeCloseTo(mark.left, 0)
       // the tools end the first row, the filters take the second
       const identity = part(bar, 'identity')!.getBoundingClientRect()
       await expect(tools.top).toBeLessThan(identity.bottom)
@@ -436,6 +456,28 @@ export const Small: Story = {
       await expect(chip.bottom + ringRoom()).toBeLessThanOrEqual(box.bottom)
       first.blur()
     })
+    await step(
+      'at 320 px, a long status line leaves the tools on the first row (CR-3)',
+      async () => {
+        await mounted(
+          canvasElement,
+          <PerronProvider locale="da">
+            <div style={{ inlineSize: 320 }}>
+              <TopBar size="small" brandHref="/en" time="08:09:40" paused outOfDate tools={TOOLS} />
+            </div>
+          </PerronProvider>,
+          async (host) => {
+            const own = await barIn(host)
+            const identity = part(own, 'identity')!.getBoundingClientRect()
+            const group = part(own, 'tools')!.getBoundingClientRect()
+            await expect(group.top).toBeLessThan(identity.bottom)
+            await expect(lines(part(own, 'status')!)).toBeGreaterThan(1)
+            await expect(own.scrollWidth).toBe(own.clientWidth)
+            await expect(group.right).toBeLessThanOrEqual(own.getBoundingClientRect().right)
+          },
+        )
+      },
+    )
     await step('at 320 px the chips scroll and nothing leaves the bar (CR-10)', async () => {
       await mounted(
         canvasElement,
@@ -463,7 +505,7 @@ export const Paused: Story = {
     const bar = await barIn(canvasElement)
     const status = part(bar, 'status')!
     const separator = part(bar, 'separator')!
-    await expect(status).toHaveAttribute('data-paused', '')
+    await expect(bar).toHaveAttribute('data-paused', '')
     await expect(heard(status)).toBe('Paused · Updated 08:14:05')
     await expect([...status.children]).toEqual([part(bar, 'paused'), separator, part(bar, 'time')])
     await expect(separator).toHaveTextContent(/^·$/)
@@ -484,9 +526,8 @@ export const OutOfDate: Story = {
   play: async ({ canvasElement, step }) => {
     const bar = await barIn(canvasElement)
     await step('the whole phrase in warning ink (CR-4)', async () => {
-      const status = part(bar, 'status')!
       const time = part(bar, 'time')!
-      await expect(status).toHaveAttribute('data-out-of-date', '')
+      await expect(bar).toHaveAttribute('data-out-of-date', '')
       await expect(time).toHaveTextContent(/^Updated 08:09:40, may be out of date$/)
       await expect(time.childNodes).toHaveLength(1)
       await expect(getComputedStyle(time).color).toBe(colour('--perron-color-text-warning'))
@@ -504,7 +545,7 @@ export const OutOfDate: Story = {
             'Paused · Updated 08:09:40, may be out of date',
           )
           const fresh = within(host).getByTestId('fresh')
-          await expect(part(fresh, 'status')).not.toHaveAttribute('data-out-of-date')
+          await expect(fresh).not.toHaveAttribute('data-out-of-date')
           await expect(part(fresh, 'time')).toHaveTextContent(/^Updated 08:14$/)
           await expect(part(fresh, 'time')).toHaveAttribute('dateTime', '08:14')
           await expect(getComputedStyle(part(fresh, 'time')!).color).toBe(
@@ -594,6 +635,12 @@ export const Narrow: Story = {
       await expect(rect.left).toBeGreaterThanOrEqual(box.left)
       await expect(rect.right).toBeLessThanOrEqual(box.right)
     }
+    // the groups take more rows: the filters below the identity, the tools below the filters
+    const [identity, filters, tools] = ['identity', 'filters', 'tools'].map((name) =>
+      part(bar, name)!.getBoundingClientRect(),
+    )
+    await expect(filters.top).toBeGreaterThanOrEqual(identity.bottom)
+    await expect(tools.top).toBeGreaterThanOrEqual(filters.bottom)
     // the chips wrap
     const chips = [...part(bar, 'filters')!.children].map((chip) => chip.getBoundingClientRect())
     await expect(chips.at(-1)!.top).toBeGreaterThan(chips[0].top)

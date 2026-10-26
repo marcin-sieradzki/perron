@@ -178,8 +178,6 @@ export function TopBar({
         variant="data-sm"
         emphasis="secondary"
         className={classes('pn-TopBar-status', statusProps?.className)}
-        data-paused={paused ? '' : undefined}
-        data-out-of-date={outOfDate ? '' : undefined}
       >
         {paused && (
           <>
@@ -228,8 +226,15 @@ export function TopBar({
 
   return (
     // CR-2, CR-11: Surface's glass, never set here; the rest props and the caller's ref reach its
-    // div, then the bar's own size and class, "pn-Surface pn-TopBar <caller's>"
-    <Surface {...rest} variant="glass" data-size={size} className={classes('pn-TopBar', className)}>
+    // div, then the bar's own size, states and class, "pn-Surface pn-TopBar <caller's>"
+    <Surface
+      {...rest}
+      variant="glass"
+      data-size={size}
+      data-paused={paused ? '' : undefined}
+      data-out-of-date={outOfDate ? '' : undefined}
+      className={classes('pn-TopBar', className)}
+    >
       {/* CR-3: the order on screen is the DOM order, the tools before the filters on a phone; keyed,
           so a bar that changes size moves its groups and keeps the caller's elements mounted */}
       {identity}

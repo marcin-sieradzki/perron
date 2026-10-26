@@ -9,20 +9,20 @@ stages:
     started: 2026-10-26T02:20:36.146Z
     ended: 2026-10-26T02:20:56.299Z
   build:
-    runs: 1
-    failing: review round 1 found 4 P2 (components/top-bar/review.md)
+    runs: 2
+    status: done
+    started: 2026-10-26T02:51:00.584Z
+    begun: 107179e4d4b6c6db92c676ac1c90087e7dc8902f47b918b7aa71424327f99b1e
+    spec: 5dd49490ea609183704a1676eed2b1ed6cf7e5644f6eefe07665b6c8cdbec792
+    ended: 2026-10-26T03:01:08.509Z
   review:
-    status: failed
-    started: 2026-10-26T02:40:30.560Z
     rounds: 1
+    sentBack: 1
+    reviewed: dfc0d481fcc7d4a182a4ba85944d1319746d51fc
     findings:
       p1: 0
       p2: 4
       p3: 3
-    reviewed: dfc0d481fcc7d4a182a4ba85944d1319746d51fc
-    sentBack: 1
-    ended: 2026-10-26T02:50:32.671Z
-    failing: review round 1 found 4 P2 (components/top-bar/review.md)
 notes:
   - stage: brief
     at: 2026-10-26T02:19:59.973Z
@@ -52,3 +52,9 @@ notes:
   - stage: build
     at: 2026-10-26T02:39:39.371Z
     direction: "The small bar's chips row scrolls with no visible scrollbar (scrollbar-width: none, as Mylder has it), so a phone shows no cue that more chips lie past the edge beyond the last chip being cut; a design run may want a fade or a peek."
+  - stage: build
+    at: 2026-10-26T03:01:08.509Z
+    direction: Mylder's own .bar padding (one class) loses to Surface's .pn-Surface[data-variant='glass'] padding (a class and an attribute), so Mylder's bar renders 68 px tall on a wide screen and 114 px on a 375 px phone where it means 46 px and 90 px; TopBar follows the measures Mylder writes, so Mylder's swap PR should say its bar shrinks to its intended size.
+  - stage: build
+    at: 2026-10-26T03:01:08.509Z
+    direction: "Retro: a glass pattern's padding, and TopBar's overflow-wrap over Text's, win over Surface's and Text's rules only by stylesheet order, since the contract's one-class-then-attributes selectors tie in specificity; a consumer bundler that reorders CSS chunks would flip them. A cascade layer for component CSS, or a Glass line that says how a pattern's padding wins, would make it hold."
