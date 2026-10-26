@@ -15,7 +15,7 @@ export const sv: OwnedStrings = {
   estimated: 'Beräknad',
   timetableOnly: 'Endast tidtabell',
   noSignal: 'Ingen signal',
-  aircraft: 'Flyg',
+  aircraft: 'Flygplan',
   liveDescription: 'Rapporterad av fordonet under de senaste {liveThreshold}',
   ageingDescription: 'Senast rapporterad för {liveThreshold} till {ageingThreshold} sedan',
   estimatedDescription: 'Placerad utifrån tidtabellen och den senaste förseningen',

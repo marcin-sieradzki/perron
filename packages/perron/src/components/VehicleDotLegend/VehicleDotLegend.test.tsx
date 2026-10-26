@@ -32,7 +32,7 @@ describe('VehicleDotLegend', () => {
   it.each([
     ['en', 'Planes'],
     ['da', 'Fly'],
-    ['sv', 'Flyg'],
+    ['sv', 'Flygplan'],
     ['nb', 'Fly'],
   ] as const)('says the aircraft in %s as “%s”, after the five states', (locale, word) => {
     const markup = renderToStaticMarkup(
