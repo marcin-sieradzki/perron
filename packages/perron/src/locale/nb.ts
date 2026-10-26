@@ -51,6 +51,7 @@ export const nb: OwnedStrings = {
   nextStop: 'Neste stopp',
   passed: 'Passert',
   expectedTime: 'Forventet {time}',
+  timetabledTime: 'Rutetid {time}',
   lineColumn: 'Linje',
   destinationColumn: 'Destinasjon',
   positionColumn: 'Posisjon',

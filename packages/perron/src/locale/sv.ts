@@ -51,6 +51,7 @@ export const sv: OwnedStrings = {
   nextStop: 'Nästa hållplats',
   passed: 'Passerad',
   expectedTime: 'Beräknad {time}',
+  timetabledTime: 'Ordinarie tid {time}',
   lineColumn: 'Linje',
   destinationColumn: 'Destination',
   positionColumn: 'Position',

@@ -147,6 +147,12 @@ export const en = {
    * as in "08:13, Expected 08:16". `{time}` is the expected time.
    */
   expectedTime: 'Expected {time}',
+  /**
+   * A departure row: its timetabled time, struck through before the expected time, heard in place
+   * of the struck time the eye reads, as in "Timetabled 08:14, 08:16". `{time}` is the timetabled
+   * time.
+   */
+  timetabledTime: 'Timetabled {time}',
   /** A vehicle table: the header of the column of each vehicle's line. */
   lineColumn: 'Line',
   /** A vehicle table: the header of the column of where each vehicle is going. */
