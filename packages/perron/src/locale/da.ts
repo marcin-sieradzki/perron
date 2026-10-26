@@ -61,6 +61,8 @@ export const da: OwnedStrings = {
   zoomIn: 'Zoom ind',
   zoomOut: 'Zoom ud',
   centerMap: 'Centrér kortet',
+  pause: 'Pause',
+  resume: 'Fortsæt',
   scale: 'Målestok',
   metersUnit: 'm',
   kilometersUnit: 'km',

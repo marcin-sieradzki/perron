@@ -61,6 +61,8 @@ export const nb: OwnedStrings = {
   zoomIn: 'Zoom inn',
   zoomOut: 'Zoom ut',
   centerMap: 'Sentrer kartet',
+  pause: 'Pause',
+  resume: 'Fortsett',
   scale: 'Målestokk',
   metersUnit: 'm',
   kilometersUnit: 'km',
