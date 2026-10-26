@@ -12,6 +12,7 @@ const FAILING: [string, RegExp, number][] = [
   ['Variant', /variant is a union of string literals/, 1],
   ['Color', /color takes only the intents.*'primary'/, 1],
   ['Size', /size takes only small, medium, large.*'sm'/, 1],
+  ['Responsive', /size takes only small, medium, large; not 'responsive'/, 1],
   ['BooleanPrefix', /(isOpen|hasIcon|shouldWrap) is a boolean with is, has or should/, 3],
   ['Banned', /(sx|as|leftIcon) is not a prop of any component/, 3],
   ['Inherited', /(onValueChange|onOpenChange) is not a prop of any component/, 2],
@@ -32,6 +33,7 @@ describe('props', () => {
     const rules = readPropRules(readFileSync(join(root, 'docs/components/README.md'), 'utf8'))
     expect(rules.intents).toEqual(['neutral', 'brand', 'success', 'warning', 'danger', 'info'])
     expect(rules.sizes).toEqual(['small', 'medium', 'large'])
+    expect(rules.patternSizes).toEqual(['responsive'])
     expect(rules.banned).toEqual({
       sx: 'className, the data attributes and the tokens',
       classes: 'className, the data attributes and the tokens',
@@ -50,7 +52,13 @@ describe('props', () => {
   // One program for every fixture, as the real run builds one for every component.
   const problems = propsProblems(
     root,
-    [...FAILING.map(([name]) => name), 'Passes', 'NativeText', 'Allowed'].map(fixture),
+    [
+      ...FAILING.map(([name]) => name),
+      'Passes',
+      'NativeText',
+      'Allowed',
+      'patterns/Responsive',
+    ].map(fixture),
   )
   const of = (name: string) => problems.filter((p) => p.file === fixture(name))
 
@@ -65,6 +73,10 @@ describe('props', () => {
   it('passes props written to the vocabulary', () => {
     expect(of('Passes')).toEqual([])
     expect(of('NativeText')).toEqual([])
+  })
+
+  it("lets only a pattern's size be 'responsive'", () => {
+    expect(of('patterns/Responsive')).toEqual([])
   })
 
   it('takes a perron-allow exemption', () => {

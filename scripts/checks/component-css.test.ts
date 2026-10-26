@@ -45,6 +45,7 @@ describe('component-css', () => {
       '(prefers-reduced-motion: reduce)',
       '(forced-colors: active)',
     ])
+    expect(rules.patternMedia).toEqual(['(max-width: 759.98px)'])
     expect([...rules.forcedColours]).toEqual([
       'canvas',
       'canvastext',
@@ -96,6 +97,15 @@ describe('component-css', () => {
   it('lets a pattern read its own families', () => {
     expect(lint('pattern-passes.css', 'pattern')).toEqual([])
     expect(lint('pattern-passes.css')).toHaveLength(3)
+  })
+
+  it('lets only a pattern query breakpoint.phone', () => {
+    expect(lint('phone-query.css', 'pattern')).toEqual([])
+    const problems = lint('phone-query.css')
+    expect(problems).toHaveLength(1)
+    expect(problems[0].message).toMatch(
+      /@media \(max-width: 759\.98px\) is not one of the queries components use/,
+    )
   })
 
   it('takes a perron-allow exemption', () => {

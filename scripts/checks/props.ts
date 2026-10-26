@@ -23,11 +23,19 @@ const RULE = 'props'
 export interface PropRules {
   /** The `color` values, from "Intents" */
   intents: string[]
-  /** The `size` values, from the `size` row of the "Props" table */
+  /** The `size` values, from the first code span of the `size` row of the "Props" table */
   sizes: string[]
+  /** The `size` values only a pattern takes, from that row's later code spans: `'responsive'` */
+  patternSizes: string[]
   /** Each name from "Names from other libraries", with what a component takes in its place */
   banned: Record<string, string>
 }
+
+/** The string literals quoted in `text`: `'small' | 'medium'` holds small and medium. */
+const quoted = (text: string) => [...text.matchAll(/'([^']+)'/g)].map((m) => m[1])
+
+/** Whether a file, by its path from the repo root, is a pattern's, which may take `patternSizes`. */
+const inPatterns = (file: string) => /(^|\/)patterns\//.test(file)
 
 /** The rules of the contract's "Props", "Names from other libraries" and "Intents" tables. */
 export function readPropRules(contract: string): PropRules {
@@ -43,7 +51,8 @@ export function readPropRules(contract: string): PropRules {
   }
   return {
     intents: tableRows(section(contract, 'Intents')).map(([intent]) => codeSpans(intent)[0]),
-    sizes: [...size[1].matchAll(/'([^']+)'/g)].map((m) => m[1]),
+    sizes: quoted(codeSpans(size[1])[0] ?? ''),
+    patternSizes: codeSpans(size[1]).slice(1).flatMap(quoted),
     banned,
   }
 }
@@ -190,7 +199,10 @@ export function propsProblems(root: string, files: string[]): Problem[] {
           continue
         }
         if (member.name === 'render') report(REDECLARED_RENDER)
-        const breach = typeBreach(checker, rules, member.name, own, t)
+        const sizes = inPatterns(fileOf(own))
+          ? [...rules.sizes, ...rules.patternSizes]
+          : rules.sizes
+        const breach = typeBreach(checker, { ...rules, sizes }, member.name, own, t)
         if (breach) report(breach)
         if (!decls.filter(inPackage).some(hasDoc)) report(`${member.name} has no JSDoc comment`)
       }

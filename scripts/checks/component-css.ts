@@ -41,6 +41,8 @@ export interface CssRules {
   families: Record<CssLayer, string[]>
   /** The media queries CSS may use */
   media: string[]
+  /** The media queries only a pattern's CSS may use: the rows whose use starts "In a pattern only" */
+  patternMedia: string[]
   /** The CSS system colours allowed inside `(forced-colors: active)`, lowercased */
   forcedColours: Set<string>
 }
@@ -55,13 +57,16 @@ export function readCssRules(contract: string): CssRules {
   }
   const component = reads(/^Component/)
   const queries = tableRows(section(contract, 'Media queries'))
-  const media = queries.map(([query]) => codeSpans(query)[0])
+  const patternOnly = ([, use]: string[]) => /^In a pattern only\b/.test(use)
+  const media = queries.filter((row) => !patternOnly(row)).map(([query]) => codeSpans(query)[0])
+  const patternMedia = queries.filter(patternOnly).map(([query]) => codeSpans(query)[0])
   for (const needed of [REDUCED_MOTION, FORCED_COLORS])
     if (!media.includes(needed)) throw new Error(`${CONTRACT}, "Media queries", has no ${needed}`)
   const forced = queries.find(([query]) => query.includes(FORCED_COLORS))!
   return {
     families: { component, part: component, pattern: [...component, ...reads(/^Pattern/)] },
     media,
+    patternMedia,
     forcedColours: new Set(codeSpans(forced[1]).map((c) => c.toLowerCase())),
   }
 }
@@ -215,15 +220,16 @@ export function cssProblems(
   const report = (node: Node, message: string) =>
     problems.push({ file, line: node.source?.start?.line, message })
   const families = rules.families[layer]
+  const queries = layer === 'pattern' ? [...rules.media, ...rules.patternMedia] : rules.media
   const root = postcss.parse(css, { from: file })
   // the selectors whose animation a reduced-motion block sets, so their loops stop
   const stopped = new Set<string>()
   root.walkAtRules('media', (rule) => {
     const query = media(rule.params)
-    if (!rules.media.includes(query))
+    if (!queries.includes(query))
       report(
         rule,
-        `@media ${rule.params} is not one of the queries components use: ${rules.media.join(', ')}`,
+        `@media ${rule.params} is not one of the queries ${layer === 'pattern' ? 'patterns' : 'components'} use: ${queries.join(', ')}`,
       )
     if (query === REDUCED_MOTION)
       rule.walkDecls(/^animation(-name|-iteration-count)?$/i, (d) => {

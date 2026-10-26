@@ -4405,6 +4405,7 @@
         "optional": true,
         "type": [
           "\"medium\"",
+          "\"responsive\"",
           "\"small\""
         ]
       },

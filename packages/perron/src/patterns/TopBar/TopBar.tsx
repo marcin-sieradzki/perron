@@ -17,11 +17,13 @@ export interface TopBarProps extends Omit<ComponentPropsWithRef<'div'>, 'childre
   /**
    * The bar's layout: `medium` is one row at least `size.top-bar` tall, for a wide screen; `small`
    * is the phone's, at least `size.top-bar-phone` tall, with the status line under the brand and
-   * the filters on a second row of their own that scrolls sideways. The screen picks `small` under
+   * the filters on a second row of their own that scrolls sideways; `responsive` is `small` under
+   * `breakpoint.phone` and `medium` above it, switched in CSS from one render, for a page rendered
+   * before it knows the viewport's width. A screen that knows it picks `small` under
    * `breakpoint.phone`.
    * @default 'medium'
    */
-  size?: 'medium' | 'small'
+  size?: 'medium' | 'small' | 'responsive'
   /**
    * Where the brand leads, such as the start screen, `'/en'`. Given, the brand is a link there;
    * left out, it is the brand alone.
@@ -236,7 +238,8 @@ export function TopBar({
       className={classes('pn-TopBar', className)}
     >
       {/* CR-3: the order on screen is the DOM order, the tools before the filters on a phone; keyed,
-          so a bar that changes size moves its groups and keeps the caller's elements mounted */}
+          so a bar that changes size moves its groups and keeps the caller's elements mounted. A
+          responsive bar keeps the wide order and its CSS places the groups on a phone */}
       {identity}
       {size === 'small' ? [toolsGroup, filtersGroup] : [filtersGroup, toolsGroup]}
     </Surface>

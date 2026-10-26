@@ -37,7 +37,7 @@ Return the report to the caller.
 ## Rules to compare by
 
 - **One idea, one name.** The same job has the same prop name everywhere: never `size` beside `scale`, `onClose` beside `onDismiss`, `startIcon` beside `icon`.
-- **One name, one type and default.** `size` is a subset of the same three values with `'medium'` first; `variant`'s default is its first value; a boolean is an adjective, default `false`.
+- **One name, one type and default.** `size` is a subset of the same three values with `'medium'` first, to which only a pattern adds `'responsive'`; `variant`'s default is its first value; a boolean is an adjective, default `false`.
 - **Events** have the contract's shapes: `onChange(event, value, details)`, `onOpen(event, details)`, `onClose(event, reason, details)`, and never Base UI's own `onValueChange` or `onOpenChange`. A native text control passes React's `onChange(event)`.
 - **`slotProps` keys** are the Base UI part's name in camelCase, and one part has one key in every member: `popup`, `positioner`.
 - **Data attributes:** `data-variant`, `data-color` and `data-size` with defaults included, and a bare attribute named after a boolean that changes the look, such as `data-full-width`.
