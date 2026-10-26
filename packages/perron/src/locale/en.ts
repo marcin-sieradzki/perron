@@ -163,7 +163,7 @@ export const en = {
   delayColumn: 'Delay',
   /** A vehicle table: the header of the column of the time each vehicle last reported its position. */
   lastSeenColumn: 'Last seen',
-  /** The map's bar of zoom and centre buttons: the toolbar's name. */
+  /** The map's bar of zoom, centre and pause buttons: the toolbar's name. */
   mapControls: 'Map controls',
   /** The map's button that zooms in by one step. */
   zoomIn: 'Zoom in',
@@ -171,6 +171,10 @@ export const en = {
   zoomOut: 'Zoom out',
   /** The map's button that moves and zooms the map to show the whole network. */
   centerMap: 'Centre the map',
+  /** The map's button that stops the vehicles moving, its name while they move. */
+  pause: 'Pause',
+  /** The map's button that sets the vehicles moving again, its name while they are paused. */
+  resume: 'Resume',
   /** The map's scale: heard before the distance its bar spans, as in "Scale 300 m". */
   scale: 'Scale',
   /** The map's scale: the unit after a distance under a kilometre, as in "300 m". */

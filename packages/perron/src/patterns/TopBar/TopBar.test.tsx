@@ -1,6 +1,6 @@
 // TopBar renders its filters group and its tools group only when the caller gives them something
-// to render (CR-7), each slot in every shape a ReactNode takes, the groups in the order on screen
-// for each size (CR-3), and its time as it is given or "—" (CR-4). Spec: docs/patterns/top-bar.md.
+// to render (CR-7), each slot in every shape a ReactNode takes, the groups in their DOM order for
+// each size (CR-3, CR-16), and its time as it is given or "—" (CR-4). Spec: docs/patterns/top-bar.md.
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import { attribute, openingTag } from '../../testing/markup.ts'
@@ -40,7 +40,9 @@ describe('TopBar', () => {
   it.each([
     ['medium', ['identity', 'filters', 'tools']],
     ['small', ['identity', 'tools', 'filters']],
-  ] as const)('puts the groups of a %s bar in the order on screen', (size, order) => {
+    // one render for both widths, in the wide order; its CSS places the groups on a phone (CR-16)
+    ['responsive', ['identity', 'filters', 'tools']],
+  ] as const)('puts the groups of a %s bar in their DOM order', (size, order) => {
     const markup = renderToStaticMarkup(
       <TopBar size={size} time="08:14:05" filters="Bus" tools="About" />,
     )

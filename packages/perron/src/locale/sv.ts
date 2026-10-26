@@ -61,6 +61,8 @@ export const sv: OwnedStrings = {
   zoomIn: 'Zooma in',
   zoomOut: 'Zooma ut',
   centerMap: 'Centrera kartan',
+  pause: 'Pausa',
+  resume: 'Fortsätt',
   scale: 'Skala',
   metersUnit: 'm',
   kilometersUnit: 'km',

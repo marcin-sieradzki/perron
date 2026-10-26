@@ -2,7 +2,12 @@ import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
-import check, { cssProblems, readCssRules } from './component-css.ts'
+import check, {
+  cssProblems,
+  patternMediaProblems,
+  phoneQuery,
+  readCssRules,
+} from './component-css.ts'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const root = join(here, '../..')
@@ -45,6 +50,7 @@ describe('component-css', () => {
       '(prefers-reduced-motion: reduce)',
       '(forced-colors: active)',
     ])
+    expect(rules.patternMedia).toEqual(['(max-width: 759.98px)'])
     expect([...rules.forcedColours]).toEqual([
       'canvas',
       'canvastext',
@@ -96,6 +102,43 @@ describe('component-css', () => {
   it('lets a pattern read its own families', () => {
     expect(lint('pattern-passes.css', 'pattern')).toEqual([])
     expect(lint('pattern-passes.css')).toHaveLength(3)
+  })
+
+  it('lets only a pattern query breakpoint.phone', () => {
+    expect(lint('phone-query.css', 'pattern')).toEqual([])
+    const problems = lint('phone-query.css')
+    expect(problems).toHaveLength(1)
+    expect(problems[0].message).toMatch(
+      /@media \(max-width: 759\.98px\) is not one of the queries components use/,
+    )
+  })
+
+  it("fails a rule inside the phone query that doesn't select size='responsive'", () => {
+    const problems = lint('phone-query-other-size.css', 'pattern')
+    expect(problems.map((p) => p.message.split(' is inside')[0])).toEqual([
+      ".pn-Fixture[data-size='small']",
+      '.pn-Fixture-part',
+      ".pn-Fixture:not([data-size='responsive']) .pn-Fixture-part",
+    ])
+    for (const p of problems) expect(p.message).toMatch(/select \[data-size='responsive'\]/)
+    expect(problems.every((p) => p.line)).toBe(true)
+  })
+
+  it("holds the contract's pattern query to breakpoint.phone, less 0.02 px", () => {
+    const contract = readFileSync(join(root, 'docs/components/README.md'), 'utf8')
+    const rules = readCssRules(contract)
+    expect(phoneQuery(760)).toBe('(max-width: 759.98px)')
+    expect(patternMediaProblems(contract, rules, 760)).toEqual([])
+    // the token moved and the contract didn't: the query is named at its line of the contract
+    const moved = patternMediaProblems(contract, rules, 780)
+    expect(moved).toHaveLength(1)
+    expect(moved[0].message).toMatch(
+      /breakpoint\.phone is 780px, so its query is \(max-width: 779\.98px\)/,
+    )
+    expect(contract.split('\n')[moved[0].line! - 1]).toContain('`(max-width: 759.98px)`')
+    // the contract moved and the token didn't
+    const edited = contract.replace('`(max-width: 759.98px)`', '`(max-width: 760px)`')
+    expect(patternMediaProblems(edited, readCssRules(edited), 760)).toHaveLength(1)
   })
 
   it('takes a perron-allow exemption', () => {

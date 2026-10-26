@@ -4,6 +4,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join, relative } from 'node:path'
 import ts from 'typescript'
+import { PACKAGE } from '../lib/paths.ts'
 import { codeFile, inPackage, propsProgram } from '../lib/props.ts'
 import { isBuilt, readRegistry } from '../lib/registry.ts'
 import {
@@ -23,11 +24,19 @@ const RULE = 'props'
 export interface PropRules {
   /** The `color` values, from "Intents" */
   intents: string[]
-  /** The `size` values, from the `size` row of the "Props" table */
+  /** The `size` values, from the first code span of the `size` row of the "Props" table */
   sizes: string[]
+  /** The `size` values only a pattern takes, from that row's later code spans: `'responsive'` */
+  patternSizes: string[]
   /** Each name from "Names from other libraries", with what a component takes in its place */
   banned: Record<string, string>
 }
+
+/** The string literals quoted in `text`: `'small' | 'medium'` holds small and medium. */
+const quoted = (text: string) => [...text.matchAll(/'([^']+)'/g)].map((m) => m[1])
+
+/** Where the patterns' code is, from the repo root: a file in it may take `patternSizes`. */
+export const PATTERNS = `${PACKAGE}/src/patterns/`
 
 /** The rules of the contract's "Props", "Names from other libraries" and "Intents" tables. */
 export function readPropRules(contract: string): PropRules {
@@ -35,6 +44,12 @@ export function readPropRules(contract: string): PropRules {
     codeSpans(prop).includes('size'),
   )
   if (!size) throw new Error(`${CONTRACT}, "Props", has no size row`)
+  // the row's first code span holds every component's sizes; later ones, a pattern's own
+  const sizes = quoted(codeSpans(size[1])[0] ?? '')
+  if (!sizes.includes('medium'))
+    throw new Error(
+      `${CONTRACT}, "Props", size row: its Type's first code span must quote every component's sizes, 'medium' among them, such as \`'small' | 'medium' | 'large'\`; it reads ${sizes.length ? sizes.map((v) => `'${v}'`).join(', ') : 'none'}`,
+    )
   const banned: Record<string, string> = {}
   for (const [use, names] of tableRows(section(contract, 'Names from other libraries'))) {
     const plain = use.replaceAll('`', '')
@@ -43,7 +58,8 @@ export function readPropRules(contract: string): PropRules {
   }
   return {
     intents: tableRows(section(contract, 'Intents')).map(([intent]) => codeSpans(intent)[0]),
-    sizes: [...size[1].matchAll(/'([^']+)'/g)].map((m) => m[1]),
+    sizes,
+    patternSizes: codeSpans(size[1]).slice(1).flatMap(quoted),
     banned,
   }
 }
@@ -130,7 +146,7 @@ const hasDoc = (d: ts.Declaration) =>
  * `<Name>Props`, whose members, and those of every other `*Props` it exports for a compound
  * component's parts, keep to the contract's vocabulary and carry JSDoc.
  */
-export function propsProblems(root: string, files: string[]): Problem[] {
+export function propsProblems(root: string, files: string[], patterns = PATTERNS): Problem[] {
   if (!files.length) return []
   const rules = readPropRules(readFileSync(join(root, CONTRACT), 'utf8'))
   const { program, checker, propsOf } = propsProgram(root, files)
@@ -190,7 +206,10 @@ export function propsProblems(root: string, files: string[]): Problem[] {
           continue
         }
         if (member.name === 'render') report(REDECLARED_RENDER)
-        const breach = typeBreach(checker, rules, member.name, own, t)
+        const sizes = fileOf(own).startsWith(patterns)
+          ? [...rules.sizes, ...rules.patternSizes]
+          : rules.sizes
+        const breach = typeBreach(checker, { ...rules, sizes }, member.name, own, t)
         if (breach) report(breach)
         if (!decls.filter(inPackage).some(hasDoc)) report(`${member.name} has no JSDoc comment`)
       }

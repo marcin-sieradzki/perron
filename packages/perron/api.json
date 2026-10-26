@@ -2044,6 +2044,12 @@
           "(event: MouseEvent<HTMLButtonElement, MouseEvent>) => void"
         ]
       },
+      "onPausedChange": {
+        "optional": true,
+        "type": [
+          "(event: MouseEvent<HTMLButtonElement, MouseEvent>, paused: boolean) => void"
+        ]
+      },
       "onZoomIn": {
         "optional": true,
         "type": [
@@ -2063,10 +2069,28 @@
           "\"vertical\""
         ]
       },
+      "pauseLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "paused": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
       "ref": {
         "optional": true,
         "type": [
           "Ref<HTMLDivElement>"
+        ]
+      },
+      "resumeLabel": {
+        "optional": true,
+        "type": [
+          "string"
         ]
       },
       "style": {
@@ -4381,6 +4405,7 @@
         "optional": true,
         "type": [
           "\"medium\"",
+          "\"responsive\"",
           "\"small\""
         ]
       },

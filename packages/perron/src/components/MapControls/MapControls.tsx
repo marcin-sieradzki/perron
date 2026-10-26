@@ -1,6 +1,7 @@
 'use client'
-// MapControls: the map's zoom in, zoom out and centre buttons, in Perron's Toolbar on its glass, one
-// tab stop named in the reader's language. Every behaviour and every look is Toolbar's (CR-1, CR-9).
+// MapControls: the map's zoom in, zoom out and centre buttons, and a pause button when the screen
+// handles one, in Perron's Toolbar on its glass, one tab stop named in the reader's language. Every
+// behaviour and every look is Toolbar's (CR-1, CR-9).
 // The spec is docs/components/map-controls.md.
 import type { CSSProperties, MouseEvent, Ref } from 'react'
 import { useOwnedStrings } from '../../PerronProvider.tsx'
@@ -38,6 +39,20 @@ const LOCATE = (
   <svg {...STROKE} strokeWidth="1.6">
     <circle cx="8" cy="8" r="5" />
     <path d="M8 1.5v3M8 11.5v3M1.5 8h3M11.5 8h3" />
+  </svg>
+)
+
+/** `pause` from packages/perron/icons/: shown while the map moves, for the press that stops it. */
+const PAUSE = (
+  <svg {...STROKE} strokeWidth="1.8">
+    <path d="M5.75 3.5v9M10.25 3.5v9" />
+  </svg>
+)
+
+/** `play` from packages/perron/icons/: shown while the map is paused, for the press that resumes it. */
+const PLAY = (
+  <svg {...STROKE} strokeWidth="1.6">
+    <path d="M5 3.4v9.2a.5.5 0 0 0 .76.43l7.4-4.6a.5.5 0 0 0 0-.86l-7.4-4.6A.5.5 0 0 0 5 3.4z" />
   </svg>
 )
 
@@ -85,6 +100,19 @@ export interface MapControlsProps extends Omit<
    */
   onCenterMap?: (event: MouseEvent<HTMLButtonElement>) => void
   /**
+   * Whether the map's motion is paused, held by the screen. The pause button shows the `play` icon
+   * and is named "Resume" while it is `true`, and the `pause` icon and "Pause" while it is `false`.
+   * @default false
+   */
+  paused?: boolean
+  /**
+   * Called when the pause button is pressed, by click, Enter or Space, with the click event and the
+   * state the press asks for: `true` while the map moves, `false` while it is paused. Given, it adds
+   * the pause button after the centre button; the screen stops or starts the map's motion and passes
+   * the new `paused`.
+   */
+  onPausedChange?: (event: MouseEvent<HTMLButtonElement>, paused: boolean) => void
+  /**
    * Overrides "Map controls", the bar's name.
    * @default The locale's
    */
@@ -104,6 +132,16 @@ export interface MapControlsProps extends Omit<
    * @default The locale's
    */
   centerMapLabel?: string
+  /**
+   * Overrides "Pause", the pause button's name while the map moves.
+   * @default The locale's
+   */
+  pauseLabel?: string
+  /**
+   * Overrides "Resume", the pause button's name while the map is paused.
+   * @default The locale's
+   */
+  resumeLabel?: string
   /** Reaches the root. Merged after `pn-Toolbar` and `pn-MapControls`. */
   className?: string
   /** Reaches the root. */
@@ -113,8 +151,9 @@ export interface MapControlsProps extends Omit<
 }
 
 /**
- * The map's zoom in, zoom out and centre buttons, in one glass bar that is one tab stop. The screen
- * places it, at the bottom right of the map, and does the zooming in its handlers.
+ * The map's zoom in, zoom out and centre buttons, and a pause button when the screen handles one,
+ * in one glass bar that is one tab stop. The screen places it, at the bottom right of the map, and
+ * does the zooming and the pausing in its handlers.
  */
 export function MapControls({
   orientation = 'vertical',
@@ -124,10 +163,14 @@ export function MapControls({
   onZoomIn,
   onZoomOut,
   onCenterMap,
+  paused = false,
+  onPausedChange,
   mapControlsLabel,
   zoomInLabel,
   zoomOutLabel,
   centerMapLabel,
+  pauseLabel,
+  resumeLabel,
   className,
   ref,
   ...rest
@@ -137,6 +180,8 @@ export function MapControls({
     zoomIn: zoomInLabel,
     zoomOut: zoomOutLabel,
     centerMap: centerMapLabel,
+    pause: pauseLabel,
+    resume: resumeLabel,
   })
   return (
     <Toolbar
@@ -172,6 +217,20 @@ export function MapControls({
         disabled={disabled}
         onClick={onCenterMap}
       />
+      {/* The pause button is the screen's to ask for: with no handler, the bar is its three buttons. */}
+      {onPausedChange ? (
+        <>
+          <ToolbarSeparator className="pn-MapControls-pauseSeparator" />
+          <ToolbarButton
+            className="pn-MapControls-pause"
+            color="neutral"
+            startIcon={paused ? PLAY : PAUSE}
+            aria-label={paused ? strings.resume : strings.pause}
+            disabled={disabled}
+            onClick={(event) => onPausedChange(event, !paused)}
+          />
+        </>
+      ) : null}
     </Toolbar>
   )
 }

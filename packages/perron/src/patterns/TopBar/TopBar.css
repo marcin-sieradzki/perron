@@ -1,5 +1,6 @@
 /* TopBar: the brand and the status line, the filters and the tools in one wrapping row on Surface's
-   glass (docs/patterns/top-bar.md, Tokens), one row on a wide screen and two on a phone. The one
+   glass (docs/patterns/top-bar.md, Tokens), one row on a wide screen and two on a phone, or, with
+   size='responsive', each in turn on either side of breakpoint.phone, from one render. The one
    part it draws that a pointer presses is the brand as a link, with its hover and pressed fills on
    a radius.md box; every other part is at rest. No fill, edge, radius or shadow beyond Surface's,
    which it only pads, and no position, inset, outer margin or z-index: the bar sizes to its
@@ -13,8 +14,9 @@
   row-gap: var(--perron-space-100);
 }
 
-/* One row on a wide screen */
-.pn-TopBar[data-size='medium'] {
+/* One row on a wide screen, and a responsive bar's row until the media query below */
+.pn-TopBar[data-size='medium'],
+.pn-TopBar[data-size='responsive'] {
   min-block-size: var(--perron-size-top-bar);
   /* a wrapped bar's first and last rows keep off the glass's edge; one row stays size.top-bar */
   padding-block: var(--perron-space-100);
@@ -87,7 +89,8 @@
 }
 
 /* CR-10: centred between the identity and the tools, wrapping in a bar narrower than the chips */
-.pn-TopBar[data-size='medium'] .pn-TopBar-filters {
+.pn-TopBar[data-size='medium'] .pn-TopBar-filters,
+.pn-TopBar[data-size='responsive'] .pn-TopBar-filters {
   flex-wrap: wrap;
   justify-content: center;
   column-gap: var(--perron-space-200);
@@ -117,4 +120,44 @@
   align-items: center;
   gap: var(--perron-space-100);
   margin-inline-start: auto;
+}
+
+/* CR-16: a responsive bar keeps the wide order in the DOM, identity, filters, tools, and its
+   reading follows the order on screen where the browser can, so Tab and a screen reader reach the
+   tools before the filters on a phone, as they see them */
+.pn-TopBar[data-size='responsive'] {
+  reading-flow: flex-visual;
+}
+
+/* CR-16: under breakpoint.phone, a responsive bar is the phone's, the small rules above again,
+   with the filters placed after the tools by order and kept to one row. A media query can't read
+   the token, so it repeats 760px less 0.02px, as the CSS of Perron's docs website does: a breakpoint
+   is the width below which the screen changes (contract, Media queries; foundations, Layout) */
+@media (max-width: 759.98px) {
+  .pn-TopBar[data-size='responsive'] {
+    min-block-size: var(--perron-size-top-bar-phone);
+    padding-inline: var(--perron-space-300);
+  }
+
+  .pn-TopBar[data-size='responsive'] .pn-TopBar-identity {
+    flex: 1 1 0;
+    flex-direction: column;
+    align-items: flex-start;
+    min-inline-size: 0;
+  }
+
+  .pn-TopBar[data-size='responsive'] .pn-TopBar-filters {
+    order: 1;
+    flex-basis: calc(100% + 2 * (var(--perron-focus-width) + var(--perron-focus-offset)));
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: var(--perron-space-100);
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-block-start: calc(var(--perron-focus-width) + var(--perron-focus-offset));
+    padding-block-end: var(--perron-space-100);
+    padding-inline: calc(var(--perron-focus-width) + var(--perron-focus-offset));
+    margin-block-start: calc(-1 * (var(--perron-focus-width) + var(--perron-focus-offset)));
+    margin-inline: calc(-1 * (var(--perron-focus-width) + var(--perron-focus-offset)));
+  }
 }

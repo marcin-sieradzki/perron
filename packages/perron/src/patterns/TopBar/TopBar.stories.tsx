@@ -518,6 +518,134 @@ export const SmallDefault: Story = {
   },
 }
 
+/**
+ * A viewport Storybook gives the story, from its own list, so the bar's media query sees a screen
+ * of that width; a container of a width, as `inside` gives, can't trigger a media query. The test
+ * run sets the viewport too, and every other story gets its default, 1200 by 900.
+ */
+const viewport = (value: 'desktop' | 'mobile2') => ({ viewport: { value, isRotated: false } })
+
+/** The parts and controls of a bar, each with its box inside the bar, rounded to the pixel. */
+function layoutOf(bar: HTMLElement) {
+  const origin = bar.getBoundingClientRect()
+  const box = (element: Element) => {
+    const rect = element.getBoundingClientRect()
+    return [rect.left - origin.left, rect.top - origin.top, rect.width, rect.height].map(Math.round)
+  }
+  const parts = ['identity', 'brand', 'status', 'time', 'filters', 'tools'].map((name) => [
+    name,
+    box(part(bar, name)!),
+  ])
+  const controls = [...bar.querySelectorAll('.pn-FilterChip, .pn-LinkButton, .pn-IconButton')].map(
+    (control) => [heard(control), box(control)],
+  )
+  return { root: box(bar), ...Object.fromEntries([...parts, ...controls]) }
+}
+
+/**
+ * The layout of `bar` is that of a bar of `size`, rendered with `MediumDefault`'s args at the same
+ * width beside it: each part and control in the same place, at the same size.
+ */
+async function expectLayoutOf(canvas: HTMLElement, bar: HTMLElement, size: 'medium' | 'small') {
+  await mounted(
+    canvas,
+    <div style={{ inlineSize: bar.getBoundingClientRect().width }}>
+      <TopBar size={size} {...meta.args} />
+    </div>,
+    async (host) => {
+      const other = await barIn(host)
+      await expect(other).toHaveAttribute('data-size', size)
+      await expect(layoutOf(bar)).toEqual(layoutOf(other))
+    },
+  )
+}
+
+/**
+ * The media rule that holds the responsive bar's phone layout: its condition, the width in it, and
+ * `breakpoint.phone`'s, in pixels.
+ */
+function phoneQuery() {
+  const rules = [...document.styleSheets].flatMap((sheet) => [...sheet.cssRules])
+  const query = rules.find(
+    (rule): rule is CSSMediaRule =>
+      rule instanceof CSSMediaRule &&
+      [...rule.cssRules].some((inner) =>
+        (inner as CSSStyleRule).selectorText?.includes('.pn-TopBar[data-size="responsive"]'),
+      ),
+  )
+  return {
+    text: query?.conditionText,
+    width: Number.parseFloat(/max-width:\s*([\d.]+)px/.exec(query?.conditionText ?? '')?.[1] ?? ''),
+    token: px('breakpoint-phone'),
+  }
+}
+
+/** `MediumDefault`'s args with `size` responsive, on a 1280 px screen: the wide layout. */
+export const ResponsiveWide: Story = {
+  args: { size: 'responsive' },
+  globals: viewport('desktop'),
+  decorators: [inside(1024)],
+  play: async ({ canvasElement, step }) => {
+    const bar = await barIn(canvasElement)
+    await step('the wide layout above breakpoint.phone, from one render (CR-16)', async () => {
+      await expect(window.innerWidth).toBeGreaterThanOrEqual(phoneQuery().token)
+      await expect(bar).toHaveAttribute('data-size', 'responsive')
+      await expect(groupsOf(bar)).toEqual(['identity', 'filters', 'tools'])
+      await expect(getComputedStyle(bar).minBlockSize).toBe(`${px('size-top-bar')}px`)
+      await expect(getComputedStyle(part(bar, 'filters')!).order).toBe('0')
+      await expectLayoutOf(canvasElement, bar, 'medium')
+    })
+    await step('Tab: the brand, the chips in order, then the tools; Shift+Tab back', async () => {
+      const controls = controlsIn(canvasElement)
+      await expectTabOrder(canvasElement, [
+        controls.brand!,
+        ...controls.chips,
+        controls.language,
+        controls.about,
+      ])
+    })
+  },
+}
+
+/** `MediumDefault`'s args with `size` responsive, on a 414 px phone: the phone's layout. */
+export const ResponsivePhone: Story = {
+  args: { size: 'responsive' },
+  globals: viewport('mobile2'),
+  play: async ({ canvasElement, step }) => {
+    const bar = await barIn(canvasElement)
+    await step('the query is breakpoint.phone less 0.02 px (CR-16)', async () => {
+      const query = phoneQuery()
+      await expect(query.text).toBe('(max-width: 759.98px)')
+      await expect(query.width).toBeCloseTo(query.token - 0.02, 5)
+      await expect(window.innerWidth).toBeLessThan(query.token)
+    })
+    await step('the phone’s layout, the DOM in the wide order (CR-3, CR-16)', async () => {
+      await expect(bar).toHaveAttribute('data-size', 'responsive')
+      await expect(groupsOf(bar)).toEqual(['identity', 'filters', 'tools'])
+      await expect(getComputedStyle(bar).minBlockSize).toBe(`${px('size-top-bar-phone')}px`)
+      const filters = getComputedStyle(part(bar, 'filters')!)
+      await expect([filters.order, filters.flexWrap, filters.overflowX]).toEqual([
+        '1',
+        'nowrap',
+        'auto',
+      ])
+      // the tools end the first row, beside the identity, and the filters take the second
+      const [identity, tools, group] = ['identity', 'tools', 'filters'].map((name) =>
+        part(bar, name)!.getBoundingClientRect(),
+      )
+      await expect(tools.top).toBeLessThan(identity.bottom)
+      await expect(group.top).toBeGreaterThanOrEqual(identity.bottom)
+      await expect(group.top).toBeGreaterThanOrEqual(tools.bottom)
+      await expectLayoutOf(canvasElement, bar, 'small')
+    })
+    // Tab in the order on screen, the brand, the tools, then the chips, is the browser's, from
+    // reading-flow; user-event's Tab walks the DOM itself, so the Keyboard row says it is untested
+    await step('read in the order on screen where the browser can (CR-16)', async () => {
+      await expect(getComputedStyle(bar).getPropertyValue('reading-flow')).toBe('flex-visual')
+    })
+  },
+}
+
 /** `MediumDefault`'s args with `paused`: "Paused · Updated 08:14:05". */
 export const Paused: Story = {
   args: { paused: true },

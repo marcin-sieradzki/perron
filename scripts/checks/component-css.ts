@@ -35,12 +35,59 @@ const ICON_SIZE = '--perron-icon-size'
 const REDUCED_MOTION = '(prefers-reduced-motion: reduce)'
 const FORCED_COLORS = '(forced-colors: active)'
 
+/** What every rule inside a pattern-only query selects: a pattern's `size='responsive'`. */
+const RESPONSIVE = /\[data-size=(['"]?)responsive\1\]/
+
+/** `sel` without what its `:not(…)` hold, so a selector that leaves a size out never reads as selecting it. */
+function withoutNot(sel: string) {
+  let out = ''
+  for (let i = 0; i < sel.length;) {
+    if (sel.slice(i, i + 5).toLowerCase() !== ':not(') {
+      out += sel[i++]
+      continue
+    }
+    let depth = 1
+    for (i += 5; i < sel.length && depth; i++)
+      if (sel[i] === '(') depth++
+      else if (sel[i] === ')') depth--
+  }
+  return out
+}
+
+/**
+ * The query a pattern lays out its phone layout in: `breakpoint.phone` less 0.02 px, so the
+ * breakpoint itself is above it, a breakpoint being the width below which the screen changes
+ * (docs/foundations/layout.md). A media query can't read the token, so the contract writes it out.
+ */
+export const phoneQuery = (phonePx: number) =>
+  `(max-width: ${Number((phonePx - 0.02).toFixed(2))}px)`
+
+/**
+ * The contract's pattern-only queries that aren't `breakpoint.phone`'s, each at its line of
+ * `contract`: a token changed without its query would leave a pattern switching at the old width.
+ */
+export function patternMediaProblems(contract: string, rules: CssRules, phonePx: number) {
+  const want = phoneQuery(phonePx)
+  return rules.patternMedia
+    .filter((query) => query !== want)
+    .map((query): Problem => {
+      const at = contract.indexOf(`\`${query}\``)
+      return {
+        file: CONTRACT,
+        line: at < 0 ? undefined : contract.slice(0, at).split('\n').length,
+        message: `"Media queries" gives a pattern ${query}, but breakpoint.phone is ${phonePx}px, so its query is ${want}: the token's value less 0.02 px`,
+      }
+    })
+}
+
 /** What the contract lets CSS read and query. */
 export interface CssRules {
   /** Per layer, the tokens it reads: `color.text.*` is a family, `z-index.dialog` one token */
   families: Record<CssLayer, string[]>
   /** The media queries CSS may use */
   media: string[]
+  /** The media queries only a pattern's CSS may use: the rows whose use starts "In a pattern only" */
+  patternMedia: string[]
   /** The CSS system colours allowed inside `(forced-colors: active)`, lowercased */
   forcedColours: Set<string>
 }
@@ -55,13 +102,16 @@ export function readCssRules(contract: string): CssRules {
   }
   const component = reads(/^Component/)
   const queries = tableRows(section(contract, 'Media queries'))
-  const media = queries.map(([query]) => codeSpans(query)[0])
+  const patternOnly = ([, use]: string[]) => /^In a pattern only\b/.test(use)
+  const media = queries.filter((row) => !patternOnly(row)).map(([query]) => codeSpans(query)[0])
+  const patternMedia = queries.filter(patternOnly).map(([query]) => codeSpans(query)[0])
   for (const needed of [REDUCED_MOTION, FORCED_COLORS])
     if (!media.includes(needed)) throw new Error(`${CONTRACT}, "Media queries", has no ${needed}`)
   const forced = queries.find(([query]) => query.includes(FORCED_COLORS))!
   return {
     families: { component, part: component, pattern: [...component, ...reads(/^Pattern/)] },
     media,
+    patternMedia,
     forcedColours: new Set(codeSpans(forced[1]).map((c) => c.toLowerCase())),
   }
 }
@@ -147,6 +197,15 @@ export interface CssContext {
   rules: CssRules
 }
 
+/** `breakpoint.phone` in pixels, from the tokens of the repo at `root`. */
+export function breakpointPhone(root: string) {
+  const token = loadTokens(readSources(root)).base.find((t) => t.name === 'breakpoint.phone')
+  const value = token?.value as { value?: unknown; unit?: unknown } | undefined
+  if (typeof value?.value !== 'number' || value.unit !== 'px')
+    throw new Error('breakpoint.phone is not a px dimension, so no pattern query can follow it')
+  return value.value
+}
+
 /** The context of the repo at `root`. */
 export function cssContext(root: string): CssContext {
   const contract = readFileSync(join(root, CONTRACT), 'utf8')
@@ -215,16 +274,26 @@ export function cssProblems(
   const report = (node: Node, message: string) =>
     problems.push({ file, line: node.source?.start?.line, message })
   const families = rules.families[layer]
+  const queries = layer === 'pattern' ? [...rules.media, ...rules.patternMedia] : rules.media
   const root = postcss.parse(css, { from: file })
   // the selectors whose animation a reduced-motion block sets, so their loops stop
   const stopped = new Set<string>()
   root.walkAtRules('media', (rule) => {
     const query = media(rule.params)
-    if (!rules.media.includes(query))
+    if (!queries.includes(query))
       report(
         rule,
-        `@media ${rule.params} is not one of the queries components use: ${rules.media.join(', ')}`,
+        `@media ${rule.params} is not one of the queries ${layer === 'pattern' ? 'patterns' : 'components'} use: ${queries.join(', ')}`,
       )
+    if (layer === 'pattern' && rules.patternMedia.includes(query))
+      rule.walkRules((inner) => {
+        for (const sel of inner.selectors)
+          if (!RESPONSIVE.test(withoutNot(sel)))
+            report(
+              inner,
+              `${selector(sel)} is inside @media ${rule.params}, which only lays out a pattern's size='responsive': select [data-size='responsive']`,
+            )
+      })
     if (query === REDUCED_MOTION)
       rule.walkDecls(/^animation(-name|-iteration-count)?$/i, (d) => {
         if (d.parent?.type === 'rule') stopped.add(selector((d.parent as Rule).selector))
@@ -343,10 +412,14 @@ export default {
   rule: RULE,
   run(root) {
     const context = cssContext(root)
-    return CSS_LAYERS.flatMap(([dir, layer]) =>
-      walk(root, dir, (n) => n.endsWith('.css')).flatMap((file) =>
-        cssProblems(file, readFileSync(join(root, file), 'utf8'), layer, context),
+    const contract = readFileSync(join(root, CONTRACT), 'utf8')
+    return [
+      ...patternMediaProblems(contract, context.rules, breakpointPhone(root)),
+      ...CSS_LAYERS.flatMap(([dir, layer]) =>
+        walk(root, dir, (n) => n.endsWith('.css')).flatMap((file) =>
+          cssProblems(file, readFileSync(join(root, file), 'utf8'), layer, context),
+        ),
       ),
-    ).sort(byFileLine)
+    ].sort(byFileLine)
   },
 } satisfies Check
