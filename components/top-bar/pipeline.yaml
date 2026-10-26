@@ -1,0 +1,77 @@
+# Written by npm run factory; never by hand.
+component: TopBar
+layer: pattern
+deferred:
+  at: 2026-10-26T02:10:47.486Z
+stages:
+  brief:
+    status: done
+    started: 2026-10-26T02:20:36.146Z
+    ended: 2026-10-26T02:20:56.299Z
+  build:
+    runs: 5
+    status: done
+    started: 2026-10-26T03:40:52.193Z
+    begun: 06f89857896accf53ee535c73f49ef874d90324cc3ea666ac0dbcaf2beb0a4fe
+    spec: 18ca5ecefee871931c42ac5095986f7af1dbc7eea5213031ddae32e6feb7e591
+    ended: 2026-10-26T03:48:35.832Z
+  review:
+    rounds: 5
+    sentBack: 4
+    reviewed: e8922c4def85b1655b0a60ccf8aea5bbffcf989f
+    findings:
+      p1: 0
+      p2: 0
+      p3: 1
+    granted: 5
+    status: done
+    started: 2026-10-26T03:49:21.564Z
+    ended: 2026-10-26T03:56:10.220Z
+  docs:
+    status: done
+    started: 2026-10-26T03:56:28.692Z
+    ended: 2026-10-26T04:05:01.394Z
+notes:
+  - stage: brief
+    at: 2026-10-26T02:19:59.973Z
+    direction: "Mylder's composition clips a chip's focus ring in its phone filters row, whose overflow-x: auto leaves no room above or at the sides; TopBar keeps focus.width plus focus.offset of room there, taken back by a negative margin, so the swap fixes it with nothing else moved."
+  - stage: brief
+    at: 2026-10-26T02:19:59.973Z
+    direction: Layout's page shell says the top bar is 'glass groups' holding a clock, and Typography gives typography.data-lg to the 'Top bar clock', but Mylder's composition is one glass panel with an 'Updated 08:14:05' line in typography.data-sm and no clock; a design run should settle the bar against those two pages and reword whichever it departs from.
+  - stage: brief
+    at: 2026-10-26T02:19:59.973Z
+    direction: TopBar's unknown time reads 'Updated —' with the dash as text, heard as the screen reader names it, rather than UnknownValue's 'Unknown' for the ear, because expectOwnedStrings can't read an owned phrase whose placeholder is filled with an element.
+  - stage: brief
+    at: 2026-10-26T02:19:59.973Z
+    questions: |-
+      1. Anatomy: Is the root a plain div on Surface's glass, not a header landmark, with the screen wrapping the bar in its header, as KioskBar leaves its landmark to its screen? Recommended: yes.
+      2. Anatomy: Is the bar one glass Surface holding every part, as Mylder's composition has it, rather than a glass group for each part as Layout's page shell words it? Recommended: yes.
+      3. Props: Does TopBar take a size of 'medium' | 'small', default 'medium', that the screen sets to small under breakpoint.phone, in place of Mylder's two media queries at 760 px? Recommended: yes.
+      4. Props: Does TopBar take its filters and tools as the caller's elements (the filters and tools slots) rather than data it renders into FilterChips, an IconButton and a LinkButton, so that its dependsOn is Surface, Brand and Text? Recommended: yes.
+      5. Props: Does the status line match SourceLine rather than compose it: its own time, paused and outOfDate props, SourceLine's words, order, separator and inks, but no source name and Mylder's typography.data-sm? Recommended: yes.
+      6. Props: Is time optional, the line reading 'Updated —' while it is left out, the '—' filling {time} as text with no dateTime? Recommended: yes.
+      7. Props: Does TopBar take a brandHref and render the Brand as <a href={brandHref}> when it is given, the brand alone when not? Recommended: yes.
+      8. Tokens: Is the status line in typography.data-sm and color.text.secondary, with 'Paused' in color.text.primary and the whole out-of-date phrase in color.text.warning, and no icon? Recommended: yes.
+      9. Owned strings: Are the new keys updated 'Updated {time}', updatedOutOfDate 'Updated {time}, may be out of date' and filters 'Filters', with sourcePaused and brandName reused? Recommended: yes.
+      10. Component rules: With size='small', are the groups in the DOM in the order identity, tools, filters, the order on screen, rather than Mylder's one DOM order with CSS order? Recommended: yes.
+  - stage: build
+    at: 2026-10-26T02:39:39.371Z
+    direction: The groups are keyed and reordered as an array, so a screen that switches size at breakpoint.phone moves the filters and tools groups rather than remounting them, keeping focus and any uncontrolled chip state.
+  - stage: build
+    at: 2026-10-26T02:39:39.371Z
+    direction: "The small bar's chips row scrolls with no visible scrollbar (scrollbar-width: none, as Mylder has it), so a phone shows no cue that more chips lie past the edge beyond the last chip being cut; a design run may want a fade or a peek."
+  - stage: build
+    at: 2026-10-26T03:01:08.509Z
+    direction: Mylder's own .bar padding (one class) loses to Surface's .pn-Surface[data-variant='glass'] padding (a class and an attribute), so Mylder's bar renders 68 px tall on a wide screen and 114 px on a 375 px phone where it means 46 px and 90 px; TopBar follows the measures Mylder writes, so Mylder's swap PR should say its bar shrinks to its intended size.
+  - stage: build
+    at: 2026-10-26T03:01:08.509Z
+    direction: "Retro: a glass pattern's padding, and TopBar's overflow-wrap over Text's, win over Surface's and Text's rules only by stylesheet order, since the contract's one-class-then-attributes selectors tie in specificity; a consumer bundler that reorders CSS chunks would flip them. A cascade layer for component CSS, or a Glass line that says how a pattern's padding wins, would make it hold."
+  - stage: build
+    at: 2026-10-26T03:17:51.159Z
+    direction: "Shared tooling gap for the retro: the visual stage (scripts/visual.ts, drive) hovers and presses a State variant's story on the root, .pn-TopBar, at its centre, so for TopBar's MediumHover and MediumPressed it would hover a chip, not the brand link whose looks the State names; a code map that names the part a State drives on would let it check a pattern whose interactive part is inside it."
+  - stage: review
+    at: 2026-10-26T03:27:30.346Z
+    unblocked: '3 review rounds found a P1 or a P2; the last: review round 3 found 1 P2 (components/top-bar/review.md)'
+  - stage: review
+    at: 2026-10-26T03:40:51.340Z
+    unblocked: 'review round 4 found a P1 or a P2 after unblock granted one round past the cap (round 4): review round 4 found 1 P2 (components/top-bar/review.md)'

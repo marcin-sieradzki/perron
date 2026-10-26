@@ -1,0 +1,120 @@
+/* TopBar: the brand and the status line, the filters and the tools in one wrapping row on Surface's
+   glass (docs/patterns/top-bar.md, Tokens), one row on a wide screen and two on a phone. The one
+   part it draws that a pointer presses is the brand as a link, with its hover and pressed fills on
+   a radius.md box; every other part is at rest. No fill, edge, radius or shadow beyond Surface's,
+   which it only pads, and no position, inset, outer margin or z-index: the bar sizes to its
+   container and its screen places it (CR-2, CR-14, CR-15). */
+
+.pn-TopBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: var(--perron-space-300);
+  row-gap: var(--perron-space-100);
+}
+
+/* One row on a wide screen */
+.pn-TopBar[data-size='medium'] {
+  min-block-size: var(--perron-size-top-bar);
+  /* a wrapped bar's first and last rows keep off the glass's edge; one row stays size.top-bar */
+  padding-block: var(--perron-space-100);
+  padding-inline: var(--perron-space-400);
+}
+
+/* The phone's bar, its groups on two rows (CR-3) */
+.pn-TopBar[data-size='small'] {
+  min-block-size: var(--perron-size-top-bar-phone);
+  padding-block: var(--perron-space-100);
+  padding-inline: var(--perron-space-300);
+}
+
+/* The brand and the status line, side by side, or the line under the brand on a phone */
+.pn-TopBar-identity {
+  display: flex;
+  align-items: center;
+  column-gap: var(--perron-space-300);
+}
+
+.pn-TopBar[data-size='small'] .pn-TopBar-identity {
+  /* CR-3: it takes the room the tools leave, so the tools keep the first row */
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: flex-start;
+  min-inline-size: 0;
+}
+
+/* The brand as a link, with brandHref: a quiet control's pointer feedback, on a box padded at its
+   sides and taken back by the margin, so the lockup stays where it was (Pointer feedback) */
+.pn-TopBar-brand[href] {
+  margin-inline: calc(-1 * var(--perron-space-100));
+  padding-inline: var(--perron-space-100);
+  border-radius: var(--perron-radius-md);
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .pn-TopBar-brand[href]:hover {
+    background-color: var(--perron-color-surface-hover);
+  }
+}
+
+.pn-TopBar-brand[href]:active {
+  background-color: var(--perron-color-surface-selected);
+}
+
+/* CR-10: the line breaks at its spaces only when it is wider than the bar, keeping whole words */
+.pn-TopBar-status {
+  overflow-wrap: break-word;
+}
+
+.pn-TopBar-paused {
+  color: var(--perron-color-text-primary);
+}
+
+/* The whole out-of-date phrase, one owned string, in warning ink */
+.pn-TopBar[data-out-of-date] .pn-TopBar-time {
+  color: var(--perron-color-text-warning);
+}
+
+/* A fieldset, so the chips are one named group, without a box of its own */
+.pn-TopBar-filters {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  min-inline-size: 0;
+  margin: 0;
+  border: 0;
+}
+
+/* CR-10: centred between the identity and the tools, wrapping in a bar narrower than the chips */
+.pn-TopBar[data-size='medium'] .pn-TopBar-filters {
+  flex-wrap: wrap;
+  justify-content: center;
+  column-gap: var(--perron-space-200);
+  row-gap: var(--perron-space-100);
+  padding: 0;
+}
+
+/* CR-9: a row of its own that scrolls sideways, with room for a chip's focus ring above and at its
+   sides, taken back by the margin, and space.100 below */
+.pn-TopBar[data-size='small'] .pn-TopBar-filters {
+  /* the bar's whole width, and the ring's room each side, which the margins take back */
+  flex-basis: calc(100% + 2 * (var(--perron-focus-width) + var(--perron-focus-offset)));
+  justify-content: flex-start;
+  gap: var(--perron-space-100);
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-block-start: calc(var(--perron-focus-width) + var(--perron-focus-offset));
+  padding-block-end: var(--perron-space-100);
+  padding-inline: calc(var(--perron-focus-width) + var(--perron-focus-offset));
+  margin-block-start: calc(-1 * (var(--perron-focus-width) + var(--perron-focus-offset)));
+  margin-inline: calc(-1 * (var(--perron-focus-width) + var(--perron-focus-offset)));
+}
+
+/* The tools end the row, or the line they wrap to */
+.pn-TopBar-tools {
+  display: flex;
+  align-items: center;
+  gap: var(--perron-space-100);
+  margin-inline-start: auto;
+}

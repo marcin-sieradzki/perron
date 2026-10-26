@@ -1583,6 +1583,60 @@
         },
         "$description": "Gap between parallel regional lines sharing a track"
       }
+    },
+    "strand": {
+      "$type": "number",
+      "$description": "A line's strand where lines share a track: its place from the track's centre, in steps of its mode's map.track-spacing",
+      "m1": {
+        "$type": "number",
+        "$value": -0.5,
+        "$description": "Line M1's strand on a shared track, in track spacings from its centre"
+      },
+      "m2": {
+        "$type": "number",
+        "$value": 0.5,
+        "$description": "Line M2's strand on a shared track, in track spacings from its centre"
+      },
+      "m3": {
+        "$type": "number",
+        "$value": -0.5,
+        "$description": "Line M3's strand on a shared track, in track spacings from its centre"
+      },
+      "m4": {
+        "$type": "number",
+        "$value": 0.5,
+        "$description": "Line M4's strand on a shared track, in track spacings from its centre"
+      },
+      "a": {
+        "$type": "number",
+        "$value": -2,
+        "$description": "Line A's strand on a shared track, in track spacings from its centre"
+      },
+      "b": {
+        "$type": "number",
+        "$value": -1,
+        "$description": "Line B's strand on a shared track, in track spacings from its centre"
+      },
+      "c": {
+        "$type": "number",
+        "$value": 0,
+        "$description": "Line C's strand on a shared track, in track spacings from its centre"
+      },
+      "e": {
+        "$type": "number",
+        "$value": 1,
+        "$description": "Line E's strand on a shared track, in track spacings from its centre"
+      },
+      "f": {
+        "$type": "number",
+        "$value": 0,
+        "$description": "Line F's strand on a shared track, in track spacings from its centre"
+      },
+      "h": {
+        "$type": "number",
+        "$value": 2,
+        "$description": "Line H's strand on a shared track, in track spacings from its centre"
+      }
     }
   }
 }

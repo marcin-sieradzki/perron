@@ -75,4 +75,7 @@ export const nb: OwnedStrings = {
   sourceUpdated: 'oppdatert {time}',
   sourcePaused: 'Satt på pause',
   sourceOutOfDate: 'oppdatert {time}, kan være utdatert',
+  topBarUpdated: 'Oppdatert {time}',
+  topBarUpdatedOutOfDate: 'Oppdatert {time}, kan være utdatert',
+  topBarFilters: 'Filtre',
 }

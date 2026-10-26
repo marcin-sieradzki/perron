@@ -30,11 +30,13 @@ Every icon renders at one of three steps, set with `--perron-icon-size` (one of 
 
 ### Map
 
-| Icon                                                      | Name     | Grid  | Size                   | Use                                |
-| --------------------------------------------------------- | -------- | ----- | ---------------------- | ---------------------------------- |
-| <img src="../../packages/perron/icons/plus.svg" alt="">   | `plus`   | 16 px | `icon.size.400`, 16 px | Zoom in; step a number field up    |
-| <img src="../../packages/perron/icons/minus.svg" alt="">  | `minus`  | 16 px | `icon.size.400`, 16 px | Zoom out; step a number field down |
-| <img src="../../packages/perron/icons/locate.svg" alt=""> | `locate` | 16 px | `icon.size.400`, 16 px | Centre the map on the network      |
+| Icon                                                      | Name     | Grid  | Size                   | Use                                 |
+| --------------------------------------------------------- | -------- | ----- | ---------------------- | ----------------------------------- |
+| <img src="../../packages/perron/icons/plus.svg" alt="">   | `plus`   | 16 px | `icon.size.400`, 16 px | Zoom in; step a number field up     |
+| <img src="../../packages/perron/icons/minus.svg" alt="">  | `minus`  | 16 px | `icon.size.400`, 16 px | Zoom out; step a number field down  |
+| <img src="../../packages/perron/icons/locate.svg" alt=""> | `locate` | 16 px | `icon.size.400`, 16 px | Centre the map on the network       |
+| <img src="../../packages/perron/icons/pause.svg" alt="">  | `pause`  | 16 px | `icon.size.400`, 16 px | Stop the vehicles moving on the map |
+| <img src="../../packages/perron/icons/play.svg" alt="">   | `play`   | 16 px | `icon.size.400`, 16 px | Set the vehicles moving again       |
 
 ### Actions
 

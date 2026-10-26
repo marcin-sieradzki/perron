@@ -216,6 +216,16 @@
   --perron-map-track-spacing-metro: 3.4px;
   --perron-map-track-spacing-stog: 2.8px;
   --perron-map-track-spacing-regional: 2.8px;
+  --perron-map-strand-m1: -0.5;
+  --perron-map-strand-m2: 0.5;
+  --perron-map-strand-m3: -0.5;
+  --perron-map-strand-m4: 0.5;
+  --perron-map-strand-a: -2;
+  --perron-map-strand-b: -1;
+  --perron-map-strand-c: 0;
+  --perron-map-strand-e: 1;
+  --perron-map-strand-f: 0;
+  --perron-map-strand-h: 2;
 }
 
 :root,

@@ -144,6 +144,7 @@ const preview: Preview = {
             'DisruptionCard',
             'ScaleBar',
             'KioskBar',
+            'TopBar',
           ],
           // registry:patterns end
           // registry:specs start: written by npm run registry, each built entry's spec page
@@ -217,6 +218,7 @@ const preview: Preview = {
             'DisruptionCard',
             'ScaleBar',
             'KioskBar',
+            'TopBar',
           ],
           // registry:specs end
         ],
