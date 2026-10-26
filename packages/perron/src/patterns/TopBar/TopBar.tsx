@@ -145,10 +145,10 @@ export function TopBar({
 }: TopBarProps) {
   // CR-8: the bar's words, with this instance's overrides laid over them
   const strings = useOwnedStrings({
-    updated: updatedLabel,
-    updatedOutOfDate: updatedOutOfDateLabel,
+    topBarUpdated: updatedLabel,
+    topBarUpdatedOutOfDate: updatedOutOfDateLabel,
     sourcePaused: sourcePausedLabel,
-    filters: filtersLabel,
+    topBarFilters: filtersLabel,
   })
   const {
     identity: identityProps,
@@ -197,10 +197,10 @@ export function TopBar({
         <time
           {...timeProps}
           className={classes('pn-TopBar-time', timeProps?.className)}
-          dateTime={time}
+          dateTime={given(time) ? time : undefined}
         >
-          {interpolate(outOfDate ? strings.updatedOutOfDate : strings.updated, {
-            time: time ?? UNKNOWN_TIME,
+          {interpolate(outOfDate ? strings.topBarUpdatedOutOfDate : strings.topBarUpdated, {
+            time: given(time) ? time : UNKNOWN_TIME,
           })}
         </time>
       </Text>
@@ -213,7 +213,7 @@ export function TopBar({
       key="filters"
       {...filtersProps}
       className={classes('pn-TopBar-filters', filtersProps?.className)}
-      aria-label={strings.filters}
+      aria-label={strings.topBarFilters}
     >
       {filters}
     </fieldset>

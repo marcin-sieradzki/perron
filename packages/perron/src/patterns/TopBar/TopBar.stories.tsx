@@ -590,7 +590,7 @@ export const OutOfDate: Story = {
         )
         expectOwnedStrings(markup, locale, CALLER_WORDS)
         await expect(markup).toContain(
-          dictionaries[locale].updatedOutOfDate.replace('{time}', '08:09:40'),
+          dictionaries[locale].topBarUpdatedOutOfDate.replace('{time}', '08:09:40'),
         )
       }
     })

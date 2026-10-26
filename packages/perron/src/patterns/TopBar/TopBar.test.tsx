@@ -57,8 +57,11 @@ describe('TopBar', () => {
     expect(markup).toContain(`>Updated ${time}</time>`)
   })
 
-  it('reads "Updated —" with no dateTime while the time is left out', () => {
-    const markup = renderToStaticMarkup(<TopBar />)
+  it.each([
+    ['left out', undefined],
+    ['an empty string', ''],
+  ])('reads "Updated —" with no dateTime while the time is %s', (_, time) => {
+    const markup = renderToStaticMarkup(<TopBar time={time} />)
     expect(markup).toContain('<time class="pn-TopBar-time">Updated —</time>')
   })
 })
