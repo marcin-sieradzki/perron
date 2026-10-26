@@ -201,6 +201,18 @@ export const en = {
    * "Vehicle positions · updated 08:09:40, may be out of date".
    */
   sourceOutOfDate: 'updated {time}, may be out of date',
+  /**
+   * A status line: the time of the data a screen shows, first in its line, as in "Updated
+   * 08:14:05". `{time}` is the caller's time, or "—" while it is unknown.
+   */
+  updated: 'Updated {time}',
+  /**
+   * A status line: the time of the data a screen shows when the app judges it may be out of date,
+   * as in "Updated 08:09:40, may be out of date".
+   */
+  updatedOutOfDate: 'Updated {time}, may be out of date',
+  /** A group of filters, such as a top bar's chips: its name, heard as the group is entered. */
+  filters: 'Filters',
 }
 
 /** The name of one owned string. */

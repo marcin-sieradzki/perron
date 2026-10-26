@@ -4306,6 +4306,110 @@
       }
     }
   },
+  "TopBar": {
+    "extends": [
+      "Omit<ComponentPropsWithRef<'div'>, 'children'>"
+    ],
+    "props": {
+      "brandHref": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "brandNameLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "className": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "filters": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "filtersLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "outOfDate": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "paused": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "ref": {
+        "optional": true,
+        "type": [
+          "Ref<HTMLDivElement>"
+        ]
+      },
+      "size": {
+        "optional": true,
+        "type": [
+          "\"medium\"",
+          "\"small\""
+        ]
+      },
+      "slotProps": {
+        "optional": true,
+        "type": [
+          "{ identity?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; brand?: Omit<BrandProps, \"brandNameLabel\" | \"render\"> | undefined; status?: Omit<DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement>, \"children\" | \"color\"> | undefined; paused?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; separator?: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> | undefined; time?: DetailedHTMLProps<TimeHTMLAttributes<HTMLTimeElement>, HTMLTimeElement> | undefined; filters?: DetailedHTMLProps<FieldsetHTMLAttributes<HTMLFieldSetElement>, HTMLFieldSetElement> | undefined; tools?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | undefined; }"
+        ]
+      },
+      "sourcePausedLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "style": {
+        "optional": true,
+        "type": [
+          "CSSProperties"
+        ]
+      },
+      "time": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "tools": {
+        "optional": true,
+        "type": [
+          "ReactNode"
+        ]
+      },
+      "updatedLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
+      "updatedOutOfDateLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      }
+    }
+  },
   "VehicleDot": {
     "extends": [
       "Omit<useRender.ComponentProps<'span'>, 'children'>"
