@@ -449,7 +449,7 @@
     "name": "TopBar",
     "layer": "pattern",
     "category": "Shell",
-    "status": "building",
+    "status": "stable",
     "baseUiParts": [],
     "penpotPath": "Patterns/TopBar",
     "dependsOn": ["Surface", "Brand", "Text"]
