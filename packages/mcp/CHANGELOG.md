@@ -1,5 +1,12 @@
 # @mylder/perron-mcp
 
+## 0.2.6
+
+### Patch Changes
+
+- Updated dependencies [f783b41]
+  - @mylder/perron@0.9.0
+
 ## 0.2.5
 
 ### Patch Changes
