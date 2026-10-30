@@ -43,7 +43,11 @@
   margin-inline-start: auto;
 }
 
-/* The content's look and layout are the caller's. */
+/* CR-10: the caller's blocks in one column, space.200 apart, each as wide as the content; what
+   each block looks like, and the layout inside it, stay the caller's. */
 .pn-Section-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--perron-space-200);
   margin: 0;
 }
