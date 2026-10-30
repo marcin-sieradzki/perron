@@ -2,6 +2,7 @@
 // design deferred, each on a raised Surface as a section sits in a panel, and their play tests.
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, userEvent, within } from 'storybook/test'
+import { Button } from '../Button/Button.tsx'
 import { LinkButton } from '../LinkButton/LinkButton.tsx'
 import { Surface } from '../Surface/Surface.tsx'
 import { Section } from './Section.tsx'
@@ -84,6 +85,43 @@ export const TitleOnly: Story = {
     )
     await userEvent.tab()
     await expect(root?.contains(document.activeElement)).toBe(false)
+  },
+}
+
+/** A row of the caller's own: its buttons side by side, keeping their own width. */
+const row = { display: 'flex', flexWrap: 'wrap', gap: 'var(--perron-space-200)' } as const
+
+/** Several children, a sentence and two rows of buttons, stacked space.200 apart (CR-10). */
+export const Blocks: Story = {
+  args: {
+    title: 'Your draft',
+    children: [
+      <p key="sentence" style={typography('body-sm')}>
+        No edits yet. They stay in this browser.
+      </p>,
+      <div key="history" style={row}>
+        <Button variant="outline" size="small">
+          Undo
+        </Button>
+        <Button variant="outline" size="small">
+          Redo
+        </Button>
+      </div>,
+      <div key="copy" style={row}>
+        <Button variant="outline" size="small">
+          Copy as a prompt
+        </Button>
+      </div>,
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const content = canvasElement.querySelector<HTMLElement>('.pn-Section-content')
+    await expect(content).not.toBeNull()
+    await expect(getComputedStyle(content!).rowGap).toBe('8px')
+    const blocks = [...content!.children].map((child) => child.getBoundingClientRect())
+    await expect(blocks).toHaveLength(3)
+    for (let i = 1; i < blocks.length; i++)
+      await expect(Math.round(blocks[i]!.top - blocks[i - 1]!.bottom)).toBe(8)
   },
 }
 
