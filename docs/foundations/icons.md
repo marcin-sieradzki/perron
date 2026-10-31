@@ -18,11 +18,12 @@ Every icon renders at one of three steps, set with `--perron-icon-size` (one of 
 
 ## Style
 
-- Strokes with round caps and joins, 1.5 to 1.8 px on the icon's own grid. Fills only for a dot, such as the point of the info icon.
+- Strokes with round caps and joins, 1.5 to 1.8 px on the icon's own grid. Fills only for a dot, such as the point of the info icon, and for the north half of the compass needle, which tells it from the south half at any angle.
 - Drawn in `currentColor`, so an icon takes the colour of the text around it. Set the colour on the text, never on the icon.
 - The `.perron-icon` class in `perron.css` sizes an inline SVG icon from `--perron-icon-size`, and keeps it from shrinking in a flex row.
 - An icon sits next to a word or inside a labelled button; it never carries meaning alone. Next to text it is hidden from screen readers (`aria-hidden="true"`). Alone, it needs an accessible name.
 - No icon font, no emoji, no third-party icon set. A new icon follows this page, joins `icons.json`, and the check confirms its grid, stroke and colour.
+- `compass` is drawn pointing north, up. The caller turns it about its centre against the map's heading, so the filled half always points to north on the map.
 - `aircraft` is also the map's aircraft glyph. The file is an icon like the others, a stroke on its 14 px grid; the map and the map's legend fill or rim its outline by data state and draw it at the map's own sizes, `map.aircraft-size.*`, as [Map](map.md#aircraft) says. That drawing is a map glyph, as a vehicle dot is, not an icon, so the fill and the sizes above don't bind it.
 
 ## The set
@@ -36,6 +37,8 @@ Every icon renders at one of three steps, set with `--perron-icon-size` (one of 
 | <img src="../../packages/perron/icons/plus.svg" alt="">     | `plus`     | 16 px | `icon.size.400`, 16 px | Zoom in; step a number field up                                                                       |
 | <img src="../../packages/perron/icons/minus.svg" alt="">    | `minus`    | 16 px | `icon.size.400`, 16 px | Zoom out; step a number field down                                                                    |
 | <img src="../../packages/perron/icons/locate.svg" alt="">   | `locate`   | 16 px | `icon.size.400`, 16 px | Centre the map on the network                                                                         |
+| <img src="../../packages/perron/icons/compass.svg" alt="">  | `compass`  | 16 px | `icon.size.400`, 16 px | Where north is, and turn the map back to it: a needle pointing up, turned to the map's heading        |
+| <img src="../../packages/perron/icons/cube.svg" alt="">     | `cube`     | 16 px | `icon.size.400`, 16 px | Tilt the map into 3D, and back to flat                                                                |
 | <img src="../../packages/perron/icons/pause.svg" alt="">    | `pause`    | 16 px | `icon.size.400`, 16 px | Stop the vehicles moving on the map                                                                   |
 | <img src="../../packages/perron/icons/play.svg" alt="">     | `play`     | 16 px | `icon.size.400`, 16 px | Set the vehicles moving again                                                                         |
 | <img src="../../packages/perron/icons/aircraft.svg" alt=""> | `aircraft` | 14 px | `icon.size.325`, 13 px | An aircraft seen from above, pointing north: on the map, turned to its track, and in the map's legend |

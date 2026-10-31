@@ -12,6 +12,14 @@
       "size": "icon.size.400",
       "use": "Centre the map on the network"
     },
+    "compass": {
+      "size": "icon.size.400",
+      "use": "Where north is, and turn the map back to it: a needle pointing up, turned to the map's heading"
+    },
+    "cube": {
+      "size": "icon.size.400",
+      "use": "Tilt the map into 3D, and back to flat"
+    },
     "pause": {
       "size": "icon.size.400",
       "use": "Stop the vehicles moving on the map"
