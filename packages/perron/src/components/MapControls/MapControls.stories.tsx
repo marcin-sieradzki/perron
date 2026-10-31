@@ -3,9 +3,7 @@
 // together, and with its words overridden. The buttons' hover, focus and pressed
 // looks are ToolbarButton's, storied on the Toolbar page; these render at rest, and their play
 // tests check the behaviour.
-import { useState, type ReactNode } from 'react'
-import { flushSync } from 'react-dom'
-import { createRoot } from 'react-dom/client'
+import { useState } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
@@ -83,29 +81,6 @@ const turnOf = (element: Element) => {
   if (transform === 'none') return 0
   const { a, b } = new DOMMatrix(transform)
   return Math.round((Math.atan2(b, a) * 180) / Math.PI) + 0
-}
-
-/**
- * Renders `first` apart from the story, into a host appended to `parent`, and gives `test` the host
- * and a `render` that passes the bar new props in place, as a screen does when its map changes, so
- * the same elements stay. Unmounts and removes the host after.
- */
-async function screen(
-  parent: HTMLElement,
-  first: ReactNode,
-  test: (host: HTMLElement, render: (ui: ReactNode) => void) => Promise<void>,
-) {
-  const host = document.createElement('div')
-  parent.append(host)
-  const root = createRoot(host)
-  const render = (ui: ReactNode) => flushSync(() => root.render(ui))
-  render(first)
-  try {
-    await test(host, render)
-  } finally {
-    root.unmount()
-    host.remove()
-  }
 }
 
 /** A bar with every button, its 3D toggle, compass and pause button among them, in English. */
@@ -618,13 +593,13 @@ export const Tiltable: Story = {
     })
     await step('Shift+Tab leaves the bar in one step', () => leave(canvasElement))
     await step('a gesture the screen passes on as tilted presses the toggle with no press', () =>
-      screen(
+      mounted(
         canvasElement,
         <PerronProvider locale="en">
           <MapControls onTiltedChange={onTiltedChange} />
         </PerronProvider>,
         async (host, render) => {
-          const toggle = within(host).getByRole('button', { name: '3D view' })
+          const toggle = await waitFor(() => within(host).getByRole('button', { name: '3D view' }))
           await expect(toggle).toHaveAttribute('aria-pressed', 'false')
           render(
             <PerronProvider locale="en">
@@ -675,7 +650,7 @@ export const Tilted: Story = {
       await expect(tilt).toHaveAttribute('aria-pressed', 'true')
     })
     await step('in forced colours, the on toggle keeps a Highlight fill', async () => {
-      const sheet = forcedColourSheet('pn-MapControls-tilt')
+      const sheet = forcedColourSheet('pn-ToolbarButton')
       document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet]
       try {
         const style = getComputedStyle(tilt)
@@ -707,6 +682,9 @@ export const Compass: Story = {
       await expect(compass).toHaveClass('pn-ToolbarButton', 'pn-MapControls-compass')
       await expect(compass).not.toHaveAttribute('aria-pressed')
       await expect(compass).toHaveAccessibleDescription(TURNED)
+      const words = document.getElementById(compass.getAttribute('aria-describedby')!)
+      await expect(words).toHaveClass('pn-MapControls-turned')
+      await expect(compass).not.toHaveAttribute('aria-description')
       await expect(iconPath(compass)).toBe(COMPASS_PATH)
       await expect(iconHidden(compass)).toBe(true)
       await expect(turnOf(needle)).toBe(-90)
@@ -727,13 +705,15 @@ export const Compass: Story = {
     })
     await step('Shift+Tab leaves the bar in one step', () => leave(canvasElement))
     await step('at north the compass stays, unturned; NaN draws it unturned too', () =>
-      screen(
+      mounted(
         canvasElement,
         <PerronProvider locale="en">
           <MapControls heading={90} onResetNorth={onResetNorth} />
         </PerronProvider>,
         async (host, render) => {
-          const button = within(host).getByRole('button', { name: 'Reset to north' })
+          const button = await waitFor(() =>
+            within(host).getByRole('button', { name: 'Reset to north' }),
+          )
           await expect(turnOf(button.querySelector('svg')!)).toBe(-90)
           for (const heading of [0, 405, -45, Number.NaN]) {
             render(
@@ -754,13 +734,15 @@ export const Compass: Story = {
     await step(
       'focus stays on the compass as its needle turns; the ear hears north or turned',
       () =>
-        screen(
+        mounted(
           canvasElement,
           <PerronProvider locale="en">
             <MapControls heading={90} onResetNorth={onResetNorth} />
           </PerronProvider>,
           async (host, render) => {
-            const button = within(host).getByRole('button', { name: 'Reset to north' })
+            const button = await waitFor(() =>
+              within(host).getByRole('button', { name: 'Reset to north' }),
+            )
             button.focus()
             await expect(button).toHaveFocus()
             // a turn back to north, frame by frame, as the screen passes it, and on past it
@@ -776,6 +758,8 @@ export const Compass: Story = {
               await expect(button).toHaveFocus()
               const north = !Number.isFinite(heading) || heading % 360 === 0
               await expect(button).toHaveAccessibleDescription(north ? '' : TURNED)
+              await expect(button.hasAttribute('aria-describedby')).toBe(!north)
+              await expect(host.querySelector('.pn-MapControls-turned') === null).toBe(north)
               await expect(turnOf(button.querySelector('svg')!) === 0).toBe(north)
             }
             await expect(onResetNorth).toHaveBeenCalledTimes(3)
@@ -871,10 +855,9 @@ export const CustomLabels: Story = {
         custom.resetNorthLabel,
         custom.pauseLabel,
       ])
-      await expect(canvas.getByRole('button', { name: custom.resetNorthLabel })).toHaveAttribute(
-        'aria-description',
-        custom.turnedFromNorthLabel,
-      )
+      await expect(
+        canvas.getByRole('button', { name: custom.resetNorthLabel }),
+      ).toHaveAccessibleDescription(custom.turnedFromNorthLabel)
       for (const paused of [false, true])
         expectOwnedStrings(
           renderToStaticMarkup(
@@ -922,10 +905,9 @@ export const CustomLabels: Story = {
             da.resetNorth,
             paused ? da.resume : da.pause,
           ])
-          await expect(within(host).getByRole('button', { name: da.resetNorth })).toHaveAttribute(
-            'aria-description',
-            da.turnedFromNorth,
-          )
+          await expect(
+            within(host).getByRole('button', { name: da.resetNorth }),
+          ).toHaveAccessibleDescription(da.turnedFromNorth)
           expectOwnedStrings(host.innerHTML, 'da')
         })
       }

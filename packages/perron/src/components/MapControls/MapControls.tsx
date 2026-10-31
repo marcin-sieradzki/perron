@@ -1,14 +1,14 @@
 'use client'
 // MapControls: the map's zoom in, zoom out and centre buttons, and a 3D toggle, a compass and a
 // pause button when the screen handles them, in Perron's Toolbar on its glass, one tab stop named in
-// the reader's language. Every behaviour and every look is Toolbar's (CR-1), but the 3D toggle's on
-// look (CR-9).
+// the reader's language. Every behaviour and every look is Toolbar's (CR-1, CR-9).
 // The spec is docs/components/map-controls.md.
-import type { CSSProperties, MouseEvent, Ref } from 'react'
+import { useId, type CSSProperties, type MouseEvent, type Ref } from 'react'
 import { useOwnedStrings } from '../../PerronProvider.tsx'
 import { Toolbar, ToolbarButton, ToolbarSeparator } from '../Toolbar/Toolbar.tsx'
 import type { ToolbarProps } from '../Toolbar/Toolbar.tsx'
 import { classes } from '../../internal/nodes.ts'
+import { VisuallyHidden } from '../../parts/VisuallyHidden/VisuallyHidden.tsx'
 import './MapControls.css'
 
 /** The icons' shared attributes, from packages/perron/icons/ (CR-7). */
@@ -56,7 +56,7 @@ const CUBE = (
  * by minus `heading` about its centre, and unturned for a `heading` that isn't finite (CR-15). The
  * needle jumps to each heading, with no transition (CR-12).
  */
-const compass = (heading: number) => (
+const compassIcon = (heading: number) => (
   <svg
     {...STROKE}
     strokeWidth="1.6"
@@ -72,7 +72,8 @@ const compass = (heading: number) => (
  * `heading` that isn't a whole turn from north. It changes only between north and turned, not at
  * every degree of a turn (CR-15).
  */
-const turned = (heading: number) => Number.isFinite(heading) && ((heading % 360) + 360) % 360 !== 0
+const isTurned = (heading: number) =>
+  Number.isFinite(heading) && ((heading % 360) + 360) % 360 !== 0
 
 /** `pause` from packages/perron/icons/: shown while the map moves, for the press that stops it. */
 const PAUSE = (
@@ -274,6 +275,8 @@ export function MapControls({
     pause: pauseLabel,
     resume: resumeLabel,
   })
+  const turnedId = useId()
+  const turned = isTurned(heading)
   return (
     <Toolbar
       {...rest}
@@ -318,22 +321,29 @@ export function MapControls({
           color="neutral"
           startIcon={CUBE}
           aria-label={strings.view3d}
-          aria-pressed={tilted}
-          data-selected={tilted ? '' : undefined}
+          selected={tilted}
           disabled={disabled}
           onClick={(event) => onTiltedChange(event, !tilted)}
         />
       ) : null}
       {onResetNorth ? (
-        <ToolbarButton
-          className="pn-MapControls-compass"
-          color="neutral"
-          startIcon={compass(heading)}
-          aria-label={strings.resetNorth}
-          aria-description={turned(heading) ? strings.turnedFromNorth : undefined}
-          disabled={disabled}
-          onClick={onResetNorth}
-        />
+        <>
+          <ToolbarButton
+            className="pn-MapControls-compass"
+            color="neutral"
+            startIcon={compassIcon(heading)}
+            aria-label={strings.resetNorth}
+            aria-describedby={turned ? turnedId : undefined}
+            disabled={disabled}
+            onClick={onResetNorth}
+          />
+          {/* The words for the turned needle, out of sight and out of the flow (CR-15). */}
+          {turned ? (
+            <VisuallyHidden id={turnedId} className="pn-MapControls-turned">
+              {strings.turnedFromNorth}
+            </VisuallyHidden>
+          ) : null}
+        </>
       ) : null}
       {/* The pause button is the screen's to ask for: with no handler, the bar is its three buttons. */}
       {onPausedChange ? (

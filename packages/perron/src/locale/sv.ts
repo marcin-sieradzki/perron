@@ -63,7 +63,7 @@ export const sv: OwnedStrings = {
   zoomOut: 'Zooma ut',
   centerMap: 'Centrera kartan',
   view3d: '3D-vy',
-  resetNorth: 'Vrid mot norr',
+  resetNorth: 'Återställ till norr',
   turnedFromNorth: 'Kartan är roterad bort från norr',
   pause: 'Pausa',
   resume: 'Fortsätt',

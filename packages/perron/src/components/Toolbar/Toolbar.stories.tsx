@@ -1,9 +1,18 @@
 // Toolbar's stories: the toolbar in each orientation, then its button in each colour and state,
-// each in a toolbar of its own, as Base UI's parts need (CR-2). Hover and focus render at rest;
+// each in a toolbar of its own, as Base UI's parts need (CR-2), and as a toggle. Hover and focus render at rest;
 // the visual check drives them, and their play tests check them.
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, userEvent, within } from 'storybook/test'
-import { colour, onHover, pressedAfterHover, rendered, stateFill } from '../../testing/stories.ts'
+import {
+  colour,
+  fill,
+  forcedColourSheet,
+  onHover,
+  pressedAfterHover,
+  rendered,
+  resolve,
+  stateFill,
+} from '../../testing/stories.ts'
 import { Toolbar, ToolbarButton, ToolbarGroup, ToolbarSeparator } from './Toolbar.tsx'
 
 /** `plus` from packages/perron/icons/. */
@@ -231,6 +240,64 @@ export const ButtonBrandDisabled: Story = {
         Show whole line
       </ToolbarButton>
     ),
+  },
+}
+
+/**
+ * Three neutral buttons: a toggle that is on, a toggle that is off and a plain button, which has
+ * no `aria-pressed`. On is the inverse fill, with its own hover and pressed steps (CR-14).
+ */
+export const Toggle: Story = {
+  args: {
+    'aria-label': 'Map view',
+    children: [
+      <ToolbarButton key="on" selected>
+        3D view
+      </ToolbarButton>,
+      <ToolbarButton key="off" selected={false}>
+        Satellite
+      </ToolbarButton>,
+      <ToolbarButton key="plain">Centre the map</ToolbarButton>,
+    ],
+  },
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement)
+    const on = canvas.getByRole('button', { name: '3D view' })
+    const off = canvas.getByRole('button', { name: 'Satellite' })
+    const plain = canvas.getByRole('button', { name: 'Centre the map' })
+    await step('selected sets aria-pressed, and data-selected only while on', async () => {
+      await expect(on).toHaveAttribute('aria-pressed', 'true')
+      await expect(on).toHaveAttribute('data-selected')
+      await expect(off).toHaveAttribute('aria-pressed', 'false')
+      await expect(off).not.toHaveAttribute('data-selected')
+      await expect(plain).not.toHaveAttribute('aria-pressed')
+      await expect(plain).not.toHaveAttribute('data-selected')
+    })
+    await step('on is the inverse fill, the size of off, which is the neutral rest', async () => {
+      const style = getComputedStyle(on)
+      await expect(style.backgroundColor).toBe(fill('color-surface-inverse'))
+      await expect(style.color).toBe(colour('--perron-color-text-inverse'))
+      await expect(style.borderTopColor).toBe(resolve('borderColor', 'transparent'))
+      await expect(getComputedStyle(off).backgroundColor).toBe('rgba(0, 0, 0, 0)')
+      await expect(on.getBoundingClientRect().height).toBe(off.getBoundingClientRect().height)
+    })
+    await step("hover and press take the inverse fill's own steps, the press after", async () => {
+      await expect(stateFill(on)).toBe('var(--perron-color-surface-inverse-hover)')
+      await expect(stateFill(on, ':active')).toBe('var(--perron-color-surface-inverse-pressed)')
+      await expect(pressedAfterHover(on)).toBe(true)
+      await expect(getComputedStyle(on).cursor).toBe('pointer')
+    })
+    await step('in forced colours, on keeps a Highlight fill', async () => {
+      const sheet = forcedColourSheet('pn-ToolbarButton')
+      document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet]
+      try {
+        const style = getComputedStyle(on)
+        await expect(style.backgroundColor).toBe(resolve('backgroundColor', 'Highlight'))
+        await expect(style.color).toBe(resolve('color', 'HighlightText'))
+      } finally {
+        document.adoptedStyleSheets = document.adoptedStyleSheets.filter((s) => s !== sheet)
+      }
+    })
   },
 }
 
