@@ -1,7 +1,0 @@
----
-'@mylder/perron': minor
----
-
-`MapControls` takes an optional 3D toggle and an optional compass for the map's angle: given `onTiltedChange(event, tilted)`, the bar adds a 3D toggle, and given `onResetNorth(event)`, a compass, after the centre button and before the pause button, past a new separator (`angleSeparator`), in the same bar and arrow-key order, so the map's controls stay one tab stop. The screen holds `tilted` (default `false`), which the toggle's `aria-pressed` and its inverse on fill follow, through the new `ToolbarButton` `selected`, and `heading` (default `0`, degrees clockwise from north), by which the compass's needle turns to point north on the map. While the needle is turned, the compass is described as "Map turned away from north" through `aria-describedby` pointing at visually hidden text, so a screen reader hears what the needle shows. New owned strings `view3d` ("3D view"), `resetNorth` ("Reset to north") and `turnedFromNorth` ("Map turned away from north"), in all four locales (a caller that supplies its own dictionaries adds them too), overridden by the new `view3dLabel`, `resetNorthLabel` and `turnedFromNorthLabel` props. Without `onTiltedChange` and `onResetNorth` the bar renders as before.
-
-`ToolbarButton` takes an optional `selected`, as `Button` does: given, it makes the button a toggle with `aria-pressed`, and while `true` sets `data-selected` and draws the on look, the inverse fill with its own hover and pressed steps and a `Highlight` fill in forced colours. Left out, the button is no toggle and renders as before.
