@@ -18,12 +18,12 @@ Every icon renders at one of three steps, set with `--perron-icon-size` (one of 
 
 ## Style
 
-- Strokes with round caps and joins, 1.5 to 1.8 px on the icon's own grid. Fills only for a dot, such as the point of the info icon, and for the north half of the compass needle, which tells it from the south half at any angle.
+- Strokes with round caps and joins, 1.5 to 1.8 px on the icon's own grid. Fills only for a dot, such as the point of the info icon, and for `compass`'s needle, below.
 - Drawn in `currentColor`, so an icon takes the colour of the text around it. Set the colour on the text, never on the icon.
 - The `.perron-icon` class in `perron.css` sizes an inline SVG icon from `--perron-icon-size`, and keeps it from shrinking in a flex row.
 - An icon sits next to a word or inside a labelled button; it never carries meaning alone. Next to text it is hidden from screen readers (`aria-hidden="true"`). Alone, it needs an accessible name.
 - No icon font, no emoji, no third-party icon set. A new icon follows this page, joins `icons.json`, and the check confirms its grid, stroke and colour.
-- `compass` is drawn pointing north, up. The caller turns it about its centre against the map's heading, so the filled half always points to north on the map.
+- `compass` is a needle drawn pointing north, up, its north half filled so it tells north from south at any angle. The caller turns it about its centre against the map's heading, so the filled half always points to north on the map.
 - `aircraft` is also the map's aircraft glyph. The file is an icon like the others, a stroke on its 14 px grid; the map and the map's legend fill or rim its outline by data state and draw it at the map's own sizes, `map.aircraft-size.*`, as [Map](map.md#aircraft) says. That drawing is a map glyph, as a vehicle dot is, not an icon, so the fill and the sizes above don't bind it.
 
 ## The set
