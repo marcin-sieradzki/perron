@@ -94,11 +94,11 @@ An aircraft carries the data states in the vehicle dots' shapes, as far as a pla
 
 `color.map.aircraft`, in the [Colours](#colours) table, reaches 3:1 on every ground a plane flies or taxis over, in both themes, as WCAG asks of a mark that carries meaning:
 
-<!-- contrast 3: color.map.aircraft on color.map.land color.map.water color.map.park color.map.airport color.map.runway -->
+<!-- contrast 3: color.map.aircraft on color.map.land color.map.water color.map.park color.map.airport color.map.runway color.map.building color.map.building-3d -->
 
-| Colour               | Light land | Light water | Light park | Light airport | Light runway | Dark land | Dark water | Dark park | Dark airport | Dark runway |
-| -------------------- | ---------- | ----------- | ---------- | ------------- | ------------ | --------- | ---------- | --------- | ------------ | ----------- |
-| `color.map.aircraft` | 5.53:1     | 4.20:1      | 4.86:1     | 5.03:1        | 4.13:1       | 6.99:1    | 7.65:1     | 6.53:1    | 6.41:1       | 5.11:1      |
+| Colour               | Light land | Light water | Light park | Light airport | Light runway | Light building | Light building-3d | Dark land | Dark water | Dark park | Dark airport | Dark runway | Dark building | Dark building-3d |
+| -------------------- | ---------- | ----------- | ---------- | ------------- | ------------ | -------------- | ----------------- | --------- | ---------- | --------- | ------------ | ----------- | ------------- | ---------------- |
+| `color.map.aircraft` | 5.53:1     | 4.20:1      | 4.86:1     | 5.03:1        | 4.13:1       | 5.03:1         | 4.46:1            | 6.99:1    | 7.65:1     | 6.53:1    | 6.41:1       | 5.11:1      | 6.55:1        | 5.18:1           |
 
 <!-- /contrast -->
 
@@ -106,16 +106,16 @@ An aircraft carries the data states in the vehicle dots' shapes, as far as a pla
 
 The map opens flat and north-up. 3D is a view the rider turns on: the map tilts, up to 60°, and turns, and the buildings rise.
 
-- **Where.** Buildings rise from zoom 14, as the flat footprints appear.
-- **Heights** come from OpenStreetMap and are approximate: a block may stand a storey off, and one with no height recorded stands at a default. Say so where the map credits its data.
+- **Where.** Buildings rise from zoom 14.
+- **Heights** come from OpenStreetMap and are approximate: a block may stand a storey off, and one with no height recorded stands at a default.
 - **Colour.** A 3D building is one colour, `color.map.building-3d`, walls and roof alike: the map's light shades each face from it, so a block reads as a block without a second colour. It is a step further from the land than `color.map.building`, darker in light and lighter in dark, so the walls stand off the ground they rise from.
-- **Over and under.** The dots, lines and stops are drawn over the buildings, never hidden behind them. The buildings are drawn at `opacity.map-building-3d`, faint enough that a bus behind a block shows through it and reads as being there.
+- **Over and under.** The dots, lines and stops are drawn over the buildings, never hidden behind them. The buildings are drawn at `opacity.map-building-3d`, faint enough that the street behind a block shows through it, so a bus on that street, drawn over the block, reads as being behind it rather than on its roof.
 
 <!-- tokens: opacity.map-building-3d -->
 
-| Token                     | Value | Use                                                                                    |
-| ------------------------- | ----- | -------------------------------------------------------------------------------------- |
-| `opacity.map-building-3d` | `0.7` | 3D buildings, faint enough that the dots, lines and stops drawn over them read through |
+| Token                     | Value | Use                                                                     |
+| ------------------------- | ----- | ----------------------------------------------------------------------- |
+| `opacity.map-building-3d` | `0.6` | 3D buildings, faint enough that the street behind a block shows through |
 
 <!-- /tokens -->
 

@@ -916,8 +916,8 @@
       },
       "map-building-3d": {
         "$type": "opacity",
-        "$value": "0.7",
-        "$description": "3D buildings, faint enough that the dots, lines and stops drawn over them read through"
+        "$value": "0.6",
+        "$description": "3D buildings, faint enough that the street behind a block shows through"
       }
     },
     "vehicle-dot": {
