@@ -67,6 +67,13 @@ const compass = (heading: number) => (
   </svg>
 )
 
+/**
+ * Whether the compass's needle is drawn turned, so the ear is told what the eye is: a finite
+ * `heading` that isn't a whole turn from north. It changes only between north and turned, not at
+ * every degree of a turn (CR-15).
+ */
+const turned = (heading: number) => Number.isFinite(heading) && ((heading % 360) + 360) % 360 !== 0
+
 /** `pause` from packages/perron/icons/: shown while the map moves, for the press that stops it. */
 const PAUSE = (
   <svg {...STROKE} strokeWidth="1.8">
@@ -159,8 +166,8 @@ export interface MapControlsProps extends Omit<
   onTiltedChange?: (event: MouseEvent<HTMLButtonElement>, tilted: boolean) => void
   /**
    * The map's heading in degrees, its bearing clockwise from north, held by the screen. The
-   * compass's needle turns by minus `heading`, so it points to north on the map; a value that isn't
-   * finite points it up.
+   * compass's needle turns by minus `heading`, so it points to north on the map, and the compass is
+   * described as turned away from north while it is turned; a value that isn't finite points it up.
    * @default 0
    */
   heading?: number
@@ -210,6 +217,11 @@ export interface MapControlsProps extends Omit<
    * @default The locale's
    */
   resetNorthLabel?: string
+  /**
+   * Overrides "Map turned away from north", the compass's description while the map is turned.
+   * @default The locale's
+   */
+  turnedFromNorthLabel?: string
   /** Reaches the root. Merged after `pn-Toolbar` and `pn-MapControls`. */
   className?: string
   /** Reaches the root. */
@@ -246,6 +258,7 @@ export function MapControls({
   resumeLabel,
   view3dLabel,
   resetNorthLabel,
+  turnedFromNorthLabel,
   className,
   ref,
   ...rest
@@ -257,6 +270,7 @@ export function MapControls({
     centerMap: centerMapLabel,
     view3d: view3dLabel,
     resetNorth: resetNorthLabel,
+    turnedFromNorth: turnedFromNorthLabel,
     pause: pauseLabel,
     resume: resumeLabel,
   })
@@ -305,6 +319,7 @@ export function MapControls({
           startIcon={CUBE}
           aria-label={strings.view3d}
           aria-pressed={tilted}
+          data-selected={tilted ? '' : undefined}
           disabled={disabled}
           onClick={(event) => onTiltedChange(event, !tilted)}
         />
@@ -315,6 +330,7 @@ export function MapControls({
           color="neutral"
           startIcon={compass(heading)}
           aria-label={strings.resetNorth}
+          aria-description={turned(heading) ? strings.turnedFromNorth : undefined}
           disabled={disabled}
           onClick={onResetNorth}
         />

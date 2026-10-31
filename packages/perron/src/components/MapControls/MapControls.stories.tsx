@@ -39,6 +39,8 @@ const PAUSE_PATH = pathOf(pauseSvg)
 const PLAY_PATH = pathOf(playSvg)
 const CUBE_PATH = pathOf(cubeSvg)
 const COMPASS_PATH = pathOf(compassSvg)
+/** The compass's description while the map is turned away from north, in English. */
+const TURNED = dictionaries.en.turnedFromNorth
 
 const meta = {
   title: 'Components/MapControls',
@@ -579,6 +581,7 @@ export const Tiltable: Story = {
       await expect(iconPath(tilt)).toBe(CUBE_PATH)
       await expect(iconHidden(tilt)).toBe(true)
       await expect(tilt).toHaveAttribute('aria-pressed', 'false')
+      await expect(tilt).not.toHaveAttribute('data-selected')
       await expect(getComputedStyle(tilt).backgroundColor).toBe(
         getComputedStyle(zoomIn).backgroundColor,
       )
@@ -597,6 +600,7 @@ export const Tiltable: Story = {
         await expect(onTiltedChange).toHaveBeenCalledTimes(1)
         await expect(onTiltedChange).toHaveBeenLastCalledWith(expect.anything(), true)
         await expect(tilt).toHaveAttribute('aria-pressed', 'true')
+        await expect(tilt).toHaveAttribute('data-selected')
         await expect(tilt).toHaveAccessibleName('3D view')
         await expect(iconPath(tilt)).toBe(CUBE_PATH)
         await expect(getComputedStyle(tilt).backgroundColor).toBe(fill('color-surface-inverse'))
@@ -608,6 +612,7 @@ export const Tiltable: Story = {
       await expect(onTiltedChange).toHaveBeenCalledTimes(2)
       await expect(onTiltedChange).toHaveBeenLastCalledWith(expect.anything(), false)
       await expect(tilt).toHaveAttribute('aria-pressed', 'false')
+      await expect(tilt).not.toHaveAttribute('data-selected')
       await expect(tilt).toHaveFocus()
       await expect(onZoomIn).not.toHaveBeenCalled()
     })
@@ -628,6 +633,7 @@ export const Tiltable: Story = {
           )
           await expect(within(host).getByRole('button', { name: '3D view' })).toBe(toggle)
           await expect(toggle).toHaveAttribute('aria-pressed', 'true')
+          await expect(toggle).toHaveAttribute('data-selected')
           await expect(onTiltedChange).toHaveBeenCalledTimes(2)
         },
       ),
@@ -648,7 +654,7 @@ export const Tilted: Story = {
       async () => {
         await expect(tilt).toHaveAttribute('aria-pressed', 'true')
         await expect(tilt).not.toHaveAttribute('data-pressed')
-        await expect(tilt).not.toHaveAttribute('data-selected')
+        await expect(tilt).toHaveAttribute('data-selected')
         const style = getComputedStyle(tilt)
         await expect(style.backgroundColor).toBe(fill('color-surface-inverse'))
         await expect(style.color).toBe(resolve('color', 'var(--perron-color-text-inverse)'))
@@ -700,19 +706,23 @@ export const Compass: Story = {
       await expect(canvasElement.querySelector('.pn-MapControls-tilt')).toBeNull()
       await expect(compass).toHaveClass('pn-ToolbarButton', 'pn-MapControls-compass')
       await expect(compass).not.toHaveAttribute('aria-pressed')
+      await expect(compass).toHaveAccessibleDescription(TURNED)
       await expect(iconPath(compass)).toBe(COMPASS_PATH)
       await expect(iconHidden(compass)).toBe(true)
       await expect(turnOf(needle)).toBe(-90)
       await expect(getComputedStyle(needle).transitionDuration).toBe('0s')
     })
-    await step('Enter and a click each call onResetNorth once', async () => {
+    await step('Enter, Space and a click each call onResetNorth once', async () => {
       await enter()
       await userEvent.keyboard('{ArrowUp}')
       await expect(compass).toHaveFocus()
       await userEvent.keyboard('{Enter}')
       await expect(onResetNorth).toHaveBeenCalledTimes(1)
-      await userEvent.click(compass)
+      await userEvent.keyboard(' ')
       await expect(onResetNorth).toHaveBeenCalledTimes(2)
+      await expect(compass).toHaveFocus()
+      await userEvent.click(compass)
+      await expect(onResetNorth).toHaveBeenCalledTimes(3)
       await expect(onCenterMap).not.toHaveBeenCalled()
     })
     await step('Shift+Tab leaves the bar in one step', () => leave(canvasElement))
@@ -737,9 +747,40 @@ export const Compass: Story = {
               Math.round(((((turn + 180) % 360) + 360) % 360) - 180),
             )
           }
-          await expect(onResetNorth).toHaveBeenCalledTimes(2)
+          await expect(onResetNorth).toHaveBeenCalledTimes(3)
         },
       ),
+    )
+    await step(
+      'focus stays on the compass as its needle turns; the ear hears north or turned',
+      () =>
+        screen(
+          canvasElement,
+          <PerronProvider locale="en">
+            <MapControls heading={90} onResetNorth={onResetNorth} />
+          </PerronProvider>,
+          async (host, render) => {
+            const button = within(host).getByRole('button', { name: 'Reset to north' })
+            button.focus()
+            await expect(button).toHaveFocus()
+            // a turn back to north, frame by frame, as the screen passes it, and on past it
+            for (const heading of [60, 30, 1, 0, 360, -20, Number.NaN]) {
+              render(
+                <PerronProvider locale="en">
+                  <MapControls heading={heading} onResetNorth={onResetNorth} />
+                </PerronProvider>,
+              )
+              await expect(within(host).getByRole('button', { name: 'Reset to north' })).toBe(
+                button,
+              )
+              await expect(button).toHaveFocus()
+              const north = !Number.isFinite(heading) || heading % 360 === 0
+              await expect(button).toHaveAccessibleDescription(north ? '' : TURNED)
+              await expect(turnOf(button.querySelector('svg')!) === 0).toBe(north)
+            }
+            await expect(onResetNorth).toHaveBeenCalledTimes(3)
+          },
+        ),
     )
   },
 }
@@ -806,10 +847,14 @@ const custom = {
   resumeLabel: 'Move the vehicles',
   view3dLabel: 'Tilted map',
   resetNorthLabel: 'Turn the map to north',
+  turnedFromNorthLabel: 'North is not up',
 }
 
-/** The 3D toggle's, the compass's and the pause button's handlers, so a bar shows all six buttons. */
-const extras = { onTiltedChange, onResetNorth, onPausedChange }
+/**
+ * The 3D toggle's, the compass's and the pause button's handlers, so a bar shows all six buttons,
+ * with the map turned, so the compass carries its description.
+ */
+const extras = { onTiltedChange, onResetNorth, onPausedChange, heading: 45 }
 
 /** Every word overridden by its `…Label` prop; in Danish with none, the Danish dictionary's. */
 export const CustomLabels: Story = {
@@ -826,6 +871,10 @@ export const CustomLabels: Story = {
         custom.resetNorthLabel,
         custom.pauseLabel,
       ])
+      await expect(canvas.getByRole('button', { name: custom.resetNorthLabel })).toHaveAttribute(
+        'aria-description',
+        custom.turnedFromNorthLabel,
+      )
       for (const paused of [false, true])
         expectOwnedStrings(
           renderToStaticMarkup(
@@ -873,6 +922,10 @@ export const CustomLabels: Story = {
             da.resetNorth,
             paused ? da.resume : da.pause,
           ])
+          await expect(within(host).getByRole('button', { name: da.resetNorth })).toHaveAttribute(
+            'aria-description',
+            da.turnedFromNorth,
+          )
           expectOwnedStrings(host.innerHTML, 'da')
         })
       }

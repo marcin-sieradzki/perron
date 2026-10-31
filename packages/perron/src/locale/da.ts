@@ -64,6 +64,7 @@ export const da: OwnedStrings = {
   centerMap: 'Centrér kortet',
   view3d: '3D-visning',
   resetNorth: 'Drej mod nord',
+  turnedFromNorth: 'Kortet er drejet væk fra nord',
   pause: 'Pause',
   resume: 'Fortsæt',
   scale: 'Målestok',

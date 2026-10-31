@@ -64,6 +64,7 @@ export const nb: OwnedStrings = {
   centerMap: 'Sentrer kartet',
   view3d: '3D-visning',
   resetNorth: 'Drei mot nord',
+  turnedFromNorth: 'Kartet er dreid bort fra nord',
   pause: 'Pause',
   resume: 'Fortsett',
   scale: 'Målestokk',

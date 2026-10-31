@@ -177,6 +177,8 @@ export const en = {
   view3d: '3D view',
   /** The map's compass button that turns the map back to north. */
   resetNorth: 'Reset to north',
+  /** The map's compass button: its description while the map is turned away from north. */
+  turnedFromNorth: 'Map turned away from north',
   /** The map's button that stops the vehicles moving, its name while they move. */
   pause: 'Pause',
   /** The map's button that sets the vehicles moving again, its name while they are paused. */
