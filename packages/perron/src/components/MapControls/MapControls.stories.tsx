@@ -1,5 +1,6 @@
 // MapControls' stories: the bar in each orientation, at each zoom limit, disabled, with its pause
-// button moving and paused, and with its words overridden. The buttons' hover, focus and pressed
+// button moving and paused, its 3D toggle flat and tilted, its compass turned, all six buttons
+// together, and with its words overridden. The buttons' hover, focus and pressed
 // looks are ToolbarButton's, storied on the Toolbar page; these render at rest, and their play
 // tests check the behaviour.
 import { useState } from 'react'
@@ -9,7 +10,16 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { dictionaries } from '../../locale/index.ts'
 import { expectOwnedStrings } from '../../testing/owned-strings.ts'
-import { mounted } from '../../testing/stories.ts'
+import {
+  fill,
+  forcedColourSheet,
+  mounted,
+  pressedAfterHover,
+  resolve,
+  stateFill,
+} from '../../testing/stories.ts'
+import compassSvg from '../../../icons/compass.svg?raw'
+import cubeSvg from '../../../icons/cube.svg?raw'
 import pauseSvg from '../../../icons/pause.svg?raw'
 import playSvg from '../../../icons/play.svg?raw'
 import { MapControls, type MapControlsProps } from './MapControls.tsx'
@@ -18,11 +28,17 @@ const onZoomIn = fn()
 const onZoomOut = fn()
 const onCenterMap = fn()
 const onPausedChange = fn()
+const onTiltedChange = fn()
+const onResetNorth = fn()
 
 /** The path an icon file draws, to tell which icon a button shows. */
 const pathOf = (svg: string) => /\sd="([^"]+)"/.exec(svg)![1]
 const PAUSE_PATH = pathOf(pauseSvg)
 const PLAY_PATH = pathOf(playSvg)
+const CUBE_PATH = pathOf(cubeSvg)
+const COMPASS_PATH = pathOf(compassSvg)
+/** The compass's description while the map is turned away from north, in English. */
+const TURNED = dictionaries.en.turnedFromNorth
 
 const meta = {
   title: 'Components/MapControls',
@@ -45,7 +61,42 @@ const clearHandlers = () => {
   onZoomOut.mockClear()
   onCenterMap.mockClear()
   onPausedChange.mockClear()
+  onTiltedChange.mockClear()
+  onResetNorth.mockClear()
 }
+
+/** The path of the first icon drawn in `button`, to tell which icon it shows. */
+const iconPath = (button: Element) => button.querySelector('svg path')?.getAttribute('d')
+
+/** Whether `button`'s icon sits inside an `aria-hidden` span, out of what the ear hears. */
+const iconHidden = (button: Element) =>
+  button.querySelector('svg')?.closest('[aria-hidden="true"]') != null
+
+/**
+ * The angle, in degrees, that an element's computed `transform` turns it by, 0 for none, read from
+ * its matrix, so `rotate(-90deg)` reads -90 whatever form the browser computes it in.
+ */
+const turnOf = (element: Element) => {
+  const transform = getComputedStyle(element).transform
+  if (transform === 'none') return 0
+  const { a, b } = new DOMMatrix(transform)
+  return Math.round((Math.atan2(b, a) * 180) / Math.PI) + 0
+}
+
+/** A bar with every button, its 3D toggle, compass and pause button among them, in English. */
+const allControls = (props: MapControlsProps = {}) => (
+  <PerronProvider locale="en">
+    <MapControls
+      onZoomIn={onZoomIn}
+      onZoomOut={onZoomOut}
+      onCenterMap={onCenterMap}
+      onTiltedChange={onTiltedChange}
+      onResetNorth={onResetNorth}
+      onPausedChange={onPausedChange}
+      {...props}
+    />
+  </PerronProvider>
+)
 
 /** The pause button of `canvas`, by its English name, with the path of the icon it shows. */
 const pauseButton = (canvasElement: HTMLElement, name: 'Pause' | 'Resume') => {
@@ -117,6 +168,17 @@ export const Default: Story = {
       }
       await expect(canvas.getByRole('separator')).toHaveAttribute('aria-orientation', 'horizontal')
     })
+    await step(
+      'without the new props, the bar is as before: no 3D toggle, compass or pause',
+      async () => {
+        const bar = canvas.getByRole('toolbar')
+        await expect(canvas.getAllByRole('button')).toHaveLength(3)
+        await expect(canvas.getAllByRole('separator')).toHaveLength(1)
+        for (const part of ['angleSeparator', 'tilt', 'compass', 'pauseSeparator', 'pause'])
+          await expect(bar.querySelector(`.pn-MapControls-${part}`)).toBeNull()
+        await expect(bar.querySelector('[aria-pressed]')).toBeNull()
+      },
+    )
     await step('Tab enters at zoom in; ArrowDown walks the bar and wraps', async () => {
       await enter()
       await expect(zoomIn).toHaveFocus()
@@ -184,6 +246,24 @@ export const Horizontal: Story = {
       await userEvent.keyboard('{ArrowRight}')
       await expect(hostZoomIn).toHaveFocus()
       hostZoomIn.blur()
+    })
+    // With the 3D toggle and the compass, the row walks centre, 3D, compass, pause, past an upright
+    // angleSeparator.
+    await mounted(canvasElement, allControls({ orientation: 'horizontal' }), async (host) => {
+      const bar = await waitFor(() => within(host).getByRole('toolbar'))
+      const [, , hostCenterMap, tilt, compass, pause] = within(bar).getAllByRole('button')
+      await expect(bar.querySelector('.pn-MapControls-angleSeparator')).toHaveAttribute(
+        'aria-orientation',
+        'vertical',
+      )
+      hostCenterMap.focus()
+      for (const next of [tilt, compass, pause]) {
+        await userEvent.keyboard('{ArrowRight}')
+        await expect(next).toHaveFocus()
+      }
+      await userEvent.keyboard('{ArrowLeft}')
+      await expect(compass).toHaveFocus()
+      compass.blur()
     })
   },
 }
@@ -278,6 +358,19 @@ export const Disabled: Story = {
     await expect(onZoomOut).not.toHaveBeenCalled()
     await expect(onCenterMap).not.toHaveBeenCalled()
     await leave(canvasElement)
+    // With every button, the 3D toggle, the compass and the pause button are dimmed with the rest.
+    await mounted(canvasElement, allControls({ disabled: true, tilted: true }), async (host) => {
+      const bar = await waitFor(() => within(host).getByRole('toolbar'))
+      const [, , , tilt, compass, pause] = within(bar).getAllByRole('button')
+      for (const button of [tilt, compass, pause])
+        await expect(button).toHaveAttribute('aria-disabled', 'true')
+      await expect(tilt).toHaveAttribute('aria-pressed', 'true')
+      await expect(getComputedStyle(tilt).backgroundColor).toBe(fill('color-surface-inset'))
+      for (const button of [tilt, compass, pause]) await userEvent.click(button)
+      await expect(onTiltedChange).not.toHaveBeenCalled()
+      await expect(onResetNorth).not.toHaveBeenCalled()
+      await expect(onPausedChange).not.toHaveBeenCalled()
+    })
   },
 }
 
@@ -419,6 +512,316 @@ export const Paused: Story = {
   },
 }
 
+/**
+ * A screen that holds `tilted` in its own `useState` and sets it from `onTiltedChange`: the story's
+ * spy stands for the screen's own handler.
+ */
+function TiltableMap(args: MapControlsProps) {
+  const [tilted, setTilted] = useState(args.tilted ?? false)
+  return (
+    <MapControls
+      {...args}
+      tilted={tilted}
+      onTiltedChange={(event, next) => {
+        args.onTiltedChange?.(event, next)
+        setTilted(next)
+      }}
+    />
+  )
+}
+
+/**
+ * The bar with its 3D toggle, while the map is flat: zoom in, zoom out, a separator, centre the map,
+ * a separator, 3D. The screen holds `tilted`, so each press turns the toggle on or off.
+ */
+export const Tiltable: Story = {
+  args: { onTiltedChange },
+  render: (args) => <TiltableMap {...args} />,
+  play: async ({ canvasElement, step }) => {
+    clearHandlers()
+    const canvas = within(canvasElement)
+    const { zoomIn, zoomOut, centerMap } = buttonsIn(canvasElement)
+    const tilt = canvas.getByRole('button', { name: '3D view' })
+    await step('one bar holds four buttons, the 3D toggle last, past angleSeparator', async () => {
+      await expect(canvas.getAllByRole('toolbar')).toHaveLength(1)
+      await expect(canvas.getAllByRole('button')).toEqual([zoomIn, zoomOut, centerMap, tilt])
+      const separators = canvas.getAllByRole('separator')
+      await expect(separators).toHaveLength(2)
+      await expect(separators[1]).toHaveClass(
+        'pn-ToolbarSeparator',
+        'pn-MapControls-angleSeparator',
+      )
+      await expect(separators[1].nextElementSibling).toBe(tilt)
+      await expect(tilt).toHaveClass('pn-ToolbarButton', 'pn-MapControls-tilt')
+      await expect(iconPath(tilt)).toBe(CUBE_PATH)
+      await expect(iconHidden(tilt)).toBe(true)
+      await expect(tilt).toHaveAttribute('aria-pressed', 'false')
+      await expect(tilt).not.toHaveAttribute('data-selected')
+      await expect(getComputedStyle(tilt).backgroundColor).toBe(
+        getComputedStyle(zoomIn).backgroundColor,
+      )
+      await expect(getComputedStyle(tilt).color).toBe(getComputedStyle(zoomIn).color)
+    })
+    await step('the bar is one tab stop, and ArrowUp wraps to the toggle', async () => {
+      await enter()
+      await expect(zoomIn).toHaveFocus()
+      await userEvent.keyboard('{ArrowUp}')
+      await expect(tilt).toHaveFocus()
+    })
+    await step(
+      'Enter asks for tilted; the screen tilts, and the toggle is on, with focus kept',
+      async () => {
+        await userEvent.keyboard('{Enter}')
+        await expect(onTiltedChange).toHaveBeenCalledTimes(1)
+        await expect(onTiltedChange).toHaveBeenLastCalledWith(expect.anything(), true)
+        await expect(tilt).toHaveAttribute('aria-pressed', 'true')
+        await expect(tilt).toHaveAttribute('data-selected')
+        await expect(tilt).toHaveAccessibleName('3D view')
+        await expect(iconPath(tilt)).toBe(CUBE_PATH)
+        await expect(getComputedStyle(tilt).backgroundColor).toBe(fill('color-surface-inverse'))
+        await expect(tilt).toHaveFocus()
+      },
+    )
+    await step('Space asks to lay it flat; the toggle is off again', async () => {
+      await userEvent.keyboard(' ')
+      await expect(onTiltedChange).toHaveBeenCalledTimes(2)
+      await expect(onTiltedChange).toHaveBeenLastCalledWith(expect.anything(), false)
+      await expect(tilt).toHaveAttribute('aria-pressed', 'false')
+      await expect(tilt).not.toHaveAttribute('data-selected')
+      await expect(tilt).toHaveFocus()
+      await expect(onZoomIn).not.toHaveBeenCalled()
+    })
+    await step('Shift+Tab leaves the bar in one step', () => leave(canvasElement))
+    await step('a gesture the screen passes on as tilted presses the toggle with no press', () =>
+      mounted(
+        canvasElement,
+        <PerronProvider locale="en">
+          <MapControls onTiltedChange={onTiltedChange} />
+        </PerronProvider>,
+        async (host, render) => {
+          const toggle = await waitFor(() => within(host).getByRole('button', { name: '3D view' }))
+          await expect(toggle).toHaveAttribute('aria-pressed', 'false')
+          render(
+            <PerronProvider locale="en">
+              <MapControls tilted onTiltedChange={onTiltedChange} />
+            </PerronProvider>,
+          )
+          await expect(within(host).getByRole('button', { name: '3D view' })).toBe(toggle)
+          await expect(toggle).toHaveAttribute('aria-pressed', 'true')
+          await expect(toggle).toHaveAttribute('data-selected')
+          await expect(onTiltedChange).toHaveBeenCalledTimes(2)
+        },
+      ),
+    )
+  },
+}
+
+/** The 3D toggle while the map is tilted: on, on the inverse fill. */
+export const Tilted: Story = {
+  args: { tilted: true, onTiltedChange },
+  play: async ({ canvasElement, step }) => {
+    clearHandlers()
+    const canvas = within(canvasElement)
+    const { zoomIn } = buttonsIn(canvasElement)
+    const tilt = canvas.getByRole('button', { name: '3D view' })
+    await step(
+      'the toggle is pressed, on the inverse fill, the size of an off button',
+      async () => {
+        await expect(tilt).toHaveAttribute('aria-pressed', 'true')
+        await expect(tilt).not.toHaveAttribute('data-pressed')
+        await expect(tilt).toHaveAttribute('data-selected')
+        const style = getComputedStyle(tilt)
+        await expect(style.backgroundColor).toBe(fill('color-surface-inverse'))
+        await expect(style.color).toBe(resolve('color', 'var(--perron-color-text-inverse)'))
+        await expect(style.borderColor).toBe(resolve('borderColor', 'transparent'))
+        const [on, off] = [tilt, zoomIn].map((b) => b.getBoundingClientRect())
+        await expect([on.width, on.height]).toEqual([off.width, off.height])
+      },
+    )
+    await step("hover and press take the inverse fill's own steps, the press after", async () => {
+      await expect(stateFill(tilt)).toBe('var(--perron-color-surface-inverse-hover)')
+      await expect(stateFill(tilt, ':active')).toBe('var(--perron-color-surface-inverse-pressed)')
+      await expect(pressedAfterHover(tilt)).toBe(true)
+    })
+    await step('a click asks to lay it flat; the toggle waits for the screen', async () => {
+      await userEvent.click(tilt)
+      await expect(onTiltedChange).toHaveBeenCalledTimes(1)
+      await expect(onTiltedChange).toHaveBeenLastCalledWith(expect.anything(), false)
+      await expect(tilt).toHaveAttribute('aria-pressed', 'true')
+    })
+    await step('in forced colours, the on toggle keeps a Highlight fill', async () => {
+      const sheet = forcedColourSheet('pn-ToolbarButton')
+      document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet]
+      try {
+        const style = getComputedStyle(tilt)
+        await expect(style.backgroundColor).toBe(resolve('backgroundColor', 'Highlight'))
+        await expect(style.color).toBe(resolve('color', 'HighlightText'))
+      } finally {
+        document.adoptedStyleSheets = document.adoptedStyleSheets.filter((s) => s !== sheet)
+      }
+    })
+    await step('Shift+Tab leaves the bar in one step', () => leave(canvasElement))
+  },
+}
+
+/** The compass, with the map turned 90° clockwise: its needle points left, to north on the map. */
+export const Compass: Story = {
+  args: { onResetNorth, heading: 90 },
+  play: async ({ canvasElement, step }) => {
+    clearHandlers()
+    const canvas = within(canvasElement)
+    const { zoomIn, zoomOut, centerMap } = buttonsIn(canvasElement)
+    const compass = canvas.getByRole('button', { name: 'Reset to north' })
+    const needle = compass.querySelector('svg')!
+    await step('the compass follows angleSeparator, named, with its needle turned', async () => {
+      await expect(canvas.getAllByRole('button')).toEqual([zoomIn, zoomOut, centerMap, compass])
+      const separator = canvasElement.querySelector('.pn-MapControls-angleSeparator')
+      await expect(separator).toHaveAttribute('role', 'separator')
+      await expect(separator?.nextElementSibling).toBe(compass)
+      await expect(canvasElement.querySelector('.pn-MapControls-tilt')).toBeNull()
+      await expect(compass).toHaveClass('pn-ToolbarButton', 'pn-MapControls-compass')
+      await expect(compass).not.toHaveAttribute('aria-pressed')
+      await expect(compass).toHaveAccessibleDescription(TURNED)
+      const words = document.getElementById(compass.getAttribute('aria-describedby')!)
+      await expect(words).toHaveClass('pn-MapControls-turned')
+      await expect(compass).not.toHaveAttribute('aria-description')
+      await expect(iconPath(compass)).toBe(COMPASS_PATH)
+      await expect(iconHidden(compass)).toBe(true)
+      await expect(turnOf(needle)).toBe(-90)
+      await expect(getComputedStyle(needle).transitionDuration).toBe('0s')
+    })
+    await step('Enter, Space and a click each call onResetNorth once', async () => {
+      await enter()
+      await userEvent.keyboard('{ArrowUp}')
+      await expect(compass).toHaveFocus()
+      await userEvent.keyboard('{Enter}')
+      await expect(onResetNorth).toHaveBeenCalledTimes(1)
+      await userEvent.keyboard(' ')
+      await expect(onResetNorth).toHaveBeenCalledTimes(2)
+      await expect(compass).toHaveFocus()
+      await userEvent.click(compass)
+      await expect(onResetNorth).toHaveBeenCalledTimes(3)
+      await expect(onCenterMap).not.toHaveBeenCalled()
+    })
+    await step('Shift+Tab leaves the bar in one step', () => leave(canvasElement))
+    await step('at north the compass stays, unturned; NaN draws it unturned too', () =>
+      mounted(
+        canvasElement,
+        <PerronProvider locale="en">
+          <MapControls heading={90} onResetNorth={onResetNorth} />
+        </PerronProvider>,
+        async (host, render) => {
+          const button = await waitFor(() =>
+            within(host).getByRole('button', { name: 'Reset to north' }),
+          )
+          await expect(turnOf(button.querySelector('svg')!)).toBe(-90)
+          for (const heading of [0, 405, -45, Number.NaN]) {
+            render(
+              <PerronProvider locale="en">
+                <MapControls heading={heading} onResetNorth={onResetNorth} />
+              </PerronProvider>,
+            )
+            await expect(within(host).getByRole('button', { name: 'Reset to north' })).toBe(button)
+            const turn = Number.isFinite(heading) ? -heading : 0
+            await expect(turnOf(button.querySelector('svg')!)).toBe(
+              Math.round(((((turn + 180) % 360) + 360) % 360) - 180),
+            )
+          }
+          await expect(onResetNorth).toHaveBeenCalledTimes(3)
+        },
+      ),
+    )
+    await step(
+      'focus stays on the compass as its needle turns; the ear hears north or turned',
+      () =>
+        mounted(
+          canvasElement,
+          <PerronProvider locale="en">
+            <MapControls heading={90} onResetNorth={onResetNorth} />
+          </PerronProvider>,
+          async (host, render) => {
+            const button = await waitFor(() =>
+              within(host).getByRole('button', { name: 'Reset to north' }),
+            )
+            button.focus()
+            await expect(button).toHaveFocus()
+            // a turn back to north, frame by frame, as the screen passes it, and on past it
+            for (const heading of [60, 30, 1, 0, 360, -20, Number.NaN]) {
+              render(
+                <PerronProvider locale="en">
+                  <MapControls heading={heading} onResetNorth={onResetNorth} />
+                </PerronProvider>,
+              )
+              await expect(within(host).getByRole('button', { name: 'Reset to north' })).toBe(
+                button,
+              )
+              await expect(button).toHaveFocus()
+              const north = !Number.isFinite(heading) || heading % 360 === 0
+              await expect(button).toHaveAccessibleDescription(north ? '' : TURNED)
+              await expect(button.hasAttribute('aria-describedby')).toBe(!north)
+              await expect(host.querySelector('.pn-MapControls-turned') === null).toBe(north)
+              await expect(turnOf(button.querySelector('svg')!) === 0).toBe(north)
+            }
+            await expect(onResetNorth).toHaveBeenCalledTimes(3)
+          },
+        ),
+    )
+  },
+}
+
+/** Every button: zoom in, zoom out, centre, 3D, the compass and pause, past three separators. */
+export const AllControls: Story = {
+  args: { onTiltedChange, onResetNorth, onPausedChange, heading: 30 },
+  play: async ({ canvasElement, step }) => {
+    clearHandlers()
+    const canvas = within(canvasElement)
+    const { zoomIn, zoomOut, centerMap } = buttonsIn(canvasElement)
+    const tilt = canvas.getByRole('button', { name: '3D view' })
+    const compass = canvas.getByRole('button', { name: 'Reset to north' })
+    const pause = canvas.getByRole('button', { name: 'Pause' })
+    const order = [zoomIn, zoomOut, centerMap, tilt, compass, pause]
+    await step('six buttons and three separators, in order', async () => {
+      await expect(canvas.getAllByRole('button')).toEqual(order)
+      const separators = canvas.getAllByRole('separator')
+      await expect(separators.map((s) => s.classList[1])).toEqual([
+        'pn-MapControls-separator',
+        'pn-MapControls-angleSeparator',
+        'pn-MapControls-pauseSeparator',
+      ])
+      await expect(turnOf(compass.querySelector('svg')!)).toBe(-30)
+    })
+    await step(
+      'one tab stop; ArrowDown walks every button, skipping the separators, and wraps',
+      async () => {
+        await enter()
+        await expect(zoomIn).toHaveFocus()
+        for (const next of [...order.slice(1), zoomIn]) {
+          await userEvent.keyboard('{ArrowDown}')
+          await expect(next).toHaveFocus()
+        }
+      },
+    )
+    await step('each press fires only its own handler', async () => {
+      const handlers = [
+        onZoomIn,
+        onZoomOut,
+        onCenterMap,
+        onTiltedChange,
+        onResetNorth,
+        onPausedChange,
+      ]
+      for (const [index, button] of order.entries()) {
+        await userEvent.click(button)
+        for (const [other, handler] of handlers.entries())
+          await expect(handler).toHaveBeenCalledTimes(other <= index ? 1 : 0)
+      }
+      await expect(onTiltedChange).toHaveBeenLastCalledWith(expect.anything(), true)
+      await expect(onPausedChange).toHaveBeenLastCalledWith(expect.anything(), true)
+    })
+    await step('Shift+Tab leaves the bar in one step', () => leave(canvasElement))
+  },
+}
+
 const custom = {
   mapControlsLabel: 'Network map controls',
   zoomInLabel: 'Zoom the map in',
@@ -426,11 +829,20 @@ const custom = {
   centerMapLabel: 'Show the whole network',
   pauseLabel: 'Stop the vehicles',
   resumeLabel: 'Move the vehicles',
+  view3dLabel: 'Tilted map',
+  resetNorthLabel: 'Turn the map to north',
+  turnedFromNorthLabel: 'North is not up',
 }
+
+/**
+ * The 3D toggle's, the compass's and the pause button's handlers, so a bar shows all six buttons,
+ * with the map turned, so the compass carries its description.
+ */
+const extras = { onTiltedChange, onResetNorth, onPausedChange, heading: 45 }
 
 /** Every word overridden by its `…Label` prop; in Danish with none, the Danish dictionary's. */
 export const CustomLabels: Story = {
-  args: { ...custom, onPausedChange },
+  args: { ...custom, ...extras },
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement)
     await step('the overrides name the bar and the buttons', async () => {
@@ -439,28 +851,35 @@ export const CustomLabels: Story = {
         custom.zoomInLabel,
         custom.zoomOutLabel,
         custom.centerMapLabel,
+        custom.view3dLabel,
+        custom.resetNorthLabel,
         custom.pauseLabel,
       ])
+      await expect(
+        canvas.getByRole('button', { name: custom.resetNorthLabel }),
+      ).toHaveAccessibleDescription(custom.turnedFromNorthLabel)
       for (const paused of [false, true])
         expectOwnedStrings(
           renderToStaticMarkup(
             <PerronProvider locale="da">
-              <MapControls {...custom} paused={paused} onPausedChange={onPausedChange} />
+              <MapControls {...custom} {...extras} paused={paused} tilted={paused} />
             </PerronProvider>,
           ),
           'da',
           Object.values(custom),
         )
     })
-    await step('paused, the resume override names the pause button', async () => {
+    await step('paused and tilted, the overrides still name the buttons', async () => {
       const ui = (
         <PerronProvider locale="en">
-          <MapControls {...custom} paused onPausedChange={onPausedChange} />
+          <MapControls {...custom} {...extras} paused tilted />
         </PerronProvider>
       )
       await mounted(canvasElement, ui, async (host) => {
         const buttons = await waitFor(() => within(host).getAllByRole('button'))
         await expect(buttons.at(-1)).toHaveAccessibleName(custom.resumeLabel)
+        await expect(buttons[3]).toHaveAccessibleName(custom.view3dLabel)
+        await expect(buttons[3]).toHaveAttribute('aria-pressed', 'true')
       })
     })
     await step('in Danish with no overrides, the Danish dictionary names them', async () => {
@@ -468,7 +887,7 @@ export const CustomLabels: Story = {
       for (const paused of [false, true]) {
         const ui = (
           <PerronProvider locale="da">
-            <MapControls paused={paused} onPausedChange={onPausedChange} />
+            <MapControls {...extras} paused={paused} tilted={paused} />
           </PerronProvider>
         )
         await mounted(canvasElement, ui, async (host) => {
@@ -478,7 +897,17 @@ export const CustomLabels: Story = {
             within(host)
               .getAllByRole('button')
               .map((b) => b.getAttribute('aria-label')),
-          ).toEqual([da.zoomIn, da.zoomOut, da.centerMap, paused ? da.resume : da.pause])
+          ).toEqual([
+            da.zoomIn,
+            da.zoomOut,
+            da.centerMap,
+            da.view3d,
+            da.resetNorth,
+            paused ? da.resume : da.pause,
+          ])
+          await expect(
+            within(host).getByRole('button', { name: da.resetNorth }),
+          ).toHaveAccessibleDescription(da.turnedFromNorth)
           expectOwnedStrings(host.innerHTML, 'da')
         })
       }

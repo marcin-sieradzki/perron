@@ -1,4 +1,4 @@
-/* Toolbar: the bar on the Popups' glass, its group, its separator and its button
+/* Toolbar: the bar on the Popups' glass, its group, its separator and its button, a toggle too
    (docs/components/toolbar.md, Tokens). Every state changes colours only (CR-5), at once (CR-12). */
 
 /* The bar sizes to its content (CR-13); the pattern that uses it places it. It wraps rather than
@@ -128,10 +128,57 @@
   background-color: var(--perron-color-surface-inset);
 }
 
+/* A toggle that is on, read from the data-selected that selected sets with aria-pressed (CR-14):
+   FilterChip's inverse fill, in either colour, on a transparent border, so on and off share one box.
+   Each rule ties the colour rule it overrides and comes after it. */
+.pn-ToolbarButton[data-selected] {
+  border-color: transparent;
+  background-color: var(--perron-color-surface-inverse);
+  color: var(--perron-color-text-inverse);
+}
+
+@media (hover: hover) {
+  .pn-ToolbarButton[data-selected]:hover:not([data-disabled]) {
+    background-color: var(--perron-color-surface-inverse-hover);
+  }
+}
+
+.pn-ToolbarButton[data-selected]:active:not([data-disabled]) {
+  background-color: var(--perron-color-surface-inverse-pressed);
+}
+
+/* Disabled and on: a colour, never an opacity, and still a fill, so the toggle shows it is on. */
+.pn-ToolbarButton[data-selected][data-disabled] {
+  background-color: var(--perron-color-surface-inset);
+  color: var(--perron-color-text-tertiary);
+}
+
 /* As specific as the brand rule above, and after it, so every disabled button draws GrayText. */
 @media (forced-colors: active) {
   .pn-ToolbarButton[data-color][data-disabled] {
     border-color: GrayText;
     color: GrayText;
+  }
+
+  /* Forced colours drop the inverse fill, so a toggle that is on keeps a system fill of its own,
+     Highlight, or GrayText when it is disabled too, as FilterChip's does (CR-14). The :hover and
+     :active rule ties the hover rules' specificity and comes after them. */
+  .pn-ToolbarButton[data-selected]:not([data-disabled]),
+  .pn-ToolbarButton[data-selected]:not([data-disabled]):is(:hover, :active) {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    color: HighlightText;
+  }
+
+  /* forced-color-adjust: none keeps the ring in the theme's ink, which Canvas could hide */
+  .pn-ToolbarButton[data-selected]:not([data-disabled]):focus-visible {
+    outline-color: CanvasText;
+  }
+
+  .pn-ToolbarButton[data-selected][data-disabled] {
+    forced-color-adjust: none;
+    border-color: transparent;
+    background-color: GrayText;
+    color: Canvas;
   }
 }

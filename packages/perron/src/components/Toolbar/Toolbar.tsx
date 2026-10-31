@@ -82,6 +82,13 @@ export interface ToolbarButtonProps extends Inherited<BaseToolbar.Button.Props, 
    */
   disabled?: boolean
   /**
+   * Whether the button, a toggle such as the map's 3D view, is on: `true` or `false` sets
+   * `aria-pressed` and draws the button on or off, and `true` sets `data-selected`. Left out, the
+   * button is no toggle and has no `aria-pressed`. The caller keeps the state and flips it in
+   * `onClick`.
+   */
+  selected?: boolean
+  /**
    * An icon before the label, in reading order. Hidden from screen readers. Alone, with no
    * `children`, it makes an icon-only button, which needs an `aria-label`.
    */
@@ -108,6 +115,7 @@ export interface ToolbarButtonProps extends Inherited<BaseToolbar.Button.Props, 
 export function ToolbarButton({
   color = 'neutral',
   disabled = false,
+  selected,
   startIcon,
   endIcon,
   children,
@@ -122,6 +130,10 @@ export function ToolbarButton({
       {...rest}
       ref={ref}
       disabled={disabled}
+      // a toggle only when `selected` is given, so a plain button has no aria-pressed of its own,
+      // and a caller's `aria-pressed`, spread with the rest, still reaches the root
+      {...(selected !== undefined && { 'aria-pressed': selected })}
+      data-selected={selected ? '' : undefined}
       data-color={color}
       data-icon-only={iconOnly ? '' : undefined}
       className={classes('pn-ToolbarButton', className)}

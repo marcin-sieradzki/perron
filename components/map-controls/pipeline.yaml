@@ -6,23 +6,58 @@ deferred:
 stages:
   brief:
     status: done
-    started: 2026-10-24T22:38:40.447Z
-    ended: 2026-10-24T22:44:56.764Z
+    started: 2026-10-31T08:37:16.034Z
+    ended: 2026-10-31T08:38:05.781Z
   build:
+    runs: 3
     status: done
-    started: 2026-10-24T22:45:03.722Z
-    runs: 1
-    ended: 2026-10-24T22:51:28.347Z
+    started: 2026-10-31T08:55:17.625Z
+    begun: b518206cc65fabf89cbd52d5dd205a3249b4215dd5a8560281342f4faf23d05c
+    spec: abd43482956aa93bcf77a7234f75380c06c49d763596517fb11165a354d9fd64
+    ended: 2026-10-31T09:03:48.467Z
   review:
-    status: done
-    started: 2026-10-24T22:52:01.227Z
-    rounds: 1
+    rounds: 3
+    sentBack: 1
+    reviewed: 17c063c19de82a82b428f3e76258a9d3e07bef83
     findings:
       p1: 0
       p2: 0
-      p3: 3
-    ended: 2026-10-24T22:56:56.050Z
+      p3: 5
+    status: done
+    started: 2026-10-31T09:03:51.670Z
+    ended: 2026-10-31T09:07:37.291Z
   docs:
     status: done
-    started: 2026-10-24T22:57:31.313Z
-    ended: 2026-10-24T22:59:18.548Z
+    started: 2026-10-31T09:07:38.016Z
+    ended: 2026-10-31T09:14:12.084Z
+notes:
+  - stage: brief
+    at: 2026-10-31T08:36:36.980Z
+    direction: ToolbarButton draws no selected state, and the Toolbar spec's Do and don't says not to build a toggle from one, so a toggle inside a toolbar (MapControls' 3D toggle) has to draw its own on look in its component CSS. A selected look on ToolbarButton, read from aria-pressed, would let any toolbar hold a toggle.
+  - stage: brief
+    at: 2026-10-31T08:36:36.980Z
+    direction: The contract's Design states table has no selector for a toggle button's on state. FilterChip reads Base UI's [data-pressed], which the table files under Pressed, and a ToolbarButton toggle can only read [aria-pressed='true']. A Selected row naming the toggle case would settle it for every component.
+  - stage: brief
+    at: 2026-10-31T08:36:36.980Z
+    direction: Before this run, MapControls' Tokens table had no cursor rows for its buttons, which the brief's Pointer feedback cross-check asks for. Other specs written before that rule may lack them too.
+  - stage: brief
+    at: 2026-10-31T08:36:36.980Z
+    questions: "1. Anatomy: toggle and compass after centre, before pause, past angleSeparator. 2. Anatomy: compass stays at north. 3. Props: tilted/onTiltedChange. 4. Props: heading/onResetNorth. 5. Props: no tiltDisabled/compassDisabled. 6. Keyboard and ARIA: compass turn unannounced. 7. Owned strings: view3d '3D view'. 8. CR-9: toggle on look in MapControls.css from aria-pressed. 9. CR-12: needle turns with no transition."
+  - stage: brief
+    at: 2026-10-31T08:38:05.781Z
+    direction: The contract's 'everything the eye is told, the ear is told' check has no rule for a look that changes all the time, such as MapControls' compass needle following heading, so the spec has to make its own exception. A line in the contract saying a continuous value the screen already describes (heading, zoom) need not be announced by the control would settle it for later map components.
+  - stage: brief
+    at: 2026-10-31T08:38:05.781Z
+    direction: The factory refuses a [PENDING] line that keeps its question or label, but not a line elsewhere that points back at the question ('as the question above asks', 'as answered above'); a grep for 'question above|answered above' in that check would catch them.
+  - stage: build
+    at: 2026-10-31T08:49:59.413Z
+    direction: The pointer-feedback gate (scripts/checks/pointer-feedback.ts, hoveredName) finds the cursor of the part a file hovers in that file only, so a component that adds a state look to a shared part, such as MapControls' on look for a ToolbarButton, has to repeat cursor keywords the shared part already sets. A gate that also counts the cursor from the hovered part's own CSS file would remove the repeat.
+  - stage: build
+    at: 2026-10-31T08:49:59.413Z
+    direction: testing/stories.ts's mounted() gives a play test no way to pass new props to the rendered UI in place, so a test can't show a controlled prop changing on the same element. MapControls' stories wrote a local screen() (a flushSync render) and turnOf() (rotation from the computed matrix); both would serve other components as shared helpers.
+  - stage: build
+    at: 2026-10-31T09:03:48.467Z
+    direction: "To fix P2-2 the build chose how the compass speaks: an aria-description from a new owned string, turnedFromNorth ('Map turned away from north'), with a turnedFromNorthLabel prop. The maintainer may want to confirm the wording, and whether aria-description (ARIA 1.3) is supported widely enough or aria-describedby should replace it."
+  - stage: build
+    at: 2026-10-31T09:03:48.467Z
+    direction: The owned-strings test helper (packages/perron/src/testing/owned-strings.ts, SPOKEN) does not read aria-description, so expectOwnedStrings can't catch a hard-coded description; adding it to SPOKEN would cover every component.

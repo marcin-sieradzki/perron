@@ -1,5 +1,6 @@
 // Helpers the stories share, written once here (docs/components/README.md, "Shared helpers").
 import { createElement, type ComponentProps, type CSSProperties, type ReactNode } from 'react'
+import { flushSync } from 'react-dom'
 import { createRoot } from 'react-dom/client'
 import { expect, screen, userEvent, waitFor, within } from 'storybook/test'
 import { holds, isPaint } from './pointer.ts'
@@ -250,19 +251,21 @@ export const RouterLink = ({ to, ...rest }: ComponentProps<'a'> & { to: string }
 
 /**
  * Renders `ui` apart from the story, into a host appended to `parent`, runs `test` on the host,
- * and unmounts and removes the host after, whether `test` passes or throws.
+ * and unmounts and removes the host after, whether `test` passes or throws. `test` is also given
+ * `render`, which renders new props in place at once, as a screen does when its state changes, so
+ * the same elements stay.
  */
 export async function mounted<T>(
   parent: HTMLElement,
   ui: ReactNode,
-  test: (host: HTMLElement) => Promise<T>,
+  test: (host: HTMLElement, render: (next: ReactNode) => void) => Promise<T>,
 ): Promise<T> {
   const host = document.createElement('div')
   parent.append(host)
   const root = createRoot(host)
   root.render(ui)
   try {
-    return await test(host)
+    return await test(host, (next) => flushSync(() => root.render(next)))
   } finally {
     root.unmount()
     host.remove()
