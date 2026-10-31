@@ -220,7 +220,8 @@ The map's ground. How the map is drawn is on [Map](map.md).
 | `color.map.street`      | `#FFFFFF` | `#252D31` | Streets                                                                       |
 | `color.map.airport`     | `#E2E5E1` | `#1C2326` | Airport grounds                                                               |
 | `color.map.runway`      | `#CBD1CE` | `#2B3438` | Runways and taxiways                                                          |
-| `color.map.building`    | `#E2E5E0` | `#1A2125` | Building footprints at close zoom                                             |
+| `color.map.building`    | `#E2E5E0` | `#1A2125` | Building footprints at close zoom, on the flat map                            |
+| `color.map.building-3d` | `#D3D9D4` | `#2A3338` | 3D buildings, walls and roofs: the map's light shades each face from it       |
 | `color.map.rail`        | `#BCC4C1` | `#323C41` | Rail tracks without a coloured line on them                                   |
 | `color.map.label`       | `#66737A` | `#7E8B91` | Place names                                                                   |
 | `color.map.water-label` | `#5F7A88` | `#4B6774` | Water names                                                                   |

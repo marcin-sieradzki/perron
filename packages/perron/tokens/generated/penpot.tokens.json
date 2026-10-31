@@ -913,6 +913,11 @@
         "$type": "opacity",
         "$value": "0.32",
         "$description": "Motion trail behind live vehicles"
+      },
+      "map-building-3d": {
+        "$type": "opacity",
+        "$value": "0.6",
+        "$description": "3D buildings, faint enough that the street behind a block shows through"
       }
     },
     "vehicle-dot": {
@@ -1441,7 +1446,12 @@
         "building": {
           "$type": "color",
           "$value": "#E2E5E0",
-          "$description": "Building footprints at close zoom"
+          "$description": "Building footprints at close zoom, on the flat map"
+        },
+        "building-3d": {
+          "$type": "color",
+          "$value": "#D3D9D4",
+          "$description": "3D buildings, walls and roofs: the map's light shades each face from it"
         },
         "rail": {
           "$type": "color",
@@ -1825,7 +1835,12 @@
         "building": {
           "$type": "color",
           "$value": "#1A2125",
-          "$description": "Building footprints at close zoom"
+          "$description": "Building footprints at close zoom, on the flat map"
+        },
+        "building-3d": {
+          "$type": "color",
+          "$value": "#2A3338",
+          "$description": "3D buildings, walls and roofs: the map's light shades each face from it"
         },
         "rail": {
           "$type": "color",

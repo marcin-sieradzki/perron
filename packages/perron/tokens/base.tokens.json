@@ -1353,6 +1353,11 @@
       "$type": "number",
       "$value": 0.32,
       "$description": "Motion trail behind live vehicles"
+    },
+    "map-building-3d": {
+      "$type": "number",
+      "$value": 0.6,
+      "$description": "3D buildings, faint enough that the street behind a block shows through"
     }
   },
   "vehicle-dot": {
