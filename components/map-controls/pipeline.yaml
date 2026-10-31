@@ -10,17 +10,19 @@ stages:
     ended: 2026-10-31T08:38:05.781Z
   build:
     runs: 2
-    status: done
-    started: 2026-10-31T08:38:09.237Z
-    begun: be3706907061cc5aa97ec3fb3f517cf1b59d6191e4542539c5d4121d5e33ea2b
-    spec: b518206cc65fabf89cbd52d5dd205a3249b4215dd5a8560281342f4faf23d05c
-    ended: 2026-10-31T08:49:59.413Z
+    failing: review round 2 found 3 P2 (components/map-controls/review.md)
   review:
-    rounds: 1
+    rounds: 2
     findings:
       p1: 0
-      p2: 0
+      p2: 3
       p3: 3
+    status: failed
+    started: 2026-10-31T08:50:06.222Z
+    reviewed: aa76ce3441d205613d9a0694c38afa405155721b
+    sentBack: 1
+    ended: 2026-10-31T08:55:12.335Z
+    failing: review round 2 found 3 P2 (components/map-controls/review.md)
 notes:
   - stage: brief
     at: 2026-10-31T08:36:36.980Z
