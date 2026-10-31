@@ -347,7 +347,16 @@
           "components": [0.102, 0.1294, 0.1451],
           "hex": "#1A2125"
         },
-        "$description": "Building footprints at close zoom"
+        "$description": "Building footprints at close zoom, on the flat map"
+      },
+      "building-3d": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.1647, 0.2, 0.2196],
+          "hex": "#2A3338"
+        },
+        "$description": "3D buildings, walls and roofs: the map's light shades each face from it"
       },
       "rail": {
         "$type": "color",

@@ -16,7 +16,8 @@ Land, water, parks, streets, rail, buildings and labels each have a colour per t
 | `color.map.street`      | `#FFFFFF` | `#252D31` | Streets                                                                       |
 | `color.map.airport`     | `#E2E5E1` | `#1C2326` | Airport grounds                                                               |
 | `color.map.runway`      | `#CBD1CE` | `#2B3438` | Runways and taxiways                                                          |
-| `color.map.building`    | `#E2E5E0` | `#1A2125` | Building footprints at close zoom                                             |
+| `color.map.building`    | `#E2E5E0` | `#1A2125` | Building footprints at close zoom, on the flat map                            |
+| `color.map.building-3d` | `#D3D9D4` | `#2A3338` | 3D buildings, walls and roofs: the map's light shades each face from it       |
 | `color.map.rail`        | `#BCC4C1` | `#323C41` | Rail tracks without a coloured line on them                                   |
 | `color.map.label`       | `#66737A` | `#7E8B91` | Place names                                                                   |
 | `color.map.water-label` | `#5F7A88` | `#4B6774` | Water names                                                                   |
@@ -101,11 +102,28 @@ An aircraft carries the data states in the vehicle dots' shapes, as far as a pla
 
 <!-- /contrast -->
 
+## 3D buildings
+
+The map opens flat and north-up. 3D is a view the rider turns on: the map tilts, up to 60°, and turns, and the buildings rise.
+
+- **Where.** Buildings rise from zoom 14, as the flat footprints appear.
+- **Heights** come from OpenStreetMap and are approximate: a block may stand a storey off, and one with no height recorded stands at a default. Say so where the map credits its data.
+- **Colour.** A 3D building is one colour, `color.map.building-3d`, walls and roof alike: the map's light shades each face from it, so a block reads as a block without a second colour. It is a step further from the land than `color.map.building`, darker in light and lighter in dark, so the walls stand off the ground they rise from.
+- **Over and under.** The dots, lines and stops are drawn over the buildings, never hidden behind them. The buildings are drawn at `opacity.map-building-3d`, faint enough that a bus behind a block shows through it and reads as being there.
+
+<!-- tokens: opacity.map-building-3d -->
+
+| Token                     | Value | Use                                                                                    |
+| ------------------------- | ----- | -------------------------------------------------------------------------------------- |
+| `opacity.map-building-3d` | `0.7` | 3D buildings, faint enough that the dots, lines and stops drawn over them read through |
+
+<!-- /tokens -->
+
 ## Focus and dimming
 
 When a line is in focus, everything outside it dims: vehicles, lines, stations and labels each to their own opacity, so the focused line reads first without the rest vanishing. Lines at rest are drawn slightly translucent, and live vehicles leave a short trail.
 
-<!-- tokens: opacity.map-* -->
+<!-- tokens: opacity.map-dim-* opacity.map-line opacity.map-line-regional opacity.map-trail -->
 
 | Token                       | Value  | Use                                 |
 | --------------------------- | ------ | ----------------------------------- |

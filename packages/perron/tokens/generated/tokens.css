@@ -191,6 +191,7 @@
   --perron-opacity-map-line: 0.78;
   --perron-opacity-map-line-regional: 0.5;
   --perron-opacity-map-trail: 0.32;
+  --perron-opacity-map-building-3d: 0.7;
   --perron-vehicle-dot-inset: 2px;
   --perron-vehicle-dot-halo: 1.6px;
   --perron-vehicle-dot-ageing-fill-opacity: 0.42;
@@ -295,6 +296,7 @@
   --perron-color-map-airport: #E2E5E1;
   --perron-color-map-runway: #CBD1CE;
   --perron-color-map-building: #E2E5E0;
+  --perron-color-map-building-3d: #D3D9D4;
   --perron-color-map-rail: #BCC4C1;
   --perron-color-map-label: #66737A;
   --perron-color-map-water-label: #5F7A88;
@@ -366,6 +368,7 @@
     --perron-color-map-airport: #1C2326;
     --perron-color-map-runway: #2B3438;
     --perron-color-map-building: #1A2125;
+    --perron-color-map-building-3d: #2A3338;
     --perron-color-map-rail: #323C41;
     --perron-color-map-label: #7E8B91;
     --perron-color-map-water-label: #4B6774;
@@ -437,6 +440,7 @@
   --perron-color-map-airport: #1C2326;
   --perron-color-map-runway: #2B3438;
   --perron-color-map-building: #1A2125;
+  --perron-color-map-building-3d: #2A3338;
   --perron-color-map-rail: #323C41;
   --perron-color-map-label: #7E8B91;
   --perron-color-map-water-label: #4B6774;
