@@ -5,24 +5,28 @@ deferred:
   at: 2026-10-24T22:38:36.571Z
 stages:
   brief:
-    status: done
-    started: 2026-10-24T22:38:40.447Z
-    ended: 2026-10-24T22:44:56.764Z
+    status: pending
+    started: 2026-10-31T08:30:33.862Z
+    ended: 2026-10-31T08:36:36.980Z
+    pending: 9
   build:
-    status: done
-    started: 2026-10-24T22:45:03.722Z
     runs: 1
-    ended: 2026-10-24T22:51:28.347Z
   review:
-    status: done
-    started: 2026-10-24T22:52:01.227Z
     rounds: 1
     findings:
       p1: 0
       p2: 0
       p3: 3
-    ended: 2026-10-24T22:56:56.050Z
-  docs:
-    status: done
-    started: 2026-10-24T22:57:31.313Z
-    ended: 2026-10-24T22:59:18.548Z
+notes:
+  - stage: brief
+    at: 2026-10-31T08:36:36.980Z
+    direction: ToolbarButton draws no selected state, and the Toolbar spec's Do and don't says not to build a toggle from one, so a toggle inside a toolbar (MapControls' 3D toggle) has to draw its own on look in its component CSS. A selected look on ToolbarButton, read from aria-pressed, would let any toolbar hold a toggle.
+  - stage: brief
+    at: 2026-10-31T08:36:36.980Z
+    direction: The contract's Design states table has no selector for a toggle button's on state. FilterChip reads Base UI's [data-pressed], which the table files under Pressed, and a ToolbarButton toggle can only read [aria-pressed='true']. A Selected row naming the toggle case would settle it for every component.
+  - stage: brief
+    at: 2026-10-31T08:36:36.980Z
+    direction: Before this run, MapControls' Tokens table had no cursor rows for its buttons, which the brief's Pointer feedback cross-check asks for. Other specs written before that rule may lack them too.
+  - stage: brief
+    at: 2026-10-31T08:36:36.980Z
+    questions: "1. Anatomy: toggle and compass after centre, before pause, past angleSeparator. 2. Anatomy: compass stays at north. 3. Props: tilted/onTiltedChange. 4. Props: heading/onResetNorth. 5. Props: no tiltDisabled/compassDisabled. 6. Keyboard and ARIA: compass turn unannounced. 7. Owned strings: view3d '3D view'. 8. CR-9: toggle on look in MapControls.css from aria-pressed. 9. CR-12: needle turns with no transition."
