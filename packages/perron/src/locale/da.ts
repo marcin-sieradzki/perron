@@ -62,6 +62,8 @@ export const da: OwnedStrings = {
   zoomIn: 'Zoom ind',
   zoomOut: 'Zoom ud',
   centerMap: 'Centrér kortet',
+  view3d: '3D-visning',
+  resetNorth: 'Drej mod nord',
   pause: 'Pause',
   resume: 'Fortsæt',
   scale: 'Målestok',

@@ -165,7 +165,7 @@ export const en = {
   delayColumn: 'Delay',
   /** A vehicle table: the header of the column of the time each vehicle last reported its position. */
   lastSeenColumn: 'Last seen',
-  /** The map's bar of zoom, centre and pause buttons: the toolbar's name. */
+  /** The map's bar of zoom, centre, 3D, compass and pause buttons: the toolbar's name. */
   mapControls: 'Map controls',
   /** The map's button that zooms in by one step. */
   zoomIn: 'Zoom in',
@@ -173,6 +173,10 @@ export const en = {
   zoomOut: 'Zoom out',
   /** The map's button that moves and zooms the map to show the whole network. */
   centerMap: 'Centre the map',
+  /** The map's toggle that tilts the map into 3D and lays it flat again: its name, the same in both states. */
+  view3d: '3D view',
+  /** The map's compass button that turns the map back to north. */
+  resetNorth: 'Reset to north',
   /** The map's button that stops the vehicles moving, its name while they move. */
   pause: 'Pause',
   /** The map's button that sets the vehicles moving again, its name while they are paused. */

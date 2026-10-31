@@ -9,7 +9,12 @@ stages:
     started: 2026-10-31T08:37:16.034Z
     ended: 2026-10-31T08:38:05.781Z
   build:
-    runs: 1
+    runs: 2
+    status: done
+    started: 2026-10-31T08:38:09.237Z
+    begun: be3706907061cc5aa97ec3fb3f517cf1b59d6191e4542539c5d4121d5e33ea2b
+    spec: b518206cc65fabf89cbd52d5dd205a3249b4215dd5a8560281342f4faf23d05c
+    ended: 2026-10-31T08:49:59.413Z
   review:
     rounds: 1
     findings:
@@ -35,3 +40,9 @@ notes:
   - stage: brief
     at: 2026-10-31T08:38:05.781Z
     direction: The factory refuses a [PENDING] line that keeps its question or label, but not a line elsewhere that points back at the question ('as the question above asks', 'as answered above'); a grep for 'question above|answered above' in that check would catch them.
+  - stage: build
+    at: 2026-10-31T08:49:59.413Z
+    direction: The pointer-feedback gate (scripts/checks/pointer-feedback.ts, hoveredName) finds the cursor of the part a file hovers in that file only, so a component that adds a state look to a shared part, such as MapControls' on look for a ToolbarButton, has to repeat cursor keywords the shared part already sets. A gate that also counts the cursor from the hovered part's own CSS file would remove the repeat.
+  - stage: build
+    at: 2026-10-31T08:49:59.413Z
+    direction: testing/stories.ts's mounted() gives a play test no way to pass new props to the rendered UI in place, so a test can't show a controlled prop changing on the same element. MapControls' stories wrote a local screen() (a flushSync render) and turnOf() (rotation from the computed matrix); both would serve other components as shared helpers.

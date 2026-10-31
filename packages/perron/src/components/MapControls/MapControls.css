@@ -1,5 +1,59 @@
-/* MapControls, from docs/components/map-controls.md. It sets nothing: the bar, the separator and
-   the buttons wear Toolbar's look through pn-Toolbar, pn-ToolbarSeparator and pn-ToolbarButton, so
-   the controls match every other toolbar (CR-9). It places nothing either: the screen puts it at
-   the bottom right, size.panel-gap from the edges, at z-index.map-controls (CR-10). The
-   pn-MapControls-* classes are hooks for a caller's CSS. */
+/* MapControls, from docs/components/map-controls.md. The bar, the separators and the buttons wear
+   Toolbar's look through pn-Toolbar, pn-ToolbarSeparator and pn-ToolbarButton, so the controls
+   match every other toolbar; the one look of MapControls' own is the 3D toggle's on state, which
+   ToolbarButton doesn't draw, read from the aria-pressed the ear hears (CR-9). It places nothing:
+   the screen puts it at the bottom right, size.panel-gap from the edges, at z-index.map-controls
+   (CR-10). The pn-MapControls-* classes are hooks for a caller's CSS. */
+
+/* On: FilterChip's inverse fill, on the same transparent border as off, so both share one box.
+   .pn-ToolbarButton keeps each rule above Toolbar's own state rules, whatever order they load in. */
+.pn-ToolbarButton.pn-MapControls-tilt[aria-pressed='true'] {
+  background-color: var(--perron-color-surface-inverse);
+  color: var(--perron-color-text-inverse);
+  /* ToolbarButton's keyword, repeated where this file hovers the toggle, which the
+     pointer-feedback gate reads file by file */
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .pn-ToolbarButton.pn-MapControls-tilt[aria-pressed='true']:hover:not([data-disabled]) {
+    background-color: var(--perron-color-surface-inverse-hover);
+  }
+}
+
+.pn-ToolbarButton.pn-MapControls-tilt[aria-pressed='true']:active:not([data-disabled]) {
+  background-color: var(--perron-color-surface-inverse-pressed);
+}
+
+/* Disabled and on: a colour, never an opacity, and still a fill, so the toggle shows it is on. */
+.pn-ToolbarButton.pn-MapControls-tilt[aria-pressed='true'][data-disabled] {
+  background-color: var(--perron-color-surface-inset);
+  color: var(--perron-color-text-tertiary);
+  cursor: default;
+}
+
+/* Forced colours drop the inverse fill, so the on toggle keeps a system fill of its own, Highlight,
+   or GrayText when it is disabled too, as FilterChip's does. */
+@media (forced-colors: active) {
+  /* :hover and :active too, at the hover rules' specificity and after them */
+  .pn-ToolbarButton.pn-MapControls-tilt[aria-pressed='true']:not([data-disabled]),
+  .pn-ToolbarButton.pn-MapControls-tilt[aria-pressed='true']:not([data-disabled]):is(
+      :hover,
+      :active
+    ) {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    color: HighlightText;
+  }
+
+  /* forced-color-adjust: none keeps the ring in the theme's ink, which Canvas could hide */
+  .pn-ToolbarButton.pn-MapControls-tilt[aria-pressed='true']:not([data-disabled]):focus-visible {
+    outline-color: CanvasText;
+  }
+
+  .pn-ToolbarButton.pn-MapControls-tilt[aria-pressed='true'][data-disabled] {
+    forced-color-adjust: none;
+    background-color: GrayText;
+    color: Canvas;
+  }
+}

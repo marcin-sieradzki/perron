@@ -62,6 +62,8 @@ export const sv: OwnedStrings = {
   zoomIn: 'Zooma in',
   zoomOut: 'Zooma ut',
   centerMap: 'Centrera kartan',
+  view3d: '3D-vy',
+  resetNorth: 'Vrid mot norr',
   pause: 'Pausa',
   resume: 'Fortsätt',
   scale: 'Skala',

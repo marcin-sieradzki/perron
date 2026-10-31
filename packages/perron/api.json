@@ -2038,6 +2038,12 @@
           "boolean"
         ]
       },
+      "heading": {
+        "optional": true,
+        "type": [
+          "number"
+        ]
+      },
       "mapControlsLabel": {
         "optional": true,
         "type": [
@@ -2054,6 +2060,18 @@
         "optional": true,
         "type": [
           "(event: MouseEvent<HTMLButtonElement, MouseEvent>, paused: boolean) => void"
+        ]
+      },
+      "onResetNorth": {
+        "optional": true,
+        "type": [
+          "(event: MouseEvent<HTMLButtonElement, MouseEvent>) => void"
+        ]
+      },
+      "onTiltedChange": {
+        "optional": true,
+        "type": [
+          "(event: MouseEvent<HTMLButtonElement, MouseEvent>, tilted: boolean) => void"
         ]
       },
       "onZoomIn": {
@@ -2093,6 +2111,12 @@
           "Ref<HTMLDivElement>"
         ]
       },
+      "resetNorthLabel": {
+        "optional": true,
+        "type": [
+          "string"
+        ]
+      },
       "resumeLabel": {
         "optional": true,
         "type": [
@@ -2103,6 +2127,18 @@
         "optional": true,
         "type": [
           "CSSProperties"
+        ]
+      },
+      "tilted": {
+        "optional": true,
+        "type": [
+          "boolean"
+        ]
+      },
+      "view3dLabel": {
+        "optional": true,
+        "type": [
+          "string"
         ]
       },
       "zoomInDisabled": {
