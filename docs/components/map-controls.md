@@ -103,7 +103,7 @@ MapControls takes no `slotProps`, and puts a `pn-MapControls-<part>` class on ea
 | `resetNorthLabel`           | `string`                                                                | The locale's | none                                | Overrides "Reset to north", the compass's name.                                                                                                                                                                                                                                                                     |
 | `className`, `style`, `ref` | React's                                                                 | none         | `className`, `style`                | Reaches the root, the `role="toolbar"` element. `className` is merged after `pn-Toolbar` and `pn-MapControls`.                                                                                                                                                                                                      |
 
-No `slotProps`, as answered above. No `children`: the buttons are the component's own.
+No `slotProps`, for the reasons above. No `children`: the buttons are the component's own.
 
 ## Tokens
 
@@ -202,7 +202,7 @@ The compass's turn is left unannounced, so its name stays "Reset to north" with 
 
 What axe won't catch, from the contract, each with how this component meets it:
 
-- [ ] Everything the eye is told, the ear is told, for every shape each prop accepts: each icon is `aria-hidden` inside its button, and the button's `aria-label` says the action it shows ("Zoom in", "Zoom out", "Centre the map", "Reset to north", and "Pause" or "Resume" as the `pause` or `play` icon shows), or, for the 3D toggle, the view it turns on, "3D view"; the toggle's on fill is its `aria-pressed`; the compass's needle angle is left to the map to announce, as the question above asks; a dimmed button is announced through `aria-disabled`; the separators are announced as such.
+- [ ] Everything the eye is told, the ear is told, for every shape each prop accepts: each icon is `aria-hidden` inside its button, and the button's `aria-label` says the action it shows ("Zoom in", "Zoom out", "Centre the map", "Reset to north", and "Pause" or "Resume" as the `pause` or `play` icon shows), or, for the 3D toggle, the view it turns on, "3D view"; the toggle's on fill is its `aria-pressed`; the compass's needle angle is left to the map to announce, as the paragraph above says; a dimmed button is announced through `aria-disabled`; the separators are announced as such.
 - [ ] Every landmark and named region has an accessible name: the bar is a `toolbar` named "Map controls" by its owned string, so it tells itself apart from the top bar's toolbars.
 - [ ] Every default label can be overridden: `mapControlsLabel`, `zoomInLabel`, `zoomOutLabel`, `centerMapLabel`, `view3dLabel`, `resetNorthLabel`, `pauseLabel` and `resumeLabel`.
 - [ ] Every shape the type accepts renders, in every variant: the props take no `ReactNode`; both orientations, every `…Disabled` combination and `disabled` render all three buttons, square, in the same order, and the 3D toggle in either state of `tilted`, the compass at any `heading`, 0, negative, past 360 or not finite, and the pause button in either state of `paused` after them when their handlers are given.

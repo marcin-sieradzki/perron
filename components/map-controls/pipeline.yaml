@@ -5,10 +5,9 @@ deferred:
   at: 2026-10-24T22:38:36.571Z
 stages:
   brief:
-    status: pending
-    started: 2026-10-31T08:30:33.862Z
-    ended: 2026-10-31T08:36:36.980Z
-    pending: 9
+    status: done
+    started: 2026-10-31T08:37:16.034Z
+    ended: 2026-10-31T08:38:05.781Z
   build:
     runs: 1
   review:
@@ -30,3 +29,9 @@ notes:
   - stage: brief
     at: 2026-10-31T08:36:36.980Z
     questions: "1. Anatomy: toggle and compass after centre, before pause, past angleSeparator. 2. Anatomy: compass stays at north. 3. Props: tilted/onTiltedChange. 4. Props: heading/onResetNorth. 5. Props: no tiltDisabled/compassDisabled. 6. Keyboard and ARIA: compass turn unannounced. 7. Owned strings: view3d '3D view'. 8. CR-9: toggle on look in MapControls.css from aria-pressed. 9. CR-12: needle turns with no transition."
+  - stage: brief
+    at: 2026-10-31T08:38:05.781Z
+    direction: The contract's 'everything the eye is told, the ear is told' check has no rule for a look that changes all the time, such as MapControls' compass needle following heading, so the spec has to make its own exception. A line in the contract saying a continuous value the screen already describes (heading, zoom) need not be announced by the control would settle it for later map components.
+  - stage: brief
+    at: 2026-10-31T08:38:05.781Z
+    direction: The factory refuses a [PENDING] line that keeps its question or label, but not a line elsewhere that points back at the question ('as the question above asks', 'as answered above'); a grep for 'question above|answered above' in that check would catch them.
