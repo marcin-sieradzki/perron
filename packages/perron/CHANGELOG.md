@@ -1,5 +1,19 @@
 # @mylder/perron
 
+## 0.10.0
+
+### Minor Changes
+
+- 7a98dcb: Two map icons, `compass` and `cube`, on the 16 px grid at `icon.size.400`. `compass` is a needle pointing north with its north half filled, for a caller to turn against the map's heading; `cube` stands for tilting the map into 3D and back to flat.
+- d412c06: Map tokens for 3D buildings: `color.map.building-3d` (light `#D3D9D4`, dark `#2A3338`), the one colour an extruded building's walls and roof take, and `opacity.map-building-3d` (`0.6`), so the street behind a block shows through. `docs/foundations/map.md` gains a "3D buildings" section: buildings rise from zoom 14, heights come from OpenStreetMap and are approximate, and the map opens flat with 3D as a view the rider turns on.
+- aa76ce3: `MapControls` takes an optional 3D toggle and an optional compass for the map's angle: given `onTiltedChange(event, tilted)`, the bar adds a 3D toggle, and given `onResetNorth(event)`, a compass, after the centre button and before the pause button, past a new separator (`angleSeparator`), in the same bar and arrow-key order, so the map's controls stay one tab stop. The screen holds `tilted` (default `false`), which the toggle's `aria-pressed` and its inverse on fill follow, through the new `ToolbarButton` `selected`, and `heading` (default `0`, degrees clockwise from north), by which the compass's needle turns to point north on the map. While the needle is turned, the compass is described as "Map turned away from north" through `aria-describedby` pointing at visually hidden text, so a screen reader hears what the needle shows. New owned strings `view3d` ("3D view"), `resetNorth` ("Reset to north") and `turnedFromNorth` ("Map turned away from north"), in all four locales (a caller that supplies its own dictionaries adds them too), overridden by the new `view3dLabel`, `resetNorthLabel` and `turnedFromNorthLabel` props. Without `onTiltedChange` and `onResetNorth` the bar renders as before.
+
+  `ToolbarButton` takes an optional `selected`, as `Button` does: given, it makes the button a toggle with `aria-pressed`, and while `true` sets `data-selected` and draws the on look, the inverse fill with its own hover and pressed steps and a `Highlight` fill in forced colours. Left out, the button is no toggle and renders as before.
+
+### Patch Changes
+
+- 7c50630: The package's README names the components and patterns it ships, shows where to import each from, and links the docs site.
+
 ## 0.9.0
 
 ### Minor Changes
