@@ -1,6 +1,6 @@
 # @mylder/perron
 
-Perron is the design system of Mylder, a live map of Copenhagen's buses, S-tog, metro and regional trains. This package holds its foundations: the design tokens as CSS custom properties and TypeScript, the fonts, the icons and the Mylder mark.
+Perron is the design system of Mylder, a live map of Copenhagen's buses, S-tog, metro and regional trains. This package holds all of it: the design tokens as CSS custom properties and TypeScript, the fonts, the icons and the Mylder mark, and the React components and patterns built on Base UI. The docs are at [marcin-sieradzki.github.io/perron](https://marcin-sieradzki.github.io/perron/).
 
 ```sh
 npm install @mylder/perron
@@ -11,6 +11,13 @@ Load the stylesheet once at the app root. It brings the fonts, the tokens for bo
 ```ts
 import '@mylder/perron/perron.css'
 import { theme } from '@mylder/perron/tokens.ts'
+```
+
+Components come from the package's root and patterns, built from them for Mylder's screens, from `@mylder/perron/patterns`.
+
+```tsx
+import { Button } from '@mylder/perron'
+import { DepartureRow } from '@mylder/perron/patterns'
 ```
 
 Read a token in CSS as `var(--perron-color-text-primary)`, and never copy a value. Light is the default theme; set `data-theme="dark"` on any element for dark. The icons and the mark are SVG files under `@mylder/perron/icons/` and `@mylder/perron/logos/`.
