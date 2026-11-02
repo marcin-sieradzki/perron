@@ -4,11 +4,11 @@
 // and logos work unchanged on the site.
 import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { SITE } from '../../website/lib/base-path.ts'
 import { headingOf, PAGES } from './pages.ts'
 import { PACKAGE } from './paths.ts'
 
-/** Where GitHub Pages serves the site. */
-export const SITE = 'https://marcin-sieradzki.github.io/perron/'
+export { SITE }
 
 /** The page AGENTS.md takes its rules from, and the section that holds them. */
 const RULES = { path: 'docs/foundations/README.md', heading: 'Using the tokens' }

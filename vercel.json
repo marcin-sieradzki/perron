@@ -1,0 +1,8 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "npm ci",
+  "buildCommand": "export PERRON_SITE_URL=https://$VERCEL_PROJECT_PRODUCTION_URL/ && npm run build -w website && npm run storybook:build && npm run site:build",
+  "outputDirectory": "dist/site",
+  "trailingSlash": true
+}

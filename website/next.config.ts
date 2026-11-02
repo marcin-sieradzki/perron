@@ -2,12 +2,13 @@
 // components and in the loaders of lib/, which import the repo's own readers in scripts/lib and
 // packages/mcp/src. Those sit outside website/, so Turbopack's root is the repository's.
 //
-// The build is a static export to out/, which GitHub Pages serves under BASE_PATH: each route as a
-// folder holding index.html, so a path with or without its trailing slash finds it.
+// The build is a static export to out/, served under BASE_PATH (GitHub Pages' /perron, or the root
+// on Vercel): each route as a folder holding index.html, so a path with or without its trailing
+// slash finds it.
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import type { NextConfig } from 'next'
-import { BASE_PATH } from './lib/base-path.ts'
+import { BASE_PATH, SITE } from './lib/base-path.ts'
 
 const repo = join(dirname(fileURLToPath(import.meta.url)), '..')
 
@@ -15,6 +16,8 @@ const config: NextConfig = {
   reactStrictMode: true,
   output: 'export',
   basePath: BASE_PATH,
+  // the browser bundles read the site's address too, where Next.js inlines only what it is given
+  env: { PERRON_SITE_URL: SITE },
   trailingSlash: true,
   outputFileTracingRoot: repo,
   turbopack: {
