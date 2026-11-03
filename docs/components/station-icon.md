@@ -114,17 +114,13 @@ No owned strings: the marker shows and announces no words, and the stop's and li
 
 ## Stories
 
-No Penpot design yet, so the stories are named by the variant names the design will have: `variant`, then `size`, each in PascalCase (the Conventions of `penpot/README.md`). `line` is a colour, not a Penpot variant property, and the `Lines` story shows every value.
+`Default` is the subject story, which the contract story renders, every prop a control; `Variants` shows each variant at each size and runs each one's test there; the visual stage renders each on `Default` with its args.
 
-| Story            | Shows                                                                                                               | `play` test                                                                                        |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| `OutlinedSmall`  | `variant='outlined'`, `size='small'`, no line, beside a caption-sized stop name                                     | none                                                                                               |
-| `OutlinedMedium` | `variant='outlined'`, `size='medium'`, no line, beside a label-sized stop name                                      | The root is `aria-hidden`, has no role or name, and Tab passes it by to the next focusable element |
-| `OutlinedLarge`  | `variant='outlined'`, `size='large'`, no line, beside a panel-title stop name                                       | none                                                                                               |
-| `FilledSmall`    | `variant='filled'`, `size='small'`, no line                                                                         | none                                                                                               |
-| `FilledMedium`   | `variant='filled'`, `size='medium'`, no line                                                                        | none                                                                                               |
-| `FilledLarge`    | `variant='filled'`, `size='large'`, no line                                                                         | none                                                                                               |
-| `Lines`          | Every `line` value, and none, in both variants at `size='medium'`, each beside a stop's name with its line after it | Each marker carries its `data-line`, and none without a `line`                                     |
+| Story      | Shows                                                                                                               | `play` test                                                                                                           |
+| ---------- | ------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `Default`  | The subject story: outlined, medium, beside "Nørreport", every prop a control                                       | none                                                                                                                  |
+| `Variants` | Each `variant` at each `size`, side by side, beside the text that size is for                                       | Outlined, medium: the root is `aria-hidden`, has no role or name, and Tab passes it by to the next focusable element. |
+| `Lines`    | Every `line` value, and none, in both variants at `size='medium'`, each beside a stop's name with its line after it | Each marker carries its `data-line`, and none without a `line`                                                        |
 
 ## Do and don't
 
