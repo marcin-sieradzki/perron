@@ -1,11 +1,11 @@
-// NumberField's stories: the variants of the deferred design, Default, Hover, Focus, Disabled and
-// Invalid, and the stories of content and behaviour the spec's Stories table names
-// (docs/components/number-field.md), each in a 320 px container. Hover, focus and pressed render
-// at rest; their plays drive them.
+// NumberField's stories: the field alone with every prop a control, its states side by side,
+// its bounds, units, Danish and long words, each in a 320 px container, then the behaviour tests
+// (docs/components/number-field.md). Hover, focus and pressed are play steps, not stories.
 import { Form } from '@base-ui/react/form'
 import { useEffect, useState } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { showcase } from '../../testing/Showcase.tsx'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { dictionaries } from '../../locale/index.ts'
@@ -80,8 +80,89 @@ const values = (handler: unknown) => mock(handler).mock.calls.map((call) => call
 const reasons = (handler: unknown) =>
   mock(handler).mock.calls.map((call) => (call[2] as { reason: string }).reason)
 
+/** The label of a field whose placeholder comes from `slotProps.input`. */
+const STOPS = 'Stops to show'
+
+const MOST = 'Departures to show'
+const FEWEST = 'Stops to show'
+
+/** The label of a second field the plays mount beside the story's. */
+const UNBOUNDED = 'Stops to skip'
+
+/** The label of a field whose `onChange` cancels every change. */
+const HELD = 'Departures held'
+
+/** The label of a field whose `min` is below zero. */
+const DELAY = 'Delay in minutes'
+
+/** The label of a field written as a percentage. */
+const SHARE = 'Share of late departures'
+
+/** The label of a field written in euros. */
+const FARE = 'Fare in euros'
+
+/** The label of a controlled field the plays mount beside the story's. */
+const SET_OUTSIDE = 'Departures set elsewhere'
+
+/** A wheel turn over the input, with the focus in it. */
+const wheel = (input: HTMLElement, deltaY: number) => {
+  const turn = new WheelEvent('wheel', { deltaY, bubbles: true, cancelable: true })
+  input.dispatchEvent(turn)
+  return turn
+}
+
+/** Base UI's hidden `<input type="number">`, which the browser's checks run on. */
+const hiddenInput = (scope: HTMLElement) =>
+  scope.querySelector<HTMLInputElement>('input[type="number"]')!
+
+const DANISH_LABEL = 'Gangafstand i meter'
+const DANISH_DESCRIPTION = 'Fra 100 til 5.000'
+
+/** Renders `args` in `locale` on the server, as the owned-strings check reads a render. */
+const markup = (args: NumberFieldProps, locale: Locale) =>
+  renderToStaticMarkup(
+    <PerronProvider locale={locale}>
+      <NumberField {...args} />
+    </PerronProvider>,
+  )
+
+/**
+ * The number held in the story's state, from `start`, set from each change's `value`; `expose`
+ * hands a play the setter, to change the number from outside.
+ */
+function ControlledField({
+  start = 8,
+  expose,
+  ...props
+}: NumberFieldProps & {
+  start?: number
+  expose?: (set: (value: number | null) => void) => void
+}) {
+  const [value, setValue] = useState<number | null>(start)
+  useEffect(() => expose?.(setValue), [expose])
+  return (
+    <NumberField
+      {...props}
+      defaultValue={undefined}
+      value={value}
+      onChange={(event, next, details) => {
+        props.onChange?.(event, next, details)
+        setValue(next)
+      }}
+    />
+  )
+}
+
+/** The story's submit handler: it keeps the number the form submits and stays on the page. */
+const onSubmit = fn((event: { preventDefault: () => void; currentTarget: HTMLFormElement }) => {
+  event.preventDefault()
+  return new FormData(event.currentTarget).get('departures')
+})
+
+const COMPOUND = 'Hovedstadsområdetsbuslinjestoppestedsoversigtskortudgivelsen'
+
 /** The subject story, State default: the label, the description, and the box holding 8. */
-export const Default: Story = {
+const atRest = {
   play: async ({ canvasElement, step }) => {
     const input = inputIn(canvasElement)
     await step('the input is named by the label, described by the help, holding 8', async () => {
@@ -141,10 +222,10 @@ export const Default: Story = {
       await expect(group).toHaveAttribute('data-touched')
     })
   },
-}
+} satisfies Story
 
 /** State hover: the box at rest at first render; the play reads the hover rule. */
-export const Hover: Story = {
+const hover = {
   play: async ({ canvasElement }) => {
     const group = groupOf(inputIn(canvasElement))
     const image = onHover(group, 'background-image')
@@ -154,10 +235,10 @@ export const Hover: Story = {
       colour('--perron-color-surface-raised'),
     )
   },
-}
+} satisfies Story
 
 /** State focus: the box at rest at first render; Tab gives the input focus and the box the ring. */
-export const Focus: Story = {
+const focus = {
   play: async ({ canvasElement }) => {
     const input = inputIn(canvasElement)
     const group = groupOf(input)
@@ -174,10 +255,10 @@ export const Focus: Story = {
     await userEvent.tab({ shift: true })
     await expect(input).not.toHaveFocus()
   },
-}
+} satisfies Story
 
 /** State disabled: the number, both icons, the label and the description in the tertiary ink. */
-export const Disabled: Story = {
+const disabled = {
   args: { disabled: true },
   parameters: {
     // a disabled field's words are color.text.tertiary, a miss Accessibility lists by name
@@ -213,10 +294,10 @@ export const Disabled: Story = {
     await expect(args.onChangeCommitted).not.toHaveBeenCalled()
     await userEvent.tab({ shift: true })
   },
-}
+} satisfies Story
 
 /** State invalid: the error "Enter a number from 1 to 20" under the box, its edge in danger. */
-export const Invalid: Story = {
+const invalid = {
   args: { error: 'Enter a number from 1 to 20' },
   play: async ({ canvasElement }) => {
     const input = inputIn(canvasElement)
@@ -233,13 +314,10 @@ export const Invalid: Story = {
     )
     await expect(input).toHaveAccessibleDescription(`${DESCRIPTION} Enter a number from 1 to 20`)
   },
-}
-
-/** The label of a field whose placeholder comes from `slotProps.input`. */
-const STOPS = 'Stops to show'
+} satisfies Story
 
 /** No value, and the placeholder "Such as 8". */
-export const Empty: Story = {
+const empty = {
   args: { defaultValue: undefined, placeholder: 'Such as 8' },
   play: async ({ args, canvasElement }) => {
     const input = inputIn(canvasElement)
@@ -271,10 +349,322 @@ export const Empty: Story = {
       },
     )
   },
+} satisfies Story
+
+/** `optional`: the label reads "Departures to show (optional)". */
+const optional = {
+  args: { optional: true },
+  play: async ({ args, canvasElement, step }) => {
+    await step('the mark is part of the input’s name', async () => {
+      await expect(inputIn(canvasElement, 'Departures to show (optional)')).toBeInTheDocument()
+    })
+    await step('optionalLabel replaces the mark', async () => {
+      await mounted(
+        canvasElement,
+        <PerronProvider locale="en">
+          <NumberField {...args} optionalLabel="(if wanted)" />
+        </PerronProvider>,
+        async (host) => {
+          await waitFor(() =>
+            expect(inputIn(host, 'Departures to show (if wanted)')).toBeInTheDocument(),
+          )
+        },
+      )
+    })
+    await step('its render says only the dictionary’s and the caller’s words (CR-13)', async () => {
+      for (const locale of ['en', 'da', 'sv', 'nb'] as const)
+        expectOwnedStrings(markup(args, locale), locale, [LABEL, DESCRIPTION])
+    })
+  },
+} satisfies Story
+
+/** `readOnly`, holding 8: the box at rest, both icons in the tertiary ink. */
+const readOnly = {
+  args: { readOnly: true },
+  play: async ({ args, canvasElement }) => {
+    const input = inputIn(canvasElement)
+    const group = groupOf(input)
+    const buttons = [buttonIn(canvasElement, 'Decrease'), buttonIn(canvasElement, 'Increase')]
+    await expect(input).toHaveAttribute('readonly')
+    await userEvent.tab()
+    await expect(input).toHaveFocus()
+    await userEvent.keyboard('{ArrowUp}')
+    await userEvent.keyboard('5')
+    for (const button of buttons) await userEvent.click(button, { pointerEventsCheck: 0 })
+    await expect(input).toHaveValue('8')
+    await expect(args.onChange).not.toHaveBeenCalled()
+    await expect(args.onChangeCommitted).not.toHaveBeenCalled()
+    const tertiary = colour('--perron-color-text-tertiary')
+    for (const button of buttons) {
+      await expect(button).toHaveAttribute('aria-disabled', 'true')
+      await expect(button).toHaveAttribute('data-readonly')
+      await expect(getComputedStyle(button.querySelector('svg')!).color).toBe(tertiary)
+      // no hover and no pressed look on a button that can't step (CR-15)
+      await expect(onHover(button, 'background-color')).toBe('')
+      await expect(stateFill(button, ':active')).toBe('')
+    }
+    await expect(getComputedStyle(input).color).toBe(colour('--perron-color-text-primary'))
+    await expect(getComputedStyle(group).borderColor).toBe(edge('color-border-control'))
+    await expect(getComputedStyle(group).backgroundColor).toBe(
+      colour('--perron-color-surface-raised'),
+    )
+    await userEvent.tab({ shift: true })
+    await expect(input).not.toHaveFocus()
+    // leaving a read-only field only marks it touched
+    await expect(input.closest('.pn-NumberField')).toHaveAttribute('data-touched')
+    await expect(group).toHaveAttribute('data-touched')
+    await expect(input).toHaveValue('8')
+    await expect(args.onChange).not.toHaveBeenCalled()
+    await expect(args.onChangeCommitted).not.toHaveBeenCalled()
+  },
+} satisfies Story
+
+/**
+ * The subject story, every prop a control: the label, the description, and the box holding 8. Its
+ * play reads the box's hover rule and gives it focus and the ring.
+ */
+export const Default: Story = {
+  play: async (context) => {
+    await atRest.play(context)
+    await hover.play(context)
+    await focus.play(context)
+  },
+}
+
+/** Each state a prop reaches, one field apiece: empty, optional, disabled, read-only and invalid. */
+export const States: Story = {
+  parameters: {
+    // a disabled field's words are color.text.tertiary, a miss Accessibility lists by name
+    // (docs/foundations/accessibility.md) and WCAG 1.4.3 exempts for an inactive control, so axe
+    // leaves the disabled field out
+    a11y: { context: { include: ['body'], exclude: ['[data-row="Disabled"]'] } },
+  },
+  ...showcase<NumberFieldProps>(
+    [
+      { label: 'Empty', story: empty },
+      { label: 'Optional', story: optional },
+      { label: 'Disabled', story: disabled },
+      { label: 'Read-only', story: readOnly },
+      { label: 'Invalid', story: invalid },
+    ],
+    (args) => <NumberField {...args} />,
+  ),
+}
+
+/** Two fields, one holding 20, at `max`, and one holding 1, at `min`. */
+export const Bounds: Story = {
+  render: (args) => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--perron-space-400)' }}>
+      <NumberField {...args} label={MOST} defaultValue={20} />
+      <NumberField {...args} label={FEWEST} defaultValue={1} />
+    </div>
+  ),
+  play: async ({ args, canvasElement }) => {
+    const tertiary = colour('--perron-color-text-tertiary')
+    for (const [name, value, bound, other] of [
+      [MOST, '20', 'Increase', 'Decrease'],
+      [FEWEST, '1', 'Decrease', 'Increase'],
+    ] as const) {
+      const field = inputIn(canvasElement, name).closest<HTMLElement>('.pn-Field')!
+      const atBound = buttonIn(field, bound)
+      await expect(atBound).toHaveAttribute('aria-disabled', 'true')
+      await expect(atBound).toHaveAttribute('data-disabled')
+      await expect(getComputedStyle(atBound.querySelector('svg')!).color).toBe(tertiary)
+      // no hover and no pressed look on a button that can't step (CR-15)
+      await expect(onHover(atBound, 'background-color')).toBe('')
+      await expect(stateFill(atBound, ':active')).toBe('')
+      await userEvent.click(atBound, { pointerEventsCheck: 0 })
+      await expect(inputIn(field, name)).toHaveValue(value)
+      await expect(buttonIn(field, other)).not.toHaveAttribute('aria-disabled', 'true')
+      await expect(buttonIn(field, other)).not.toHaveAttribute('data-disabled')
+      inputIn(field, name).blur()
+    }
+    await expect(args.onChange).not.toHaveBeenCalled()
+  },
+}
+
+/** A field labelled "Walking time", its number written with the minute unit. */
+export const Units: Story = {
+  args: {
+    label: 'Walking time',
+    description: 'From the door to the stop',
+    format: { style: 'unit', unit: 'minute' },
+    min: 0,
+    defaultValue: 4,
+  },
+  play: async ({ args, canvasElement }) => {
+    const input = inputIn(canvasElement, 'Walking time')
+    // a space before the unit, as content design writes it
+    await expect(input).toHaveValue('4 min')
+    await userEvent.tab()
+    await userEvent.keyboard('{ArrowUp}')
+    await expect(input).toHaveValue('5 min')
+    await expect(values(args.onChange)).toEqual([5])
+    // the unit the format writes is typed, and a letter outside it is not
+    await userEvent.type(input, '6 minx', {
+      initialSelectionStart: 0,
+      initialSelectionEnd: input.value.length,
+    })
+    await expect(input).toHaveValue('6 min')
+    await expect(values(args.onChange).at(-1)).toBe(6)
+    await userEvent.tab({ shift: true })
+    // a percent sign is typed once, and a second one is not
+    mock(args.onChange).mockClear()
+    await mounted(
+      canvasElement,
+      <PerronProvider locale="en">
+        <NumberField label={SHARE} format={{ style: 'percent' }} onChange={args.onChange} />
+      </PerronProvider>,
+      async (host) => {
+        const share = await waitFor(() => inputIn(host, SHARE))
+        await userEvent.type(share, '25%%')
+        await expect(share).toHaveValue('25%')
+        await expect(values(args.onChange).at(-1)).toBe(0.25)
+        share.blur()
+      },
+    )
+    // a currency symbol the same: once, and not a second time
+    mock(args.onChange).mockClear()
+    await mounted(
+      canvasElement,
+      <PerronProvider locale="en">
+        <NumberField
+          label={FARE}
+          format={{ style: 'currency', currency: 'EUR' }}
+          onChange={args.onChange}
+        />
+      </PerronProvider>,
+      async (host) => {
+        const fare = await waitFor(() => inputIn(host, FARE))
+        await userEvent.type(fare, '€€25')
+        await expect(fare).toHaveValue('€25')
+        await expect(values(args.onChange).at(-1)).toBe(25)
+        fare.blur()
+      },
+    )
+  },
+}
+
+/** A field in a Danish PerronProvider: the number written as Danish writes it, "1.500". */
+export const Danish: Story = {
+  args: {
+    label: DANISH_LABEL,
+    description: DANISH_DESCRIPTION,
+    min: 100,
+    max: 5000,
+    step: 100,
+    defaultValue: 1500,
+  },
+  decorators: [
+    (Story) => (
+      <PerronProvider locale="da">
+        <Story />
+      </PerronProvider>
+    ),
+  ],
+  play: async ({ args, canvasElement, step }) => {
+    const da = dictionaries.da
+    const input = inputIn(canvasElement, DANISH_LABEL)
+    await step('the number, the buttons and the role description are Danish', async () => {
+      await expect(input).toHaveValue('1.500')
+      await expect(input).toHaveAttribute('aria-roledescription', da.numberField)
+      await expect(buttonIn(canvasElement, da.decrease)).toBeInTheDocument()
+      await expect(buttonIn(canvasElement, da.increase)).toBeInTheDocument()
+    })
+    await step('ArrowUp writes 1.600', async () => {
+      await userEvent.tab()
+      await userEvent.keyboard('{ArrowUp}')
+      await expect(input).toHaveValue('1.600')
+      await userEvent.tab({ shift: true })
+    })
+    await step('a typed "2.000" is read in Danish, as 2000', async () => {
+      await userEvent.type(input, '2.000', {
+        initialSelectionStart: 0,
+        initialSelectionEnd: input.value.length,
+      })
+      await expect(values(args.onChange).at(-1)).toBe(2000)
+      await userEvent.tab()
+      await expect(input).toHaveValue('2.000')
+      await expect(values(args.onChangeCommitted).at(-1)).toBe(2000)
+    })
+    await step('a given locale writes the number in its own way', async () => {
+      await mounted(
+        canvasElement,
+        <PerronProvider locale="da">
+          <NumberField {...args} locale="en" defaultValue={1600} />
+        </PerronProvider>,
+        async (host) => {
+          await waitFor(() => expect(inputIn(host, DANISH_LABEL)).toHaveValue('1,600'))
+        },
+      )
+    })
+    await step('its render says only the dictionary’s and the caller’s words', async () => {
+      expectOwnedStrings(markup(args, 'da'), 'da', [DANISH_LABEL, DANISH_DESCRIPTION])
+    })
+  },
+}
+
+/** `hiddenLabel`: the description and the box, no label in view. */
+export const HiddenLabel: Story = {
+  args: { hiddenLabel: true },
+  parameters: {
+    // axe's label-title-only fails a control with no visible label text that has a title or an
+    // aria-describedby, and here the description's aria-describedby trips it on the hidden label,
+    // the point of the story; so the rule is off for it alone: the input is still named by the
+    // label, through aria-labelledby
+    a11y: { options: { rules: { 'label-title-only': { enabled: false } } } },
+  },
+  play: async ({ canvasElement }) => {
+    const label = fieldPart(canvasElement, 'label')!
+    await expect(label.tagName).toBe('SPAN')
+    await expect(label.getBoundingClientRect().width).toBeLessThanOrEqual(1)
+    const input = inputIn(canvasElement)
+    await expect(input).toHaveAccessibleName(LABEL)
+    // a press on the hidden label focuses the input, through Base UI's own handler
+    await userEvent.click(label)
+    await expect(input).toHaveFocus()
+    input.blur()
+  },
+}
+
+/** A Danish compound longer than its line in every part, and a number longer than the box. */
+export const LongWords: Story = {
+  args: {
+    label: COMPOUND,
+    description: `Som skrevet i ${COMPOUND}`,
+    error: `Skriv antallet fra ${COMPOUND}`,
+    max: 1e40,
+    defaultValue: 1e35,
+  },
+  play: async ({ canvasElement }) => {
+    const frame = fieldPart(canvasElement, 'field')!
+    const bounds = frame.getBoundingClientRect()
+    for (const name of ['label', 'description', 'error'] as const) {
+      const element = fieldPart(canvasElement, name)!
+      await expect(lines(element)).toBeGreaterThan(1.5)
+      await expect(element.getBoundingClientRect().right).toBeLessThanOrEqual(bounds.right + 0.5)
+      await expect(element.scrollWidth).toBeLessThanOrEqual(element.clientWidth)
+    }
+    const input = canvasElement.querySelector<HTMLInputElement>('.pn-NumberField-input')!
+    const group = groupOf(input)
+    const box = group.getBoundingClientRect()
+    // one line that scrolls inside the box, which keeps size.input and the frame's width
+    await expect(box.height).toBe(Number.parseFloat(rendered('size-input', 'block-size')))
+    await expect(box.right).toBeLessThanOrEqual(bounds.right + 0.5)
+    await expect(input.scrollWidth).toBeGreaterThan(input.clientWidth)
+    for (const button of group.querySelectorAll('button')) {
+      const rect = button.getBoundingClientRect()
+      await expect(rect.left).toBeGreaterThanOrEqual(box.left)
+      await expect(rect.right).toBeLessThanOrEqual(box.right)
+    }
+    await expect(frame.scrollWidth).toBeLessThanOrEqual(frame.clientWidth)
+    await expect(bounds.width).toBeLessThanOrEqual(320)
+  },
 }
 
 /** The box holding 8, its two buttons at rest; the play drives hover, pressed and the presses. */
 export const Steppers: Story = {
+  tags: ['!dev', '!autodocs'],
   play: async ({ args, canvasElement, step }) => {
     const input = inputIn(canvasElement)
     const decrease = buttonIn(canvasElement, 'Decrease')
@@ -349,61 +739,9 @@ export const Steppers: Story = {
   },
 }
 
-const MOST = 'Departures to show'
-const FEWEST = 'Stops to show'
-
-/** Two fields, one holding 20, at `max`, and one holding 1, at `min`. */
-export const Bounds: Story = {
-  render: (args) => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--perron-space-400)' }}>
-      <NumberField {...args} label={MOST} defaultValue={20} />
-      <NumberField {...args} label={FEWEST} defaultValue={1} />
-    </div>
-  ),
-  play: async ({ args, canvasElement }) => {
-    const tertiary = colour('--perron-color-text-tertiary')
-    for (const [name, value, bound, other] of [
-      [MOST, '20', 'Increase', 'Decrease'],
-      [FEWEST, '1', 'Decrease', 'Increase'],
-    ] as const) {
-      const field = inputIn(canvasElement, name).closest<HTMLElement>('.pn-Field')!
-      const atBound = buttonIn(field, bound)
-      await expect(atBound).toHaveAttribute('aria-disabled', 'true')
-      await expect(atBound).toHaveAttribute('data-disabled')
-      await expect(getComputedStyle(atBound.querySelector('svg')!).color).toBe(tertiary)
-      // no hover and no pressed look on a button that can't step (CR-15)
-      await expect(onHover(atBound, 'background-color')).toBe('')
-      await expect(stateFill(atBound, ':active')).toBe('')
-      await userEvent.click(atBound, { pointerEventsCheck: 0 })
-      await expect(inputIn(field, name)).toHaveValue(value)
-      await expect(buttonIn(field, other)).not.toHaveAttribute('aria-disabled', 'true')
-      await expect(buttonIn(field, other)).not.toHaveAttribute('data-disabled')
-      inputIn(field, name).blur()
-    }
-    await expect(args.onChange).not.toHaveBeenCalled()
-  },
-}
-
-/** The label of a second field the plays mount beside the story's. */
-const UNBOUNDED = 'Stops to skip'
-
-/** The label of a field whose `onChange` cancels every change. */
-const HELD = 'Departures held'
-
-/** The label of a field whose `min` is below zero. */
-const DELAY = 'Delay in minutes'
-
-/** The label of a field written as a percentage. */
-const SHARE = 'Share of late departures'
-
-/** The label of a field written in euros. */
-const FARE = 'Fare in euros'
-
-/** The label of a controlled field the plays mount beside the story's. */
-const SET_OUTSIDE = 'Departures set elsewhere'
-
 /** The box holding 8, with `largeStep` 5: the arrow keys, Shift, Alt, Home and End step it. */
 export const Keyboard: Story = {
+  tags: ['!dev', '!autodocs'],
   args: { largeStep: 5 },
   play: async ({ args, canvasElement }) => {
     const input = inputIn(canvasElement)
@@ -506,6 +844,7 @@ export const Keyboard: Story = {
  * `max`, and leaving commits it.
  */
 export const Typing: Story = {
+  tags: ['!dev', '!autodocs'],
   play: async ({ args, canvasElement }) => {
     const input = inputIn(canvasElement)
     const start = document.activeElement
@@ -588,15 +927,9 @@ export const Typing: Story = {
   },
 }
 
-/** A wheel turn over the input, with the focus in it. */
-const wheel = (input: HTMLElement, deltaY: number) => {
-  const turn = new WheelEvent('wheel', { deltaY, bubbles: true, cancelable: true })
-  input.dispatchEvent(turn)
-  return turn
-}
-
 /** The box holding 8, with `allowWheelScrub`: the mouse wheel steps it while the input has focus. */
 export const Wheel: Story = {
+  tags: ['!dev', '!autodocs'],
   args: { allowWheelScrub: true },
   play: async ({ args, canvasElement, step }) => {
     const input = inputIn(canvasElement)
@@ -638,15 +971,12 @@ export const Wheel: Story = {
   },
 }
 
-/** Base UI's hidden `<input type="number">`, which the browser's checks run on. */
-const hiddenInput = (scope: HTMLElement) =>
-  scope.querySelector<HTMLInputElement>('input[type="number"]')!
-
 /**
  * The box holding 8, with `allowOutOfRange` and checked on blur: a number outside the bounds stays
  * as typed, and the browser's own checks on the hidden input mark the field invalid.
  */
 export const OutOfRange: Story = {
+  tags: ['!dev', '!autodocs'],
   args: { allowOutOfRange: true, slotProps: { field: { validationMode: 'onBlur' } } },
   play: async ({ args, canvasElement, step }) => {
     const input = inputIn(canvasElement)
@@ -703,231 +1033,9 @@ export const OutOfRange: Story = {
   },
 }
 
-/** A field labelled "Walking time", its number written with the minute unit. */
-export const Units: Story = {
-  args: {
-    label: 'Walking time',
-    description: 'From the door to the stop',
-    format: { style: 'unit', unit: 'minute' },
-    min: 0,
-    defaultValue: 4,
-  },
-  play: async ({ args, canvasElement }) => {
-    const input = inputIn(canvasElement, 'Walking time')
-    // a space before the unit, as content design writes it
-    await expect(input).toHaveValue('4 min')
-    await userEvent.tab()
-    await userEvent.keyboard('{ArrowUp}')
-    await expect(input).toHaveValue('5 min')
-    await expect(values(args.onChange)).toEqual([5])
-    // the unit the format writes is typed, and a letter outside it is not
-    await userEvent.type(input, '6 minx', {
-      initialSelectionStart: 0,
-      initialSelectionEnd: input.value.length,
-    })
-    await expect(input).toHaveValue('6 min')
-    await expect(values(args.onChange).at(-1)).toBe(6)
-    await userEvent.tab({ shift: true })
-    // a percent sign is typed once, and a second one is not
-    mock(args.onChange).mockClear()
-    await mounted(
-      canvasElement,
-      <PerronProvider locale="en">
-        <NumberField label={SHARE} format={{ style: 'percent' }} onChange={args.onChange} />
-      </PerronProvider>,
-      async (host) => {
-        const share = await waitFor(() => inputIn(host, SHARE))
-        await userEvent.type(share, '25%%')
-        await expect(share).toHaveValue('25%')
-        await expect(values(args.onChange).at(-1)).toBe(0.25)
-        share.blur()
-      },
-    )
-    // a currency symbol the same: once, and not a second time
-    mock(args.onChange).mockClear()
-    await mounted(
-      canvasElement,
-      <PerronProvider locale="en">
-        <NumberField
-          label={FARE}
-          format={{ style: 'currency', currency: 'EUR' }}
-          onChange={args.onChange}
-        />
-      </PerronProvider>,
-      async (host) => {
-        const fare = await waitFor(() => inputIn(host, FARE))
-        await userEvent.type(fare, '€€25')
-        await expect(fare).toHaveValue('€25')
-        await expect(values(args.onChange).at(-1)).toBe(25)
-        fare.blur()
-      },
-    )
-  },
-}
-
-const DANISH_LABEL = 'Gangafstand i meter'
-const DANISH_DESCRIPTION = 'Fra 100 til 5.000'
-
-/** Renders `args` in `locale` on the server, as the owned-strings check reads a render. */
-const markup = (args: NumberFieldProps, locale: Locale) =>
-  renderToStaticMarkup(
-    <PerronProvider locale={locale}>
-      <NumberField {...args} />
-    </PerronProvider>,
-  )
-
-/** A field in a Danish PerronProvider: the number written as Danish writes it, "1.500". */
-export const Danish: Story = {
-  args: {
-    label: DANISH_LABEL,
-    description: DANISH_DESCRIPTION,
-    min: 100,
-    max: 5000,
-    step: 100,
-    defaultValue: 1500,
-  },
-  decorators: [
-    (Story) => (
-      <PerronProvider locale="da">
-        <Story />
-      </PerronProvider>
-    ),
-  ],
-  play: async ({ args, canvasElement, step }) => {
-    const da = dictionaries.da
-    const input = inputIn(canvasElement, DANISH_LABEL)
-    await step('the number, the buttons and the role description are Danish', async () => {
-      await expect(input).toHaveValue('1.500')
-      await expect(input).toHaveAttribute('aria-roledescription', da.numberField)
-      await expect(buttonIn(canvasElement, da.decrease)).toBeInTheDocument()
-      await expect(buttonIn(canvasElement, da.increase)).toBeInTheDocument()
-    })
-    await step('ArrowUp writes 1.600', async () => {
-      await userEvent.tab()
-      await userEvent.keyboard('{ArrowUp}')
-      await expect(input).toHaveValue('1.600')
-      await userEvent.tab({ shift: true })
-    })
-    await step('a typed "2.000" is read in Danish, as 2000', async () => {
-      await userEvent.type(input, '2.000', {
-        initialSelectionStart: 0,
-        initialSelectionEnd: input.value.length,
-      })
-      await expect(values(args.onChange).at(-1)).toBe(2000)
-      await userEvent.tab()
-      await expect(input).toHaveValue('2.000')
-      await expect(values(args.onChangeCommitted).at(-1)).toBe(2000)
-    })
-    await step('a given locale writes the number in its own way', async () => {
-      await mounted(
-        canvasElement,
-        <PerronProvider locale="da">
-          <NumberField {...args} locale="en" defaultValue={1600} />
-        </PerronProvider>,
-        async (host) => {
-          await waitFor(() => expect(inputIn(host, DANISH_LABEL)).toHaveValue('1,600'))
-        },
-      )
-    })
-    await step('its render says only the dictionary’s and the caller’s words', async () => {
-      expectOwnedStrings(markup(args, 'da'), 'da', [DANISH_LABEL, DANISH_DESCRIPTION])
-    })
-  },
-}
-
-/** `optional`: the label reads "Departures to show (optional)". */
-export const Optional: Story = {
-  args: { optional: true },
-  play: async ({ args, canvasElement, step }) => {
-    await step('the mark is part of the input’s name', async () => {
-      await expect(inputIn(canvasElement, 'Departures to show (optional)')).toBeInTheDocument()
-    })
-    await step('optionalLabel replaces the mark', async () => {
-      await mounted(
-        canvasElement,
-        <PerronProvider locale="en">
-          <NumberField {...args} optionalLabel="(if wanted)" />
-        </PerronProvider>,
-        async (host) => {
-          await waitFor(() =>
-            expect(inputIn(host, 'Departures to show (if wanted)')).toBeInTheDocument(),
-          )
-        },
-      )
-    })
-    await step('its render says only the dictionary’s and the caller’s words (CR-13)', async () => {
-      for (const locale of ['en', 'da', 'sv', 'nb'] as const)
-        expectOwnedStrings(markup(args, locale), locale, [LABEL, DESCRIPTION])
-    })
-  },
-}
-
-/** `hiddenLabel`: the description and the box, no label in view. */
-export const HiddenLabel: Story = {
-  args: { hiddenLabel: true },
-  parameters: {
-    // axe's label-title-only fails a control with no visible label text that has a title or an
-    // aria-describedby, and here the description's aria-describedby trips it on the hidden label,
-    // the point of the story; so the rule is off for it alone: the input is still named by the
-    // label, through aria-labelledby
-    a11y: { options: { rules: { 'label-title-only': { enabled: false } } } },
-  },
-  play: async ({ canvasElement }) => {
-    const label = fieldPart(canvasElement, 'label')!
-    await expect(label.tagName).toBe('SPAN')
-    await expect(label.getBoundingClientRect().width).toBeLessThanOrEqual(1)
-    const input = inputIn(canvasElement)
-    await expect(input).toHaveAccessibleName(LABEL)
-    // a press on the hidden label focuses the input, through Base UI's own handler
-    await userEvent.click(label)
-    await expect(input).toHaveFocus()
-    input.blur()
-  },
-}
-
-/** `readOnly`, holding 8: the box at rest, both icons in the tertiary ink. */
-export const ReadOnly: Story = {
-  args: { readOnly: true },
-  play: async ({ args, canvasElement }) => {
-    const input = inputIn(canvasElement)
-    const group = groupOf(input)
-    const buttons = [buttonIn(canvasElement, 'Decrease'), buttonIn(canvasElement, 'Increase')]
-    await expect(input).toHaveAttribute('readonly')
-    await userEvent.tab()
-    await expect(input).toHaveFocus()
-    await userEvent.keyboard('{ArrowUp}')
-    await userEvent.keyboard('5')
-    for (const button of buttons) await userEvent.click(button, { pointerEventsCheck: 0 })
-    await expect(input).toHaveValue('8')
-    await expect(args.onChange).not.toHaveBeenCalled()
-    await expect(args.onChangeCommitted).not.toHaveBeenCalled()
-    const tertiary = colour('--perron-color-text-tertiary')
-    for (const button of buttons) {
-      await expect(button).toHaveAttribute('aria-disabled', 'true')
-      await expect(button).toHaveAttribute('data-readonly')
-      await expect(getComputedStyle(button.querySelector('svg')!).color).toBe(tertiary)
-      // no hover and no pressed look on a button that can't step (CR-15)
-      await expect(onHover(button, 'background-color')).toBe('')
-      await expect(stateFill(button, ':active')).toBe('')
-    }
-    await expect(getComputedStyle(input).color).toBe(colour('--perron-color-text-primary'))
-    await expect(getComputedStyle(group).borderColor).toBe(edge('color-border-control'))
-    await expect(getComputedStyle(group).backgroundColor).toBe(
-      colour('--perron-color-surface-raised'),
-    )
-    await userEvent.tab({ shift: true })
-    await expect(input).not.toHaveFocus()
-    // leaving a read-only field only marks it touched
-    await expect(input.closest('.pn-NumberField')).toHaveAttribute('data-touched')
-    await expect(group).toHaveAttribute('data-touched')
-    await expect(input).toHaveValue('8')
-    await expect(args.onChange).not.toHaveBeenCalled()
-    await expect(args.onChangeCommitted).not.toHaveBeenCalled()
-  },
-}
-
 /** The three owned strings overridden on one instance. */
 export const Labels: Story = {
+  tags: ['!dev', '!autodocs'],
   args: {
     increaseLabel: 'More departures',
     decreaseLabel: 'Fewer departures',
@@ -942,35 +1050,9 @@ export const Labels: Story = {
   },
 }
 
-/**
- * The number held in the story's state, from `start`, set from each change's `value`; `expose`
- * hands a play the setter, to change the number from outside.
- */
-function ControlledField({
-  start = 8,
-  expose,
-  ...props
-}: NumberFieldProps & {
-  start?: number
-  expose?: (set: (value: number | null) => void) => void
-}) {
-  const [value, setValue] = useState<number | null>(start)
-  useEffect(() => expose?.(setValue), [expose])
-  return (
-    <NumberField
-      {...props}
-      defaultValue={undefined}
-      value={value}
-      onChange={(event, next, details) => {
-        props.onChange?.(event, next, details)
-        setValue(next)
-      }}
-    />
-  )
-}
-
 /** `value` held in the story's state, starting at 8. */
 export const Controlled: Story = {
+  tags: ['!dev', '!autodocs'],
   render: (args) => <ControlledField {...args} />,
   play: async ({ args, canvasElement }) => {
     const input = inputIn(canvasElement)
@@ -1037,14 +1119,9 @@ export const Controlled: Story = {
   },
 }
 
-/** The story's submit handler: it keeps the number the form submits and stays on the page. */
-const onSubmit = fn((event: { preventDefault: () => void; currentTarget: HTMLFormElement }) => {
-  event.preventDefault()
-  return new FormData(event.currentTarget).get('departures')
-})
-
 /** With `name` "departures", inside a native `<form>` with a submit button. */
 export const InForm: Story = {
+  tags: ['!dev', '!autodocs'],
   args: { name: 'departures' },
   decorators: [
     (Story) => (
@@ -1107,6 +1184,7 @@ export const InForm: Story = {
 
 /** A `required` field with no value in Base UI's `Form`, checked on blur. */
 export const Validation: Story = {
+  tags: ['!dev', '!autodocs'],
   args: {
     defaultValue: undefined,
     required: true,
@@ -1153,42 +1231,5 @@ export const Validation: Story = {
       await expect(getComputedStyle(group).borderColor).toBe(edge('color-border-control'))
       await expect(document.activeElement).toBe(start)
     })
-  },
-}
-
-const COMPOUND = 'Hovedstadsområdetsbuslinjestoppestedsoversigtskortudgivelsen'
-
-/** A Danish compound longer than its line in every part, and a number longer than the box. */
-export const LongWords: Story = {
-  args: {
-    label: COMPOUND,
-    description: `Som skrevet i ${COMPOUND}`,
-    error: `Skriv antallet fra ${COMPOUND}`,
-    max: 1e40,
-    defaultValue: 1e35,
-  },
-  play: async ({ canvasElement }) => {
-    const frame = fieldPart(canvasElement, 'field')!
-    const bounds = frame.getBoundingClientRect()
-    for (const name of ['label', 'description', 'error'] as const) {
-      const element = fieldPart(canvasElement, name)!
-      await expect(lines(element)).toBeGreaterThan(1.5)
-      await expect(element.getBoundingClientRect().right).toBeLessThanOrEqual(bounds.right + 0.5)
-      await expect(element.scrollWidth).toBeLessThanOrEqual(element.clientWidth)
-    }
-    const input = canvasElement.querySelector<HTMLInputElement>('.pn-NumberField-input')!
-    const group = groupOf(input)
-    const box = group.getBoundingClientRect()
-    // one line that scrolls inside the box, which keeps size.input and the frame's width
-    await expect(box.height).toBe(Number.parseFloat(rendered('size-input', 'block-size')))
-    await expect(box.right).toBeLessThanOrEqual(bounds.right + 0.5)
-    await expect(input.scrollWidth).toBeGreaterThan(input.clientWidth)
-    for (const button of group.querySelectorAll('button')) {
-      const rect = button.getBoundingClientRect()
-      await expect(rect.left).toBeGreaterThanOrEqual(box.left)
-      await expect(rect.right).toBeLessThanOrEqual(box.right)
-    }
-    await expect(frame.scrollWidth).toBeLessThanOrEqual(frame.clientWidth)
-    await expect(bounds.width).toBeLessThanOrEqual(320)
   },
 }
