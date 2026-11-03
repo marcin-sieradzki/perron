@@ -37,8 +37,13 @@ const preview: Preview = {
   parameters: {
     // axe in error mode: a violation fails the story's test, and so CI (docs/components/README.md)
     a11y: { test: 'error' },
-    // a story opts in to its play on the docs page with `autoplay: true`, rendering inline
-    docs: { story: { autoplay: false } },
+    docs: {
+      // a story opts in to its play on the docs page with `autoplay: true`, rendering inline
+      story: { autoplay: false },
+      // a test-only story, tagged '!dev', stays off the docs page as it stays out of the sidebar
+      // (docs/components/README.md, "Stories")
+      stories: { filter: (story: { tags?: string[] }) => story.tags?.includes('dev') ?? true },
+    },
     options: {
       storySort: {
         // the order of the Contents page
