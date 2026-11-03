@@ -6,7 +6,7 @@ import { expect, fn, userEvent, within } from 'storybook/test'
 import info from '../../../icons/info.svg?raw'
 import plus from '../../../icons/plus.svg?raw'
 import { icon, pressedAfterHover, resolve, stateFill, stateRules } from '../../testing/stories.ts'
-import { IconButton, type IconButtonProps } from './IconButton.tsx'
+import { IconButton } from './IconButton.tsx'
 
 const meta = {
   title: 'Components/IconButton',
@@ -17,6 +17,8 @@ const meta = {
 export default meta
 
 type Story = StoryObj<typeof meta>
+/** The args a story renders with: the meta's and its own. */
+type StoryArgs = Parameters<NonNullable<Story['render']>>[0]
 type Play = NonNullable<Story['play']>
 
 /** A `large` button's words and icon: `info`, drawn on the 18 px grid. */
@@ -175,7 +177,7 @@ export const Default: Story = {
 
 /** Each colour at each size, the large ones with the help icon on the 18 px grid. */
 export const Variants: Story = {
-  ...showcase<IconButtonProps>(
+  ...showcase<StoryArgs>(
     [
       { label: 'Neutral, medium', story: neutralMediumHover },
       { label: 'Neutral, large', story: neutralLargeDefault },
@@ -188,7 +190,7 @@ export const Variants: Story = {
 
 /** Each colour at each size, disabled. */
 export const Disabled: Story = {
-  ...showcase<IconButtonProps>(
+  ...showcase<StoryArgs>(
     [
       { label: 'Neutral, medium', story: neutralMediumDisabled },
       { label: 'Neutral, large', story: neutralLargeDisabled },

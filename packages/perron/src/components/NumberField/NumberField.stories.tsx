@@ -58,6 +58,8 @@ const meta = {
 export default meta
 
 type Story = StoryObj<typeof meta>
+/** The args a story renders with: the meta's and its own. */
+type StoryArgs = Parameters<NonNullable<Story['render']>>[0]
 
 /** A story's mock handler, to read its calls. */
 const mock = (handler: unknown) => handler as ReturnType<typeof fn>
@@ -439,7 +441,7 @@ export const States: Story = {
     // leaves the disabled field out
     a11y: { context: { include: ['body'], exclude: ['[data-row="Disabled"]'] } },
   },
-  ...showcase<NumberFieldProps>(
+  ...showcase<StoryArgs>(
     [
       { label: 'Empty', story: empty },
       { label: 'Optional', story: optional },

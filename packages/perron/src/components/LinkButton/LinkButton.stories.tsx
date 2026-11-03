@@ -18,7 +18,7 @@ import {
   stateFill,
   stateRules,
 } from '../../testing/stories.ts'
-import { LinkButton, type LinkButtonProps } from './LinkButton.tsx'
+import { LinkButton } from './LinkButton.tsx'
 
 const LABEL = 'Back to the map'
 
@@ -39,6 +39,8 @@ const meta = {
 export default meta
 
 type Story = StoryObj<typeof meta>
+/** The args a story renders with: the meta's and its own. */
+type StoryArgs = Parameters<NonNullable<Story['render']>>[0]
 type Play = NonNullable<Story['play']>
 
 /** The link the story renders, by its role and name. */
@@ -156,7 +158,7 @@ export const Default: Story = {
 
 /** Each variant at each size. */
 export const Variants: Story = {
-  ...showcase<LinkButtonProps>(
+  ...showcase<StoryArgs>(
     [
       { label: 'Solid, medium', story: solidMediumHover },
       { label: 'Solid, small', story: solidSmallDefault },

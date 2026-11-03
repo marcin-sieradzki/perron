@@ -1,7 +1,8 @@
-// Toolbar's stories: the toolbar in each orientation, then its button in each colour and state,
-// each in a toolbar of its own, as Base UI's parts need (CR-2), and as a toggle. Hover and focus render at rest;
-// the visual check drives them, and their play tests check them.
+// Toolbar's stories: the toolbar laid out horizontally and vertically, its button in each colour
+// and disabled, toggles, icon-only buttons and a disabled toolbar. Hover and focus are play steps,
+// not stories.
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { showcase } from '../../testing/Showcase.tsx'
 import { expect, fn, userEvent, within } from 'storybook/test'
 import {
   colour,
@@ -86,9 +87,23 @@ const meta = {
 
 export default meta
 type Story = StoryObj<typeof meta>
+/** The args a story renders with: the meta's and its own. */
+type StoryArgs = Parameters<NonNullable<Story['render']>>[0]
+
+const neutral = {
+  'aria-label': 'Actions',
+  children: <ToolbarButton>Show whole line</ToolbarButton>,
+}
+const brand = {
+  'aria-label': 'Actions',
+  children: <ToolbarButton color="brand">Show whole line</ToolbarButton>,
+}
+
+/** Labels turned off, as a caller's condition gives them: `false` and `''` render no label. */
+const showLabels = false as boolean
 
 /** Two icon-only buttons, a separator, then a group of two labelled buttons. */
-export const Horizontal: Story = {
+const horizontal = {
   play: async ({ canvasElement }) => {
     onShowDepartures.mockClear()
     const canvas = within(canvasElement)
@@ -109,6 +124,115 @@ export const Horizontal: Story = {
     await expect(button('Show departures')).toHaveFocus()
     await userEvent.tab({ shift: true })
     await expect(canvasElement).not.toContainElement(document.activeElement as HTMLElement)
+  },
+} satisfies Story
+
+/** A neutral button at rest. */
+const buttonNeutralDefault = { args: neutral } satisfies Story
+
+/** A neutral button, hovered by the visual check. */
+const buttonNeutralHover = {
+  args: neutral,
+  play: async ({ canvasElement }) => {
+    const button = within(canvasElement).getByRole('button', { name: 'Show whole line' })
+    await expect(getComputedStyle(button).backgroundColor).toBe('rgba(0, 0, 0, 0)')
+    await expect(onHover(button, 'background-color')).toBe('var(--perron-color-surface-hover)')
+    await expect(stateFill(button, ':active')).toBe('var(--perron-color-surface-selected)')
+    await expect(pressedAfterHover(button)).toBe(true)
+    await expect(getComputedStyle(button).cursor).toBe('pointer')
+  },
+} satisfies Story
+
+/** A neutral button, focused by the visual check. */
+const buttonNeutralFocus = {
+  args: neutral,
+  play: async ({ canvasElement }) => {
+    const button = within(canvasElement).getByRole('button', { name: 'Show whole line' })
+    await userEvent.tab()
+    await expect(button).toHaveFocus()
+    await expect(button.matches(':focus-visible')).toBe(true)
+    await expect(getComputedStyle(button).outlineStyle).toBe('solid')
+    await expect(getComputedStyle(button).outlineColor).toBe(colour('--perron-color-border-focus'))
+    await userEvent.tab({ shift: true })
+    await expect(button).not.toHaveFocus()
+  },
+} satisfies Story
+
+/** A neutral button, disabled: still focusable, so it can explain itself. */
+const buttonNeutralDisabled = {
+  args: {
+    'aria-label': 'Actions',
+    children: (
+      <ToolbarButton disabled onClick={onShowWholeLine}>
+        Show whole line
+      </ToolbarButton>
+    ),
+  },
+  play: async ({ canvasElement }) => {
+    onShowWholeLine.mockClear()
+    const button = within(canvasElement).getByRole('button', { name: 'Show whole line' })
+    await expect(button).toHaveAttribute('aria-disabled', 'true')
+    await expect(button).toHaveAttribute('data-disabled')
+    await userEvent.tab()
+    await expect(button).toHaveFocus()
+    await userEvent.click(button)
+    await expect(onShowWholeLine).not.toHaveBeenCalled()
+    await userEvent.tab({ shift: true })
+    await expect(button).not.toHaveFocus()
+  },
+} satisfies Story
+
+/** A brand button at rest: the one main action. */
+const buttonBrandDefault = { args: brand } satisfies Story
+
+/** A brand button, hovered by the visual check. */
+const buttonBrandHover = {
+  args: brand,
+  play: async ({ canvasElement }) => {
+    const button = within(canvasElement).getByRole('button', { name: 'Show whole line' })
+    await expect(onHover(button, 'background-color')).toBe(
+      'var(--perron-color-surface-brand-hover)',
+    )
+    await expect(onHover(button, 'border-color')).toBe('')
+    await expect(stateFill(button, ':active')).toBe('var(--perron-color-surface-brand-pressed)')
+    await expect(pressedAfterHover(button)).toBe(true)
+    await expect(getComputedStyle(button).borderTopColor).toBe(
+      colour('--perron-color-border-brand'),
+    )
+  },
+} satisfies Story
+
+/** A brand button, disabled: a fill and a colour, no longer yellow. */
+const buttonBrandDisabled = {
+  args: {
+    'aria-label': 'Actions',
+    children: (
+      <ToolbarButton color="brand" disabled>
+        Show whole line
+      </ToolbarButton>
+    ),
+  },
+} satisfies Story
+
+const neutralButton = {
+  args: buttonNeutralDefault.args,
+  play: async (context: Parameters<NonNullable<Story['play']>>[0]) => {
+    await buttonNeutralHover.play(context)
+    await buttonNeutralFocus.play(context)
+  },
+} satisfies Story
+
+const brandButton = {
+  args: buttonBrandDefault.args,
+  play: async (context: Parameters<NonNullable<Story['play']>>[0]) => {
+    await buttonBrandHover.play(context)
+  },
+} satisfies Story
+
+/** Two icon-only buttons, a separator, then a group of two labelled buttons, laid out horizontally. */
+export const Default: Story = {
+  play: async (context) => {
+    await horizontal.play(context)
   },
 }
 
@@ -144,103 +268,17 @@ export const Vertical: Story = {
   },
 }
 
-const neutral = {
-  'aria-label': 'Actions',
-  children: <ToolbarButton>Show whole line</ToolbarButton>,
-}
-const brand = {
-  'aria-label': 'Actions',
-  children: <ToolbarButton color="brand">Show whole line</ToolbarButton>,
-}
-
-/** A neutral button at rest. */
-export const ButtonNeutralDefault: Story = { args: neutral }
-
-/** A neutral button, hovered by the visual check. */
-export const ButtonNeutralHover: Story = {
-  args: neutral,
-  play: async ({ canvasElement }) => {
-    const button = within(canvasElement).getByRole('button', { name: 'Show whole line' })
-    await expect(getComputedStyle(button).backgroundColor).toBe('rgba(0, 0, 0, 0)')
-    await expect(onHover(button, 'background-color')).toBe('var(--perron-color-surface-hover)')
-    await expect(stateFill(button, ':active')).toBe('var(--perron-color-surface-selected)')
-    await expect(pressedAfterHover(button)).toBe(true)
-    await expect(getComputedStyle(button).cursor).toBe('pointer')
-  },
-}
-
-/** A neutral button, focused by the visual check. */
-export const ButtonNeutralFocus: Story = {
-  args: neutral,
-  play: async ({ canvasElement }) => {
-    const button = within(canvasElement).getByRole('button', { name: 'Show whole line' })
-    await userEvent.tab()
-    await expect(button).toHaveFocus()
-    await expect(button.matches(':focus-visible')).toBe(true)
-    await expect(getComputedStyle(button).outlineStyle).toBe('solid')
-    await expect(getComputedStyle(button).outlineColor).toBe(colour('--perron-color-border-focus'))
-    await userEvent.tab({ shift: true })
-    await expect(button).not.toHaveFocus()
-  },
-}
-
-/** A neutral button, disabled: still focusable, so it can explain itself. */
-export const ButtonNeutralDisabled: Story = {
-  args: {
-    'aria-label': 'Actions',
-    children: (
-      <ToolbarButton disabled onClick={onShowWholeLine}>
-        Show whole line
-      </ToolbarButton>
-    ),
-  },
-  play: async ({ canvasElement }) => {
-    onShowWholeLine.mockClear()
-    const button = within(canvasElement).getByRole('button', { name: 'Show whole line' })
-    await expect(button).toHaveAttribute('aria-disabled', 'true')
-    await expect(button).toHaveAttribute('data-disabled')
-    await userEvent.tab()
-    await expect(button).toHaveFocus()
-    await userEvent.click(button)
-    await expect(onShowWholeLine).not.toHaveBeenCalled()
-    await userEvent.tab({ shift: true })
-    await expect(button).not.toHaveFocus()
-  },
-}
-
-/** A brand button at rest: the one main action. */
-export const ButtonBrandDefault: Story = { args: brand }
-
-/** A brand button, hovered by the visual check. */
-export const ButtonBrandHover: Story = {
-  args: brand,
-  play: async ({ canvasElement }) => {
-    const button = within(canvasElement).getByRole('button', { name: 'Show whole line' })
-    await expect(onHover(button, 'background-color')).toBe(
-      'var(--perron-color-surface-brand-hover)',
-    )
-    await expect(onHover(button, 'border-color')).toBe('')
-    await expect(stateFill(button, ':active')).toBe('var(--perron-color-surface-brand-pressed)')
-    await expect(pressedAfterHover(button)).toBe(true)
-    await expect(getComputedStyle(button).borderTopColor).toBe(
-      colour('--perron-color-border-brand'),
-    )
-  },
-}
-
-/** A brand button, focused by the visual check. */
-export const ButtonBrandFocus: Story = { args: brand }
-
-/** A brand button, disabled: a fill and a colour, no longer yellow. */
-export const ButtonBrandDisabled: Story = {
-  args: {
-    'aria-label': 'Actions',
-    children: (
-      <ToolbarButton color="brand" disabled>
-        Show whole line
-      </ToolbarButton>
-    ),
-  },
+/** The button in each colour, at rest and disabled, each in a toolbar of its own. */
+export const Buttons: Story = {
+  ...showcase<StoryArgs>(
+    [
+      { label: 'Neutral', story: neutralButton },
+      { label: 'Brand', story: brandButton },
+      { label: 'Neutral, disabled', story: buttonNeutralDisabled },
+      { label: 'Brand, disabled', story: buttonBrandDisabled },
+    ],
+    (args) => <Toolbar {...args} />,
+  ),
 }
 
 /**
@@ -300,9 +338,6 @@ export const Toggle: Story = {
     })
   },
 }
-
-/** Labels turned off, as a caller's condition gives them: `false` and `''` render no label. */
-const showLabels = false as boolean
 
 /**
  * Three icon-only neutral buttons, each named by its aria-label; two get a label that renders

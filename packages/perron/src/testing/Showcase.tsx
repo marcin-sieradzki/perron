@@ -88,6 +88,9 @@ export function cellOf(canvas: HTMLElement, row: string, column = '') {
   return cell
 }
 
+/** What Tab can reach. */
+const FOCUSABLE = 'a[href], button, input, select, textarea, [tabindex]'
+
 /** A story's parts a showcase cell takes: the args it adds, its own render, and its play. */
 interface CellStory<A> {
   args?: Partial<A>
@@ -98,8 +101,8 @@ interface CellStory<A> {
 /**
  * A showcase story made of stories: each cell renders one of `cells` with the story's args and its
  * own over them, by its own `render` or by `render`, stacked and named. Its `play` runs each cell's
- * `play` in turn, with that cell as the canvas and the cell's args, each spy cleared first and focus
- * just before the cell, so a cell tests what it tested as a story of its own.
+ * `play` in turn, with that cell as the canvas and the cell's args, each spy cleared first and the
+ * other cells out of the tab order, so a cell tests what it tested as a story of its own.
  */
 export function showcase<A extends object>(
   cells: readonly { label: string; story: CellStory<A> }[],
@@ -124,16 +127,19 @@ export function showcase<A extends object>(
         for (const value of Object.values(args))
           (value as { mockClear?: () => void } | undefined)?.mockClear?.()
         const cell = cellOf(context.canvasElement, label)
-        // focus starts just before the cell, as it would before a story of its own, so Tab
-        // reaches the cell first and Shift+Tab leaves it
-        const start = document.createElement('span')
-        start.tabIndex = 0
-        cell.before(start)
-        start.focus()
+        // the other cells leave the tab order while this one plays, so Tab from the page's start
+        // reaches this cell first and Shift+Tab leaves it, as around a story of its own
+        const others = [...context.canvasElement.querySelectorAll<HTMLElement>(FOCUSABLE)]
+          .filter((el) => !cell.contains(el))
+          .map((el) => [el, el.getAttribute('tabindex')] as const)
+        for (const [el] of others) el.setAttribute('tabindex', '-1')
+        ;(document.activeElement as HTMLElement | null)?.blur()
         try {
           await story.play({ ...context, args, canvasElement: cell } as never)
         } finally {
-          start.remove()
+          for (const [el, was] of others)
+            if (was === null) el.removeAttribute('tabindex')
+            else el.setAttribute('tabindex', was)
         }
       }
     },

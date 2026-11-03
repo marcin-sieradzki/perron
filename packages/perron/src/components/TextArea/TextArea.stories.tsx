@@ -47,6 +47,8 @@ const meta = {
 export default meta
 
 type Story = StoryObj<typeof meta>
+/** The args a story renders with: the meta's and its own. */
+type StoryArgs = Parameters<NonNullable<Story['render']>>[0]
 
 /** The field's textarea, the textbox, in `scope`. */
 const boxIn = (scope: HTMLElement, name: string | RegExp = LABEL) =>
@@ -318,7 +320,7 @@ export const States: Story = {
     // leaves the disabled field out
     a11y: { context: { include: ['body'], exclude: ['[data-row="Disabled"]'] } },
   },
-  ...showcase<TextAreaProps>(
+  ...showcase<StoryArgs>(
     [
       { label: 'Filled', story: filled },
       { label: 'Placeholder', story: placeholder },

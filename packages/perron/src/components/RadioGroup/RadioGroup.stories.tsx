@@ -1,12 +1,10 @@
-// RadioGroup's stories: the group, then the radio in each state of the deferred design, its state on
-// "Light", then the group disabled, read-only, invalid in a Base UI Field, with a hidden label,
-// controlled, with each shape a label takes, with a long word and in a form, one per row of the
-// spec's Stories table (docs/components/radio-group.md). Each sits on a raised Surface, as a group
-// sits in a panel. Hover and focus render at rest; the visual check drives them, and their play
-// tests check them.
+// RadioGroup's stories: the group alone with every prop a control, the radio in each state, the
+// group's states, a hidden label, label shapes and long labels, then the behaviour tests. Hover and
+// focus are play steps, not stories.
 import { Field } from '@base-ui/react/field'
 import { createRef, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { showcase } from '../../testing/Showcase.tsx'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import {
   colour,
@@ -59,6 +57,8 @@ const meta = {
 export default meta
 
 type Story = StoryObj<typeof meta>
+/** The args a story renders with: the meta's and its own. */
+type StoryArgs = Parameters<NonNullable<Story['render']>>[0]
 
 /** The group in `container`, by its name. */
 const groupIn = (container: HTMLElement, name = LABEL) =>
@@ -86,6 +86,296 @@ const PRESSED_LAYER =
   'linear-gradient(var(--perron-color-surface-selected),var(--perron-color-surface-selected))'
 
 const defaultRef = createRef<HTMLDivElement>()
+
+/**
+ * A caller that keeps the value in its own `useState` and sets it from `onChange`, unless the
+ * change was cancelled: the story's `onChange` spy stands for the caller's own handler.
+ */
+function ControlledGroup(args: RadioGroupProps) {
+  const [value, setValue] = useState('system')
+  return (
+    <RadioGroup
+      {...args}
+      defaultValue={undefined}
+      value={value}
+      onChange={(event, next, details) => {
+        args.onChange?.(event, next, details)
+        if (!details.isCanceled) setValue(next)
+      }}
+    />
+  )
+}
+
+/** State default: "Light" at rest, unchecked. */
+const radioDefault = {
+  play: async ({ canvasElement }) => {
+    const light = radio(canvasElement, 'Light')
+    await expect(light).toHaveAttribute('aria-checked', 'false')
+    await expect(light).toHaveAttribute('data-unchecked')
+    const indicator = indicatorOf(light)
+    const box = indicator.getBoundingClientRect()
+    await expect(box.width).toBe(length('icon-size-400'))
+    await expect(box.height).toBe(length('icon-size-400'))
+    const style = getComputedStyle(indicator)
+    await expect(style.borderTopWidth).toBe(
+      resolve('borderTopWidth', 'var(--perron-border-width-025)'),
+    )
+    await expect(style.borderTopStyle).toBe('solid')
+    await expect(style.borderColor).toBe(edge('color-border-control'))
+    await expect(style.backgroundColor).toBe(fill('color-surface-raised'))
+    await expect(light.getBoundingClientRect().height).toBe(length('size-target-min'))
+    const words = getComputedStyle(labelOf(light))
+    await expect(words.font).toBe(rendered('typography-body', 'font'))
+    await expect(words.letterSpacing).toBe(rendered('typography-body-tracking', 'letter-spacing'))
+    await expect(words.color).toBe(colour('--perron-color-text-primary'))
+    await expect(getComputedStyle(light).cursor).toBe('pointer')
+  },
+} satisfies Story
+
+/** State hover: "Light", hovered by the visual check. */
+const radioHover = {
+  play: async ({ canvasElement }) => {
+    const light = indicatorOf(radio(canvasElement, 'Light'))
+    await expect(onHover(light, 'background-image').replace(/\s+/g, '')).toBe(HOVER_LAYER)
+    // the edge stays the control edge: no hover rule sets it on an unchecked radio
+    await expect(stateRules(light).every((s) => !s.getPropertyValue('border-color'))).toBe(true)
+    await expect(getComputedStyle(light).borderColor).toBe(edge('color-border-control'))
+    // the checked radio darkens its ink and takes no layer
+    const system = indicatorOf(radio(canvasElement, 'Match the system'))
+    await expect(onHover(system, 'background-color')).toBe(
+      'var(--perron-color-surface-inverse-hover)',
+    )
+    await expect(onHover(system, 'border-color')).toBe('var(--perron-color-surface-inverse-hover)')
+    await expect(onHover(system, 'background-image')).toBe('')
+    // a press lays the denser selected layer, outside (hover: hover) and after it; the
+    // forced-colours reset (CR-11) sets `none`
+    await expect(
+      stateRules(light, ':active')
+        .map((s) => s.getPropertyValue('background-image'))
+        .join('')
+        .replace(/\s+/g, ''),
+    ).toBe(PRESSED_LAYER)
+    await expect(pressedAfterHover(light)).toBe(true)
+    await expect(stateFill(system, ':active')).toBe('var(--perron-color-surface-inverse-pressed)')
+  },
+} satisfies Story
+
+/** State focus: "Light", checked, as focus rests on the checked radio, focused by the visual check. */
+const radioFocus = {
+  args: { defaultValue: 'light' },
+  play: async ({ canvasElement }) => {
+    const light = radio(canvasElement, 'Light')
+    await userEvent.tab()
+    await expect(light).toHaveFocus()
+    await expect(light.matches(':focus-visible')).toBe(true)
+    // CR-10: perron.css's ring round the whole row, following its radius
+    const ring = getComputedStyle(light)
+    await expect(ring.outlineStyle).toBe('solid')
+    await expect(ring.outlineColor).toBe(edge('color-border-focus'))
+    await expect(ring.outlineWidth).toBe(resolve('outlineWidth', 'var(--perron-focus-width)'))
+    await expect(ring.outlineOffset).toBe(resolve('outlineOffset', 'var(--perron-focus-offset)'))
+    await expect(ring.borderTopLeftRadius).toBe(
+      resolve('borderTopLeftRadius', 'var(--perron-radius-md)'),
+    )
+    await expect(getComputedStyle(indicatorOf(light)).outlineStyle).toBe('none')
+    await userEvent.tab({ shift: true })
+    await expect(light).not.toHaveFocus()
+    await expect(light).toHaveAttribute('aria-checked', 'true')
+  },
+} satisfies Story
+
+/** State checked: "Light", with `defaultValue` `'light'`. */
+const radioChecked = {
+  args: { defaultValue: 'light' },
+  play: async ({ canvasElement }) => {
+    const light = radio(canvasElement, 'Light')
+    await expect(light).toHaveAttribute('aria-checked', 'true')
+    const indicator = indicatorOf(light)
+    await expect(indicator).toHaveAttribute('data-checked')
+    const style = getComputedStyle(indicator)
+    await expect(style.backgroundColor).toBe(fill('color-surface-inverse'))
+    await expect(style.borderColor).toBe(edge('color-surface-inverse'))
+    const dot = getComputedStyle(indicator, '::before')
+    await expect(dot.backgroundColor).toBe(fill('color-surface-raised'))
+    await expect(parseFloat(dot.width)).toBe(length('icon-size-400') / 2)
+    await expect(parseFloat(dot.height)).toBe(length('icon-size-400') / 2)
+    // CR-6: the same circle as an unchecked radio's, with the same edge
+    const checked = indicator.getBoundingClientRect()
+    const dark = indicatorOf(radio(canvasElement, 'Dark'))
+    const unchecked = dark.getBoundingClientRect()
+    await expect(checked.width).toBe(unchecked.width)
+    await expect(checked.height).toBe(unchecked.height)
+    await expect(style.borderTopWidth).toBe(getComputedStyle(dark).borderTopWidth)
+    await expect(getComputedStyle(dark, '::before').content).toBe('none')
+  },
+} satisfies Story
+
+/** State disabled: "Light", disabled. */
+const radioDisabled = {
+  args: { children: themes({ disabled: true }) },
+  play: async ({ canvasElement }) => {
+    onChange.mockClear()
+    const system = radio(canvasElement, 'Match the system')
+    const light = radio(canvasElement, 'Light')
+    const dark = radio(canvasElement, 'Dark')
+    await expect(light).toHaveAttribute('aria-disabled', 'true')
+    await expect(light).toHaveAttribute('data-disabled')
+    await expect(getComputedStyle(labelOf(light)).color).toBe(
+      colour('--perron-color-text-tertiary'),
+    )
+    const indicator = getComputedStyle(indicatorOf(light))
+    await expect(indicator.borderColor).toBe(edge('color-border-subtle'))
+    await expect(indicator.backgroundColor).toBe(fill('color-surface-inset'))
+    await expect(getComputedStyle(light).cursor).toBe('default')
+    // CR-8: no hover or pressed layer on a disabled radio
+    for (const pseudo of [':hover', ':active'] as const)
+      await expect(stateRules(indicatorOf(light), pseudo)).toHaveLength(0)
+    // the arrow keys pass it by
+    await userEvent.tab()
+    await expect(system).toHaveFocus()
+    await userEvent.keyboard('{ArrowDown}')
+    await expect(dark).toHaveFocus()
+    await expect(dark).toHaveAttribute('aria-checked', 'true')
+    onChange.mockClear()
+    await userEvent.click(light, { pointerEventsCheck: 0 })
+    await expect(light).toHaveAttribute('aria-checked', 'false')
+    await expect(onChange).not.toHaveBeenCalled()
+    // back to rest
+    dark.focus()
+    await userEvent.keyboard('{ArrowUp}')
+    await expect(system).toHaveAttribute('aria-checked', 'true')
+    await userEvent.tab({ shift: true })
+    await expect(canvasElement).not.toContainElement(document.activeElement as HTMLElement)
+  },
+} satisfies Story
+
+/** The whole group disabled, "Match the system" checked, with a Button after it for Tab to reach. */
+const disabled = {
+  args: { disabled: true },
+  render: (args) => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--perron-space-300)' }}>
+      <RadioGroup {...args} />
+      <div>
+        <Button>Save</Button>
+      </div>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const group = groupIn(canvasElement)
+    const radios = within(group).getAllByRole('radio')
+    for (const root of radios) {
+      await expect(root).toHaveAttribute('aria-disabled', 'true')
+      await expect(root).toHaveAttribute('data-disabled')
+    }
+    const save = within(canvasElement).getByRole('button', { name: 'Save' })
+    const system = radio(canvasElement, 'Match the system')
+    // CR-1: Base UI keeps the group's one stop, heard as dimmed and checked, and Perron forces no
+    // tabIndex; the next Tab leaves for the Button
+    await userEvent.tab()
+    await expect(system).toHaveFocus()
+    await expect(system).toHaveAttribute('aria-disabled', 'true')
+    await expect(system).toHaveAttribute('aria-checked', 'true')
+    await userEvent.tab()
+    await expect(save).toHaveFocus()
+    await expect(system).toHaveAttribute('aria-checked', 'true')
+    const indicator = indicatorOf(system)
+    await expect(getComputedStyle(indicator).backgroundColor).toBe(fill('color-text-tertiary'))
+    await expect(getComputedStyle(indicator).borderColor).toBe(edge('color-text-tertiary'))
+    await expect(getComputedStyle(indicator, '::before').backgroundColor).toBe(
+      fill('color-surface-raised'),
+    )
+    await expect(group.querySelector('.pn-RadioGroup-legend')).toHaveAttribute('data-disabled')
+    // back to rest: Shift+Tab returns to the group's stop, then leaves it
+    await userEvent.tab({ shift: true })
+    await expect(system).toHaveFocus()
+    await userEvent.tab({ shift: true })
+    await expect(canvasElement).not.toContainElement(document.activeElement as HTMLElement)
+  },
+} satisfies Story
+
+/** The group read-only, "Match the system" checked. */
+const readOnly = {
+  args: { readOnly: true },
+  play: async ({ canvasElement }) => {
+    onChange.mockClear()
+    const group = groupIn(canvasElement)
+    await expect(group).toHaveAttribute('aria-readonly', 'true')
+    const system = radio(canvasElement, 'Match the system')
+    const light = radio(canvasElement, 'Light')
+    await userEvent.tab()
+    await expect(system).toHaveFocus()
+    await userEvent.keyboard('{ArrowDown}')
+    await expect(light).toHaveFocus()
+    await expect(light).toHaveAttribute('aria-checked', 'false')
+    await userEvent.keyboard(' ')
+    await userEvent.click(light)
+    await expect(light).toHaveAttribute('aria-checked', 'false')
+    await expect(system).toHaveAttribute('aria-checked', 'true')
+    await expect(onChange).not.toHaveBeenCalled()
+    // CR-9: the rest look, the default cursor, and no hover or pressed layer
+    await expect(getComputedStyle(light).cursor).toBe('default')
+    await expect(getComputedStyle(indicatorOf(light)).backgroundColor).toBe(
+      fill('color-surface-raised'),
+    )
+    for (const root of [system, light])
+      for (const pseudo of [':hover', ':active'] as const)
+        await expect(stateRules(indicatorOf(root), pseudo)).toHaveLength(0)
+    await userEvent.tab({ shift: true })
+    await expect(group).not.toContainElement(document.activeElement as HTMLElement)
+  },
+} satisfies Story
+
+/** Nothing checked and `required`, in a Base UI Field marked invalid, with its error below. */
+const invalid = {
+  args: { defaultValue: undefined, required: true },
+  render: (args) => (
+    <Field.Root
+      invalid
+      style={{ display: 'flex', flexDirection: 'column', gap: 'var(--perron-space-100)' }}
+    >
+      <RadioGroup {...args} />
+      <Field.Error
+        match
+        style={{ ...typography('caption'), color: 'var(--perron-color-text-danger)' }}
+      >
+        Choose a theme
+      </Field.Error>
+    </Field.Root>
+  ),
+  play: async ({ canvasElement }) => {
+    const group = groupIn(canvasElement)
+    await expect(group).toHaveAttribute('aria-required', 'true')
+    // the group too is invalid and described by the error, and still named by its legend
+    await expect(group).toHaveAttribute('aria-invalid', 'true')
+    await expect(group).toHaveAccessibleDescription('Choose a theme')
+    for (const name of ['Match the system', 'Light', 'Dark']) {
+      const root = radio(canvasElement, name)
+      await expect(root).toHaveAttribute('aria-invalid', 'true')
+      await expect(root).toHaveAttribute('aria-checked', 'false')
+      await expect(root).toHaveAccessibleName(name)
+      await expect(root).toHaveAccessibleDescription('Choose a theme')
+      const indicator = indicatorOf(root)
+      await expect(indicator).toHaveAttribute('data-invalid')
+      await expect(getComputedStyle(indicator).borderColor).toBe(edge('color-status-danger'))
+      await expect(getComputedStyle(indicator).backgroundColor).toBe(fill('color-surface-raised'))
+    }
+  },
+} satisfies Story
+
+const restingRadio = {
+  play: async (context: Parameters<NonNullable<Story['play']>>[0]) => {
+    await radioDefault.play(context)
+    await radioHover.play(context)
+  },
+} satisfies Story
+
+const checkedRadio = {
+  args: radioChecked.args,
+  play: async (context: Parameters<NonNullable<Story['play']>>[0]) => {
+    await radioChecked.play(context)
+    await radioFocus.play(context)
+  },
+} satisfies Story
 
 /** The group: "Theme" over three radios, "Match the system" checked; the subject story. */
 export const Default: Story = {
@@ -159,260 +449,40 @@ export const Default: Story = {
   },
 }
 
-/** State default: "Light" at rest, unchecked. */
-export const RadioDefault: Story = {
-  play: async ({ canvasElement }) => {
-    const light = radio(canvasElement, 'Light')
-    await expect(light).toHaveAttribute('aria-checked', 'false')
-    await expect(light).toHaveAttribute('data-unchecked')
-    const indicator = indicatorOf(light)
-    const box = indicator.getBoundingClientRect()
-    await expect(box.width).toBe(length('icon-size-400'))
-    await expect(box.height).toBe(length('icon-size-400'))
-    const style = getComputedStyle(indicator)
-    await expect(style.borderTopWidth).toBe(
-      resolve('borderTopWidth', 'var(--perron-border-width-025)'),
-    )
-    await expect(style.borderTopStyle).toBe('solid')
-    await expect(style.borderColor).toBe(edge('color-border-control'))
-    await expect(style.backgroundColor).toBe(fill('color-surface-raised'))
-    await expect(light.getBoundingClientRect().height).toBe(length('size-target-min'))
-    const words = getComputedStyle(labelOf(light))
-    await expect(words.font).toBe(rendered('typography-body', 'font'))
-    await expect(words.letterSpacing).toBe(rendered('typography-body-tracking', 'letter-spacing'))
-    await expect(words.color).toBe(colour('--perron-color-text-primary'))
-    await expect(getComputedStyle(light).cursor).toBe('pointer')
+/** The radio "Light" in each state it can be left in: at rest, checked and disabled. */
+export const Radios: Story = {
+  parameters: {
+    // a disabled field's words are color.text.tertiary, a miss Accessibility lists by name
+    // (docs/foundations/accessibility.md) and WCAG 1.4.3 exempts for an inactive control, so axe
+    // leaves the disabled field out
+    a11y: { context: { include: ['body'], exclude: ['[data-row="Disabled"]'] } },
   },
-}
-
-/** State hover: "Light", hovered by the visual check. */
-export const RadioHover: Story = {
-  play: async ({ canvasElement }) => {
-    const light = indicatorOf(radio(canvasElement, 'Light'))
-    await expect(onHover(light, 'background-image').replace(/\s+/g, '')).toBe(HOVER_LAYER)
-    // the edge stays the control edge: no hover rule sets it on an unchecked radio
-    await expect(stateRules(light).every((s) => !s.getPropertyValue('border-color'))).toBe(true)
-    await expect(getComputedStyle(light).borderColor).toBe(edge('color-border-control'))
-    // the checked radio darkens its ink and takes no layer
-    const system = indicatorOf(radio(canvasElement, 'Match the system'))
-    await expect(onHover(system, 'background-color')).toBe(
-      'var(--perron-color-surface-inverse-hover)',
-    )
-    await expect(onHover(system, 'border-color')).toBe('var(--perron-color-surface-inverse-hover)')
-    await expect(onHover(system, 'background-image')).toBe('')
-    // a press lays the denser selected layer, outside (hover: hover) and after it; the
-    // forced-colours reset (CR-11) sets `none`
-    await expect(
-      stateRules(light, ':active')
-        .map((s) => s.getPropertyValue('background-image'))
-        .join('')
-        .replace(/\s+/g, ''),
-    ).toBe(PRESSED_LAYER)
-    await expect(pressedAfterHover(light)).toBe(true)
-    await expect(stateFill(system, ':active')).toBe('var(--perron-color-surface-inverse-pressed)')
-  },
-}
-
-/** State focus: "Light", checked, as focus rests on the checked radio, focused by the visual check. */
-export const RadioFocus: Story = {
-  args: { defaultValue: 'light' },
-  play: async ({ canvasElement }) => {
-    const light = radio(canvasElement, 'Light')
-    await userEvent.tab()
-    await expect(light).toHaveFocus()
-    await expect(light.matches(':focus-visible')).toBe(true)
-    // CR-10: perron.css's ring round the whole row, following its radius
-    const ring = getComputedStyle(light)
-    await expect(ring.outlineStyle).toBe('solid')
-    await expect(ring.outlineColor).toBe(edge('color-border-focus'))
-    await expect(ring.outlineWidth).toBe(resolve('outlineWidth', 'var(--perron-focus-width)'))
-    await expect(ring.outlineOffset).toBe(resolve('outlineOffset', 'var(--perron-focus-offset)'))
-    await expect(ring.borderTopLeftRadius).toBe(
-      resolve('borderTopLeftRadius', 'var(--perron-radius-md)'),
-    )
-    await expect(getComputedStyle(indicatorOf(light)).outlineStyle).toBe('none')
-    await userEvent.tab({ shift: true })
-    await expect(light).not.toHaveFocus()
-    await expect(light).toHaveAttribute('aria-checked', 'true')
-  },
-}
-
-/** State checked: "Light", with `defaultValue` `'light'`. */
-export const RadioChecked: Story = {
-  args: { defaultValue: 'light' },
-  play: async ({ canvasElement }) => {
-    const light = radio(canvasElement, 'Light')
-    await expect(light).toHaveAttribute('aria-checked', 'true')
-    const indicator = indicatorOf(light)
-    await expect(indicator).toHaveAttribute('data-checked')
-    const style = getComputedStyle(indicator)
-    await expect(style.backgroundColor).toBe(fill('color-surface-inverse'))
-    await expect(style.borderColor).toBe(edge('color-surface-inverse'))
-    const dot = getComputedStyle(indicator, '::before')
-    await expect(dot.backgroundColor).toBe(fill('color-surface-raised'))
-    await expect(parseFloat(dot.width)).toBe(length('icon-size-400') / 2)
-    await expect(parseFloat(dot.height)).toBe(length('icon-size-400') / 2)
-    // CR-6: the same circle as an unchecked radio's, with the same edge
-    const checked = indicator.getBoundingClientRect()
-    const dark = indicatorOf(radio(canvasElement, 'Dark'))
-    const unchecked = dark.getBoundingClientRect()
-    await expect(checked.width).toBe(unchecked.width)
-    await expect(checked.height).toBe(unchecked.height)
-    await expect(style.borderTopWidth).toBe(getComputedStyle(dark).borderTopWidth)
-    await expect(getComputedStyle(dark, '::before').content).toBe('none')
-  },
-}
-
-/** State disabled: "Light", disabled. */
-export const RadioDisabled: Story = {
-  args: { children: themes({ disabled: true }) },
-  play: async ({ canvasElement }) => {
-    onChange.mockClear()
-    const system = radio(canvasElement, 'Match the system')
-    const light = radio(canvasElement, 'Light')
-    const dark = radio(canvasElement, 'Dark')
-    await expect(light).toHaveAttribute('aria-disabled', 'true')
-    await expect(light).toHaveAttribute('data-disabled')
-    await expect(getComputedStyle(labelOf(light)).color).toBe(
-      colour('--perron-color-text-tertiary'),
-    )
-    const indicator = getComputedStyle(indicatorOf(light))
-    await expect(indicator.borderColor).toBe(edge('color-border-subtle'))
-    await expect(indicator.backgroundColor).toBe(fill('color-surface-inset'))
-    await expect(getComputedStyle(light).cursor).toBe('default')
-    // CR-8: no hover or pressed layer on a disabled radio
-    for (const pseudo of [':hover', ':active'] as const)
-      await expect(stateRules(indicatorOf(light), pseudo)).toHaveLength(0)
-    // the arrow keys pass it by
-    await userEvent.tab()
-    await expect(system).toHaveFocus()
-    await userEvent.keyboard('{ArrowDown}')
-    await expect(dark).toHaveFocus()
-    await expect(dark).toHaveAttribute('aria-checked', 'true')
-    onChange.mockClear()
-    await userEvent.click(light, { pointerEventsCheck: 0 })
-    await expect(light).toHaveAttribute('aria-checked', 'false')
-    await expect(onChange).not.toHaveBeenCalled()
-    // back to rest
-    dark.focus()
-    await userEvent.keyboard('{ArrowUp}')
-    await expect(system).toHaveAttribute('aria-checked', 'true')
-    await userEvent.tab({ shift: true })
-    await expect(canvasElement).not.toContainElement(document.activeElement as HTMLElement)
-  },
-}
-
-/** The whole group disabled, "Match the system" checked, with a Button after it for Tab to reach. */
-export const Disabled: Story = {
-  args: { disabled: true },
-  render: (args) => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--perron-space-300)' }}>
-      <RadioGroup {...args} />
-      <div>
-        <Button>Save</Button>
-      </div>
-    </div>
+  ...showcase<StoryArgs>(
+    [
+      { label: 'At rest', story: restingRadio },
+      { label: 'Checked', story: checkedRadio },
+      { label: 'Disabled', story: radioDisabled },
+    ],
+    (args) => <RadioGroup {...args} />,
   ),
-  play: async ({ canvasElement }) => {
-    const group = groupIn(canvasElement)
-    const radios = within(group).getAllByRole('radio')
-    for (const root of radios) {
-      await expect(root).toHaveAttribute('aria-disabled', 'true')
-      await expect(root).toHaveAttribute('data-disabled')
-    }
-    const save = within(canvasElement).getByRole('button', { name: 'Save' })
-    const system = radio(canvasElement, 'Match the system')
-    // CR-1: Base UI keeps the group's one stop, heard as dimmed and checked, and Perron forces no
-    // tabIndex; the next Tab leaves for the Button
-    await userEvent.tab()
-    await expect(system).toHaveFocus()
-    await expect(system).toHaveAttribute('aria-disabled', 'true')
-    await expect(system).toHaveAttribute('aria-checked', 'true')
-    await userEvent.tab()
-    await expect(save).toHaveFocus()
-    await expect(system).toHaveAttribute('aria-checked', 'true')
-    const indicator = indicatorOf(system)
-    await expect(getComputedStyle(indicator).backgroundColor).toBe(fill('color-text-tertiary'))
-    await expect(getComputedStyle(indicator).borderColor).toBe(edge('color-text-tertiary'))
-    await expect(getComputedStyle(indicator, '::before').backgroundColor).toBe(
-      fill('color-surface-raised'),
-    )
-    await expect(group.querySelector('.pn-RadioGroup-legend')).toHaveAttribute('data-disabled')
-    // back to rest: Shift+Tab returns to the group's stop, then leaves it
-    await userEvent.tab({ shift: true })
-    await expect(system).toHaveFocus()
-    await userEvent.tab({ shift: true })
-    await expect(canvasElement).not.toContainElement(document.activeElement as HTMLElement)
-  },
 }
 
-/** The group read-only, "Match the system" checked. */
-export const ReadOnly: Story = {
-  args: { readOnly: true },
-  play: async ({ canvasElement }) => {
-    onChange.mockClear()
-    const group = groupIn(canvasElement)
-    await expect(group).toHaveAttribute('aria-readonly', 'true')
-    const system = radio(canvasElement, 'Match the system')
-    const light = radio(canvasElement, 'Light')
-    await userEvent.tab()
-    await expect(system).toHaveFocus()
-    await userEvent.keyboard('{ArrowDown}')
-    await expect(light).toHaveFocus()
-    await expect(light).toHaveAttribute('aria-checked', 'false')
-    await userEvent.keyboard(' ')
-    await userEvent.click(light)
-    await expect(light).toHaveAttribute('aria-checked', 'false')
-    await expect(system).toHaveAttribute('aria-checked', 'true')
-    await expect(onChange).not.toHaveBeenCalled()
-    // CR-9: the rest look, the default cursor, and no hover or pressed layer
-    await expect(getComputedStyle(light).cursor).toBe('default')
-    await expect(getComputedStyle(indicatorOf(light)).backgroundColor).toBe(
-      fill('color-surface-raised'),
-    )
-    for (const root of [system, light])
-      for (const pseudo of [':hover', ':active'] as const)
-        await expect(stateRules(indicatorOf(root), pseudo)).toHaveLength(0)
-    await userEvent.tab({ shift: true })
-    await expect(group).not.toContainElement(document.activeElement as HTMLElement)
+/** The group in each state a prop reaches: disabled, read-only and invalid. */
+export const States: Story = {
+  parameters: {
+    // a disabled field's words are color.text.tertiary, a miss Accessibility lists by name
+    // (docs/foundations/accessibility.md) and WCAG 1.4.3 exempts for an inactive control, so axe
+    // leaves the disabled field out
+    a11y: { context: { include: ['body'], exclude: ['[data-row="Disabled"]'] } },
   },
-}
-
-/** Nothing checked and `required`, in a Base UI Field marked invalid, with its error below. */
-export const Invalid: Story = {
-  args: { defaultValue: undefined, required: true },
-  render: (args) => (
-    <Field.Root
-      invalid
-      style={{ display: 'flex', flexDirection: 'column', gap: 'var(--perron-space-100)' }}
-    >
-      <RadioGroup {...args} />
-      <Field.Error
-        match
-        style={{ ...typography('caption'), color: 'var(--perron-color-text-danger)' }}
-      >
-        Choose a theme
-      </Field.Error>
-    </Field.Root>
+  ...showcase<StoryArgs>(
+    [
+      { label: 'Disabled', story: disabled },
+      { label: 'Read-only', story: readOnly },
+      { label: 'Invalid', story: invalid },
+    ],
+    (args) => <RadioGroup {...args} />,
   ),
-  play: async ({ canvasElement }) => {
-    const group = groupIn(canvasElement)
-    await expect(group).toHaveAttribute('aria-required', 'true')
-    // the group too is invalid and described by the error, and still named by its legend
-    await expect(group).toHaveAttribute('aria-invalid', 'true')
-    await expect(group).toHaveAccessibleDescription('Choose a theme')
-    for (const name of ['Match the system', 'Light', 'Dark']) {
-      const root = radio(canvasElement, name)
-      await expect(root).toHaveAttribute('aria-invalid', 'true')
-      await expect(root).toHaveAttribute('aria-checked', 'false')
-      await expect(root).toHaveAccessibleName(name)
-      await expect(root).toHaveAccessibleDescription('Choose a theme')
-      const indicator = indicatorOf(root)
-      await expect(indicator).toHaveAttribute('data-invalid')
-      await expect(getComputedStyle(indicator).borderColor).toBe(edge('color-status-danger'))
-      await expect(getComputedStyle(indicator).backgroundColor).toBe(fill('color-surface-raised'))
-    }
-  },
 }
 
 /** The Default group with `hiddenLabel`, in a Section whose title names it for the eye. */
@@ -435,89 +505,6 @@ export const HiddenLabel: Story = {
     await expect(
       Math.abs(first.getBoundingClientRect().top - group.getBoundingClientRect().top),
     ).toBeLessThan(1)
-  },
-}
-
-/**
- * A caller that keeps the value in its own `useState` and sets it from `onChange`, unless the
- * change was cancelled: the story's `onChange` spy stands for the caller's own handler.
- */
-function ControlledGroup(args: RadioGroupProps) {
-  const [value, setValue] = useState('system')
-  return (
-    <RadioGroup
-      {...args}
-      defaultValue={undefined}
-      value={value}
-      onChange={(event, next, details) => {
-        args.onChange?.(event, next, details)
-        if (!details.isCanceled) setValue(next)
-      }}
-    />
-  )
-}
-
-/** A group given `value` and `onChange` from the story's state. */
-export const Controlled: Story = {
-  render: (args) => <ControlledGroup {...args} />,
-  play: async ({ canvasElement }) => {
-    onChange.mockClear()
-    const system = radio(canvasElement, 'Match the system')
-    const dark = radio(canvasElement, 'Dark')
-    // the caller sets `value`, and only then does the check move
-    await userEvent.click(dark)
-    await expect(onChange).toHaveBeenCalledTimes(1)
-    await expect(onChange).toHaveBeenLastCalledWith(
-      expect.any(Event),
-      'dark',
-      expect.objectContaining({ reason: 'none' }),
-    )
-    await expect(dark).toHaveAttribute('aria-checked', 'true')
-    // a click on the checked radio calls nothing (CR-3)
-    await userEvent.click(dark)
-    await expect(onChange).toHaveBeenCalledTimes(1)
-    await userEvent.click(system)
-    await expect(system).toHaveAttribute('aria-checked', 'true')
-    system.blur()
-    // a caller that ignores the change: `value` stays, and so does the check
-    const ignored = fn()
-    await mounted(
-      canvasElement,
-      <RadioGroup label="Theme for print" value="system" onChange={ignored}>
-        {themes()}
-      </RadioGroup>,
-      async (host) => {
-        await waitFor(() => expect(groupIn(host, 'Theme for print')).toBeInTheDocument())
-        await userEvent.click(radio(host, 'Dark'))
-        await expect(ignored).toHaveBeenCalledTimes(1)
-        await expect(ignored).toHaveBeenLastCalledWith(
-          expect.any(Event),
-          'dark',
-          expect.objectContaining({ reason: 'none', isCanceled: false }),
-        )
-        await expect(radio(host, 'Dark')).toHaveAttribute('aria-checked', 'false')
-        await expect(radio(host, 'Match the system')).toHaveAttribute('aria-checked', 'true')
-        radio(host, 'Dark').blur()
-      },
-    )
-    // an uncontrolled group whose handler cancels the change stays as it was
-    const cancelling = fn((_event: Event, _value: string, details: { cancel(): void }) =>
-      details.cancel(),
-    )
-    await mounted(
-      canvasElement,
-      <RadioGroup label="Theme for print" defaultValue="system" onChange={cancelling}>
-        {themes()}
-      </RadioGroup>,
-      async (host) => {
-        await waitFor(() => expect(groupIn(host, 'Theme for print')).toBeInTheDocument())
-        await userEvent.click(radio(host, 'Dark'))
-        await expect(cancelling).toHaveBeenCalledTimes(1)
-        await expect(radio(host, 'Dark')).toHaveAttribute('aria-checked', 'false')
-        await expect(radio(host, 'Match the system')).toHaveAttribute('aria-checked', 'true')
-        radio(host, 'Dark').blur()
-      },
-    )
   },
 }
 
@@ -616,8 +603,74 @@ export const LongLabels: Story = {
   },
 }
 
+/** A group given `value` and `onChange` from the story's state. */
+export const Controlled: Story = {
+  tags: ['!dev', '!autodocs'],
+  render: (args) => <ControlledGroup {...args} />,
+  play: async ({ canvasElement }) => {
+    onChange.mockClear()
+    const system = radio(canvasElement, 'Match the system')
+    const dark = radio(canvasElement, 'Dark')
+    // the caller sets `value`, and only then does the check move
+    await userEvent.click(dark)
+    await expect(onChange).toHaveBeenCalledTimes(1)
+    await expect(onChange).toHaveBeenLastCalledWith(
+      expect.any(Event),
+      'dark',
+      expect.objectContaining({ reason: 'none' }),
+    )
+    await expect(dark).toHaveAttribute('aria-checked', 'true')
+    // a click on the checked radio calls nothing (CR-3)
+    await userEvent.click(dark)
+    await expect(onChange).toHaveBeenCalledTimes(1)
+    await userEvent.click(system)
+    await expect(system).toHaveAttribute('aria-checked', 'true')
+    system.blur()
+    // a caller that ignores the change: `value` stays, and so does the check
+    const ignored = fn()
+    await mounted(
+      canvasElement,
+      <RadioGroup label="Theme for print" value="system" onChange={ignored}>
+        {themes()}
+      </RadioGroup>,
+      async (host) => {
+        await waitFor(() => expect(groupIn(host, 'Theme for print')).toBeInTheDocument())
+        await userEvent.click(radio(host, 'Dark'))
+        await expect(ignored).toHaveBeenCalledTimes(1)
+        await expect(ignored).toHaveBeenLastCalledWith(
+          expect.any(Event),
+          'dark',
+          expect.objectContaining({ reason: 'none', isCanceled: false }),
+        )
+        await expect(radio(host, 'Dark')).toHaveAttribute('aria-checked', 'false')
+        await expect(radio(host, 'Match the system')).toHaveAttribute('aria-checked', 'true')
+        radio(host, 'Dark').blur()
+      },
+    )
+    // an uncontrolled group whose handler cancels the change stays as it was
+    const cancelling = fn((_event: Event, _value: string, details: { cancel(): void }) =>
+      details.cancel(),
+    )
+    await mounted(
+      canvasElement,
+      <RadioGroup label="Theme for print" defaultValue="system" onChange={cancelling}>
+        {themes()}
+      </RadioGroup>,
+      async (host) => {
+        await waitFor(() => expect(groupIn(host, 'Theme for print')).toBeInTheDocument())
+        await userEvent.click(radio(host, 'Dark'))
+        await expect(cancelling).toHaveBeenCalledTimes(1)
+        await expect(radio(host, 'Dark')).toHaveAttribute('aria-checked', 'false')
+        await expect(radio(host, 'Match the system')).toHaveAttribute('aria-checked', 'true')
+        radio(host, 'Dark').blur()
+      },
+    )
+  },
+}
+
 /** A native `<form>` holding the group with `name` "theme" and a submit button. */
 export const InForm: Story = {
+  tags: ['!dev', '!autodocs'],
   args: { name: 'theme' },
   render: (args) => (
     <form
