@@ -1,11 +1,11 @@
-// TopBar's stories: one per row of the spec's Stories table (docs/patterns/top-bar.md), with the
-// design deferred, each over a map-like backdrop that shows the glass, with Mylder's five mode chips
-// in `filters` and its language link and About button in `tools`, and their play tests, which read
-// what the eye sees and what the ear hears.
+// TopBar's stories: the wide bar with every prop a control, on a phone and responsive, its states
+// side by side, and narrow in Danish, then the labels' test. Hover and pressed are play steps, not
+// stories.
 import { createRef } from 'react'
 import type { CSSProperties } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Decorator, Meta, StoryObj } from '@storybook/react-vite'
+import { showcase } from '../../testing/Showcase.tsx'
 import { expect, userEvent, waitFor, within } from 'storybook/test'
 import info from '../../../icons/info.svg?raw'
 import { FilterChip } from '../../components/FilterChip/FilterChip.tsx'
@@ -100,6 +100,8 @@ const meta = {
 export default meta
 
 type Story = StoryObj<typeof meta>
+/** The args a story renders with: the meta's and its own. */
+type StoryArgs = Parameters<NonNullable<Story['render']>>[0]
 
 /** The bar in `scope`, once it has rendered. */
 const barIn = (scope: HTMLElement) =>
@@ -169,10 +171,88 @@ const everySlot = (props: (name: string) => object) =>
   ) as TopBarProps['slotProps']
 
 /**
+ * A viewport Storybook gives the story, from its own list, so the bar's media query sees a screen
+ * of that width; a container of a width, as `inside` gives, can't trigger a media query. The test
+ * run sets the viewport too, and every other story gets its default, 1200 by 900.
+ */
+const viewport = (value: 'desktop' | 'mobile2') => ({ viewport: { value, isRotated: false } })
+
+/** The parts and controls of a bar, each with its box inside the bar, rounded to the pixel. */
+function layoutOf(bar: HTMLElement) {
+  const origin = bar.getBoundingClientRect()
+  const box = (element: Element) => {
+    const rect = element.getBoundingClientRect()
+    return [rect.left - origin.left, rect.top - origin.top, rect.width, rect.height].map(Math.round)
+  }
+  const parts = ['identity', 'brand', 'status', 'time', 'filters', 'tools'].map((name) => [
+    name,
+    box(part(bar, name)!),
+  ])
+  const controls = [...bar.querySelectorAll('.pn-FilterChip, .pn-LinkButton, .pn-IconButton')].map(
+    (control) => [heard(control), box(control)],
+  )
+  return { root: box(bar), ...Object.fromEntries([...parts, ...controls]) }
+}
+
+/**
+ * The layout of `bar` is that of a bar of `size`, rendered with `MediumDefault`'s args at the same
+ * width beside it: each part and control in the same place, at the same size.
+ */
+async function expectLayoutOf(canvas: HTMLElement, bar: HTMLElement, size: 'medium' | 'small') {
+  await mounted(
+    canvas,
+    <div style={{ inlineSize: bar.getBoundingClientRect().width }}>
+      <TopBar size={size} {...meta.args} />
+    </div>,
+    async (host) => {
+      const other = await barIn(host)
+      await expect(other).toHaveAttribute('data-size', size)
+      await expect(layoutOf(bar)).toEqual(layoutOf(other))
+    },
+  )
+}
+
+/**
+ * The media rule that holds the responsive bar's phone layout: its condition, the width in it, and
+ * `breakpoint.phone`'s, in pixels.
+ */
+function phoneQuery() {
+  const rules = [...document.styleSheets].flatMap((sheet) => [...sheet.cssRules])
+  const query = rules.find(
+    (rule): rule is CSSMediaRule =>
+      rule instanceof CSSMediaRule &&
+      [...rule.cssRules].some((inner) =>
+        (inner as CSSStyleRule).selectorText?.includes('.pn-TopBar[data-size="responsive"]'),
+      ),
+  )
+  return {
+    text: query?.conditionText,
+    width: Number.parseFloat(/max-width:\s*([\d.]+)px/.exec(query?.conditionText ?? '')?.[1] ?? ''),
+    token: px('breakpoint-phone'),
+  }
+}
+
+/** A Danish wrapper, for the story whose words are the locale's. */
+const inDanish: Decorator = (Story) => (
+  <PerronProvider locale="da">
+    <Story />
+  </PerronProvider>
+)
+
+/** Every owned word overridden, as a caller names its own: the labels replace only their words. */
+const LABELS = {
+  updatedLabel: 'As of {time}',
+  updatedOutOfDateLabel: 'As of {time}, could be old',
+  sourcePausedLabel: 'On hold',
+  filtersLabel: 'Modes',
+  brandNameLabel: 'Perron',
+} satisfies Partial<TopBarProps>
+
+/**
  * The wide screen's bar at 08:14:05 with the five mode chips, the language link and About, in a
  * 1024 px container; the contract story renders it.
  */
-export const MediumDefault: Story = {
+const mediumDefault = {
   decorators: [inside(1024)],
   play: async ({ canvasElement, step }) => {
     const bar = await barIn(canvasElement)
@@ -392,25 +472,154 @@ export const MediumDefault: Story = {
       )
     })
   },
-}
+} satisfies Story
 
 /** The brand link of a wide bar under the pointer, at rest: the visual stage drives the hover. */
-export const MediumHover: Story = {
+const mediumHover = {
   decorators: [inside(1024)],
   play: async ({ canvasElement }) => {
     const brand = part(await barIn(canvasElement), 'brand')!
     await expect(stateFill(brand)).toBe('var(--perron-color-surface-hover)')
     await expect(getComputedStyle(brand).cursor).toBe('pointer')
   },
-}
+} satisfies Story
 
 /** The brand link of a wide bar pressed, at rest: the visual stage drives the press. */
-export const MediumPressed: Story = {
+const mediumPressed = {
   decorators: [inside(1024)],
   play: async ({ canvasElement }) => {
     const brand = part(await barIn(canvasElement), 'brand')!
     await expect(stateFill(brand, ':active')).toBe('var(--perron-color-surface-selected)')
     await expect(pressedAfterHover(brand)).toBe(true)
+  },
+} satisfies Story
+
+/** `MediumDefault`'s args with `paused`: "Paused · Updated 08:14:05". */
+const paused = {
+  args: { paused: true },
+  play: async ({ canvasElement }) => {
+    const bar = await barIn(canvasElement)
+    const status = part(bar, 'status')!
+    const separator = part(bar, 'separator')!
+    await expect(bar).toHaveAttribute('data-paused', '')
+    await expect(heard(status)).toBe('Paused · Updated 08:14:05')
+    await expect([...status.children]).toEqual([part(bar, 'paused'), separator, part(bar, 'time')])
+    await expect(separator).toHaveTextContent(/^·$/)
+    // a no-break space before the "·" and a space after it (CR-4)
+    await expect(separator.previousSibling?.textContent).toBe(' ')
+    await expect(separator.nextSibling?.textContent).toBe(' ')
+    await expect(getComputedStyle(part(bar, 'paused')!).color).toBe(
+      colour('--perron-color-text-primary'),
+    )
+    await expect(getComputedStyle(separator).color).toBe(colour('--perron-color-text-secondary'))
+    await expect(part(bar, 'time')).toHaveAttribute('dateTime', '08:14:05')
+  },
+} satisfies Story
+
+/** `MediumDefault`'s args with `time` 08:09:40 and `outOfDate`: "Updated 08:09:40, may be out of date". */
+const outOfDate = {
+  args: { time: '08:09:40', outOfDate: true },
+  play: async ({ canvasElement, step }) => {
+    const bar = await barIn(canvasElement)
+    await step('the whole phrase in warning ink (CR-4)', async () => {
+      const time = part(bar, 'time')!
+      await expect(bar).toHaveAttribute('data-out-of-date', '')
+      await expect(time).toHaveTextContent(/^Updated 08:09:40, may be out of date$/)
+      await expect(time.childNodes).toHaveLength(1)
+      await expect(getComputedStyle(time).color).toBe(colour('--perron-color-text-warning'))
+    })
+    await step('paused too, and an HH:MM time not out of date (CR-4)', async () => {
+      await mounted(
+        canvasElement,
+        <>
+          <TopBar time="08:09:40" outOfDate paused data-testid="both" />
+          <TopBar time="08:14" outOfDate={false} data-testid="fresh" />
+        </>,
+        async (host) => {
+          const both = await waitFor(() => within(host).getByTestId('both'))
+          await expect(heard(part(both, 'status')!)).toBe(
+            'Paused · Updated 08:09:40, may be out of date',
+          )
+          const fresh = within(host).getByTestId('fresh')
+          await expect(fresh).not.toHaveAttribute('data-out-of-date')
+          await expect(part(fresh, 'time')).toHaveTextContent(/^Updated 08:14$/)
+          await expect(part(fresh, 'time')).toHaveAttribute('dateTime', '08:14')
+          await expect(getComputedStyle(part(fresh, 'time')!).color).toBe(
+            colour('--perron-color-text-secondary'),
+          )
+        },
+      )
+    })
+    await step('in every locale, only the dictionary’s words (CR-8)', async () => {
+      for (const locale of Object.keys(dictionaries) as Locale[]) {
+        const markup = renderToStaticMarkup(
+          <PerronProvider locale={locale}>
+            <TopBar
+              brandHref="/en"
+              time="08:09:40"
+              outOfDate
+              paused
+              filters={FILTERS}
+              tools={TOOLS}
+            />
+          </PerronProvider>,
+        )
+        expectOwnedStrings(markup, locale, CALLER_WORDS)
+        await expect(markup).toContain(
+          dictionaries[locale].topBarUpdatedOutOfDate.replace('{time}', '08:09:40'),
+        )
+      }
+    })
+  },
+} satisfies Story
+
+/** `MediumDefault`'s args with no `time`: the bar before the first answer, "Updated —". */
+const unknownTime = {
+  args: { time: undefined },
+  play: async ({ canvasElement }) => {
+    const bar = await barIn(canvasElement)
+    const time = part(bar, 'time')!
+    await expect(time).toHaveTextContent(/^Updated —$/)
+    await expect(time).not.toHaveAttribute('dateTime')
+  },
+} satisfies Story
+
+/** `MediumDefault`'s args with no `brandHref` and no `filters`: the bar while the timetable loads. */
+const noFilters = {
+  args: { brandHref: undefined, filters: undefined },
+  play: async ({ canvasElement }) => {
+    const bar = await barIn(canvasElement)
+    // CR-7: no empty group is announced
+    await expect(within(canvasElement).queryByRole('group')).toBeNull()
+    await expect(groupsOf(bar)).toEqual(['identity', 'tools'])
+    // CR-5: the brand alone, no link
+    await expect(part(bar, 'brand')!.tagName).toBe('SPAN')
+    await expect(within(canvasElement).queryByRole('link', { name: 'Mylder' })).toBeNull()
+    // the tools end the row, at the end of the root's content box
+    const style = getComputedStyle(bar)
+    const end =
+      bar.getBoundingClientRect().right -
+      Number.parseFloat(style.paddingRight) -
+      Number.parseFloat(style.borderRightWidth)
+    await expect(part(bar, 'tools')!.getBoundingClientRect().right).toBeCloseTo(end, 0)
+    const controls = controlsIn(canvasElement)
+    await expectTabOrder(canvasElement, [controls.language, controls.about])
+  },
+} satisfies Story
+
+/**
+ * The wide screen's bar at 08:14:05 with the five mode chips, the language link and About, in a
+ * 1024 px container, every prop a control; the contract story renders it. Its play reads the brand
+ * link's hover and pressed rules.
+ */
+export const Default: Story = {
+  ...mediumHover,
+  ...mediumPressed,
+  ...mediumDefault,
+  play: async (context) => {
+    await mediumHover.play(context)
+    await mediumPressed.play(context)
+    await mediumDefault.play(context)
   },
 }
 
@@ -518,68 +727,6 @@ export const SmallDefault: Story = {
   },
 }
 
-/**
- * A viewport Storybook gives the story, from its own list, so the bar's media query sees a screen
- * of that width; a container of a width, as `inside` gives, can't trigger a media query. The test
- * run sets the viewport too, and every other story gets its default, 1200 by 900.
- */
-const viewport = (value: 'desktop' | 'mobile2') => ({ viewport: { value, isRotated: false } })
-
-/** The parts and controls of a bar, each with its box inside the bar, rounded to the pixel. */
-function layoutOf(bar: HTMLElement) {
-  const origin = bar.getBoundingClientRect()
-  const box = (element: Element) => {
-    const rect = element.getBoundingClientRect()
-    return [rect.left - origin.left, rect.top - origin.top, rect.width, rect.height].map(Math.round)
-  }
-  const parts = ['identity', 'brand', 'status', 'time', 'filters', 'tools'].map((name) => [
-    name,
-    box(part(bar, name)!),
-  ])
-  const controls = [...bar.querySelectorAll('.pn-FilterChip, .pn-LinkButton, .pn-IconButton')].map(
-    (control) => [heard(control), box(control)],
-  )
-  return { root: box(bar), ...Object.fromEntries([...parts, ...controls]) }
-}
-
-/**
- * The layout of `bar` is that of a bar of `size`, rendered with `MediumDefault`'s args at the same
- * width beside it: each part and control in the same place, at the same size.
- */
-async function expectLayoutOf(canvas: HTMLElement, bar: HTMLElement, size: 'medium' | 'small') {
-  await mounted(
-    canvas,
-    <div style={{ inlineSize: bar.getBoundingClientRect().width }}>
-      <TopBar size={size} {...meta.args} />
-    </div>,
-    async (host) => {
-      const other = await barIn(host)
-      await expect(other).toHaveAttribute('data-size', size)
-      await expect(layoutOf(bar)).toEqual(layoutOf(other))
-    },
-  )
-}
-
-/**
- * The media rule that holds the responsive bar's phone layout: its condition, the width in it, and
- * `breakpoint.phone`'s, in pixels.
- */
-function phoneQuery() {
-  const rules = [...document.styleSheets].flatMap((sheet) => [...sheet.cssRules])
-  const query = rules.find(
-    (rule): rule is CSSMediaRule =>
-      rule instanceof CSSMediaRule &&
-      [...rule.cssRules].some((inner) =>
-        (inner as CSSStyleRule).selectorText?.includes('.pn-TopBar[data-size="responsive"]'),
-      ),
-  )
-  return {
-    text: query?.conditionText,
-    width: Number.parseFloat(/max-width:\s*([\d.]+)px/.exec(query?.conditionText ?? '')?.[1] ?? ''),
-    token: px('breakpoint-phone'),
-  }
-}
-
 /** `MediumDefault`'s args with `size` responsive, on a 1280 px screen: the wide layout. */
 export const ResponsiveWide: Story = {
   args: { size: 'responsive' },
@@ -646,125 +793,18 @@ export const ResponsivePhone: Story = {
   },
 }
 
-/** `MediumDefault`'s args with `paused`: "Paused · Updated 08:14:05". */
-export const Paused: Story = {
-  args: { paused: true },
-  play: async ({ canvasElement }) => {
-    const bar = await barIn(canvasElement)
-    const status = part(bar, 'status')!
-    const separator = part(bar, 'separator')!
-    await expect(bar).toHaveAttribute('data-paused', '')
-    await expect(heard(status)).toBe('Paused · Updated 08:14:05')
-    await expect([...status.children]).toEqual([part(bar, 'paused'), separator, part(bar, 'time')])
-    await expect(separator).toHaveTextContent(/^·$/)
-    // a no-break space before the "·" and a space after it (CR-4)
-    await expect(separator.previousSibling?.textContent).toBe(' ')
-    await expect(separator.nextSibling?.textContent).toBe(' ')
-    await expect(getComputedStyle(part(bar, 'paused')!).color).toBe(
-      colour('--perron-color-text-primary'),
-    )
-    await expect(getComputedStyle(separator).color).toBe(colour('--perron-color-text-secondary'))
-    await expect(part(bar, 'time')).toHaveAttribute('dateTime', '08:14:05')
-  },
+/** Each state of the bar's time and filters, one wide bar apiece. */
+export const States: Story = {
+  ...showcase<StoryArgs>(
+    [
+      { label: 'Paused', story: paused },
+      { label: 'Out of date', story: outOfDate },
+      { label: 'Unknown time', story: unknownTime },
+      { label: 'No filters', story: noFilters },
+    ],
+    (args) => <TopBar {...args} />,
+  ),
 }
-
-/** `MediumDefault`'s args with `time` 08:09:40 and `outOfDate`: "Updated 08:09:40, may be out of date". */
-export const OutOfDate: Story = {
-  args: { time: '08:09:40', outOfDate: true },
-  play: async ({ canvasElement, step }) => {
-    const bar = await barIn(canvasElement)
-    await step('the whole phrase in warning ink (CR-4)', async () => {
-      const time = part(bar, 'time')!
-      await expect(bar).toHaveAttribute('data-out-of-date', '')
-      await expect(time).toHaveTextContent(/^Updated 08:09:40, may be out of date$/)
-      await expect(time.childNodes).toHaveLength(1)
-      await expect(getComputedStyle(time).color).toBe(colour('--perron-color-text-warning'))
-    })
-    await step('paused too, and an HH:MM time not out of date (CR-4)', async () => {
-      await mounted(
-        canvasElement,
-        <>
-          <TopBar time="08:09:40" outOfDate paused data-testid="both" />
-          <TopBar time="08:14" outOfDate={false} data-testid="fresh" />
-        </>,
-        async (host) => {
-          const both = await waitFor(() => within(host).getByTestId('both'))
-          await expect(heard(part(both, 'status')!)).toBe(
-            'Paused · Updated 08:09:40, may be out of date',
-          )
-          const fresh = within(host).getByTestId('fresh')
-          await expect(fresh).not.toHaveAttribute('data-out-of-date')
-          await expect(part(fresh, 'time')).toHaveTextContent(/^Updated 08:14$/)
-          await expect(part(fresh, 'time')).toHaveAttribute('dateTime', '08:14')
-          await expect(getComputedStyle(part(fresh, 'time')!).color).toBe(
-            colour('--perron-color-text-secondary'),
-          )
-        },
-      )
-    })
-    await step('in every locale, only the dictionary’s words (CR-8)', async () => {
-      for (const locale of Object.keys(dictionaries) as Locale[]) {
-        const markup = renderToStaticMarkup(
-          <PerronProvider locale={locale}>
-            <TopBar
-              brandHref="/en"
-              time="08:09:40"
-              outOfDate
-              paused
-              filters={FILTERS}
-              tools={TOOLS}
-            />
-          </PerronProvider>,
-        )
-        expectOwnedStrings(markup, locale, CALLER_WORDS)
-        await expect(markup).toContain(
-          dictionaries[locale].topBarUpdatedOutOfDate.replace('{time}', '08:09:40'),
-        )
-      }
-    })
-  },
-}
-
-/** `MediumDefault`'s args with no `time`: the bar before the first answer, "Updated —". */
-export const UnknownTime: Story = {
-  args: { time: undefined },
-  play: async ({ canvasElement }) => {
-    const bar = await barIn(canvasElement)
-    const time = part(bar, 'time')!
-    await expect(time).toHaveTextContent(/^Updated —$/)
-    await expect(time).not.toHaveAttribute('dateTime')
-  },
-}
-
-/** `MediumDefault`'s args with no `brandHref` and no `filters`: the bar while the timetable loads. */
-export const NoFilters: Story = {
-  args: { brandHref: undefined, filters: undefined },
-  play: async ({ canvasElement }) => {
-    const bar = await barIn(canvasElement)
-    // CR-7: no empty group is announced
-    await expect(within(canvasElement).queryByRole('group')).toBeNull()
-    await expect(groupsOf(bar)).toEqual(['identity', 'tools'])
-    // CR-5: the brand alone, no link
-    await expect(part(bar, 'brand')!.tagName).toBe('SPAN')
-    await expect(within(canvasElement).queryByRole('link', { name: 'Mylder' })).toBeNull()
-    // the tools end the row, at the end of the root's content box
-    const style = getComputedStyle(bar)
-    const end =
-      bar.getBoundingClientRect().right -
-      Number.parseFloat(style.paddingRight) -
-      Number.parseFloat(style.borderRightWidth)
-    await expect(part(bar, 'tools')!.getBoundingClientRect().right).toBeCloseTo(end, 0)
-    const controls = controlsIn(canvasElement)
-    await expectTabOrder(canvasElement, [controls.language, controls.about])
-  },
-}
-
-/** A Danish wrapper, for the story whose words are the locale's. */
-const inDanish: Decorator = (Story) => (
-  <PerronProvider locale="da">
-    <Story />
-  </PerronProvider>
-)
 
 /** `OutOfDate`'s args with `paused`, `size` medium, in Danish, in a 320 px container. */
 export const Narrow: Story = {
@@ -808,17 +848,9 @@ export const Narrow: Story = {
   },
 }
 
-/** Every owned word overridden, as a caller names its own: the labels replace only their words. */
-const LABELS = {
-  updatedLabel: 'As of {time}',
-  updatedOutOfDateLabel: 'As of {time}, could be old',
-  sourcePausedLabel: 'On hold',
-  filtersLabel: 'Modes',
-  brandNameLabel: 'Perron',
-} satisfies Partial<TopBarProps>
-
 /** `Paused`'s args with `outOfDate`, and every `*Label` given. */
 export const WithLabels: Story = {
+  tags: ['!dev', '!autodocs'],
   args: { paused: true, outOfDate: true, ...LABELS },
   play: async ({ canvasElement }) => {
     const bar = await barIn(canvasElement)

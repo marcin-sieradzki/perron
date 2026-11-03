@@ -496,6 +496,7 @@ export const Narrow: Story = {
 
 /** `UnknownCounts`' counts with every word overridden, and "Unknown" as "No data yet". */
 export const Labels: Story = {
+  tags: ['!dev', '!autodocs'],
   args: { counts: UNKNOWN_COUNTS, ...OWN_LABELS },
   play: async ({ canvasElement, step }) => {
     const list = within(canvasElement).getByRole('list')

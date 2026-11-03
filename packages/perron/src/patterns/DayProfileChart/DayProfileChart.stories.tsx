@@ -211,79 +211,6 @@ export const UnknownHours: Story = {
   },
 }
 
-/** `Default`'s args, driven by the keys. */
-export const Keyboard: Story = {
-  play: async ({ canvasElement }) => {
-    const { plot } = parts(canvasElement)
-    const start = document.activeElement
-    // CR-6: focus highlights the last point
-    await userEvent.tab()
-    await expect(plot).toHaveFocus()
-    await expectHighlighted(plot, '23:00')
-    await userEvent.keyboard('{ArrowLeft}')
-    await expectHighlighted(plot, '22:00')
-    await userEvent.keyboard('{Home}')
-    await expectHighlighted(plot, '00:00')
-    await userEvent.keyboard('{ArrowLeft}')
-    await expectHighlighted(plot, '00:00')
-    await userEvent.keyboard('{End}')
-    await expectHighlighted(plot, '23:00')
-    await userEvent.keyboard('{Escape}')
-    await expectAtRest(plot)
-    await expect(plot).toHaveFocus()
-    // CR-6: with none highlighted, an arrow highlights the last point, as focus does, then moves
-    await userEvent.keyboard('{ArrowRight}')
-    await expectHighlighted(plot, '23:00')
-    await userEvent.keyboard('{ArrowLeft}')
-    await expectHighlighted(plot, '22:00')
-    await userEvent.keyboard('{Escape}')
-    await userEvent.keyboard('{ArrowLeft}')
-    await expectHighlighted(plot, '23:00')
-    await userEvent.keyboard('{Escape}')
-    await expectAtRest(plot)
-    await userEvent.tab({ shift: true })
-    await expect(plot).not.toHaveFocus()
-    await expect(document.activeElement).toBe(start)
-  },
-}
-
-/** `Default`'s args, driven by the pointer. */
-export const Pointer: Story = {
-  play: async ({ canvasElement }) => {
-    const { plot, scale } = parts(canvasElement)
-    const box = plot.getBoundingClientRect()
-    const clientY = box.top + box.height / 2
-    const guideOf = () => plot.querySelector('[data-highlighted]')!.getBoundingClientRect()
-    const tipOf = () => parts(canvasElement).tip()!.getBoundingClientRect()
-    // CR-7: the point nearest the pointer in time
-    await userEvent.pointer({
-      target: plot,
-      coords: { clientX: box.left + box.width / 2, clientY },
-    })
-    await expectHighlighted(plot, '12:00')
-    // CR-8: up to the middle, the tip sits after the guide, a gap away
-    await expect(tipOf().left).toBeGreaterThan(guideOf().right)
-    await userEvent.pointer({ target: plot, coords: { clientX: box.right - 1, clientY } })
-    await expectHighlighted(plot, '23:00')
-    // past the middle, before it, inside the plot
-    await expect(tipOf().right).toBeLessThan(guideOf().left)
-    await expect(tipOf().left).toBeGreaterThanOrEqual(box.left)
-    await userEvent.pointer({ target: plot, coords: { clientX: box.left, clientY } })
-    await expectHighlighted(plot, '00:00')
-    // at 00:00, after the guide and clear of the scale's count
-    await expect(tipOf().left).toBeGreaterThan(scale.getBoundingClientRect().right)
-    await expect(tipOf().right).toBeLessThanOrEqual(box.right)
-    // CR-7: Escape closes the tip the pointer showed, with focus elsewhere
-    await expect(plot).not.toHaveFocus()
-    await userEvent.keyboard('{Escape}')
-    await expectAtRest(plot)
-    await userEvent.pointer({ target: plot, coords: { clientX: box.left + 1, clientY } })
-    await expectHighlighted(plot, '00:00')
-    await userEvent.unhover(plot)
-    await expectAtRest(plot)
-  },
-}
-
 /** An empty `points`: the caption, the baseline, the five ticks and nothing else. */
 export const NoPoints: Story = {
   args: { points: [] },
@@ -341,5 +268,80 @@ export const Narrow: Story = {
     await expect(edges[4].right).toBeLessThanOrEqual(box.right + 0.5)
     for (let i = 1; i < edges.length; i++)
       await expect(edges[i].left).toBeGreaterThan(edges[i - 1].right)
+  },
+}
+
+/** `Default`'s args, driven by the keys. */
+export const Keyboard: Story = {
+  tags: ['!dev', '!autodocs'],
+  play: async ({ canvasElement }) => {
+    const { plot } = parts(canvasElement)
+    const start = document.activeElement
+    // CR-6: focus highlights the last point
+    await userEvent.tab()
+    await expect(plot).toHaveFocus()
+    await expectHighlighted(plot, '23:00')
+    await userEvent.keyboard('{ArrowLeft}')
+    await expectHighlighted(plot, '22:00')
+    await userEvent.keyboard('{Home}')
+    await expectHighlighted(plot, '00:00')
+    await userEvent.keyboard('{ArrowLeft}')
+    await expectHighlighted(plot, '00:00')
+    await userEvent.keyboard('{End}')
+    await expectHighlighted(plot, '23:00')
+    await userEvent.keyboard('{Escape}')
+    await expectAtRest(plot)
+    await expect(plot).toHaveFocus()
+    // CR-6: with none highlighted, an arrow highlights the last point, as focus does, then moves
+    await userEvent.keyboard('{ArrowRight}')
+    await expectHighlighted(plot, '23:00')
+    await userEvent.keyboard('{ArrowLeft}')
+    await expectHighlighted(plot, '22:00')
+    await userEvent.keyboard('{Escape}')
+    await userEvent.keyboard('{ArrowLeft}')
+    await expectHighlighted(plot, '23:00')
+    await userEvent.keyboard('{Escape}')
+    await expectAtRest(plot)
+    await userEvent.tab({ shift: true })
+    await expect(plot).not.toHaveFocus()
+    await expect(document.activeElement).toBe(start)
+  },
+}
+
+/** `Default`'s args, driven by the pointer. */
+export const Pointer: Story = {
+  tags: ['!dev', '!autodocs'],
+  play: async ({ canvasElement }) => {
+    const { plot, scale } = parts(canvasElement)
+    const box = plot.getBoundingClientRect()
+    const clientY = box.top + box.height / 2
+    const guideOf = () => plot.querySelector('[data-highlighted]')!.getBoundingClientRect()
+    const tipOf = () => parts(canvasElement).tip()!.getBoundingClientRect()
+    // CR-7: the point nearest the pointer in time
+    await userEvent.pointer({
+      target: plot,
+      coords: { clientX: box.left + box.width / 2, clientY },
+    })
+    await expectHighlighted(plot, '12:00')
+    // CR-8: up to the middle, the tip sits after the guide, a gap away
+    await expect(tipOf().left).toBeGreaterThan(guideOf().right)
+    await userEvent.pointer({ target: plot, coords: { clientX: box.right - 1, clientY } })
+    await expectHighlighted(plot, '23:00')
+    // past the middle, before it, inside the plot
+    await expect(tipOf().right).toBeLessThan(guideOf().left)
+    await expect(tipOf().left).toBeGreaterThanOrEqual(box.left)
+    await userEvent.pointer({ target: plot, coords: { clientX: box.left, clientY } })
+    await expectHighlighted(plot, '00:00')
+    // at 00:00, after the guide and clear of the scale's count
+    await expect(tipOf().left).toBeGreaterThan(scale.getBoundingClientRect().right)
+    await expect(tipOf().right).toBeLessThanOrEqual(box.right)
+    // CR-7: Escape closes the tip the pointer showed, with focus elsewhere
+    await expect(plot).not.toHaveFocus()
+    await userEvent.keyboard('{Escape}')
+    await expectAtRest(plot)
+    await userEvent.pointer({ target: plot, coords: { clientX: box.left + 1, clientY } })
+    await expectHighlighted(plot, '00:00')
+    await userEvent.unhover(plot)
+    await expectAtRest(plot)
   },
 }

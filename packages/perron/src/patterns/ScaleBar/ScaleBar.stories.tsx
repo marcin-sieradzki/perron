@@ -1,9 +1,9 @@
-// ScaleBar's stories: one per row of the spec's Stories table (docs/patterns/scale-bar.md), with the
-// design deferred, each over a map-like backdrop that shows the glass, and their play tests, which
-// read what the eye sees, the bar's length, and what the ear hears.
+// ScaleBar's stories: a close zoom with every prop a control, other distances side by side, then the
+// labels' test.
 import type { CSSProperties } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Decorator, Meta, StoryObj } from '@storybook/react-vite'
+import { showcase } from '../../testing/Showcase.tsx'
 import { expect, waitFor } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { dictionaries, type Locale } from '../../locale/index.ts'
@@ -37,6 +37,8 @@ const meta = {
 export default meta
 
 type Story = StoryObj<typeof meta>
+/** The args a story renders with: the meta's and its own. */
+type StoryArgs = Parameters<NonNullable<Story['render']>>[0]
 
 /** The scale rendered inside `host`. */
 const rootIn = (host: HTMLElement) => host.querySelector<HTMLElement>('.pn-ScaleBar')!
@@ -88,6 +90,55 @@ async function expectMeasuredOwnedStrings(parent: HTMLElement, metersPerPixel: n
     )
 }
 
+/** The whole city: "3 km". */
+const kilometres = {
+  args: { metersPerPixel: 40 },
+  play: async ({ canvasElement }) => {
+    await barIn(canvasElement)
+    const label = labelIn(canvasElement)
+    await expect(heard(label)).toBe('Scale 3 km')
+    await expect(texts(label)).not.toContain('m')
+    await expect(texts(label)).toContain('km')
+    await expectMeasuredOwnedStrings(canvasElement, 40)
+  },
+} satisfies Story
+
+/** A longest distance just under 2 km: "1 km" over the shortest bar, half the longest. */
+const halfLength = {
+  args: { metersPerPixel: 20.82 },
+  play: async ({ canvasElement }) => {
+    const bar = await barIn(canvasElement)
+    await expect(heard(labelIn(canvasElement))).toBe('Scale 1 km')
+    const share = shareOf(rootIn(canvasElement), bar)
+    await expect(share).toBeGreaterThanOrEqual(0.5)
+    await expect(share).toBeLessThan(0.6)
+  },
+} satisfies Story
+
+/** A map that has not given its resolution yet: "—", heard as "Unknown", and no bar. */
+const unknown = {
+  args: { metersPerPixel: NaN },
+  play: async ({ canvasElement }) => {
+    const label = labelIn(canvasElement)
+    const dash = label.querySelector('[aria-hidden="true"]')
+    await expect(dash).toHaveTextContent(/^—$/)
+    await expect(heard(label)).toBe('Scale Unknown')
+    await expect(canvasElement.querySelector('.pn-ScaleBar-bar')).toBeNull()
+    // the label keeps one line's height, as with a distance
+    await expect(label.getBoundingClientRect().height).toBeGreaterThan(0)
+    // "Unknown" is a word the Default render doesn't show: in every locale, it is the dictionary's
+    for (const locale of Object.keys(dictionaries) as Locale[])
+      expectOwnedStrings(
+        renderToStaticMarkup(
+          <PerronProvider locale={locale}>
+            <ScaleBar metersPerPixel={NaN} />
+          </PerronProvider>,
+        ),
+        locale,
+      )
+  },
+} satisfies Story
+
 /** A city street at close zoom: "300 m" over a bar about three quarters long; the contract story renders it. */
 export const Default: Story = {
   args: { metersPerPixel: 4.2 },
@@ -115,57 +166,21 @@ export const Default: Story = {
   },
 }
 
-/** The whole city: "3 km". */
-export const Kilometres: Story = {
-  args: { metersPerPixel: 40 },
-  play: async ({ canvasElement }) => {
-    await barIn(canvasElement)
-    const label = labelIn(canvasElement)
-    await expect(heard(label)).toBe('Scale 3 km')
-    await expect(texts(label)).not.toContain('m')
-    await expect(texts(label)).toContain('km')
-    await expectMeasuredOwnedStrings(canvasElement, 40)
-  },
-}
-
-/** A longest distance just under 2 km: "1 km" over the shortest bar, half the longest. */
-export const HalfLength: Story = {
-  args: { metersPerPixel: 20.82 },
-  play: async ({ canvasElement }) => {
-    const bar = await barIn(canvasElement)
-    await expect(heard(labelIn(canvasElement))).toBe('Scale 1 km')
-    const share = shareOf(rootIn(canvasElement), bar)
-    await expect(share).toBeGreaterThanOrEqual(0.5)
-    await expect(share).toBeLessThan(0.6)
-  },
-}
-
-/** A map that has not given its resolution yet: "—", heard as "Unknown", and no bar. */
-export const Unknown: Story = {
-  args: { metersPerPixel: NaN },
-  play: async ({ canvasElement }) => {
-    const label = labelIn(canvasElement)
-    const dash = label.querySelector('[aria-hidden="true"]')
-    await expect(dash).toHaveTextContent(/^—$/)
-    await expect(heard(label)).toBe('Scale Unknown')
-    await expect(canvasElement.querySelector('.pn-ScaleBar-bar')).toBeNull()
-    // the label keeps one line's height, as with a distance
-    await expect(label.getBoundingClientRect().height).toBeGreaterThan(0)
-    // "Unknown" is a word the Default render doesn't show: in every locale, it is the dictionary's
-    for (const locale of Object.keys(dictionaries) as Locale[])
-      expectOwnedStrings(
-        renderToStaticMarkup(
-          <PerronProvider locale={locale}>
-            <ScaleBar metersPerPixel={NaN} />
-          </PerronProvider>,
-        ),
-        locale,
-      )
-  },
+/** Other distances, side by side: the whole city, the shortest bar, and no resolution yet. */
+export const Distances: Story = {
+  ...showcase<StoryArgs>(
+    [
+      { label: 'Kilometres', story: kilometres },
+      { label: 'Half length', story: halfLength },
+      { label: 'Unknown', story: unknown },
+    ],
+    (args) => <ScaleBar {...args} />,
+  ),
 }
 
 /** `Default`'s distance with "Scale" and "m" overridden. */
 export const Labels: Story = {
+  tags: ['!dev', '!autodocs'],
   args: { metersPerPixel: 4.2, scaleLabel: 'Målestok', metersUnitLabel: 'meter' },
   play: async ({ canvasElement }) => {
     await barIn(canvasElement)
