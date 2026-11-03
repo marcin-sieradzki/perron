@@ -1,4 +1,5 @@
-// The visual stage: opens each variant's story in Chromium, in light and dark, measures every part
+// The visual stage: opens each variant in Chromium, as the component's Default story with the
+// variant's args (its props, and an attribute state such as disabled), in light and dark, measures every part
 // against the read-back (size within 1 px, each bound token on its value in that theme), diffs the
 // root's screenshot against Penpot's export, and writes `components/<name>/visual/report.md`,
 // `report.json` and a diff PNG per variant and theme. The comparison is in scripts/lib/visual.ts.
@@ -27,6 +28,7 @@ import {
   type Theme,
 } from './lib/design.ts'
 import {
+  argsParam,
   compare,
   expectations,
   drivenStates,
@@ -36,6 +38,7 @@ import {
   type Measured,
   type Report,
   type Run,
+  variantArgs,
 } from './lib/visual.ts'
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..')
@@ -185,6 +188,8 @@ export async function runVisual(o: VisualOptions): Promise<Report> {
   const stale: string[] = []
   const report = await withStorybook(o.storybook, async (url) => {
     const ids = await storyIds(url, title)
+    // the subject story (docs/components/README.md, "Root"): Default, or the first by name
+    const id = ids.get('Default') ?? ids.get([...ids.keys()].sort()[0])
     const browser = await chromium.launch()
     const runs: Run[] = []
     try {
@@ -193,11 +198,12 @@ export async function runVisual(o: VisualOptions): Promise<Report> {
         const light = join(o.root, exportPath(o.name, variant, 'light'))
         if (existsSync(light) && sha(light) !== v.exports.png) stale.push(variant)
         for (const theme of THEMES) {
-          const id = ids.get(variant)
-          const run: Run = { variant, theme, story: id ?? '', pass: false, rows: [] }
+          const args = argsParam(variantArgs(map, v.props))
+          const story = id && args ? `${id}, args ${args}` : (id ?? '')
+          const run: Run = { variant, theme, story, pass: false, rows: [] }
           runs.push(run)
           if (!id) {
-            run.error = `${title} has no story exported as ${variant}`
+            run.error = `${title} has no Default story`
             continue
           }
           const list = expectations(o.name, v.root, map, tokenValue(theme))
@@ -206,7 +212,9 @@ export async function runVisual(o: VisualOptions): Promise<Report> {
           const page = await browser.newPage({ viewport: { width: 1280, height: 800 } })
           try {
             // embed mode renders the story without its play, which may close what it opened
-            await page.goto(`${url}/iframe.html?id=${id}&viewMode=story&embed=true`)
+            await page.goto(
+              `${url}/iframe.html?id=${id}&viewMode=story&embed=true&args=${encodeURIComponent(args)}`,
+            )
             await page.waitForSelector(rootSelector, { timeout: 15_000 })
             await page.evaluate(
               (t) => document.documentElement.setAttribute('data-theme', t),

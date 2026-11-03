@@ -2,12 +2,14 @@ import { PNG } from 'pngjs'
 import { describe, expect, it } from 'vitest'
 import type { CodeMap, Layer } from '../checks/penpot.ts'
 import {
+  argsParam,
   compare,
   expectations,
   drivenStates,
   pixelDiff,
   renderReport,
   sameCss,
+  variantArgs,
   type Measured,
 } from './visual.ts'
 
@@ -234,7 +236,7 @@ describe('drivenStates', () => {
     expect(drivenStates(states, { State: 'pressed' })).toEqual(['press'])
   })
 
-  it('drives nothing for rest or an attribute state, which the story sets', () => {
+  it('drives nothing for rest or an attribute state, which is an arg', () => {
     expect(drivenStates(states, { State: 'default' })).toEqual([])
     expect(drivenStates(states, { State: 'disabled' })).toEqual([])
   })
@@ -283,5 +285,31 @@ describe('renderReport', () => {
     expect(md).toContain('| `root` | width | 34px | 36px | **no** |')
     expect(md).toContain('Pixel difference: 1.25% ([diff](Brand.dark.diff.png))')
     expect(md).toContain('The light export of Brand does not match the read-back')
+  })
+})
+
+describe('variantArgs', () => {
+  const map: CodeMap = {
+    component: 'Swatch',
+    properties: {
+      tone: { prop: 'tone', values: { plain: 'plain', brand: 'brand-subtle' } },
+      State: { state: { default: null, hover: ':hover', 'read-only': '[data-read-only]' } },
+    },
+    layers: {},
+  }
+
+  it("gives each prop property's value from the code map, and true for an attribute state", () => {
+    expect(variantArgs(map, { tone: 'brand', State: 'hover' })).toEqual({ tone: 'brand-subtle' })
+    expect(variantArgs(map, { tone: 'plain', State: 'read-only' })).toEqual({
+      tone: 'plain',
+      readOnly: true,
+    })
+  })
+
+  it("writes them as Storybook's args URL parameter, a boolean marked with !", () => {
+    expect(argsParam({ tone: 'brand', disabled: true, step: 2 })).toBe(
+      'tone:brand;disabled:!true;step:2',
+    )
+    expect(argsParam({})).toBe('')
   })
 })

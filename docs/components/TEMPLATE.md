@@ -99,11 +99,13 @@ Rules for this component alone, numbered so the build and the review can cite th
 
 ## Stories
 
-One per variant and state the Penpot design shows, named as Penpot names it, and one row per story the stories file exports, under its export name (the `docs` gate holds the two to each other). The contract story renders the [subject story](README.md#root) with axe on, so its Shows cell says it is the subject and its args pass every rule alone.
+A few generic stories, by the contract's [Stories](README.md#stories): `Default`, the component alone with every prop a control; a showcase per axis a reader compares (`Variants`, `Sizes`, `States`), every value side by side in one story; and a story per feature a grid cannot show. Hover, pressed and focus are `play` steps, never stories. A behaviour test no reader needs to see is a test-only story, tagged `['!dev', '!autodocs']`, and its Shows cell starts "Test only". One row per story the stories file exports, under its export name (the `docs` gate holds the two to each other). The contract story renders the [subject story](README.md#root) with axe on, so its Shows cell says it is the subject and its args pass every rule alone.
 
-| Story           | Shows                       | `play` test                          |
-| --------------- | --------------------------- | ------------------------------------ |
-| `<Penpot name>` | `<variant, size and state>` | `<the behaviour it proves, or none>` |
+| Story      | Shows                                         | `play` test                          |
+| ---------- | --------------------------------------------- | ------------------------------------ |
+| `Default`  | `<the component alone; the subject story>`    | `<the behaviour it proves, or none>` |
+| `Variants` | `<each value of the axis, side by side>`      | `<what it checks in every cell>`     |
+| `<Name>`   | `<a feature, or "Test only: " and behaviour>` | `<the behaviour it proves>`          |
 
 ## Do and don't
 

@@ -238,8 +238,8 @@ const stagesOf = (p: Pipeline): readonly Stage[] =>
   p.deferred ? STAGES.filter((s) => s !== 'design' && s !== 'visual') : STAGES
 
 /**
- * The variant names of `<Name>`'s read-back, which are its exports' and stories' names; none for a
- * deferred design, whose stories follow the spec.
+ * The variant names of `<Name>`'s read-back, which are its exports' names; none for a deferred
+ * design.
  */
 function variantsOf(env: Env, name: string, deferred = false) {
   const design = deferred ? undefined : readBack(env, name)
@@ -826,12 +826,13 @@ function buildGate(p: Pipeline, env: Env): Verdict {
   const entry = registryEntry(env, p.component)
   if (!entry || entry.status === 'designing')
     problems.push(`${PACKAGE}/components.json has no ${p.component} entry past designing`)
-  if (exists(env, files.stories)) {
-    const exported = new Set(
-      [...read(env, files.stories).matchAll(/^export const (\w+)/gm)].map((m) => m[1]),
+  // the visual stage renders each variant of the read-back on the Default story, by its args
+  if (exists(env, files.stories) && variantsOf(env, p.component, !!p.deferred).length) {
+    const exported = [...read(env, files.stories).matchAll(/^export const (\w+)/gm)].map(
+      (m) => m[1],
     )
-    const missing = variantsOf(env, p.component, !!p.deferred).filter((v) => !exported.has(v))
-    if (missing.length) problems.push(`${files.stories} exports no story ${missing.join(', ')}`)
+    if (!exported.includes('Default'))
+      problems.push(`${files.stories} exports no Default story for the visual stage to render`)
   }
   if (problems.length) return { outcome: 'failed', failing: problems.join('; ') }
   const check = env.run('npm run check')

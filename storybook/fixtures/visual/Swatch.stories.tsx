@@ -1,6 +1,5 @@
-// A made-up component whose stories scripts/visual.test.ts measures: one story per variant of the
-// fixture read-back, scripts/checks/fixtures/visual/penpot/swatch.json, named as the visual stage
-// names them.
+// A made-up component whose Default story scripts/visual.test.ts measures, once per variant of the
+// fixture read-back, scripts/checks/fixtures/visual/penpot/swatch.json, with that variant's args.
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import '../../../packages/perron/tokens/generated/tokens.css'
 import './Swatch.css'
@@ -17,8 +16,4 @@ export default { title: 'Components/Swatch', component: Swatch } satisfies Meta<
 
 type Story = StoryObj<typeof Swatch>
 
-export const PlainDefault: Story = { args: { tone: 'plain' } }
-export const PlainHover: Story = { args: { tone: 'plain' } }
-export const PlainFocus: Story = { args: { tone: 'plain' } }
-export const PlainPressed: Story = { args: { tone: 'plain' } }
-export const BrandDefault: Story = { args: { tone: 'brand' } }
+export const Default: Story = { args: { tone: 'plain' } }

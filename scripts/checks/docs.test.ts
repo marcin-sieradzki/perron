@@ -1,7 +1,7 @@
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
-import docs, { pressed } from './docs.ts'
+import docs, { pressed, shownStories } from './docs.ts'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const fixture = (name: string) => join(here, 'fixtures/docs', name)
@@ -142,6 +142,17 @@ describe('docs', () => {
           "Popup's docs page would show the type of onOpen with Details, a type its file keeps to itself, which the reader can't look up: write the type it stands for, by Base UI's or Perron's public name",
       },
     ])
+  })
+
+  it('counts the stories a file shows in the sidebar, leaving out those tagged !dev', () => {
+    const stories = [
+      'export const Default: Story = { args: {} }',
+      'export const Variants: Story = {\n  render: () => null,\n}',
+      "export const Keyboard: Story = {\n  tags: ['!dev', '!autodocs'],\n  play: async () => {},\n}",
+      'export const Typing: Story = { tags: ["!autodocs", "!dev"] }',
+      "export const Danish: Story = { tags: ['autodocs'] }",
+    ].join('\n')
+    expect(shownStories(stories)).toEqual(['Default', 'Variants', 'Danish'])
   })
 
   // the docgen of every component in the repo, through one compiler program (under a second on a
