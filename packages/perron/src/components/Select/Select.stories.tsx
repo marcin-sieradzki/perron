@@ -1,10 +1,10 @@
-// Select's stories: the variants of the deferred design, Default, Hover, Focus, Open, Disabled and
-// Invalid, and the stories of content and behaviour the spec's Stories table names, each in a
-// 320 px container, with play tests for the keys, the names, the forms and the long words
-// (docs/components/select.md). Hover and focus render at rest; their plays drive them.
+// Select's stories: the field alone with every prop a control, its states side by side, the list
+// open, its groups, a hidden label and long words, then the behaviour tests
+// (docs/components/select.md). Hover and focus are play steps, not stories.
 import { useState } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { showcase } from '../../testing/Showcase.tsx'
 import { expect, fireEvent, fn, screen, userEvent, waitFor, within } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import type { Locale } from '../../locale/index.ts'
@@ -122,10 +122,55 @@ const reached = async (name: string) => {
   return row
 }
 
+/** The field with `items` and a button that takes the next of `drops` out of them, for the reset
+ * Base UI reports when the chosen option leaves the list. */
+function Dropping({ drops, ...props }: SelectProps & { drops: string[] }) {
+  const [dropped, setDropped] = useState(0)
+  const gone = drops.slice(0, dropped)
+  return (
+    <>
+      <Select {...props} items={ITEMS.filter((item) => !gone.includes(item.value))} />
+      <button type="button" onClick={() => setDropped(dropped + 1)}>
+        Take out
+      </button>
+    </>
+  )
+}
+
+const LINES: SelectGroup[] = [
+  {
+    label: 'Metro',
+    items: ['M1', 'M2', 'M3', 'M4'].map((line) => ({ value: `metro-${line}`, label: line })),
+  },
+  {
+    label: 'S-tog',
+    items: ['A', 'B', 'C', 'E', 'F', 'H'].map((line) => ({ value: `s-tog-${line}`, label: line })),
+  },
+]
+
+/** Renders `args` in `locale` on the server, as the owned-strings check reads a render. */
+const markup = (args: SelectProps, locale: Locale) =>
+  renderToStaticMarkup(
+    <PerronProvider locale={locale}>
+      <Select {...args} />
+    </PerronProvider>,
+  )
+
+const COMPOUND = 'Hovedstadsområdetsbuslinjestoppestedsoversigten'
+const LONG_GROUPS: SelectGroup[] = [
+  {
+    label: `Busser i ${COMPOUND}`,
+    items: [
+      { value: 'long', label: `Nør${COMPOUND}` },
+      { value: 'bus', label: 'Bus' },
+    ],
+  },
+]
+
 /** The subject story, State default: the label, the trigger with "Metro" chosen, the list closed.
  * The contract story Root renders these args without this file's meta, and so without its
  * placeholder exception, so they choose a value and no placeholder renders (CR-16). */
-export const Default: Story = {
+const _default = {
   args: { defaultValue: 'metro' },
   play: async ({ args, canvasElement, step }) => {
     const trigger = triggerIn(canvasElement)
@@ -157,10 +202,10 @@ export const Default: Story = {
       await expect(trigger).not.toHaveFocus()
     })
   },
-}
+} satisfies Story
 
 /** State hover: the trigger, at rest at first render; the play reads the hover rule. */
-export const Hover: Story = {
+const hover = {
   play: async ({ canvasElement }) => {
     const trigger = triggerIn(canvasElement)
     const image = onHover(trigger, 'background-image')
@@ -171,10 +216,10 @@ export const Hover: Story = {
     )
     await expect(getComputedStyle(trigger).cursor).toBe('pointer')
   },
-}
+} satisfies Story
 
 /** State focus: the trigger, at rest at first render; Tab gives it perron.css's ring. */
-export const Focus: Story = {
+const focus = {
   play: async ({ canvasElement }) => {
     const trigger = triggerIn(canvasElement)
     await userEvent.tab()
@@ -188,6 +233,156 @@ export const Focus: Story = {
     await userEvent.tab({ shift: true })
     await expect(trigger).not.toHaveFocus()
   },
+} satisfies Story
+
+/** State disabled: "Metro" chosen, the trigger's words and chevron in `color.text.tertiary`. */
+const disabled = {
+  args: { disabled: true, defaultValue: 'metro' },
+  parameters: {
+    // a disabled field's words are color.text.tertiary, a miss Accessibility lists by name
+    // (docs/foundations/accessibility.md) and WCAG 1.4.3 exempts for an inactive control, so
+    // axe's contrast rule is off for this story alone (CR-16)
+    a11y: { options: { rules: { 'color-contrast': { enabled: false } } } },
+  },
+  play: async ({ args, canvasElement }) => {
+    const trigger = triggerIn(canvasElement)
+    await expect(trigger).toBeDisabled()
+    await expect(part(canvasElement, 'Select')).toHaveAttribute('data-disabled')
+    await userEvent.tab()
+    await expect(trigger).not.toHaveFocus()
+    await userEvent.click(trigger, { pointerEventsCheck: 0 })
+    await expect(screen.queryByRole('listbox')).toBeNull()
+    await expect(args.onOpen).not.toHaveBeenCalled()
+    await expect(args.onChange).not.toHaveBeenCalled()
+    const tertiary = colour('--perron-color-text-tertiary')
+    await expect(getComputedStyle(trigger).color).toBe(tertiary)
+    await expect(getComputedStyle(part(canvasElement, 'Select-icon')!).color).toBe(tertiary)
+    await expect(getComputedStyle(trigger).cursor).toBe('default')
+    await userEvent.tab({ shift: true })
+  },
+} satisfies Story
+
+/** State invalid: the error under the trigger, the trigger's edge in `color.status.danger`. */
+const invalid = {
+  args: { error: 'Choose a transport mode' },
+  play: async ({ canvasElement }) => {
+    const trigger = triggerIn(canvasElement)
+    const error = part(canvasElement, 'Field-error')!
+    await expect(trigger).toHaveAttribute('aria-invalid', 'true')
+    await expect(trigger).toHaveAttribute('data-invalid')
+    await waitFor(() => expect(trigger.getAttribute('aria-describedby')).toContain(error.id))
+    await expect(trigger).toHaveAccessibleDescription('Choose a transport mode')
+    await expect(getComputedStyle(error).color).toBe(colour('--perron-color-text-danger'))
+    await expect(getComputedStyle(trigger).borderTopColor).toBe(
+      colour('--perron-color-status-danger'),
+    )
+  },
+} satisfies Story
+
+/** `readOnly`, "Metro" chosen: the list opens, but the value can't change. */
+const readOnly = {
+  args: { readOnly: true, defaultValue: 'metro' },
+  play: async ({ args, canvasElement }) => {
+    const trigger = triggerIn(canvasElement)
+    await expect(trigger).toHaveAttribute('aria-readonly', 'true')
+    // read-only takes no hover and the default cursor (CR-9)
+    await expect(getComputedStyle(trigger).cursor).toBe('default')
+    await expect(onHover(trigger, 'background-image')).toBe('')
+    await userEvent.tab()
+    await expect(trigger).toHaveFocus()
+    await userEvent.keyboard('{Enter}')
+    await waitFor(() =>
+      expect(args.onOpen).toHaveBeenLastCalledWith(
+        expect.anything(),
+        expect.objectContaining({ reason: 'trigger-press' }),
+      ),
+    )
+    await reached('Metro')
+    await expect(await listbox()).toHaveAttribute('aria-readonly', 'true')
+    // nor do its rows, chosen or not, take hover or pressed (CR-17)
+    for (const name of ['Metro', 'S-tog']) {
+      const row = await option(name)
+      await expect(getComputedStyle(row).cursor).toBe('default')
+      await expect(stateFill(row)).toBe('')
+      await expect(stateFill(row, ':active')).toBe('')
+      await expect(stateLayer(row, ':hover')).toBe('')
+      await expect(stateLayer(row, ':active')).toBe('')
+    }
+    await userEvent.keyboard('{ArrowDown}')
+    await reached('S-tog')
+    await userEvent.keyboard('{Enter}')
+    await expect(args.onChange).not.toHaveBeenCalled()
+    await expect(part(canvasElement, 'Select-value')).toHaveTextContent(/^Metro$/)
+    await expect(await listbox()).toBeInTheDocument()
+    await userEvent.keyboard('{Escape}')
+    await closed(LIST)
+    await waitFor(() => expect(trigger).toHaveFocus())
+    // Shift+Tab in the open list closes it and returns focus, as Tab does
+    await userEvent.keyboard('{ArrowDown}')
+    await reached('Metro')
+    await userEvent.tab({ shift: true })
+    await expect(args.onClose).toHaveBeenLastCalledWith(
+      expect.anything(),
+      'focus-out',
+      expect.anything(),
+    )
+    await closed(LIST)
+    await waitFor(() => expect(trigger).toHaveFocus())
+    await userEvent.tab({ shift: true })
+    await expect(trigger).not.toHaveFocus()
+  },
+} satisfies Story
+
+/** `optional`: the label reads "Transport mode (optional)". */
+const optional = {
+  args: { optional: true },
+  play: async ({ args, canvasElement, step }) => {
+    await step('the mark is part of the trigger’s name', async () => {
+      await expect(triggerIn(canvasElement, 'Transport mode (optional)')).toBeInTheDocument()
+    })
+    await step('optionalLabel replaces the mark', async () => {
+      await mounted(canvasElement, <Select {...args} optionalLabel="(if any)" />, async (host) => {
+        await waitFor(() => expect(triggerIn(host, 'Transport mode (if any)')).toBeInTheDocument())
+      })
+    })
+    await step('its render says only the dictionary’s and the caller’s words (CR-15)', async () => {
+      for (const locale of ['en', 'da', 'sv', 'nb'] as const)
+        expectOwnedStrings(markup(args, locale), locale, CALLER)
+    })
+  },
+} satisfies Story
+
+/**
+ * The subject story, every prop a control: the label, the trigger with "Metro" chosen, the list
+ * closed. Its play reads the trigger's hover rule and gives it focus and the ring.
+ */
+export const Default: Story = {
+  args: { defaultValue: 'metro' },
+  play: async (context) => {
+    await _default.play(context)
+    await hover.play(context)
+    await focus.play(context)
+  },
+}
+
+/** Each state a prop reaches, one field apiece: optional, disabled, read-only and invalid. */
+export const States: Story = {
+  parameters: {
+    docs: { story: { inline: false, height: '560px' } },
+    // a disabled field's words are color.text.tertiary, a miss Accessibility lists by name
+    // (docs/foundations/accessibility.md) and WCAG 1.4.3 exempts for an inactive control, so axe
+    // leaves the disabled field out
+    a11y: { context: { include: ['body'], exclude: ['[data-row="Disabled"]'] } },
+  },
+  ...showcase<SelectProps>(
+    [
+      { label: 'Optional', story: optional },
+      { label: 'Disabled', story: disabled },
+      { label: 'Read-only', story: readOnly },
+      { label: 'Invalid', story: invalid },
+    ],
+    (args) => <Select {...args} />,
+  ),
 }
 
 /** State open: "S-tog" chosen and the list open, its row highlighted, with its fill and tick. */
@@ -345,67 +540,130 @@ export const Open: Story = {
   },
 }
 
-/** State disabled: "Metro" chosen, the trigger's words and chevron in `color.text.tertiary`. */
-export const Disabled: Story = {
-  args: { disabled: true, defaultValue: 'metro' },
-  parameters: {
-    // a disabled field's words are color.text.tertiary, a miss Accessibility lists by name
-    // (docs/foundations/accessibility.md) and WCAG 1.4.3 exempts for an inactive control, so
-    // axe's contrast rule is off for this story alone (CR-16)
-    a11y: { options: { rules: { 'color-contrast': { enabled: false } } } },
+/** The label "Line", the list open, with the groups "Metro" and "S-tog" and a hairline between. */
+export const Groups: Story = {
+  args: { label: 'Line', placeholder: 'Choose a line', items: LINES, defaultOpen: true },
+  play: async ({ args, canvasElement, step }) => {
+    const trigger = triggerIn(canvasElement, 'Line')
+    const list = await listbox()
+    await step('two groups, named by their labels, with one separator between', async () => {
+      const groups = within(list).getAllByRole('group', { hidden: true })
+      await expect(groups).toHaveLength(2)
+      await expect(groups[0]).toHaveAccessibleName('Metro')
+      await expect(groups[1]).toHaveAccessibleName('S-tog')
+      for (const label of list.querySelectorAll('.pn-Select-groupLabel'))
+        await expect(label).toHaveAttribute('aria-hidden', 'true')
+      const separators = list.querySelectorAll('.pn-Select-separator')
+      await expect(separators).toHaveLength(1)
+      await expect(separators[0].previousElementSibling).toBe(groups[0])
+      await expect(separators[0].nextElementSibling).toBe(groups[1])
+      expectOwnedStrings((await popup()).outerHTML, 'en', [
+        'Line',
+        'Choose a line',
+        ...LINES.flatMap((group) => [group.label, ...group.items.map((item) => item.label)]),
+      ])
+    })
+    await step('End moves focus to "H", Home back to "M1", where ArrowUp stops', async () => {
+      await focusIn()
+      await userEvent.keyboard('{End}')
+      await reached('H')
+      await userEvent.keyboard('{Home}')
+      await reached('M1')
+      await userEvent.keyboard('{ArrowUp}')
+      await frames(2)
+      await reached('M1')
+    })
+    await step('the pointer on "C" moves the highlight and focus to it', async () => {
+      const row = await option('C')
+      await expect(onHover(row, 'background-color')).toBe('var(--perron-color-surface-hover)')
+      await userEvent.hover(row)
+      await reached('C')
+      await expect(await option('M1')).not.toHaveAttribute('data-highlighted')
+    })
+    await step('Esc closes the list, keeping the value, and returns focus', async () => {
+      await userEvent.keyboard('{Escape}')
+      await expect(args.onClose).toHaveBeenLastCalledWith(
+        expect.anything(),
+        'escape-key',
+        expect.anything(),
+      )
+      await closed(LIST)
+      await expect(args.onChange).not.toHaveBeenCalled()
+      await expect(part(canvasElement, 'Select-value')).toHaveAttribute('data-placeholder')
+      await waitFor(() => expect(trigger).toHaveFocus())
+      trigger.blur()
+    })
   },
+}
+
+/** `hiddenLabel`: the trigger alone, no label in view, still named "Transport mode". */
+export const HiddenLabel: Story = {
+  args: { hiddenLabel: true },
   play: async ({ args, canvasElement }) => {
+    const label = part(canvasElement, 'Field-label')!
+    // the VisuallyHidden part, through Field: a span the eye never sees
+    await expect(label.tagName).toBe('SPAN')
+    await expect(label.getBoundingClientRect().width).toBeLessThanOrEqual(1)
     const trigger = triggerIn(canvasElement)
-    await expect(trigger).toBeDisabled()
-    await expect(part(canvasElement, 'Select')).toHaveAttribute('data-disabled')
-    await userEvent.tab()
-    await expect(trigger).not.toHaveFocus()
-    await userEvent.click(trigger, { pointerEventsCheck: 0 })
-    await expect(screen.queryByRole('listbox')).toBeNull()
-    await expect(args.onOpen).not.toHaveBeenCalled()
-    await expect(args.onChange).not.toHaveBeenCalled()
-    const tertiary = colour('--perron-color-text-tertiary')
-    await expect(getComputedStyle(trigger).color).toBe(tertiary)
-    await expect(getComputedStyle(part(canvasElement, 'Select-icon')!).color).toBe(tertiary)
-    await expect(getComputedStyle(trigger).cursor).toBe('default')
-    await userEvent.tab({ shift: true })
-  },
-}
-
-/** State invalid: the error under the trigger, the trigger's edge in `color.status.danger`. */
-export const Invalid: Story = {
-  args: { error: 'Choose a transport mode' },
-  play: async ({ canvasElement }) => {
-    const trigger = triggerIn(canvasElement)
-    const error = part(canvasElement, 'Field-error')!
-    await expect(trigger).toHaveAttribute('aria-invalid', 'true')
-    await expect(trigger).toHaveAttribute('data-invalid')
-    await waitFor(() => expect(trigger.getAttribute('aria-describedby')).toContain(error.id))
-    await expect(trigger).toHaveAccessibleDescription('Choose a transport mode')
-    await expect(getComputedStyle(error).color).toBe(colour('--perron-color-text-danger'))
-    await expect(getComputedStyle(trigger).borderTopColor).toBe(
-      colour('--perron-color-status-danger'),
+    trigger.focus()
+    // ArrowDown with nothing chosen opens the list on the first option
+    await userEvent.keyboard('{ArrowDown}')
+    await expect(args.onOpen).toHaveBeenLastCalledWith(
+      expect.anything(),
+      expect.objectContaining({ reason: 'list-navigation' }),
     )
+    await expect(await listbox()).toHaveAccessibleName(LABEL)
+    await reached('Metro')
+    await userEvent.keyboard('{Escape}')
+    await closed(LIST)
+    trigger.blur()
   },
 }
 
-/** The field with `items` and a button that takes the next of `drops` out of them, for the reset
- * Base UI reports when the chosen option leaves the list. */
-function Dropping({ drops, ...props }: SelectProps & { drops: string[] }) {
-  const [dropped, setDropped] = useState(0)
-  const gone = drops.slice(0, dropped)
-  return (
-    <>
-      <Select {...props} items={ITEMS.filter((item) => !gone.includes(item.value))} />
-      <button type="button" onClick={() => setDropped(dropped + 1)}>
-        Take out
-      </button>
-    </>
-  )
+/** Danish compounds longer than their line in the label, an option and a group label. */
+export const LongWords: Story = {
+  args: {
+    label: `Transport i ${COMPOUND}`,
+    items: LONG_GROUPS,
+    defaultValue: 'long',
+    defaultOpen: true,
+  },
+  play: async ({ canvasElement }) => {
+    const trigger = triggerIn(canvasElement, `Transport i ${COMPOUND}`)
+    const panel = await popup()
+    expectOwnedStrings(panel.outerHTML, 'en', [
+      `Transport i ${COMPOUND}`,
+      PLACEHOLDER,
+      ...LONG_GROUPS.flatMap((group) => [group.label, ...group.items.map((item) => item.label)]),
+    ])
+    const text = panel.querySelector('.pn-Select-itemText')!
+    const groupLabel = panel.querySelector('.pn-Select-groupLabel')!
+    for (const element of [text, groupLabel]) {
+      await expect(lines(element)).toBeGreaterThan(1.5)
+      await expect(element.getBoundingClientRect().right).toBeLessThanOrEqual(
+        panel.getBoundingClientRect().right,
+      )
+    }
+    await expect(panel.getBoundingClientRect().width).toBeLessThanOrEqual(
+      trigger.getBoundingClientRect().width + 0.5,
+    )
+    const list = panel.querySelector('.pn-Select-list')!
+    await expect(list.scrollWidth).toBeLessThanOrEqual(list.clientWidth)
+    const value = part(canvasElement, 'Select-value')!
+    await expect(lines(value)).toBeLessThan(1.5)
+    await expect(value.scrollWidth).toBeGreaterThan(value.clientWidth)
+    await expect(getComputedStyle(value).textOverflow).toBe('ellipsis')
+    await expect(trigger).toHaveTextContent(`Nør${COMPOUND}`)
+    await expect(trigger.scrollWidth).toBeLessThanOrEqual(trigger.clientWidth)
+    await userEvent.keyboard('{Escape}')
+    await closed(LIST)
+    trigger.blur()
+  },
 }
 
 /** "Metro" chosen by `defaultValue`. */
 export const Filled: Story = {
+  tags: ['!dev', '!autodocs'],
   args: { defaultValue: 'metro' },
   play: async ({ args, canvasElement, step }) => {
     const trigger = triggerIn(canvasElement)
@@ -469,75 +727,9 @@ export const Filled: Story = {
   },
 }
 
-const LINES: SelectGroup[] = [
-  {
-    label: 'Metro',
-    items: ['M1', 'M2', 'M3', 'M4'].map((line) => ({ value: `metro-${line}`, label: line })),
-  },
-  {
-    label: 'S-tog',
-    items: ['A', 'B', 'C', 'E', 'F', 'H'].map((line) => ({ value: `s-tog-${line}`, label: line })),
-  },
-]
-
-/** The label "Line", the list open, with the groups "Metro" and "S-tog" and a hairline between. */
-export const Groups: Story = {
-  args: { label: 'Line', placeholder: 'Choose a line', items: LINES, defaultOpen: true },
-  play: async ({ args, canvasElement, step }) => {
-    const trigger = triggerIn(canvasElement, 'Line')
-    const list = await listbox()
-    await step('two groups, named by their labels, with one separator between', async () => {
-      const groups = within(list).getAllByRole('group', { hidden: true })
-      await expect(groups).toHaveLength(2)
-      await expect(groups[0]).toHaveAccessibleName('Metro')
-      await expect(groups[1]).toHaveAccessibleName('S-tog')
-      for (const label of list.querySelectorAll('.pn-Select-groupLabel'))
-        await expect(label).toHaveAttribute('aria-hidden', 'true')
-      const separators = list.querySelectorAll('.pn-Select-separator')
-      await expect(separators).toHaveLength(1)
-      await expect(separators[0].previousElementSibling).toBe(groups[0])
-      await expect(separators[0].nextElementSibling).toBe(groups[1])
-      expectOwnedStrings((await popup()).outerHTML, 'en', [
-        'Line',
-        'Choose a line',
-        ...LINES.flatMap((group) => [group.label, ...group.items.map((item) => item.label)]),
-      ])
-    })
-    await step('End moves focus to "H", Home back to "M1", where ArrowUp stops', async () => {
-      await focusIn()
-      await userEvent.keyboard('{End}')
-      await reached('H')
-      await userEvent.keyboard('{Home}')
-      await reached('M1')
-      await userEvent.keyboard('{ArrowUp}')
-      await frames(2)
-      await reached('M1')
-    })
-    await step('the pointer on "C" moves the highlight and focus to it', async () => {
-      const row = await option('C')
-      await expect(onHover(row, 'background-color')).toBe('var(--perron-color-surface-hover)')
-      await userEvent.hover(row)
-      await reached('C')
-      await expect(await option('M1')).not.toHaveAttribute('data-highlighted')
-    })
-    await step('Esc closes the list, keeping the value, and returns focus', async () => {
-      await userEvent.keyboard('{Escape}')
-      await expect(args.onClose).toHaveBeenLastCalledWith(
-        expect.anything(),
-        'escape-key',
-        expect.anything(),
-      )
-      await closed(LIST)
-      await expect(args.onChange).not.toHaveBeenCalled()
-      await expect(part(canvasElement, 'Select-value')).toHaveAttribute('data-placeholder')
-      await waitFor(() => expect(trigger).toHaveFocus())
-      trigger.blur()
-    })
-  },
-}
-
 /** The list open, "Harbour bus" given `disabled`. */
 export const DisabledItem: Story = {
+  tags: ['!dev', '!autodocs'],
   args: {
     items: ITEMS.map((item) => (item.value === 'harbour-bus' ? { ...item, disabled: true } : item)),
     defaultOpen: true,
@@ -590,62 +782,9 @@ export const DisabledItem: Story = {
   },
 }
 
-/** `readOnly`, "Metro" chosen: the list opens, but the value can't change. */
-export const ReadOnly: Story = {
-  args: { readOnly: true, defaultValue: 'metro' },
-  play: async ({ args, canvasElement }) => {
-    const trigger = triggerIn(canvasElement)
-    await expect(trigger).toHaveAttribute('aria-readonly', 'true')
-    // read-only takes no hover and the default cursor (CR-9)
-    await expect(getComputedStyle(trigger).cursor).toBe('default')
-    await expect(onHover(trigger, 'background-image')).toBe('')
-    await userEvent.tab()
-    await expect(trigger).toHaveFocus()
-    await userEvent.keyboard('{Enter}')
-    await waitFor(() =>
-      expect(args.onOpen).toHaveBeenLastCalledWith(
-        expect.anything(),
-        expect.objectContaining({ reason: 'trigger-press' }),
-      ),
-    )
-    await reached('Metro')
-    await expect(await listbox()).toHaveAttribute('aria-readonly', 'true')
-    // nor do its rows, chosen or not, take hover or pressed (CR-17)
-    for (const name of ['Metro', 'S-tog']) {
-      const row = await option(name)
-      await expect(getComputedStyle(row).cursor).toBe('default')
-      await expect(stateFill(row)).toBe('')
-      await expect(stateFill(row, ':active')).toBe('')
-      await expect(stateLayer(row, ':hover')).toBe('')
-      await expect(stateLayer(row, ':active')).toBe('')
-    }
-    await userEvent.keyboard('{ArrowDown}')
-    await reached('S-tog')
-    await userEvent.keyboard('{Enter}')
-    await expect(args.onChange).not.toHaveBeenCalled()
-    await expect(part(canvasElement, 'Select-value')).toHaveTextContent(/^Metro$/)
-    await expect(await listbox()).toBeInTheDocument()
-    await userEvent.keyboard('{Escape}')
-    await closed(LIST)
-    await waitFor(() => expect(trigger).toHaveFocus())
-    // Shift+Tab in the open list closes it and returns focus, as Tab does
-    await userEvent.keyboard('{ArrowDown}')
-    await reached('Metro')
-    await userEvent.tab({ shift: true })
-    await expect(args.onClose).toHaveBeenLastCalledWith(
-      expect.anything(),
-      'focus-out',
-      expect.anything(),
-    )
-    await closed(LIST)
-    await waitFor(() => expect(trigger).toHaveFocus())
-    await userEvent.tab({ shift: true })
-    await expect(trigger).not.toHaveFocus()
-  },
-}
-
 /** `value` and `open` held in the story's state, the list closed at first. */
 export const Controlled: Story = {
+  tags: ['!dev', '!autodocs'],
   render: function Render(args: SelectProps) {
     const [value, setValue] = useState<string | null>(null)
     const [open, setOpen] = useState(false)
@@ -812,6 +951,7 @@ export const Controlled: Story = {
 
 /** A `validate` that asks for a choice, checked on blur; valid at first. */
 export const Validation: Story = {
+  tags: ['!dev', '!autodocs'],
   args: {
     validationMode: 'onBlur',
     validate: (value) => (value ? null : 'Choose a transport mode'),
@@ -868,108 +1008,5 @@ export const Validation: Story = {
         await expect(new FormData(host.querySelector('form')!).get('mode')).toBe('bus')
       })
     })
-  },
-}
-
-/** `hiddenLabel`: the trigger alone, no label in view, still named "Transport mode". */
-export const HiddenLabel: Story = {
-  args: { hiddenLabel: true },
-  play: async ({ args, canvasElement }) => {
-    const label = part(canvasElement, 'Field-label')!
-    // the VisuallyHidden part, through Field: a span the eye never sees
-    await expect(label.tagName).toBe('SPAN')
-    await expect(label.getBoundingClientRect().width).toBeLessThanOrEqual(1)
-    const trigger = triggerIn(canvasElement)
-    trigger.focus()
-    // ArrowDown with nothing chosen opens the list on the first option
-    await userEvent.keyboard('{ArrowDown}')
-    await expect(args.onOpen).toHaveBeenLastCalledWith(
-      expect.anything(),
-      expect.objectContaining({ reason: 'list-navigation' }),
-    )
-    await expect(await listbox()).toHaveAccessibleName(LABEL)
-    await reached('Metro')
-    await userEvent.keyboard('{Escape}')
-    await closed(LIST)
-    trigger.blur()
-  },
-}
-
-/** Renders `args` in `locale` on the server, as the owned-strings check reads a render. */
-const markup = (args: SelectProps, locale: Locale) =>
-  renderToStaticMarkup(
-    <PerronProvider locale={locale}>
-      <Select {...args} />
-    </PerronProvider>,
-  )
-
-/** `optional`: the label reads "Transport mode (optional)". */
-export const Optional: Story = {
-  args: { optional: true },
-  play: async ({ args, canvasElement, step }) => {
-    await step('the mark is part of the trigger’s name', async () => {
-      await expect(triggerIn(canvasElement, 'Transport mode (optional)')).toBeInTheDocument()
-    })
-    await step('optionalLabel replaces the mark', async () => {
-      await mounted(canvasElement, <Select {...args} optionalLabel="(if any)" />, async (host) => {
-        await waitFor(() => expect(triggerIn(host, 'Transport mode (if any)')).toBeInTheDocument())
-      })
-    })
-    await step('its render says only the dictionary’s and the caller’s words (CR-15)', async () => {
-      for (const locale of ['en', 'da', 'sv', 'nb'] as const)
-        expectOwnedStrings(markup(args, locale), locale, CALLER)
-    })
-  },
-}
-
-const COMPOUND = 'Hovedstadsområdetsbuslinjestoppestedsoversigten'
-const LONG_GROUPS: SelectGroup[] = [
-  {
-    label: `Busser i ${COMPOUND}`,
-    items: [
-      { value: 'long', label: `Nør${COMPOUND}` },
-      { value: 'bus', label: 'Bus' },
-    ],
-  },
-]
-
-/** Danish compounds longer than their line in the label, an option and a group label. */
-export const LongWords: Story = {
-  args: {
-    label: `Transport i ${COMPOUND}`,
-    items: LONG_GROUPS,
-    defaultValue: 'long',
-    defaultOpen: true,
-  },
-  play: async ({ canvasElement }) => {
-    const trigger = triggerIn(canvasElement, `Transport i ${COMPOUND}`)
-    const panel = await popup()
-    expectOwnedStrings(panel.outerHTML, 'en', [
-      `Transport i ${COMPOUND}`,
-      PLACEHOLDER,
-      ...LONG_GROUPS.flatMap((group) => [group.label, ...group.items.map((item) => item.label)]),
-    ])
-    const text = panel.querySelector('.pn-Select-itemText')!
-    const groupLabel = panel.querySelector('.pn-Select-groupLabel')!
-    for (const element of [text, groupLabel]) {
-      await expect(lines(element)).toBeGreaterThan(1.5)
-      await expect(element.getBoundingClientRect().right).toBeLessThanOrEqual(
-        panel.getBoundingClientRect().right,
-      )
-    }
-    await expect(panel.getBoundingClientRect().width).toBeLessThanOrEqual(
-      trigger.getBoundingClientRect().width + 0.5,
-    )
-    const list = panel.querySelector('.pn-Select-list')!
-    await expect(list.scrollWidth).toBeLessThanOrEqual(list.clientWidth)
-    const value = part(canvasElement, 'Select-value')!
-    await expect(lines(value)).toBeLessThan(1.5)
-    await expect(value.scrollWidth).toBeGreaterThan(value.clientWidth)
-    await expect(getComputedStyle(value).textOverflow).toBe('ellipsis')
-    await expect(trigger).toHaveTextContent(`Nør${COMPOUND}`)
-    await expect(trigger.scrollWidth).toBeLessThanOrEqual(trigger.clientWidth)
-    await userEvent.keyboard('{Escape}')
-    await closed(LIST)
-    trigger.blur()
   },
 }
