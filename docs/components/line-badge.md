@@ -117,35 +117,12 @@ No owned strings: the label is the caller's `children`, and the badge announces 
 
 ## Stories
 
-One per variant the deferred design will show: the Penpot properties `line` and `size`, in that order, with no `State` property, since the badge has one state. The design has these 24 variants, every `line` at both sizes, each story named `<Line><Size>` and showing that line's short name as `children`, with the metro stories titled "M1 Medium" to "M4 Large" as riders write the line. One more story, `Default`, comes first and gives the contract story its args: M2 at `medium`, a pair that meets 4.5:1, so axe's `color-contrast` rule stays on there.
+The deferred design's Penpot properties are `line` and `size`, in that order, with no `State` property, since the badge has one state; the visual stage renders each of its variants on `Default`. Each badge shows its line's short name as `children`. The official pairs of M1, M4, A, B and C miss 4.5:1 and stay exact by rule (CR-4, CR-6), so axe leaves those badges out of `Lines`, and every other badge keeps every rule.
 
-| Story            | Shows                                | `play` test |
-| ---------------- | ------------------------------------ | ----------- |
-| `Default`        | `line` m2, `size` medium, "M2"       | none        |
-| `M1Medium`       | `line` m1, `size` medium, "M1"       | none        |
-| `M2Medium`       | `line` m2, `size` medium, "M2"       | none        |
-| `M3Medium`       | `line` m3, `size` medium, "M3"       | none        |
-| `M4Medium`       | `line` m4, `size` medium, "M4"       | none        |
-| `AMedium`        | `line` a, `size` medium, "A"         | none        |
-| `BMedium`        | `line` b, `size` medium, "B"         | none        |
-| `CMedium`        | `line` c, `size` medium, "C"         | none        |
-| `EMedium`        | `line` e, `size` medium, "E"         | none        |
-| `FMedium`        | `line` f, `size` medium, "F"         | none        |
-| `HMedium`        | `line` h, `size` medium, "H"         | none        |
-| `BusMedium`      | `line` bus, `size` medium, "5C"      | none        |
-| `RegionalMedium` | `line` regional, `size` medium, "RE" | none        |
-| `M1Large`        | `line` m1, `size` large, "M1"        | none        |
-| `M2Large`        | `line` m2, `size` large, "M2"        | none        |
-| `M3Large`        | `line` m3, `size` large, "M3"        | none        |
-| `M4Large`        | `line` m4, `size` large, "M4"        | none        |
-| `ALarge`         | `line` a, `size` large, "A"          | none        |
-| `BLarge`         | `line` b, `size` large, "B"          | none        |
-| `CLarge`         | `line` c, `size` large, "C"          | none        |
-| `ELarge`         | `line` e, `size` large, "E"          | none        |
-| `FLarge`         | `line` f, `size` large, "F"          | none        |
-| `HLarge`         | `line` h, `size` large, "H"          | none        |
-| `BusLarge`       | `line` bus, `size` large, "5C"       | none        |
-| `RegionalLarge`  | `line` regional, `size` large, "RE"  | none        |
+| Story     | Shows                                                                                            | `play` test |
+| --------- | ------------------------------------------------------------------------------------------------ | ----------- |
+| `Default` | The subject story: `line` m2, `size` medium, "M2", a pair that meets 4.5:1, every prop a control | none        |
+| `Lines`   | Every `line` by `size`, medium and large, each with its short name                               | none        |
 
 ## Do and don't
 
