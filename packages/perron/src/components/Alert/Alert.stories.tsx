@@ -1,10 +1,8 @@
-// Alert's stories: one per row of the spec's Stories table (docs/components/alert.md), with the
-// design deferred, named as the `color` values, and their play tests. The close button's hover and
-// pressed render at rest; the visual stage drives them, and the Danger play reads the rules they
-// trigger.
+// Alert's stories: the alert alone with every prop a control, then each intent side by side.
 import { useRef, useState } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { showcase } from '../../testing/Showcase.tsx'
 import { expect, fn, mocked, userEvent, waitFor, within } from 'storybook/test'
 import calendar from '../../../icons/calendar.svg?raw'
 import { PerronProvider } from '../../PerronProvider.tsx'
@@ -32,6 +30,8 @@ const meta = {
 export default meta
 
 type Story = StoryObj<typeof meta>
+/** The args a story renders with: the meta's and its own. */
+type StoryArgs = Parameters<NonNullable<Story['render']>>[0]
 
 const DANGER_TITLE = 'Could not load departures'
 const DANGER_SENTENCE =
@@ -71,7 +71,7 @@ function Dismissible() {
 }
 
 /** Every part: the icon, the title, the sentence, a small outline action and the close button. */
-export const Danger: Story = {
+const danger = {
   args: {
     color: 'danger',
     title: DANGER_TITLE,
@@ -165,10 +165,10 @@ export const Danger: Story = {
 
     await expect(document.activeElement).toBe(before)
   },
-}
+} satisfies Story
 
 /** The sentence alone, in the info intent: no title, action or close. */
-export const Info: Story = {
+const info = {
   args: {
     color: 'info',
     children: 'Departures after 01:00 follow the night timetable.',
@@ -189,10 +189,10 @@ export const Info: Story = {
     await expectNoFocus(root)
     await expect(document.activeElement).toBe(before)
   },
-}
+} satisfies Story
 
 /** The default intent: a calm grey notice with no icon. */
-export const Neutral: Story = {
+const neutral = {
   args: {
     children: 'Departures update every 30 seconds.',
   },
@@ -214,10 +214,10 @@ export const Neutral: Story = {
       })
     })
   },
-}
+} satisfies Story
 
 /** A title and the close button, in the success intent. */
-export const Success: Story = {
+const success = {
   args: {
     color: 'success',
     title: 'Report sent',
@@ -282,10 +282,10 @@ export const Success: Story = {
       })
     })
   },
-}
+} satisfies Story
 
 /** A title and the sentences, in the warning intent, with no close button. */
-export const Warning: Story = {
+const warning = {
   args: {
     color: 'warning',
     title: 'Signal fault at Danshøj',
@@ -328,4 +328,26 @@ export const Warning: Story = {
       )
     })
   },
+} satisfies Story
+
+/** Every part, every prop a control: the icon, the title, the sentence, a small outline action and the close button, in the danger intent. */
+export const Default: Story = {
+  ...danger,
+  play: async (context) => {
+    await danger.play(context)
+  },
+}
+
+/** Each intent, side by side. */
+export const Intents: Story = {
+  ...showcase<StoryArgs>(
+    [
+      { label: 'Neutral', story: neutral },
+      { label: 'Info', story: info },
+      { label: 'Success', story: success },
+      { label: 'Warning', story: warning },
+      { label: 'Danger', story: danger },
+    ],
+    (args) => <Alert {...args} />,
+  ),
 }

@@ -1,9 +1,8 @@
-// FilterChip's stories: one per variant of the deferred design, named as the spec's Stories table
-// names them, then the selected chip disabled, a controlled chip, a chip with words only and a row
-// that wraps. Hover and focus render at rest; the visual check drives them, and their play tests
-// check them.
+// FilterChip's stories: the chip alone with every prop a control, its states side by side, a label
+// alone and a row, then the behaviour tests. Hover and focus are play steps, not stories.
 import { createRef, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { showcase } from '../../testing/Showcase.tsx'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import calendar from '../../../icons/calendar.svg?raw'
 import diversion from '../../../icons/diversion.svg?raw'
@@ -27,13 +26,34 @@ const meta = {
 export default meta
 
 type Story = StoryObj<typeof meta>
+/** The args a story renders with: the meta's and its own. */
+type StoryArgs = Parameters<NonNullable<Story['render']>>[0]
 
 /** The chip in `canvasElement`, by its name. */
 const chip = (canvasElement: HTMLElement, name = 'Delays 3') =>
   within(canvasElement).getByRole('button', { name })
 
+/**
+ * A caller that keeps the state in its own `useState` and sets it from `onChange`, unless the
+ * change was cancelled: the story's `onChange` spy stands for the caller's own handler, and may call
+ * `details.cancel()`.
+ */
+function ControlledChip(args: FilterChipProps) {
+  const [selected, setSelected] = useState(false)
+  return (
+    <FilterChip
+      {...args}
+      selected={selected}
+      onChange={(event, next, details) => {
+        args.onChange?.(event, next, details)
+        if (!details.isCanceled) setSelected(next)
+      }}
+    />
+  )
+}
+
 /** Off, at rest: the warning icon, "Delays" and a count of 3; the subject story. */
-export const Default: Story = {
+const _default = {
   play: async ({ args, canvasElement }) => {
     const onChange = args.onChange as ReturnType<typeof fn>
     onChange.mockClear()
@@ -92,10 +112,10 @@ export const Default: Story = {
     )
     root.blur()
   },
-}
+} satisfies Story
 
 /** Off, hovered by the visual check. */
-export const Hover: Story = {
+const hover = {
   play: async ({ canvasElement }) => {
     const root = chip(canvasElement)
     await expect(stateFill(root)).toBe('var(--perron-color-surface-hover)')
@@ -110,10 +130,10 @@ export const Hover: Story = {
       resolve('borderColor', 'var(--perron-color-border-control)'),
     )
   },
-}
+} satisfies Story
 
 /** Off, focused by the visual check. */
-export const Focus: Story = {
+const focus = {
   play: async ({ canvasElement }) => {
     const root = chip(canvasElement)
     await userEvent.tab()
@@ -127,10 +147,10 @@ export const Focus: Story = {
     await userEvent.tab({ shift: true })
     await expect(root).not.toHaveFocus()
   },
-}
+} satisfies Story
 
 /** On, with `defaultSelected`. */
-export const Selected: Story = {
+const selected = {
   args: { defaultSelected: true },
   play: async ({ args, canvasElement }) => {
     const root = chip(canvasElement)
@@ -159,10 +179,10 @@ export const Selected: Story = {
       },
     )
   },
-}
+} satisfies Story
 
 /** Off, disabled. */
-export const Disabled: Story = {
+const disabled = {
   args: { disabled: true },
   play: async ({ args, canvasElement }) => {
     const onChange = args.onChange as ReturnType<typeof fn>
@@ -176,10 +196,10 @@ export const Disabled: Story = {
     await expect(root).toHaveAttribute('aria-pressed', 'false')
     await expect(onChange).not.toHaveBeenCalled()
   },
-}
+} satisfies Story
 
 /** On and disabled. */
-export const SelectedDisabled: Story = {
+const selectedDisabled = {
   args: { defaultSelected: true, disabled: true },
   play: async ({ args, canvasElement }) => {
     const onChange = args.onChange as ReturnType<typeof fn>
@@ -195,79 +215,38 @@ export const SelectedDisabled: Story = {
     await expect(root).toHaveAttribute('aria-pressed', 'true')
     await expect(onChange).not.toHaveBeenCalled()
   },
-}
+} satisfies Story
 
-/**
- * A caller that keeps the state in its own `useState` and sets it from `onChange`, unless the
- * change was cancelled: the story's `onChange` spy stands for the caller's own handler, and may call
- * `details.cancel()`.
- */
-function ControlledChip(args: FilterChipProps) {
-  const [selected, setSelected] = useState(false)
-  return (
-    <FilterChip
-      {...args}
-      selected={selected}
-      onChange={(event, next, details) => {
-        args.onChange?.(event, next, details)
-        if (!details.isCanceled) setSelected(next)
-      }}
-    />
-  )
-}
-
-/** A chip given `selected` and `onChange` from the story's state. */
-export const Controlled: Story = {
-  render: (args) => <ControlledChip {...args} />,
-  play: async ({ args, canvasElement }) => {
-    const onChange = args.onChange as ReturnType<typeof fn>
-    onChange.mockClear()
-    const root = chip(canvasElement)
-    // a handler that cancels: the caller sets nothing, and the state stays
-    onChange.mockImplementationOnce((_event, _selected, details) => details.cancel())
-    await userEvent.click(root)
-    await expect(onChange).toHaveBeenLastCalledWith(
-      expect.any(Event),
-      true,
-      expect.objectContaining({ reason: 'none' }),
-    )
-    await expect(root).toHaveAttribute('aria-pressed', 'false')
-    // the caller sets `selected`, and only then does the chip turn on
-    await userEvent.click(root)
-    await expect(onChange).toHaveBeenCalledTimes(2)
-    await expect(root).toHaveAttribute('aria-pressed', 'true')
-    await userEvent.click(root)
-    await expect(onChange).toHaveBeenLastCalledWith(
-      expect.any(Event),
-      false,
-      expect.objectContaining({ reason: 'none' }),
-    )
-    await expect(root).toHaveAttribute('aria-pressed', 'false')
-    root.blur()
-    // a caller that ignores the change without cancelling it: `selected` stays false, and so does
-    // the chip, which follows `selected` rather than its own state
-    const ignored = fn()
-    await mounted(
-      canvasElement,
-      <FilterChip selected={false} onChange={ignored}>
-        Diversions
-      </FilterChip>,
-      async (host) => {
-        await waitFor(() => expect(host.querySelector('button')).not.toBeNull())
-        const off = host.querySelector('button')!
-        await userEvent.click(off)
-        await expect(ignored).toHaveBeenCalledTimes(1)
-        await expect(ignored).toHaveBeenLastCalledWith(
-          expect.any(Event),
-          true,
-          expect.objectContaining({ reason: 'none', isCanceled: false }),
-        )
-        await expect(off).toHaveAttribute('aria-pressed', 'false')
-        await expect(off).not.toHaveAttribute('data-pressed')
-        off.blur()
-      },
-    )
+/** Off, at rest: the warning icon, "Delays" and a count of 3, every prop a control; the subject story. Its play reads the hover rule and gives the chip the ring. */
+export const Default: Story = {
+  play: async (context) => {
+    await hover.play(context)
+    await focus.play(context)
+    await _default.play(context)
   },
+}
+
+/** Each state a prop reaches, one chip apiece. */
+export const States: Story = {
+  parameters: {
+    // a disabled chip's words are color.text.tertiary, a miss Accessibility lists by name
+    // (docs/foundations/accessibility.md) and WCAG 1.4.3 exempts for an inactive control, so axe
+    // leaves it out
+    a11y: {
+      context: {
+        include: ['body'],
+        exclude: ['[data-row="Disabled"]', '[data-row="Selected, disabled"]'],
+      },
+    },
+  },
+  ...showcase<StoryArgs>(
+    [
+      { label: 'Selected', story: selected },
+      { label: 'Disabled', story: disabled },
+      { label: 'Selected, disabled', story: selectedDisabled },
+    ],
+    (args) => <FilterChip {...args} />,
+  ),
 }
 
 /** "Planned works", with no icon and no count. */
@@ -344,5 +323,60 @@ export const Row: Story = {
     await userEvent.tab({ shift: true })
     await userEvent.tab({ shift: true })
     await expect(canvasElement).not.toContainElement(document.activeElement as HTMLElement)
+  },
+}
+
+/** A chip given `selected` and `onChange` from the story's state. */
+export const Controlled: Story = {
+  tags: ['!dev', '!autodocs'],
+  render: (args) => <ControlledChip {...args} />,
+  play: async ({ args, canvasElement }) => {
+    const onChange = args.onChange as ReturnType<typeof fn>
+    onChange.mockClear()
+    const root = chip(canvasElement)
+    // a handler that cancels: the caller sets nothing, and the state stays
+    onChange.mockImplementationOnce((_event, _selected, details) => details.cancel())
+    await userEvent.click(root)
+    await expect(onChange).toHaveBeenLastCalledWith(
+      expect.any(Event),
+      true,
+      expect.objectContaining({ reason: 'none' }),
+    )
+    await expect(root).toHaveAttribute('aria-pressed', 'false')
+    // the caller sets `selected`, and only then does the chip turn on
+    await userEvent.click(root)
+    await expect(onChange).toHaveBeenCalledTimes(2)
+    await expect(root).toHaveAttribute('aria-pressed', 'true')
+    await userEvent.click(root)
+    await expect(onChange).toHaveBeenLastCalledWith(
+      expect.any(Event),
+      false,
+      expect.objectContaining({ reason: 'none' }),
+    )
+    await expect(root).toHaveAttribute('aria-pressed', 'false')
+    root.blur()
+    // a caller that ignores the change without cancelling it: `selected` stays false, and so does
+    // the chip, which follows `selected` rather than its own state
+    const ignored = fn()
+    await mounted(
+      canvasElement,
+      <FilterChip selected={false} onChange={ignored}>
+        Diversions
+      </FilterChip>,
+      async (host) => {
+        await waitFor(() => expect(host.querySelector('button')).not.toBeNull())
+        const off = host.querySelector('button')!
+        await userEvent.click(off)
+        await expect(ignored).toHaveBeenCalledTimes(1)
+        await expect(ignored).toHaveBeenLastCalledWith(
+          expect.any(Event),
+          true,
+          expect.objectContaining({ reason: 'none', isCanceled: false }),
+        )
+        await expect(off).toHaveAttribute('aria-pressed', 'false')
+        await expect(off).not.toHaveAttribute('data-pressed')
+        off.blur()
+      },
+    )
   },
 }

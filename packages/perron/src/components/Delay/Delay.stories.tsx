@@ -1,8 +1,8 @@
-// Delay's stories, one per kind the deferred design will draw, each with a play test that reads the
-// accessibility tree: the kind, the visible figure and what a screen reader hears.
+// Delay's stories: the delay alone with every prop a control, then each kind of delay side by side.
 import type { ReactElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { showcase } from '../../testing/Showcase.tsx'
 import { expect } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { dictionaries, type Locale } from '../../locale/index.ts'
@@ -18,6 +18,8 @@ const meta = {
 
 export default meta
 type Story = StoryObj<typeof meta>
+/** The args a story renders with: the meta's and its own. */
+type StoryArgs = Parameters<NonNullable<Story['render']>>[0]
 
 /** The root Delay rendered inside `canvas`. */
 const rootIn = (canvas: HTMLElement) => canvas.querySelector<HTMLElement>('.pn-Delay')!
@@ -49,7 +51,7 @@ function expectOwnedInEveryLocale(minutes: number | null) {
 }
 
 /** On time: "On time" in the on-time colour, read as shown. */
-export const OnTime: Story = {
+const onTime = {
   args: { minutes: 0 },
   play: async ({ canvasElement }) => {
     const root = rootIn(canvasElement)
@@ -63,10 +65,10 @@ export const OnTime: Story = {
     await expect(renderApart(<Delay minutes={-0.4} />)).toHaveAttribute('data-delay', 'on-time')
     expectOwnedInEveryLocale(0)
   },
-}
+} satisfies Story
 
 /** Slightly late: "+2 min", heard as "2 min late". */
-export const Slight: Story = {
+const slight = {
   args: { minutes: 2 },
   play: async ({ canvasElement }) => {
     const root = rootIn(canvasElement)
@@ -78,10 +80,10 @@ export const Slight: Story = {
     await expect(renderApart(<Delay minutes={1} />)).toHaveAttribute('data-delay', 'slight')
     expectOwnedInEveryLocale(2)
   },
-}
+} satisfies Story
 
 /** Late: "+7 min", heard as "7 min late". */
-export const Late: Story = {
+const late = {
   args: { minutes: 7 },
   play: async ({ canvasElement }) => {
     const root = rootIn(canvasElement)
@@ -96,10 +98,10 @@ export const Late: Story = {
     await expect(heard(overridden)).toBe('7 min behind')
     expectOwnedInEveryLocale(7)
   },
-}
+} satisfies Story
 
 /** Early: "−1 min" with the true minus sign, heard as "1 min early". */
-export const Early: Story = {
+const early = {
   args: { minutes: -1 },
   play: async ({ canvasElement }) => {
     const root = rootIn(canvasElement)
@@ -112,10 +114,10 @@ export const Early: Story = {
     await expect(heard(far)).toBe('12 min early')
     expectOwnedInEveryLocale(-1)
   },
-}
+} satisfies Story
 
 /** Unknown: "—" in the unknown colour, heard as "Delay unknown". */
-export const Unknown: Story = {
+const unknown = {
   args: { minutes: null },
   play: async ({ canvasElement }) => {
     const root = rootIn(canvasElement)
@@ -129,4 +131,26 @@ export const Unknown: Story = {
     await expect(renderApart(<Delay minutes={Infinity} />).outerHTML).toBe(markup)
     expectOwnedInEveryLocale(null)
   },
+} satisfies Story
+
+/** The delay alone, every prop a control. */
+export const Default: Story = {
+  ...late,
+  play: async (context) => {
+    await late.play(context)
+  },
+}
+
+/** Each kind of delay, side by side. */
+export const Values: Story = {
+  ...showcase<StoryArgs>(
+    [
+      { label: 'On time', story: onTime },
+      { label: 'Slightly late', story: slight },
+      { label: 'Late', story: late },
+      { label: 'Early', story: early },
+      { label: 'Unknown', story: unknown },
+    ],
+    (args) => <Delay {...args} />,
+  ),
 }

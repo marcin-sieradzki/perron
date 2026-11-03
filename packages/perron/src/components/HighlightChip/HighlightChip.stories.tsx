@@ -1,8 +1,7 @@
-// HighlightChip's stories: one per value of the deferred design's State property, named by its
-// variant name, each with the label "Line 5C", and the play tests the spec's Stories table asks
-// for. Hover, focus and the press render at rest; the visual stage drives them, and the play tests
-// read the rules they trigger.
+// HighlightChip's stories: the chip alone with every prop a control, and its states side by side.
+// Hover and focus are play steps, not stories.
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { showcase } from '../../testing/Showcase.tsx'
 import { expect, fn, userEvent, within } from 'storybook/test'
 import { LineBadge } from '../LineBadge/LineBadge.tsx'
 import {
@@ -25,6 +24,8 @@ const meta = {
 export default meta
 
 type Story = StoryObj<typeof meta>
+/** The args a story renders with: the meta's and its own. */
+type StoryArgs = Parameters<NonNullable<Story['render']>>[0]
 
 /** The chip a story renders, by its name. */
 const chipIn = (canvasElement: HTMLElement, name = 'Line 5C') =>
@@ -38,7 +39,7 @@ const focusLeft = (canvasElement: HTMLElement) =>
   expect(canvasElement).not.toContainElement(document.activeElement as HTMLElement)
 
 /** At rest, not selected: glass, "Line 5C". The subject story: its args render the chip alone. */
-export const Default: Story = {
+const _default = {
   play: async ({ args, canvasElement }) => {
     const onChange = args.onChange!
     const chip = chipIn(canvasElement)
@@ -143,10 +144,10 @@ export const Default: Story = {
       },
     )
   },
-}
+} satisfies Story
 
 /** At rest, hovered by the visual stage. */
-export const Hover: Story = {
+const hover = {
   play: async ({ canvasElement }) => {
     const chip = chipIn(canvasElement)
     const layer = onHover(chip, 'background-image')
@@ -169,10 +170,10 @@ export const Hover: Story = {
       rendered('color-surface-overlay', 'background-color'),
     )
   },
-}
+} satisfies Story
 
 /** At rest, focused from the keyboard by the visual stage. */
-export const Focus: Story = {
+const focus = {
   play: async ({ canvasElement }) => {
     const chip = chipIn(canvasElement)
     await userEvent.tab()
@@ -186,10 +187,10 @@ export const Focus: Story = {
     await userEvent.tab({ shift: true })
     await focusLeft(canvasElement)
   },
-}
+} satisfies Story
 
 /** At rest, disabled: out of the tab order and deaf to clicks, the words in tertiary. */
-export const Disabled: Story = {
+const disabled = {
   args: { disabled: true },
   play: async ({ args, canvasElement }) => {
     const chip = chipIn(canvasElement)
@@ -202,10 +203,10 @@ export const Disabled: Story = {
     await expect(args.onChange).not.toHaveBeenCalled()
     await expect(chip).toHaveAttribute('aria-pressed', 'false')
   },
-}
+} satisfies Story
 
 /** Selected (`defaultSelected`): `color.surface.inverse` with `color.text.inverse`. */
-export const Selected: Story = {
+const selected = {
   args: { defaultSelected: true },
   play: async ({ canvasElement }) => {
     const chip = chipIn(canvasElement)
@@ -225,10 +226,10 @@ export const Selected: Story = {
       await expect(other.height).toBe(box.height)
     })
   },
-}
+} satisfies Story
 
 /** Selected, hovered by the visual stage. */
-export const SelectedHover: Story = {
+const selectedHover = {
   args: { defaultSelected: true },
   play: async ({ canvasElement }) => {
     const chip = chipIn(canvasElement)
@@ -240,10 +241,10 @@ export const SelectedHover: Story = {
     await expect(stateFill(chip, ':active')).toBe('var(--perron-color-surface-inverse-pressed)')
     await expect(pressedAfterHover(chip)).toBe(true)
   },
-}
+} satisfies Story
 
 /** Selected and disabled: `color.surface.inset` with `color.text.tertiary`. */
-export const SelectedDisabled: Story = {
+const selectedDisabled = {
   args: { defaultSelected: true, disabled: true },
   play: async ({ args, canvasElement }) => {
     const chip = chipIn(canvasElement)
@@ -256,4 +257,44 @@ export const SelectedDisabled: Story = {
     await expect(args.onChange).not.toHaveBeenCalled()
     await expect(chip).toHaveAttribute('aria-pressed', 'true')
   },
+} satisfies Story
+
+const selectedChip = {
+  ...selected,
+  play: async (context: Parameters<NonNullable<Story['play']>>[0]) => {
+    await selected.play(context)
+    await selectedHover.play(context)
+  },
+} satisfies Story
+
+/** At rest, not selected: glass, "Line 5C", every prop a control; the subject story. Its play reads the hover rule and gives the chip the ring. */
+export const Default: Story = {
+  play: async (context) => {
+    await hover.play(context)
+    await focus.play(context)
+    await _default.play(context)
+  },
+}
+
+/** Each state a prop reaches, one chip apiece. */
+export const States: Story = {
+  parameters: {
+    // a disabled chip's words are color.text.tertiary, a miss Accessibility lists by name
+    // (docs/foundations/accessibility.md) and WCAG 1.4.3 exempts for an inactive control, so axe
+    // leaves it out
+    a11y: {
+      context: {
+        include: ['body'],
+        exclude: ['[data-row="Disabled"]', '[data-row="Selected, disabled"]'],
+      },
+    },
+  },
+  ...showcase<StoryArgs>(
+    [
+      { label: 'Selected', story: selectedChip },
+      { label: 'Disabled', story: disabled },
+      { label: 'Selected, disabled', story: selectedDisabled },
+    ],
+    (args) => <HighlightChip {...args} />,
+  ),
 }

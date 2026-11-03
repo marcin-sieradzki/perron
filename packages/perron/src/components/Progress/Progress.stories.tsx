@@ -1,10 +1,10 @@
-// Progress's stories: one per row of the spec's Stories table (docs/components/progress.md), with
-// the design deferred, each the `State` value the drawing will name, in PascalCase.
+// Progress's stories: the bar alone with every prop a control, then each state side by side.
 import { createRef } from 'react'
 import { flushSync } from 'react-dom'
 import { createRoot } from 'react-dom/client'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { showcase } from '../../testing/Showcase.tsx'
 import { expect, within } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { dictionaries, type Locale } from '../../locale/index.ts'
@@ -30,6 +30,8 @@ const meta = {
 export default meta
 
 type Story = StoryObj<typeof meta>
+/** The args a story renders with: the meta's and its own. */
+type StoryArgs = Parameters<NonNullable<Story['render']>>[0]
 
 /** The parts of the Progress rendered inside `canvas`. */
 function partsIn(canvas: HTMLElement) {
@@ -86,7 +88,7 @@ async function expectFirstFigureAppearsAtOnce(canvas: HTMLElement) {
 const progressingRef = createRef<HTMLDivElement>()
 
 /** The subject story: the export done, "100%" over a full fill, in the progressing look. */
-export const Complete: Story = {
+const complete = {
   args: { label: 'Exporting the report', value: 100 },
   play: async ({ canvasElement }) => {
     const { root, indicator } = partsIn(canvasElement)
@@ -102,10 +104,10 @@ export const Complete: Story = {
     // Progress is not a control: Tab passes it by
     await expectNoFocus(root)
   },
-}
+} satisfies Story
 
 /** How far the network's load has got is not known: a segment sweeps along the track (CR-5, CR-6). */
-export const Indeterminate: Story = {
+const indeterminate = {
   args: { label: 'Loading the network', value: null },
   play: async ({ canvasElement }) => {
     const { root, value, indicator } = partsIn(canvasElement)
@@ -136,10 +138,10 @@ export const Indeterminate: Story = {
     // The first figure appears at once, never eased from the segment's width
     await expectFirstFigureAppearsAtOnce(canvasElement)
   },
-}
+} satisfies Story
 
 /** The export under way: 9 of 20 parts written, "45%". */
-export const Progressing: Story = {
+const progressing = {
   args: { label: 'Exporting the report', value: 9, max: 20 },
   render: (args) => <Progress {...args} ref={progressingRef} />,
   play: async ({ canvasElement }) => {
@@ -160,4 +162,24 @@ export const Progressing: Story = {
     // The name comes first in reading order, then the figure, then the track
     await expect(root.firstElementChild).toHaveClass('pn-Progress-label')
   },
+} satisfies Story
+
+/** The bar alone, every prop a control. */
+export const Default: Story = {
+  ...progressing,
+  play: async (context) => {
+    await progressing.play(context)
+  },
+}
+
+/** Each state, side by side. */
+export const States: Story = {
+  ...showcase<StoryArgs>(
+    [
+      { label: 'Progressing', story: progressing },
+      { label: 'Complete', story: complete },
+      { label: 'Indeterminate', story: indeterminate },
+    ],
+    (args) => <Progress {...args} />,
+  ),
 }

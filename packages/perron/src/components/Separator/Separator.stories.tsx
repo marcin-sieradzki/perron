@@ -1,5 +1,5 @@
-// Separator's stories: one per row of the spec's Stories table (docs/components/separator.md),
-// with the design deferred, and their play tests, which read the DOM and the accessibility tree.
+// Separator's stories: the line alone with every prop a control, between two lines of a panel, and
+// vertical between two words.
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, within } from 'storybook/test'
 import { colour, mounted, resolve, typography } from '../../testing/stories.ts'
@@ -48,7 +48,7 @@ async function notFocusable(separator: HTMLElement) {
 }
 
 /** The default orientation between two lines of a panel, in a flex column with a `space.100` gap. */
-export const Horizontal: Story = {
+const horizontal = {
   args: { orientation: 'horizontal' },
   render: (args) => (
     <div
@@ -83,6 +83,14 @@ export const Horizontal: Story = {
       await oneBorder(hr, 'BlockStart')
       await expect(hr.getBoundingClientRect().height).toBe(parseFloat(hairline().width))
     })
+  },
+} satisfies Story
+
+/** The default orientation between two lines of a panel, every prop a control. */
+export const Default: Story = {
+  ...horizontal,
+  play: async (context) => {
+    await horizontal.play(context)
   },
 }
 

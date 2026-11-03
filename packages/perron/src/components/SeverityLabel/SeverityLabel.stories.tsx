@@ -1,5 +1,7 @@
+// SeverityLabel's stories: the label alone with every prop a control, then each severity side by side.
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { showcase } from '../../testing/Showcase.tsx'
 import { expect, getRoles, isInaccessible, waitFor, within } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { dictionaries } from '../../locale/index.ts'
@@ -18,6 +20,8 @@ const meta = {
 export default meta
 
 type Story = StoryObj<typeof meta>
+/** The args a story renders with: the meta's and its own. */
+type StoryArgs = Parameters<NonNullable<Story['render']>>[0]
 
 /**
  * The play test every story shares: the root carries `data-severity`, its only text is the kind's
@@ -63,13 +67,13 @@ const reads =
   }
 
 /** `severity='data'`: the `signal-off` icon and "Data feed problems". */
-export const Data: Story = {
+const data = {
   args: { severity: 'data' },
   play: reads('data', 'dataFeedProblems'),
-}
+} satisfies Story
 
 /** `severity='delay'`: the `warning` icon and "Delays". */
-export const Delay: Story = {
+const delay = {
   args: { severity: 'delay' },
   play: async (context) => {
     await reads('delay', 'delays')!(context)
@@ -91,19 +95,19 @@ export const Delay: Story = {
       })
     })
   },
-}
+} satisfies Story
 
 /** `severity='diversion'`: the `diversion` icon and "Diversions". */
-export const Diversion: Story = {
+const diversion = {
   args: { severity: 'diversion' },
   play: reads('diversion', 'diversions'),
-}
+} satisfies Story
 
 /**
  * `severity='notice'`: the `info-circle` icon and "Service notice", for a message whose fields don't
  * say which kind it is.
  */
-export const Notice: Story = {
+const notice = {
   args: { severity: 'notice' },
   play: async (context) => {
     await reads('notice', 'serviceNotice')!(context)
@@ -133,10 +137,32 @@ export const Notice: Story = {
       },
     )
   },
-}
+} satisfies Story
 
 /** `severity='planned'`: the `calendar` icon and "Planned works". */
-export const Planned: Story = {
+const planned = {
   args: { severity: 'planned' },
   play: reads('planned', 'plannedWorks'),
+} satisfies Story
+
+/** The label alone, every prop a control. */
+export const Default: Story = {
+  ...delay,
+  play: async (context) => {
+    await delay.play(context)
+  },
+}
+
+/** Each severity, side by side. */
+export const Severities: Story = {
+  ...showcase<StoryArgs>(
+    [
+      { label: 'Delay', story: delay },
+      { label: 'Diversion', story: diversion },
+      { label: 'Planned', story: planned },
+      { label: 'Notice', story: notice },
+      { label: 'Data', story: data },
+    ],
+    (args) => <SeverityLabel {...args} />,
+  ),
 }

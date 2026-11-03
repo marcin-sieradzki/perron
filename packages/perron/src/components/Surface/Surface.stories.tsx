@@ -1,9 +1,9 @@
-// Surface's stories, one per step of the surface ladder the deferred design will draw, and Nested,
-// the ladder together. Each variant story shows the shapes `children` takes: a list of nodes, a
-// string and one element. The play tests read the DOM and the accessibility tree, not the pixels.
+// Surface's stories: a raised card with every prop a control, each variant side by side over the
+// panel or the map it is made for, and the ladder nested.
 import { createRef } from 'react'
 import type { CSSProperties, ReactNode } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { showcase } from '../../testing/Showcase.tsx'
 import { expect, userEvent, within } from 'storybook/test'
 import { Button } from '../Button/Button.tsx'
 import { Surface } from './Surface.tsx'
@@ -85,6 +85,8 @@ const meta = {
 
 export default meta
 type Story = StoryObj<typeof meta>
+/** The args a story renders with: the meta's and its own. */
+type StoryArgs = Parameters<NonNullable<Story['render']>>[0]
 
 /** The surface `testId` names inside the story. */
 const surfaceIn = (canvasElement: HTMLElement, testId: string) =>
@@ -101,8 +103,22 @@ async function expectShapes(canvasElement: HTMLElement, variant: string) {
   }
 }
 
+/** The panel content glass and opaque hold, over the map. */
+const panel = (
+  <Column>
+    <h2 style={typography('heading-md')}>Nørreport</h2>
+    <p style={typography('body')}>
+      Metro M1 and M2, S-trains and regional trains. Next train to Lufthavnen in 3 min.
+    </p>
+  </Column>
+)
+
+const panelRef = createRef<HTMLElement>()
+const cardRef = createRef<HTMLElement>()
+const boxRef = createRef<HTMLElement>()
+
 /** A raised card on the panel's surface, holding a heading, a line of text and a Button. */
-export const Raised: Story = {
+const raised = {
   args: { variant: 'raised' },
   render: (args) => (
     <Stage background={{ background: 'var(--perron-color-surface-default)' }}>
@@ -139,10 +155,10 @@ export const Raised: Story = {
     await userEvent.tab({ shift: true })
     await expect(document.activeElement).toBe(start)
   },
-}
+} satisfies Story
 
 /** An inset box set into a raised card's surface, holding a line of text. */
-export const Inset: Story = {
+const inset = {
   args: { variant: 'inset' },
   render: (args) => (
     <Stage background={{ background: 'var(--perron-color-surface-raised)' }}>
@@ -162,20 +178,10 @@ export const Inset: Story = {
   play: async ({ canvasElement }) => {
     await expectShapes(canvasElement, 'inset')
   },
-}
-
-/** The panel content glass and opaque hold, over the map. */
-const panel = (
-  <Column>
-    <h2 style={typography('heading-md')}>Nørreport</h2>
-    <p style={typography('body')}>
-      Metro M1 and M2, S-trains and regional trains. Next train to Lufthavnen in 3 min.
-    </p>
-  </Column>
-)
+} satisfies Story
 
 /** A glass panel floating over a busy map, which the blur softens. */
-export const Glass: Story = {
+const glass = {
   args: { variant: 'glass' },
   render: (args) => (
     <Stage background={BACKDROP}>
@@ -190,10 +196,10 @@ export const Glass: Story = {
   play: async ({ canvasElement }) => {
     await expectShapes(canvasElement, 'glass')
   },
-}
+} satisfies Story
 
 /** The same panel, opaque, over the same map: what a phone full of text uses. */
-export const Opaque: Story = {
+const opaque = {
   args: { variant: 'opaque' },
   render: (args) => (
     <Stage background={BACKDROP}>
@@ -208,11 +214,28 @@ export const Opaque: Story = {
   play: async ({ canvasElement }) => {
     await expectShapes(canvasElement, 'opaque')
   },
+} satisfies Story
+
+/** A raised card on the panel's surface, every prop a control. */
+export const Default: Story = {
+  ...raised,
+  play: async (context) => {
+    await raised.play(context)
+  },
 }
 
-const panelRef = createRef<HTMLElement>()
-const cardRef = createRef<HTMLElement>()
-const boxRef = createRef<HTMLElement>()
+/** Each variant, side by side, each over what it is made for. */
+export const Variants: Story = {
+  ...showcase<StoryArgs>(
+    [
+      { label: 'Raised', story: raised },
+      { label: 'Inset', story: inset },
+      { label: 'Glass', story: glass },
+      { label: 'Opaque', story: opaque },
+    ],
+    (args) => <Surface {...args} />,
+  ),
+}
 
 /**
  * The ladder together: a glass panel rendered as a named `<section>`, holding a raised card that
