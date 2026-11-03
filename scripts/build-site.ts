@@ -1,4 +1,4 @@
-// Puts the docs site together for GitHub Pages: the website's static export at the root, the
+// Puts the docs site together for GitHub Pages or Vercel: the website's static export at the root, the
 // Storybook build under storybook/, and the agent-readable files of scripts/lib/site.ts beside
 // them. Build both first: `npm run build -w website` and `npm run storybook:build`.
 // Usage: node scripts/build-site.ts <site folder>
