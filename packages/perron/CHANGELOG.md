@@ -1,5 +1,11 @@
 # @mylder/perron
 
+## 0.10.1
+
+### Patch Changes
+
+- 657a532: The component docs name the new, fewer stories: a Default with every prop a control, a showcase per axis, such as Variants or States, and a story per feature.
+
 ## 0.10.0
 
 ### Minor Changes
