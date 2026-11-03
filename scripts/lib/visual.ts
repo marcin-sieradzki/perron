@@ -153,9 +153,34 @@ const DRIVEN: Record<string, Interaction> = {
 }
 
 /**
+ * The args a variant renders with on the component's Default story: each prop property's value as
+ * the code map gives it, and `true` for each attribute state, `[data-disabled]` as `disabled`.
+ */
+export function variantArgs(map: CodeMap, props: Record<string, string>) {
+  const args: Record<string, string | number | boolean> = {}
+  for (const [property, value] of Object.entries(props)) {
+    const entry = map.properties[property]
+    if (!entry) continue
+    if ('prop' in entry) {
+      if (value in entry.values) args[entry.prop] = entry.values[value]
+      continue
+    }
+    for (const [, attribute] of (entry.state[value] ?? '').matchAll(/\[data-([\w-]+)\]/g))
+      args[attribute.replace(/-(\w)/g, (_, c: string) => c.toUpperCase())] = true
+  }
+  return args
+}
+
+/** Storybook's `args` URL parameter for `args`, as its router writes it: `tone:brand;disabled:!true`. */
+export const argsParam = (args: Record<string, string | number | boolean>) =>
+  Object.entries(args)
+    .map(([k, v]) => `${k}:${typeof v === 'boolean' ? `!${v}` : v}`)
+    .join(';')
+
+/**
  * The interactions to drive on the root for a variant: those its state property maps to in the
  * code map, such as `:hover`, since a story renders at rest. An attribute state, such as
- * `[data-disabled]`, comes from the story's own args.
+ * `[data-disabled]`, is an arg, by `variantArgs`.
  */
 export function drivenStates(map: CodeMap, props: Record<string, string>): Interaction[] {
   return Object.entries(props).flatMap(([property, value]) => {

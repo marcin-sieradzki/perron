@@ -1,8 +1,9 @@
-// SourceLine's stories: one per row of the spec's Stories table (docs/patterns/source-line.md),
-// with the design deferred, each with a play test that reads the accessibility tree and the drawing.
+// SourceLine's stories: one source with every prop a control, its states side by side, Mylder's
+// own source lines, and narrow in Swedish, then the labels' test.
 import { createRef } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { showcase } from '../../testing/Showcase.tsx'
 import { expect, userEvent, waitFor, within } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { dictionaries, type Locale } from '../../locale/index.ts'
@@ -206,6 +207,8 @@ const meta = {
 
 export default meta
 type Story = StoryObj<typeof meta>
+/** The args a story renders with: the meta's and its own. */
+type StoryArgs = Parameters<NonNullable<Story['render']>>[0]
 
 /** The line's root in `scope`, once it has rendered. */
 const lineIn = (scope: HTMLElement) =>
@@ -286,6 +289,120 @@ async function expectWrapsInside(box: HTMLElement, line: HTMLElement) {
   await expect(line.scrollWidth).toBe(line.clientWidth)
   await expect(separatorFirstAt(box, line)).toEqual([])
 }
+
+/** A stack of lines, one for each of `mylder`, each with `args` laid under its own sources. */
+const linesOf = (mylder: readonly MylderLine[], args: Partial<SourceLineProps>) => (
+  <div style={{ display: 'grid', gap: 'var(--perron-space-200)' }}>
+    {mylder.map(({ screen, sources }) => (
+      <SourceLine key={screen} {...args} sources={sources} data-testid={screen} />
+    ))}
+  </div>
+)
+
+/** Each line of `mylder` in `scope`, by its screen, once it has rendered. */
+const linesIn = (scope: HTMLElement, mylder: readonly MylderLine[]) =>
+  Promise.all(mylder.map(({ screen }) => waitFor(() => within(scope).getByTestId(screen))))
+
+/** Two sources, each with its own name and its own phrase and time. */
+const twoSources = {
+  args: { sources: [REJSEPLANEN, POSITIONS] },
+  play: async ({ canvasElement }) => {
+    const line = await lineIn(canvasElement)
+    const parts = partsOf(line)
+    await expect(heard(line)).toBe(
+      'Rejseplanen · updated 08:14:05 · Vehicle positions · updated 08:13:58',
+    )
+    // CR-1: the caller's order, joined by one separator outside the sources
+    await expect(parts.sources).toHaveLength(2)
+    await expect(parts.sources.map((source) => heard(source))).toEqual([
+      'Rejseplanen · updated 08:14:05',
+      'Vehicle positions · updated 08:13:58',
+    ])
+    await expect(parts.between).toHaveLength(1)
+    await expect(parts.between[0].previousElementSibling).toBe(parts.sources[0])
+    await expect(parts.between[0].nextElementSibling).toBe(parts.sources[1])
+    // CR-4: each source its own phrase and time, and no time for the line as a whole
+    await expect(parts.times).toHaveLength(2)
+    await expect(line.querySelectorAll('time')).toHaveLength(2)
+    for (const [index, source] of parts.sources.entries()) {
+      await expect(source.querySelector('.pn-SourceLine-name')).toBe(parts.names[index])
+      await expect(source.querySelector('time')).toBe(parts.times[index])
+    }
+  },
+} satisfies Story
+
+/** The two sources, paused. */
+const paused = {
+  args: { sources: [REJSEPLANEN, POSITIONS], paused: true },
+  play: async ({ canvasElement }) => {
+    const line = await lineIn(canvasElement)
+    const parts = partsOf(line)
+    // CR-5: the state on the root, and "Paused" first, then a separator
+    await expect(line).toHaveAttribute('data-paused', '')
+    await expect(heard(line)).toBe(
+      'Paused · Rejseplanen · updated 08:14:05 · Vehicle positions · updated 08:13:58',
+    )
+    await expect(parts.paused).toHaveLength(1)
+    await expect(line.firstElementChild).toBe(parts.paused[0])
+    await expect(parts.paused[0].nextElementSibling).toBe(parts.between[0])
+    await expect(parts.between).toHaveLength(2)
+    await expect(getComputedStyle(parts.paused[0]).color).toBe(
+      colour('--perron-color-text-primary'),
+    )
+    // each source keeps its own time while paused
+    await expect(parts.times.map((time) => time.dateTime)).toEqual(['08:14:05', '08:13:58'])
+    await expect(parts.times.map((time) => time.textContent)).toEqual([
+      'updated 08:14:05',
+      'updated 08:13:58',
+    ])
+  },
+} satisfies Story
+
+/** A fresh source and a stale one under it, the second marked by the app as out of date. */
+const outOfDate = {
+  args: { sources: [REJSEPLANEN, STALE] },
+  play: async ({ canvasElement }) => {
+    const line = await lineIn(canvasElement)
+    const parts = partsOf(line)
+    // CR-6: only the stale source carries the state, and its phrase says it, in warning ink
+    await expect(parts.sources[0]).not.toHaveAttribute('data-out-of-date')
+    await expect(parts.times[0]).toHaveTextContent(/^updated 08:14:05$/)
+    await expect(getComputedStyle(parts.times[0]).color).toBe(colour(SECONDARY))
+    await expect(parts.sources[1]).toHaveAttribute('data-out-of-date', '')
+    await expect(heard(parts.sources[1])).toBe(
+      'Vehicle positions · updated 08:09:40, may be out of date',
+    )
+    await expect(parts.times[1].childNodes).toHaveLength(1)
+    await expect(parts.times[1]).toHaveTextContent(/^updated 08:09:40, may be out of date$/)
+    await expect(parts.times[1]).toHaveAttribute('dateTime', '08:09:40')
+    await expect(getComputedStyle(parts.times[1]).color).toBe(colour('--perron-color-text-warning'))
+    await expect(line).not.toHaveAttribute('data-paused')
+    // CR-3, CR-6: outOfDate false shows none of it, and an HH:MM time is shown as it is given
+    await mounted(
+      canvasElement,
+      <SourceLine sources={[{ name: 'Rejseplanen', time: '08:14', outOfDate: false }]} />,
+      async (host) => {
+        const own = partsOf(await lineIn(host))
+        await expect(own.sources[0]).not.toHaveAttribute('data-out-of-date')
+        await expect(own.times[0]).toHaveAttribute('dateTime', '08:14')
+        await expect(own.times[0]).toHaveTextContent(/^updated 08:14$/)
+        await expect(heard(own.sources[0])).toBe('Rejseplanen · updated 08:14')
+      },
+    )
+    // the paused word and out-of-date phrase, beyond the subject story's: in every locale, only the
+    // dictionary's, each phrase filled with its time
+    for (const locale of Object.keys(dictionaries) as Locale[])
+      expectOwnedStrings(
+        renderToStaticMarkup(
+          <PerronProvider locale={locale}>
+            <SourceLine sources={[REJSEPLANEN, STALE]} paused />
+          </PerronProvider>,
+        ),
+        locale,
+        [REJSEPLANEN.name, STALE.name],
+      )
+  },
+} satisfies Story
 
 /** One source, Rejseplanen at 08:14:05. The subject story: its args render the line alone. */
 export const Default: Story = {
@@ -526,119 +643,17 @@ export const Default: Story = {
   },
 }
 
-/** Two sources, each with its own name and its own phrase and time. */
-export const TwoSources: Story = {
-  args: { sources: [REJSEPLANEN, POSITIONS] },
-  play: async ({ canvasElement }) => {
-    const line = await lineIn(canvasElement)
-    const parts = partsOf(line)
-    await expect(heard(line)).toBe(
-      'Rejseplanen · updated 08:14:05 · Vehicle positions · updated 08:13:58',
-    )
-    // CR-1: the caller's order, joined by one separator outside the sources
-    await expect(parts.sources).toHaveLength(2)
-    await expect(parts.sources.map((source) => heard(source))).toEqual([
-      'Rejseplanen · updated 08:14:05',
-      'Vehicle positions · updated 08:13:58',
-    ])
-    await expect(parts.between).toHaveLength(1)
-    await expect(parts.between[0].previousElementSibling).toBe(parts.sources[0])
-    await expect(parts.between[0].nextElementSibling).toBe(parts.sources[1])
-    // CR-4: each source its own phrase and time, and no time for the line as a whole
-    await expect(parts.times).toHaveLength(2)
-    await expect(line.querySelectorAll('time')).toHaveLength(2)
-    for (const [index, source] of parts.sources.entries()) {
-      await expect(source.querySelector('.pn-SourceLine-name')).toBe(parts.names[index])
-      await expect(source.querySelector('time')).toBe(parts.times[index])
-    }
-  },
+/** Two sources, paused, and one out of date, side by side. */
+export const States: Story = {
+  ...showcase<StoryArgs>(
+    [
+      { label: 'Two sources', story: twoSources },
+      { label: 'Paused', story: paused },
+      { label: 'Out of date', story: outOfDate },
+    ],
+    (args) => <SourceLine {...args} />,
+  ),
 }
-
-/** `TwoSources`' sources, paused. */
-export const Paused: Story = {
-  args: { sources: [REJSEPLANEN, POSITIONS], paused: true },
-  play: async ({ canvasElement }) => {
-    const line = await lineIn(canvasElement)
-    const parts = partsOf(line)
-    // CR-5: the state on the root, and "Paused" first, then a separator
-    await expect(line).toHaveAttribute('data-paused', '')
-    await expect(heard(line)).toBe(
-      'Paused · Rejseplanen · updated 08:14:05 · Vehicle positions · updated 08:13:58',
-    )
-    await expect(parts.paused).toHaveLength(1)
-    await expect(line.firstElementChild).toBe(parts.paused[0])
-    await expect(parts.paused[0].nextElementSibling).toBe(parts.between[0])
-    await expect(parts.between).toHaveLength(2)
-    await expect(getComputedStyle(parts.paused[0]).color).toBe(
-      colour('--perron-color-text-primary'),
-    )
-    // each source keeps its own time while paused
-    await expect(parts.times.map((time) => time.dateTime)).toEqual(['08:14:05', '08:13:58'])
-    await expect(parts.times.map((time) => time.textContent)).toEqual([
-      'updated 08:14:05',
-      'updated 08:13:58',
-    ])
-  },
-}
-
-/** A fresh source and a stale one under it, the second marked by the app as out of date. */
-export const OutOfDate: Story = {
-  args: { sources: [REJSEPLANEN, STALE] },
-  play: async ({ canvasElement }) => {
-    const line = await lineIn(canvasElement)
-    const parts = partsOf(line)
-    // CR-6: only the stale source carries the state, and its phrase says it, in warning ink
-    await expect(parts.sources[0]).not.toHaveAttribute('data-out-of-date')
-    await expect(parts.times[0]).toHaveTextContent(/^updated 08:14:05$/)
-    await expect(getComputedStyle(parts.times[0]).color).toBe(colour(SECONDARY))
-    await expect(parts.sources[1]).toHaveAttribute('data-out-of-date', '')
-    await expect(heard(parts.sources[1])).toBe(
-      'Vehicle positions · updated 08:09:40, may be out of date',
-    )
-    await expect(parts.times[1].childNodes).toHaveLength(1)
-    await expect(parts.times[1]).toHaveTextContent(/^updated 08:09:40, may be out of date$/)
-    await expect(parts.times[1]).toHaveAttribute('dateTime', '08:09:40')
-    await expect(getComputedStyle(parts.times[1]).color).toBe(colour('--perron-color-text-warning'))
-    await expect(line).not.toHaveAttribute('data-paused')
-    // CR-3, CR-6: outOfDate false shows none of it, and an HH:MM time is shown as it is given
-    await mounted(
-      canvasElement,
-      <SourceLine sources={[{ name: 'Rejseplanen', time: '08:14', outOfDate: false }]} />,
-      async (host) => {
-        const own = partsOf(await lineIn(host))
-        await expect(own.sources[0]).not.toHaveAttribute('data-out-of-date')
-        await expect(own.times[0]).toHaveAttribute('dateTime', '08:14')
-        await expect(own.times[0]).toHaveTextContent(/^updated 08:14$/)
-        await expect(heard(own.sources[0])).toBe('Rejseplanen · updated 08:14')
-      },
-    )
-    // the paused word and out-of-date phrase, beyond the subject story's: in every locale, only the
-    // dictionary's, each phrase filled with its time
-    for (const locale of Object.keys(dictionaries) as Locale[])
-      expectOwnedStrings(
-        renderToStaticMarkup(
-          <PerronProvider locale={locale}>
-            <SourceLine sources={[REJSEPLANEN, STALE]} paused />
-          </PerronProvider>,
-        ),
-        locale,
-        [REJSEPLANEN.name, STALE.name],
-      )
-  },
-}
-
-/** A stack of lines, one for each of `mylder`, each with `args` laid under its own sources. */
-const linesOf = (mylder: readonly MylderLine[], args: Partial<SourceLineProps>) => (
-  <div style={{ display: 'grid', gap: 'var(--perron-space-200)' }}>
-    {mylder.map(({ screen, sources }) => (
-      <SourceLine key={screen} {...args} sources={sources} data-testid={screen} />
-    ))}
-  </div>
-)
-
-/** Each line of `mylder` in `scope`, by its screen, once it has rendered. */
-const linesIn = (scope: HTMLElement, mylder: readonly MylderLine[]) =>
-  Promise.all(mylder.map(({ screen }) => waitFor(() => within(scope).getByTestId(screen))))
 
 /**
  * Mylder's source lines, each source in the app's own words of what its time is of: the vehicle
@@ -800,7 +815,7 @@ export const SourceLabelsOutOfDate: Story = {
   },
 }
 
-/** `OutOfDate`'s sources, paused, in Swedish, in a 320 px container. */
+/** The out-of-date sources, paused, in Swedish, in a 320 px container. */
 export const Narrow: Story = {
   args: { sources: [REJSEPLANEN, STALE], paused: true },
   render: (args) => (
@@ -881,6 +896,7 @@ export const Narrow: Story = {
 
 /** `Narrow`'s sources in English, paused, with each of the line's owned strings overridden. */
 export const Labels: Story = {
+  tags: ['!dev', '!autodocs'],
   args: { sources: [REJSEPLANEN, STALE], paused: true, ...OWN_LABELS },
   play: async ({ canvasElement, step }) => {
     const line = await lineIn(canvasElement)

@@ -1,7 +1,10 @@
+// Text's stories: one paragraph with every prop a control, then every variant, colour and
+// emphasis side by side, and text with an element inside it.
 import { createRef } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, within } from 'storybook/test'
-import { Text } from './Text.tsx'
+import { Showcase, type Axis } from '../../testing/Showcase.tsx'
+import { Text, type TextProps } from './Text.tsx'
 
 const meta = {
   title: 'Components/Text',
@@ -38,8 +41,12 @@ const rootOf = (canvasElement: HTMLElement) => {
 
 const bodyRef = createRef<HTMLElement>()
 
-// passes none of variant, color or emphasis, so the play test checks the defaults fill them in
-export const BodyNeutralPrimary: Story = {
+/**
+ * A paragraph, every prop a control. It passes none of `variant`, `color` or `emphasis`, so the
+ * test checks the defaults fill them in: a `<p>` with `body`, `neutral` and `primary`, its `ref` on
+ * the root.
+ */
+export const Default: Story = {
   render: (args) => <Text {...args} ref={bodyRef} />,
   play: async ({ canvasElement }) => {
     const root = rootOf(canvasElement)
@@ -52,28 +59,122 @@ export const BodyNeutralPrimary: Story = {
   },
 }
 
-export const DisplayNeutralPrimary: Story = {
-  args: { variant: 'display', children: 'Every bus and train in Copenhagen, live' },
+type Variant = NonNullable<TextProps['variant']>
+
+/** Each variant with words it is made for, a heading on the heading element `render` gives. */
+type Sample = Pick<TextProps, 'render' | 'children'> & { variant: Variant }
+
+const VARIANTS: Axis<Sample>[] = (
+  [
+    { variant: 'display', children: 'Every bus and train in Copenhagen, live' },
+    { variant: 'heading-lg', render: <h1 />, children: 'Disruptions' },
+    { variant: 'heading-md', render: <h2 />, children: 'Nørreport St.' },
+    { variant: 'heading-sm', render: <h3 />, children: 'Signal fault at Danshøj' },
+    { variant: 'body', children: 'Trains between Flintholm and Ny Ellebjerg run slower.' },
+    { variant: 'body-sm', children: 'Next train to Ny Ellebjerg at 08:14' },
+    { variant: 'caption', children: 'Reporting live, by operator' },
+    { variant: 'label', children: 'Show whole line' },
+    { variant: 'label-sm', children: 'Average delay' },
+    { variant: 'overline', children: 'Nearby stops' },
+    { variant: 'badge', children: '5C' },
+    { variant: 'stat', children: '94%' },
+    { variant: 'data-xl', children: '08:14' },
+    { variant: 'data-lg', children: '3 min' },
+    { variant: 'data', children: '08:17' },
+    { variant: 'data-sm', children: '12' },
+  ] satisfies Sample[]
+).map((value) => ({ label: value.variant, value }))
+
+/** The root of the one Text of `variant` a story renders. */
+const variantOf = (canvasElement: HTMLElement, variant: Variant) => {
+  const root = canvasElement.querySelector<HTMLElement>(`.pn-Text[data-variant="${variant}"]`)
+  if (!root) throw new Error(`no .pn-Text root with data-variant ${variant} rendered`)
+  return root
 }
 
-export const HeadingLgNeutralPrimary: Story = {
-  args: { variant: 'heading-lg', render: <h1 />, children: 'Disruptions' },
-}
-
-export const HeadingMdNeutralPrimary: Story = {
-  args: { variant: 'heading-md', render: <h2 />, children: 'Nørreport St.' },
+/**
+ * Every typography role, each with words it is made for. A heading takes the element `render`
+ * gives, `caption` is a `<span>`, `overline` is uppercase, and `data` sets tabular figures.
+ */
+export const Variants: Story = {
+  render: (args) => <Showcase rows={VARIANTS} render={(value) => <Text {...args} {...value} />} />,
   play: async ({ canvasElement }) => {
     const heading = within(canvasElement).getByRole('heading', { level: 2, name: 'Nørreport St.' })
     await expect(heading).toHaveClass('pn-Text')
     await expect(heading).toHaveAttribute('data-variant', 'heading-md')
+    await expect(variantOf(canvasElement, 'caption').tagName).toBe('SPAN')
+    const overline = variantOf(canvasElement, 'overline')
+    await expect(overline.textContent).toBe('Nearby stops')
+    await expect(getComputedStyle(overline).textTransform).toBe('uppercase')
+    await expect(getComputedStyle(variantOf(canvasElement, 'data')).fontVariantNumeric).toBe(
+      'tabular-nums',
+    )
   },
 }
 
-export const HeadingSmNeutralPrimary: Story = {
-  args: { variant: 'heading-sm', render: <h3 />, children: 'Signal fault at Danshøj' },
+/** Each colour, in words it is made for. */
+export const Colors: Story = {
+  render: (args) => (
+    <Showcase
+      rows={
+        [
+          { label: 'Neutral', value: { color: 'neutral', children: 'Departures from platform 2' } },
+          {
+            label: 'Brand',
+            value: { color: 'brand', children: 'Every bus and train, as it moves.' },
+          },
+          { label: 'Success', value: { color: 'success', children: 'Running normally' } },
+          { label: 'Warning', value: { color: 'warning', children: 'Delays likely after 17:00' } },
+          { label: 'Danger', value: { color: 'danger', children: 'Running 4 min late' } },
+          { label: 'Info', value: { color: 'info', children: 'Diverted via Vesterport' } },
+        ] satisfies Axis<Pick<TextProps, 'color' | 'children'>>[]
+      }
+      render={(value) => <Text {...args} {...value} />}
+    />
+  ),
 }
 
-export const BodySmNeutralPrimary: Story = {
+/**
+ * Each emphasis. Tertiary is a hint, always next to stronger text: it is for nothing else
+ * (Semantic colours), so it follows a label here.
+ */
+export const Emphasis: Story = {
+  parameters: {
+    // color.text.tertiary misses 4.5:1 on purpose, a miss Accessibility lists by name
+    // (docs/foundations/accessibility.md), so axe leaves the tertiary text out
+    a11y: { context: { include: ['body'], exclude: ['.pn-Text[data-emphasis="tertiary"]'] } },
+  },
+  render: (args) => (
+    <Showcase
+      rows={[
+        { label: 'Primary', value: <Text {...args}>Departures from platform 2</Text> },
+        {
+          label: 'Secondary',
+          value: (
+            <Text {...args} emphasis="secondary">
+              Departures from platform 2
+            </Text>
+          ),
+        },
+        {
+          label: 'Tertiary',
+          value: (
+            <>
+              <Text variant="label">Search lines and stops</Text>
+              <Text {...args} emphasis="tertiary">
+                Try a line number such as 5C.
+              </Text>
+            </>
+          ),
+        },
+      ]}
+      render={(node) => node}
+    />
+  ),
+}
+
+/** Text with an element inside it, a `<time>`, which stays where the caller put it. */
+export const RichContent: Story = {
   args: {
     variant: 'body-sm',
     children: [
@@ -89,99 +190,5 @@ export const BodySmNeutralPrimary: Story = {
     await expect(first.textContent).toBe('Next train to Ny Ellebjerg at ')
     await expect(second.nodeName).toBe('TIME')
     await expect(second.textContent).toBe('08:14')
-  },
-}
-
-export const CaptionNeutralPrimary: Story = {
-  args: { variant: 'caption', children: 'Reporting live, by operator' },
-  play: async ({ canvasElement }) => {
-    await expect(rootOf(canvasElement).tagName).toBe('SPAN')
-  },
-}
-
-export const LabelNeutralPrimary: Story = {
-  args: { variant: 'label', children: 'Show whole line' },
-}
-
-export const LabelSmNeutralPrimary: Story = {
-  args: { variant: 'label-sm', children: 'Average delay' },
-}
-
-export const OverlineNeutralPrimary: Story = {
-  args: { variant: 'overline', children: 'Nearby stops' },
-  play: async ({ canvasElement }) => {
-    const root = rootOf(canvasElement)
-    await expect(root.textContent).toBe('Nearby stops')
-    await expect(getComputedStyle(root).textTransform).toBe('uppercase')
-  },
-}
-
-export const BadgeNeutralPrimary: Story = {
-  args: { variant: 'badge', children: '5C' },
-}
-
-export const StatNeutralPrimary: Story = {
-  args: { variant: 'stat', children: '94%' },
-}
-
-export const DataXlNeutralPrimary: Story = {
-  args: { variant: 'data-xl', children: '08:14' },
-}
-
-export const DataLgNeutralPrimary: Story = {
-  args: { variant: 'data-lg', children: '3 min' },
-}
-
-export const DataNeutralPrimary: Story = {
-  args: { variant: 'data', children: '08:17' },
-  play: async ({ canvasElement }) => {
-    await expect(getComputedStyle(rootOf(canvasElement)).fontVariantNumeric).toBe('tabular-nums')
-  },
-}
-
-export const DataSmNeutralPrimary: Story = {
-  args: { variant: 'data-sm', children: '12' },
-}
-
-export const BodyBrandPrimary: Story = {
-  args: { color: 'brand', children: 'Every bus and train in Copenhagen, as it moves.' },
-}
-
-export const BodySuccessPrimary: Story = {
-  args: { color: 'success', children: 'Running normally' },
-}
-
-export const BodyWarningPrimary: Story = {
-  args: {
-    color: 'warning',
-    children: 'Delays likely after 17:00 because of roadworks on Åboulevard.',
-  },
-}
-
-export const BodyDangerPrimary: Story = {
-  args: { color: 'danger', children: 'Running 4 min late' },
-}
-
-export const BodyInfoPrimary: Story = {
-  args: { color: 'info', children: 'Diverted via Vesterport until Sunday.' },
-}
-
-export const BodyNeutralSecondary: Story = {
-  args: { emphasis: 'secondary', children: 'Departures from platform 2' },
-}
-
-/** A hint, always next to stronger text: tertiary is for nothing else (Semantic colours). */
-export const BodyNeutralTertiary: Story = {
-  args: { emphasis: 'tertiary', children: 'Try a line number such as 5C.' },
-  render: (args) => (
-    <>
-      <Text variant="label">Search lines and stops</Text>
-      <Text {...args} />
-    </>
-  ),
-  parameters: {
-    // color.text.tertiary misses 4.5:1 on purpose, a miss Accessibility lists by name
-    // (docs/foundations/accessibility.md), so axe's contrast rule is off for this story alone
-    a11y: { options: { rules: { 'color-contrast': { enabled: false } } } },
   },
 }

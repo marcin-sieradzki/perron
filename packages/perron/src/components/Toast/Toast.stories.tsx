@@ -1,8 +1,6 @@
-// Toast's stories: one per row of the spec's Stories table (docs/components/toast.md), with the
-// design deferred, named as the `color` values, and Stack. Each opens its toast at first render by
-// `defaultOpen`, beside a trigger that shows it again, inside a PerronProvider whose region at the
-// bottom of the frame holds it; behaviour that needs a toast that hides itself is mounted beside the
-// story in its play (CR-14). Each play ends at rest: every toast closed, and focus where it found it.
+// Toast's stories: the toast with every part and every prop a control, a stack of toasts, then
+// each intent as a test. A toast shows in the one region the page holds, so the intents are not
+// laid out side by side.
 import { Toast as BaseToast } from '@base-ui/react/toast'
 import { useEffect, useState } from 'react'
 import type { RefObject } from 'react'
@@ -297,7 +295,7 @@ const SHAPES: { props: Partial<ToastProps>; check: (root: HTMLElement) => Promis
 ]
 
 /** Every part: the icon, the title, the sentence, the action and the close button. The subject. */
-export const Danger: Story = {
+const danger = {
   args: {
     color: 'danger',
     title: DANGER_TITLE,
@@ -449,211 +447,13 @@ export const Danger: Story = {
 
     await atRest(before)
   },
-}
+} satisfies Story
 
-/** The sentence alone, in the info intent: no title and no action. */
-export const Info: Story = {
-  args: { color: 'info', children: NIGHT_BUSES },
-  render: (args) => <Shown {...args} trigger="Show night buses" />,
-  play: async ({ args, canvasElement, step }) => {
-    const before = document.activeElement
-    const root = await toastNamed(NIGHT_BUSES)
-
-    await step(
-      'no title and no action; the sentence names it and describes nothing (CR-9)',
-      async () => {
-        await expect(root).toHaveAttribute('data-color', 'info')
-        await expect(partOf(root, 'title')).toBeNull()
-        await expect(partOf(root, 'action')).toBeNull()
-        await expect(root).toHaveAttribute('aria-labelledby', partOf(root, 'description')!.id)
-        await expect(root).not.toHaveAttribute('aria-describedby')
-      },
-    )
-
-    await step('with no PerronProvider, a Toast brings a region of its own (CR-2)', async () => {
-      const ref: RefObject<HTMLDivElement | null> = { current: null }
-      await mounted(
-        canvasElement,
-        <Toast {...args} ref={ref} className="caller" data-testid="toast-alone" />,
-        async () => {
-          const alone = await byTestId('toast-alone')
-          await expect(ref.current).toBe(alone)
-          await expect(alone).toHaveClass('pn-Toast caller', { exact: true })
-          const own = alone.closest('.pn-Toast-viewport')
-          await expect(own).toHaveAttribute('role', 'region')
-          await expect(own).toHaveAccessibleName('Notifications')
-          await expect(own).not.toContainElement(root)
-        },
-      )
-    })
-
-    await step(
-      'an open Toast re-rendered with a new title and color updates its toast (CR-5)',
-      async () => {
-        const drive = driver()
-        await mounted(
-          canvasElement,
-          <PerronProvider>
-            <Driven color="info" drive={drive}>
-              Buses are on time.
-            </Driven>
-          </PerronProvider>,
-          async () => {
-            const shown = await toastNamed('Buses are on time.')
-            drive.current!({ title: DELAYED, color: 'warning' })
-            await waitFor(() => expect(shown).toHaveAccessibleName(DELAYED))
-            await expect(shown).toHaveAttribute('data-color', 'warning')
-            await expect(shown).toHaveAccessibleDescription('Buses are on time.')
-            const own = shown.closest<HTMLElement>('.pn-Toast-viewport')!
-            await expect(within(own).getAllByRole('dialog')).toEqual([shown])
-          },
-        )
-      },
-    )
-
-    await step(
-      'a Toast unmounted while open takes its toast away, calling no onClose (CR-5)',
-      async () => {
-        const onClose = fn()
-        const drive = driver()
-        await mounted(
-          canvasElement,
-          <PerronProvider>
-            <Driven title="Unmounted" onClose={onClose} drive={drive} />
-          </PerronProvider>,
-          async () => {
-            await toastNamed('Unmounted')
-            drive.current!({ unmounted: true })
-            await waitFor(() =>
-              expect(screen.queryByRole('dialog', { name: 'Unmounted' })).toBeNull(),
-            )
-            await expect(onClose).not.toHaveBeenCalled()
-          },
-        )
-      },
-    )
-
-    await step('a toast added with no data, not by a Toast, is skipped (CR-2)', async () => {
-      await mounted(
-        canvasElement,
-        <PerronProvider notificationsLabel="Raw">
-          <RawToast title="Added raw" />
-        </PerronProvider>,
-        async () => {
-          const raw = await region('Raw')
-          await frames(2)
-          await expect(within(raw).queryAllByRole('dialog')).toEqual([])
-        },
-      )
-    })
-
-    await step('its close button closes it, and the play ends at rest', async () => {
-      await pressClose(NIGHT_BUSES)
-      await expect(lastClose(args.onClose)[1]).toBe('close-press')
-      await atRest(before)
-    })
-  },
-}
-
-/** The default intent, with no icon, a title, a sentence and an action. */
-export const Neutral: Story = {
-  args: {
-    title: 'Filters cleared',
-    children: 'The map shows every line again.',
-    action: small('Undo', undo),
-  },
-  render: (args) => <Shown {...args} trigger="Clear filters" />,
-  play: async ({ args, canvasElement, step }) => {
-    const before = document.activeElement
-    const root = await toastNamed('Filters cleared')
-
-    await step('it is neutral, with no icon part', async () => {
-      await expect(root).toHaveAttribute('data-color', 'neutral')
-      await expect(partOf(root, 'icon')).toBeNull()
-    })
-
-    await step("a caller's icon renders in the icon part, hidden", async () => {
-      await mounted(
-        canvasElement,
-        <Toast {...args} title="With an icon" icon={icon(calendar)} />,
-        async () => {
-          const withIcon = await toastNamed('With an icon')
-          const iconPart = partOf(withIcon, 'icon')!
-          await expect(iconPart).toHaveAttribute('aria-hidden', 'true')
-          await expect(iconPart.querySelector('svg.perron-icon')).not.toBeNull()
-        },
-      )
-    })
-
-    await step('pressing "Undo" runs its onClick and closes nothing', async () => {
-      await userEvent.click(within(root).getByRole('button', { name: 'Undo' }))
-      await expect(undo).toHaveBeenCalledTimes(1)
-      await expect(args.onClose).not.toHaveBeenCalled()
-      await expect(root).toBeInTheDocument()
-      ;(document.activeElement as HTMLElement).blur()
-    })
-
-    await step('an action toast with no autoHideDuration never hides itself (CR-5)', async () => {
-      const timeouts: (number | undefined)[] = []
-      await mounted(
-        canvasElement,
-        <PerronProvider>
-          <Toast defaultOpen title="Stays" action={small('Undo')} />
-          <TimeoutProbe found={timeouts} />
-        </PerronProvider>,
-        async () => {
-          await toastNamed('Stays')
-          await waitFor(() => expect(timeouts).toEqual([0]))
-        },
-      )
-    })
-
-    await step('an action toast with autoHideDuration closes with timeout', async () => {
-      const onClose = fn()
-      await mounted(
-        canvasElement,
-        <Toast
-          defaultOpen
-          title="Leaves"
-          action={small('Undo')}
-          autoHideDuration={300}
-          onClose={onClose}
-        />,
-        async () => {
-          await toastNamed('Leaves')
-          await waitFor(() => expect(onClose).toHaveBeenCalledTimes(1))
-          await expect(onClose.mock.lastCall![1]).toBe('timeout')
-        },
-      )
-    })
-
-    await step("a drag that starts on the action's button or link swipes nothing", async () => {
-      const onClose = fn()
-      await mounted(
-        canvasElement,
-        <Toast defaultOpen title="Not swiped" action={undoAndHistory} onClose={onClose} />,
-        async () => {
-          const shown = await toastNamed('Not swiped')
-          for (const control of [
-            within(shown).getByRole('button', { name: 'Undo' }),
-            within(shown).getByRole('link', { name: 'See history' }),
-          ]) {
-            await dragDown(control, 60)
-            await frames(2)
-            await expect(shown).not.toHaveAttribute('data-swiping')
-            await expect(shown).not.toHaveAttribute('data-swipe-direction')
-            await expect(onClose).not.toHaveBeenCalled()
-            await expect(await toastNamed('Not swiped')).toBe(shown)
-          }
-        },
-      )
-    })
-
-    await step('its close button closes it, and the play ends at rest', async () => {
-      await pressClose('Filters cleared')
-      await expect(lastClose(args.onClose)[1]).toBe('close-press')
-      await atRest(before)
-    })
+/** Every part, every prop a control: the icon, the title, the sentence, the action and the close button. */
+export const Default: Story = {
+  ...danger,
+  play: async (context) => {
+    await danger.play(context)
   },
 }
 
@@ -841,8 +641,217 @@ export const Stack: Story = {
   },
 }
 
+/** The default intent, with no icon, a title, a sentence and an action. */
+export const Neutral: Story = {
+  tags: ['!dev', '!autodocs'],
+  args: {
+    title: 'Filters cleared',
+    children: 'The map shows every line again.',
+    action: small('Undo', undo),
+  },
+  render: (args) => <Shown {...args} trigger="Clear filters" />,
+  play: async ({ args, canvasElement, step }) => {
+    const before = document.activeElement
+    const root = await toastNamed('Filters cleared')
+
+    await step('it is neutral, with no icon part', async () => {
+      await expect(root).toHaveAttribute('data-color', 'neutral')
+      await expect(partOf(root, 'icon')).toBeNull()
+    })
+
+    await step("a caller's icon renders in the icon part, hidden", async () => {
+      await mounted(
+        canvasElement,
+        <Toast {...args} title="With an icon" icon={icon(calendar)} />,
+        async () => {
+          const withIcon = await toastNamed('With an icon')
+          const iconPart = partOf(withIcon, 'icon')!
+          await expect(iconPart).toHaveAttribute('aria-hidden', 'true')
+          await expect(iconPart.querySelector('svg.perron-icon')).not.toBeNull()
+        },
+      )
+    })
+
+    await step('pressing "Undo" runs its onClick and closes nothing', async () => {
+      await userEvent.click(within(root).getByRole('button', { name: 'Undo' }))
+      await expect(undo).toHaveBeenCalledTimes(1)
+      await expect(args.onClose).not.toHaveBeenCalled()
+      await expect(root).toBeInTheDocument()
+      ;(document.activeElement as HTMLElement).blur()
+    })
+
+    await step('an action toast with no autoHideDuration never hides itself (CR-5)', async () => {
+      const timeouts: (number | undefined)[] = []
+      await mounted(
+        canvasElement,
+        <PerronProvider>
+          <Toast defaultOpen title="Stays" action={small('Undo')} />
+          <TimeoutProbe found={timeouts} />
+        </PerronProvider>,
+        async () => {
+          await toastNamed('Stays')
+          await waitFor(() => expect(timeouts).toEqual([0]))
+        },
+      )
+    })
+
+    await step('an action toast with autoHideDuration closes with timeout', async () => {
+      const onClose = fn()
+      await mounted(
+        canvasElement,
+        <Toast
+          defaultOpen
+          title="Leaves"
+          action={small('Undo')}
+          autoHideDuration={300}
+          onClose={onClose}
+        />,
+        async () => {
+          await toastNamed('Leaves')
+          await waitFor(() => expect(onClose).toHaveBeenCalledTimes(1))
+          await expect(onClose.mock.lastCall![1]).toBe('timeout')
+        },
+      )
+    })
+
+    await step("a drag that starts on the action's button or link swipes nothing", async () => {
+      const onClose = fn()
+      await mounted(
+        canvasElement,
+        <Toast defaultOpen title="Not swiped" action={undoAndHistory} onClose={onClose} />,
+        async () => {
+          const shown = await toastNamed('Not swiped')
+          for (const control of [
+            within(shown).getByRole('button', { name: 'Undo' }),
+            within(shown).getByRole('link', { name: 'See history' }),
+          ]) {
+            await dragDown(control, 60)
+            await frames(2)
+            await expect(shown).not.toHaveAttribute('data-swiping')
+            await expect(shown).not.toHaveAttribute('data-swipe-direction')
+            await expect(onClose).not.toHaveBeenCalled()
+            await expect(await toastNamed('Not swiped')).toBe(shown)
+          }
+        },
+      )
+    })
+
+    await step('its close button closes it, and the play ends at rest', async () => {
+      await pressClose('Filters cleared')
+      await expect(lastClose(args.onClose)[1]).toBe('close-press')
+      await atRest(before)
+    })
+  },
+}
+
+/** The sentence alone, in the info intent: no title and no action. */
+export const Info: Story = {
+  tags: ['!dev', '!autodocs'],
+  args: { color: 'info', children: NIGHT_BUSES },
+  render: (args) => <Shown {...args} trigger="Show night buses" />,
+  play: async ({ args, canvasElement, step }) => {
+    const before = document.activeElement
+    const root = await toastNamed(NIGHT_BUSES)
+
+    await step(
+      'no title and no action; the sentence names it and describes nothing (CR-9)',
+      async () => {
+        await expect(root).toHaveAttribute('data-color', 'info')
+        await expect(partOf(root, 'title')).toBeNull()
+        await expect(partOf(root, 'action')).toBeNull()
+        await expect(root).toHaveAttribute('aria-labelledby', partOf(root, 'description')!.id)
+        await expect(root).not.toHaveAttribute('aria-describedby')
+      },
+    )
+
+    await step('with no PerronProvider, a Toast brings a region of its own (CR-2)', async () => {
+      const ref: RefObject<HTMLDivElement | null> = { current: null }
+      await mounted(
+        canvasElement,
+        <Toast {...args} ref={ref} className="caller" data-testid="toast-alone" />,
+        async () => {
+          const alone = await byTestId('toast-alone')
+          await expect(ref.current).toBe(alone)
+          await expect(alone).toHaveClass('pn-Toast caller', { exact: true })
+          const own = alone.closest('.pn-Toast-viewport')
+          await expect(own).toHaveAttribute('role', 'region')
+          await expect(own).toHaveAccessibleName('Notifications')
+          await expect(own).not.toContainElement(root)
+        },
+      )
+    })
+
+    await step(
+      'an open Toast re-rendered with a new title and color updates its toast (CR-5)',
+      async () => {
+        const drive = driver()
+        await mounted(
+          canvasElement,
+          <PerronProvider>
+            <Driven color="info" drive={drive}>
+              Buses are on time.
+            </Driven>
+          </PerronProvider>,
+          async () => {
+            const shown = await toastNamed('Buses are on time.')
+            drive.current!({ title: DELAYED, color: 'warning' })
+            await waitFor(() => expect(shown).toHaveAccessibleName(DELAYED))
+            await expect(shown).toHaveAttribute('data-color', 'warning')
+            await expect(shown).toHaveAccessibleDescription('Buses are on time.')
+            const own = shown.closest<HTMLElement>('.pn-Toast-viewport')!
+            await expect(within(own).getAllByRole('dialog')).toEqual([shown])
+          },
+        )
+      },
+    )
+
+    await step(
+      'a Toast unmounted while open takes its toast away, calling no onClose (CR-5)',
+      async () => {
+        const onClose = fn()
+        const drive = driver()
+        await mounted(
+          canvasElement,
+          <PerronProvider>
+            <Driven title="Unmounted" onClose={onClose} drive={drive} />
+          </PerronProvider>,
+          async () => {
+            await toastNamed('Unmounted')
+            drive.current!({ unmounted: true })
+            await waitFor(() =>
+              expect(screen.queryByRole('dialog', { name: 'Unmounted' })).toBeNull(),
+            )
+            await expect(onClose).not.toHaveBeenCalled()
+          },
+        )
+      },
+    )
+
+    await step('a toast added with no data, not by a Toast, is skipped (CR-2)', async () => {
+      await mounted(
+        canvasElement,
+        <PerronProvider notificationsLabel="Raw">
+          <RawToast title="Added raw" />
+        </PerronProvider>,
+        async () => {
+          const raw = await region('Raw')
+          await frames(2)
+          await expect(within(raw).queryAllByRole('dialog')).toEqual([])
+        },
+      )
+    })
+
+    await step('its close button closes it, and the play ends at rest', async () => {
+      await pressClose(NIGHT_BUSES)
+      await expect(lastClose(args.onClose)[1]).toBe('close-press')
+      await atRest(before)
+    })
+  },
+}
+
 /** A title alone, in the success intent. */
 export const Success: Story = {
+  tags: ['!dev', '!autodocs'],
   args: { color: 'success', title: LINK_COPIED },
   render: (args) => <Shown {...args} trigger="Copy link" />,
   play: async ({ args, canvasElement, step }) => {
@@ -994,6 +1003,7 @@ export const Success: Story = {
 
 /** A title and a sentence, in the warning intent. */
 export const Warning: Story = {
+  tags: ['!dev', '!autodocs'],
   args: {
     color: 'warning',
     title: DELAYED,

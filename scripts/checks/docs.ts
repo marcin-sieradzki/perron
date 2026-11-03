@@ -10,7 +10,8 @@
 // "The locale's" for an owned-string prop, so the docs stage never meets a row or a Default cell the
 // brief or the build could have settled. The spec's Stories table and the stories file name the
 // same stories, one row per export, so the story the contract story renders (its `Default`, or its
-// alphabetically first) is one the spec describes. An overlay, a component with `open` and
+// alphabetically first) is one the spec describes, and the file shows at most eight in the sidebar,
+// test-only stories (tagged `'!dev'`) aside. An overlay, a component with `open` and
 // `defaultOpen`, opens by `defaultOpen` in its stories (the contract's Stories), since the docs page
 // shows each story's first render. The intro the docs page shows holds no run notes: what the spec
 // rests on, such as ADR 0010, sits below the intro's `<!-- run notes -->` line. A missing file or
@@ -166,6 +167,36 @@ function storyProblems(root: string, e: Entry): Problem[] {
         line: r.line,
         message: `${r.name} is a row of ${specPage(e)}'s Stories table but no story ${storiesFile(e)} exports: export it under that name, or take the row out`,
       })),
+  ]
+}
+
+/** The most stories a stories file shows in the sidebar, test-only stories aside (the contract's Stories). */
+export const SHOWN_STORIES = 8
+
+/**
+ * The stories a stories file shows in the sidebar: each export but those tagged `'!dev'`, the
+ * test-only stories.
+ */
+export function shownStories(stories: string) {
+  const exports = [...stories.matchAll(/^export const (\w+)/gm)]
+  return exports
+    .filter(
+      (m, i) => !/tags:\s*\[[^\]]*['"]!dev['"]/.test(stories.slice(m.index, exports[i + 1]?.index)),
+    )
+    .map((m) => m[1])
+}
+
+/** A stories file that shows more stories than `SHOWN_STORIES`. */
+function shownProblems(root: string, e: Entry): Problem[] {
+  const file = join(root, storiesFile(e))
+  if (!existsSync(file)) return []
+  const shown = shownStories(readFileSync(file, 'utf8'))
+  if (shown.length <= SHOWN_STORIES) return []
+  return [
+    {
+      file: storiesFile(e),
+      message: `${storiesFile(e)} shows ${shown.length} stories, more than ${SHOWN_STORIES}: lay the values of one axis out side by side in a Showcase story, and tag a behaviour test no reader needs to see \`tags: ['!dev', '!autodocs']\` (${CONTRACT}, "Stories")`,
+    },
   ]
 }
 
@@ -368,6 +399,7 @@ export default {
         )
       problems.push(
         ...storyProblems(root, e),
+        ...shownProblems(root, e),
         ...introProblems(root, e),
         ...keyboardProblems(root, e),
       )

@@ -1,10 +1,10 @@
-// Checkbox's stories: one per variant of the deferred design, named as the spec's Stories table
-// names them, then a ticked and disabled box, a read-only one, a controlled one, two in a form, the
-// label's shapes, a long Danish label and a box with no label. Hover and focus render at rest; the visual check
-// drives them, and their play tests check them.
+// Checkbox's stories: the checkbox alone with every prop a control, its states side by side, its
+// label shapes, a long label and one without a label, then the behaviour tests. Hover and focus
+// are play steps, not stories.
 import { Field } from '@base-ui/react/field'
 import { createRef, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { showcase } from '../../testing/Showcase.tsx'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import {
   byTestId,
@@ -29,6 +29,8 @@ const meta = {
 export default meta
 
 type Story = StoryObj<typeof meta>
+/** The args a story renders with: the meta's and its own. */
+type StoryArgs = Parameters<NonNullable<Story['render']>>[0]
 
 /** The checkbox in `element`, by its name. */
 const checkbox = (element: HTMLElement, name = 'Show planned works on the map') =>
@@ -48,8 +50,41 @@ const inHost = (host: HTMLElement) =>
     return found!
   })
 
+/**
+ * A caller that keeps the state in its own `useState` and sets it from `onChange`, unless the
+ * change was cancelled: the story's `onChange` spy stands for the caller's own handler, and may call
+ * `details.cancel()`.
+ */
+function ControlledCheckbox(args: CheckboxProps) {
+  const [checked, setChecked] = useState(false)
+  return (
+    <Checkbox
+      {...args}
+      checked={checked}
+      onChange={(event, next, details) => {
+        args.onChange?.(event, next, details)
+        if (!details.isCanceled) setChecked(next)
+      }}
+    />
+  )
+}
+
+/** The story's submit handler, which stops the form from leaving the page. */
+const onSubmit = fn((event: { preventDefault: () => void }) => event.preventDefault())
+
+/** Each state a label's shape is shown in, with the props that set it and what the root says. */
+const SHAPE_STATES = [
+  { state: 'unticked', props: {}, checked: 'false', mark: null },
+  { state: 'ticked', props: { defaultChecked: true }, checked: 'true', mark: 'tick' },
+  { state: 'indeterminate', props: { indeterminate: true }, checked: 'mixed', mark: 'dash' },
+  { state: 'disabled', props: { disabled: true }, checked: 'false', mark: null },
+] as const
+
+/** Each label that renders nothing, by the test id of the box it is given to. */
+const NOTHING = { false: false, empty: '', list: [null, false] } as const
+
 /** Unticked, at rest, "Show planned works on the map"; the subject story. */
-export const Default: Story = {
+const _default = {
   play: async ({ args, canvasElement }) => {
     const onChange = args.onChange as ReturnType<typeof fn>
     onChange.mockClear()
@@ -96,10 +131,10 @@ export const Default: Story = {
     await expect(onChange).toHaveBeenCalledTimes(2)
     root.blur()
   },
-}
+} satisfies Story
 
 /** Unticked, hovered by the visual check. */
-export const Hover: Story = {
+const hover = {
   play: async ({ canvasElement }) => {
     const indicator = box(checkbox(canvasElement))
     // the hover layer over the raised fill, and the control edge kept
@@ -121,10 +156,10 @@ export const Hover: Story = {
     ).toBe(true)
     await expect(pressedAfterHover(indicator)).toBe(true)
   },
-}
+} satisfies Story
 
 /** Unticked, focused by the visual check. */
-export const Focus: Story = {
+const focus = {
   play: async ({ canvasElement }) => {
     const root = checkbox(canvasElement)
     await userEvent.tab()
@@ -141,10 +176,10 @@ export const Focus: Story = {
     await userEvent.tab({ shift: true })
     await expect(root).not.toHaveFocus()
   },
-}
+} satisfies Story
 
 /** Ticked, with `defaultChecked`. */
-export const Checked: Story = {
+const checked = {
   args: { defaultChecked: true },
   play: async ({ args, canvasElement }) => {
     const root = checkbox(canvasElement)
@@ -179,10 +214,10 @@ export const Checked: Story = {
       await expect(offLabel.top - offRoot.top).toBe(onLabel.top - onRoot.top)
     })
   },
-}
+} satisfies Story
 
 /** Indeterminate, "Show all lines", with `indeterminate`. */
-export const Indeterminate: Story = {
+const indeterminate = {
   args: { indeterminate: true, children: 'Show all lines' },
   play: async ({ canvasElement }) => {
     const root = checkbox(canvasElement, 'Show all lines')
@@ -206,10 +241,10 @@ export const Indeterminate: Story = {
       resolve('backgroundColor', 'var(--perron-color-surface-inverse)'),
     )
   },
-}
+} satisfies Story
 
 /** Unticked, disabled. */
-export const Disabled: Story = {
+const disabled = {
   args: { disabled: true },
   play: async ({ args, canvasElement }) => {
     const onChange = args.onChange as ReturnType<typeof fn>
@@ -232,10 +267,10 @@ export const Disabled: Story = {
     await expect(stateFill(box(root))).toBe('')
     ;(document.activeElement as HTMLElement | null)?.blur()
   },
-}
+} satisfies Story
 
 /** Unticked and `required`, inside a Base UI `Field.Root` with `invalid`. */
-export const Invalid: Story = {
+const invalid = {
   args: { required: true },
   render: (args) => (
     <Field.Root invalid>
@@ -254,10 +289,10 @@ export const Invalid: Story = {
       resolve('borderColor', 'var(--perron-color-status-danger)'),
     )
   },
-}
+} satisfies Story
 
 /** Ticked and disabled. */
-export const CheckedDisabled: Story = {
+const checkedDisabled = {
   args: { defaultChecked: true, disabled: true },
   play: async ({ args, canvasElement }) => {
     const onChange = args.onChange as ReturnType<typeof fn>
@@ -274,10 +309,10 @@ export const CheckedDisabled: Story = {
     await expect(root).toHaveAttribute('aria-checked', 'true')
     await expect(onChange).not.toHaveBeenCalled()
   },
-}
+} satisfies Story
 
 /** Ticked and `readOnly`. */
-export const ReadOnly: Story = {
+const readOnly = {
   args: { defaultChecked: true, readOnly: true },
   play: async ({ args, canvasElement }) => {
     const onChange = args.onChange as ReturnType<typeof fn>
@@ -298,136 +333,40 @@ export const ReadOnly: Story = {
     await expect(getComputedStyle(root).cursor).toBe('default')
     root.blur()
   },
-}
+} satisfies Story
 
 /**
- * A caller that keeps the state in its own `useState` and sets it from `onChange`, unless the
- * change was cancelled: the story's `onChange` spy stands for the caller's own handler, and may call
- * `details.cancel()`.
+ * Unticked, at rest, "Show planned works on the map", every prop a control; the subject story. Its
+ * play reads the hover rule and gives the box focus and the ring.
  */
-function ControlledCheckbox(args: CheckboxProps) {
-  const [checked, setChecked] = useState(false)
-  return (
-    <Checkbox
-      {...args}
-      checked={checked}
-      onChange={(event, next, details) => {
-        args.onChange?.(event, next, details)
-        if (!details.isCanceled) setChecked(next)
-      }}
-    />
-  )
-}
-
-/** A checkbox given `checked` and `onChange` from the story's state. */
-export const Controlled: Story = {
-  render: (args) => <ControlledCheckbox {...args} />,
-  play: async ({ args, canvasElement }) => {
-    const onChange = args.onChange as ReturnType<typeof fn>
-    onChange.mockClear()
-    const root = checkbox(canvasElement)
-    // a handler that cancels: the caller sets nothing, and the state stays
-    onChange.mockImplementationOnce((_event, _checked, details) => details.cancel())
-    await userEvent.click(root)
-    await expect(onChange).toHaveBeenLastCalledWith(
-      expect.any(Event),
-      true,
-      expect.objectContaining({ reason: 'none' }),
-    )
-    await expect(root).toHaveAttribute('aria-checked', 'false')
-    // the caller sets `checked`, and only then does the box tick
-    await userEvent.click(root)
-    await expect(onChange).toHaveBeenCalledTimes(2)
-    await expect(root).toHaveAttribute('aria-checked', 'true')
-    await userEvent.click(root)
-    await expect(onChange).toHaveBeenLastCalledWith(
-      expect.any(Event),
-      false,
-      expect.objectContaining({ reason: 'none' }),
-    )
-    await expect(root).toHaveAttribute('aria-checked', 'false')
-    root.blur()
-    // a caller that ignores the change without cancelling it: `checked` stays false, and so does
-    // the box, which follows `checked` rather than its own state
-    const ignored = fn()
-    await mounted(
-      canvasElement,
-      <Checkbox checked={false} onChange={ignored}>
-        Show bus routes
-      </Checkbox>,
-      async (host) => {
-        const off = await inHost(host)
-        await userEvent.click(off)
-        await expect(ignored).toHaveBeenCalledTimes(1)
-        await expect(ignored).toHaveBeenLastCalledWith(
-          expect.any(Event),
-          true,
-          expect.objectContaining({ reason: 'none', isCanceled: false }),
-        )
-        await expect(off).toHaveAttribute('aria-checked', 'false')
-        await expect(off).not.toHaveAttribute('data-checked')
-        off.blur()
-      },
-    )
+export const Default: Story = {
+  play: async (context) => {
+    await _default.play(context)
+    await hover.play(context)
+    await focus.play(context)
   },
 }
 
-/** The story's submit handler, which stops the form from leaving the page. */
-const onSubmit = fn((event: { preventDefault: () => void }) => event.preventDefault())
-
-/** Two checkboxes in a `<form>`, the second ticked, with a submit button. */
-export const InForm: Story = {
-  render: (args) => (
-    <form onSubmit={onSubmit} style={{ display: 'grid', justifyItems: 'start' }}>
-      <Checkbox {...args} name="planned" />
-      <Checkbox
-        onChange={args.onChange}
-        name="routes"
-        value="bus"
-        uncheckedValue="none"
-        defaultChecked
-      >
-        Show bus routes
-      </Checkbox>
-      <Button type="submit">Save</Button>
-    </form>
+/** Each state a prop reaches, one checkbox apiece. */
+export const States: Story = {
+  parameters: {
+    // a disabled field's words are color.text.tertiary, a miss Accessibility lists by name
+    // (docs/foundations/accessibility.md) and WCAG 1.4.3 exempts for an inactive control, so axe
+    // leaves the disabled checkboxes out
+    a11y: { context: { include: ['body'], exclude: ['[data-row="Disabled"]'] } },
+  },
+  ...showcase<StoryArgs>(
+    [
+      { label: 'Checked', story: checked },
+      { label: 'Indeterminate', story: indeterminate },
+      { label: 'Disabled', story: disabled },
+      { label: 'Checked, disabled', story: checkedDisabled },
+      { label: 'Read-only', story: readOnly },
+      { label: 'Invalid', story: invalid },
+    ],
+    (args) => <Checkbox {...args} />,
   ),
-  play: async ({ canvasElement }) => {
-    onSubmit.mockClear()
-    const form = canvasElement.querySelector('form')!
-    const planned = checkbox(canvasElement)
-    const routes = checkbox(canvasElement, 'Show bus routes')
-    const data = () => new FormData(form)
-    await expect(data().has('planned')).toBe(false)
-    await expect(data().get('routes')).toBe('bus')
-    await userEvent.click(planned)
-    await expect(data().get('planned')).toBe('on')
-    await userEvent.click(routes)
-    await expect(data().get('routes')).toBe('none')
-    // Enter clicks the form's submit button, which the story stops, and toggles nothing
-    await expect(routes).toHaveFocus()
-    await userEvent.keyboard('{Enter}')
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1))
-    await expect(routes).toHaveAttribute('aria-checked', 'false')
-    // both as they started
-    await userEvent.click(planned)
-    await userEvent.click(routes)
-    await expect(data().has('planned')).toBe(false)
-    await expect(data().get('routes')).toBe('bus')
-    ;(document.activeElement as HTMLElement | null)?.blur()
-  },
 }
-
-/** Each state a label's shape is shown in, with the props that set it and what the root says. */
-const SHAPE_STATES = [
-  { state: 'unticked', props: {}, checked: 'false', mark: null },
-  { state: 'ticked', props: { defaultChecked: true }, checked: 'true', mark: 'tick' },
-  { state: 'indeterminate', props: { indeterminate: true }, checked: 'mixed', mark: 'dash' },
-  { state: 'disabled', props: { disabled: true }, checked: 'false', mark: null },
-] as const
-
-/** Each label that renders nothing, by the test id of the box it is given to. */
-const NOTHING = { false: false, empty: '', list: [null, false] } as const
 
 /**
  * The label as an element and as a list, unticked, ticked, indeterminate and disabled, then three
@@ -534,5 +473,103 @@ export const WithoutLabel: Story = {
     await userEvent.click(root)
     await expect(root).toHaveAttribute('aria-checked', 'false')
     root.blur()
+  },
+}
+
+/** A checkbox given `checked` and `onChange` from the story's state. */
+export const Controlled: Story = {
+  tags: ['!dev', '!autodocs'],
+  render: (args) => <ControlledCheckbox {...args} />,
+  play: async ({ args, canvasElement }) => {
+    const onChange = args.onChange as ReturnType<typeof fn>
+    onChange.mockClear()
+    const root = checkbox(canvasElement)
+    // a handler that cancels: the caller sets nothing, and the state stays
+    onChange.mockImplementationOnce((_event, _checked, details) => details.cancel())
+    await userEvent.click(root)
+    await expect(onChange).toHaveBeenLastCalledWith(
+      expect.any(Event),
+      true,
+      expect.objectContaining({ reason: 'none' }),
+    )
+    await expect(root).toHaveAttribute('aria-checked', 'false')
+    // the caller sets `checked`, and only then does the box tick
+    await userEvent.click(root)
+    await expect(onChange).toHaveBeenCalledTimes(2)
+    await expect(root).toHaveAttribute('aria-checked', 'true')
+    await userEvent.click(root)
+    await expect(onChange).toHaveBeenLastCalledWith(
+      expect.any(Event),
+      false,
+      expect.objectContaining({ reason: 'none' }),
+    )
+    await expect(root).toHaveAttribute('aria-checked', 'false')
+    root.blur()
+    // a caller that ignores the change without cancelling it: `checked` stays false, and so does
+    // the box, which follows `checked` rather than its own state
+    const ignored = fn()
+    await mounted(
+      canvasElement,
+      <Checkbox checked={false} onChange={ignored}>
+        Show bus routes
+      </Checkbox>,
+      async (host) => {
+        const off = await inHost(host)
+        await userEvent.click(off)
+        await expect(ignored).toHaveBeenCalledTimes(1)
+        await expect(ignored).toHaveBeenLastCalledWith(
+          expect.any(Event),
+          true,
+          expect.objectContaining({ reason: 'none', isCanceled: false }),
+        )
+        await expect(off).toHaveAttribute('aria-checked', 'false')
+        await expect(off).not.toHaveAttribute('data-checked')
+        off.blur()
+      },
+    )
+  },
+}
+
+/** Two checkboxes in a `<form>`, the second ticked, with a submit button. */
+export const InForm: Story = {
+  tags: ['!dev', '!autodocs'],
+  render: (args) => (
+    <form onSubmit={onSubmit} style={{ display: 'grid', justifyItems: 'start' }}>
+      <Checkbox {...args} name="planned" />
+      <Checkbox
+        onChange={args.onChange}
+        name="routes"
+        value="bus"
+        uncheckedValue="none"
+        defaultChecked
+      >
+        Show bus routes
+      </Checkbox>
+      <Button type="submit">Save</Button>
+    </form>
+  ),
+  play: async ({ canvasElement }) => {
+    onSubmit.mockClear()
+    const form = canvasElement.querySelector('form')!
+    const planned = checkbox(canvasElement)
+    const routes = checkbox(canvasElement, 'Show bus routes')
+    const data = () => new FormData(form)
+    await expect(data().has('planned')).toBe(false)
+    await expect(data().get('routes')).toBe('bus')
+    await userEvent.click(planned)
+    await expect(data().get('planned')).toBe('on')
+    await userEvent.click(routes)
+    await expect(data().get('routes')).toBe('none')
+    // Enter clicks the form's submit button, which the story stops, and toggles nothing
+    await expect(routes).toHaveFocus()
+    await userEvent.keyboard('{Enter}')
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1))
+    await expect(routes).toHaveAttribute('aria-checked', 'false')
+    // both as they started
+    await userEvent.click(planned)
+    await userEvent.click(routes)
+    await expect(data().has('planned')).toBe(false)
+    await expect(data().get('routes')).toBe('bus')
+    ;(document.activeElement as HTMLElement | null)?.blur()
   },
 }

@@ -182,6 +182,7 @@ export const Narrow: Story = {
 
 /** `Default`'s figures with one unknown, the brand name and "Unknown" overridden. */
 export const Labels: Story = {
+  tags: ['!dev', '!autodocs'],
   args: {
     time: '08:14',
     stats: UNKNOWN_DELAY,

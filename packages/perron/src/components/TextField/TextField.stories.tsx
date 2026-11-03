@@ -1,12 +1,12 @@
-// TextField's stories: the variants of the deferred design, Default, Hover, Focus, Disabled and
-// Invalid, and the stories of content and behaviour the spec's Stories table names
-// (docs/components/text-field.md), each in a 320 px container. Hover and focus render at rest;
-// their plays drive them.
+// TextField's stories: the field alone with every prop a control, its states side by side, its
+// types, a hidden label and long words, then the behaviour tests (docs/components/text-field.md).
+// Hover and focus are play steps, not stories.
 import { Form } from '@base-ui/react/form'
 import { useState } from 'react'
 import type { ChangeEvent } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { showcase } from '../../testing/Showcase.tsx'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import type { Locale } from '../../locale/index.ts'
@@ -46,13 +46,49 @@ const meta = {
 export default meta
 
 type Story = StoryObj<typeof meta>
+/** The args a story renders with: the meta's and its own. */
+type StoryArgs = Parameters<NonNullable<Story['render']>>[0]
 
 /** The field's input, the textbox, in `scope`. */
 const inputIn = (scope: HTMLElement, name: string | RegExp = LABEL) =>
   within(scope).getByRole<HTMLInputElement>('textbox', { name })
 
+/** Renders `args` in `locale` on the server, as the owned-strings check reads a render. */
+const markup = (args: TextFieldProps, locale: Locale) =>
+  renderToStaticMarkup(
+    <PerronProvider locale={locale}>
+      <TextField {...args} />
+    </PerronProvider>,
+  )
+
+/** Each `type`, with its label and the `autoComplete` a person's own details take. */
+const TYPES = [
+  { type: 'text', label: 'Stop name' },
+  { type: 'email', label: 'Email address', autoComplete: 'email' },
+  { type: 'password', label: 'Password', autoComplete: 'current-password' },
+  { type: 'tel', label: 'Phone number', autoComplete: 'tel' },
+  { type: 'url', label: 'Web address', autoComplete: 'url' },
+] as const
+
+/** The words held in the story's state, set from each change event's `target.value`. */
+function ControlledField(props: TextFieldProps) {
+  const [value, setValue] = useState('')
+  return (
+    <TextField
+      {...props}
+      value={value}
+      onChange={(event) => {
+        props.onChange?.(event)
+        setValue(event.target.value)
+      }}
+    />
+  )
+}
+
+const COMPOUND = 'Hovedstadsområdetsbuslinjestoppestedsoversigtskortudgivelsen'
+
 /** The subject story, State default: the label, the description and the empty box. */
-export const Default: Story = {
+const _default = {
   play: async ({ canvasElement, step }) => {
     const input = inputIn(canvasElement)
     await step('the input is the root, named by the label and described by the help', async () => {
@@ -83,10 +119,10 @@ export const Default: Story = {
       await expect(input).not.toHaveFocus()
     })
   },
-}
+} satisfies Story
 
 /** State hover: the empty box, at rest at first render; the play reads the hover rule. */
-export const Hover: Story = {
+const hover = {
   play: async ({ canvasElement }) => {
     const input = inputIn(canvasElement)
     const image = onHover(input, 'background-image')
@@ -96,10 +132,10 @@ export const Hover: Story = {
       colour('--perron-color-surface-raised'),
     )
   },
-}
+} satisfies Story
 
 /** State focus: the empty box, at rest at first render; Tab gives the input itself the ring. */
-export const Focus: Story = {
+const focus = {
   play: async ({ canvasElement }) => {
     const input = inputIn(canvasElement)
     await userEvent.tab()
@@ -113,10 +149,10 @@ export const Focus: Story = {
     await userEvent.tab({ shift: true })
     await expect(input).not.toHaveFocus()
   },
-}
+} satisfies Story
 
 /** State disabled: the words, the label and the description in `color.text.tertiary`. */
-export const Disabled: Story = {
+const disabled = {
   args: { disabled: true, defaultValue: WORDS },
   parameters: {
     // a disabled field's words are color.text.tertiary, a miss Accessibility lists by name
@@ -144,10 +180,10 @@ export const Disabled: Story = {
     await expect(args.onChange).not.toHaveBeenCalled()
     await userEvent.tab({ shift: true })
   },
-}
+} satisfies Story
 
 /** State invalid: the error "Enter a stop name" under the box, its edge in `color.status.danger`. */
-export const Invalid: Story = {
+const invalid = {
   args: { error: 'Enter a stop name' },
   play: async ({ canvasElement }) => {
     const input = inputIn(canvasElement)
@@ -163,10 +199,10 @@ export const Invalid: Story = {
     )
     await expect(input).toHaveAccessibleDescription(`${DESCRIPTION} Enter a stop name`)
   },
-}
+} satisfies Story
 
 /** The field with `defaultValue` "Nørreport St.". */
-export const Filled: Story = {
+const filled = {
   args: { defaultValue: WORDS },
   play: async ({ args, canvasElement }) => {
     const input = inputIn(canvasElement)
@@ -183,10 +219,10 @@ export const Filled: Story = {
     await expect(event.target.value).toBe(`${WORDS} 1`)
     input.blur()
   },
-}
+} satisfies Story
 
 /** The empty field with the placeholder "Such as Nørreport St.". */
-export const Placeholder: Story = {
+const placeholder = {
   args: { placeholder: 'Such as Nørreport St.' },
   play: async ({ canvasElement }) => {
     const input = inputIn(canvasElement)
@@ -196,18 +232,10 @@ export const Placeholder: Story = {
     await expect(hint.opacity).toBe('1')
     await expect(input).toHaveAccessibleName(LABEL)
   },
-}
-
-/** Renders `args` in `locale` on the server, as the owned-strings check reads a render. */
-const markup = (args: TextFieldProps, locale: Locale) =>
-  renderToStaticMarkup(
-    <PerronProvider locale={locale}>
-      <TextField {...args} />
-    </PerronProvider>,
-  )
+} satisfies Story
 
 /** `optional`: the label reads "Stop name (optional)". */
-export const Optional: Story = {
+const optional = {
   args: { optional: true },
   play: async ({ args, canvasElement, step }) => {
     await step('the mark is part of the input’s name', async () => {
@@ -229,34 +257,61 @@ export const Optional: Story = {
         expectOwnedStrings(markup(args, locale), locale, [LABEL, DESCRIPTION])
     })
   },
+} satisfies Story
+
+/** `readOnly` with the words "Nørreport St.", in the rest look. */
+const readOnly = {
+  args: { readOnly: true, defaultValue: WORDS },
+  play: async ({ args, canvasElement }) => {
+    const input = inputIn(canvasElement)
+    await expect(input).toHaveAttribute('readonly')
+    await userEvent.tab()
+    await expect(input).toHaveFocus()
+    await userEvent.keyboard('x')
+    await expect(input).toHaveValue(WORDS)
+    await expect(args.onChange).not.toHaveBeenCalled()
+    await expect(getComputedStyle(input).borderColor).toBe(edge('color-border-control'))
+    await expect(getComputedStyle(input).backgroundColor).toBe(
+      colour('--perron-color-surface-raised'),
+    )
+    await expect(getComputedStyle(input).color).toBe(colour('--perron-color-text-primary'))
+    await userEvent.tab({ shift: true })
+    await expect(input).not.toHaveFocus()
+  },
+} satisfies Story
+
+/**
+ * The subject story, every prop a control: the label, the description and the empty box. Its
+ * play reads the box's hover rule and gives the input focus and the ring.
+ */
+export const Default: Story = {
+  play: async (context) => {
+    await _default.play(context)
+    await hover.play(context)
+    await focus.play(context)
+  },
 }
 
-/** `hiddenLabel` with a placeholder: the description and the box, no label in view. */
-export const HiddenLabel: Story = {
-  args: { hiddenLabel: true, placeholder: 'Such as Nørreport St.' },
+/** Each state a prop reaches, one field apiece: filled, a placeholder, optional, disabled, read-only and invalid. */
+export const States: Story = {
   parameters: {
-    // axe's label-title-only fails a control with no visible label text that has a title or an
-    // aria-describedby, and here the description's aria-describedby trips it on the hidden label,
-    // the point of the story; so the rule is off for it alone: the input is still named by the
-    // label, through aria-labelledby
-    a11y: { options: { rules: { 'label-title-only': { enabled: false } } } },
+    // a disabled field's words are color.text.tertiary, a miss Accessibility lists by name
+    // (docs/foundations/accessibility.md) and WCAG 1.4.3 exempts for an inactive control, so axe
+    // leaves the disabled field out
+    a11y: { context: { include: ['body'], exclude: ['[data-row="Disabled"]'] } },
   },
-  play: async ({ canvasElement }) => {
-    const label = fieldPart(canvasElement, 'label')!
-    await expect(label.tagName).toBe('SPAN')
-    await expect(label.getBoundingClientRect().width).toBeLessThanOrEqual(1)
-    await expect(inputIn(canvasElement)).toHaveAccessibleName(LABEL)
-  },
+  ...showcase<StoryArgs>(
+    [
+      { label: 'Filled', story: filled },
+      { label: 'Placeholder', story: placeholder },
+      { label: 'Optional', story: optional },
+      { label: 'Disabled', story: disabled },
+      { label: 'Read-only', story: readOnly },
+      { label: 'Invalid', story: invalid },
+    ],
+    (args) => <TextField {...args} />,
+  ),
 }
-
-/** Each `type`, with its label and the `autoComplete` a person's own details take. */
-const TYPES = [
-  { type: 'text', label: 'Stop name' },
-  { type: 'email', label: 'Email address', autoComplete: 'email' },
-  { type: 'password', label: 'Password', autoComplete: 'current-password' },
-  { type: 'tel', label: 'Phone number', autoComplete: 'tel' },
-  { type: 'url', label: 'Web address', autoComplete: 'url' },
-] as const
 
 /** Five fields, one per `type`, each with its own label and no description. */
 export const Types: Story = {
@@ -289,44 +344,55 @@ export const Types: Story = {
   },
 }
 
-/** `readOnly` with the words "Nørreport St.", in the rest look. */
-export const ReadOnly: Story = {
-  args: { readOnly: true, defaultValue: WORDS },
-  play: async ({ args, canvasElement }) => {
-    const input = inputIn(canvasElement)
-    await expect(input).toHaveAttribute('readonly')
-    await userEvent.tab()
-    await expect(input).toHaveFocus()
-    await userEvent.keyboard('x')
-    await expect(input).toHaveValue(WORDS)
-    await expect(args.onChange).not.toHaveBeenCalled()
-    await expect(getComputedStyle(input).borderColor).toBe(edge('color-border-control'))
-    await expect(getComputedStyle(input).backgroundColor).toBe(
-      colour('--perron-color-surface-raised'),
-    )
-    await expect(getComputedStyle(input).color).toBe(colour('--perron-color-text-primary'))
-    await userEvent.tab({ shift: true })
-    await expect(input).not.toHaveFocus()
+/** `hiddenLabel` with a placeholder: the description and the box, no label in view. */
+export const HiddenLabel: Story = {
+  args: { hiddenLabel: true, placeholder: 'Such as Nørreport St.' },
+  parameters: {
+    // axe's label-title-only fails a control with no visible label text that has a title or an
+    // aria-describedby, and here the description's aria-describedby trips it on the hidden label,
+    // the point of the story; so the rule is off for it alone: the input is still named by the
+    // label, through aria-labelledby
+    a11y: { options: { rules: { 'label-title-only': { enabled: false } } } },
+  },
+  play: async ({ canvasElement }) => {
+    const label = fieldPart(canvasElement, 'label')!
+    await expect(label.tagName).toBe('SPAN')
+    await expect(label.getBoundingClientRect().width).toBeLessThanOrEqual(1)
+    await expect(inputIn(canvasElement)).toHaveAccessibleName(LABEL)
   },
 }
 
-/** The words held in the story's state, set from each change event's `target.value`. */
-function ControlledField(props: TextFieldProps) {
-  const [value, setValue] = useState('')
-  return (
-    <TextField
-      {...props}
-      value={value}
-      onChange={(event) => {
-        props.onChange?.(event)
-        setValue(event.target.value)
-      }}
-    />
-  )
+/** A Danish compound longer than its line in every part, and a value longer than the box (CR-7). */
+export const LongWords: Story = {
+  args: {
+    label: COMPOUND,
+    description: `Som skrevet i ${COMPOUND}`,
+    error: `Skriv navnet fra ${COMPOUND}`,
+    defaultValue: `${COMPOUND} ${COMPOUND}`,
+  },
+  play: async ({ canvasElement }) => {
+    const frame = fieldPart(canvasElement, 'field')!
+    const bounds = frame.getBoundingClientRect()
+    for (const name of ['label', 'description', 'error'] as const) {
+      const element = fieldPart(canvasElement, name)!
+      await expect(lines(element)).toBeGreaterThan(1.5)
+      await expect(element.getBoundingClientRect().right).toBeLessThanOrEqual(bounds.right + 0.5)
+      await expect(element.scrollWidth).toBeLessThanOrEqual(element.clientWidth)
+    }
+    const input = canvasElement.querySelector<HTMLInputElement>('.pn-TextField')!
+    const box = input.getBoundingClientRect()
+    // one line that scrolls inside the box, which keeps size.input and the frame's width
+    await expect(box.height).toBe(Number.parseFloat(rendered('size-input', 'block-size')))
+    await expect(box.right).toBeLessThanOrEqual(bounds.right + 0.5)
+    await expect(input.scrollWidth).toBeGreaterThan(input.clientWidth)
+    await expect(frame.scrollWidth).toBeLessThanOrEqual(frame.clientWidth)
+    await expect(bounds.width).toBeLessThanOrEqual(320)
+  },
 }
 
 /** `value` held in the story's state, starting empty. */
 export const Controlled: Story = {
+  tags: ['!dev', '!autodocs'],
   render: (args) => <ControlledField {...args} />,
   play: async ({ args, canvasElement }) => {
     const input = inputIn(canvasElement)
@@ -346,6 +412,7 @@ export const Controlled: Story = {
 
 /** Inside a native `<form>`, spread with the shape React Hook Form's `register('stop')` returns. */
 export const Registered: Story = {
+  tags: ['!dev', '!autodocs'],
   args: { name: 'stop', ref: fn(), onChange: fn(), onBlur: fn() },
   decorators: [
     (Story) => (
@@ -371,6 +438,7 @@ export const Registered: Story = {
 
 /** A `required` field in Base UI's `Form`, checked on blur by the caller's `validate`. */
 export const Validation: Story = {
+  tags: ['!dev', '!autodocs'],
   args: {
     required: true,
     slotProps: {
@@ -417,35 +485,5 @@ export const Validation: Story = {
       await expect(getComputedStyle(input).borderColor).toBe(edge('color-border-control'))
       await expect(document.activeElement).toBe(start)
     })
-  },
-}
-
-const COMPOUND = 'Hovedstadsområdetsbuslinjestoppestedsoversigtskortudgivelsen'
-
-/** A Danish compound longer than its line in every part, and a value longer than the box (CR-7). */
-export const LongWords: Story = {
-  args: {
-    label: COMPOUND,
-    description: `Som skrevet i ${COMPOUND}`,
-    error: `Skriv navnet fra ${COMPOUND}`,
-    defaultValue: `${COMPOUND} ${COMPOUND}`,
-  },
-  play: async ({ canvasElement }) => {
-    const frame = fieldPart(canvasElement, 'field')!
-    const bounds = frame.getBoundingClientRect()
-    for (const name of ['label', 'description', 'error'] as const) {
-      const element = fieldPart(canvasElement, name)!
-      await expect(lines(element)).toBeGreaterThan(1.5)
-      await expect(element.getBoundingClientRect().right).toBeLessThanOrEqual(bounds.right + 0.5)
-      await expect(element.scrollWidth).toBeLessThanOrEqual(element.clientWidth)
-    }
-    const input = canvasElement.querySelector<HTMLInputElement>('.pn-TextField')!
-    const box = input.getBoundingClientRect()
-    // one line that scrolls inside the box, which keeps size.input and the frame's width
-    await expect(box.height).toBe(Number.parseFloat(rendered('size-input', 'block-size')))
-    await expect(box.right).toBeLessThanOrEqual(bounds.right + 0.5)
-    await expect(input.scrollWidth).toBeGreaterThan(input.clientWidth)
-    await expect(frame.scrollWidth).toBeLessThanOrEqual(frame.clientWidth)
-    await expect(bounds.width).toBeLessThanOrEqual(320)
   },
 }

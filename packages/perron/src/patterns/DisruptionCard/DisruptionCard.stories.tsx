@@ -1,7 +1,7 @@
-// DisruptionCard's stories: one per row of the spec's Stories table (docs/patterns/disruption-card.md),
-// with the design deferred, and their play tests. Every line used has a badge pair that reaches 4.5:1,
-// so axe's color-contrast rule stays on (CR-11). Hover and focus render at rest.
+// DisruptionCard's stories: every part with every prop a control, each kind side by side, badges
+// that wrap, a stretch, the card as a link, then the parts' tests.
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { showcase } from '../../testing/Showcase.tsx'
 import { expect, isInaccessible, userEvent, within } from 'storybook/test'
 import { LinkButton } from '../../components/LinkButton/LinkButton.tsx'
 import { heard, onHover, pressedAfterHover, stateRules } from '../../testing/stories.ts'
@@ -17,6 +17,8 @@ const meta = {
 export default meta
 
 type Story = StoryObj<typeof meta>
+/** The args a story renders with: the meta's and its own. */
+type StoryArgs = Parameters<NonNullable<Story['render']>>[0]
 type Play = NonNullable<Story['play']>
 
 const METRO: DisruptionCardLine[] = [
@@ -91,200 +93,6 @@ const readsPart = async (canvasElement: HTMLElement, part: 'stops' | 'time', wor
   return element!
 }
 
-/**
- * Every part: the kind, two lines, the title, the sentence, the stops, the time and the action, with
- * no `slotProps`.
- */
-export const Default: Story = {
-  args: { ...delay, stops: FIVE_STOPS, time: { from: '08:03' }, action: SHOW_ON_MAP },
-}
-
-/** A data feed problem across the network: no lines, so no list. */
-export const Data: Story = {
-  args: {
-    severity: 'data',
-    title: 'Bus positions not updating',
-    children: 'Buses across the network show timetable positions until the data feed returns.',
-  },
-  play: async ({ canvasElement, step }) => {
-    const root = rootOf(canvasElement)
-    await step('data-severity is data', async () => {
-      await expect(root).toHaveAttribute('data-severity', 'data')
-    })
-    await step('"Data feed problems" is read', () => readsKind(canvasElement, 'Data feed problems'))
-    await step('no list renders', async () => {
-      await expect(within(canvasElement).queryByRole('list')).toBeNull()
-      await expect(root.querySelector('.pn-DisruptionCard-lines')).toBeNull()
-    })
-    await step('the title is a paragraph', async () => {
-      const title = root.querySelector('.pn-DisruptionCard-title')
-      await expect(title?.tagName).toBe('P')
-      await expect(title).toHaveTextContent('Bus positions not updating')
-      await expect(within(canvasElement).queryByRole('heading')).toBeNull()
-    })
-  },
-}
-
-/** A delay on M2 and M3, its title made a level-3 heading through `slotProps.title.render`. */
-export const Delay: Story = {
-  args: { ...delay, slotProps: { title: { render: <h3 /> } } },
-  play: async ({ canvasElement, step }) => {
-    await step('"Delays" is read', () => readsKind(canvasElement, 'Delays'))
-    await step('"Affected lines" is read just before an unnamed list holding M2 and M3', () =>
-      listsLines(canvasElement, ['M2', 'M3']),
-    )
-    await step('the title is a level-3 heading', async () => {
-      const heading = within(canvasElement).getByRole('heading', {
-        level: 3,
-        name: 'Signal fault at Kongens Nytorv',
-      })
-      await expect(heading).toHaveClass('pn-DisruptionCard-title', 'pn-Text')
-    })
-  },
-}
-
-/** A bus diverted: one line, 5C. */
-export const Diversion: Story = {
-  args: {
-    severity: 'diversion',
-    lines: [{ line: 'bus', name: '5C' }],
-    title: '5C diverted at Nørrebros Runddel',
-    children: 'Buses towards Herlev skip Nørrebrogade and stop on Jagtvej instead.',
-  },
-  play: async ({ canvasElement, step }) => {
-    await step('"Diversions" is read', () => readsKind(canvasElement, 'Diversions'))
-    await step('the list holds one item, 5C', () => listsLines(canvasElement, ['5C']))
-  },
-}
-
-/** A service notice: a message whose fields don't say which kind it is, shown as received. */
-export const Notice: Story = {
-  args: {
-    severity: 'notice',
-    lines: [{ line: 'bus', name: '5C' }],
-    title: 'New stop names on 5C',
-    children: 'From Sunday, Ålholm Plads is called Ålholm Station.',
-  },
-  play: async ({ canvasElement, step }) => {
-    await step('data-severity is notice', async () => {
-      await expect(rootOf(canvasElement)).toHaveAttribute('data-severity', 'notice')
-    })
-    await step('"Service notice" is read', () => readsKind(canvasElement, 'Service notice'))
-    await step('the list holds one item, 5C', () => listsLines(canvasElement, ['5C']))
-  },
-}
-
-/** Planned works on three S-tog lines, in a 200 px container, so the badges wrap under the kind. */
-export const Planned: Story = {
-  args: {
-    severity: 'planned',
-    lines: [
-      { line: 'e', name: 'E' },
-      { line: 'f', name: 'F' },
-      { line: 'h', name: 'H' },
-    ],
-    title: 'Track works between Valby and Østerport',
-    children: 'From Saturday 06:00 to Sunday 22:00, E, F and H trains run every 20 min.',
-  },
-  decorators: [
-    (Story) => (
-      <div style={{ maxInlineSize: 200 }}>
-        <Story />
-      </div>
-    ),
-  ],
-  play: async ({ canvasElement, step }) => {
-    await step('"Planned works" is read', () => readsKind(canvasElement, 'Planned works'))
-    await step('the list holds E, F and H in the given order', () =>
-      listsLines(canvasElement, ['E', 'F', 'H']),
-    )
-  },
-}
-
-/** A delay affecting five stops: the list names the first two and counts the other three. */
-export const Stops: Story = {
-  args: { ...delay, stops: FIVE_STOPS },
-  play: async ({ canvasElement, step }) => {
-    await step(
-      '"Affects Nørreport, Kongens Nytorv and 3 more" is read, after the sentence',
-      async () => {
-        const stops = await readsPart(
-          canvasElement,
-          'stops',
-          'Affects Nørreport, Kongens Nytorv and 3 more',
-        )
-        await expect(stops.previousElementSibling).toHaveClass('pn-DisruptionCard-description')
-      },
-    )
-    await step('no time and no action render', async () => {
-      const root = rootOf(canvasElement)
-      await expect(root.querySelector('.pn-DisruptionCard-time')).toBeNull()
-      await expect(root.querySelector('.pn-DisruptionCard-action')).toBeNull()
-    })
-  },
-}
-
-/** Replacement buses on a stretch, between its two ends, over two days. */
-export const Stretch: Story = {
-  args: {
-    severity: 'planned',
-    lines: [{ line: 'regional', name: 'RE' }],
-    title: 'Buses replace trains on the coast line',
-    children: 'Regional trains run as far as Hellerup. Buses run on to Klampenborg every 10 min.',
-    stops: { from: 'Hellerup', to: 'Klampenborg' },
-    time: { from: '24', to: '25 October' },
-  },
-  play: async ({ canvasElement, step }) => {
-    await step('"Between Hellerup and Klampenborg" is read', async () => {
-      await readsPart(canvasElement, 'stops', 'Between Hellerup and Klampenborg')
-    })
-    await step('"24 to 25 October" is read, after the stops', async () => {
-      const time = await readsPart(canvasElement, 'time', '24 to 25 October')
-      await expect(time.previousElementSibling).toHaveClass('pn-DisruptionCard-stops')
-    })
-  },
-}
-
-/** A delay with a start and no end, its time a `<time>` element. */
-export const Time: Story = {
-  args: { ...delay, time: { from: <time dateTime="08:03">08:03</time> } },
-  play: async ({ canvasElement, step }) => {
-    await step('"From 08:03" is read, the caller\'s <time> element kept inside it', async () => {
-      const time = await readsPart(canvasElement, 'time', 'From 08:03')
-      await expect(time.querySelector('time')).toHaveAttribute('datetime', '08:03')
-      await expect(time.previousElementSibling).toHaveClass('pn-DisruptionCard-description')
-    })
-  },
-}
-
-/** A delay with one action at its foot, a link to the disruption on the map. */
-export const Action: Story = {
-  args: { ...delay, action: SHOW_ON_MAP },
-  play: async ({ canvasElement, step }) => {
-    const root = rootOf(canvasElement)
-    const link = within(canvasElement).getByRole('link', { name: 'Show on map' })
-    await step("the action is the last part, holding the caller's link", async () => {
-      const action = link.closest('.pn-DisruptionCard-action')
-      await expect(action).not.toBeNull()
-      await expect(action?.parentElement).toBe(root)
-      await expect(root.lastElementChild).toBe(action)
-      await expect(link).toHaveAttribute('href', '#map')
-    })
-    await step("the link keeps its own width rather than the card's", async () => {
-      await expect(link.getBoundingClientRect().width).toBeLessThan(
-        root.getBoundingClientRect().width / 2,
-      )
-    })
-    await step('Tab focuses the link, not the card, and Shift+Tab leaves it', async () => {
-      const before = document.activeElement
-      await userEvent.tab()
-      await expect(link).toHaveFocus()
-      await userEvent.tab({ shift: true })
-      await expect(document.activeElement).toBe(before)
-    })
-  },
-}
-
 /** Tab reaches the card made a link and Shift+Tab leaves it, so focus ends where it started. */
 const tabsThrough: Play = async ({ canvasElement, step }) => {
   const root = rootOf(canvasElement)
@@ -316,8 +124,218 @@ const tabsThrough: Play = async ({ canvasElement, step }) => {
   })
 }
 
+/** A data feed problem across the network: no lines, so no list. */
+const data = {
+  args: {
+    severity: 'data',
+    title: 'Bus positions not updating',
+    children: 'Buses across the network show timetable positions until the data feed returns.',
+  },
+  play: async ({ canvasElement, step }) => {
+    const root = rootOf(canvasElement)
+    await step('data-severity is data', async () => {
+      await expect(root).toHaveAttribute('data-severity', 'data')
+    })
+    await step('"Data feed problems" is read', () => readsKind(canvasElement, 'Data feed problems'))
+    await step('no list renders', async () => {
+      await expect(within(canvasElement).queryByRole('list')).toBeNull()
+      await expect(root.querySelector('.pn-DisruptionCard-lines')).toBeNull()
+    })
+    await step('the title is a paragraph', async () => {
+      const title = root.querySelector('.pn-DisruptionCard-title')
+      await expect(title?.tagName).toBe('P')
+      await expect(title).toHaveTextContent('Bus positions not updating')
+      await expect(within(canvasElement).queryByRole('heading')).toBeNull()
+    })
+  },
+} satisfies Story
+
+/** A delay on M2 and M3, its title made a level-3 heading through `slotProps.title.render`. */
+const delayStory = {
+  args: { ...delay, slotProps: { title: { render: <h3 /> } } },
+  play: async ({ canvasElement, step }) => {
+    await step('"Delays" is read', () => readsKind(canvasElement, 'Delays'))
+    await step('"Affected lines" is read just before an unnamed list holding M2 and M3', () =>
+      listsLines(canvasElement, ['M2', 'M3']),
+    )
+    await step('the title is a level-3 heading', async () => {
+      const heading = within(canvasElement).getByRole('heading', {
+        level: 3,
+        name: 'Signal fault at Kongens Nytorv',
+      })
+      await expect(heading).toHaveClass('pn-DisruptionCard-title', 'pn-Text')
+    })
+  },
+} satisfies Story
+
+/** A bus diverted: one line, 5C. */
+const diversion = {
+  args: {
+    severity: 'diversion',
+    lines: [{ line: 'bus', name: '5C' }],
+    title: '5C diverted at Nørrebros Runddel',
+    children: 'Buses towards Herlev skip Nørrebrogade and stop on Jagtvej instead.',
+  },
+  play: async ({ canvasElement, step }) => {
+    await step('"Diversions" is read', () => readsKind(canvasElement, 'Diversions'))
+    await step('the list holds one item, 5C', () => listsLines(canvasElement, ['5C']))
+  },
+} satisfies Story
+
+/** A service notice: a message whose fields don't say which kind it is, shown as received. */
+const notice = {
+  args: {
+    severity: 'notice',
+    lines: [{ line: 'bus', name: '5C' }],
+    title: 'New stop names on 5C',
+    children: 'From Sunday, Ålholm Plads is called Ålholm Station.',
+  },
+  play: async ({ canvasElement, step }) => {
+    await step('data-severity is notice', async () => {
+      await expect(rootOf(canvasElement)).toHaveAttribute('data-severity', 'notice')
+    })
+    await step('"Service notice" is read', () => readsKind(canvasElement, 'Service notice'))
+    await step('the list holds one item, 5C', () => listsLines(canvasElement, ['5C']))
+  },
+} satisfies Story
+
+/**
+ * Every part: the kind, two lines, the title, the sentence, the stops, the time and the action, with
+ * no `slotProps`.
+ */
+export const Default: Story = {
+  args: { ...delay, stops: FIVE_STOPS, time: { from: '08:03' }, action: SHOW_ON_MAP },
+}
+
+/** Each kind of disruption, side by side. */
+export const Kinds: Story = {
+  ...showcase<StoryArgs>(
+    [
+      { label: 'Delay', story: delayStory },
+      { label: 'Diversion', story: diversion },
+      { label: 'Notice', story: notice },
+      { label: 'Data', story: data },
+    ],
+    (args) => <DisruptionCard {...args} />,
+  ),
+}
+
+/** Planned works on three S-tog lines, in a 200 px container, so the badges wrap under the kind. */
+export const Planned: Story = {
+  args: {
+    severity: 'planned',
+    lines: [
+      { line: 'e', name: 'E' },
+      { line: 'f', name: 'F' },
+      { line: 'h', name: 'H' },
+    ],
+    title: 'Track works between Valby and Østerport',
+    children: 'From Saturday 06:00 to Sunday 22:00, E, F and H trains run every 20 min.',
+  },
+  decorators: [
+    (Story) => (
+      <div style={{ maxInlineSize: 200 }}>
+        <Story />
+      </div>
+    ),
+  ],
+  play: async ({ canvasElement, step }) => {
+    await step('"Planned works" is read', () => readsKind(canvasElement, 'Planned works'))
+    await step('the list holds E, F and H in the given order', () =>
+      listsLines(canvasElement, ['E', 'F', 'H']),
+    )
+  },
+}
+
+/** Replacement buses on a stretch, between its two ends, over two days. */
+export const Stretch: Story = {
+  args: {
+    severity: 'planned',
+    lines: [{ line: 'regional', name: 'RE' }],
+    title: 'Buses replace trains on the coast line',
+    children: 'Regional trains run as far as Hellerup. Buses run on to Klampenborg every 10 min.',
+    stops: { from: 'Hellerup', to: 'Klampenborg' },
+    time: { from: '24', to: '25 October' },
+  },
+  play: async ({ canvasElement, step }) => {
+    await step('"Between Hellerup and Klampenborg" is read', async () => {
+      await readsPart(canvasElement, 'stops', 'Between Hellerup and Klampenborg')
+    })
+    await step('"24 to 25 October" is read, after the stops', async () => {
+      const time = await readsPart(canvasElement, 'time', '24 to 25 October')
+      await expect(time.previousElementSibling).toHaveClass('pn-DisruptionCard-stops')
+    })
+  },
+}
+
 /** The whole card as a link to the line, through `render` (CR-8). */
 export const Link: Story = {
-  args: { ...Delay.args, render: <a href="#line-m2" /> },
+  args: { ...delayStory.args, render: <a href="#line-m2" /> },
   play: tabsThrough,
+}
+
+/** A delay affecting five stops: the list names the first two and counts the other three. */
+export const Stops: Story = {
+  tags: ['!dev', '!autodocs'],
+  args: { ...delay, stops: FIVE_STOPS },
+  play: async ({ canvasElement, step }) => {
+    await step(
+      '"Affects Nørreport, Kongens Nytorv and 3 more" is read, after the sentence',
+      async () => {
+        const stops = await readsPart(
+          canvasElement,
+          'stops',
+          'Affects Nørreport, Kongens Nytorv and 3 more',
+        )
+        await expect(stops.previousElementSibling).toHaveClass('pn-DisruptionCard-description')
+      },
+    )
+    await step('no time and no action render', async () => {
+      const root = rootOf(canvasElement)
+      await expect(root.querySelector('.pn-DisruptionCard-time')).toBeNull()
+      await expect(root.querySelector('.pn-DisruptionCard-action')).toBeNull()
+    })
+  },
+}
+
+/** A delay with a start and no end, its time a `<time>` element. */
+export const Time: Story = {
+  tags: ['!dev', '!autodocs'],
+  args: { ...delay, time: { from: <time dateTime="08:03">08:03</time> } },
+  play: async ({ canvasElement, step }) => {
+    await step('"From 08:03" is read, the caller\'s <time> element kept inside it', async () => {
+      const time = await readsPart(canvasElement, 'time', 'From 08:03')
+      await expect(time.querySelector('time')).toHaveAttribute('datetime', '08:03')
+      await expect(time.previousElementSibling).toHaveClass('pn-DisruptionCard-description')
+    })
+  },
+}
+
+/** A delay with one action at its foot, a link to the disruption on the map. */
+export const Action: Story = {
+  tags: ['!dev', '!autodocs'],
+  args: { ...delay, action: SHOW_ON_MAP },
+  play: async ({ canvasElement, step }) => {
+    const root = rootOf(canvasElement)
+    const link = within(canvasElement).getByRole('link', { name: 'Show on map' })
+    await step("the action is the last part, holding the caller's link", async () => {
+      const action = link.closest('.pn-DisruptionCard-action')
+      await expect(action).not.toBeNull()
+      await expect(action?.parentElement).toBe(root)
+      await expect(root.lastElementChild).toBe(action)
+      await expect(link).toHaveAttribute('href', '#map')
+    })
+    await step("the link keeps its own width rather than the card's", async () => {
+      await expect(link.getBoundingClientRect().width).toBeLessThan(
+        root.getBoundingClientRect().width / 2,
+      )
+    })
+    await step('Tab focuses the link, not the card, and Shift+Tab leaves it', async () => {
+      const before = document.activeElement
+      await userEvent.tab()
+      await expect(link).toHaveFocus()
+      await userEvent.tab({ shift: true })
+      await expect(document.activeElement).toBe(before)
+    })
+  },
 }

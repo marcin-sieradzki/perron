@@ -1,7 +1,7 @@
-// IconButton's stories: one per variant of the deferred design, named as the spec's Stories table
-// names them, and the play tests it asks for. Hover and focus render at rest; the visual stage
-// drives them.
+// IconButton's stories: the button alone with every prop a control, each colour at each size, and
+// each disabled. Hover and focus are play steps, not stories; the visual stage drives them.
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { showcase } from '../../testing/Showcase.tsx'
 import { expect, fn, userEvent, within } from 'storybook/test'
 import info from '../../../icons/info.svg?raw'
 import plus from '../../../icons/plus.svg?raw'
@@ -17,6 +17,8 @@ const meta = {
 export default meta
 
 type Story = StoryObj<typeof meta>
+/** The args a story renders with: the meta's and its own. */
+type StoryArgs = Parameters<NonNullable<Story['render']>>[0]
 type Play = NonNullable<Story['play']>
 
 /** A `large` button's words and icon: `info`, drawn on the 18 px grid. */
@@ -113,62 +115,88 @@ const brandDisabled: Play = async ({ args, canvasElement }) => {
   await expect(style.borderColor).toBe(resolve('borderColor', 'transparent'))
 }
 
-export const NeutralMediumDefault: Story = {
+const neutralMediumDefault = {
   args: { color: 'neutral', size: 'medium', onClick: fn() },
   play: activates,
-}
-export const NeutralMediumHover: Story = {
+} satisfies Story
+
+const neutralMediumHover = {
   args: { color: 'neutral', size: 'medium' },
   play: hoverFill('var(--perron-color-surface-hover)', 'var(--perron-color-surface-selected)'),
-}
-export const NeutralMediumFocus: Story = {
+} satisfies Story
+
+const neutralMediumFocus = {
   args: { color: 'neutral', size: 'medium' },
   play: focusRing,
-}
-export const NeutralMediumDisabled: Story = {
+} satisfies Story
+
+const neutralMediumDisabled = {
   args: { color: 'neutral', size: 'medium', disabled: true, onClick: fn() },
   play: disabledSkipped,
-}
-export const NeutralLargeDefault: Story = {
+} satisfies Story
+
+const neutralLargeDefault = {
   args: { ...help, color: 'neutral', size: 'large' },
   play: largeSquare,
-}
-export const NeutralLargeHover: Story = {
-  args: { ...help, color: 'neutral', size: 'large' },
-}
-export const NeutralLargeFocus: Story = {
-  args: { ...help, color: 'neutral', size: 'large' },
-}
-export const NeutralLargeDisabled: Story = {
+} satisfies Story
+
+const neutralLargeDisabled = {
   args: { ...help, color: 'neutral', size: 'large', disabled: true },
-}
-export const BrandMediumDefault: Story = {
-  args: { color: 'brand', size: 'medium' },
-}
-export const BrandMediumHover: Story = {
+} satisfies Story
+
+const brandMediumHover = {
   args: { color: 'brand', size: 'medium' },
   play: hoverFill(
     'var(--perron-color-surface-brand-hover)',
     'var(--perron-color-surface-brand-pressed)',
     'var(--perron-color-border-brand)',
   ),
-}
-export const BrandMediumFocus: Story = {
-  args: { color: 'brand', size: 'medium' },
-}
-export const BrandMediumDisabled: Story = {
+} satisfies Story
+
+const brandMediumDisabled = {
   args: { color: 'brand', size: 'medium', disabled: true },
   play: brandDisabled,
-}
-export const BrandLargeDefault: Story = {
+} satisfies Story
+
+const brandLargeDefault = {
   args: { ...help, color: 'brand', size: 'large' },
-}
-export const BrandLargeHover: Story = {
-  args: { ...help, color: 'brand', size: 'large' },
-}
-export const BrandLargeFocus: Story = {
-  args: { ...help, color: 'brand', size: 'large' },
-}
-export const BrandLargeDisabled: Story = {
+} satisfies Story
+
+const brandLargeDisabled = {
   args: { ...help, color: 'brand', size: 'large', disabled: true },
+} satisfies Story
+
+/** The button alone, every prop a control: neutral, medium, "Zoom in". */
+export const Default: Story = {
+  args: { color: 'neutral', size: 'medium', onClick: fn() },
+  play: async (context) => {
+    await neutralMediumDefault.play(context)
+    await neutralMediumFocus.play(context)
+  },
+}
+
+/** Each colour at each size, the large ones with the help icon on the 18 px grid. */
+export const Variants: Story = {
+  ...showcase<StoryArgs>(
+    [
+      { label: 'Neutral, medium', story: neutralMediumHover },
+      { label: 'Neutral, large', story: neutralLargeDefault },
+      { label: 'Brand, medium', story: brandMediumHover },
+      { label: 'Brand, large', story: brandLargeDefault },
+    ],
+    (args) => <IconButton {...args} />,
+  ),
+}
+
+/** Each colour at each size, disabled. */
+export const Disabled: Story = {
+  ...showcase<StoryArgs>(
+    [
+      { label: 'Neutral, medium', story: neutralMediumDisabled },
+      { label: 'Neutral, large', story: neutralLargeDisabled },
+      { label: 'Brand, medium', story: brandMediumDisabled },
+      { label: 'Brand, large', story: brandLargeDisabled },
+    ],
+    (args) => <IconButton {...args} />,
+  ),
 }

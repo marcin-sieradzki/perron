@@ -1,7 +1,8 @@
-// Brand's stories: one per row of the spec's Stories table, named by the variant names the deferred
-// design will have, each on a color.surface.raised ground, as in a top bar's glass group.
+// Brand's stories: the brand with every prop a control, each variant, each as a link, and the brand
+// name overridden.
 import { createRef } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { showcase } from '../../testing/Showcase.tsx'
 import { expect, userEvent, within } from 'storybook/test'
 import { Brand } from './Brand.tsx'
 
@@ -27,6 +28,8 @@ const meta = {
 export default meta
 
 type Story = StoryObj<typeof meta>
+/** The args a story renders with: the meta's and its own. */
+type StoryArgs = Parameters<NonNullable<Story['render']>>[0]
 
 /** The one `.pn-Brand` root a story renders. */
 const rootOf = (canvasElement: HTMLElement) => {
@@ -65,20 +68,8 @@ function resolveBlockSize(value: string) {
 
 const defaultRef = createRef<HTMLSpanElement>()
 
-/** The default props, as the docs page and the contract story show Brand. */
-export const Default: Story = {
-  render: (args) => <Brand {...args} ref={defaultRef} />,
-  play: async ({ canvasElement }) => {
-    const root = rootOf(canvasElement)
-    await expect(root.tagName).toBe('SPAN')
-    await expect(root).toHaveAttribute('data-variant', 'full')
-    await expect(root).toHaveTextContent(/^Mylder$/)
-    await expect(defaultRef.current).toBe(root)
-  },
-}
-
 /** The mark beside the wordmark "mylder". */
-export const Full: Story = {
+const full = {
   args: { variant: 'full' },
   play: async ({ canvasElement }) => {
     const root = rootOf(canvasElement)
@@ -96,10 +87,10 @@ export const Full: Story = {
     await userEvent.tab({ shift: true })
     await expect(document.activeElement).toBe(start)
   },
-}
+} satisfies Story
 
 /** The mark alone, with the brand name read to screen readers. */
-export const Mark: Story = {
+const markStory = {
   args: { variant: 'mark' },
   play: async ({ canvasElement }) => {
     const root = rootOf(canvasElement)
@@ -114,10 +105,10 @@ export const Mark: Story = {
     await expect(root).toHaveTextContent(/^Mylder$/)
     await expect(root.querySelector('.pn-Brand-mark')).toHaveAttribute('aria-hidden', 'true')
   },
-}
+} satisfies Story
 
 /** Rendered as a link to the start screen: the brand name is the link's name, one tab stop. */
-export const Link: Story = {
+const linkStory = {
   args: { variant: 'full', render: <a href="/" /> },
   play: async ({ canvasElement }) => {
     const link = within(canvasElement).getByRole('link', { name: /^mylder$/i })
@@ -125,10 +116,10 @@ export const Link: Story = {
     await expect(link).toHaveAttribute('href', '/')
     await expectLinkTarget(link)
   },
-}
+} satisfies Story
 
 /** The mark alone as a link: the hidden brand name is the link's only name. */
-export const MarkLink: Story = {
+const markLink = {
   args: { variant: 'mark', render: <a href="/" /> },
   play: async ({ canvasElement }) => {
     const link = within(canvasElement).getByRole('link', { name: /^mylder$/i })
@@ -137,6 +128,40 @@ export const MarkLink: Story = {
     await expect(link.querySelector('.pn-Brand-wordmark')).toBeNull()
     await expectLinkTarget(link, { wide: true })
   },
+} satisfies Story
+
+/** The default props, as the docs page and the contract story show Brand. */
+export const Default: Story = {
+  render: (args) => <Brand {...args} ref={defaultRef} />,
+  play: async ({ canvasElement }) => {
+    const root = rootOf(canvasElement)
+    await expect(root.tagName).toBe('SPAN')
+    await expect(root).toHaveAttribute('data-variant', 'full')
+    await expect(root).toHaveTextContent(/^Mylder$/)
+    await expect(defaultRef.current).toBe(root)
+  },
+}
+
+/** Each variant: the mark beside the wordmark, and the mark alone. */
+export const Variants: Story = {
+  ...showcase<StoryArgs>(
+    [
+      { label: 'Full', story: full },
+      { label: 'Mark', story: markStory },
+    ],
+    (args) => <Brand {...args} />,
+  ),
+}
+
+/** Each variant as a link to the start screen. */
+export const Links: Story = {
+  ...showcase<StoryArgs>(
+    [
+      { label: 'Full', story: linkStory },
+      { label: 'Mark', story: markLink },
+    ],
+    (args) => <Brand {...args} />,
+  ),
 }
 
 /** `brandNameLabel` in both variants: seen lowercase in the wordmark, heard alone with the mark. */

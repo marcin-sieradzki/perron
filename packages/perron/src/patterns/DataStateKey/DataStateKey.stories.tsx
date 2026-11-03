@@ -135,6 +135,25 @@ const heardItems = (key: HTMLElement) => partsOf(key).items.map(heard)
 /** What the ear hears of each sentence. */
 const heardSentences = (key: Element) => partsOf(key).descriptions.map(heard)
 
+/** The sentences of a key with these thresholds, in a locale, mounted apart from the story. */
+const sentencesAt = async (
+  canvasElement: HTMLElement,
+  thresholds: { liveThreshold: number; ageingThreshold: number },
+  locale: Locale = 'en',
+) => {
+  let found: string[] = []
+  await mounted(
+    canvasElement,
+    <PerronProvider locale={locale}>
+      <DataStateKey counts={COUNTS} {...thresholds} />
+    </PerronProvider>,
+    async (host) => {
+      found = heardSentences(await keyIn(host))
+    },
+  )
+  return found
+}
+
 /** Mylder's thresholds and a morning's counts. The subject story: its args render the key alone. */
 export const Default: Story = {
   play: async ({ canvasElement, step }) => {
@@ -476,25 +495,6 @@ export const Default: Story = {
   },
 }
 
-/** The sentences of a key with these thresholds, in a locale, mounted apart from the story. */
-const sentencesAt = async (
-  canvasElement: HTMLElement,
-  thresholds: { liveThreshold: number; ageingThreshold: number },
-  locale: Locale = 'en',
-) => {
-  let found: string[] = []
-  await mounted(
-    canvasElement,
-    <PerronProvider locale={locale}>
-      <DataStateKey counts={COUNTS} {...thresholds} />
-    </PerronProvider>,
-    async (host) => {
-      found = heardSentences(await keyIn(host))
-    },
-  )
-  return found
-}
-
 /** The feed defaults the tokens give, and, in its play, other figures in English and Danish. */
 export const Thresholds: Story = {
   args: DEFAULTS,
@@ -719,6 +719,7 @@ export const Narrow: Story = {
 
 /** `UnknownCounts`' args with every string overridden, and "Unknown" as "No data yet". */
 export const Labels: Story = {
+  tags: ['!dev', '!autodocs'],
   args: { counts: UNKNOWN_COUNTS, ...OWN_LABELS },
   play: async ({ canvasElement, step }) => {
     const list = within(canvasElement).getByRole('list')

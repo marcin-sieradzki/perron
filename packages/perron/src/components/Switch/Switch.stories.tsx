@@ -1,10 +1,9 @@
-// Switch's stories: one per State value of the deferred design, named as the spec's Stories table
-// names them, then the on switch disabled, read-only, invalid in a Field, controlled, beside a long
-// label and in a form. Hover and focus render at rest; the visual check drives them, and their
-// play tests check them.
+// Switch's stories: the switch alone with every prop a control, its states side by side and a wrapping
+// label, then the behaviour tests. Hover and focus are play steps, not stories.
 import { Field } from '@base-ui/react/field'
 import { createRef, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { showcase } from '../../testing/Showcase.tsx'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import {
   edge,
@@ -29,6 +28,8 @@ const meta = {
 export default meta
 
 type Story = StoryObj<typeof meta>
+/** The args a story renders with: the meta's and its own. */
+type StoryArgs = Parameters<NonNullable<Story['render']>>[0]
 
 /** The switch in `canvasElement`, by its name. */
 const control = (canvasElement: HTMLElement, name = 'Show vehicle trails') =>
@@ -43,8 +44,26 @@ const HOVER_LAYER =
 
 const defaultRef = createRef<HTMLElement>()
 
+/**
+ * A caller that keeps the state in its own `useState` and sets it from `onChange`, unless the
+ * change was cancelled: the story's `onChange` spy stands for the caller's own handler.
+ */
+function ControlledSwitch(args: SwitchProps) {
+  const [checked, setChecked] = useState(false)
+  return (
+    <Switch
+      {...args}
+      checked={checked}
+      onChange={(event, next, details) => {
+        args.onChange?.(event, next, details)
+        if (!details.isCanceled) setChecked(next)
+      }}
+    />
+  )
+}
+
 /** Off, at rest; the subject story. */
-export const Default: Story = {
+const _default = {
   render: (args) => <Switch {...args} ref={defaultRef} />,
   play: async ({ args, canvasElement }) => {
     const onChange = args.onChange as ReturnType<typeof fn>
@@ -91,10 +110,10 @@ export const Default: Story = {
     )
     root.blur()
   },
-}
+} satisfies Story
 
 /** Off, hovered by the visual check. */
-export const Hover: Story = {
+const hover = {
   play: async ({ canvasElement }) => {
     const root = control(canvasElement)
     const style = getComputedStyle(root)
@@ -116,10 +135,10 @@ export const Hover: Story = {
     )
     await expect(pressedAfterHover(root)).toBe(true)
   },
-}
+} satisfies Story
 
 /** Off, focused by the visual check. */
-export const Focus: Story = {
+const focus = {
   play: async ({ canvasElement }) => {
     const root = control(canvasElement)
     await userEvent.tab()
@@ -133,10 +152,10 @@ export const Focus: Story = {
     await userEvent.tab({ shift: true })
     await expect(root).not.toHaveFocus()
   },
-}
+} satisfies Story
 
 /** On, with `defaultChecked`. */
-export const Checked: Story = {
+const checked = {
   args: { defaultChecked: true },
   play: async ({ canvasElement }) => {
     const root = control(canvasElement)
@@ -166,10 +185,10 @@ export const Checked: Story = {
       await expect(offRoot.getBoundingClientRect().width).toBe(root.getBoundingClientRect().width)
     })
   },
-}
+} satisfies Story
 
 /** Off, disabled, with a Button after it for Tab to reach. */
-export const Disabled: Story = {
+const disabled = {
   args: { disabled: true },
   render: (args) => (
     <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--perron-space-300)' }}>
@@ -198,10 +217,10 @@ export const Disabled: Story = {
     await expect(onChange).not.toHaveBeenCalled()
     root.blur()
   },
-}
+} satisfies Story
 
 /** On and disabled. */
-export const CheckedDisabled: Story = {
+const checkedDisabled = {
   args: { defaultChecked: true, disabled: true },
   play: async ({ args, canvasElement }) => {
     const onChange = args.onChange as ReturnType<typeof fn>
@@ -215,10 +234,10 @@ export const CheckedDisabled: Story = {
     await expect(root).toHaveAttribute('aria-checked', 'true')
     await expect(onChange).not.toHaveBeenCalled()
   },
-}
+} satisfies Story
 
 /** On and read-only. */
-export const ReadOnly: Story = {
+const readOnly = {
   args: { defaultChecked: true, readOnly: true },
   play: async ({ args, canvasElement }) => {
     const onChange = args.onChange as ReturnType<typeof fn>
@@ -244,10 +263,10 @@ export const ReadOnly: Story = {
     await expect(onChange).not.toHaveBeenCalled()
     root.blur()
   },
-}
+} satisfies Story
 
 /** Off, in a Base UI Field marked invalid, named by the field's label, with its error below. */
-export const Invalid: Story = {
+const invalid = {
   args: { 'aria-label': undefined },
   render: (args) => (
     <Field.Root
@@ -274,28 +293,93 @@ export const Invalid: Story = {
     await expect(getComputedStyle(root).borderColor).toBe(edge('color-status-danger'))
     await expect(getComputedStyle(root).backgroundColor).toBe(fill('color-surface-inset'))
   },
+} satisfies Story
+
+/** Off, at rest, every prop a control; the subject story. Its play reads the hover rule and gives the switch the ring. */
+export const Default: Story = {
+  ..._default,
+  play: async (context) => {
+    await hover.play(context)
+    await focus.play(context)
+    await _default.play(context)
+  },
 }
 
-/**
- * A caller that keeps the state in its own `useState` and sets it from `onChange`, unless the
- * change was cancelled: the story's `onChange` spy stands for the caller's own handler.
- */
-function ControlledSwitch(args: SwitchProps) {
-  const [checked, setChecked] = useState(false)
-  return (
-    <Switch
-      {...args}
-      checked={checked}
-      onChange={(event, next, details) => {
-        args.onChange?.(event, next, details)
-        if (!details.isCanceled) setChecked(next)
+/** Each state a prop reaches, one switch apiece. */
+export const States: Story = {
+  parameters: {
+    // a disabled switch's words are color.text.tertiary, a miss Accessibility lists by name
+    // (docs/foundations/accessibility.md) and WCAG 1.4.3 exempts for an inactive control, so axe
+    // leaves it out
+    a11y: {
+      context: {
+        include: ['body'],
+        exclude: ['[data-row="Disabled"]', '[data-row="Checked, disabled"]'],
+      },
+    },
+  },
+  ...showcase<StoryArgs>(
+    [
+      { label: 'Checked', story: checked },
+      { label: 'Disabled', story: disabled },
+      { label: 'Checked, disabled', story: checkedDisabled },
+      { label: 'Read-only', story: readOnly },
+      { label: 'Invalid', story: invalid },
+    ],
+    (args) => <Switch {...args} />,
+  ),
+}
+
+/** A wrapping `<label>`, its long text before the switch, in a 320 px wide flex row. */
+export const WithLabel: Story = {
+  args: { 'aria-label': undefined },
+  render: (args) => (
+    <label
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 'var(--perron-space-300)',
+        inlineSize: 320,
+        maxInlineSize: '100%',
       }}
-    />
-  )
+    >
+      <span style={typography('label')}>Show planned works and diversions on the map</span>
+      <Switch {...args} />
+    </label>
+  ),
+  play: async ({ args, canvasElement }) => {
+    const onChange = args.onChange as ReturnType<typeof fn>
+    onChange.mockClear()
+    const name = 'Show planned works and diversions on the map'
+    const root = control(canvasElement, name)
+    await expect(root).toHaveAttribute('aria-labelledby')
+    const text = within(canvasElement).getByText(name)
+    // CR-5: the text wraps, and the track keeps its size
+    const line = parseFloat(getComputedStyle(text).lineHeight)
+    await expect(text.getBoundingClientRect().height).toBeGreaterThan(line * 1.5)
+    const box = root.getBoundingClientRect()
+    await expect(box.width).toBe(40)
+    await expect(box.height).toBe(24)
+    const row = root.parentElement!
+    await expect(row.scrollWidth).toBe(row.clientWidth)
+    // a click on the text turns it on
+    await userEvent.click(text)
+    await expect(root).toHaveAttribute('aria-checked', 'true')
+    await expect(onChange).toHaveBeenCalledTimes(1)
+    await expect(onChange).toHaveBeenLastCalledWith(
+      expect.any(Event),
+      true,
+      expect.objectContaining({ reason: 'none' }),
+    )
+    await userEvent.click(root)
+    await expect(root).toHaveAttribute('aria-checked', 'false')
+    root.blur()
+  },
 }
 
 /** A switch given `checked` and `onChange` from the story's state. */
 export const Controlled: Story = {
+  tags: ['!dev', '!autodocs'],
   render: (args) => <ControlledSwitch {...args} />,
   play: async ({ args, canvasElement }) => {
     const onChange = args.onChange as ReturnType<typeof fn>
@@ -356,55 +440,9 @@ export const Controlled: Story = {
   },
 }
 
-/** A wrapping `<label>`, its long text before the switch, in a 320 px wide flex row. */
-export const WithLabel: Story = {
-  args: { 'aria-label': undefined },
-  render: (args) => (
-    <label
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 'var(--perron-space-300)',
-        inlineSize: 320,
-        maxInlineSize: '100%',
-      }}
-    >
-      <span style={typography('label')}>Show planned works and diversions on the map</span>
-      <Switch {...args} />
-    </label>
-  ),
-  play: async ({ args, canvasElement }) => {
-    const onChange = args.onChange as ReturnType<typeof fn>
-    onChange.mockClear()
-    const name = 'Show planned works and diversions on the map'
-    const root = control(canvasElement, name)
-    await expect(root).toHaveAttribute('aria-labelledby')
-    const text = within(canvasElement).getByText(name)
-    // CR-5: the text wraps, and the track keeps its size
-    const line = parseFloat(getComputedStyle(text).lineHeight)
-    await expect(text.getBoundingClientRect().height).toBeGreaterThan(line * 1.5)
-    const box = root.getBoundingClientRect()
-    await expect(box.width).toBe(40)
-    await expect(box.height).toBe(24)
-    const row = root.parentElement!
-    await expect(row.scrollWidth).toBe(row.clientWidth)
-    // a click on the text turns it on
-    await userEvent.click(text)
-    await expect(root).toHaveAttribute('aria-checked', 'true')
-    await expect(onChange).toHaveBeenCalledTimes(1)
-    await expect(onChange).toHaveBeenLastCalledWith(
-      expect.any(Event),
-      true,
-      expect.objectContaining({ reason: 'none' }),
-    )
-    await userEvent.click(root)
-    await expect(root).toHaveAttribute('aria-checked', 'false')
-    root.blur()
-  },
-}
-
 /** A native `<form>` with two switches, the second submitting "off" when it is off. */
 export const InForm: Story = {
+  tags: ['!dev', '!autodocs'],
   render: (args) => (
     <form
       onSubmit={(event) => event.preventDefault()}

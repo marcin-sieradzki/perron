@@ -1,8 +1,8 @@
-// Tabs' stories: the tab set, then the tab in each state of the deferred design, each in a set of
-// its own, as Base UI's parts need (CR-2), then counts, a controlled set and a narrow one. Hover
-// and focus render at rest; the visual check drives them, and their play tests check them.
+// Tabs' stories: the tab set with every prop a control, the tab in each state it can be left in,
+// counts and wrapping, then the behaviour tests. Hover and focus are play steps, not stories.
 import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { showcase } from '../../testing/Showcase.tsx'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import { Button } from '../Button/Button.tsx'
 import { colour, onHover, pressedAfterHover, rendered, stateFill } from '../../testing/stories.ts'
@@ -57,6 +57,125 @@ const meta = {
 
 export default meta
 type Story = StoryObj<typeof meta>
+/** The args a story renders with: the meta's and its own. */
+type StoryArgs = Parameters<NonNullable<Story['render']>>[0]
+
+/** A list of two tabs, "Departures" and "Lines", with the state under test on "Lines". */
+const twoTabs = (lines: { disabled?: boolean } = {}) => (
+  <>
+    <TabsList aria-label="Stop">
+      <Tab value="departures">Departures</Tab>
+      <Tab value="lines" {...lines}>
+        Lines
+      </Tab>
+    </TabsList>
+    <TabsPanel value="departures">The next departures from this stop.</TabsPanel>
+    <TabsPanel value="lines">The lines that call at this stop.</TabsPanel>
+  </>
+)
+
+/**
+ * A caller that keeps the value in its own state and sets it from `onChange`, unless the story's
+ * `onChange` spy returns `false`, which stands for a caller that turns the change down; and a
+ * button outside the tabs that sets the value too.
+ */
+function ControlledTabs(args: TabsProps) {
+  const [value, setValue] = useState<string | null>('departures')
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 16 }}>
+      <Tabs
+        {...args}
+        value={value}
+        onChange={(event, next, details) => {
+          if (onChange(event, next, details) !== false) setValue(next)
+        }}
+      />
+      <Button variant="outline" size="small" onClick={() => setValue('disruptions')}>
+        Show disruptions
+      </Button>
+    </div>
+  )
+}
+
+/** A tab at rest, not selected: "Lines", beside the selected "Departures". */
+const tabDefault = {
+  args: { defaultValue: 'departures', children: twoTabs() },
+} satisfies Story
+
+/** A tab, hovered by the visual check. */
+const tabHover = {
+  args: { defaultValue: 'departures', children: twoTabs() },
+  play: async ({ canvasElement }) => {
+    const lines = within(canvasElement).getByRole('tab', { name: 'Lines' })
+    await expect(getComputedStyle(lines).color).toBe(colour('--perron-color-text-secondary'))
+    await expect(onHover(lines, 'color')).toBe('var(--perron-color-text-primary)')
+    // pressed lays the hover layer behind the inked label, a step past hover
+    await expect(stateFill(lines, ':active')).toBe('var(--perron-color-surface-hover)')
+    await expect(pressedAfterHover(lines)).toBe(true)
+  },
+} satisfies Story
+
+/** A tab, focused by the visual check. */
+const tabFocus = {
+  args: { defaultValue: 'departures', children: twoTabs() },
+  play: async ({ canvasElement }) => {
+    const lines = within(canvasElement).getByRole('tab', { name: 'Lines' })
+    await userEvent.tab()
+    await userEvent.keyboard('{ArrowRight}')
+    await expect(lines).toHaveFocus()
+    await expect(lines.matches(':focus-visible')).toBe(true)
+    const ring = getComputedStyle(lines)
+    await expect(ring.outlineStyle).toBe('solid')
+    await expect(ring.outlineColor).toBe(colour('--perron-color-border-focus'))
+    await expect(ring.outlineWidth).toBe(rendered('focus-width', 'outline-width'))
+    await userEvent.tab({ shift: true })
+    await expect(canvasElement).not.toContainElement(document.activeElement as HTMLElement)
+  },
+} satisfies Story
+
+/** A tab, selected, with the underline under it. */
+const tabSelected = {
+  args: { defaultValue: 'lines', children: twoTabs() },
+  play: async ({ canvasElement }) => {
+    const lines = within(canvasElement).getByRole('tab', { name: 'Lines' })
+    await expect(lines).toHaveAttribute('aria-selected', 'true')
+    await expect(lines).toHaveAttribute('data-active')
+    await expect(getComputedStyle(lines).color).toBe(colour('--perron-color-text-primary'))
+    await expectUnder(await measuredIndicator(canvasElement), lines)
+  },
+} satisfies Story
+
+/** A tab, disabled: still focusable and in the arrow-key order, so it can be heard. */
+const tabDisabled = {
+  args: { defaultValue: 'departures', children: twoTabs({ disabled: true }) },
+  play: async ({ canvasElement }) => {
+    onChange.mockClear()
+    const canvas = within(canvasElement)
+    const lines = canvas.getByRole('tab', { name: 'Lines' })
+    await expect(lines).toHaveAttribute('aria-disabled', 'true')
+    await expect(lines).toHaveAttribute('data-disabled')
+    await userEvent.tab()
+    await userEvent.keyboard('{ArrowRight}')
+    await expect(lines).toHaveFocus()
+    await userEvent.keyboard('{Enter}')
+    await userEvent.click(lines)
+    await expect(lines).toHaveAttribute('aria-selected', 'false')
+    await expect(canvas.getByRole('tabpanel')).toHaveTextContent(
+      'The next departures from this stop.',
+    )
+    await expect(onChange).not.toHaveBeenCalled()
+    await userEvent.tab({ shift: true })
+    await expect(canvasElement).not.toContainElement(document.activeElement as HTMLElement)
+  },
+} satisfies Story
+
+const restingTab = {
+  ...tabDefault,
+  play: async (context: Parameters<NonNullable<Story['play']>>[0]) => {
+    await tabHover.play(context)
+    await tabFocus.play(context)
+  },
+} satisfies Story
 
 /** The tab set: three tabs, the first selected, the third with a count of 2, and the first panel. */
 export const Default: Story = {
@@ -107,90 +226,22 @@ export const Default: Story = {
   },
 }
 
-/** A list of two tabs, "Departures" and "Lines", with the state under test on "Lines". */
-const twoTabs = (lines: { disabled?: boolean } = {}) => (
-  <>
-    <TabsList aria-label="Stop">
-      <Tab value="departures">Departures</Tab>
-      <Tab value="lines" {...lines}>
-        Lines
-      </Tab>
-    </TabsList>
-    <TabsPanel value="departures">The next departures from this stop.</TabsPanel>
-    <TabsPanel value="lines">The lines that call at this stop.</TabsPanel>
-  </>
-)
-
-/** A tab at rest, not selected: "Lines", beside the selected "Departures". */
-export const TabDefault: Story = {
-  args: { defaultValue: 'departures', children: twoTabs() },
-}
-
-/** A tab, hovered by the visual check. */
-export const TabHover: Story = {
-  args: { defaultValue: 'departures', children: twoTabs() },
-  play: async ({ canvasElement }) => {
-    const lines = within(canvasElement).getByRole('tab', { name: 'Lines' })
-    await expect(getComputedStyle(lines).color).toBe(colour('--perron-color-text-secondary'))
-    await expect(onHover(lines, 'color')).toBe('var(--perron-color-text-primary)')
-    // pressed lays the hover layer behind the inked label, a step past hover
-    await expect(stateFill(lines, ':active')).toBe('var(--perron-color-surface-hover)')
-    await expect(pressedAfterHover(lines)).toBe(true)
+/** The tab "Lines" in each state it can be left in: at rest, selected and disabled, each in a tab set of its own. */
+export const TabStates: Story = {
+  parameters: {
+    // a disabled tab's words are color.text.tertiary, a miss Accessibility lists by name
+    // (docs/foundations/accessibility.md) and WCAG 1.4.3 exempts for an inactive control, so axe
+    // leaves it out
+    a11y: { context: { include: ['body'], exclude: ['[data-row="Disabled"]'] } },
   },
-}
-
-/** A tab, focused by the visual check. */
-export const TabFocus: Story = {
-  args: { defaultValue: 'departures', children: twoTabs() },
-  play: async ({ canvasElement }) => {
-    const lines = within(canvasElement).getByRole('tab', { name: 'Lines' })
-    await userEvent.tab()
-    await userEvent.keyboard('{ArrowRight}')
-    await expect(lines).toHaveFocus()
-    await expect(lines.matches(':focus-visible')).toBe(true)
-    const ring = getComputedStyle(lines)
-    await expect(ring.outlineStyle).toBe('solid')
-    await expect(ring.outlineColor).toBe(colour('--perron-color-border-focus'))
-    await expect(ring.outlineWidth).toBe(rendered('focus-width', 'outline-width'))
-    await userEvent.tab({ shift: true })
-    await expect(canvasElement).not.toContainElement(document.activeElement as HTMLElement)
-  },
-}
-
-/** A tab, selected, with the underline under it. */
-export const TabSelected: Story = {
-  args: { defaultValue: 'lines', children: twoTabs() },
-  play: async ({ canvasElement }) => {
-    const lines = within(canvasElement).getByRole('tab', { name: 'Lines' })
-    await expect(lines).toHaveAttribute('aria-selected', 'true')
-    await expect(lines).toHaveAttribute('data-active')
-    await expect(getComputedStyle(lines).color).toBe(colour('--perron-color-text-primary'))
-    await expectUnder(await measuredIndicator(canvasElement), lines)
-  },
-}
-
-/** A tab, disabled: still focusable and in the arrow-key order, so it can be heard. */
-export const TabDisabled: Story = {
-  args: { defaultValue: 'departures', children: twoTabs({ disabled: true }) },
-  play: async ({ canvasElement }) => {
-    onChange.mockClear()
-    const canvas = within(canvasElement)
-    const lines = canvas.getByRole('tab', { name: 'Lines' })
-    await expect(lines).toHaveAttribute('aria-disabled', 'true')
-    await expect(lines).toHaveAttribute('data-disabled')
-    await userEvent.tab()
-    await userEvent.keyboard('{ArrowRight}')
-    await expect(lines).toHaveFocus()
-    await userEvent.keyboard('{Enter}')
-    await userEvent.click(lines)
-    await expect(lines).toHaveAttribute('aria-selected', 'false')
-    await expect(canvas.getByRole('tabpanel')).toHaveTextContent(
-      'The next departures from this stop.',
-    )
-    await expect(onChange).not.toHaveBeenCalled()
-    await userEvent.tab({ shift: true })
-    await expect(canvasElement).not.toContainElement(document.activeElement as HTMLElement)
-  },
+  ...showcase<StoryArgs>(
+    [
+      { label: 'At rest', story: restingTab },
+      { label: 'Selected', story: tabSelected },
+      { label: 'Disabled', story: tabDisabled },
+    ],
+    (args) => <Tabs {...args} />,
+  ),
 }
 
 /** Three tabs with counts of 12, 0 and 2: each is heard after its label. */
@@ -223,63 +274,6 @@ export const Count: Story = {
     const zero = canvas.getByRole('tab', { name: 'Lines 0' }).querySelector('.pn-Tab-count')
     await expect(zero).toHaveTextContent('0')
     await expect(zero).toBeVisible()
-  },
-}
-
-/**
- * A caller that keeps the value in its own state and sets it from `onChange`, unless the story's
- * `onChange` spy returns `false`, which stands for a caller that turns the change down; and a
- * button outside the tabs that sets the value too.
- */
-function ControlledTabs(args: TabsProps) {
-  const [value, setValue] = useState<string | null>('departures')
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 16 }}>
-      <Tabs
-        {...args}
-        value={value}
-        onChange={(event, next, details) => {
-          if (onChange(event, next, details) !== false) setValue(next)
-        }}
-      />
-      <Button variant="outline" size="small" onClick={() => setValue('disruptions')}>
-        Show disruptions
-      </Button>
-    </div>
-  )
-}
-
-/** Tabs given `value` and `onChange` from the story's state. */
-export const Controlled: Story = {
-  render: (args) => <ControlledTabs {...args} />,
-  play: async ({ canvasElement }) => {
-    onChange.mockClear()
-    const canvas = within(canvasElement)
-    const lines = canvas.getByRole('tab', { name: 'Lines' })
-    onChange.mockReturnValueOnce(false)
-    await userEvent.click(lines)
-    await expect(onChange).toHaveBeenCalledWith(
-      expect.any(Event),
-      'lines',
-      expect.objectContaining({ reason: 'none' }),
-    )
-    // the change turned down: the value, and so the panel, stays
-    await expect(lines).toHaveAttribute('aria-selected', 'false')
-    await expect(canvas.getByRole('tabpanel')).toHaveTextContent(
-      'The next departures from this stop.',
-    )
-    await userEvent.click(lines)
-    await expect(lines).toHaveAttribute('aria-selected', 'true')
-    await expect(canvas.getByRole('tabpanel')).toHaveTextContent(
-      'The lines that call at this stop.',
-    )
-    const show = canvas.getByRole('button', { name: 'Show disruptions' })
-    await userEvent.click(show)
-    const disruptions = canvas.getByRole('tab', { name: 'Disruptions 2' })
-    await expect(disruptions).toHaveAttribute('aria-selected', 'true')
-    await waitFor(async () => expectUnder(await measuredIndicator(canvasElement), disruptions))
-    show.blur()
-    await expect(canvasElement).not.toContainElement(document.activeElement as HTMLElement)
   },
 }
 
@@ -323,5 +317,40 @@ export const Wrapping: Story = {
     )
     await expect(list.scrollWidth).toBe(list.clientWidth)
     await expectUnder(await measuredIndicator(canvasElement), selected)
+  },
+}
+
+/** Tabs given `value` and `onChange` from the story's state. */
+export const Controlled: Story = {
+  tags: ['!dev', '!autodocs'],
+  render: (args) => <ControlledTabs {...args} />,
+  play: async ({ canvasElement }) => {
+    onChange.mockClear()
+    const canvas = within(canvasElement)
+    const lines = canvas.getByRole('tab', { name: 'Lines' })
+    onChange.mockReturnValueOnce(false)
+    await userEvent.click(lines)
+    await expect(onChange).toHaveBeenCalledWith(
+      expect.any(Event),
+      'lines',
+      expect.objectContaining({ reason: 'none' }),
+    )
+    // the change turned down: the value, and so the panel, stays
+    await expect(lines).toHaveAttribute('aria-selected', 'false')
+    await expect(canvas.getByRole('tabpanel')).toHaveTextContent(
+      'The next departures from this stop.',
+    )
+    await userEvent.click(lines)
+    await expect(lines).toHaveAttribute('aria-selected', 'true')
+    await expect(canvas.getByRole('tabpanel')).toHaveTextContent(
+      'The lines that call at this stop.',
+    )
+    const show = canvas.getByRole('button', { name: 'Show disruptions' })
+    await userEvent.click(show)
+    const disruptions = canvas.getByRole('tab', { name: 'Disruptions 2' })
+    await expect(disruptions).toHaveAttribute('aria-selected', 'true')
+    await waitFor(async () => expectUnder(await measuredIndicator(canvasElement), disruptions))
+    show.blur()
+    await expect(canvasElement).not.toContainElement(document.activeElement as HTMLElement)
   },
 }

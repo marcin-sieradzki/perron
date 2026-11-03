@@ -1,8 +1,9 @@
-// VehicleDot's stories: one per data state, then every size, every line, and forced colours, each
-// with a play test that reads the accessibility tree and the drawing (docs/components/vehicle-dot.md).
+// VehicleDot's stories: the dot alone with every prop a control, each data state side by side, each
+// at each size, on each line, with no line, and in forced colours.
 import { createRef } from 'react'
 import type { CSSProperties } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { showcase } from '../../testing/Showcase.tsx'
 import { expect, isInaccessible, userEvent, waitFor, within } from 'storybook/test'
 import { VehicleDot } from './VehicleDot.tsx'
 import type { VehicleDotProps } from './VehicleDot.tsx'
@@ -81,7 +82,7 @@ const pair: CSSProperties = {
  * The five states in a row, each dot beside its word, as a screen shows them (CR-5): the word is
  * read, so each dot passes `aria-hidden` and the state is heard once.
  */
-function States({ line, size }: { line: Line; size: Size }) {
+function StateRow({ line, size }: { line: Line; size: Size }) {
   const role = SIZES.find((s) => s.size === size)!.role
   return (
     <div style={{ ...row, ...typography(role) }}>
@@ -116,6 +117,8 @@ const meta = {
 
 export default meta
 type Story = StoryObj<typeof meta>
+/** The args a story renders with: the meta's and its own. */
+type StoryArgs = Parameters<NonNullable<Story['render']>>[0]
 
 /** A VehicleDot's dot, the `<circle>` inside its root. */
 const dotOf = (root: Element) => root.querySelector<SVGCircleElement>('.pn-VehicleDot-dot')!
@@ -129,8 +132,31 @@ function parts(scope: Element) {
 /** The colour a line's token renders as, which `currentColor` takes on the root. */
 const lineColour = (line: Line) => colour(LINES.find((l) => l.line === line)!.token)
 
+/** The outer edge of a dot, from the centre: its radius, plus half its stroke when it has one. */
+function outerEdge(dot: SVGCircleElement) {
+  const style = getComputedStyle(dot)
+  const stroke = style.stroke === 'none' ? 0 : Number.parseFloat(style.strokeWidth) / 2
+  return dot.getBBox().width / 2 + stroke
+}
+
+const cell: CSSProperties = {
+  padding: 'var(--perron-space-100) var(--perron-space-200)',
+  textAlign: 'start',
+  fontWeight: 'inherit',
+}
+
+/** A dot's shape without its colour: its fill and opacity, its rim and dash, and its cut. */
+function shape(root: Element) {
+  const style = getComputedStyle(dotOf(root))
+  return [
+    style.fill === 'none' ? 'no fill' : `fill ${style.fillOpacity}`,
+    style.stroke === 'none' ? 'no rim' : `rim ${style.strokeWidth} dash ${style.strokeDasharray}`,
+    getComputedStyle(root).maskImage === 'none' ? 'whole' : 'cut',
+  ].join(', ')
+}
+
 /** The subject story: a fainter dot with a rim, on M1, alone. */
-export const Ageing: Story = {
+const ageing = {
   args: { variant: 'ageing' },
   play: async ({ canvasElement }) => {
     const root = within(canvasElement).getByRole('img', { name: 'Ageing' })
@@ -149,10 +175,10 @@ export const Ageing: Story = {
     )
     await expect(style.strokeDasharray).toBe('none')
   },
-}
+} satisfies Story
 
 /** A ring in the line's colour. */
-export const Estimated: Story = {
+const estimated = {
   args: { variant: 'estimated' },
   play: async ({ canvasElement }) => {
     within(canvasElement).getByRole('img', { name: 'Estimated' })
@@ -164,10 +190,10 @@ export const Estimated: Story = {
     )
     await expect(style.strokeDasharray).toBe('none')
   },
-}
+} satisfies Story
 
 /** A solid dot in the line's colour, the default state. */
-export const Live: Story = {
+const liveStory = {
   args: { variant: 'live' },
   play: async ({ canvasElement, step }) => {
     const root = within(canvasElement).getByRole('img', { name: 'Live' })
@@ -342,10 +368,10 @@ export const Live: Story = {
       )
     })
   },
-}
+} satisfies Story
 
 /** A grey dot cut by a slash, whatever the line. */
-export const NoSignal: Story = {
+const noSignal = {
   args: { variant: 'no-signal' },
   play: async ({ canvasElement, step }) => {
     const root = within(canvasElement).getByRole('img', { name: 'No signal' })
@@ -414,10 +440,10 @@ export const NoSignal: Story = {
       )
     })
   },
-}
+} satisfies Story
 
 /** A ring dashed by the timetable dash. */
-export const TimetableOnly: Story = {
+const timetableOnly = {
   args: { variant: 'timetable-only' },
   play: async ({ canvasElement }) => {
     within(canvasElement).getByRole('img', { name: 'Timetable only' })
@@ -431,13 +457,28 @@ export const TimetableOnly: Story = {
       rendered('vehicle-dot-timetable-dash', 'stroke-dasharray'),
     )
   },
+} satisfies Story
+
+/** A solid dot in the line's colour, the default state, every prop a control. */
+export const Default: Story = {
+  ...liveStory,
+  play: async (context) => {
+    await liveStory.play(context)
+  },
 }
 
-/** The outer edge of a dot, from the centre: its radius, plus half its stroke when it has one. */
-function outerEdge(dot: SVGCircleElement) {
-  const style = getComputedStyle(dot)
-  const stroke = style.stroke === 'none' ? 0 : Number.parseFloat(style.strokeWidth) / 2
-  return dot.getBBox().width / 2 + stroke
+/** Each data state, side by side, on M1. */
+export const States: Story = {
+  ...showcase<StoryArgs>(
+    [
+      { label: 'Live', story: liveStory },
+      { label: 'Ageing', story: ageing },
+      { label: 'Estimated', story: estimated },
+      { label: 'No signal', story: noSignal },
+      { label: 'Timetable only', story: timetableOnly },
+    ],
+    (args) => <VehicleDot {...args} />,
+  ),
 }
 
 /** Each state at each size, beside the text that size is for. */
@@ -451,7 +492,7 @@ export const Sizes: Story = {
           style={{ display: 'grid', gap: 'var(--perron-space-100)' }}
         >
           <p style={{ ...typography(role), color: 'var(--perron-color-text-secondary)' }}>{text}</p>
-          <States line={args.line} size={size} />
+          <StateRow line={args.line} size={size} />
         </div>
       ))}
     </div>
@@ -474,12 +515,6 @@ export const Sizes: Story = {
         }
       })
   },
-}
-
-const cell: CSSProperties = {
-  padding: 'var(--perron-space-100) var(--perron-space-200)',
-  textAlign: 'start',
-  fontWeight: 'inherit',
 }
 
 /** Each state on each of the twelve lines, a row per line, named by its words. */
@@ -543,7 +578,7 @@ export const Lines: Story = {
  */
 export const NoLine: Story = {
   args: { line: undefined },
-  render: () => <States line={undefined} size="medium" />,
+  render: () => <StateRow line={undefined} size="medium" />,
   play: async ({ canvasElement, step }) => {
     const roots = [...canvasElement.querySelectorAll<HTMLElement>('.pn-VehicleDot')]
     await expect(roots).toHaveLength(STATE_WORDS.length)
@@ -579,23 +614,13 @@ export const NoLine: Story = {
   },
 }
 
-/** A dot's shape without its colour: its fill and opacity, its rim and dash, and its cut. */
-function shape(root: Element) {
-  const style = getComputedStyle(dotOf(root))
-  return [
-    style.fill === 'none' ? 'no fill' : `fill ${style.fillOpacity}`,
-    style.stroke === 'none' ? 'no rim' : `rim ${style.strokeWidth} dash ${style.strokeDasharray}`,
-    getComputedStyle(root).maskImage === 'none' ? 'whole' : 'cut',
-  ].join(', ')
-}
-
 /**
  * The five states on M1 at medium, beside their words. Its first render, which the docs page, the
  * visual stage and the audits show, is in normal colours: the forced-colours look exists only while
  * its play test applies the sheet (CR-11).
  */
 export const ForcedColours: Story = {
-  render: (args) => <States line={args.line} size="medium" />,
+  render: (args) => <StateRow line={args.line} size="medium" />,
   play: async ({ canvasElement, step }) => {
     const sheet = forcedColourSheet('pn-VehicleDot')
     await expect(

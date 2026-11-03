@@ -1,9 +1,9 @@
-// DepartureRow's stories: one per row of the spec's Stories table (docs/patterns/departure-row.md),
-// with the design deferred, and their play tests, which read the accessibility tree and the DOM.
-// Every line used has a badge pair that reaches 4.5:1, so axe's color-contrast rule stays on (CR-11).
+// DepartureRow's stories: a live row with every prop a control, each data state side by side, the
+// times a row can show, a long destination and a list of rows.
 import { createRef, type ReactElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { showcase } from '../../testing/Showcase.tsx'
 import { expect, isInaccessible, userEvent, waitFor, within } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { delayKnown, VEHICLE_STATES } from '../../internal/vehicle-states.ts'
@@ -45,6 +45,8 @@ const meta = {
 
 export default meta
 type Story = StoryObj<typeof meta>
+/** The args a story renders with: the meta's and its own. */
+type StoryArgs = Parameters<NonNullable<Story['render']>>[0]
 
 /** The parts of a row, in reading order. */
 const PARTS = ['badge', 'destination', 'status', 'countdown', 'time', 'delay'] as const
@@ -116,8 +118,105 @@ async function tildeBeforeFigure(row: HTMLElement) {
   await expect(countdown.textContent).toMatch(/^~\d+ min$/)
 }
 
+/**
+ * What a screen reader reads of a row's schedule: its children in DOM order, each one's text apart,
+ * those hidden from the ear left out.
+ */
+const scheduleRead = (row: Element) =>
+  [...(part(row, 'schedule')?.children ?? [])]
+    .filter((child) => !isInaccessible(child))
+    .map(heard)
+    .join(' ')
+
+/** Every own prop at once, for the check that none reaches the root as an attribute (CR-2). */
+const EVERY_PROP = {
+  variant: 'live',
+  line: 'bus',
+  lineName: '5C',
+  destination: 'Husum Torv',
+  countdown: 240,
+  time: '08:14',
+  expected: '08:14',
+  delay: 0,
+  cancelled: false,
+  nowLabel: 'Leaving',
+  unknownLabel: 'Not known',
+  timetabledTimeLabel: 'Planned {time}',
+  cancelledLabel: 'Not running',
+  everyLabel: 'Each {minutes} mins',
+  everyRangeLabel: 'Each {from} or {to} mins',
+  liveLabel: 'Real-time',
+  ageingLabel: 'Older',
+  estimatedLabel: 'Guessed',
+  timetableOnlyLabel: 'Planned only',
+  noSignalLabel: 'Silent',
+  minutesUnitLabel: 'mins',
+  minutesLateLabel: 'mins behind',
+  minutesEarlyLabel: 'mins ahead',
+  onTimeLabel: 'Punctual',
+  delayUnknownLabel: 'No delay data',
+  slotProps: {},
+} satisfies DepartureRowProps
+
+/** Each part's own class and a caller's, through `slotProps`. */
+const SLOT_CLASSES = {
+  badge: { className: 'caller-badge' },
+  destination: { className: 'caller-destination' },
+  status: { className: 'caller-status' },
+  dot: { className: 'caller-dot', 'aria-hidden': false },
+  countdown: { className: 'caller-countdown' },
+  schedule: { className: 'caller-schedule' },
+  time: { className: 'caller-time' },
+  delay: { className: 'caller-delay' },
+} satisfies DepartureRowProps['slotProps']
+
+/** Four departures as a stop's list, each row in its own list item. */
+const DEPARTURES: (DepartureRowProps & { key: string })[] = [
+  {
+    key: '5c',
+    variant: 'live',
+    line: 'bus',
+    lineName: '5C',
+    destination: 'Husum Torv',
+    countdown: 120,
+    time: '08:12',
+    delay: 0,
+  },
+  {
+    key: 'm3',
+    variant: 'estimated',
+    line: 'm3',
+    lineName: 'M3',
+    destination: 'Cityringen',
+    countdown: 260,
+    time: '08:13',
+    expected: '08:14',
+    delay: 1,
+  },
+  {
+    key: 'f',
+    variant: 'ageing',
+    line: 'f',
+    lineName: 'F',
+    destination: 'Hellerup',
+    countdown: 540,
+    time: '08:15',
+    expected: '08:19',
+    delay: 4,
+  },
+  {
+    key: 're',
+    variant: 'timetable-only',
+    line: 'regional',
+    lineName: 'RE',
+    destination: 'Helsingør',
+    countdown: 1080,
+    time: '08:26',
+  },
+]
+
 /** An ageing bus, a little late: the subject story. */
-export const Ageing: Story = {
+const ageingStory = {
   args: { variant: 'ageing', delay: 2 },
   play: async ({ canvasElement, step }) => {
     const row = rowIn(canvasElement)
@@ -139,10 +238,10 @@ export const Ageing: Story = {
       await expect(row.textContent).not.toContain('~')
     })
   },
-}
+} satisfies Story
 
 /** An estimated bus, three minutes late: the countdown is an estimate. */
-export const Estimated: Story = {
+const estimatedStory = {
   args: { variant: 'estimated', countdown: 380, time: '08:16', delay: 3 },
   play: async ({ canvasElement, step }) => {
     const row = rowIn(canvasElement)
@@ -164,23 +263,13 @@ export const Estimated: Story = {
       await expect(delay.whiteSpace).toBe('nowrap')
     })
   },
-}
-
-/**
- * What a screen reader reads of a row's schedule: its children in DOM order, each one's text apart,
- * those hidden from the ear left out.
- */
-const scheduleRead = (row: Element) =>
-  [...(part(row, 'schedule')?.children ?? [])]
-    .filter((child) => !isInaccessible(child))
-    .map(heard)
-    .join(' ')
+} satisfies Story
 
 /**
  * A bus running two minutes late: its expected time in the timetabled time's place, the timetabled
  * one struck through before it.
  */
-export const Expected: Story = {
+const expectedStory = {
   args: { variant: 'live', countdown: 360, expected: '08:16', delay: 2 },
   play: async ({ canvasElement, args, step }) => {
     const row = rowIn(canvasElement)
@@ -370,55 +459,13 @@ export const Expected: Story = {
         ])
     })
   },
-}
-
-/** Every own prop at once, for the check that none reaches the root as an attribute (CR-2). */
-const EVERY_PROP = {
-  variant: 'live',
-  line: 'bus',
-  lineName: '5C',
-  destination: 'Husum Torv',
-  countdown: 240,
-  time: '08:14',
-  expected: '08:14',
-  delay: 0,
-  cancelled: false,
-  nowLabel: 'Leaving',
-  unknownLabel: 'Not known',
-  timetabledTimeLabel: 'Planned {time}',
-  cancelledLabel: 'Not running',
-  everyLabel: 'Each {minutes} mins',
-  everyRangeLabel: 'Each {from} or {to} mins',
-  liveLabel: 'Real-time',
-  ageingLabel: 'Older',
-  estimatedLabel: 'Guessed',
-  timetableOnlyLabel: 'Planned only',
-  noSignalLabel: 'Silent',
-  minutesUnitLabel: 'mins',
-  minutesLateLabel: 'mins behind',
-  minutesEarlyLabel: 'mins ahead',
-  onTimeLabel: 'Punctual',
-  delayUnknownLabel: 'No delay data',
-  slotProps: {},
-} satisfies DepartureRowProps
-
-/** Each part's own class and a caller's, through `slotProps`. */
-const SLOT_CLASSES = {
-  badge: { className: 'caller-badge' },
-  destination: { className: 'caller-destination' },
-  status: { className: 'caller-status' },
-  dot: { className: 'caller-dot', 'aria-hidden': false },
-  countdown: { className: 'caller-countdown' },
-  schedule: { className: 'caller-schedule' },
-  time: { className: 'caller-time' },
-  delay: { className: 'caller-delay' },
-} satisfies DepartureRowProps['slotProps']
+} satisfies Story
 
 /**
  * A live bus on time. Its play test holds the root, the parts' `slotProps`, the countdown's
  * rounding and its unknown value, the label overrides and the owned strings.
  */
-export const Live: Story = {
+const live = {
   args: { variant: 'live', delay: 0 },
   play: async ({ canvasElement, args, step }) => {
     const row = rowIn(canvasElement)
@@ -644,10 +691,10 @@ export const Live: Story = {
             )
       })
   },
-}
+} satisfies Story
 
 /** A silent bus: the delay is unknown whatever `delay` holds. */
-export const NoSignal: Story = {
+const noSignal = {
   args: { variant: 'no-signal', delay: 4 },
   play: async ({ canvasElement, step }) => {
     const row = rowIn(canvasElement)
@@ -663,10 +710,10 @@ export const NoSignal: Story = {
     await step('"~" comes before the figure', () => tildeBeforeFigure(row))
     await step('"No signal" is read beside the dot', () => dotHiddenWordRead(row, 'No signal'))
   },
-}
+} satisfies Story
 
 /** "Now": a live bus leaving in under 45 seconds. */
-export const Now: Story = {
+const now = {
   args: { variant: 'live', countdown: 30, delay: 0 },
   play: async ({ canvasElement, args, step }) => {
     const countdown = part(rowIn(canvasElement), 'countdown')!
@@ -690,10 +737,10 @@ export const Now: Story = {
       await expect(shows({ nowLabel: 'Leaving' })).toBe('Leaving')
     })
   },
-}
+} satisfies Story
 
 /** A bus with no real-time data: a timetabled time, an unknown delay. */
-export const TimetableOnly: Story = {
+const timetableOnly = {
   args: { variant: 'timetable-only' },
   play: async ({ canvasElement, step }) => {
     const row = rowIn(canvasElement)
@@ -712,10 +759,10 @@ export const TimetableOnly: Story = {
       dotHiddenWordRead(row, 'Timetable only'),
     )
   },
-}
+} satisfies Story
 
 /** A cancelled bus: the row stays, marked "Cancelled", its countdown and time struck through. */
-export const Cancelled: Story = {
+const cancelled = {
   args: { variant: 'live', cancelled: true, delay: 2 },
   play: async ({ canvasElement, args, step }) => {
     const row = rowIn(canvasElement)
@@ -785,10 +832,10 @@ export const Cancelled: Story = {
       ownedStringsInEveryLocale(<DepartureRow {...args} interval={[3, 4]} />, ['5C', 'Husum Torv'])
     })
   },
-}
+} satisfies Story
 
 /** The Metro, which runs to an interval: "Every 3 to 4 min" in place of a countdown and a time. */
-export const Interval: Story = {
+const intervalStory = {
   args: {
     variant: 'live',
     line: 'm2',
@@ -881,10 +928,10 @@ export const Interval: Story = {
         ])
     })
   },
-}
+} satisfies Story
 
 /** A regional train with its track: the platform after the state's word. */
-export const Platform: Story = {
+const platformStory = {
   args: {
     variant: 'timetable-only',
     line: 'regional',
@@ -952,6 +999,41 @@ export const Platform: Story = {
       ]),
     )
   },
+} satisfies Story
+
+/** A live bus on time, every prop a control. */
+export const Default: Story = {
+  ...live,
+  play: async (context) => {
+    await live.play(context)
+  },
+}
+
+/** Each data state but live, side by side. */
+export const States: Story = {
+  ...showcase<StoryArgs>(
+    [
+      { label: 'Ageing', story: ageingStory },
+      { label: 'Estimated', story: estimatedStory },
+      { label: 'No signal', story: noSignal },
+      { label: 'Timetable only', story: timetableOnly },
+    ],
+    (args) => <DepartureRow {...args} />,
+  ),
+}
+
+/** What a row shows in place of a plain countdown and time: an expected time, now, cancelled, an interval, a platform. */
+export const Times: Story = {
+  ...showcase<StoryArgs>(
+    [
+      { label: 'Expected', story: expectedStory },
+      { label: 'Now', story: now },
+      { label: 'Cancelled', story: cancelled },
+      { label: 'Interval', story: intervalStory },
+      { label: 'Platform', story: platformStory },
+    ],
+    (args) => <DepartureRow {...args} />,
+  ),
 }
 
 /** A long destination in a 320 px container: it wraps; the countdown and the time never do. */
@@ -1013,51 +1095,6 @@ export const LongDestination: Story = {
     )
   },
 }
-
-/** Four departures as a stop's list, each row in its own list item. */
-const DEPARTURES: (DepartureRowProps & { key: string })[] = [
-  {
-    key: '5c',
-    variant: 'live',
-    line: 'bus',
-    lineName: '5C',
-    destination: 'Husum Torv',
-    countdown: 120,
-    time: '08:12',
-    delay: 0,
-  },
-  {
-    key: 'm3',
-    variant: 'estimated',
-    line: 'm3',
-    lineName: 'M3',
-    destination: 'Cityringen',
-    countdown: 260,
-    time: '08:13',
-    expected: '08:14',
-    delay: 1,
-  },
-  {
-    key: 'f',
-    variant: 'ageing',
-    line: 'f',
-    lineName: 'F',
-    destination: 'Hellerup',
-    countdown: 540,
-    time: '08:15',
-    expected: '08:19',
-    delay: 4,
-  },
-  {
-    key: 're',
-    variant: 'timetable-only',
-    line: 'regional',
-    lineName: 'RE',
-    destination: 'Helsingør',
-    countdown: 1080,
-    time: '08:26',
-  },
-]
 
 /** A stop's departures: a list of four rows. */
 export const List: Story = {

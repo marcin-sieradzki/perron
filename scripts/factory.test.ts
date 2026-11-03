@@ -92,7 +92,7 @@ function build(status = 'building') {
   const dir = 'packages/perron/src/components/Tally'
   write(`${dir}/Tally.tsx`, 'export function Tally() {}\n')
   write(`${dir}/Tally.css`, '.pn-Tally {}\n')
-  write(`${dir}/Tally.stories.tsx`, 'export const Plain = {}\nexport const Brand = {}\n')
+  write(`${dir}/Tally.stories.tsx`, 'export const Default = {}\nexport const Variants = {}\n')
   write(
     'packages/perron/components.json',
     JSON.stringify([
@@ -780,7 +780,7 @@ describe('the factory dry run', () => {
     )
     expect(run('defer Tally').err).toMatch(/already deferred/)
     stage('brief', () => brief())
-    // no read-back, so the stories follow the spec and no variant is required
+    // no read-back, so the stories follow the spec
     write('packages/perron/src/components/Tally/Tally.stories.tsx', 'export const Default = {}\n')
     expect(stage('build', () => build()).out).toContain('ended build: done\nrun: review')
     review(1)

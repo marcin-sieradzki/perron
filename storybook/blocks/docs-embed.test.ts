@@ -16,7 +16,16 @@ describe('docs page stories render without play', () => {
     expect(preview).toContain(
       "Object.assign(globalThis, { PREVIEW_URL: 'iframe.html?embed=true' })",
     )
-    expect(preview).toMatch(/docs: \{ story: \{ autoplay: false \} \}/)
+    expect(preview).toMatch(/docs: \{\s*(\/\/[^\n]*\s*)*story: \{ autoplay: false \}/)
+  })
+
+  it("the docs page's Stories block leaves out a test-only story, as the sidebar does", async () => {
+    const { default: preview } = await import('../../.storybook/preview.ts')
+    const filter = preview.parameters?.docs?.stories?.filter as (s: { tags?: string[] }) => boolean
+    expect(filter({ tags: ['dev', 'test'] })).toBe(true)
+    expect(filter({ tags: ['test'] })).toBe(false)
+    const blocks = read(require.resolve('@storybook/addon-docs/blocks'))
+    expect(blocks).toMatch(/filter = projectAnnotations\.parameters\?\.docs\?\.stories\?\.filter/)
   })
 
   it("addon-docs loads a story's iframe from PREVIEW_URL, keeping its query", () => {

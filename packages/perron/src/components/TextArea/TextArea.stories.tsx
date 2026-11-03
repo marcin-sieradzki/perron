@@ -1,12 +1,12 @@
-// TextArea's stories: the variants of the deferred design, Default, Hover, Focus, Disabled and
-// Invalid, and the stories of content and behaviour the spec's Stories table names
-// (docs/components/text-area.md), each in a 320 px container. Hover and focus render at rest;
-// their plays drive them.
+// TextArea's stories: the field alone with every prop a control, its states side by side, rows,
+// scrolling, a hidden label and long words, then the behaviour tests (docs/components/text-area.md).
+// Hover and focus are play steps, not stories.
 import { Form } from '@base-ui/react/form'
 import { useState } from 'react'
 import type { ChangeEvent } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { showcase } from '../../testing/Showcase.tsx'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import type { Locale } from '../../locale/index.ts'
@@ -47,6 +47,8 @@ const meta = {
 export default meta
 
 type Story = StoryObj<typeof meta>
+/** The args a story renders with: the meta's and its own. */
+type StoryArgs = Parameters<NonNullable<Story['render']>>[0]
 
 /** The field's textarea, the textbox, in `scope`. */
 const boxIn = (scope: HTMLElement, name: string | RegExp = LABEL) =>
@@ -55,8 +57,50 @@ const boxIn = (scope: HTMLElement, name: string | RegExp = LABEL) =>
 /** `size.input` in pixels, as it renders on a block size. */
 const inputHeight = () => Number.parseFloat(rendered('size-input', 'block-size'))
 
+/** Renders `args` in `locale` on the server, as the owned-strings check reads a render. */
+const markup = (args: TextAreaProps, locale: Locale) =>
+  renderToStaticMarkup(
+    <PerronProvider locale={locale}>
+      <TextArea {...args} />
+    </PerronProvider>,
+  )
+
+/** The two fields of the `Rows` story, each with its own label. */
+const ROWS = [
+  { rows: 1, label: 'Where it happened' },
+  { rows: 6, label: 'What happened' },
+] as const
+
+/** What the `NewLines` story's form is sent, which Enter in the textarea must never call. */
+const submitted = fn()
+
+const FIVE_LINES = [
+  'The 5C waited at Nørreport for 10 minutes.',
+  'The display showed no delay.',
+  'The driver said a lorry blocked the lane.',
+  'We left 12 minutes late.',
+  'I missed my train at Valby.',
+].join('\n')
+
+/** The words held in the story's state, set from each change event's `target.value`. */
+function ControlledArea(props: TextAreaProps) {
+  const [value, setValue] = useState('')
+  return (
+    <TextArea
+      {...props}
+      value={value}
+      onChange={(event) => {
+        props.onChange?.(event)
+        setValue(event.target.value)
+      }}
+    />
+  )
+}
+
+const COMPOUND = 'Hovedstadsområdetsbuslinjestoppestedsoversigtskortudgivelsen'
+
 /** The subject story, State default: the label, the description and the empty box, three rows. */
-export const Default: Story = {
+const _default = {
   play: async ({ canvasElement, step }) => {
     const box = boxIn(canvasElement)
     await step(
@@ -91,10 +135,10 @@ export const Default: Story = {
       await expect(box).not.toHaveFocus()
     })
   },
-}
+} satisfies Story
 
 /** State hover: the empty box, at rest at first render; the play reads the hover rule. */
-export const Hover: Story = {
+const hover = {
   play: async ({ canvasElement }) => {
     const box = boxIn(canvasElement)
     const image = onHover(box, 'background-image')
@@ -104,10 +148,10 @@ export const Hover: Story = {
       colour('--perron-color-surface-raised'),
     )
   },
-}
+} satisfies Story
 
 /** State focus: the empty box, at rest at first render; Tab gives the textarea itself the ring. */
-export const Focus: Story = {
+const focus = {
   play: async ({ canvasElement }) => {
     const box = boxIn(canvasElement)
     await userEvent.tab()
@@ -121,10 +165,10 @@ export const Focus: Story = {
     await userEvent.tab({ shift: true })
     await expect(box).not.toHaveFocus()
   },
-}
+} satisfies Story
 
 /** State disabled: the words, the label and the description in `color.text.tertiary`. */
-export const Disabled: Story = {
+const disabled = {
   args: { disabled: true, defaultValue: WORDS },
   parameters: {
     // a disabled field's words are color.text.tertiary, a miss Accessibility lists by name
@@ -153,10 +197,10 @@ export const Disabled: Story = {
     await expect(args.onChange).not.toHaveBeenCalled()
     await userEvent.tab({ shift: true })
   },
-}
+} satisfies Story
 
 /** State invalid: the error "Say what happened" under the box, its edge in `color.status.danger`. */
-export const Invalid: Story = {
+const invalid = {
   args: { error: 'Say what happened' },
   play: async ({ canvasElement }) => {
     const box = boxIn(canvasElement)
@@ -172,10 +216,10 @@ export const Invalid: Story = {
     )
     await expect(box).toHaveAccessibleDescription(`${DESCRIPTION} Say what happened`)
   },
-}
+} satisfies Story
 
 /** The field with the two-line `defaultValue`. */
-export const Filled: Story = {
+const filled = {
   args: { defaultValue: WORDS },
   play: async ({ args, canvasElement }) => {
     const box = boxIn(canvasElement)
@@ -193,10 +237,10 @@ export const Filled: Story = {
     await expect(event.target.value).toBe(`${WORDS} Ok`)
     box.blur()
   },
-}
+} satisfies Story
 
 /** The empty field with the placeholder "Such as the 5C waited at Nørreport for 10 minutes". */
-export const Placeholder: Story = {
+const placeholder = {
   args: { placeholder: PLACEHOLDER },
   play: async ({ canvasElement }) => {
     const box = boxIn(canvasElement)
@@ -206,18 +250,10 @@ export const Placeholder: Story = {
     await expect(hint.opacity).toBe('1')
     await expect(box).toHaveAccessibleName(LABEL)
   },
-}
-
-/** Renders `args` in `locale` on the server, as the owned-strings check reads a render. */
-const markup = (args: TextAreaProps, locale: Locale) =>
-  renderToStaticMarkup(
-    <PerronProvider locale={locale}>
-      <TextArea {...args} />
-    </PerronProvider>,
-  )
+} satisfies Story
 
 /** `optional`: the label reads "What happened (optional)". */
-export const Optional: Story = {
+const optional = {
   args: { optional: true },
   play: async ({ args, canvasElement, step }) => {
     await step('the mark is part of the textarea’s name', async () => {
@@ -241,31 +277,61 @@ export const Optional: Story = {
         expectOwnedStrings(markup(args, locale), locale, [LABEL, DESCRIPTION])
     })
   },
+} satisfies Story
+
+/** `readOnly` with the two-line words, in the rest look. */
+const readOnly = {
+  args: { readOnly: true, defaultValue: WORDS },
+  play: async ({ args, canvasElement }) => {
+    const box = boxIn(canvasElement)
+    await expect(box).toHaveAttribute('readonly')
+    await userEvent.tab()
+    await expect(box).toHaveFocus()
+    await userEvent.keyboard('x')
+    await expect(box).toHaveValue(WORDS)
+    await expect(args.onChange).not.toHaveBeenCalled()
+    await expect(getComputedStyle(box).borderColor).toBe(edge('color-border-control'))
+    await expect(getComputedStyle(box).backgroundColor).toBe(
+      colour('--perron-color-surface-raised'),
+    )
+    await expect(getComputedStyle(box).color).toBe(colour('--perron-color-text-primary'))
+    await userEvent.tab({ shift: true })
+    await expect(box).not.toHaveFocus()
+  },
+} satisfies Story
+
+/**
+ * The subject story, every prop a control: the label, the description and the empty box, three
+ * rows. Its play reads the box's hover rule and gives the textarea focus and the ring.
+ */
+export const Default: Story = {
+  play: async (context) => {
+    await _default.play(context)
+    await hover.play(context)
+    await focus.play(context)
+  },
 }
 
-/** `hiddenLabel` with a placeholder: the description and the box, no label in view. */
-export const HiddenLabel: Story = {
-  args: { hiddenLabel: true, placeholder: PLACEHOLDER },
+/** Each state a prop reaches, one field apiece: filled, a placeholder, optional, disabled, read-only and invalid. */
+export const States: Story = {
   parameters: {
-    // axe's label-title-only fails a control with no visible label text that has a title or an
-    // aria-describedby, and here the description's aria-describedby trips it on the hidden label,
-    // the point of the story; so the rule is off for it alone: the textarea is still named by the
-    // label, through aria-labelledby
-    a11y: { options: { rules: { 'label-title-only': { enabled: false } } } },
+    // a disabled field's words are color.text.tertiary, a miss Accessibility lists by name
+    // (docs/foundations/accessibility.md) and WCAG 1.4.3 exempts for an inactive control, so axe
+    // leaves the disabled field out
+    a11y: { context: { include: ['body'], exclude: ['[data-row="Disabled"]'] } },
   },
-  play: async ({ canvasElement }) => {
-    const label = fieldPart(canvasElement, 'label')!
-    await expect(label.tagName).toBe('SPAN')
-    await expect(label.getBoundingClientRect().width).toBeLessThanOrEqual(1)
-    await expect(boxIn(canvasElement)).toHaveAccessibleName(LABEL)
-  },
+  ...showcase<StoryArgs>(
+    [
+      { label: 'Filled', story: filled },
+      { label: 'Placeholder', story: placeholder },
+      { label: 'Optional', story: optional },
+      { label: 'Disabled', story: disabled },
+      { label: 'Read-only', story: readOnly },
+      { label: 'Invalid', story: invalid },
+    ],
+    (args) => <TextArea {...args} />,
+  ),
 }
-
-/** The two fields of the `Rows` story, each with its own label. */
-const ROWS = [
-  { rows: 1, label: 'Where it happened' },
-  { rows: 6, label: 'What happened' },
-] as const
 
 /** Two fields, one with `rows` 1 and one with `rows` 6, each with its own label. */
 export const Rows: Story = {
@@ -299,65 +365,6 @@ export const Rows: Story = {
   },
 }
 
-/** `readOnly` with the two-line words, in the rest look. */
-export const ReadOnly: Story = {
-  args: { readOnly: true, defaultValue: WORDS },
-  play: async ({ args, canvasElement }) => {
-    const box = boxIn(canvasElement)
-    await expect(box).toHaveAttribute('readonly')
-    await userEvent.tab()
-    await expect(box).toHaveFocus()
-    await userEvent.keyboard('x')
-    await expect(box).toHaveValue(WORDS)
-    await expect(args.onChange).not.toHaveBeenCalled()
-    await expect(getComputedStyle(box).borderColor).toBe(edge('color-border-control'))
-    await expect(getComputedStyle(box).backgroundColor).toBe(
-      colour('--perron-color-surface-raised'),
-    )
-    await expect(getComputedStyle(box).color).toBe(colour('--perron-color-text-primary'))
-    await userEvent.tab({ shift: true })
-    await expect(box).not.toHaveFocus()
-  },
-}
-
-/** What the `NewLines` story's form is sent, which Enter in the textarea must never call. */
-const submitted = fn()
-
-/** The empty field inside a native `<form>` with an `onSubmit` handler. */
-export const NewLines: Story = {
-  decorators: [
-    (Story) => (
-      <form
-        onSubmit={(event) => {
-          event.preventDefault()
-          submitted()
-        }}
-      >
-        <Story />
-      </form>
-    ),
-  ],
-  play: async ({ canvasElement }) => {
-    submitted.mockClear()
-    const box = boxIn(canvasElement)
-    await userEvent.click(box)
-    await userEvent.keyboard('The 5C waited{Enter}The display')
-    await expect(box).toHaveValue('The 5C waited\nThe display')
-    await expect(submitted).not.toHaveBeenCalled()
-    // Base UI's Enter handling runs on an <input> only, so Enter marks nothing touched
-    await expect(box).not.toHaveAttribute('data-touched')
-    box.blur()
-  },
-}
-
-const FIVE_LINES = [
-  'The 5C waited at Nørreport for 10 minutes.',
-  'The display showed no delay.',
-  'The driver said a lorry blocked the lane.',
-  'We left 12 minutes late.',
-  'I missed my train at Valby.',
-].join('\n')
-
 /** Five lines of words in a three-row box. */
 export const Scrolling: Story = {
   args: { defaultValue: FIVE_LINES },
@@ -386,23 +393,83 @@ export const Scrolling: Story = {
   },
 }
 
-/** The words held in the story's state, set from each change event's `target.value`. */
-function ControlledArea(props: TextAreaProps) {
-  const [value, setValue] = useState('')
-  return (
-    <TextArea
-      {...props}
-      value={value}
-      onChange={(event) => {
-        props.onChange?.(event)
-        setValue(event.target.value)
-      }}
-    />
-  )
+/** `hiddenLabel` with a placeholder: the description and the box, no label in view. */
+export const HiddenLabel: Story = {
+  args: { hiddenLabel: true, placeholder: PLACEHOLDER },
+  parameters: {
+    // axe's label-title-only fails a control with no visible label text that has a title or an
+    // aria-describedby, and here the description's aria-describedby trips it on the hidden label,
+    // the point of the story; so the rule is off for it alone: the textarea is still named by the
+    // label, through aria-labelledby
+    a11y: { options: { rules: { 'label-title-only': { enabled: false } } } },
+  },
+  play: async ({ canvasElement }) => {
+    const label = fieldPart(canvasElement, 'label')!
+    await expect(label.tagName).toBe('SPAN')
+    await expect(label.getBoundingClientRect().width).toBeLessThanOrEqual(1)
+    await expect(boxIn(canvasElement)).toHaveAccessibleName(LABEL)
+  },
+}
+
+/** A Danish compound longer than its line in every part, and a word longer than the box (CR-7). */
+export const LongWords: Story = {
+  args: {
+    label: COMPOUND,
+    description: `Sig hvor og hvornår, som i ${COMPOUND}`,
+    error: `Skriv hvad der skete ved ${COMPOUND}`,
+    // one word longer than the box's three rows, so it can only fit by breaking
+    defaultValue: COMPOUND.repeat(3),
+  },
+  play: async ({ canvasElement }) => {
+    const frame = fieldPart(canvasElement, 'field')!
+    const bounds = frame.getBoundingClientRect()
+    for (const name of ['label', 'description', 'error'] as const) {
+      const element = fieldPart(canvasElement, name)!
+      await expect(lines(element)).toBeGreaterThan(1.5)
+      await expect(element.getBoundingClientRect().right).toBeLessThanOrEqual(bounds.right + 0.5)
+      await expect(element.scrollWidth).toBeLessThanOrEqual(element.clientWidth)
+    }
+    const box = canvasElement.querySelector<HTMLTextAreaElement>('.pn-TextArea')!
+    // the word breaks onto more lines than the box shows, and none runs past its edge
+    await expect(box.scrollHeight).toBeGreaterThan(box.clientHeight)
+    await expect(box.scrollWidth).toBeLessThanOrEqual(box.clientWidth)
+    await expect(box.getBoundingClientRect().right).toBeLessThanOrEqual(bounds.right + 0.5)
+    await expect(frame.scrollWidth).toBeLessThanOrEqual(frame.clientWidth)
+    await expect(bounds.width).toBeLessThanOrEqual(320)
+  },
+}
+
+/** The empty field inside a native `<form>` with an `onSubmit` handler. */
+export const NewLines: Story = {
+  tags: ['!dev', '!autodocs'],
+  decorators: [
+    (Story) => (
+      <form
+        onSubmit={(event) => {
+          event.preventDefault()
+          submitted()
+        }}
+      >
+        <Story />
+      </form>
+    ),
+  ],
+  play: async ({ canvasElement }) => {
+    submitted.mockClear()
+    const box = boxIn(canvasElement)
+    await userEvent.click(box)
+    await userEvent.keyboard('The 5C waited{Enter}The display')
+    await expect(box).toHaveValue('The 5C waited\nThe display')
+    await expect(submitted).not.toHaveBeenCalled()
+    // Base UI's Enter handling runs on an <input> only, so Enter marks nothing touched
+    await expect(box).not.toHaveAttribute('data-touched')
+    box.blur()
+  },
 }
 
 /** `value` held in the story's state, starting empty. */
 export const Controlled: Story = {
+  tags: ['!dev', '!autodocs'],
   render: (args) => <ControlledArea {...args} />,
   play: async ({ args, canvasElement }) => {
     const box = boxIn(canvasElement)
@@ -422,6 +489,7 @@ export const Controlled: Story = {
 
 /** Inside a native `<form>`, spread with the shape React Hook Form's `register('note')` returns. */
 export const Registered: Story = {
+  tags: ['!dev', '!autodocs'],
   args: { name: 'note', ref: fn(), onChange: fn(), onBlur: fn() },
   decorators: [
     (Story) => (
@@ -447,6 +515,7 @@ export const Registered: Story = {
 
 /** A `required` field in Base UI's `Form`, checked on blur by the caller's `validate`. */
 export const Validation: Story = {
+  tags: ['!dev', '!autodocs'],
   args: {
     required: true,
     slotProps: {
@@ -495,35 +564,5 @@ export const Validation: Story = {
       await expect(getComputedStyle(box).borderColor).toBe(edge('color-border-control'))
       await expect(document.activeElement).toBe(start)
     })
-  },
-}
-
-const COMPOUND = 'Hovedstadsområdetsbuslinjestoppestedsoversigtskortudgivelsen'
-
-/** A Danish compound longer than its line in every part, and a word longer than the box (CR-7). */
-export const LongWords: Story = {
-  args: {
-    label: COMPOUND,
-    description: `Sig hvor og hvornår, som i ${COMPOUND}`,
-    error: `Skriv hvad der skete ved ${COMPOUND}`,
-    // one word longer than the box's three rows, so it can only fit by breaking
-    defaultValue: COMPOUND.repeat(3),
-  },
-  play: async ({ canvasElement }) => {
-    const frame = fieldPart(canvasElement, 'field')!
-    const bounds = frame.getBoundingClientRect()
-    for (const name of ['label', 'description', 'error'] as const) {
-      const element = fieldPart(canvasElement, name)!
-      await expect(lines(element)).toBeGreaterThan(1.5)
-      await expect(element.getBoundingClientRect().right).toBeLessThanOrEqual(bounds.right + 0.5)
-      await expect(element.scrollWidth).toBeLessThanOrEqual(element.clientWidth)
-    }
-    const box = canvasElement.querySelector<HTMLTextAreaElement>('.pn-TextArea')!
-    // the word breaks onto more lines than the box shows, and none runs past its edge
-    await expect(box.scrollHeight).toBeGreaterThan(box.clientHeight)
-    await expect(box.scrollWidth).toBeLessThanOrEqual(box.clientWidth)
-    await expect(box.getBoundingClientRect().right).toBeLessThanOrEqual(bounds.right + 0.5)
-    await expect(frame.scrollWidth).toBeLessThanOrEqual(frame.clientWidth)
-    await expect(bounds.width).toBeLessThanOrEqual(320)
   },
 }

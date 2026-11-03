@@ -1,8 +1,8 @@
-// Meter's stories: one per row of the spec's Stories table (docs/components/meter.md), with the
-// design deferred, each the `color` value in PascalCase, and Unknown for the value no data gives.
+// Meter's stories: the meter alone with every prop a control, then each intent side by side.
 import { createRef } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { showcase } from '../../testing/Showcase.tsx'
 import { expect, within } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { dictionaries, type Locale } from '../../locale/index.ts'
@@ -28,6 +28,8 @@ const meta = {
 export default meta
 
 type Story = StoryObj<typeof meta>
+/** The args a story renders with: the meta's and its own. */
+type StoryArgs = Parameters<NonNullable<Story['render']>>[0]
 
 /** The parts of the Meter rendered inside `canvas`. */
 function partsIn(canvas: HTMLElement) {
@@ -43,7 +45,7 @@ function partsIn(canvas: HTMLElement) {
 const neutralRef = createRef<HTMLDivElement>()
 
 /** The subject story: the live share at 31%, below the 40% the foundations mark as danger. */
-export const Danger: Story = {
+const danger = {
   args: { color: 'danger', label: 'Reporting live', value: 31 },
   play: async ({ canvasElement }) => {
     const { root, value, indicator } = partsIn(canvasElement)
@@ -60,18 +62,18 @@ export const Danger: Story = {
     // Meter is not a control: Tab passes it by
     await expectNoFocus(root)
   },
-}
+} satisfies Story
 
 /** The share of trips running early, which the foundations give the info intent. */
-export const Info: Story = {
+const info = {
   args: { color: 'info', label: 'Running early', value: 8 },
   play: async ({ canvasElement }) => {
     await expect(partsIn(canvasElement).root).toHaveAttribute('data-color', 'info')
   },
-}
+} satisfies Story
 
 /** The default intent, a plain measure: 1046 of 1204 trips run today, "87%". */
-export const Neutral: Story = {
+const neutral = {
   args: { color: 'neutral', label: 'Trips run today', value: 1046, max: 1204 },
   render: (args) => <Meter {...args} ref={neutralRef} />,
   play: async ({ canvasElement }) => {
@@ -88,10 +90,10 @@ export const Neutral: Story = {
     // The name comes first in reading order, then the figure, then the track
     await expect(root.firstElementChild).toHaveClass('pn-Meter-label')
   },
-}
+} satisfies Story
 
 /** The live share at 82%, above the 70% the foundations mark as success. */
-export const Success: Story = {
+const success = {
   args: { color: 'success', label: 'Reporting live', value: 82 },
   play: async ({ canvasElement }) => {
     const { root, indicator } = partsIn(canvasElement)
@@ -100,6 +102,36 @@ export const Success: Story = {
       colour('--perron-color-status-success'),
     )
   },
+} satisfies Story
+
+/** The live share at 55%, between the 40% and 70% the foundations mark as warning. */
+const warning = {
+  args: { color: 'warning', label: 'Reporting live', value: 55 },
+  play: async ({ canvasElement }) => {
+    await expect(partsIn(canvasElement).root).toHaveAttribute('data-color', 'warning')
+  },
+} satisfies Story
+
+/** The meter alone, every prop a control. */
+export const Default: Story = {
+  ...danger,
+  play: async (context) => {
+    await danger.play(context)
+  },
+}
+
+/** Each intent, side by side. */
+export const Intents: Story = {
+  ...showcase<StoryArgs>(
+    [
+      { label: 'Neutral', story: neutral },
+      { label: 'Info', story: info },
+      { label: 'Success', story: success },
+      { label: 'Warning', story: warning },
+      { label: 'Danger', story: danger },
+    ],
+    (args) => <Meter {...args} />,
+  ),
 }
 
 /** No data gives the live share: "—" over an empty track, heard as "Unknown" (CR-5). */
@@ -123,13 +155,5 @@ export const Unknown: Story = {
         locale,
         ['Reporting live'],
       )
-  },
-}
-
-/** The live share at 55%, between the 40% and 70% the foundations mark as warning. */
-export const Warning: Story = {
-  args: { color: 'warning', label: 'Reporting live', value: 55 },
-  play: async ({ canvasElement }) => {
-    await expect(partsIn(canvasElement).root).toHaveAttribute('data-color', 'warning')
   },
 }

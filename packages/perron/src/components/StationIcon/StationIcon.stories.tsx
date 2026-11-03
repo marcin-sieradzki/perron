@@ -1,5 +1,8 @@
+// StationIcon's stories: the marker alone with every prop a control, each variant at each size
+// beside the text that size is for, and on every line.
 import type { CSSProperties, ReactNode } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { showcase } from '../../testing/Showcase.tsx'
 import { expect, getRoles, isInaccessible, userEvent, within } from 'storybook/test'
 import { StationIcon } from './StationIcon.tsx'
 import type { StationIconProps } from './StationIcon.tsx'
@@ -85,8 +88,8 @@ const meta = {
 
 export default meta
 type Story = StoryObj<typeof meta>
-
-export const OutlinedSmall: Story = { args: { variant: 'outlined', size: 'small' } }
+/** The args a story renders with: the meta's and its own. */
+type StoryArgs = Parameters<NonNullable<Story['render']>>[0]
 
 /** A pressable stop: its whole row is the target, with the marker inside it. */
 function PressableStop({ name, children }: { name: string; children: ReactNode }) {
@@ -111,11 +114,30 @@ function PressableStop({ name, children }: { name: string; children: ReactNode }
   )
 }
 
+/** Every line, and none, each a stop on it with the line named after the stop's name. */
+const LINES: { line: StationIconProps['line']; name: string }[] = [
+  { line: 'm1', name: 'Vestamager, M1' },
+  { line: 'm2', name: 'Lufthavnen, M2' },
+  { line: 'm3', name: 'Marmorkirken, M3' },
+  { line: 'm4', name: 'Orientkaj, M4' },
+  { line: 'a', name: 'Hillerød, A' },
+  { line: 'b', name: 'Farum, B' },
+  { line: 'c', name: 'Klampenborg, C' },
+  { line: 'e', name: 'Køge, E' },
+  { line: 'f', name: 'Grøndal, F' },
+  { line: 'h', name: 'Frederikssund, H' },
+  { line: 'bus', name: 'Rådhuspladsen, bus 5C' },
+  { line: 'regional', name: 'Roskilde, regional train' },
+  { line: undefined, name: 'Nørreport, several lines' },
+]
+
+const outlinedSmall = { args: { variant: 'outlined', size: 'small' } } satisfies Story
+
 /**
  * Two pressable stops, each row the target; the marker inside the first is hidden, and Tab passes
  * it by from the first stop straight to the next.
  */
-export const OutlinedMedium: Story = {
+const outlinedMedium = {
   args: { variant: 'outlined', size: 'medium' },
   render: (args) => (
     <div style={{ display: 'grid', justifyItems: 'start' }}>
@@ -157,32 +179,33 @@ export const OutlinedMedium: Story = {
     await userEvent.tab({ shift: true })
     await expect(document.activeElement).toBe(start)
   },
+} satisfies Story
+
+const outlinedLarge = { args: { variant: 'outlined', size: 'large' } } satisfies Story
+
+const filledSmall = { args: { variant: 'filled', size: 'small' } } satisfies Story
+
+const filledMedium = { args: { variant: 'filled', size: 'medium' } } satisfies Story
+
+const filledLarge = { args: { variant: 'filled', size: 'large' } } satisfies Story
+
+/** The marker beside a stop's name, every prop a control: outlined, medium. */
+export const Default: Story = {}
+
+/** Each variant at each size, beside the text that size is for; the medium outlined ones a pair of pressable stops. */
+export const Variants: Story = {
+  ...showcase<StoryArgs>(
+    [
+      { label: 'Outlined, small', story: outlinedSmall },
+      { label: 'Outlined, medium', story: outlinedMedium },
+      { label: 'Outlined, large', story: outlinedLarge },
+      { label: 'Filled, small', story: filledSmall },
+      { label: 'Filled, medium', story: filledMedium },
+      { label: 'Filled, large', story: filledLarge },
+    ],
+    meta.render,
+  ),
 }
-
-export const OutlinedLarge: Story = { args: { variant: 'outlined', size: 'large' } }
-
-export const FilledSmall: Story = { args: { variant: 'filled', size: 'small' } }
-
-export const FilledMedium: Story = { args: { variant: 'filled', size: 'medium' } }
-
-export const FilledLarge: Story = { args: { variant: 'filled', size: 'large' } }
-
-/** Every line, and none, each a stop on it with the line named after the stop's name. */
-const LINES: { line: StationIconProps['line']; name: string }[] = [
-  { line: 'm1', name: 'Vestamager, M1' },
-  { line: 'm2', name: 'Lufthavnen, M2' },
-  { line: 'm3', name: 'Marmorkirken, M3' },
-  { line: 'm4', name: 'Orientkaj, M4' },
-  { line: 'a', name: 'Hillerød, A' },
-  { line: 'b', name: 'Farum, B' },
-  { line: 'c', name: 'Klampenborg, C' },
-  { line: 'e', name: 'Køge, E' },
-  { line: 'f', name: 'Grøndal, F' },
-  { line: 'h', name: 'Frederikssund, H' },
-  { line: 'bus', name: 'Rådhuspladsen, bus 5C' },
-  { line: 'regional', name: 'Roskilde, regional train' },
-  { line: undefined, name: 'Nørreport, several lines' },
-]
 
 /**
  * Each line is its own two-stop list, so each list fills one stop and says why in words beside it:

@@ -1,8 +1,9 @@
-// VehicleDotLabel's stories: one per data state, and a long word wrapping in a narrow container,
-// each with a play test that reads the accessibility tree (docs/components/vehicle-dot-label.md).
+// VehicleDotLabel's stories: the label alone with every prop a control, each data state side by
+// side, with no line, and wrapping.
 import { createRef } from 'react'
 import type { ReactNode } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { showcase } from '../../testing/Showcase.tsx'
 import { expect, getRoles, isInaccessible, userEvent, waitFor, within } from 'storybook/test'
 import { VehicleDotLabel } from './VehicleDotLabel.tsx'
 import type { VehicleDotLabelProps } from './VehicleDotLabel.tsx'
@@ -80,6 +81,8 @@ const meta = {
 
 export default meta
 type Story = StoryObj<typeof meta>
+/** The args a story renders with: the meta's and its own. */
+type StoryArgs = Parameters<NonNullable<Story['render']>>[0]
 
 /** A VehicleDotLabel's root, its dot and its word. */
 function partsOf(root: HTMLElement) {
@@ -121,7 +124,7 @@ async function expectWordStyle(label: Element) {
 }
 
 /** A fainter dot and "Ageing", on M1. The subject story: its args render the label alone. */
-export const Ageing: Story = {
+const ageing = {
   args: { variant: 'ageing' },
   play: async ({ canvasElement }) => {
     await expectState(canvasElement, 'ageing')
@@ -130,16 +133,16 @@ export const Ageing: Story = {
     await expect(dot).toHaveAttribute('data-line', 'm1')
     await expect(dot).toHaveAttribute('data-size', 'small')
   },
-}
+} satisfies Story
 
 /** A ring and "Estimated". */
-export const Estimated: Story = {
+const estimated = {
   args: { variant: 'estimated' },
   play: ({ canvasElement }) => expectState(canvasElement, 'estimated'),
-}
+} satisfies Story
 
 /** A solid dot and "Live", the default state. */
-export const Live: Story = {
+const live = {
   args: { variant: 'live' },
   play: async ({ canvasElement, step }) => {
     const { root, dot, label } = parts(canvasElement)
@@ -342,6 +345,47 @@ export const Live: Story = {
       )
     })
   },
+} satisfies Story
+
+/** A grey dot cut by a slash and "No signal", the word at full strength. */
+const noSignal = {
+  args: { variant: 'no-signal' },
+  play: async ({ canvasElement }) => {
+    await expectState(canvasElement, 'no-signal')
+    const { label } = parts(canvasElement)
+    await expectWordStyle(label)
+    await expect(getComputedStyle(label).color).not.toBe(
+      colour('--perron-color-data-state-no-signal'),
+    )
+  },
+} satisfies Story
+
+/** A dashed ring and "Timetable only". */
+const timetableOnly = {
+  args: { variant: 'timetable-only' },
+  play: ({ canvasElement }) => expectState(canvasElement, 'timetable-only'),
+} satisfies Story
+
+/** A solid dot and "Live", the default state, every prop a control. */
+export const Default: Story = {
+  ...live,
+  play: async (context) => {
+    await live.play(context)
+  },
+}
+
+/** Each data state, side by side, on M1. */
+export const States: Story = {
+  ...showcase<StoryArgs>(
+    [
+      { label: 'Live', story: live },
+      { label: 'Ageing', story: ageing },
+      { label: 'Estimated', story: estimated },
+      { label: 'No signal', story: noSignal },
+      { label: 'Timetable only', story: timetableOnly },
+    ],
+    (args) => <VehicleDotLabel {...args} />,
+  ),
 }
 
 /**
@@ -361,25 +405,6 @@ export const NoLine: Story = {
     await expect(getComputedStyle(dot).color).toBe(ink)
     await expectVehicleDotShape(dot, 'live', ink)
   },
-}
-
-/** A grey dot cut by a slash and "No signal", the word at full strength. */
-export const NoSignal: Story = {
-  args: { variant: 'no-signal' },
-  play: async ({ canvasElement }) => {
-    await expectState(canvasElement, 'no-signal')
-    const { label } = parts(canvasElement)
-    await expectWordStyle(label)
-    await expect(getComputedStyle(label).color).not.toBe(
-      colour('--perron-color-data-state-no-signal'),
-    )
-  },
-}
-
-/** A dashed ring and "Timetable only". */
-export const TimetableOnly: Story = {
-  args: { variant: 'timetable-only' },
-  play: ({ canvasElement }) => expectState(canvasElement, 'timetable-only'),
 }
 
 /**

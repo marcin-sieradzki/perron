@@ -1,7 +1,6 @@
-// Link's stories: one per row of the spec's Stories table (docs/components/link.md), with the design
-// deferred: the drawing's Default, Hover and Focus, then Link where callers put it. Hover and focus
-// render at rest; the visual stage drives them. A decorator prevents every link's navigation, so no
-// story leaves the page.
+// Link's stories: the link alone with every prop a control, then where callers put it: in text, in
+// secondary text, wrapping and with rich content, then the behaviour tests. Hover and focus are play
+// steps, not stories.
 import { createRef } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, within } from 'storybook/test'
@@ -48,11 +47,13 @@ const linkIn = (canvas: HTMLElement) => within(canvas).getByRole('link')
 const stateProperties = (link: Element, state: ':hover' | ':active') =>
   stateRules(link, state).flatMap((declarations) => Array.from(declarations))
 
+const renderedRef = createRef<HTMLAnchorElement>()
+
 /**
  * "Show all departures" alone, at rest: a native link with its words as its name, underlined in its
  * parent's colour; the contract story's subject. Its play presses every key of the Keyboard table.
  */
-export const Default: Story = {
+const _default = {
   play: async ({ args, canvasElement }) => {
     const link = within(canvasElement).getByRole('link', { name: LABEL })
     // a native <a href>, with no role of its own (CR-1)
@@ -70,13 +71,13 @@ export const Default: Story = {
     // the element before it (CR-5)
     await expectFollows(canvasElement, link, args.onClick)
   },
-}
+} satisfies Story
 
 /**
  * "Show all departures", hover: the rules lay `color.surface.hover` behind it under the pointer and
  * `color.surface.selected` while pressed, and change nothing else (CR-3, CR-4).
  */
-export const Hover: Story = {
+const hover = {
   play: async ({ canvasElement }) => {
     const link = linkIn(canvasElement)
     await expect(stateFill(link, ':hover')).toBe('var(--perron-color-surface-hover)')
@@ -95,11 +96,23 @@ export const Hover: Story = {
       for (const property of stateProperties(link, state))
         await expect(`${state} ${property}`).toBe(`${state} background-color`)
   },
-}
+} satisfies Story
 
 /** "Show all departures", focus: Tab gives it `:focus-visible` and the ring perron.css draws (CR-6). */
-export const Focus: Story = {
+const focus = {
   play: async ({ canvasElement }) => expectFocusRing(canvasElement, linkIn(canvasElement)),
+} satisfies Story
+
+/**
+ * "Show all departures" alone, at rest, every prop a control; the contract story's subject. Its
+ * play presses it, reads the hover and pressed rules, and gives it the ring.
+ */
+export const Default: Story = {
+  play: async (context) => {
+    await _default.play(context)
+    await hover.play(context)
+    await focus.play(context)
+  },
 }
 
 /** A sentence of `typography.body` in `color.text.primary`, with its source's name a Link. */
@@ -162,43 +175,6 @@ export const Wrapping: Story = {
   },
 }
 
-/** "Rejseplanen", opening in a new tab, with the caller's `target` and `rel`. */
-export const NewTab: Story = {
-  args: {
-    children: 'Rejseplanen',
-    href: REJSEPLANEN,
-    target: '_blank',
-    rel: 'noopener noreferrer',
-  },
-  play: async ({ canvasElement }) => {
-    const link = linkIn(canvasElement)
-    // both reach the <a> as given, and Link adds no word, icon or rel of its own (CR-10)
-    await expect(link).toHaveAttribute('target', '_blank')
-    await expect(link).toHaveAttribute('rel', 'noopener noreferrer')
-    await expect(link).toHaveAccessibleName('Rejseplanen')
-    await expect(link.childElementCount).toBe(0)
-    await expect(link.textContent).toBe('Rejseplanen')
-  },
-}
-
-/** A file to save: "Download the Nørreport timetable", with the caller's `download`. */
-export const Download: Story = {
-  args: {
-    children: 'Download the Nørreport timetable',
-    href: '/timetables/norreport.pdf',
-    download: 'norreport-timetable.pdf',
-  },
-  play: async ({ canvasElement }) => {
-    const link = linkIn(canvasElement)
-    // `download` reaches the <a> as given, and Link adds no target or rel of its own (CR-10)
-    await expect(link).toHaveAttribute('download', 'norreport-timetable.pdf')
-    await expect(link).toHaveAttribute('href', '/timetables/norreport.pdf')
-    await expect(link).not.toHaveAttribute('target')
-    await expect(link).not.toHaveAttribute('rel')
-    await expect(link).toHaveAccessibleName('Download the Nørreport timetable')
-  },
-}
-
 /**
  * The link's words given as an element, a Danish name marked with its language, in a sentence;
  * its play renders them as a list of strings and elements too.
@@ -242,13 +218,51 @@ export const RichContent: Story = {
   },
 }
 
-const renderedRef = createRef<HTMLAnchorElement>()
+/** "Rejseplanen", opening in a new tab, with the caller's `target` and `rel`. */
+export const NewTab: Story = {
+  tags: ['!dev', '!autodocs'],
+  args: {
+    children: 'Rejseplanen',
+    href: REJSEPLANEN,
+    target: '_blank',
+    rel: 'noopener noreferrer',
+  },
+  play: async ({ canvasElement }) => {
+    const link = linkIn(canvasElement)
+    // both reach the <a> as given, and Link adds no word, icon or rel of its own (CR-10)
+    await expect(link).toHaveAttribute('target', '_blank')
+    await expect(link).toHaveAttribute('rel', 'noopener noreferrer')
+    await expect(link).toHaveAccessibleName('Rejseplanen')
+    await expect(link.childElementCount).toBe(0)
+    await expect(link.textContent).toBe('Rejseplanen')
+  },
+}
+
+/** A file to save: "Download the Nørreport timetable", with the caller's `download`. */
+export const Download: Story = {
+  tags: ['!dev', '!autodocs'],
+  args: {
+    children: 'Download the Nørreport timetable',
+    href: '/timetables/norreport.pdf',
+    download: 'norreport-timetable.pdf',
+  },
+  play: async ({ canvasElement }) => {
+    const link = linkIn(canvasElement)
+    // `download` reaches the <a> as given, and Link adds no target or rel of its own (CR-10)
+    await expect(link).toHaveAttribute('download', 'norreport-timetable.pdf')
+    await expect(link).toHaveAttribute('href', '/timetables/norreport.pdf')
+    await expect(link).not.toHaveAttribute('target')
+    await expect(link).not.toHaveAttribute('rel')
+    await expect(link).toHaveAccessibleName('Download the Nørreport timetable')
+  },
+}
 
 /**
  * `render` gives a router-style link that renders an `<a>` and brings its own destination; the
  * root keeps Link's class, then the caller's, and takes the caller's style and ref.
  */
 export const RenderedLink: Story = {
+  tags: ['!dev', '!autodocs'],
   args: {
     href: undefined,
     className: 'departures-link',
