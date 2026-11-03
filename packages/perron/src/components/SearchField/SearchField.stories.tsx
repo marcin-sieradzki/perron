@@ -1,9 +1,9 @@
-// SearchField's stories: the variants of the deferred design, Default, Hover, Focus, Open and
-// Disabled, and the stories of content and behaviour the spec's Stories table names, each in a
-// 320 px container, with play tests for the keys, the clear button, the empty message and the
-// names (docs/components/search-field.md). Hover and focus render at rest; their plays drive them.
+// SearchField's stories: the field alone with every prop a control, its states side by side, the list
+// open, no matches, a hidden label and long words, then the behaviour tests. Hover and focus are
+// play steps, not stories.
 import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { showcase } from '../../testing/Showcase.tsx'
 import { expect, fireEvent, fn, screen, userEvent, waitFor, within } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { dictionaries } from '../../locale/index.ts'
@@ -61,6 +61,8 @@ const meta = {
 export default meta
 
 type Story = StoryObj<typeof meta>
+/** The args a story renders with: the meta's and its own. */
+type StoryArgs = Parameters<NonNullable<Story['render']>>[0]
 
 /** The field's input, the combobox, in the story's canvas. */
 const inputIn = (canvasElement: HTMLElement, name = LABEL) =>
@@ -89,8 +91,32 @@ const highlighted = (input: HTMLElement) => {
     : null
 }
 
+/** Rows with marks: a LineBadge before a line, a StationIcon before a stop, the list open on "5". */
+const MARKED: SearchFieldItem[] = [
+  {
+    value: 'line-5c',
+    label: '5C',
+    description: 'Bus, Husum Torv to Lufthavnen',
+    startIcon: <LineBadge line="bus">5C</LineBadge>,
+  },
+  {
+    value: 'line-250s',
+    label: '250S',
+    description: 'Bus, Buddinge St. to Ishøj St.',
+    startIcon: <LineBadge line="bus">250S</LineBadge>,
+  },
+  {
+    value: 'stop-husum-torv-5c',
+    label: 'Husum Torv, stop for 5C',
+    description: 'Bus',
+    startIcon: <StationIcon line="bus" />,
+  },
+]
+
+const COMPOUND = 'Hovedstadsområdetsbuslinjestoppestedsoversigten'
+
 /** The subject story: the empty field, its label, icon and placeholder, the list closed. */
-export const Default: Story = {
+const _default = {
   play: async ({ canvasElement, step }) => {
     const input = inputIn(canvasElement)
     await step('the input is a combobox named by the label, the list closed', async () => {
@@ -123,10 +149,10 @@ export const Default: Story = {
       )
     })
   },
-}
+} satisfies Story
 
 /** State hover: the empty field, at rest at first render; the play reads the hover rule. */
-export const Hover: Story = {
+const hover = {
   play: async ({ canvasElement }) => {
     const group = canvasElement.querySelector('.pn-SearchField-inputGroup')!
     const image = onHover(group, 'background-image')
@@ -136,10 +162,10 @@ export const Hover: Story = {
       colour('--perron-color-surface-raised'),
     )
   },
-}
+} satisfies Story
 
 /** State focus: the empty field, at rest at first render; Tab gives it the ring. */
-export const Focus: Story = {
+const focus = {
   play: async ({ canvasElement }) => {
     const input = inputIn(canvasElement)
     const group = canvasElement.querySelector('.pn-SearchField-inputGroup')!
@@ -155,6 +181,94 @@ export const Focus: Story = {
     await userEvent.tab({ shift: true })
     await expect(input).not.toHaveFocus()
   },
+} satisfies Story
+
+/** State disabled: the words "5C" in the tertiary ink, no clear button, no keys. */
+const disabled = {
+  args: { defaultValue: '5C', disabled: true },
+  play: async ({ args, canvasElement }) => {
+    const input = inputIn(canvasElement)
+    await expect(input).toBeDisabled()
+    await expect(within(canvasElement).queryByRole('button')).toBeNull()
+    await userEvent.tab()
+    await expect(input).not.toHaveFocus()
+    await userEvent.type(input, 'N', { pointerEventsCheck: 0 })
+    await expect(input).toHaveValue('5C')
+    await expect(args.onChange).not.toHaveBeenCalled()
+    await expect(args.onOpen).not.toHaveBeenCalled()
+    await expect(args.onClose).not.toHaveBeenCalled()
+    await expect(args.onItemSelect).not.toHaveBeenCalled()
+  },
+} satisfies Story
+
+/** The field holding the words "5C", with the clear button. */
+const filled = {
+  args: { defaultValue: '5C' },
+  play: async ({ args, canvasElement, step }) => {
+    const input = inputIn(canvasElement)
+    const clear = within(canvasElement).getByRole('button', { name: 'Clear' })
+    await step('the clear button is named "Clear" and is not a tab stop', async () => {
+      await expect(clear).toHaveAttribute('tabindex', '-1')
+      await userEvent.tab()
+      await expect(input).toHaveFocus()
+      await userEvent.tab()
+      await expect(clear).not.toHaveFocus()
+      await userEvent.tab({ shift: true })
+      await expect(input).toHaveFocus()
+    })
+    await step('pressing it empties the box and leaves focus on the input', async () => {
+      await userEvent.click(clear)
+      await expect(input).toHaveValue('')
+      await expect(args.onChange).toHaveBeenLastCalledWith(
+        expect.anything(),
+        '',
+        expect.objectContaining({ reason: 'clear-press' }),
+      )
+      await waitFor(() => expect(within(canvasElement).queryByRole('button')).toBeNull())
+      await expect(input).toHaveFocus()
+    })
+    await step('Esc with the list closed empties it again', async () => {
+      await userEvent.type(input, '5C')
+      await listbox()
+      await userEvent.keyboard('{Escape}')
+      await closed(LIST)
+      await expect(input).toHaveValue('5C')
+      await userEvent.keyboard('{Escape}')
+      await expect(input).toHaveValue('')
+      await expect(args.onChange).toHaveBeenLastCalledWith(
+        expect.anything(),
+        '',
+        expect.objectContaining({ reason: 'escape-key' }),
+      )
+      input.blur()
+    })
+  },
+} satisfies Story
+
+/**
+ * The subject story, every prop a control: the empty field, its label, icon and placeholder, the list
+ * closed. Its play reads the hover rule and gives the field the ring.
+ */
+export const Default: Story = {
+  play: async (context) => {
+    await _default.play(context)
+    await hover.play(context)
+    await focus.play(context)
+  },
+}
+
+/** Each state a prop reaches, one field apiece: filled and disabled. */
+export const States: Story = {
+  parameters: {
+    docs: { story: { inline: false, height: '320px' } },
+  },
+  ...showcase<StoryArgs>(
+    [
+      { label: 'Filled', story: filled },
+      { label: 'Disabled', story: disabled },
+    ],
+    (args) => <SearchField {...args} />,
+  ),
 }
 
 /** State open: the words "Nørre" and the list open, with the three items that contain them. */
@@ -210,68 +324,6 @@ export const Open: Story = {
       await expect(dismissControls()).toHaveLength(0)
       await expect(canvasElement.querySelector('.pn-SearchField-label')).not.toHaveAttribute(
         'aria-hidden',
-      )
-      input.blur()
-    })
-  },
-}
-
-/** State disabled: the words "5C" in the tertiary ink, no clear button, no keys. */
-export const Disabled: Story = {
-  args: { defaultValue: '5C', disabled: true },
-  play: async ({ args, canvasElement }) => {
-    const input = inputIn(canvasElement)
-    await expect(input).toBeDisabled()
-    await expect(within(canvasElement).queryByRole('button')).toBeNull()
-    await userEvent.tab()
-    await expect(input).not.toHaveFocus()
-    await userEvent.type(input, 'N', { pointerEventsCheck: 0 })
-    await expect(input).toHaveValue('5C')
-    await expect(args.onChange).not.toHaveBeenCalled()
-    await expect(args.onOpen).not.toHaveBeenCalled()
-    await expect(args.onClose).not.toHaveBeenCalled()
-    await expect(args.onItemSelect).not.toHaveBeenCalled()
-  },
-}
-
-/** The field holding the words "5C", with the clear button. */
-export const Filled: Story = {
-  args: { defaultValue: '5C' },
-  play: async ({ args, canvasElement, step }) => {
-    const input = inputIn(canvasElement)
-    const clear = within(canvasElement).getByRole('button', { name: 'Clear' })
-    await step('the clear button is named "Clear" and is not a tab stop', async () => {
-      await expect(clear).toHaveAttribute('tabindex', '-1')
-      await userEvent.tab()
-      await expect(input).toHaveFocus()
-      await userEvent.tab()
-      await expect(clear).not.toHaveFocus()
-      await userEvent.tab({ shift: true })
-      await expect(input).toHaveFocus()
-    })
-    await step('pressing it empties the box and leaves focus on the input', async () => {
-      await userEvent.click(clear)
-      await expect(input).toHaveValue('')
-      await expect(args.onChange).toHaveBeenLastCalledWith(
-        expect.anything(),
-        '',
-        expect.objectContaining({ reason: 'clear-press' }),
-      )
-      await waitFor(() => expect(within(canvasElement).queryByRole('button')).toBeNull())
-      await expect(input).toHaveFocus()
-    })
-    await step('Esc with the list closed empties it again', async () => {
-      await userEvent.type(input, '5C')
-      await listbox()
-      await userEvent.keyboard('{Escape}')
-      await closed(LIST)
-      await expect(input).toHaveValue('5C')
-      await userEvent.keyboard('{Escape}')
-      await expect(input).toHaveValue('')
-      await expect(args.onChange).toHaveBeenLastCalledWith(
-        expect.anything(),
-        '',
-        expect.objectContaining({ reason: 'escape-key' }),
       )
       input.blur()
     })
@@ -366,29 +418,48 @@ export const HiddenLabel: Story = {
   },
 }
 
-/** Rows with marks: a LineBadge before a line, a StationIcon before a stop, the list open on "5". */
-const MARKED: SearchFieldItem[] = [
-  {
-    value: 'line-5c',
-    label: '5C',
-    description: 'Bus, Husum Torv to Lufthavnen',
-    startIcon: <LineBadge line="bus">5C</LineBadge>,
+/** Long Danish compounds in the label and a row, the list open, in the 320 px container. */
+export const LongWords: Story = {
+  args: {
+    label: `Søg ${COMPOUND}`,
+    items: [
+      {
+        value: 'stop-long',
+        label: `Nør${COMPOUND}`,
+        description: `Trafikinformationsformidlingssystemet${COMPOUND}`,
+      },
+    ],
+    defaultValue: 'Nør',
+    defaultOpen: true,
   },
-  {
-    value: 'line-250s',
-    label: '250S',
-    description: 'Bus, Buddinge St. to Ishøj St.',
-    startIcon: <LineBadge line="bus">250S</LineBadge>,
+  play: async ({ canvasElement }) => {
+    const field = canvasElement.querySelector('.pn-SearchField')!
+    const label = canvasElement.querySelector('.pn-SearchField-label')!
+    const group = canvasElement.querySelector('.pn-SearchField-inputGroup')!
+    await expect(lines(label)).toBeGreaterThan(1.5)
+    await expect(label.getBoundingClientRect().right).toBeLessThanOrEqual(
+      field.getBoundingClientRect().right + 0.5,
+    )
+    const panel = await popup()
+    const itemLabel = panel.querySelector('.pn-SearchField-itemLabel')!
+    const description = panel.querySelector('.pn-SearchField-description')!
+    await expect(lines(itemLabel)).toBeGreaterThan(1.5)
+    await expect(lines(description)).toBeGreaterThan(1.5)
+    const box = panel.getBoundingClientRect()
+    await expect(box.width).toBeLessThanOrEqual(group.getBoundingClientRect().width + 0.5)
+    for (const part of [itemLabel, description])
+      await expect(part.getBoundingClientRect().right).toBeLessThanOrEqual(box.right)
+    await expect(panel.scrollWidth).toBeLessThanOrEqual(panel.clientWidth)
+    const input = inputIn(canvasElement, `Søg ${COMPOUND}`)
+    input.focus()
+    await userEvent.keyboard('{Escape}')
+    await closed(LIST)
+    input.blur()
   },
-  {
-    value: 'stop-husum-torv-5c',
-    label: 'Husum Torv, stop for 5C',
-    description: 'Bus',
-    startIcon: <StationIcon line="bus" />,
-  },
-]
+}
 
 export const WithMarks: Story = {
+  tags: ['!dev', '!autodocs'],
   args: { items: MARKED, defaultValue: '5', defaultOpen: true },
   play: async ({ canvasElement }) => {
     const list = await listbox()
@@ -416,6 +487,7 @@ export const WithMarks: Story = {
 
 /** `filter={null}`: every item as given, though none contains the words "zz". */
 export const CallerFilter: Story = {
+  tags: ['!dev', '!autodocs'],
   args: { filter: null, defaultValue: 'zz', defaultOpen: true },
   play: async ({ canvasElement }) => {
     const list = await listbox()
@@ -430,6 +502,7 @@ export const CallerFilter: Story = {
 
 /** `value` and `open` held in the story's state, the list closed at first. */
 export const Controlled: Story = {
+  tags: ['!dev', '!autodocs'],
   render: function Render(args: SearchFieldProps) {
     const [value, setValue] = useState('')
     const [open, setOpen] = useState(false)
@@ -503,47 +576,5 @@ export const Controlled: Story = {
       await expect(input).toHaveFocus()
       input.blur()
     })
-  },
-}
-
-const COMPOUND = 'Hovedstadsområdetsbuslinjestoppestedsoversigten'
-
-/** Long Danish compounds in the label and a row, the list open, in the 320 px container. */
-export const LongWords: Story = {
-  args: {
-    label: `Søg ${COMPOUND}`,
-    items: [
-      {
-        value: 'stop-long',
-        label: `Nør${COMPOUND}`,
-        description: `Trafikinformationsformidlingssystemet${COMPOUND}`,
-      },
-    ],
-    defaultValue: 'Nør',
-    defaultOpen: true,
-  },
-  play: async ({ canvasElement }) => {
-    const field = canvasElement.querySelector('.pn-SearchField')!
-    const label = canvasElement.querySelector('.pn-SearchField-label')!
-    const group = canvasElement.querySelector('.pn-SearchField-inputGroup')!
-    await expect(lines(label)).toBeGreaterThan(1.5)
-    await expect(label.getBoundingClientRect().right).toBeLessThanOrEqual(
-      field.getBoundingClientRect().right + 0.5,
-    )
-    const panel = await popup()
-    const itemLabel = panel.querySelector('.pn-SearchField-itemLabel')!
-    const description = panel.querySelector('.pn-SearchField-description')!
-    await expect(lines(itemLabel)).toBeGreaterThan(1.5)
-    await expect(lines(description)).toBeGreaterThan(1.5)
-    const box = panel.getBoundingClientRect()
-    await expect(box.width).toBeLessThanOrEqual(group.getBoundingClientRect().width + 0.5)
-    for (const part of [itemLabel, description])
-      await expect(part.getBoundingClientRect().right).toBeLessThanOrEqual(box.right)
-    await expect(panel.scrollWidth).toBeLessThanOrEqual(panel.clientWidth)
-    const input = inputIn(canvasElement, `Søg ${COMPOUND}`)
-    input.focus()
-    await userEvent.keyboard('{Escape}')
-    await closed(LIST)
-    input.blur()
   },
 }

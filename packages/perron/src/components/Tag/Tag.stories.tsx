@@ -1,5 +1,6 @@
-// Tag's stories: one per variant of the deferred design, every `variant` with every `color`.
+// Tag's stories: the tag alone with every prop a control, then each variant in each colour.
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { showcase } from '../../testing/Showcase.tsx'
 import { expect, getRoles, waitFor, within } from 'storybook/test'
 import { mounted } from '../../testing/stories.ts'
 import { Tag } from './Tag.tsx'
@@ -15,6 +16,8 @@ const meta = {
 export default meta
 
 type Story = StoryObj<typeof meta>
+/** The args a story renders with: the meta's and its own. */
+type StoryArgs = Parameters<NonNullable<Story['render']>>[0]
 
 /** The tag in the canvas: the one `.pn-Tag` element. */
 const tagIn = (canvasElement: HTMLElement) => {
@@ -73,7 +76,7 @@ const carries =
   }
 
 /** `variant='filled'`, `color='neutral'`, the defaults: "Night bus". */
-export const FilledNeutral: Story = {
+const filledNeutral = {
   args: { variant: 'filled', color: 'neutral', children: 'Night bus' },
   play: async (context) => {
     const { canvasElement, step } = context
@@ -163,34 +166,34 @@ export const FilledNeutral: Story = {
       },
     )
   },
-}
+} satisfies Story
 
 /** `variant='filled'`, `color='success'`: "Step-free". */
-export const FilledSuccess: Story = {
+const filledSuccess = {
   args: { variant: 'filled', color: 'success', children: 'Step-free' },
   play: carries('filled', 'success', 'Step-free'),
-}
+} satisfies Story
 
 /** `variant='filled'`, `color='warning'`: "Replacement bus". */
-export const FilledWarning: Story = {
+const filledWarning = {
   args: { variant: 'filled', color: 'warning', children: 'Replacement bus' },
   play: carries('filled', 'warning', 'Replacement bus'),
-}
+} satisfies Story
 
 /** `variant='filled'`, `color='danger'`: "Cancelled". */
-export const FilledDanger: Story = {
+const filledDanger = {
   args: { variant: 'filled', color: 'danger', children: 'Cancelled' },
   play: carries('filled', 'danger', 'Cancelled'),
-}
+} satisfies Story
 
 /** `variant='filled'`, `color='info'`: "Extra departure". */
-export const FilledInfo: Story = {
+const filledInfo = {
   args: { variant: 'filled', color: 'info', children: 'Extra departure' },
   play: carries('filled', 'info', 'Extra departure'),
-}
+} satisfies Story
 
 /** `variant='dashed'`, `color='neutral'`: "Night bus planned". */
-export const DashedNeutral: Story = {
+const dashedNeutral = {
   args: { variant: 'dashed', color: 'neutral', children: 'Night bus planned' },
   play: async (context) => {
     const { canvasElement, step } = context
@@ -223,28 +226,55 @@ export const DashedNeutral: Story = {
       },
     )
   },
-}
+} satisfies Story
 
 /** `variant='dashed'`, `color='success'`: "Step-free expected". */
-export const DashedSuccess: Story = {
+const dashedSuccess = {
   args: { variant: 'dashed', color: 'success', children: 'Step-free expected' },
   play: carries('dashed', 'success', 'Step-free expected'),
-}
+} satisfies Story
 
 /** `variant='dashed'`, `color='warning'`: "Replacement bus planned". */
-export const DashedWarning: Story = {
+const dashedWarning = {
   args: { variant: 'dashed', color: 'warning', children: 'Replacement bus planned' },
   play: carries('dashed', 'warning', 'Replacement bus planned'),
-}
+} satisfies Story
 
 /** `variant='dashed'`, `color='danger'`: "Cancellation expected". */
-export const DashedDanger: Story = {
+const dashedDanger = {
   args: { variant: 'dashed', color: 'danger', children: 'Cancellation expected' },
   play: carries('dashed', 'danger', 'Cancellation expected'),
-}
+} satisfies Story
 
 /** `variant='dashed'`, `color='info'`: "Extra departure planned". */
-export const DashedInfo: Story = {
+const dashedInfo = {
   args: { variant: 'dashed', color: 'info', children: 'Extra departure planned' },
   play: carries('dashed', 'info', 'Extra departure planned'),
+} satisfies Story
+
+/** The defaults, every prop a control: `filled`, `neutral`, "Night bus". */
+export const Default: Story = {
+  ...filledNeutral,
+  play: async (context) => {
+    await filledNeutral.play(context)
+  },
+}
+
+/** Each variant in each colour, each with words it is made for. */
+export const Variants: Story = {
+  ...showcase<StoryArgs>(
+    [
+      { label: 'Filled, neutral', story: filledNeutral },
+      { label: 'Filled, success', story: filledSuccess },
+      { label: 'Filled, warning', story: filledWarning },
+      { label: 'Filled, danger', story: filledDanger },
+      { label: 'Filled, info', story: filledInfo },
+      { label: 'Dashed, neutral', story: dashedNeutral },
+      { label: 'Dashed, success', story: dashedSuccess },
+      { label: 'Dashed, warning', story: dashedWarning },
+      { label: 'Dashed, danger', story: dashedDanger },
+      { label: 'Dashed, info', story: dashedInfo },
+    ],
+    (args) => <Tag {...args} />,
+  ),
 }

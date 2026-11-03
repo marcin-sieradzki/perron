@@ -1,10 +1,10 @@
-// Slider's stories: the states of the deferred design, Default, Hover, Focus, Pressed, Disabled and
-// Invalid, and the stories of content and behaviour the spec's Stories table names
-// (docs/components/slider.md), each in a 320 px container. Hover, focus and pressed render at rest;
-// their plays drive them.
+// Slider's stories: the slider alone with every prop a control, its states side by side, a range,
+// units, a hidden label and long words, then the behaviour tests. Hover and focus are play steps,
+// not stories.
 import { createRef, useState } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { showcase } from '../../testing/Showcase.tsx'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import type { Locale } from '../../locale/index.ts'
@@ -57,6 +57,8 @@ const meta = {
 export default meta
 
 type Story = StoryObj<typeof meta>
+/** The args a story renders with: the meta's and its own. */
+type StoryArgs = Parameters<NonNullable<Story['render']>>[0]
 
 /** A range: the label and the help the Range story and the form's second slider show. */
 const RANGE = {
@@ -172,8 +174,45 @@ function DisablesOnChange(props: SliderProps) {
   return <Slider {...props} disabled={disabled} onChange={() => setDisabled(true)} />
 }
 
+/** Renders `props` in `locale` on the server, as the owned-strings check reads a render. */
+const markup = (props: SliderProps, locale: Locale) =>
+  renderToStaticMarkup(
+    <PerronProvider locale={locale}>
+      <Slider {...props} />
+    </PerronProvider>,
+  )
+
+/** Walking distance in kilometres, in English and in a Danish PerronProvider. */
+const UNITS = {
+  label: 'Walking distance',
+  description: undefined,
+  min: 0.5,
+  max: 3,
+  step: 0.5,
+  defaultValue: 1.5,
+  format: { style: 'unit', unit: 'kilometer' },
+} satisfies Partial<SliderProps>
+
+/** The value held in the story's state, set from each change. */
+function ControlledSlider(props: SliderProps) {
+  const [value, setValue] = useState<SliderProps['value']>(5)
+  return (
+    <Slider
+      {...props}
+      defaultValue={undefined}
+      value={value}
+      onChange={(event, next, details) => {
+        props.onChange?.(event, next, details)
+        setValue(next)
+      }}
+    />
+  )
+}
+
+const COMPOUND = 'Hovedstadsområdetsbuslinjestoppestedsoversigtskortudgivelsen'
+
 /** The subject story, State default: the label, the help, the track filled to 5 of 10 and "5". */
-export const Default: Story = {
+const _default = {
   play: async ({ args, canvasElement, step }) => {
     const slider = sliderIn(canvasElement)
     const root = within(canvasElement).getByRole('group', { name: LABEL })
@@ -363,10 +402,10 @@ export const Default: Story = {
       },
     )
   },
-}
+} satisfies Story
 
 /** State hover: the slider at 5, at rest at first render; the play reads the hover rule. */
-export const Hover: Story = {
+const hover = {
   play: async ({ canvasElement }) => {
     const thumb = part(canvasElement, 'thumb')
     const image = onHover(thumb, 'background-image')
@@ -383,10 +422,10 @@ export const Hover: Story = {
     await expect(still(thumb)).toBe(true)
     await expect(still(part(canvasElement, 'indicator'))).toBe(true)
   },
-}
+} satisfies Story
 
 /** State focus: the slider at 5, at rest at first render; Tab gives the thumb its ring (CR-9). */
-export const Focus: Story = {
+const focus = {
   play: async ({ canvasElement }) => {
     const slider = sliderIn(canvasElement)
     const thumb = part(canvasElement, 'thumb')
@@ -404,93 +443,10 @@ export const Focus: Story = {
     await expect(slider).not.toHaveFocus()
     await expect(getComputedStyle(thumb).outlineStyle).toBe('none')
   },
-}
-
-/** State pressed: the slider at 5, at rest at first render; the play presses and drags. */
-export const Pressed: Story = {
-  play: async ({ args, canvasElement, step }) => {
-    const slider = sliderIn(canvasElement)
-    const control = part(canvasElement, 'control')
-    const track = part(canvasElement, 'track')
-    const thumb = part(canvasElement, 'thumb')
-    await step('the pressed layer is a step past hover, and its rule comes after', async () => {
-      await expect(stateLayer(thumb, ':active')).toContain('var(--perron-color-surface-selected)')
-      await expect(onHover(thumb, 'background-image')).toContain(
-        'var(--perron-color-surface-hover)',
-      )
-      await expect(pressedAfterHover(thumb)).toBe(true)
-    })
-    await step('a press at 80% of the track moves the thumb there and drags it', async () => {
-      pointer('pointerdown', control, track, 0.8)
-      await waitFor(() => expect(slider).toHaveAttribute('aria-valuenow', '8'))
-      await expect(call(args.onChange)).toEqual({ value: 8, reason: 'track-press' })
-      await waitFor(() => expect(thumb).toHaveAttribute('data-dragging'))
-    })
-    await step('the press focuses the thumb’s input without the ring (CR-9)', async () => {
-      await waitFor(() => expect(slider).toHaveFocus())
-      await expect(slider.matches(':focus-visible')).toBe(false)
-      await expect(getComputedStyle(thumb).outlineStyle).toBe('none')
-    })
-    await step('the thumb the press drags shows the pressed layer (CR-12)', async () => {
-      await expect(getComputedStyle(thumb).backgroundImage).toContain(
-        fill('color-surface-selected'),
-      )
-    })
-    await step('moving the pointer, still pressed, to 30% drags the value to 3', async () => {
-      pointer('pointermove', control, track, 0.3)
-      await waitFor(() => expect(slider).toHaveAttribute('aria-valuenow', '3'))
-      await expect(call(args.onChange)).toEqual({ value: 3, reason: 'drag' })
-      await expect(spy(args.onChangeCommitted)).not.toHaveBeenCalled()
-    })
-    await step('releasing commits 3 once, with drag, and the drag ends', async () => {
-      pointer('pointerup', control, track, 0.3)
-      await waitFor(() => expect(thumb).not.toHaveAttribute('data-dragging'))
-      await expect(spy(args.onChangeCommitted)).toHaveBeenCalledTimes(1)
-      await expect(call(args.onChangeCommitted)).toEqual({ value: 3, reason: 'drag' })
-    })
-    await step('a key pressed after the press brings the ring back (CR-9)', async () => {
-      await userEvent.keyboard('{ArrowRight}')
-      await expect(slider).toHaveAttribute('aria-valuenow', '4')
-      await expect(slider).toHaveFocus()
-      await expect(slider.matches(':focus-visible')).toBe(true)
-      await expect(getComputedStyle(thumb).outlineStyle).toBe('solid')
-      await userEvent.keyboard('{ArrowLeft}')
-      await expect(slider).toHaveAttribute('aria-valuenow', '3')
-    })
-    await step(
-      'a press in the control’s padding moves the thumb to the nearer end (CR-10)',
-      async () => {
-        const box = control.getBoundingClientRect()
-        const middle = box.top + box.height / 2
-        pointerAt('pointerdown', control, box.left + 1, middle)
-        pointerAt('pointerup', control, box.left + 1, middle)
-        await waitFor(() => expect(slider).toHaveAttribute('aria-valuenow', '0'))
-        await expect(call(args.onChangeCommitted)).toEqual({ value: 0, reason: 'track-press' })
-        // at min, the thumb stays inside the control
-        await expect(thumb.getBoundingClientRect().left).toBeGreaterThanOrEqual(box.left - 0.5)
-        pointerAt('pointerdown', control, box.right - 1, middle)
-        pointerAt('pointerup', control, box.right - 1, middle)
-        await waitFor(() => expect(slider).toHaveAttribute('aria-valuenow', '10'))
-        await expect(call(args.onChangeCommitted)).toEqual({ value: 10, reason: 'track-press' })
-        // and at max
-        await expect(thumb.getBoundingClientRect().right).toBeLessThanOrEqual(box.right + 0.5)
-      },
-    )
-    await step('a press and release at the middle commits 5, with track-press', async () => {
-      const commits = spy(args.onChangeCommitted).mock.calls.length
-      pointer('pointerdown', control, track, 0.5)
-      pointer('pointerup', control, track, 0.5)
-      await waitFor(() => expect(slider).toHaveAttribute('aria-valuenow', '5'))
-      await waitFor(() => expect(thumb).not.toHaveAttribute('data-dragging'))
-      await expect(spy(args.onChangeCommitted)).toHaveBeenCalledTimes(commits + 1)
-      await expect(call(args.onChangeCommitted)).toEqual({ value: 5, reason: 'track-press' })
-      slider.blur()
-    })
-  },
-}
+} satisfies Story
 
 /** State disabled: the fill, the thumb's edge, the figure, the label and the help in tertiary ink. */
-export const Disabled: Story = {
+const disabled = {
   args: { disabled: true },
   parameters: {
     // a disabled slider's words are color.text.tertiary, a miss Accessibility lists by name
@@ -574,10 +530,10 @@ export const Disabled: Story = {
       )
     })
   },
-}
+} satisfies Story
 
 /** State invalid: the slider at 9 with the error "Choose 8 minutes or fewer", a danger edge. */
-export const Invalid: Story = {
+const invalid = {
   args: { defaultValue: 9, error: 'Choose 8 minutes or fewer' },
   play: async ({ canvasElement }) => {
     const slider = sliderIn(canvasElement)
@@ -636,15 +592,36 @@ export const Invalid: Story = {
       },
     )
   },
+} satisfies Story
+
+/**
+ * The subject story, every prop a control: the label, the help, the track filled to 5 of 10 and
+ * "5". Its play reads the hover rule and gives the thumb its ring.
+ */
+export const Default: Story = {
+  play: async (context) => {
+    await hover.play(context)
+    await _default.play(context)
+    await focus.play(context)
+  },
 }
 
-/** Renders `props` in `locale` on the server, as the owned-strings check reads a render. */
-const markup = (props: SliderProps, locale: Locale) =>
-  renderToStaticMarkup(
-    <PerronProvider locale={locale}>
-      <Slider {...props} />
-    </PerronProvider>,
-  )
+/** Each state a prop reaches, one slider apiece: disabled and invalid. */
+export const States: Story = {
+  parameters: {
+    // a disabled slider's words are color.text.tertiary, a miss Accessibility lists by name
+    // (docs/foundations/accessibility.md) and WCAG 1.4.3 exempts for an inactive control, so axe
+    // leaves it out
+    a11y: { context: { include: ['body'], exclude: ['[data-row="Disabled"]'] } },
+  },
+  ...showcase<StoryArgs>(
+    [
+      { label: 'Disabled', story: disabled },
+      { label: 'Invalid', story: invalid },
+    ],
+    (args) => <Slider {...args} />,
+  ),
+}
 
 /** A range: two thumbs at 4 and 12 of 30, the fill between them and the figure "4 – 12". */
 export const Range: Story = {
@@ -812,17 +789,6 @@ export const Range: Story = {
   },
 }
 
-/** Walking distance in kilometres, in English and in a Danish PerronProvider. */
-const UNITS = {
-  label: 'Walking distance',
-  description: undefined,
-  min: 0.5,
-  max: 3,
-  step: 0.5,
-  defaultValue: 1.5,
-  format: { style: 'unit', unit: 'kilometer' },
-} satisfies Partial<SliderProps>
-
 /** A distance with its unit in `format`: "1.5 km", beside the same slider in Danish, "1,5 km". */
 export const Units: Story = {
   args: UNITS,
@@ -880,24 +846,152 @@ export const Units: Story = {
   },
 }
 
-/** The value held in the story's state, set from each change. */
-function ControlledSlider(props: SliderProps) {
-  const [value, setValue] = useState<SliderProps['value']>(5)
-  return (
-    <Slider
-      {...props}
-      defaultValue={undefined}
-      value={value}
-      onChange={(event, next, details) => {
-        props.onChange?.(event, next, details)
-        setValue(next)
-      }}
-    />
-  )
+/** `hiddenLabel`: the help, the track and the figure, no label in view. */
+export const HiddenLabel: Story = {
+  args: { hiddenLabel: true },
+  parameters: {
+    // axe's label-title-only fails a control with no visible label text that has a title or an
+    // aria-describedby, and here the description's aria-describedby trips it on the hidden label,
+    // the point of the story; so the rule is off for it alone: the slider is still named by the
+    // label, through aria-labelledby
+    a11y: { options: { rules: { 'label-title-only': { enabled: false } } } },
+  },
+  play: async ({ canvasElement }) => {
+    const label = fieldPart(canvasElement, 'label')!
+    await expect(label.tagName).toBe('SPAN')
+    await expect(label.getBoundingClientRect().width).toBeLessThanOrEqual(1)
+    await expect(within(canvasElement).getByRole('group')).toHaveAccessibleName(LABEL)
+    await expect(sliderIn(canvasElement)).toHaveAccessibleName(LABEL)
+  },
+}
+
+/** A Danish compound longer than its line in the label and in the help, with the figure "5". */
+export const LongWords: Story = {
+  args: { label: COMPOUND, description: `Minutter vist bag hver ${COMPOUND}` },
+  play: async ({ canvasElement }) => {
+    const frame = fieldPart(canvasElement, 'field')!
+    const container = frame.parentElement!
+    const bounds = frame.getBoundingClientRect()
+    for (const name of ['label', 'description'] as const) {
+      const element = fieldPart(canvasElement, name)!
+      await expect(lines(element)).toBeGreaterThan(1.5)
+      await expect(element.getBoundingClientRect().right).toBeLessThanOrEqual(bounds.right + 0.5)
+    }
+    await expect(figure(canvasElement)).toBe('5')
+    await expect(lines(part(canvasElement, 'valueText'))).toBeLessThan(1.5)
+    const control = part(canvasElement, 'control').getBoundingClientRect()
+    await expect(control.right).toBeLessThanOrEqual(container.getBoundingClientRect().right + 0.5)
+    await expect(container.scrollWidth).toBe(container.clientWidth)
+    // the label, the help and the error render an element and a list as a string
+    await mounted(
+      canvasElement,
+      <PerronProvider locale="en">
+        <Slider
+          label={
+            <span>
+              Trail <em>length</em>
+            </span>
+          }
+          description={['Minutes of movement', ' drawn behind each vehicle']}
+          error={<strong>Choose 8 minutes or fewer</strong>}
+        />
+      </PerronProvider>,
+      async (host) => {
+        const input = await waitFor(() => sliderIn(host, LABEL))
+        await expect(within(host).getByRole('group')).toHaveAccessibleName(LABEL)
+        await expect(input).toHaveAccessibleDescription(`${DESCRIPTION} Choose 8 minutes or fewer`)
+      },
+    )
+  },
+}
+
+/** State pressed: the slider at 5, at rest at first render; the play presses and drags. */
+export const Pressed: Story = {
+  tags: ['!dev', '!autodocs'],
+  play: async ({ args, canvasElement, step }) => {
+    const slider = sliderIn(canvasElement)
+    const control = part(canvasElement, 'control')
+    const track = part(canvasElement, 'track')
+    const thumb = part(canvasElement, 'thumb')
+    await step('the pressed layer is a step past hover, and its rule comes after', async () => {
+      await expect(stateLayer(thumb, ':active')).toContain('var(--perron-color-surface-selected)')
+      await expect(onHover(thumb, 'background-image')).toContain(
+        'var(--perron-color-surface-hover)',
+      )
+      await expect(pressedAfterHover(thumb)).toBe(true)
+    })
+    await step('a press at 80% of the track moves the thumb there and drags it', async () => {
+      pointer('pointerdown', control, track, 0.8)
+      await waitFor(() => expect(slider).toHaveAttribute('aria-valuenow', '8'))
+      await expect(call(args.onChange)).toEqual({ value: 8, reason: 'track-press' })
+      await waitFor(() => expect(thumb).toHaveAttribute('data-dragging'))
+    })
+    await step('the press focuses the thumb’s input without the ring (CR-9)', async () => {
+      await waitFor(() => expect(slider).toHaveFocus())
+      await expect(slider.matches(':focus-visible')).toBe(false)
+      await expect(getComputedStyle(thumb).outlineStyle).toBe('none')
+    })
+    await step('the thumb the press drags shows the pressed layer (CR-12)', async () => {
+      await expect(getComputedStyle(thumb).backgroundImage).toContain(
+        fill('color-surface-selected'),
+      )
+    })
+    await step('moving the pointer, still pressed, to 30% drags the value to 3', async () => {
+      pointer('pointermove', control, track, 0.3)
+      await waitFor(() => expect(slider).toHaveAttribute('aria-valuenow', '3'))
+      await expect(call(args.onChange)).toEqual({ value: 3, reason: 'drag' })
+      await expect(spy(args.onChangeCommitted)).not.toHaveBeenCalled()
+    })
+    await step('releasing commits 3 once, with drag, and the drag ends', async () => {
+      pointer('pointerup', control, track, 0.3)
+      await waitFor(() => expect(thumb).not.toHaveAttribute('data-dragging'))
+      await expect(spy(args.onChangeCommitted)).toHaveBeenCalledTimes(1)
+      await expect(call(args.onChangeCommitted)).toEqual({ value: 3, reason: 'drag' })
+    })
+    await step('a key pressed after the press brings the ring back (CR-9)', async () => {
+      await userEvent.keyboard('{ArrowRight}')
+      await expect(slider).toHaveAttribute('aria-valuenow', '4')
+      await expect(slider).toHaveFocus()
+      await expect(slider.matches(':focus-visible')).toBe(true)
+      await expect(getComputedStyle(thumb).outlineStyle).toBe('solid')
+      await userEvent.keyboard('{ArrowLeft}')
+      await expect(slider).toHaveAttribute('aria-valuenow', '3')
+    })
+    await step(
+      'a press in the control’s padding moves the thumb to the nearer end (CR-10)',
+      async () => {
+        const box = control.getBoundingClientRect()
+        const middle = box.top + box.height / 2
+        pointerAt('pointerdown', control, box.left + 1, middle)
+        pointerAt('pointerup', control, box.left + 1, middle)
+        await waitFor(() => expect(slider).toHaveAttribute('aria-valuenow', '0'))
+        await expect(call(args.onChangeCommitted)).toEqual({ value: 0, reason: 'track-press' })
+        // at min, the thumb stays inside the control
+        await expect(thumb.getBoundingClientRect().left).toBeGreaterThanOrEqual(box.left - 0.5)
+        pointerAt('pointerdown', control, box.right - 1, middle)
+        pointerAt('pointerup', control, box.right - 1, middle)
+        await waitFor(() => expect(slider).toHaveAttribute('aria-valuenow', '10'))
+        await expect(call(args.onChangeCommitted)).toEqual({ value: 10, reason: 'track-press' })
+        // and at max
+        await expect(thumb.getBoundingClientRect().right).toBeLessThanOrEqual(box.right + 0.5)
+      },
+    )
+    await step('a press and release at the middle commits 5, with track-press', async () => {
+      const commits = spy(args.onChangeCommitted).mock.calls.length
+      pointer('pointerdown', control, track, 0.5)
+      pointer('pointerup', control, track, 0.5)
+      await waitFor(() => expect(slider).toHaveAttribute('aria-valuenow', '5'))
+      await waitFor(() => expect(thumb).not.toHaveAttribute('data-dragging'))
+      await expect(spy(args.onChangeCommitted)).toHaveBeenCalledTimes(commits + 1)
+      await expect(call(args.onChangeCommitted)).toEqual({ value: 5, reason: 'track-press' })
+      slider.blur()
+    })
+  },
 }
 
 /** `value` held in the story's state, starting at 5. */
 export const Controlled: Story = {
+  tags: ['!dev', '!autodocs'],
   render: (args) => <ControlledSlider {...args} />,
   play: async ({ args, canvasElement, step }) => {
     const slider = sliderIn(canvasElement)
@@ -954,27 +1048,9 @@ export const Controlled: Story = {
   },
 }
 
-/** `hiddenLabel`: the help, the track and the figure, no label in view. */
-export const HiddenLabel: Story = {
-  args: { hiddenLabel: true },
-  parameters: {
-    // axe's label-title-only fails a control with no visible label text that has a title or an
-    // aria-describedby, and here the description's aria-describedby trips it on the hidden label,
-    // the point of the story; so the rule is off for it alone: the slider is still named by the
-    // label, through aria-labelledby
-    a11y: { options: { rules: { 'label-title-only': { enabled: false } } } },
-  },
-  play: async ({ canvasElement }) => {
-    const label = fieldPart(canvasElement, 'label')!
-    await expect(label.tagName).toBe('SPAN')
-    await expect(label.getBoundingClientRect().width).toBeLessThanOrEqual(1)
-    await expect(within(canvasElement).getByRole('group')).toHaveAccessibleName(LABEL)
-    await expect(sliderIn(canvasElement)).toHaveAccessibleName(LABEL)
-  },
-}
-
 /** Inside a native `<form>`: a single slider named "trail" and a range named "departures". */
 export const InForm: Story = {
+  tags: ['!dev', '!autodocs'],
   args: { name: 'trail' },
   render: (args) => (
     <form
@@ -1001,47 +1077,5 @@ export const InForm: Story = {
     await userEvent.keyboard('{ArrowLeft}')
     await expect(new FormData(form).get('trail')).toBe('5')
     slider.blur()
-  },
-}
-
-const COMPOUND = 'Hovedstadsområdetsbuslinjestoppestedsoversigtskortudgivelsen'
-
-/** A Danish compound longer than its line in the label and in the help, with the figure "5". */
-export const LongWords: Story = {
-  args: { label: COMPOUND, description: `Minutter vist bag hver ${COMPOUND}` },
-  play: async ({ canvasElement }) => {
-    const frame = fieldPart(canvasElement, 'field')!
-    const container = frame.parentElement!
-    const bounds = frame.getBoundingClientRect()
-    for (const name of ['label', 'description'] as const) {
-      const element = fieldPart(canvasElement, name)!
-      await expect(lines(element)).toBeGreaterThan(1.5)
-      await expect(element.getBoundingClientRect().right).toBeLessThanOrEqual(bounds.right + 0.5)
-    }
-    await expect(figure(canvasElement)).toBe('5')
-    await expect(lines(part(canvasElement, 'valueText'))).toBeLessThan(1.5)
-    const control = part(canvasElement, 'control').getBoundingClientRect()
-    await expect(control.right).toBeLessThanOrEqual(container.getBoundingClientRect().right + 0.5)
-    await expect(container.scrollWidth).toBe(container.clientWidth)
-    // the label, the help and the error render an element and a list as a string
-    await mounted(
-      canvasElement,
-      <PerronProvider locale="en">
-        <Slider
-          label={
-            <span>
-              Trail <em>length</em>
-            </span>
-          }
-          description={['Minutes of movement', ' drawn behind each vehicle']}
-          error={<strong>Choose 8 minutes or fewer</strong>}
-        />
-      </PerronProvider>,
-      async (host) => {
-        const input = await waitFor(() => sliderIn(host, LABEL))
-        await expect(within(host).getByRole('group')).toHaveAccessibleName(LABEL)
-        await expect(input).toHaveAccessibleDescription(`${DESCRIPTION} Choose 8 minutes or fewer`)
-      },
-    )
   },
 }

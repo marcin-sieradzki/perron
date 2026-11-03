@@ -1,10 +1,9 @@
-// CheckboxGroup's stories: the variants of the deferred design, Default, Disabled and Invalid, and
-// the stories of content and behaviour the spec's Stories table names
-// (docs/components/checkbox-group.md), each on a raised Surface in a 320 px container, in English.
-// The checkboxes are Perron's Checkbox; the group draws none of their looks.
+// CheckboxGroup's stories: the group alone with every prop a control, its states side by side, a
+// hidden label, a parent checkbox, rich content and long words, then the behaviour tests.
 import { createRef, useState } from 'react'
 import type { FormEvent, ReactNode } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { showcase } from '../../testing/Showcase.tsx'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import { colour, lines, mounted, resolve, typography } from '../../testing/stories.ts'
@@ -66,6 +65,8 @@ const meta = {
 export default meta
 
 type Story = StoryObj<typeof meta>
+/** The args a story renders with: the meta's and its own. */
+type StoryArgs = Parameters<NonNullable<Story['render']>>[0]
 
 /** The group in `scope`, by its name. */
 const groupIn = (scope: HTMLElement, name: string | RegExp = LABEL) =>
@@ -97,6 +98,127 @@ const spy = (args: { onChange?: unknown }) => {
   onChange.mockClear()
   return onChange
 }
+
+/**
+ * A caller that keeps the list in its own `useState` and sets it from `onChange`, with a line that
+ * lists the ticked values. The story's `onChange` spy stands for the caller's own handler.
+ */
+function ControlledGroup({ defaultValue, ...args }: CheckboxGroupProps) {
+  const [value, setValue] = useState<string[]>(defaultValue ?? [])
+  return (
+    <>
+      <CheckboxGroup
+        {...args}
+        value={value}
+        onChange={(event, next, details) => {
+          args.onChange?.(event, next, details)
+          setValue(next)
+        }}
+      />
+      <p
+        data-testid="ticked"
+        style={{ ...typography('body-sm'), marginBlockStart: 'var(--perron-space-400)' }}
+      >
+        Ticked: {value.join(', ') || 'none'}
+      </p>
+    </>
+  )
+}
+
+/** The story's submit handler, which stops the form from leaving the page. */
+const onSubmit = fn((event: FormEvent<HTMLFormElement>) => event.preventDefault())
+
+/** State disabled: the Default group with `disabled`. */
+const disabled = {
+  args: { disabled: true },
+  parameters: {
+    // a disabled group's legend and help are color.text.tertiary, a miss Accessibility lists by
+    // name (docs/foundations/accessibility.md) and WCAG 1.4.3 exempts for an inactive control, so
+    // axe's contrast rule is off for this story alone
+    a11y: { options: { rules: { 'color-contrast': { enabled: false } } } },
+  },
+  play: async ({ args, canvasElement, step }) => {
+    const onChange = spy(args)
+    const group = groupIn(canvasElement)
+    await step('every checkbox is disabled and out of the tab order', async () => {
+      await expect(group).toHaveAttribute('data-disabled')
+      for (const root of allBoxes(group)) {
+        await expect(root).toHaveAttribute('aria-disabled', 'true')
+        await expect(root.tabIndex).toBe(-1)
+      }
+      const start = document.activeElement
+      await userEvent.tab()
+      await expect(group.contains(document.activeElement)).toBe(false)
+      await userEvent.tab({ shift: true })
+      await expect(document.activeElement).toBe(start)
+    })
+    await step('a click ticks nothing and calls no onChange', async () => {
+      await userEvent.click(box(group, 'Metro'), { pointerEventsCheck: 0 })
+      await expect(box(group, 'Metro')).toHaveAttribute('aria-checked', 'false')
+      await expect(onChange).not.toHaveBeenCalled()
+      ;(document.activeElement as HTMLElement | null)?.blur()
+    })
+    await step('the legend and the description take the tertiary ink', async () => {
+      const tertiary = colour('--perron-color-text-tertiary')
+      await expect(getComputedStyle(part(group, 'legend')!).color).toBe(tertiary)
+      await expect(getComputedStyle(part(group, 'description')!).color).toBe(tertiary)
+    })
+    await step('a disabled Fieldset round the group disables it too (CR-9)', async () => {
+      await mounted(
+        canvasElement,
+        <Fieldset legend="Map" disabled>
+          <CheckboxGroup label={LABEL} description={DESCRIPTION} defaultValue={['bus']}>
+            {boxes()}
+          </CheckboxGroup>
+        </Fieldset>,
+        async (host) => {
+          const inner = await waitFor(() => groupIn(host))
+          await expect(inner).toHaveAttribute('data-disabled')
+          for (const root of allBoxes(inner))
+            await expect(root).toHaveAttribute('aria-disabled', 'true')
+        },
+      )
+    })
+  },
+} satisfies Story
+
+/** State invalid: nothing ticked, and the error "Choose at least one mode" under the checkboxes. */
+const invalid = {
+  args: { defaultValue: [], error: ERROR },
+  play: async ({ canvasElement }) => {
+    const group = groupIn(canvasElement)
+    const roots = allBoxes(group)
+    const error = await waitFor(() => {
+      const found = part(group, 'error')
+      expect(found).not.toBeNull()
+      return found!
+    })
+    await expect(error).toHaveTextContent(/^Choose at least one mode$/)
+    await expect(before(roots[roots.length - 1], error)).toBe(true)
+    await expect(group.lastElementChild).toBe(error)
+    await expect(getComputedStyle(error).color).toBe(colour('--perron-color-text-danger'))
+    await expect(group).toHaveAttribute('data-invalid')
+    // the help first, then the error
+    await waitFor(() =>
+      expect(group.getAttribute('aria-describedby')).toBe(
+        `${part(group, 'description')!.id} ${error.id}`,
+      ),
+    )
+    await expect(group).toHaveAccessibleDescription(`${DESCRIPTION} ${ERROR}`)
+    const danger = resolve('borderColor', 'var(--perron-color-status-danger)')
+    for (const root of roots) {
+      await expect(root).toHaveAttribute('data-invalid')
+      await expect(root).toHaveAttribute('aria-invalid', 'true')
+      await expect(
+        getComputedStyle(root.querySelector('.pn-Checkbox-indicator')!).borderColor,
+      ).toBe(danger)
+    }
+    // the legend keeps its rest look: the error and the boxes' edges show it
+    await expect(getComputedStyle(part(group, 'legend')!).color).toBe(
+      colour('--perron-color-text-primary'),
+    )
+  },
+} satisfies Story
 
 /** The subject story, State default: the legend, the description and "Bus" ticked. */
 export const Default: Story = {
@@ -174,96 +296,21 @@ export const Default: Story = {
   },
 }
 
-/** State disabled: the Default group with `disabled`. */
-export const Disabled: Story = {
-  args: { disabled: true },
+/** Each state a prop reaches, one group apiece: disabled and invalid. */
+export const States: Story = {
   parameters: {
-    // a disabled group's legend and help are color.text.tertiary, a miss Accessibility lists by
-    // name (docs/foundations/accessibility.md) and WCAG 1.4.3 exempts for an inactive control, so
-    // axe's contrast rule is off for this story alone
-    a11y: { options: { rules: { 'color-contrast': { enabled: false } } } },
+    // a disabled group's words are color.text.tertiary, a miss Accessibility lists by name
+    // (docs/foundations/accessibility.md) and WCAG 1.4.3 exempts for an inactive control, so axe
+    // leaves it out
+    a11y: { context: { include: ['body'], exclude: ['[data-row="Disabled"]'] } },
   },
-  play: async ({ args, canvasElement, step }) => {
-    const onChange = spy(args)
-    const group = groupIn(canvasElement)
-    await step('every checkbox is disabled and out of the tab order', async () => {
-      await expect(group).toHaveAttribute('data-disabled')
-      for (const root of allBoxes(group)) {
-        await expect(root).toHaveAttribute('aria-disabled', 'true')
-        await expect(root.tabIndex).toBe(-1)
-      }
-      const start = document.activeElement
-      await userEvent.tab()
-      await expect(group.contains(document.activeElement)).toBe(false)
-      await userEvent.tab({ shift: true })
-      await expect(document.activeElement).toBe(start)
-    })
-    await step('a click ticks nothing and calls no onChange', async () => {
-      await userEvent.click(box(group, 'Metro'), { pointerEventsCheck: 0 })
-      await expect(box(group, 'Metro')).toHaveAttribute('aria-checked', 'false')
-      await expect(onChange).not.toHaveBeenCalled()
-      ;(document.activeElement as HTMLElement | null)?.blur()
-    })
-    await step('the legend and the description take the tertiary ink', async () => {
-      const tertiary = colour('--perron-color-text-tertiary')
-      await expect(getComputedStyle(part(group, 'legend')!).color).toBe(tertiary)
-      await expect(getComputedStyle(part(group, 'description')!).color).toBe(tertiary)
-    })
-    await step('a disabled Fieldset round the group disables it too (CR-9)', async () => {
-      await mounted(
-        canvasElement,
-        <Fieldset legend="Map" disabled>
-          <CheckboxGroup label={LABEL} description={DESCRIPTION} defaultValue={['bus']}>
-            {boxes()}
-          </CheckboxGroup>
-        </Fieldset>,
-        async (host) => {
-          const inner = await waitFor(() => groupIn(host))
-          await expect(inner).toHaveAttribute('data-disabled')
-          for (const root of allBoxes(inner))
-            await expect(root).toHaveAttribute('aria-disabled', 'true')
-        },
-      )
-    })
-  },
-}
-
-/** State invalid: nothing ticked, and the error "Choose at least one mode" under the checkboxes. */
-export const Invalid: Story = {
-  args: { defaultValue: [], error: ERROR },
-  play: async ({ canvasElement }) => {
-    const group = groupIn(canvasElement)
-    const roots = allBoxes(group)
-    const error = await waitFor(() => {
-      const found = part(group, 'error')
-      expect(found).not.toBeNull()
-      return found!
-    })
-    await expect(error).toHaveTextContent(/^Choose at least one mode$/)
-    await expect(before(roots[roots.length - 1], error)).toBe(true)
-    await expect(group.lastElementChild).toBe(error)
-    await expect(getComputedStyle(error).color).toBe(colour('--perron-color-text-danger'))
-    await expect(group).toHaveAttribute('data-invalid')
-    // the help first, then the error
-    await waitFor(() =>
-      expect(group.getAttribute('aria-describedby')).toBe(
-        `${part(group, 'description')!.id} ${error.id}`,
-      ),
-    )
-    await expect(group).toHaveAccessibleDescription(`${DESCRIPTION} ${ERROR}`)
-    const danger = resolve('borderColor', 'var(--perron-color-status-danger)')
-    for (const root of roots) {
-      await expect(root).toHaveAttribute('data-invalid')
-      await expect(root).toHaveAttribute('aria-invalid', 'true')
-      await expect(
-        getComputedStyle(root.querySelector('.pn-Checkbox-indicator')!).borderColor,
-      ).toBe(danger)
-    }
-    // the legend keeps its rest look: the error and the boxes' edges show it
-    await expect(getComputedStyle(part(group, 'legend')!).color).toBe(
-      colour('--perron-color-text-primary'),
-    )
-  },
+  ...showcase<StoryArgs>(
+    [
+      { label: 'Disabled', story: disabled },
+      { label: 'Invalid', story: invalid },
+    ],
+    (args) => <CheckboxGroup {...args} />,
+  ),
 }
 
 /** The Default group with `hiddenLabel`, in a Section whose title names it for the eye. */
@@ -286,189 +333,6 @@ export const HiddenLabel: Story = {
         part(group, 'description')!.getBoundingClientRect().top - group.getBoundingClientRect().top,
       ),
     ).toBeLessThan(1)
-  },
-}
-
-/**
- * A caller that keeps the list in its own `useState` and sets it from `onChange`, with a line that
- * lists the ticked values. The story's `onChange` spy stands for the caller's own handler.
- */
-function ControlledGroup({ defaultValue, ...args }: CheckboxGroupProps) {
-  const [value, setValue] = useState<string[]>(defaultValue ?? [])
-  return (
-    <>
-      <CheckboxGroup
-        {...args}
-        value={value}
-        onChange={(event, next, details) => {
-          args.onChange?.(event, next, details)
-          setValue(next)
-        }}
-      />
-      <p
-        data-testid="ticked"
-        style={{ ...typography('body-sm'), marginBlockStart: 'var(--perron-space-400)' }}
-      >
-        Ticked: {value.join(', ') || 'none'}
-      </p>
-    </>
-  )
-}
-
-/** A group given `value` and `onChange` from the story's state, beside the list it holds. */
-export const Controlled: Story = {
-  render: (args) => <ControlledGroup {...args} />,
-  play: async ({ args, canvasElement, step }) => {
-    const onChange = spy(args)
-    const group = groupIn(canvasElement)
-    const metro = box(group, 'Metro')
-    await step('a click asks the caller, and the box ticks once it sets `value`', async () => {
-      await userEvent.click(metro)
-      await expect(onChange).toHaveBeenLastCalledWith(
-        expect.any(Event),
-        ['bus', 'metro'],
-        expect.objectContaining({ reason: 'none' }),
-      )
-      await expect(metro).toHaveAttribute('aria-checked', 'true')
-      await expect(within(canvasElement).getByTestId('ticked')).toHaveTextContent(
-        'Ticked: bus, metro',
-      )
-    })
-    await step('the caller sets the list back to "Bus" alone', async () => {
-      await userEvent.click(metro)
-      await expect(metro).toHaveAttribute('aria-checked', 'false')
-      await expect(ticked(group)).toEqual(['Bus'])
-      metro.blur()
-    })
-    await step('a caller that ignores the change keeps the group as it was', async () => {
-      const ignored = fn()
-      await mounted(
-        canvasElement,
-        <CheckboxGroup label="Lines" value={['bus']} onChange={ignored}>
-          {boxes()}
-        </CheckboxGroup>,
-        async (host) => {
-          const other = await waitFor(() => groupIn(host, 'Lines'))
-          await userEvent.click(box(other, 'Metro'))
-          await expect(ignored).toHaveBeenCalledTimes(1)
-          await expect(box(other, 'Metro')).toHaveAttribute('aria-checked', 'false')
-          await expect(ticked(other)).toEqual(['Bus'])
-          ;(document.activeElement as HTMLElement | null)?.blur()
-        },
-      )
-    })
-    await step("an uncontrolled group's onChange that cancels keeps the list", async () => {
-      const cancels = fn((_event: Event, _value: string[], details: { cancel: () => void }) =>
-        details.cancel(),
-      )
-      await mounted(
-        canvasElement,
-        <CheckboxGroup label="Lines" defaultValue={['bus']} allValues={ALL} onChange={cancels}>
-          {withParent()}
-        </CheckboxGroup>,
-        async (host) => {
-          const other = await waitFor(() => groupIn(host, 'Lines'))
-          await userEvent.click(box(other, 'Metro'))
-          await expect(cancels).toHaveBeenLastCalledWith(
-            expect.any(Event),
-            ['bus', 'metro'],
-            expect.objectContaining({ reason: 'none' }),
-          )
-          await expect(ticked(other)).toEqual(['Bus'])
-          await userEvent.click(box(other, 'All modes'))
-          await expect(cancels).toHaveBeenCalledTimes(2)
-          await expect(cancels).toHaveBeenLastCalledWith(
-            expect.any(Event),
-            ALL,
-            expect.objectContaining({ reason: 'none' }),
-          )
-          await expect(ticked(other)).toEqual(['Bus'])
-          await expect(box(other, 'All modes')).toHaveAttribute('aria-checked', 'mixed')
-          ;(document.activeElement as HTMLElement | null)?.blur()
-        },
-      )
-    })
-  },
-}
-
-/** The story's submit handler, which stops the form from leaving the page. */
-const onSubmit = fn((event: FormEvent<HTMLFormElement>) => event.preventDefault())
-
-/** The group with `name="modes"` in a `<form>` with a submit button, "S-tog" ticked and disabled. */
-export const InForm: Story = {
-  args: { name: 'modes', defaultValue: ['bus', 's-tog'], children: boxes('s-tog') },
-  render: (args) => (
-    <form
-      onSubmit={onSubmit}
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        gap: 'var(--perron-space-400)',
-      }}
-    >
-      <CheckboxGroup {...args} />
-      <Button type="submit">Save</Button>
-    </form>
-  ),
-  play: async ({ canvasElement }) => {
-    onSubmit.mockClear()
-    const form = canvasElement.querySelector('form')!
-    const group = groupIn(canvasElement)
-    const modes = () => new FormData(form).getAll('modes')
-    // "S-tog" is ticked but disabled, so it submits nothing
-    await expect(box(group, 'S-tog')).toHaveAttribute('aria-checked', 'true')
-    await expect(modes()).toEqual(['bus'])
-    await userEvent.click(box(group, 'Metro'))
-    await expect(modes()).toEqual(['bus', 'metro'])
-    // Enter on a checkbox clicks the form's submit button, which the story stops
-    await expect(box(group, 'Metro')).toHaveFocus()
-    await userEvent.keyboard('{Enter}')
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1))
-    const [event] = onSubmit.mock.calls[0]
-    await expect((event.nativeEvent as SubmitEvent).submitter).toBe(
-      within(form).getByRole('button', { name: 'Save' }),
-    )
-    await expect(box(group, 'Metro')).toHaveAttribute('aria-checked', 'true')
-    // as it started
-    await userEvent.click(box(group, 'Metro'))
-    await expect(modes()).toEqual(['bus'])
-    ;(document.activeElement as HTMLElement | null)?.blur()
-  },
-}
-
-/** Base UI's own check: a `validate` on every change that asks for at least one mode. */
-export const Validation: Story = {
-  args: {
-    validationMode: 'onChange',
-    validate: (value) => (Array.isArray(value) && value.length === 0 ? ERROR : null),
-  },
-  play: async ({ canvasElement, step }) => {
-    const group = groupIn(canvasElement)
-    await step('valid at first, with no error', async () => {
-      await expect(part(group, 'error')).toBeNull()
-      for (const root of allBoxes(group)) await expect(root).not.toHaveAttribute('aria-invalid')
-    })
-    await step('unticking "Bus" shows the message', async () => {
-      await userEvent.click(box(group, 'Bus'))
-      await waitFor(() =>
-        expect(part(group, 'error')).toHaveTextContent(/^Choose at least one mode$/),
-      )
-      await expect(before(allBoxes(group).at(-1)!, part(group, 'error')!)).toBe(true)
-      for (const root of allBoxes(group)) await expect(root).toHaveAttribute('aria-invalid', 'true')
-    })
-    await step('ticking "Metro" removes it', async () => {
-      await userEvent.click(box(group, 'Metro'))
-      await waitFor(() => expect(part(group, 'error')).toBeNull())
-      for (const root of allBoxes(group)) await expect(root).not.toHaveAttribute('aria-invalid')
-    })
-    await step('back to "Bus" alone, with no error', async () => {
-      await userEvent.click(box(group, 'Bus'))
-      await userEvent.click(box(group, 'Metro'))
-      await expect(ticked(group)).toEqual(['Bus'])
-      await waitFor(() => expect(part(group, 'error')).toBeNull())
-      ;(document.activeElement as HTMLElement | null)?.blur()
-    })
   },
 }
 
@@ -629,5 +493,162 @@ export const LongWords: Story = {
       await expect(element.scrollWidth).toBeLessThanOrEqual(element.clientWidth)
     }
     await expect(group.scrollWidth).toBeLessThanOrEqual(group.clientWidth)
+  },
+}
+
+/** A group given `value` and `onChange` from the story's state, beside the list it holds. */
+export const Controlled: Story = {
+  tags: ['!dev', '!autodocs'],
+  render: (args) => <ControlledGroup {...args} />,
+  play: async ({ args, canvasElement, step }) => {
+    const onChange = spy(args)
+    const group = groupIn(canvasElement)
+    const metro = box(group, 'Metro')
+    await step('a click asks the caller, and the box ticks once it sets `value`', async () => {
+      await userEvent.click(metro)
+      await expect(onChange).toHaveBeenLastCalledWith(
+        expect.any(Event),
+        ['bus', 'metro'],
+        expect.objectContaining({ reason: 'none' }),
+      )
+      await expect(metro).toHaveAttribute('aria-checked', 'true')
+      await expect(within(canvasElement).getByTestId('ticked')).toHaveTextContent(
+        'Ticked: bus, metro',
+      )
+    })
+    await step('the caller sets the list back to "Bus" alone', async () => {
+      await userEvent.click(metro)
+      await expect(metro).toHaveAttribute('aria-checked', 'false')
+      await expect(ticked(group)).toEqual(['Bus'])
+      metro.blur()
+    })
+    await step('a caller that ignores the change keeps the group as it was', async () => {
+      const ignored = fn()
+      await mounted(
+        canvasElement,
+        <CheckboxGroup label="Lines" value={['bus']} onChange={ignored}>
+          {boxes()}
+        </CheckboxGroup>,
+        async (host) => {
+          const other = await waitFor(() => groupIn(host, 'Lines'))
+          await userEvent.click(box(other, 'Metro'))
+          await expect(ignored).toHaveBeenCalledTimes(1)
+          await expect(box(other, 'Metro')).toHaveAttribute('aria-checked', 'false')
+          await expect(ticked(other)).toEqual(['Bus'])
+          ;(document.activeElement as HTMLElement | null)?.blur()
+        },
+      )
+    })
+    await step("an uncontrolled group's onChange that cancels keeps the list", async () => {
+      const cancels = fn((_event: Event, _value: string[], details: { cancel: () => void }) =>
+        details.cancel(),
+      )
+      await mounted(
+        canvasElement,
+        <CheckboxGroup label="Lines" defaultValue={['bus']} allValues={ALL} onChange={cancels}>
+          {withParent()}
+        </CheckboxGroup>,
+        async (host) => {
+          const other = await waitFor(() => groupIn(host, 'Lines'))
+          await userEvent.click(box(other, 'Metro'))
+          await expect(cancels).toHaveBeenLastCalledWith(
+            expect.any(Event),
+            ['bus', 'metro'],
+            expect.objectContaining({ reason: 'none' }),
+          )
+          await expect(ticked(other)).toEqual(['Bus'])
+          await userEvent.click(box(other, 'All modes'))
+          await expect(cancels).toHaveBeenCalledTimes(2)
+          await expect(cancels).toHaveBeenLastCalledWith(
+            expect.any(Event),
+            ALL,
+            expect.objectContaining({ reason: 'none' }),
+          )
+          await expect(ticked(other)).toEqual(['Bus'])
+          await expect(box(other, 'All modes')).toHaveAttribute('aria-checked', 'mixed')
+          ;(document.activeElement as HTMLElement | null)?.blur()
+        },
+      )
+    })
+  },
+}
+
+/** The group with `name="modes"` in a `<form>` with a submit button, "S-tog" ticked and disabled. */
+export const InForm: Story = {
+  tags: ['!dev', '!autodocs'],
+  args: { name: 'modes', defaultValue: ['bus', 's-tog'], children: boxes('s-tog') },
+  render: (args) => (
+    <form
+      onSubmit={onSubmit}
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        gap: 'var(--perron-space-400)',
+      }}
+    >
+      <CheckboxGroup {...args} />
+      <Button type="submit">Save</Button>
+    </form>
+  ),
+  play: async ({ canvasElement }) => {
+    onSubmit.mockClear()
+    const form = canvasElement.querySelector('form')!
+    const group = groupIn(canvasElement)
+    const modes = () => new FormData(form).getAll('modes')
+    // "S-tog" is ticked but disabled, so it submits nothing
+    await expect(box(group, 'S-tog')).toHaveAttribute('aria-checked', 'true')
+    await expect(modes()).toEqual(['bus'])
+    await userEvent.click(box(group, 'Metro'))
+    await expect(modes()).toEqual(['bus', 'metro'])
+    // Enter on a checkbox clicks the form's submit button, which the story stops
+    await expect(box(group, 'Metro')).toHaveFocus()
+    await userEvent.keyboard('{Enter}')
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1))
+    const [event] = onSubmit.mock.calls[0]
+    await expect((event.nativeEvent as SubmitEvent).submitter).toBe(
+      within(form).getByRole('button', { name: 'Save' }),
+    )
+    await expect(box(group, 'Metro')).toHaveAttribute('aria-checked', 'true')
+    // as it started
+    await userEvent.click(box(group, 'Metro'))
+    await expect(modes()).toEqual(['bus'])
+    ;(document.activeElement as HTMLElement | null)?.blur()
+  },
+}
+
+/** Base UI's own check: a `validate` on every change that asks for at least one mode. */
+export const Validation: Story = {
+  tags: ['!dev', '!autodocs'],
+  args: {
+    validationMode: 'onChange',
+    validate: (value) => (Array.isArray(value) && value.length === 0 ? ERROR : null),
+  },
+  play: async ({ canvasElement, step }) => {
+    const group = groupIn(canvasElement)
+    await step('valid at first, with no error', async () => {
+      await expect(part(group, 'error')).toBeNull()
+      for (const root of allBoxes(group)) await expect(root).not.toHaveAttribute('aria-invalid')
+    })
+    await step('unticking "Bus" shows the message', async () => {
+      await userEvent.click(box(group, 'Bus'))
+      await waitFor(() =>
+        expect(part(group, 'error')).toHaveTextContent(/^Choose at least one mode$/),
+      )
+      await expect(before(allBoxes(group).at(-1)!, part(group, 'error')!)).toBe(true)
+      for (const root of allBoxes(group)) await expect(root).toHaveAttribute('aria-invalid', 'true')
+    })
+    await step('ticking "Metro" removes it', async () => {
+      await userEvent.click(box(group, 'Metro'))
+      await waitFor(() => expect(part(group, 'error')).toBeNull())
+      for (const root of allBoxes(group)) await expect(root).not.toHaveAttribute('aria-invalid')
+    })
+    await step('back to "Bus" alone, with no error', async () => {
+      await userEvent.click(box(group, 'Bus'))
+      await userEvent.click(box(group, 'Metro'))
+      await expect(ticked(group)).toEqual(['Bus'])
+      await waitFor(() => expect(part(group, 'error')).toBeNull())
+      ;(document.activeElement as HTMLElement | null)?.blur()
+    })
   },
 }

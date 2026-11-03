@@ -1,7 +1,5 @@
-// Menu's stories: the deferred design's open menu, Default, and its row in each State, prefixed
-// Item, then the other components and the behaviour beside them, each open at first render beside
-// the trigger that opens it again, with the play tests the spec's Stories table names
-// (docs/components/menu.md). Hover and focus render at rest; their plays drive them.
+// Menu's stories: the open menu with every prop a control, its groups, checkbox and radio items, a
+// submenu, links and a long label, then the behaviour tests.
 import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, screen, userEvent, waitFor, within } from 'storybook/test'
@@ -131,6 +129,58 @@ async function reopenFromKeys(trigger: HTMLElement) {
   return popup
 }
 
+const THEME = 'Theme'
+const SYSTEM = 'System'
+const LIGHT = 'Light'
+const DARK = 'Dark'
+
+const onTheme = fn()
+
+/** The radio group "Theme", with "System", "Light" and "Dark", one chosen at first. */
+const theme = (chosen: string) => (
+  <MenuRadioGroup label={THEME} defaultValue={chosen} onChange={onTheme}>
+    <MenuRadioItem value="system">{SYSTEM}</MenuRadioItem>
+    <MenuRadioItem value="light">{LIGHT}</MenuRadioItem>
+    <MenuRadioItem value="dark">{DARK}</MenuRadioItem>
+  </MenuRadioGroup>
+)
+
+/** The radio item's tick, the SelectedMark part in its indicator, where it is rendered. */
+const tick = (item: HTMLElement) => item.querySelector('.pn-MenuRadioItem-radioItemIndicator')
+
+const MAP = 'Map'
+const ZOOM = 'Zoom'
+
+const STOP_NAMES = 'Show stop names'
+const TRAILS = 'Show vehicle trails'
+const MAP_LABELS = 'Show map labels'
+
+const onStopNames = fn()
+const onTrails = fn()
+const onMapLabels = fn()
+
+const LANGUAGE = 'Language'
+const ENGLISH = 'English'
+
+const DATA_SOURCES = 'Data sources'
+const PRIVACY = 'Privacy'
+
+const LONG_ITEM = 'Trafikinformationsoversigtssidesindstillinger'
+const LONG_GROUP = 'Realtidsdataindstillinger'
+
+/** The menu in a 320 px frame, the room it is placed in, as on a phone. */
+function InFrame(args: MenuProps) {
+  const [frame, setFrame] = useState<HTMLElement | null>(null)
+  return (
+    <div ref={setFrame} data-testid="frame" style={{ inlineSize: 320, blockSize: 400 }}>
+      <Menu
+        {...args}
+        slotProps={{ positioner: { collisionBoundary: frame ?? 'clipping-ancestors' } }}
+      />
+    </div>
+  )
+}
+
 /** The one variant of the menu: open, three items with start icons. */
 export const Default: Story = {
   play: async ({ canvasElement, args, step }) => {
@@ -202,150 +252,6 @@ export const Default: Story = {
   },
 }
 
-/** The row at rest: one item, "Zoom in", in an open menu. */
-export const ItemDefault: Story = {
-  args: {
-    children: (
-      <MenuItem startIcon={glyph(plus)} onClick={onZoomIn}>
-        {ZOOM_IN}
-      </MenuItem>
-    ),
-  },
-}
-
-/** The row highlighted: the Default menu, its second item under the pointer or the keys. */
-export const ItemHighlighted: Story = {
-  play: async ({ canvasElement, step }) => {
-    const trigger = triggerIn(canvasElement)
-    await step('the pointer highlights and focuses the row, with the hover fill', async () => {
-      const zoomIn = row(await menu(), ZOOM_IN)
-      await userEvent.hover(zoomIn)
-      await waitFor(() => expect(zoomIn).toHaveAttribute('data-highlighted'))
-      await waitFor(() => expect(zoomIn).toHaveFocus())
-      await expect(getComputedStyle(zoomIn).backgroundColor).toBe(
-        colour('--perron-color-surface-hover'),
-      )
-      await userEvent.unhover(zoomIn)
-    })
-    await step('pressed, the row lays the pressed layer past the hover one', async () => {
-      const zoomIn = row(await menu(), ZOOM_IN)
-      const fill = 'var(--perron-color-surface-selected)'
-      await expect(stateFill(zoomIn, ':active')).toBe(fill)
-      await expect(pressedAfterHover(zoomIn)).toBe(true)
-      await expect(resolve('backgroundColor', fill)).not.toBe(
-        resolve('backgroundColor', stateFill(zoomIn)),
-      )
-      await expect(getComputedStyle(zoomIn).cursor).toBe('pointer')
-    })
-    await step('opened from the keys, the first row has the focus ring', async () => {
-      const popup = await reopenFromKeys(trigger)
-      const centre = row(popup, CENTRE)
-      await waitFor(() => expect(centre).toHaveFocus())
-      await expect(centre.matches(':focus-visible')).toBe(true)
-      const ring = getComputedStyle(centre)
-      await expect(ring.outlineStyle).toBe('solid')
-      await expect(ring.outlineColor).toBe(colour('--perron-color-border-focus'))
-    })
-    await step('Escape closes it, and focus returns to the trigger', () => closeAtRest(trigger))
-  },
-}
-
-/** The row disabled: the Default menu with "Zoom in" disabled. */
-export const ItemDisabled: Story = {
-  args: { children: items({ zoomInDisabled: true }) },
-  play: async ({ canvasElement, step }) => {
-    const trigger = triggerIn(canvasElement)
-    await step('the item is announced as dimmed and drawn in the tertiary colour', async () => {
-      const zoomIn = row(await menu(), ZOOM_IN)
-      await expect(zoomIn).toHaveAttribute('aria-disabled', 'true')
-      await expect(zoomIn).toHaveAttribute('data-disabled')
-      await expect(getComputedStyle(zoomIn).color).toBe(colour('--perron-color-text-tertiary'))
-    })
-    await step('ArrowDown still reaches it, and Enter and a click do nothing', async () => {
-      onZoomIn.mockClear()
-      const popup = await reopenFromKeys(trigger)
-      await waitFor(() => expect(row(popup, CENTRE)).toHaveFocus())
-      await userEvent.keyboard('{ArrowDown}')
-      const zoomIn = row(popup, ZOOM_IN)
-      await waitFor(() => expect(zoomIn).toHaveFocus())
-      await userEvent.keyboard('{Enter}')
-      await userEvent.click(zoomIn)
-      await frames(2)
-      await expect(onZoomIn).not.toHaveBeenCalled()
-      await expect(screen.getByRole('menu', { name: TRIGGER })).toBeInTheDocument()
-    })
-    await step(
-      'hovered, highlighted or pressed, it lays no fill, under the default cursor',
-      async () => {
-        const zoomIn = row(await menu(), ZOOM_IN)
-        await expect(onHover(zoomIn, 'background-color')).toBe('')
-        await expect(stateFill(zoomIn, ':active')).toBe('')
-        await expect(getComputedStyle(zoomIn).backgroundColor).toBe('rgba(0, 0, 0, 0)')
-        await expect(getComputedStyle(zoomIn).cursor).toBe('default')
-      },
-    )
-    await step('Escape closes it, and focus returns to the trigger', () => closeAtRest(trigger))
-  },
-}
-
-const THEME = 'Theme'
-const SYSTEM = 'System'
-const LIGHT = 'Light'
-const DARK = 'Dark'
-
-const onTheme = fn()
-
-/** The radio group "Theme", with "System", "Light" and "Dark", one chosen at first. */
-const theme = (chosen: string) => (
-  <MenuRadioGroup label={THEME} defaultValue={chosen} onChange={onTheme}>
-    <MenuRadioItem value="system">{SYSTEM}</MenuRadioItem>
-    <MenuRadioItem value="light">{LIGHT}</MenuRadioItem>
-    <MenuRadioItem value="dark">{DARK}</MenuRadioItem>
-  </MenuRadioGroup>
-)
-
-/** The radio item's tick, the SelectedMark part in its indicator, where it is rendered. */
-const tick = (item: HTMLElement) => item.querySelector('.pn-MenuRadioItem-radioItemIndicator')
-
-/** The row selected: a radio group "Theme", "Light" chosen. */
-export const ItemSelected: Story = {
-  args: { children: theme('light') },
-  play: async ({ canvasElement, step }) => {
-    const trigger = triggerIn(canvasElement)
-    await step('"Light" is checked, with the selected fill and the tick', async () => {
-      const popup = await menu()
-      const light = row(popup, LIGHT, 'menuitemradio')
-      await expect(light).toHaveAttribute('aria-checked', 'true')
-      await expect(light).toHaveAttribute('data-checked')
-      await expect(getComputedStyle(light).backgroundColor).toBe(
-        colour('--perron-color-surface-selected'),
-      )
-      await expect(tick(light)).not.toBeNull()
-      for (const name of [SYSTEM, DARK]) {
-        const other = row(popup, name, 'menuitemradio')
-        await expect(other).toHaveAttribute('aria-checked', 'false')
-        await expect(other).not.toHaveAttribute('data-checked')
-        await expect(getComputedStyle(other).backgroundColor).not.toBe(
-          colour('--perron-color-surface-selected'),
-        )
-        await expect(tick(other)).toBeNull()
-      }
-    })
-    await step('pressed, "Light" lays the pressed layer over its fill', async () => {
-      const light = row(await menu(), LIGHT, 'menuitemradio')
-      const layers = stateRules(light, ':active').map((rule) =>
-        rule.getPropertyValue('background-image'),
-      )
-      await expect(layers.at(-1)).toContain('var(--perron-color-surface-selected)')
-      await expect(pressedAfterHover(light)).toBe(true)
-    })
-    await step('Escape closes it, and focus returns to the trigger', () => closeAtRest(trigger))
-  },
-}
-
-const MAP = 'Map'
-const ZOOM = 'Zoom'
-
 /** Two groups, "Map" and "Zoom", a separator between them. */
 export const Groups: Story = {
   args: {
@@ -389,14 +295,6 @@ export const Groups: Story = {
     await step('Escape closes it, and focus returns to the trigger', () => closeAtRest(trigger))
   },
 }
-
-const STOP_NAMES = 'Show stop names'
-const TRAILS = 'Show vehicle trails'
-const MAP_LABELS = 'Show map labels'
-
-const onStopNames = fn()
-const onTrails = fn()
-const onMapLabels = fn()
 
 /** Three settings: one on, one off, and one disabled. */
 export const CheckboxItems: Story = {
@@ -485,9 +383,6 @@ export const RadioItems: Story = {
   },
 }
 
-const LANGUAGE = 'Language'
-const ENGLISH = 'English'
-
 /**
  * The Default items, a separator, and a submenu "Language" of four languages, its radio group
  * named by the row. No row has a start icon, as "Language" has none.
@@ -544,9 +439,6 @@ export const Submenu: Story = {
   },
 }
 
-const DATA_SOURCES = 'Data sources'
-const PRIVACY = 'Privacy'
-
 /** Two links after "Zoom out". No row has a start icon, as the links have none. */
 export const LinkItems: Story = {
   args: {
@@ -579,42 +471,6 @@ export const LinkItems: Story = {
     })
     await step('Escape closes it, and focus returns to the trigger', () => closeAtRest(trigger))
   },
-}
-
-/** The Default menu with `disabled`, closed. */
-export const Disabled: Story = {
-  args: { disabled: true, defaultOpen: false },
-  play: async ({ canvasElement, args, step }) => {
-    const trigger = within(canvasElement).getByRole('button', { name: TRIGGER })
-    await step('the trigger carries data-disabled', async () => {
-      await expect(trigger).toHaveAttribute('data-disabled')
-    })
-    await step('a click and Enter open no menu', async () => {
-      await userEvent.click(trigger)
-      trigger.focus()
-      await userEvent.keyboard('{Enter}')
-      await frames(2)
-      await expect(screen.queryByRole('menu')).toBeNull()
-      await expect(args.onOpen).not.toHaveBeenCalled()
-      trigger.blur()
-    })
-  },
-}
-
-const LONG_ITEM = 'Trafikinformationsoversigtssidesindstillinger'
-const LONG_GROUP = 'Realtidsdataindstillinger'
-
-/** The menu in a 320 px frame, the room it is placed in, as on a phone. */
-function InFrame(args: MenuProps) {
-  const [frame, setFrame] = useState<HTMLElement | null>(null)
-  return (
-    <div ref={setFrame} data-testid="frame" style={{ inlineSize: 320, blockSize: 400 }}>
-      <Menu
-        {...args}
-        slotProps={{ positioner: { collisionBoundary: frame ?? 'clipping-ancestors' } }}
-      />
-    </div>
-  )
 }
 
 /** A long Danish word in an item and in a group's label, in a 320 px frame. */
@@ -651,5 +507,140 @@ export const LongLabel: Story = {
       await expect(popup.scrollWidth).toBeLessThanOrEqual(popup.clientWidth)
     })
     await step('Escape closes it, and focus returns to the trigger', () => closeAtRest(trigger))
+  },
+}
+
+/** The row highlighted: the Default menu, its second item under the pointer or the keys. */
+export const ItemHighlighted: Story = {
+  tags: ['!dev', '!autodocs'],
+  play: async ({ canvasElement, step }) => {
+    const trigger = triggerIn(canvasElement)
+    await step('the pointer highlights and focuses the row, with the hover fill', async () => {
+      const zoomIn = row(await menu(), ZOOM_IN)
+      await userEvent.hover(zoomIn)
+      await waitFor(() => expect(zoomIn).toHaveAttribute('data-highlighted'))
+      await waitFor(() => expect(zoomIn).toHaveFocus())
+      await expect(getComputedStyle(zoomIn).backgroundColor).toBe(
+        colour('--perron-color-surface-hover'),
+      )
+      await userEvent.unhover(zoomIn)
+    })
+    await step('pressed, the row lays the pressed layer past the hover one', async () => {
+      const zoomIn = row(await menu(), ZOOM_IN)
+      const fill = 'var(--perron-color-surface-selected)'
+      await expect(stateFill(zoomIn, ':active')).toBe(fill)
+      await expect(pressedAfterHover(zoomIn)).toBe(true)
+      await expect(resolve('backgroundColor', fill)).not.toBe(
+        resolve('backgroundColor', stateFill(zoomIn)),
+      )
+      await expect(getComputedStyle(zoomIn).cursor).toBe('pointer')
+    })
+    await step('opened from the keys, the first row has the focus ring', async () => {
+      const popup = await reopenFromKeys(trigger)
+      const centre = row(popup, CENTRE)
+      await waitFor(() => expect(centre).toHaveFocus())
+      await expect(centre.matches(':focus-visible')).toBe(true)
+      const ring = getComputedStyle(centre)
+      await expect(ring.outlineStyle).toBe('solid')
+      await expect(ring.outlineColor).toBe(colour('--perron-color-border-focus'))
+    })
+    await step('Escape closes it, and focus returns to the trigger', () => closeAtRest(trigger))
+  },
+}
+
+/** The row disabled: the Default menu with "Zoom in" disabled. */
+export const ItemDisabled: Story = {
+  tags: ['!dev', '!autodocs'],
+  args: { children: items({ zoomInDisabled: true }) },
+  play: async ({ canvasElement, step }) => {
+    const trigger = triggerIn(canvasElement)
+    await step('the item is announced as dimmed and drawn in the tertiary colour', async () => {
+      const zoomIn = row(await menu(), ZOOM_IN)
+      await expect(zoomIn).toHaveAttribute('aria-disabled', 'true')
+      await expect(zoomIn).toHaveAttribute('data-disabled')
+      await expect(getComputedStyle(zoomIn).color).toBe(colour('--perron-color-text-tertiary'))
+    })
+    await step('ArrowDown still reaches it, and Enter and a click do nothing', async () => {
+      onZoomIn.mockClear()
+      const popup = await reopenFromKeys(trigger)
+      await waitFor(() => expect(row(popup, CENTRE)).toHaveFocus())
+      await userEvent.keyboard('{ArrowDown}')
+      const zoomIn = row(popup, ZOOM_IN)
+      await waitFor(() => expect(zoomIn).toHaveFocus())
+      await userEvent.keyboard('{Enter}')
+      await userEvent.click(zoomIn)
+      await frames(2)
+      await expect(onZoomIn).not.toHaveBeenCalled()
+      await expect(screen.getByRole('menu', { name: TRIGGER })).toBeInTheDocument()
+    })
+    await step(
+      'hovered, highlighted or pressed, it lays no fill, under the default cursor',
+      async () => {
+        const zoomIn = row(await menu(), ZOOM_IN)
+        await expect(onHover(zoomIn, 'background-color')).toBe('')
+        await expect(stateFill(zoomIn, ':active')).toBe('')
+        await expect(getComputedStyle(zoomIn).backgroundColor).toBe('rgba(0, 0, 0, 0)')
+        await expect(getComputedStyle(zoomIn).cursor).toBe('default')
+      },
+    )
+    await step('Escape closes it, and focus returns to the trigger', () => closeAtRest(trigger))
+  },
+}
+
+/** The row selected: a radio group "Theme", "Light" chosen. */
+export const ItemSelected: Story = {
+  tags: ['!dev', '!autodocs'],
+  args: { children: theme('light') },
+  play: async ({ canvasElement, step }) => {
+    const trigger = triggerIn(canvasElement)
+    await step('"Light" is checked, with the selected fill and the tick', async () => {
+      const popup = await menu()
+      const light = row(popup, LIGHT, 'menuitemradio')
+      await expect(light).toHaveAttribute('aria-checked', 'true')
+      await expect(light).toHaveAttribute('data-checked')
+      await expect(getComputedStyle(light).backgroundColor).toBe(
+        colour('--perron-color-surface-selected'),
+      )
+      await expect(tick(light)).not.toBeNull()
+      for (const name of [SYSTEM, DARK]) {
+        const other = row(popup, name, 'menuitemradio')
+        await expect(other).toHaveAttribute('aria-checked', 'false')
+        await expect(other).not.toHaveAttribute('data-checked')
+        await expect(getComputedStyle(other).backgroundColor).not.toBe(
+          colour('--perron-color-surface-selected'),
+        )
+        await expect(tick(other)).toBeNull()
+      }
+    })
+    await step('pressed, "Light" lays the pressed layer over its fill', async () => {
+      const light = row(await menu(), LIGHT, 'menuitemradio')
+      const layers = stateRules(light, ':active').map((rule) =>
+        rule.getPropertyValue('background-image'),
+      )
+      await expect(layers.at(-1)).toContain('var(--perron-color-surface-selected)')
+      await expect(pressedAfterHover(light)).toBe(true)
+    })
+    await step('Escape closes it, and focus returns to the trigger', () => closeAtRest(trigger))
+  },
+}
+
+/** The Default menu with `disabled`, closed. */
+export const Disabled: Story = {
+  tags: ['!dev', '!autodocs'],
+  args: { disabled: true, defaultOpen: false },
+  play: async ({ canvasElement, args, step }) => {
+    const trigger = within(canvasElement).getByRole('button', { name: TRIGGER })
+    await step('the trigger carries data-disabled', async () => {
+      await expect(trigger).toHaveAttribute('data-disabled')
+    })
+    await step('a click and Enter open no menu', async () => {
+      await userEvent.click(trigger)
+      trigger.focus()
+      await userEvent.keyboard('{Enter}')
+      await frames(2)
+      await expect(screen.queryByRole('menu')).toBeNull()
+      await expect(args.onOpen).not.toHaveBeenCalled()
+      trigger.blur()
+    })
   },
 }

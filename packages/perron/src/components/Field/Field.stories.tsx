@@ -1,12 +1,11 @@
-// Field's stories: the variants of the deferred design, Default, Disabled and Invalid, and the
-// stories of content and behaviour the spec's Stories table names (docs/components/field.md), each
-// in a 320 px container. The control is Base UI's Input, which registers with the field (CR-10),
-// styled here with the Fields family's tokens until TextField ships; Field's own CSS draws no box.
+// Field's stories: the field alone with every prop a control, its states side by side, a hidden label,
+// rich content and long words, then the behaviour tests.
 import { Form } from '@base-ui/react/form'
 import { Input } from '@base-ui/react/input'
 import type { CSSProperties } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { showcase } from '../../testing/Showcase.tsx'
 import { expect, userEvent, waitFor, within } from 'storybook/test'
 import { PerronProvider } from '../../PerronProvider.tsx'
 import type { Locale } from '../../locale/index.ts'
@@ -63,10 +62,122 @@ const meta = {
 export default meta
 
 type Story = StoryObj<typeof meta>
+/** The args a story renders with: the meta's and its own. */
+type StoryArgs = Parameters<NonNullable<Story['render']>>[0]
 
 /** The field's control, the textbox, in `scope`. */
 const controlIn = (scope: HTMLElement, name: string | RegExp = LABEL) =>
   within(scope).getByRole<HTMLInputElement>('textbox', { name })
+
+/** Renders `args` in `locale` on the server, as the owned-strings check reads a render. */
+const markup = (args: FieldProps, locale: Locale) =>
+  renderToStaticMarkup(
+    <PerronProvider locale={locale}>
+      <Field {...args} />
+    </PerronProvider>,
+  )
+
+// two messages from the server after a submit, given through Base UI's Form, and two from the
+// field's own checks: Base UI shows each pair as a list
+const SERVER_MESSAGES = ['No stop has this name', 'Check the spelling on the stop sign']
+const CHECK_MESSAGES = ['Enter at least 2 letters', 'Use letters, not digits']
+
+const COMPOUND = 'Hovedstadsområdetsbuslinjestoppestedsoversigtskortudgivelsen'
+
+/** Whether `word`, inside `element`'s text, breaks across more than one line itself. */
+const breaks = (element: Element, word: string) => {
+  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT)
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    const start = node.textContent!.indexOf(word)
+    if (start === -1) continue
+    const range = document.createRange()
+    range.setStart(node, start)
+    range.setEnd(node, start + word.length)
+    return range.getClientRects().length > 1
+  }
+  return false
+}
+
+/** State disabled: the label and the description in `color.text.tertiary`. */
+const disabled = {
+  args: { disabled: true },
+  parameters: {
+    // a disabled field's words are color.text.tertiary, a miss Accessibility lists by name
+    // (docs/foundations/accessibility.md) and WCAG 1.4.3 exempts for an inactive control, so
+    // axe's contrast rule is off for this story alone
+    a11y: { options: { rules: { 'color-contrast': { enabled: false } } } },
+  },
+  play: async ({ canvasElement }) => {
+    const control = controlIn(canvasElement)
+    await expect(control).toBeDisabled()
+    await expect(canvasElement.querySelector('.pn-Field')).toHaveAttribute('data-disabled')
+    await userEvent.tab()
+    await expect(control).not.toHaveFocus()
+    const tertiary = colour('--perron-color-text-tertiary')
+    await expect(getComputedStyle(fieldPart(canvasElement, 'label')!).color).toBe(tertiary)
+    await expect(getComputedStyle(fieldPart(canvasElement, 'description')!).color).toBe(tertiary)
+    await userEvent.tab({ shift: true })
+  },
+} satisfies Story
+
+/** State invalid: the error "Enter a stop name" under the control, in `color.text.danger`. */
+const invalid = {
+  args: { error: 'Enter a stop name' },
+  play: async ({ canvasElement }) => {
+    const control = controlIn(canvasElement)
+    const error = fieldPart(canvasElement, 'error')!
+    const description = fieldPart(canvasElement, 'description')!
+    await expect(heard(error)).toBe('Enter a stop name')
+    await expect(getComputedStyle(error).color).toBe(colour('--perron-color-text-danger'))
+    await expect(control).toHaveAttribute('aria-invalid', 'true')
+    // the help first, then the error, whatever their place
+    await waitFor(() =>
+      expect(control.getAttribute('aria-describedby')).toBe(`${description.id} ${error.id}`),
+    )
+    await expect(control).toHaveAccessibleDescription(`${DESCRIPTION} Enter a stop name`)
+    await expect(canvasElement.querySelector('.pn-Field')).toHaveAttribute('data-invalid')
+    // the label keeps its rest look: the error and the control's edge show it
+    await expect(getComputedStyle(fieldPart(canvasElement, 'label')!).color).toBe(
+      colour('--perron-color-text-primary'),
+    )
+  },
+} satisfies Story
+
+/** `optional`: the label reads "Stop name (optional)", the mark in `color.text.secondary`. */
+const optional = {
+  args: { optional: true },
+  play: async ({ args, canvasElement, step }) => {
+    await step('the mark is part of the control’s name, in the quieter colour', async () => {
+      const control = controlIn(canvasElement, 'Stop name (optional)')
+      await expect(control).toBeInTheDocument()
+      const mark = fieldPart(canvasElement, 'optional')!
+      await expect(fieldPart(canvasElement, 'label')!.contains(mark)).toBe(true)
+      await expect(getComputedStyle(mark).color).toBe(colour('--perron-color-text-secondary'))
+      await expect(getComputedStyle(mark).font).toBe(
+        getComputedStyle(fieldPart(canvasElement, 'label')!).font,
+      )
+    })
+    await step('optionalLabel replaces the mark', async () => {
+      await mounted(canvasElement, <Field {...args} optionalLabel="(if known)" />, async (host) => {
+        await waitFor(() => expect(controlIn(host, 'Stop name (if known)')).toBeInTheDocument())
+      })
+    })
+    await step('its render says only the dictionary’s and the caller’s words (CR-12)', async () => {
+      for (const locale of ['en', 'da', 'sv', 'nb'] as const)
+        expectOwnedStrings(markup(args, locale), locale, [LABEL, DESCRIPTION])
+    })
+  },
+} satisfies Story
+
+/** The label and the control alone, with no `description`. */
+const noDescription = {
+  args: { description: undefined },
+  play: async ({ canvasElement }) => {
+    const control = controlIn(canvasElement)
+    await expect(fieldPart(canvasElement, 'description')).toBeNull()
+    await expect(control).not.toHaveAttribute('aria-describedby')
+  },
+} satisfies Story
 
 /** The subject story, State default: the label, the description and an empty control. */
 export const Default: Story = {
@@ -92,86 +203,23 @@ export const Default: Story = {
   },
 }
 
-/** State disabled: the label and the description in `color.text.tertiary`. */
-export const Disabled: Story = {
-  args: { disabled: true },
+/** Each state a prop reaches, one field apiece: optional, no description, disabled and invalid. */
+export const States: Story = {
   parameters: {
     // a disabled field's words are color.text.tertiary, a miss Accessibility lists by name
-    // (docs/foundations/accessibility.md) and WCAG 1.4.3 exempts for an inactive control, so
-    // axe's contrast rule is off for this story alone
-    a11y: { options: { rules: { 'color-contrast': { enabled: false } } } },
+    // (docs/foundations/accessibility.md) and WCAG 1.4.3 exempts for an inactive control, so axe
+    // leaves it out
+    a11y: { context: { include: ['body'], exclude: ['[data-row="Disabled"]'] } },
   },
-  play: async ({ canvasElement }) => {
-    const control = controlIn(canvasElement)
-    await expect(control).toBeDisabled()
-    await expect(canvasElement.querySelector('.pn-Field')).toHaveAttribute('data-disabled')
-    await userEvent.tab()
-    await expect(control).not.toHaveFocus()
-    const tertiary = colour('--perron-color-text-tertiary')
-    await expect(getComputedStyle(fieldPart(canvasElement, 'label')!).color).toBe(tertiary)
-    await expect(getComputedStyle(fieldPart(canvasElement, 'description')!).color).toBe(tertiary)
-    await userEvent.tab({ shift: true })
-  },
-}
-
-/** State invalid: the error "Enter a stop name" under the control, in `color.text.danger`. */
-export const Invalid: Story = {
-  args: { error: 'Enter a stop name' },
-  play: async ({ canvasElement }) => {
-    const control = controlIn(canvasElement)
-    const error = fieldPart(canvasElement, 'error')!
-    const description = fieldPart(canvasElement, 'description')!
-    await expect(heard(error)).toBe('Enter a stop name')
-    await expect(getComputedStyle(error).color).toBe(colour('--perron-color-text-danger'))
-    await expect(control).toHaveAttribute('aria-invalid', 'true')
-    // the help first, then the error, whatever their place
-    await waitFor(() =>
-      expect(control.getAttribute('aria-describedby')).toBe(`${description.id} ${error.id}`),
-    )
-    await expect(control).toHaveAccessibleDescription(`${DESCRIPTION} Enter a stop name`)
-    await expect(canvasElement.querySelector('.pn-Field')).toHaveAttribute('data-invalid')
-    // the label keeps its rest look: the error and the control's edge show it
-    await expect(getComputedStyle(fieldPart(canvasElement, 'label')!).color).toBe(
-      colour('--perron-color-text-primary'),
-    )
-  },
-}
-
-/** Base UI's own checks: a `validate` on blur, its message shown while one letter is typed. */
-export const Validation: Story = {
-  args: {
-    validationMode: 'onBlur',
-    validate: (value) =>
-      typeof value === 'string' && value.trim().length === 1 ? 'Enter at least 2 letters' : null,
-    children: <Input required style={box} />,
-  },
-  play: async ({ canvasElement, step }) => {
-    const control = controlIn(canvasElement)
-    const start = document.activeElement
-    await step('the field is valid at first, with no error', async () => {
-      await expect(fieldPart(canvasElement, 'error')).toBeNull()
-      await expect(control).not.toHaveAttribute('aria-invalid')
-    })
-    await step('one letter, then Tab out, shows the message', async () => {
-      await userEvent.tab()
-      await userEvent.type(control, 'N')
-      await userEvent.tab()
-      await waitFor(() =>
-        expect(fieldPart(canvasElement, 'error')).toHaveTextContent(/^Enter at least 2 letters$/),
-      )
-      await expect(control).toHaveAttribute('aria-invalid', 'true')
-      await expect(control).toHaveAccessibleDescription(`${DESCRIPTION} Enter at least 2 letters`)
-    })
-    await step('a second letter, then Tab out, removes it', async () => {
-      await userEvent.tab({ shift: true })
-      await expect(control).toHaveFocus()
-      await userEvent.type(control, 'ø')
-      await userEvent.tab()
-      await waitFor(() => expect(fieldPart(canvasElement, 'error')).toBeNull())
-      await expect(control).not.toHaveAttribute('aria-invalid')
-      await expect(document.activeElement).toBe(start)
-    })
-  },
+  ...showcase<StoryArgs>(
+    [
+      { label: 'Optional', story: optional },
+      { label: 'No description', story: noDescription },
+      { label: 'Disabled', story: disabled },
+      { label: 'Invalid', story: invalid },
+    ],
+    (args) => <Field {...args} />,
+  ),
 }
 
 /** `hiddenLabel`: the description and the control, no label in view. */
@@ -190,50 +238,6 @@ export const HiddenLabel: Story = {
     await expect(label.tagName).toBe('SPAN')
     await expect(label.getBoundingClientRect().width).toBeLessThanOrEqual(1)
     await expect(controlIn(canvasElement)).toHaveAccessibleName(LABEL)
-  },
-}
-
-/** Renders `args` in `locale` on the server, as the owned-strings check reads a render. */
-const markup = (args: FieldProps, locale: Locale) =>
-  renderToStaticMarkup(
-    <PerronProvider locale={locale}>
-      <Field {...args} />
-    </PerronProvider>,
-  )
-
-/** `optional`: the label reads "Stop name (optional)", the mark in `color.text.secondary`. */
-export const Optional: Story = {
-  args: { optional: true },
-  play: async ({ args, canvasElement, step }) => {
-    await step('the mark is part of the control’s name, in the quieter colour', async () => {
-      const control = controlIn(canvasElement, 'Stop name (optional)')
-      await expect(control).toBeInTheDocument()
-      const mark = fieldPart(canvasElement, 'optional')!
-      await expect(fieldPart(canvasElement, 'label')!.contains(mark)).toBe(true)
-      await expect(getComputedStyle(mark).color).toBe(colour('--perron-color-text-secondary'))
-      await expect(getComputedStyle(mark).font).toBe(
-        getComputedStyle(fieldPart(canvasElement, 'label')!).font,
-      )
-    })
-    await step('optionalLabel replaces the mark', async () => {
-      await mounted(canvasElement, <Field {...args} optionalLabel="(if known)" />, async (host) => {
-        await waitFor(() => expect(controlIn(host, 'Stop name (if known)')).toBeInTheDocument())
-      })
-    })
-    await step('its render says only the dictionary’s and the caller’s words (CR-12)', async () => {
-      for (const locale of ['en', 'da', 'sv', 'nb'] as const)
-        expectOwnedStrings(markup(args, locale), locale, [LABEL, DESCRIPTION])
-    })
-  },
-}
-
-/** The label and the control alone, with no `description`. */
-export const NoDescription: Story = {
-  args: { description: undefined },
-  play: async ({ canvasElement }) => {
-    const control = controlIn(canvasElement)
-    await expect(fieldPart(canvasElement, 'description')).toBeNull()
-    await expect(control).not.toHaveAttribute('aria-describedby')
   },
 }
 
@@ -294,13 +298,67 @@ export const RichContent: Story = {
   },
 }
 
-// two messages from the server after a submit, given through Base UI's Form, and two from the
-// field's own checks: Base UI shows each pair as a list
-const SERVER_MESSAGES = ['No stop has this name', 'Check the spelling on the stop sign']
-const CHECK_MESSAGES = ['Enter at least 2 letters', 'Use letters, not digits']
+/** A Danish compound longer than its line in the label, the description and the error (CR-8). */
+export const LongWords: Story = {
+  args: {
+    label: COMPOUND,
+    description: `Som skrevet i ${COMPOUND}`,
+    error: `Skriv navnet fra ${COMPOUND}`,
+  },
+  play: async ({ canvasElement }) => {
+    const field = canvasElement.querySelector('.pn-Field')!.getBoundingClientRect()
+    for (const name of ['label', 'description', 'error'] as const) {
+      const element = fieldPart(canvasElement, name)!
+      await expect(lines(element)).toBeGreaterThan(1.5)
+      // the compound itself breaks, inside the word, not only at the space before it
+      await expect(breaks(element, COMPOUND)).toBe(true)
+      await expect(element.getBoundingClientRect().right).toBeLessThanOrEqual(field.right + 0.5)
+      await expect(element.scrollWidth).toBeLessThanOrEqual(element.clientWidth)
+    }
+  },
+}
+
+/** Base UI's own checks: a `validate` on blur, its message shown while one letter is typed. */
+export const Validation: Story = {
+  tags: ['!dev', '!autodocs'],
+  args: {
+    validationMode: 'onBlur',
+    validate: (value) =>
+      typeof value === 'string' && value.trim().length === 1 ? 'Enter at least 2 letters' : null,
+    children: <Input required style={box} />,
+  },
+  play: async ({ canvasElement, step }) => {
+    const control = controlIn(canvasElement)
+    const start = document.activeElement
+    await step('the field is valid at first, with no error', async () => {
+      await expect(fieldPart(canvasElement, 'error')).toBeNull()
+      await expect(control).not.toHaveAttribute('aria-invalid')
+    })
+    await step('one letter, then Tab out, shows the message', async () => {
+      await userEvent.tab()
+      await userEvent.type(control, 'N')
+      await userEvent.tab()
+      await waitFor(() =>
+        expect(fieldPart(canvasElement, 'error')).toHaveTextContent(/^Enter at least 2 letters$/),
+      )
+      await expect(control).toHaveAttribute('aria-invalid', 'true')
+      await expect(control).toHaveAccessibleDescription(`${DESCRIPTION} Enter at least 2 letters`)
+    })
+    await step('a second letter, then Tab out, removes it', async () => {
+      await userEvent.tab({ shift: true })
+      await expect(control).toHaveFocus()
+      await userEvent.type(control, 'ø')
+      await userEvent.tab()
+      await waitFor(() => expect(fieldPart(canvasElement, 'error')).toBeNull())
+      await expect(control).not.toHaveAttribute('aria-invalid')
+      await expect(document.activeElement).toBe(start)
+    })
+  },
+}
 
 /** Base UI's several messages, as a list: two from the server, then two from `validate`. */
 export const SeveralMessages: Story = {
+  tags: ['!dev', '!autodocs'],
   args: {
     name: 'stop',
     validationMode: 'onBlur',
@@ -344,41 +402,5 @@ export const SeveralMessages: Story = {
       await listed(CHECK_MESSAGES)
       await expect(document.activeElement).toBe(start)
     })
-  },
-}
-
-const COMPOUND = 'Hovedstadsområdetsbuslinjestoppestedsoversigtskortudgivelsen'
-
-/** Whether `word`, inside `element`'s text, breaks across more than one line itself. */
-const breaks = (element: Element, word: string) => {
-  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT)
-  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
-    const start = node.textContent!.indexOf(word)
-    if (start === -1) continue
-    const range = document.createRange()
-    range.setStart(node, start)
-    range.setEnd(node, start + word.length)
-    return range.getClientRects().length > 1
-  }
-  return false
-}
-
-/** A Danish compound longer than its line in the label, the description and the error (CR-8). */
-export const LongWords: Story = {
-  args: {
-    label: COMPOUND,
-    description: `Som skrevet i ${COMPOUND}`,
-    error: `Skriv navnet fra ${COMPOUND}`,
-  },
-  play: async ({ canvasElement }) => {
-    const field = canvasElement.querySelector('.pn-Field')!.getBoundingClientRect()
-    for (const name of ['label', 'description', 'error'] as const) {
-      const element = fieldPart(canvasElement, name)!
-      await expect(lines(element)).toBeGreaterThan(1.5)
-      // the compound itself breaks, inside the word, not only at the space before it
-      await expect(breaks(element, COMPOUND)).toBe(true)
-      await expect(element.getBoundingClientRect().right).toBeLessThanOrEqual(field.right + 0.5)
-      await expect(element.scrollWidth).toBeLessThanOrEqual(element.clientWidth)
-    }
   },
 }
