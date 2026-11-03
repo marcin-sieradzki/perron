@@ -175,7 +175,7 @@ Rules for this component alone, numbered so the build and the review can cite th
 - **CR-9.** `optional` and `required` are independent: TextField sets neither from the other, and passes `required` to the input only.
 - **CR-10.** `type` is set on the input in every render, `'text'` when the caller leaves it out, so the box's look never depends on the browser's default type.
 - **CR-11.** The box takes the frame's width (`inline-size: 100%`, `box-sizing: border-box`), and the frame its container's, as Field's CR-7 says; TextField sets no width of its own, so a caller sets it on the container, or on the frame through `slotProps.field`.
-- **CR-12.** The subject story doesn't set `optional`, so the contract story's owned-strings check never sees the mark: the `Optional` story's render gets its own test, which runs `expectOwnedStrings` (`packages/perron/src/testing/owned-strings.ts`) on its server-rendered markup in `en`, `da`, `sv` and `nb`, with the label and the description as the caller's words, as Field's CR-12 does.
+- **CR-12.** The subject story doesn't set `optional`, so the contract story's owned-strings check never sees the mark: the optional field of the `States` story gets its own test, which runs `expectOwnedStrings` (`packages/perron/src/testing/owned-strings.ts`) on its server-rendered markup in `en`, `da`, `sv` and `nb`, with the label and the description as the caller's words, as Field's CR-12 does.
 - **CR-13.** The `placeholder` rule sets `opacity: 1` beside `color.text.tertiary`, since Firefox dims a placeholder on its own and the tertiary ink is already the hint's colour.
 
 ## Stories

@@ -105,7 +105,7 @@ What axe won't catch, from the contract, each with how this component meets it:
 - [ ] Everything the eye is told, the ear is told, for every shape each prop accepts: the text itself is what both are told; a status `color` is never the only sign, so the caller's words say it ([CR-8](#component-rules)), and `overline`'s capitals are styling over sentence-case source text, read as written.
 - [ ] Every landmark and named region has an accessible name: none here; Text makes no landmark or region.
 - [ ] Every default label can be overridden: none here; Text owns no strings.
-- [ ] Every shape the type accepts renders, in every variant: `children` is a `ReactNode`; the `BodySmNeutralPrimary` story gives a list of a string and a `<time>` element, and every other story a string.
+- [ ] Every shape the type accepts renders, in every variant: `children` is a `ReactNode`; the `RichContent` story gives a list of a string and a `<time>` element, and every other story a string.
 - [ ] A hidden copy kept for animation is `aria-hidden`, and a collapsed region is `inert`: none here; Text keeps no hidden copy and collapses nothing.
 - [ ] Native semantics first: `<p>` for sentences, `<span>` for the rest, and the caller's own element through `render`: `<h2>` for a heading, `<time>` for a time. No ARIA.
 - [ ] Focus moves in reading order and returns on close: none here; Text takes no focus and opens nothing.

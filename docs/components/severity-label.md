@@ -18,7 +18,7 @@ The icon for each kind is the one `packages/perron/icons/icons.json` lists for i
 
 The fifth kind, `notice`, is for what Mylder receives as it is: many of Rejseplanen's messages carry no kind Mylder can read, and showing one as planned works would claim what the message never said. It is neutral, `color.transit.severity.notice` pointing at `color.text.secondary` as planned works and data feed problems do, so an unread kind never looks more or less urgent than the calm kinds.
 
-SeverityLabel's one Penpot variant property is `severity`, with the values `delay`, `data`, `diversion`, `planned` and `notice`, the names of the `color.transit.severity.*` tokens. It maps to the `severity` prop with the same values. The variants are `Delay`, `Data`, `Diversion`, `Planned` and `Notice`, and the stories carry those names. There is no `State` property: the label is not interactive.
+SeverityLabel's one Penpot variant property is `severity`, with the values `delay`, `data`, `diversion`, `planned` and `notice`, the names of the `color.transit.severity.*` tokens. It maps to the `severity` prop with the same values. The variants are `Delay`, `Data`, `Diversion`, `Planned` and `Notice`. There is no `State` property: the label is not interactive.
 
 ## Base UI parts
 

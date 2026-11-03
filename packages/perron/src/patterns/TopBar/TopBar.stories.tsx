@@ -87,7 +87,7 @@ const TOOLS = (
   </>
 )
 
-/** What the caller gives `MediumDefault`: every word the bar shows that isn't its own. */
+/** What the caller gives `Default`: every word the bar shows that isn't its own. */
 const CALLER_WORDS = [...MODES.map((mode) => mode.label), 'Dansk', 'About Mylder']
 
 const meta = {
@@ -195,7 +195,7 @@ function layoutOf(bar: HTMLElement) {
 }
 
 /**
- * The layout of `bar` is that of a bar of `size`, rendered with `MediumDefault`'s args at the same
+ * The layout of `bar` is that of a bar of `size`, rendered with `Default`'s args at the same
  * width beside it: each part and control in the same place, at the same size.
  */
 async function expectLayoutOf(canvas: HTMLElement, bar: HTMLElement, size: 'medium' | 'small') {
@@ -494,7 +494,7 @@ const mediumPressed = {
   },
 } satisfies Story
 
-/** `MediumDefault`'s args with `paused`: "Paused · Updated 08:14:05". */
+/** `Default`'s args with `paused`: "Paused · Updated 08:14:05". */
 const paused = {
   args: { paused: true },
   play: async ({ canvasElement }) => {
@@ -516,7 +516,7 @@ const paused = {
   },
 } satisfies Story
 
-/** `MediumDefault`'s args with `time` 08:09:40 and `outOfDate`: "Updated 08:09:40, may be out of date". */
+/** `Default`'s args with `time` 08:09:40 and `outOfDate`: "Updated 08:09:40, may be out of date". */
 const outOfDate = {
   args: { time: '08:09:40', outOfDate: true },
   play: async ({ canvasElement, step }) => {
@@ -573,7 +573,7 @@ const outOfDate = {
   },
 } satisfies Story
 
-/** `MediumDefault`'s args with no `time`: the bar before the first answer, "Updated —". */
+/** `Default`'s args with no `time`: the bar before the first answer, "Updated —". */
 const unknownTime = {
   args: { time: undefined },
   play: async ({ canvasElement }) => {
@@ -584,7 +584,7 @@ const unknownTime = {
   },
 } satisfies Story
 
-/** `MediumDefault`'s args with no `brandHref` and no `filters`: the bar while the timetable loads. */
+/** `Default`'s args with no `brandHref` and no `filters`: the bar while the timetable loads. */
 const noFilters = {
   args: { brandHref: undefined, filters: undefined },
   play: async ({ canvasElement }) => {
@@ -623,7 +623,7 @@ export const Default: Story = {
   },
 }
 
-/** `MediumDefault`'s args on a phone: `size` small, in a 375 px container. */
+/** `Default`'s args on a phone: `size` small, in a 375 px container. */
 export const SmallDefault: Story = {
   args: { size: 'small' },
   decorators: [inside(375)],
@@ -727,7 +727,7 @@ export const SmallDefault: Story = {
   },
 }
 
-/** `MediumDefault`'s args with `size` responsive, on a 1280 px screen: the wide layout. */
+/** `Default`'s args with `size` responsive, on a 1280 px screen: the wide layout. */
 export const ResponsiveWide: Story = {
   args: { size: 'responsive' },
   globals: viewport('desktop'),
@@ -754,7 +754,7 @@ export const ResponsiveWide: Story = {
   },
 }
 
-/** `MediumDefault`'s args with `size` responsive, on a 414 px phone: the phone's layout. */
+/** `Default`'s args with `size` responsive, on a 414 px phone: the phone's layout. */
 export const ResponsivePhone: Story = {
   args: { size: 'responsive' },
   globals: viewport('mobile2'),
@@ -806,7 +806,7 @@ export const States: Story = {
   ),
 }
 
-/** `OutOfDate`'s args with `paused`, `size` medium, in Danish, in a 320 px container. */
+/** The out-of-date bar's args with `paused`, `size` medium, in Danish, in a 320 px container. */
 export const Narrow: Story = {
   args: { time: '08:09:40', outOfDate: true, paused: true },
   decorators: [inside(320), inDanish],
@@ -848,7 +848,7 @@ export const Narrow: Story = {
   },
 }
 
-/** `Paused`'s args with `outOfDate`, and every `*Label` given. */
+/** The paused bar's args with `outOfDate`, and every `*Label` given. */
 export const WithLabels: Story = {
   tags: ['!dev', '!autodocs'],
   args: { paused: true, outOfDate: true, ...LABELS },

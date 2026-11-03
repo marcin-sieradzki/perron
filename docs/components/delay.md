@@ -17,7 +17,7 @@ The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-def
 
 Delay shows a signed figure with its unit, "+3 min" late and "−1 min" early (the true minus sign), "On time" in words when on time, and "—" with no unit when unknown, as content design writes numbers: a space before units, the true minus sign for early and "—" for unknown.
 
-Delay's one Penpot variant property is `delay`, with the values `on-time`, `slight`, `late`, `early` and `unknown`. The code map maps it to the CSS state `[data-delay]` with the same value rather than to a prop, since the component works it out from `minutes`. The variants are `OnTime`, `Slight`, `Late`, `Early` and `Unknown`, and the stories carry those names.
+Delay's one Penpot variant property is `delay`, with the values `on-time`, `slight`, `late`, `early` and `unknown`. The code map maps it to the CSS state `[data-delay]` with the same value rather than to a prop, since the component works it out from `minutes`. The variants are `OnTime`, `Slight`, `Late`, `Early` and `Unknown`.
 
 ## Base UI parts
 

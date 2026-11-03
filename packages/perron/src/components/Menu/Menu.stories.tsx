@@ -511,7 +511,7 @@ export const LongLabel: Story = {
 }
 
 /** The row highlighted: the Default menu, its second item under the pointer or the keys. */
-export const ItemHighlighted: Story = {
+export const Highlighting: Story = {
   tags: ['!dev', '!autodocs'],
   play: async ({ canvasElement, step }) => {
     const trigger = triggerIn(canvasElement)

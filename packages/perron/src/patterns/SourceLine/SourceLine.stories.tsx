@@ -331,7 +331,7 @@ const twoSources = {
   },
 } satisfies Story
 
-/** `TwoSources`' sources, paused. */
+/** The two sources, paused. */
 const paused = {
   args: { sources: [REJSEPLANEN, POSITIONS], paused: true },
   play: async ({ canvasElement }) => {
@@ -815,7 +815,7 @@ export const SourceLabelsOutOfDate: Story = {
   },
 }
 
-/** `OutOfDate`'s sources, paused, in Swedish, in a 320 px container. */
+/** The out-of-date sources, paused, in Swedish, in a 320 px container. */
 export const Narrow: Story = {
   args: { sources: [REJSEPLANEN, STALE], paused: true },
   render: (args) => (

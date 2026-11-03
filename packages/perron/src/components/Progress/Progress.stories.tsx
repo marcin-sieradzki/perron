@@ -84,7 +84,7 @@ async function expectFirstFigureAppearsAtOnce(canvas: HTMLElement) {
   container.remove()
 }
 
-/** The ref the Progressing story hands Progress, to prove it reaches the root. */
+/** The ref the Default story hands Progress, to prove it reaches the root. */
 const progressingRef = createRef<HTMLDivElement>()
 
 /** The subject story: the export done, "100%" over a full fill, in the progressing look. */

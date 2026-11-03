@@ -906,7 +906,7 @@ export const LongWords: Story = {
 }
 
 /** State pressed: the slider at 5, at rest at first render; the play presses and drags. */
-export const Pressed: Story = {
+export const Dragging: Story = {
   tags: ['!dev', '!autodocs'],
   play: async ({ args, canvasElement, step }) => {
     const slider = sliderIn(canvasElement)

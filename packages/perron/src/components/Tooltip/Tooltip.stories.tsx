@@ -118,6 +118,25 @@ async function closeAtFirst(args: TooltipProps) {
   mocked(args.onClose!).mockClear()
 }
 
+/** Open from the story's state at first, which `onOpen` and `onClose` keep. */
+function ControlledTooltip(args: TooltipProps) {
+  const [open, setOpen] = useState(true)
+  return (
+    <Tooltip
+      {...args}
+      open={open}
+      onOpen={(event, details) => {
+        setOpen(true)
+        args.onOpen?.(event, details)
+      }}
+      onClose={(event, reason, details) => {
+        setOpen(false)
+        args.onClose?.(event, reason, details)
+      }}
+    />
+  )
+}
+
 /** The subject story: open above its trigger, an IconButton labelled "Zoom in". */
 export const Default: Story = {
   args: { defaultOpen: true },
@@ -160,142 +179,6 @@ export const Default: Story = {
         expect.anything(),
       )
       await gone()
-    })
-  },
-}
-
-/** Open at first, beside its trigger, which a resting pointer opens it from again. */
-export const Hover: Story = {
-  args: { defaultOpen: true },
-  play: async ({ canvasElement, args, step }) => {
-    const user = userEvent.setup()
-    const trigger = button(canvasElement)
-    await step('a press outside closes the tooltip open at first', () => closeAtFirst(args))
-    await step('hovering the trigger opens it, with trigger-hover', async () => {
-      await pointTo(user, trigger)
-      await popup(ZOOM_IN, HOVER)
-      await expect(args.onOpen).toHaveBeenLastCalledWith(
-        expect.anything(),
-        expect.objectContaining({ reason: 'trigger-hover' }),
-      )
-    })
-    await step('moving the pointer onto the popup keeps it open', async () => {
-      const open = await popup()
-      // through the gap between them, as a pointer travels, then onto the popup
-      const box = trigger.getBoundingClientRect()
-      await pointAt(user, box.left + box.width / 2, box.top - 2)
-      await pointTo(user, open)
-      await frames(2)
-      await expect(open).toBeInTheDocument()
-      await expect(args.onClose).not.toHaveBeenCalled()
-    })
-    await step('moving it off both closes it, with trigger-hover', async () => {
-      await pointTo(user)
-      await gone()
-      await expect(args.onClose).toHaveBeenLastCalledWith(
-        expect.anything(),
-        'trigger-hover',
-        expect.anything(),
-      )
-    })
-  },
-}
-
-/** Open at first, after a button "Before" that holds focus at the start. */
-export const Keyboard: Story = {
-  args: { defaultOpen: true },
-  render: (args) => (
-    <>
-      <Button variant="outline">{BEFORE}</Button>
-      <Tooltip {...args} />
-    </>
-  ),
-  play: async ({ canvasElement, args, step }) => {
-    const before = button(canvasElement, BEFORE)
-    const trigger = button(canvasElement)
-    before.focus()
-    await step('a press outside closes the tooltip open at first', () => closeAtFirst(args))
-    await step('Tab focuses the trigger and opens it, with trigger-focus', async () => {
-      await userEvent.tab()
-      await expect(trigger).toHaveFocus()
-      await popup()
-      await expect(args.onOpen).toHaveBeenLastCalledWith(
-        expect.anything(),
-        expect.objectContaining({ reason: 'trigger-focus' }),
-      )
-    })
-    await step('Esc closes it, with escape-key, and focus stays on the trigger', async () => {
-      await userEvent.keyboard('{Escape}')
-      await gone()
-      await expect(args.onClose).toHaveBeenLastCalledWith(
-        expect.anything(),
-        'escape-key',
-        expect.anything(),
-      )
-      await expect(trigger).toHaveFocus()
-    })
-    await step('Shift+Tab moves focus back to Before, with the tooltip closed', async () => {
-      await userEvent.tab({ shift: true })
-      await expect(before).toHaveFocus()
-      await expect(document.querySelector('.pn-Tooltip')).toBeNull()
-    })
-  },
-}
-
-/** Open from the story's state at first, which `onOpen` and `onClose` keep. */
-function ControlledTooltip(args: TooltipProps) {
-  const [open, setOpen] = useState(true)
-  return (
-    <Tooltip
-      {...args}
-      open={open}
-      onOpen={(event, details) => {
-        setOpen(true)
-        args.onOpen?.(event, details)
-      }}
-      onClose={(event, reason, details) => {
-        setOpen(false)
-        args.onClose?.(event, reason, details)
-      }}
-    />
-  )
-}
-
-/** Open from the story's state at first, which `onOpen` and `onClose` keep. */
-export const Controlled: Story = {
-  render: (args) => <ControlledTooltip {...args} />,
-  play: async ({ canvasElement, args, step }) => {
-    const user = userEvent.setup()
-    const trigger = button(canvasElement)
-    await popup()
-    await step('a click on the trigger closes it, with trigger-press', async () => {
-      await user.click(trigger)
-      await gone()
-      await expect(args.onClose).toHaveBeenLastCalledWith(
-        expect.anything(),
-        'trigger-press',
-        expect.anything(),
-      )
-      trigger.blur()
-    })
-    await step('hovering opens it again', async () => {
-      await pointTo(user)
-      await pointTo(user, trigger)
-      await popup(ZOOM_IN, HOVER)
-      await expect(args.onOpen).toHaveBeenLastCalledWith(
-        expect.anything(),
-        expect.objectContaining({ reason: 'trigger-hover' }),
-      )
-    })
-    await step('a press outside closes it, with outside-press', async () => {
-      pressOutside()
-      await gone()
-      await expect(args.onClose).toHaveBeenLastCalledWith(
-        expect.anything(),
-        'outside-press',
-        expect.anything(),
-      )
-      await pointTo(user)
     })
   },
 }
@@ -395,8 +278,129 @@ export const NearTopEdge: Story = {
   },
 }
 
+/** Open at first, beside its trigger, which a resting pointer opens it from again. */
+export const Hover: Story = {
+  tags: ['!dev', '!autodocs'],
+  args: { defaultOpen: true },
+  play: async ({ canvasElement, args, step }) => {
+    const user = userEvent.setup()
+    const trigger = button(canvasElement)
+    await step('a press outside closes the tooltip open at first', () => closeAtFirst(args))
+    await step('hovering the trigger opens it, with trigger-hover', async () => {
+      await pointTo(user, trigger)
+      await popup(ZOOM_IN, HOVER)
+      await expect(args.onOpen).toHaveBeenLastCalledWith(
+        expect.anything(),
+        expect.objectContaining({ reason: 'trigger-hover' }),
+      )
+    })
+    await step('moving the pointer onto the popup keeps it open', async () => {
+      const open = await popup()
+      // through the gap between them, as a pointer travels, then onto the popup
+      const box = trigger.getBoundingClientRect()
+      await pointAt(user, box.left + box.width / 2, box.top - 2)
+      await pointTo(user, open)
+      await frames(2)
+      await expect(open).toBeInTheDocument()
+      await expect(args.onClose).not.toHaveBeenCalled()
+    })
+    await step('moving it off both closes it, with trigger-hover', async () => {
+      await pointTo(user)
+      await gone()
+      await expect(args.onClose).toHaveBeenLastCalledWith(
+        expect.anything(),
+        'trigger-hover',
+        expect.anything(),
+      )
+    })
+  },
+}
+
+/** Open at first, after a button "Before" that holds focus at the start. */
+export const Keyboard: Story = {
+  tags: ['!dev', '!autodocs'],
+  args: { defaultOpen: true },
+  render: (args) => (
+    <>
+      <Button variant="outline">{BEFORE}</Button>
+      <Tooltip {...args} />
+    </>
+  ),
+  play: async ({ canvasElement, args, step }) => {
+    const before = button(canvasElement, BEFORE)
+    const trigger = button(canvasElement)
+    before.focus()
+    await step('a press outside closes the tooltip open at first', () => closeAtFirst(args))
+    await step('Tab focuses the trigger and opens it, with trigger-focus', async () => {
+      await userEvent.tab()
+      await expect(trigger).toHaveFocus()
+      await popup()
+      await expect(args.onOpen).toHaveBeenLastCalledWith(
+        expect.anything(),
+        expect.objectContaining({ reason: 'trigger-focus' }),
+      )
+    })
+    await step('Esc closes it, with escape-key, and focus stays on the trigger', async () => {
+      await userEvent.keyboard('{Escape}')
+      await gone()
+      await expect(args.onClose).toHaveBeenLastCalledWith(
+        expect.anything(),
+        'escape-key',
+        expect.anything(),
+      )
+      await expect(trigger).toHaveFocus()
+    })
+    await step('Shift+Tab moves focus back to Before, with the tooltip closed', async () => {
+      await userEvent.tab({ shift: true })
+      await expect(before).toHaveFocus()
+      await expect(document.querySelector('.pn-Tooltip')).toBeNull()
+    })
+  },
+}
+
+/** Open from the story's state at first, which `onOpen` and `onClose` keep. */
+export const Controlled: Story = {
+  tags: ['!dev', '!autodocs'],
+  render: (args) => <ControlledTooltip {...args} />,
+  play: async ({ canvasElement, args, step }) => {
+    const user = userEvent.setup()
+    const trigger = button(canvasElement)
+    await popup()
+    await step('a click on the trigger closes it, with trigger-press', async () => {
+      await user.click(trigger)
+      await gone()
+      await expect(args.onClose).toHaveBeenLastCalledWith(
+        expect.anything(),
+        'trigger-press',
+        expect.anything(),
+      )
+      trigger.blur()
+    })
+    await step('hovering opens it again', async () => {
+      await pointTo(user)
+      await pointTo(user, trigger)
+      await popup(ZOOM_IN, HOVER)
+      await expect(args.onOpen).toHaveBeenLastCalledWith(
+        expect.anything(),
+        expect.objectContaining({ reason: 'trigger-hover' }),
+      )
+    })
+    await step('a press outside closes it, with outside-press', async () => {
+      pressOutside()
+      await gone()
+      await expect(args.onClose).toHaveBeenLastCalledWith(
+        expect.anything(),
+        'outside-press',
+        expect.anything(),
+      )
+      await pointTo(user)
+    })
+  },
+}
+
 /** A disabled IconButton that keeps its focus, its tooltip open at first: the keys open it again. */
 export const DisabledTrigger: Story = {
+  tags: ['!dev', '!autodocs'],
   args: {
     defaultOpen: true,
     trigger: (
