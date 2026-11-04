@@ -36,9 +36,6 @@ describe('REPO_URL', () => {
       'https://github.com/example/repo',
     )
     expect(REPO_URL).toMatch(/^https:\/\/github\.com\/[\w.-]+\/[\w.-]+$/)
-    expect(REPO_URL).toBe(
-      repositoryLink(JSON.parse(readRepoFile('packages/perron/package.json')).repository.url),
-    )
   })
 })
 

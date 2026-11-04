@@ -37,6 +37,7 @@ Search the repo for every file that documents how code should be written. `CLAUD
 
 - component code: the contract, `docs/components/README.md`;
 - tokens: the `design-tokens` skill;
+- tests, a story's `play` among them: the `tdd` skill's Anti-patterns, where a tautological test (an assertion that cannot go red) is a hard violation;
 - anything a rider sees or hears: the foundation page for it in `docs/foundations/`, and `docs/content-design.md` for the words;
 - an agent-facing file (a skill, an agent, `CLAUDE.md`): the `writing-for-agents` skill;
 - the ADRs in `docs/adr/` that cover the area.

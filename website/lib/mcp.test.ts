@@ -36,7 +36,6 @@ describe('loadTools', () => {
       if (!tool.example) continue
       const again = await callTool(client, tool.name, tool.example.args)
       expect(tool.example).toEqual(again)
-      expect(tool.example.shown).toBe(showCall(tool.name, tool.example.args))
     }
   })
 
