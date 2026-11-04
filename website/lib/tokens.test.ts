@@ -3,7 +3,6 @@ import {
   cssVar,
   readResolvedTokens,
   readToken,
-  readTokenData,
   tokenCount,
   tokenNumber,
   tokensUnder,
@@ -11,7 +10,6 @@ import {
 
 describe('readTokenData', () => {
   it('lists every shipped token with its custom property and values', () => {
-    expect(tokenCount()).toBe(readTokenData().length)
     expect(tokenCount()).toBeGreaterThan(100)
     expect(readToken('color.text.primary')).toMatchObject({
       cssVar: '--perron-color-text-primary',

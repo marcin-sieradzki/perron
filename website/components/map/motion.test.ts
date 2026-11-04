@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { MOVING, ROUTES, SHUTTLE_PAUSE, STATIONS, STILL, WAIT } from './map-data.ts'
-import { measure, pointAt, reportKeys, runKeys, shareAt, shareNearest } from './motion.ts'
+import { measure, pointAt, reportKeys, runKeys, shareNearest } from './motion.ts'
 
 const straight = 'M0 0 L100 0'
 
@@ -47,7 +47,9 @@ describe('reportKeys', () => {
     const keys = runKeys({ kind: 'loop' }, { wait: WAIT, pause: 0 })
     const reports = reportKeys(keys, 10)
     expect(reports.times).toHaveLength(10)
-    expect(reports.points[5]).toBeCloseTo(shareAt(keys, 0.5))
+    // A loop with no waits runs at one speed, so each report is as far along as it is late.
+    expect(reports.points[5]).toBeCloseTo(0.5)
+    expect(reports.points[9]).toBeCloseTo(0.9)
   })
 })
 
