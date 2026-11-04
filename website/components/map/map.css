@@ -28,6 +28,13 @@
   opacity: 0.85;
 }
 
+/* the city runs to x 1200 of the drawing's 1440, and the Sound fills the rest: the full and quiet
+   views draw it 1440/1200 times the page's width, so the sea falls past the right edge instead of
+   leaving an empty band beside the panels, and the lines' centre sits nearer the page's middle */
+.map:is([data-view='full'], [data-view='quiet']) .map-drawing {
+  inline-size: calc(100% * 1440 / 1200);
+}
+
 /* the quiet strip shows the city centre, where the lines meet, not the drawing's top edge */
 .map[data-view='quiet'] .map-drawing {
   opacity: 0.7;
