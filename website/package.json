@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@mylder/perron": "*",
+    "@vercel/analytics": "2.0.1",
     "markdown-to-jsx": "9.10.3",
     "next": "16.4.3",
     "postcss": "8.5.31"
