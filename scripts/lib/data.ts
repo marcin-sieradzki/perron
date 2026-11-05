@@ -91,27 +91,29 @@ function propsOf(name: string, api: ComponentApi | undefined, spec: string): Com
   const table = specPropsTable(spec, name)
   const own = propRows(api ?? { extends: [], props: {} }, table).map((r) => {
     const deprecated = api?.props[r.name]?.deprecated
+    const fallback = defaultOf(r.default)
     return {
       name: r.name,
       type: r.type,
       optional: !r.required,
-      ...(defaultOf(r.default) !== undefined && { default: defaultOf(r.default) }),
+      ...(fallback !== undefined && { default: fallback }),
       description: r.description,
       ...(deprecated !== undefined && { deprecated }),
     }
   })
   const named = new Set(own.map((p) => p.name))
-  const rest = table.flatMap((r) =>
-    r.names
+  const rest = table.flatMap((r) => {
+    const fallback = defaultOf(r.default)
+    return r.names
       .filter((n) => !named.has(n))
       .map((n) => ({
         name: n,
         type: r.type,
         optional: !/\(required\)/i.test(r.default),
-        ...(defaultOf(r.default) !== undefined && { default: defaultOf(r.default) }),
+        ...(fallback !== undefined && { default: fallback }),
         description: r.description,
-      })),
-  )
+      }))
+  })
   return [...own, ...rest]
 }
 
