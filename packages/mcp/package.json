@@ -1,7 +1,7 @@
 {
   "name": "@mylder/perron-mcp",
   "version": "0.2.7",
-  "description": "The Perron MCP server: Perron's tokens, docs and pinned library references for agents.",
+  "description": "The Perron MCP server: Perron's tokens, docs, components and pinned library references for agents.",
   "license": "MIT",
   "type": "module",
   "repository": {

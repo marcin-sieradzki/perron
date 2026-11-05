@@ -99,7 +99,7 @@ export default async function AgentsPage() {
             <p className="agents-note">
               {data.files.map((f, i) => (
                 <Fragment key={f}>
-                  {i ? ' and ' : null}
+                  {i ? (i === data.files.length - 1 ? ' and ' : ', ') : null}
                   <code>{f}</code>
                 </Fragment>
               ))}
