@@ -71,6 +71,42 @@ describe('token sources', () => {
     expect(() => loadTokens(s)).toThrow(/not a base duration token/)
   })
 
+  it('fails the build on a description that only repeats the token name', () => {
+    const s = clone()
+    const b = s.files['base.tokens.json'] as {
+      color: { transit: { line: Record<string, { $description: string }> } }
+    }
+    b.color.transit.line.m1.$description = 'The transit line M1'
+    expect(() => buildAll(s)).toThrow(
+      /color\.transit\.line\.m1: the description only repeats .* What is the token for\?/,
+    )
+  })
+
+  it('fails the build on a description that only repeats the name and the value', () => {
+    const s = clone()
+    const b = s.files['base.tokens.json'] as { radius: Record<string, { $description: string }> }
+    b.radius.sm.$description = 'Radius, 6 px'
+    expect(() => buildAll(s)).toThrow(/radius\.sm: the description only repeats/)
+  })
+
+  it('fails the build on a theme description that names its token in the plural', () => {
+    const s = clone()
+    const light = s.files['light.tokens.json'] as {
+      color: { map: Record<string, { $description: string }> }
+    }
+    light.color.map.runway.$description = 'Runways'
+    expect(() => buildAll(s)).toThrow(/color\.map\.runway: the description only repeats/)
+  })
+
+  it('builds a description that says what the token is for', () => {
+    const s = clone()
+    const b = s.files['base.tokens.json'] as {
+      color: { transit: { line: Record<string, { $description: string }> } }
+    }
+    b.color.transit.line.m1.$description = 'Fills the M1 line badge'
+    expect(() => buildAll(s)).not.toThrow()
+  })
+
   it('reports unknown references and cycles', () => {
     const map = tokenMap(tokens, 'light')
     expect(() => resolveValue('{color.nope}', map)).toThrow(/Unknown reference/)

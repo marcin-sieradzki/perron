@@ -8,7 +8,7 @@
       },
       "secondary": {
         "$value": "{palette.neutral.300}",
-        "$description": "Supporting text"
+        "$description": "Supporting text beside or under the main text: labels, second lines and details"
       },
       "tertiary": {
         "$value": "{palette.neutral.500}",
@@ -46,7 +46,7 @@
       },
       "raised": {
         "$value": "{palette.neutral.800}",
-        "$description": "Inputs, selected segment"
+        "$description": "Background of fields, checkboxes, radios and keys, and of the selected segment"
       },
       "inset": {
         "$value": "{palette.neutral.700}",
@@ -68,7 +68,7 @@
           "alpha": 0.06,
           "hex": "#EBEEEB"
         },
-        "$description": "Hover state layer"
+        "$description": "Translucent layer over a control under the pointer"
       },
       "selected": {
         "$value": {
@@ -121,7 +121,7 @@
       },
       "brand-subtle": {
         "$value": "{palette.yellow.900}",
-        "$description": "Tinted brand background"
+        "$description": "Brand tint for emphasis on the hero page, under color.text.brand"
       }
     },
     "border": {
@@ -158,7 +158,7 @@
       },
       "focus": {
         "$value": "{color.text.primary}",
-        "$description": "Keyboard focus ring"
+        "$description": "The ring around the control that has keyboard focus"
       }
     },
     "status": {
@@ -177,7 +177,7 @@
       },
       "info": {
         "$value": "{palette.blue.300}",
-        "$description": "Early, diversions"
+        "$description": "Running early and diversions: the info fill of alerts, toasts and meters"
       }
     },
     "chart": {
@@ -195,7 +195,7 @@
       "mode": {
         "bus": {
           "$value": "{palette.yellow.300}",
-          "$description": "All bus lines"
+          "$description": "Every bus line: fills bus badges and colours bus dots, station icons and stop timelines; also the bus dot of the Mylder mark"
         },
         "regional": {
           "$type": "color",
@@ -244,7 +244,7 @@
         },
         "data": {
           "$value": "{color.text.secondary}",
-          "$description": "Data feed problems"
+          "$description": "Icon and label for data feed problems"
         },
         "diversion": {
           "$value": "{color.text.info}",
@@ -320,7 +320,7 @@
           "components": [0.1451, 0.1765, 0.1922],
           "hex": "#252D31"
         },
-        "$description": "Streets"
+        "$description": "Roads and streets, drawn over the land"
       },
       "airport": {
         "$type": "color",
@@ -329,7 +329,7 @@
           "components": [0.1098, 0.1373, 0.149],
           "hex": "#1C2326"
         },
-        "$description": "Airport grounds"
+        "$description": "Airport grounds, under the runways and taxiways"
       },
       "runway": {
         "$type": "color",
@@ -338,7 +338,7 @@
           "components": [0.1686, 0.2039, 0.2196],
           "hex": "#2B3438"
         },
-        "$description": "Runways and taxiways"
+        "$description": "Runways and taxiways, drawn over the airport grounds"
       },
       "building": {
         "$type": "color",
@@ -374,7 +374,7 @@
           "components": [0.4941, 0.5451, 0.5686],
           "hex": "#7E8B91"
         },
-        "$description": "Place names"
+        "$description": "Place names on land; names on water use color.map.water-label"
       },
       "water-label": {
         "$type": "color",
@@ -383,7 +383,7 @@
           "components": [0.2941, 0.4039, 0.4549],
           "hex": "#4B6774"
         },
-        "$description": "Water names"
+        "$description": "Names of seas, lakes and harbours, set on the water"
       },
       "aircraft": {
         "$type": "color",
@@ -449,7 +449,7 @@
           }
         }
       ],
-      "$description": "Floating panels"
+      "$description": "Lifts floating panels, dialogs, menus, popovers and toasts off what lies under them"
     },
     "thumb": {
       "$value": {

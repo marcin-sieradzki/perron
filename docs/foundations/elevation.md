@@ -14,10 +14,10 @@ The surface and shadow tokens. The map is the ground; everything else floats ove
 | Token                    | Light                           | Dark                            | Use                                                                                                       |
 | ------------------------ | ------------------------------- | ------------------------------- | --------------------------------------------------------------------------------------------------------- |
 | `color.surface.default`  | `#FAFBF9` (palette.neutral.50)  | `#12181B` (palette.neutral.900) | Opaque panel background; text on inverse surfaces                                                         |
-| `color.surface.raised`   | `#FFFFFF` (palette.neutral.0)   | `#1D2428` (palette.neutral.800) | Inputs, selected segment                                                                                  |
+| `color.surface.raised`   | `#FFFFFF` (palette.neutral.0)   | `#1D2428` (palette.neutral.800) | Background of fields, checkboxes, radios and keys, and of the selected segment                            |
 | `color.surface.inset`    | `#EBEEEB` (palette.neutral.100) | `#283237` (palette.neutral.700) | Segmented control track, counts, inset boxes                                                              |
 | `color.surface.overlay`  | `rgba(250, 251, 249, 0.9)`      | `rgba(18, 24, 27, 0.88)`        | Translucent floating panels over the map (used with backdrop blur)                                        |
-| `color.surface.hover`    | `rgba(18, 24, 27, 0.05)`        | `rgba(235, 238, 235, 0.06)`     | Hover state layer                                                                                         |
+| `color.surface.hover`    | `rgba(18, 24, 27, 0.05)`        | `rgba(235, 238, 235, 0.06)`     | Translucent layer over a control under the pointer                                                        |
 | `color.surface.selected` | `rgba(18, 24, 27, 0.09)`        | `rgba(235, 238, 235, 0.09)`     | Selected row; the pressed layer of a quiet or outline control, in place of color.surface.hover and denser |
 | `color.surface.inverse`  | `#12181B` (color.text.primary)  | `#EBEEEB` (color.text.primary)  | Primary buttons, pressed icon buttons, chart tooltip                                                      |
 | `effect.glass-blur`      | `16px`                          | `16px`                          | Backdrop blur behind glass panels                                                                         |
@@ -41,10 +41,10 @@ Floating panels carry `shadow.panel`. Nothing else casts a shadow, except the se
 
 <!-- tokens: shadow.* -->
 
-| Token          | Light                                                                             | Dark                                                                         | Use                                     |
-| -------------- | --------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | --------------------------------------- |
-| `shadow.panel` | `0px 1px 2px 0px rgba(18, 24, 27, 0.06), 0px 10px 30px 0px rgba(18, 24, 27, 0.1)` | `0px 1px 2px 0px rgba(0, 0, 0, 0.35), 0px 14px 36px 0px rgba(0, 0, 0, 0.38)` | Floating panels                         |
-| `shadow.thumb` | `0px 1px 2px 0px rgba(0, 0, 0, 0.14)`                                             | `0px 1px 2px 0px rgba(0, 0, 0, 0.4)`                                         | Selected segment in a segmented control |
+| Token          | Light                                                                             | Dark                                                                         | Use                                                                                 |
+| -------------- | --------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `shadow.panel` | `0px 1px 2px 0px rgba(18, 24, 27, 0.06), 0px 10px 30px 0px rgba(18, 24, 27, 0.1)` | `0px 1px 2px 0px rgba(0, 0, 0, 0.35), 0px 14px 36px 0px rgba(0, 0, 0, 0.38)` | Lifts floating panels, dialogs, menus, popovers and toasts off what lies under them |
+| `shadow.thumb` | `0px 1px 2px 0px rgba(0, 0, 0, 0.14)`                                             | `0px 1px 2px 0px rgba(0, 0, 0, 0.4)`                                         | Selected segment in a segmented control                                             |
 
 <!-- /tokens -->
 

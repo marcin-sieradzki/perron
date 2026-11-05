@@ -13,7 +13,7 @@ Motion explains a change of place. The sheet slides, the camera eases to a selec
 | -------------------------- | -------- | -------------- | --------------------------------------------------------------- |
 | `duration.sheet`           | `320ms`  | `0.01ms`       | Bottom sheet open and close                                     |
 | `duration.meter`           | `800ms`  | `0.01ms`       | Meter and progress bar fill change                              |
-| `duration.camera`          | `750ms`  | `0.01ms`       | Map camera fly-to                                               |
+| `duration.camera`          | `750ms`  | `0.01ms`       | How long the map camera takes to fly to a selection             |
 | `duration.follow`          | `500ms`  | `0.01ms`       | Camera fly-to when following starts                             |
 | `duration.switch`          | `150ms`  | `0.01ms`       | Switch thumb slide and track fill                               |
 | `duration.toast`           | `200ms`  | `0.01ms`       | Toast slide and fade in and out                                 |
@@ -30,10 +30,10 @@ The sheet has its own curve, which settles slowly so a long slide doesn't stop a
 
 <!-- tokens: easing.* -->
 
-| Token             | Value                              | Use                           |
-| ----------------- | ---------------------------------- | ----------------------------- |
-| `easing.sheet`    | `cubic-bezier(0.2, 0.8, 0.2, 1)`   | Bottom sheet                  |
-| `easing.standard` | `cubic-bezier(0.25, 0.1, 0.25, 1)` | CSS ease (meters, the switch) |
+| Token             | Value                              | Use                                           |
+| ----------------- | ---------------------------------- | --------------------------------------------- |
+| `easing.sheet`    | `cubic-bezier(0.2, 0.8, 0.2, 1)`   | Curve of the bottom sheet opening and closing |
+| `easing.standard` | `cubic-bezier(0.25, 0.1, 0.25, 1)` | CSS ease (meters, the switch)                 |
 
 <!-- /tokens -->
 
