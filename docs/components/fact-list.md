@@ -6,6 +6,16 @@ A short list of facts about one thing, each a name and what it is, such as "Oper
 
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): this spec decides what the drawing would, from the [contract](README.md), the [foundations](../foundations/README.md), [content design](../content-design.md), the tokens and the specs of its Display siblings, [Stat](stat.md)'s and [Text](text.md)'s. FactList has no Base UI component and nothing in `dependsOn`, and the extracted prototype is not reachable from this branch, so nothing here rests on it.
 
+## When to use
+
+Use FactList for several facts about one thing, each a name and what it is, such as a vehicle's operator and last report in its detail panel.
+
+| Use instead                                  | When                                                             |
+| -------------------------------------------- | ---------------------------------------------------------------- |
+| [Stat](stat.md)                              | The fact is one key figure, set large to read at a glance        |
+| [VehicleTable](../patterns/vehicle-table.md) | People compare the same facts across many vehicles, one row each |
+| [EmptyState](empty-state.md)                 | There are no facts to show                                       |
+
 ## Anatomy
 
 Penpot page `Components/FactList`. Family: none, since it is static content that sits on its container's surface: it is not one of the Rows family's options, menu items or list rows, which are pressed and take a hover, and it draws no surface of its own. Shared parts: VisuallyHidden, which says an unknown value in words (CR-5).
@@ -154,15 +164,19 @@ One per variant the deferred design will draw. It has no variant property, so it
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                | Don't                                                                                                                        |
-| ----------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| Leave out an item's `value` when no data gives it, so FactList shows "—" and says "Unknown"                       | Write "0", "n/a" or a guess for a value nobody knows: the brand never claims more than the data knows                        |
-| Name each fact in a word or two, "Operator", "Last report", and write its value as content design does, "32 km/h" | Put the name inside the value, such as "Speed 32 km/h": the name and value then read as one term with no definition          |
-| Use FactList for several facts about one thing, such as a vehicle in its detail panel                             | Use it for one key figure, which is a Stat, or for rows people compare across many things, which is a table                  |
-| Name the list with `aria-labelledby` pointing at the panel's heading when the panel holds more than one list      | Give the list a heading inside `items`: every entry is a fact, a name and its value                                          |
-| Say a status in words in the value, or show it with a SeverityLabel or a Delay                                    | Colour a value through `className` to say it is good or bad: colour alone tells no screen reader and no colour-blind person  |
-| Show EmptyState in place of FactList when there are no facts to show                                              | Render FactList with an empty `items` and nothing beside it: an empty list tells the person nothing                          |
-| Keep `render` on the root to another `dl`, or a component that renders one                                        | Swap the root for a `ul` or `div` through `render`: its `dt` and `dd` would sit outside a `dl`, which HTML and axe both fail |
-| Announce a changed fact in the screen's own polite live region, when it changes state                             | Make FactList a live region: a speed or report time that updates every few seconds floods the screen reader                  |
+| Rule | Level  | Do                                                                                                                | Don't                                                                                                                        | Checked by |
+| ---- | ------ | ----------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | must   | Leave out an item's `value` when no data gives it, so FactList shows "—" and says "Unknown"                       | Write "0", "n/a" or a guess for a value nobody knows: the brand never claims more than the data knows                        | review     |
+| DD-2 | must   | Name each fact in a word or two, "Operator", "Last report", and write its value as content design does, "32 km/h" | Put the name inside the value, such as "Speed 32 km/h": the name and value then read as one term with no definition          | review     |
+| DD-3 | should | Use FactList for several facts about one thing, such as a vehicle in its detail panel                             | Use it for one key figure, which is a Stat, or for rows people compare across many things, which is a table                  | review     |
+| DD-4 | must   | Name the list with `aria-labelledby` pointing at the panel's heading when the panel holds more than one list      | Give the list a heading inside `items`: every entry is a fact, a name and its value                                          | review     |
+| DD-5 | must   | Say a status in words in the value, or show it with a SeverityLabel or a Delay                                    | Colour a value through `className` to say it is good or bad: colour alone tells no screen reader and no colour-blind person  | review     |
+| DD-6 | should | Show EmptyState in place of FactList when there are no facts to show                                              | Render FactList with an empty `items` and nothing beside it: an empty list tells the person nothing                          | review     |
+| DD-7 | must   | Keep `render` on the root to another `dl`, or a component that renders one                                        | Swap the root for a `ul` or `div` through `render`: its `dt` and `dd` would sit outside a `dl`, which HTML and axe both fail | review     |
+| DD-8 | must   | Announce a changed fact in the screen's own polite live region, when it changes state                             | Make FactList a live region: a speed or report time that updates every few seconds floods the screen reader                  | review     |
+
+## For agents
+
+None known yet.

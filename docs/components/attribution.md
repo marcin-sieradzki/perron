@@ -2,6 +2,14 @@
 
 Attribution is the map's credits: one small strip of caption text, laid on glass in a corner of the map, that names where the map and its data come from, such as "Map data © OpenStreetMap contributors", with the caller's links to each source.
 
+## When to use
+
+Use Attribution for the map's credits: one strip in a corner of the map that names where the map and its data come from, with a link to each source's terms.
+
+| Use instead                              | When                                                              |
+| ---------------------------------------- | ----------------------------------------------------------------- |
+| [SourceLine](../patterns/source-line.md) | A panel names where its data comes from and the time of that data |
+
 ## Anatomy
 
 Penpot page `Components/Attribution`. Family: none (the contract's [Families](README.md#families) have no strip of small print; Attribution borrows the Popups' glass fill and nothing else of theirs). Shared parts: none (every word is the caller's, and nothing is told by an icon or a shape).
@@ -132,12 +140,16 @@ One per variant the deferred design will draw. Attribution has no variant proper
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                                                          | Don't                                                                                                                                                        |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Credit each source as its terms ask, with a link to those terms: "Map data © OpenStreetMap contributors"                                                    | Shorten a credit a source's terms set, or leave the link out where the terms ask for one                                                                     |
-| Place one Attribution in a corner of the map, `size.panel-gap` from the edge and stacked at `z-index.map-controls`, clear of the map controls and the scale | Put it in a panel, a dialog or the page's footer, away from the map it credits, or cover it with a sheet or a panel                                          |
-| Give it phrasing content: text, links and inline elements                                                                                                   | Put a heading, a paragraph or a list in it; a `<small>` holds phrasing content only                                                                          |
-| Write each link's text as the source's name or the credit itself                                                                                            | Write "Click here" or "Read more", or a bare URL; the link's text is what a screen reader hears                                                              |
-| Keep it to the credits                                                                                                                                      | Use it for a disclaimer, a data-state note or a status message; a status belongs in words beside what it is about, in its own component, with its own colour |
+| Rule | Level  | Do                                                                                                                                                          | Don't                                                                                                                                                        | Checked by |
+| ---- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- |
+| DD-1 | must   | Credit each source as its terms ask, with a link to those terms: "Map data © OpenStreetMap contributors"                                                    | Shorten a credit a source's terms set, or leave the link out where the terms ask for one                                                                     | review     |
+| DD-2 | should | Place one Attribution in a corner of the map, `size.panel-gap` from the edge and stacked at `z-index.map-controls`, clear of the map controls and the scale | Put it in a panel, a dialog or the page's footer, away from the map it credits, or cover it with a sheet or a panel                                          | review     |
+| DD-3 | must   | Give it phrasing content: text, links and inline elements                                                                                                   | Put a heading, a paragraph or a list in it; a `<small>` holds phrasing content only                                                                          | review     |
+| DD-4 | must   | Write each link's text as the source's name or the credit itself                                                                                            | Write "Click here" or "Read more", or a bare URL; the link's text is what a screen reader hears                                                              | review     |
+| DD-5 | should | Keep it to the credits                                                                                                                                      | Use it for a disclaimer, a data-state note or a status message; a status belongs in words beside what it is about, in its own component, with its own colour | review     |
+
+## For agents
+
+None known yet.
