@@ -1,13 +1,14 @@
 // One tool of the MCP server, as the server lists it: its name, title, description and inputs, and
 // beside them the example call and the server's answer, set to read and cut for the page with a
-// note saying how much, its raw text behind "Show the raw answer". A tool with no example yet
-// shows its input schema instead.
+// note saying how much: a JSON answer as it is, any other with its raw text behind "Show the raw
+// answer". A tool with no example yet shows its input schema instead.
 import { Markdown } from '@/components/site/Markdown.tsx'
 import { toolAnchor } from '../../lib/anchors.ts'
 import {
   answerMarkdown,
   answerTokens,
   excerpt,
+  isJsonAnswer,
   type AnswerToken,
   type Tool,
 } from '../../lib/mcp.ts'
@@ -70,26 +71,31 @@ function TokenTable({ tokens }: { tokens: AnswerToken[] }) {
 }
 
 /**
- * The server's answer, set to read: a token table or the markdown it is, with the exact text the
- * agent receives one click away.
+ * The server's answer, set to read: a token table, the JSON it is as code, or the markdown it is,
+ * with the exact text the agent receives one click away when the page sets it otherwise.
  */
 function Answer({ text, isError }: { text: string; isError: boolean }) {
   const cut = excerpt(text)
   const tokens = isError ? undefined : answerTokens(cut.text)
+  const json = !isError && !tokens && isJsonAnswer(text)
   return (
     <div className="agents-tool-call-body">
       {isError ? <p className="agents-tool-error">The server answers with an error:</p> : null}
       {tokens ? (
         <TokenTable tokens={tokens} />
+      ) : json ? (
+        <pre className="agents-tool-answer">{cut.text}</pre>
       ) : (
         <div className="agents-tool-reading">
           <Markdown source={answerMarkdown(cut.text)} path={SERVER} />
         </div>
       )}
-      <details className="agents-tool-raw">
-        <summary>Show the raw answer</summary>
-        <pre className="agents-tool-answer">{cut.text}</pre>
-      </details>
+      {json ? null : (
+        <details className="agents-tool-raw">
+          <summary>Show the raw answer</summary>
+          <pre className="agents-tool-answer">{cut.text}</pre>
+        </details>
+      )}
       {cut.cutChars ? (
         <p className="agents-tool-cut">
           Cut for this page: {plural(cut.cutLines, 'more line', 'more lines')},{' '}

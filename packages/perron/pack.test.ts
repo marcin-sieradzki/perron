@@ -1,6 +1,6 @@
 // The published tarball of @mylder/perron, as `npm pack` would build it after its prepack build:
 // every export, every relative import of the built code (its CSS included) and every stylesheet
-// import resolves to a file inside it, and it carries every icon and logo.
+// import resolves to a file inside it, and it carries every icon and logo and the MCP server's data.
 import { execFileSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 import { dirname, join, posix } from 'node:path'
@@ -85,6 +85,12 @@ describe('the @mylder/perron tarball', () => {
     )
     expect(svgs.length).toBeGreaterThan(0)
     expect(files).toEqual(expect.arrayContaining([...svgs, `${name}/${name}.json`]))
+  })
+
+  it('carries the data the Perron MCP server reads: tokens, docs and components', () => {
+    expect(files).toEqual(
+      expect.arrayContaining(['data/tokens.json', 'data/docs.json', 'data/components.json']),
+    )
   })
 
   it('leaves out the source, the tests and the test helpers', () => {

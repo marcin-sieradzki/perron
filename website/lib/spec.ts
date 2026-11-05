@@ -6,9 +6,15 @@ import postcss, { type AtRule, type ChildNode, type Container, type Rule } from 
 import { FOR_AGENTS, specProse, WHEN_TO_USE } from '../../storybook/blocks/component-page.ts'
 import { folderOf, kebab, type Layer } from '../../scripts/lib/entry.ts'
 import { SITE } from '../../scripts/lib/site.ts'
+import {
+  ordered,
+  propRows,
+  specPropsTable,
+  type PropRow,
+  type SpecPropRow,
+} from '../../scripts/lib/spec-props.ts'
 import { markdownHeadings, slug, type Heading } from './anchors.ts'
 import type { ComponentApi } from './api.ts'
-import { firstTable, sections } from './markdown.ts'
 import type { RegistryEntry } from './registry.ts'
 import { readRepoFile, repoFileExists } from './repo.ts'
 import { readTokenData } from './tokens.ts'
@@ -64,112 +70,9 @@ export function specHeadings(entry: Pick<RegistryEntry, 'built'>, markdown: stri
   return proseSections(markdown).map((s) => ({ level: 2, title: s.heading, id: s.id }))
 }
 
-/* The spec's props table */
+/* The spec's props table: scripts/lib/spec-props.ts, which the MCP's data reads too */
 
-/** One row of a markdown table in the spec's Props section, by its column names. */
-export interface SpecPropRow {
-  /** The props a row names: `className`, `style` and `ref` share one row */
-  names: string[]
-  type: string
-  default: string
-  description: string
-}
-
-/** The first markdown table in `text`, as rows keyed by the header's lowercased names. */
-const propTable = (text: string) =>
-  firstTable(text).rows.map((r) =>
-    Object.fromEntries(Object.entries(r).map(([k, v]) => [k.toLowerCase(), v])),
-  )
-
-const unquote = (s: string) => s.replace(/^`|`$/g, '')
-
-/**
- * The spec's props table for the component `name`: the table under `### <name>` in its Props
- * section when the section has one per part, otherwise the section's first table.
- */
-export function specPropsTable(markdown: string, name: string): SpecPropRow[] {
-  if (!hasSection(markdown, 'Props')) return []
-  const section = specProse(markdown, ['Props'])
-  const own = sections(section).find((s) => s.level === 3 && s.heading === name)
-  return propTable(own?.text ?? section).map((r) => {
-    const named = [...(r.name ?? '').matchAll(/`([^`]+)`/g)].map((m) => m[1])
-    return {
-      names: named.length ? named : (r.name ?? '').split(/,\s*/).filter(Boolean),
-      type: unquote(r.type ?? ''),
-      default: r.default ?? '',
-      description: r.description ?? '',
-    }
-  })
-}
-
-/** One row of the page's props table, in MUI's columns. */
-export interface PropRow {
-  name: string
-  /** A caller must give it: api.json lists it as not optional */
-  required: boolean
-  /** Its type, with string literals in single quotes, as the spec writes them */
-  type: string
-  /** Its default as markdown, or empty when it has none */
-  default: string
-  /** Its description as markdown, from the spec */
-  description: string
-}
-
-/** A union member as the page writes it: `"solid"` as `'solid'`. */
-const shown = (member: string) => member.replace(/^"(.*)"$/, "'$1'")
-
-/** The members of a spec type cell such as `'solid' | 'outline'`, with double quotes. */
-const specMembers = (type: string) =>
-  type
-    .replace(/`/g, '')
-    .split('|')
-    .map((m) => m.trim().replace(/^'(.*)'$/, '"$1"'))
-
-/** The api's members, in the spec's order when the spec's type lists the same ones. */
-function ordered(members: string[], specType?: string) {
-  if (!specType) return members
-  const spec = specMembers(specType)
-  const same = spec.length === members.length && spec.every((m) => members.includes(m))
-  return same ? spec : members
-}
-
-/** The longest type the table shows from api.json before it prefers the spec's shorter text. */
-const LONG_TYPE = 60
-
-/**
- * The props table: one row per prop api.json gives the component, in the spec's order, then the
- * props the spec leaves out in api.json's order. The type is api.json's, its union in the spec's
- * order; a type too long to read is the spec's own text where it has one. Default and description
- * come from the spec.
- */
-export function propRows(api: ComponentApi, spec: SpecPropRow[]): PropRow[] {
-  const bySpec = new Map(spec.flatMap((r) => r.names.map((n) => [n, r] as const)))
-  const names = Object.keys(api.props)
-  const order = [
-    ...spec.flatMap((r) => r.names).filter((n) => names.includes(n)),
-    ...names.filter((n) => !bySpec.has(n)),
-  ]
-  return [...new Set(order)].map((name) => {
-    const prop = api.props[name]
-    const row = bySpec.get(name)
-    const ownType = row && row.names.length === 1 ? row.type : undefined
-    let type = ordered(prop.type, ownType).map(shown).join(' | ')
-    if (type.length > LONG_TYPE && ownType) type = ownType
-    const parts = spec.flatMap((r) => r.names).filter((n) => n.startsWith(`${name}.`))
-    const defaultText = row?.default.trim() ?? ''
-    return {
-      name,
-      required: !prop.optional,
-      type,
-      default: /^(none|)$/i.test(defaultText) ? '' : defaultText,
-      description:
-        row?.description ??
-        (parts.length
-          ? `Props for each part: ${parts.map((p) => `\`${p.slice(name.length + 1)}\``).join(', ')}.`
-          : ''),
-    }
-  })
-}
+export { propRows, specPropsTable, type PropRow, type SpecPropRow }
 
 /* The matrix: the variant and colour values, by the states the stylesheet can force */
 
@@ -423,8 +326,7 @@ export const bareDefault = (spec: SpecPropRow[], prop: string) =>
 /* Links and the install strip */
 
 /** The import line of an entry: from `@mylder/perron`, or `@mylder/perron/patterns`. */
-export const importLine = (entry: Pick<RegistryEntry, 'name' | 'layer'>) =>
-  `import { ${entry.name} } from '@mylder/perron${entry.layer === 'pattern' ? '/patterns' : ''}'`
+export { importLine } from '../../scripts/lib/entry.ts'
 
 /**
  * The page of Base UI's bundled docs that `get_reference` reads for a component, as

@@ -60,6 +60,13 @@ describe('the docs site', () => {
     for (const path of PAGES) expect(agents).toContain(`${SITE}${path}`)
   })
 
+  it('sends consumer agents to the MCP server for a component, and to its rules', () => {
+    const agents = site['AGENTS.md']
+    expect(agents).toContain('"args": ["-y", "@mylder/perron-mcp"]')
+    expect(agents).toMatch(/`list_components`[\s\S]*`get_component`/)
+    expect(agents).toMatch(/`must`[\s\S]*`should`[\s\S]*`review`/)
+  })
+
   it('links only absolute URLs from llms.txt and AGENTS.md, which apps copy elsewhere', () => {
     const relative = ['llms.txt', 'AGENTS.md'].flatMap((f) =>
       [...site[f].matchAll(/\]\(([^)]+)\)/g)]

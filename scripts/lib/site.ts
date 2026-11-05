@@ -1,6 +1,6 @@
 // The files the docs site serves beside its pages, for agents: a Markdown twin of every page at its
 // path in the repo, `llms.txt` with one line per page, and an `AGENTS.md` for apps that install
-// Perron. The twins keep their repo paths, so their links to each other and to the package's icons
+// Perron, which sends their agents to the MCP server for each component. The twins keep their repo paths, so their links to each other and to the package's icons
 // and logos work unchanged on the site.
 import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
@@ -13,12 +13,21 @@ export { SITE }
 /** The page AGENTS.md takes its rules from, and the section that holds them. */
 const RULES = { path: 'docs/foundations/README.md', heading: 'Using the tokens' }
 
-/** The page's opening sentence: the first paragraph of prose, with links reduced to their text. */
-function summary(path: string, markdown: string) {
+/**
+ * A page's opening sentence: the first paragraph of prose, with links reduced to their text, or
+ * undefined when the page has none.
+ */
+export function openingSentence(markdown: string) {
   const para = markdown.split(/\n\n+/).find((block) => /^[\p{L}\p{N}"“[]/u.test(block.trim()))
-  if (!para) throw new Error(`${path} has no opening paragraph`)
+  if (!para) return undefined
   const text = para.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').replace(/\s+/g, ' ')
   return /^.+?[.!?](?=\s|$)/.exec(text)?.[0] ?? text
+}
+
+function summary(path: string, markdown: string) {
+  const sentence = openingSentence(markdown)
+  if (sentence === undefined) throw new Error(`${path} has no opening paragraph`)
+  return sentence
 }
 
 function section(path: string, markdown: string, heading: string) {
@@ -77,6 +86,16 @@ npm install @mylder/perron
 ${section(RULES.path, out[RULES.path], RULES.heading)}
 
 Every word on screen follows [Content design](${SITE}docs/content-design.md).
+
+## Components
+
+Ask the Perron MCP server about a component before you use it. Add it to the app's \`.mcp.json\`, as the [Agents page](${SITE}agents/) shows:
+
+\`\`\`json
+{ "mcpServers": { "perron": { "command": "npx", "args": ["-y", "@mylder/perron-mcp"] } } }
+\`\`\`
+
+\`list_components\` finds the component or pattern a screen needs, by words, layer and category. \`get_component\` gives one whole: its props, when to use another entry instead, and the rules of its Do and don't. Keep every \`must\` rule, and break a \`should\` rule only for a reason you can give. Check the rules marked \`review\` yourself, since nothing else catches them.
 
 ## Where to look
 

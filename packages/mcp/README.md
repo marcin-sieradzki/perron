@@ -1,6 +1,6 @@
 # @mylder/perron-mcp
 
-The Perron MCP server. It answers an agent's questions about Perron's tokens, its docs and the API of the Base UI and MUI versions a project installs, so the agent reads exact, small answers instead of the sources.
+The Perron MCP server. It answers an agent's questions about Perron's tokens, its docs, its components and patterns, and the API of the Base UI and MUI versions a project installs, so the agent reads exact, small answers instead of the sources.
 
 ```sh
 npx @mylder/perron-mcp
@@ -12,7 +12,7 @@ It runs over stdio. In a project's `.mcp.json`:
 { "mcpServers": { "perron": { "command": "npx", "args": ["-y", "@mylder/perron-mcp"] } } }
 ```
 
-The tokens and docs come from the data that `@mylder/perron` ships in `data/`, so they match the installed Perron. The references come from the docs bundled inside `@base-ui/react` and `@mui/material` in the project's `node_modules`.
+The tokens, docs and components come from the data that `@mylder/perron` ships in `data/`, so they match the installed Perron. The references come from the docs bundled inside `@base-ui/react` and `@mui/material` in the project's `node_modules`.
 
 ## Tools
 
@@ -25,6 +25,14 @@ Every token's name, type, CSS custom property, value in each theme, the token it
 ### `search_docs`
 
 The sections of the foundation pages, content design, the glossary and the component contract that best match `query`, in full. `limit` sets how many, 3 by default.
+
+### `list_components`
+
+Every component and pattern, one JSON line each: its name, layer, category, status, the entry that replaces it when it is deprecated, and what it is in one sentence. `query` puts the entries that hold the most of its words first, a word few entries hold counting for more (`a yes or no setting` finds Checkbox and Switch); `layer` keeps `component` or `pattern`, and `category` one category (`Inputs`).
+
+### `get_component`
+
+One component or pattern by `name` (`Button`, or `link-button`), as JSON: its summary and import line; when to use it, and the entries to use instead, each with when; its props, each with its type, default, description and `@deprecated` text; its rules, the rows of its spec's Do and don't, each with an id (`DD-2`), a level (`must`, never broken, or `should`, broken only with a reason) and what checks it (`types`, the compiler, or `review`, which nothing catches, so check those yourself); the mistakes agents have made with it; and its docs page. An unknown name answers with the nearest names.
 
 ### `get_reference`
 
