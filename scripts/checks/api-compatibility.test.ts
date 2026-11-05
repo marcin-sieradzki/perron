@@ -17,6 +17,19 @@ describe('compareApi', () => {
     expect(compareApi(button('release'), button('grows'))).toEqual([])
   })
 
+  it("takes a prop's @deprecated text, added or taken away, as no change to what a caller can write", () => {
+    const api = (deprecated?: string) => ({
+      Button: {
+        extends: [],
+        props: {
+          outlined: { optional: true, type: ['boolean'], ...(deprecated && { deprecated }) },
+        },
+      },
+    })
+    expect(compareApi(api(), api('Use `variant` instead.'))).toEqual([])
+    expect(compareApi(api('Use `variant` instead.'), api())).toEqual([])
+  })
+
   it('takes a nested union written in another order for the same type', () => {
     const api = (type: string) => ({
       Sheet: { extends: [], props: { onClose: { optional: true, type: [type] } } },

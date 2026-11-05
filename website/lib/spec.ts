@@ -470,3 +470,9 @@ export const STATUS_LABEL: Record<RegistryEntry['status'], string> = {
   stable: 'Stable',
   deprecated: 'Deprecated',
 }
+
+/**
+ * A deprecated entry's notice, "Deprecated: use <successor> instead.", as markdown whose link the
+ * page's Markdown takes to the successor's page; undefined for any other entry.
+ */
+export { deprecationNotice } from '../../scripts/lib/entry.ts'

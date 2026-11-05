@@ -27,12 +27,12 @@ The rules the [Checks](#checks) table names fail `npm run check` when broken. Th
 
 An entry's `status` in `packages/perron/components.json` says how far it has come, and what it has by then:
 
-| Status       | Set when                                          | It has                                                                        |
-| ------------ | ------------------------------------------------- | ----------------------------------------------------------------------------- |
-| `designing`  | It joins the registry                             | Nothing yet: it is not exported, listed or checked                            |
-| `building`   | The build stage starts                            | Its code and its spec; it joins the barrels and the sidebar                   |
-| `stable`     | Its docs stage is done, in the component's own PR | Its `<Name>.mdx` too, and a props API that only grows (see [Change](#change)) |
-| `deprecated` | Its replacement is `stable`                       | Everything a stable entry has; it keeps working                               |
+| Status       | Set when                                          | It has                                                                                    |
+| ------------ | ------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `designing`  | It joins the registry                             | Nothing yet: it is not exported, listed or checked                                        |
+| `building`   | The build stage starts                            | Its code and its spec; it joins the barrels and the sidebar                               |
+| `stable`     | Its docs stage is done, in the component's own PR | Its `<Name>.mdx` too, and a props API that only grows (see [Change](#change))             |
+| `deprecated` | Its replacement is `stable`                       | Everything a stable entry has, and `replacedBy` (see [Change](#change)); it keeps working |
 
 ## Props
 
@@ -118,9 +118,11 @@ The contract story, `storybook/contract/Contract.stories.tsx`, renders every reg
 
 Deprecate, never remove. An old prop or value keeps working: the component maps it to its replacement, and its JSDoc says `@deprecated Use <replacement> instead.`
 
-`packages/perron/api.json` is the props API of every `stable` or `deprecated` component: each member its props type declares, whether it is optional, its type, and what the type extends. `npm run api` writes it from the code, and `npm run check` fails while it is stale.
+A component or pattern is deprecated in the registry: its `status` becomes `deprecated`, and `replacedBy` names the entry to use instead. The successor is a registered entry in the same layer that is not deprecated itself. The registry's parse fails on a deprecated entry without `replacedBy`, on `replacedBy` in any other entry, and on a successor that is missing, deprecated or in the other layer. The deprecated entry keeps working, and its pages on the docs site and in Storybook open with "Deprecated: use <successor> instead.", linked to the successor.
 
-Against `api.json` at the last release tag, `@mylder/perron@<version>`, the API only grows: a new optional prop, a prop made optional, a wider union, a new base, an object type such as `slotProps` gaining optional members. A prop removed, narrowed or made required, a new required prop, a base dropped or a component removed is a break.
+`packages/perron/api.json` is the props API of every `stable` or `deprecated` component: each member its props type declares, whether it is optional, its type, its `@deprecated` text when it has one, and what the type extends. That text reaches the Perron MCP, so an agent learns the replacement of a deprecated prop. `npm run api` writes it from the code, and `npm run check` fails while it is stale.
+
+Against `api.json` at the last release tag, `@mylder/perron@<version>`, the API only grows: a new optional prop, a prop made optional, a wider union, a new base, an object type such as `slotProps` gaining optional members. A prop removed, narrowed or made required, a new required prop, a base dropped or a component removed is a break. A prop's `@deprecated` text, added or taken away, changes nothing a caller can write, so it is neither.
 
 ### Breaking changes
 

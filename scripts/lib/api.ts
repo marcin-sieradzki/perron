@@ -6,10 +6,14 @@ import { PACKAGE } from './paths.ts'
 import { codeFile, inPackage, propsProgram } from './props.ts'
 import { readRegistry, type Entry } from './registry.ts'
 
-/** One prop: whether a caller may leave it out, and its type's union members, sorted. */
+/**
+ * One prop: whether a caller may leave it out, its type's union members, sorted, and the text of
+ * its `@deprecated` tag when it has one, which says what to use instead.
+ */
 export interface Prop {
   optional: boolean
   type: string[]
+  deprecated?: string
 }
 
 /** One component's props type: what it extends, as written, and the members it declares itself. */
@@ -100,7 +104,12 @@ export function propsApi(root: string, files: string[]): Api {
       const type = node
         ? checker.getTypeFromTypeNode(node)
         : checker.getNonNullableType(checker.getTypeOfSymbolAtLocation(p, own))
-      props[p.name] = { optional, type: members(checker, type) }
+      const tag = ts.getJSDocTags(own).find((t) => t.tagName.text === 'deprecated')
+      props[p.name] = {
+        optional,
+        type: members(checker, type),
+        ...(tag && { deprecated: (ts.getTextOfJSDocComment(tag.comment) ?? '').trim() }),
+      }
     }
     const sorted = Object.fromEntries(Object.entries(props).sort(([a], [b]) => (a < b ? -1 : 1)))
     api[name.replace(/Props$/, '')] = {
