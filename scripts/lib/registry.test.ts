@@ -129,23 +129,31 @@ describe('parseRegistry', () => {
       'Button is replaced by LinkButton, which the registry does not list',
     ],
     [
-      'a successor that is deprecated itself',
+      'a successor that is deprecated',
       [
         { ...button, status: 'deprecated', replacedBy: 'LinkButton' },
         { ...link, status: 'deprecated', replacedBy: 'Button' },
       ],
-      'Button is replaced by LinkButton, which is deprecated itself',
+      'Button is replaced by LinkButton, which is deprecated, not stable',
+    ],
+    [
+      'a successor that is still being built',
+      [
+        { ...button, status: 'deprecated', replacedBy: 'LinkButton' },
+        { ...link, status: 'building' },
+      ],
+      'Button is replaced by LinkButton, which is building, not stable',
     ],
     [
       'an entry that replaces itself',
       [{ ...button, status: 'deprecated', replacedBy: 'Button' }],
-      'Button is replaced by Button, which is deprecated itself',
+      "Button can't replace itself",
     ],
     [
       'a successor in another layer',
       [
         { ...button, status: 'deprecated', replacedBy: 'DepartureRow' },
-        { ...row, dependsOn: [] },
+        { ...row, status: 'stable', dependsOn: [] },
       ],
       'Button is a component and is replaced by the pattern DepartureRow; its successor is in the same layer',
     ],
