@@ -1,12 +1,12 @@
 // A spec page's header, over the layout's map: the breadcrumb to its layer and category, the title
-// with its status, links to its Storybook page and its spec, the spec's intro as the lead, and on
-// phones the "On this page" select.
+// with its status, links to its Storybook page and its spec, a deprecated entry's successor, the
+// spec's intro as the lead, and on phones the "On this page" select.
 import NextLink from 'next/link'
-import { Tag } from '@mylder/perron'
+import { Alert, Tag } from '@mylder/perron'
 import { Markdown } from '@/components/site/Markdown.tsx'
 import type { RegistryEntry } from '../../lib/registry.ts'
 import { githubUrl } from '../../lib/repo.ts'
-import { STATUS_LABEL, storybookUrl } from '../../lib/spec.ts'
+import { deprecationNotice, STATUS_LABEL, storybookUrl } from '../../lib/spec.ts'
 import { TocSelect } from './TocSelect.tsx'
 import type { TocItem } from './SpecToc.tsx'
 
@@ -28,6 +28,7 @@ export function SpecHeader({
 }) {
   const layer = entry.layer === 'pattern' ? 'Patterns' : 'Components'
   const storybook = entry.built ? storybookUrl(entry) : undefined
+  const notice = deprecationNotice(entry)
   return (
     <header id="overview" className="page-header spec-section">
       <nav aria-label="Breadcrumb" className="spec-breadcrumb">
@@ -54,6 +55,12 @@ export function SpecHeader({
           </a>
         </div>
       </div>
+      {notice ? (
+        // a note on the page as it loads, not news to announce: no live region
+        <Alert color="warning" role="note">
+          <Markdown source={notice} path={entry.specPath} inline />
+        </Alert>
+      ) : null}
       {intro.lead ? (
         <p className="lead">
           <Markdown source={intro.lead} path={entry.specPath} inline />

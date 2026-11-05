@@ -6,6 +6,22 @@ The frame round one form control: its label above it, a line of help, and the er
 
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the [contract](README.md), the [foundations](../foundations/README.md), the tokens and the Base UI reference for `Field` (`@base-ui/react` 1.9.0, installed). The extracted prototype component is not in any branch this run can reach.
 
+## When to use
+
+Use Field to frame one form control built on Base UI with its label above it, a line of help and its error message, where no field component already does.
+
+| Use instead                    | When                                                |
+| ------------------------------ | --------------------------------------------------- |
+| [TextField](text-field.md)     | The person types one line of words                  |
+| [TextArea](text-area.md)       | The person types several lines of words             |
+| [NumberField](number-field.md) | The person types or steps a number                  |
+| [Select](select.md)            | The person picks one value from a short, fixed list |
+| [SearchField](search-field.md) | The person finds a line or a stop                   |
+| [Slider](slider.md)            | The person picks a number or a range along a track  |
+| [Fieldset](fieldset.md)        | Several controls sit together under one name        |
+| [Checkbox](checkbox.md)        | The control is a checkbox, labelled beside it       |
+| [Switch](switch.md)            | The control is a switch, labelled beside it         |
+
 ## Anatomy
 
 Penpot page `Components/Field`. Family: Fields, as the frame every member's label, help and error share; Field draws no box of its own, since the box is the control's (the Fields family's fill, edge and invalid edge are drawn by TextField, TextArea, NumberField and Select). Shared parts: `VisuallyHidden`, for a hidden label.
@@ -190,15 +206,19 @@ The deferred drawing has no variant property and a `State` property with the val
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                     | Don't                                                                                                                                                        |
-| ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Use a field component that composes Field, such as TextField or Select, where there is one                             | Wrap such a component in Field again: it already has its label, and the control would be named twice                                                         |
-| Put a control built on Base UI inside, which registers with the field                                                  | Put a plain `<input>` inside: it gets no `htmlFor`, `aria-labelledby` or `aria-describedby`, so it is unnamed for the ear (CR-10)                            |
-| Give a `label` that names the value, "Stop name", and hide it with `hiddenLabel` only where the screen already says it | Leave the field without a label, or let a placeholder stand in for one: it vanishes as the person types                                                      |
-| Word an `error` as what to do, "Enter a stop name"                                                                     | Blame the person ("You forgot the stop") or say only that it failed ("Invalid input"), against [Content design](../content-design.md)                        |
-| Give `error` whenever the field is `invalid`                                                                           | Set `invalid` with no message: the control's red edge alone tells only the eye, and only by its colour                                                       |
-| Put help the person needs while typing in `description`, such as "As written on the stop sign"                         | Put the help in the `error`: it appears only after a mistake                                                                                                 |
-| Set `optional` on the few fields the person may leave empty, and leave the rest unmarked                               | Write "(optional)", "(required)" or an asterisk into `label` yourself: it misses the locale, reads twice beside Field's mark, and an asterisk needs a legend |
-| Label a checkbox or a switch beside it, by its own label                                                               | Use Field for a checkbox or a switch: Field's label sits above the control, where theirs sits beside it                                                      |
+| Rule | Level  | Do                                                                                                                     | Don't                                                                                                                                                        | Checked by |
+| ---- | ------ | ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- |
+| DD-1 | must   | Use a field component that composes Field, such as TextField or Select, where there is one                             | Wrap such a component in Field again: it already has its label, and the control would be named twice                                                         | review     |
+| DD-2 | must   | Put a control built on Base UI inside, which registers with the field                                                  | Put a plain `<input>` inside: it gets no `htmlFor`, `aria-labelledby` or `aria-describedby`, so it is unnamed for the ear (CR-10)                            | review     |
+| DD-3 | must   | Give a `label` that names the value, "Stop name", and hide it with `hiddenLabel` only where the screen already says it | Leave the field without a label, or let a placeholder stand in for one: it vanishes as the person types                                                      | review     |
+| DD-4 | must   | Word an `error` as what to do, "Enter a stop name"                                                                     | Blame the person ("You forgot the stop") or say only that it failed ("Invalid input"), against [Content design](../content-design.md)                        | review     |
+| DD-5 | must   | Give `error` whenever the field is `invalid`                                                                           | Set `invalid` with no message: the control's red edge alone tells only the eye, and only by its colour                                                       | review     |
+| DD-6 | should | Put help the person needs while typing in `description`, such as "As written on the stop sign"                         | Put the help in the `error`: it appears only after a mistake                                                                                                 | review     |
+| DD-7 | must   | Set `optional` on the few fields the person may leave empty, and leave the rest unmarked                               | Write "(optional)", "(required)" or an asterisk into `label` yourself: it misses the locale, reads twice beside Field's mark, and an asterisk needs a legend | review     |
+| DD-8 | should | Label a checkbox or a switch beside it, by its own label                                                               | Use Field for a checkbox or a switch: Field's label sits above the control, where theirs sits beside it                                                      | review     |
+
+## For agents
+
+None known yet.

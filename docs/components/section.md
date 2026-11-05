@@ -6,6 +6,18 @@ A titled group of content inside a panel or a page, such as a stop's departures 
 
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): this spec decides what the drawing would, from the [contract](README.md), the [foundations](../foundations/README.md), [content design](../content-design.md) and the tokens. Section has no Base UI component and nothing in `dependsOn`, and the extracted prototype is not reachable from this branch, so nothing here rests on it. Its one firm source is the token `typography.overline`, whose description is "Section headings and tags, set in capitals".
 
+## When to use
+
+Use Section for a titled group of content inside a panel or a page, such as a stop's departures or the lines that call at it.
+
+| Use instead               | When                                                                         |
+| ------------------------- | ---------------------------------------------------------------------------- |
+| [Surface](surface.md)     | The group needs a card or a box of its own, with a fill, an edge or a shadow |
+| [Accordion](accordion.md) | Each group opens and closes its content under its heading                    |
+| [Tabs](tabs.md)           | One group shows at a time, picked from a row of tabs                         |
+| [Fieldset](fieldset.md)   | The group is a set of related form controls, named by its legend             |
+| [Separator](separator.md) | Two groups need a line between them and no heading                           |
+
 ## Anatomy
 
 Penpot page `Components/Section`. Family: none, since it is content on its container's surface and joins no family's treatment. Shared parts: none.
@@ -146,16 +158,20 @@ One per variant and state the design would show. The design is deferred and has 
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                                               | Don't                                                                                                                                  |
-| ------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
-| Write the title in sentence case, a word or two, and let the style set the capitals: "Departures"                                                | Type the title in capitals: a screen reader may spell it out letter by letter, and content design writes source text in sentence case  |
-| Give the title the level that fits the page's outline through `slotProps.title.render`: `h3` under a panel's `h2`, `h4` inside an `h3`'s section | Skip a level, or wrap a heading element inside `title`: the part is already a heading, and a heading inside a heading is invalid       |
-| Put one small, neutral action in the header, such as a small `outline` LinkButton to the whole list                                              | Put the panel's main action, or a `brand` button, in a section's header: a screen has one brand action, and it belongs to the panel    |
-| Give the content one block per child: a paragraph, a list, a row of buttons                                                                      | Pass a sentence with a link in it straight as `children`: each element becomes a block of its own, so wrap the sentence in a paragraph |
-| Space sections apart in the caller's layout, `space.600` between blocks of a pane                                                                | Add margins or padding to Section with raw values, or rely on it for the space between sections: it adds none                          |
-| Wrap a section in a Surface when it needs a card or a box of its own                                                                             | Add a fill, border or shadow to Section through `className`: a box is Surface's job, and the ladder lives there                        |
-| Render the root as a `div` through `render` when the group is too small to be worth a region of its own                                          | Leave a screen full of tiny named regions: a screen reader's landmark list then says less than its headings                            |
-| Leave a group that opens and closes to a collapsible component, built on Base UI's Collapsible                                                   | Build a collapsible group from Section by hiding its content: it brings no button, state or keys                                       |
-| Set the title's `id` through `slotProps.title.id`                                                                                                | Put an `id` on the element in `slotProps.title.render`: it replaces the generated one and the region loses its name                    |
+| Rule | Level  | Do                                                                                                                                               | Don't                                                                                                                                  | Checked by |
+| ---- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | must   | Write the title in sentence case, a word or two, and let the style set the capitals: "Departures"                                                | Type the title in capitals: a screen reader may spell it out letter by letter, and content design writes source text in sentence case  | review     |
+| DD-2 | must   | Give the title the level that fits the page's outline through `slotProps.title.render`: `h3` under a panel's `h2`, `h4` inside an `h3`'s section | Skip a level, or wrap a heading element inside `title`: the part is already a heading, and a heading inside a heading is invalid       | review     |
+| DD-3 | must   | Put one small, neutral action in the header, such as a small `outline` LinkButton to the whole list                                              | Put the panel's main action, or a `brand` button, in a section's header: a screen has one brand action, and it belongs to the panel    | review     |
+| DD-4 | should | Give the content one block per child: a paragraph, a list, a row of buttons                                                                      | Pass a sentence with a link in it straight as `children`: each element becomes a block of its own, so wrap the sentence in a paragraph | review     |
+| DD-5 | should | Space sections apart in the caller's layout, `space.600` between blocks of a pane                                                                | Add margins or padding to Section with raw values, or rely on it for the space between sections: it adds none                          | review     |
+| DD-6 | should | Wrap a section in a Surface when it needs a card or a box of its own                                                                             | Add a fill, border or shadow to Section through `className`: a box is Surface's job, and the ladder lives there                        | review     |
+| DD-7 | should | Render the root as a `div` through `render` when the group is too small to be worth a region of its own                                          | Leave a screen full of tiny named regions: a screen reader's landmark list then says less than its headings                            | review     |
+| DD-8 | must   | Leave a group that opens and closes to a collapsible component, built on Base UI's Collapsible                                                   | Build a collapsible group from Section by hiding its content: it brings no button, state or keys                                       | review     |
+| DD-9 | must   | Set the title's `id` through `slotProps.title.id`                                                                                                | Put an `id` on the element in `slotProps.title.render`: it replaces the generated one and the region loses its name                    | review     |
+
+## For agents
+
+None known yet.

@@ -20,13 +20,13 @@ Seventeen roles, one per job. Set every piece of text with a role, either as a c
 | `typography.heading-md` | Familjen Grotesk  | 600    | 20 px | 1.15        | -0.3 px  | Panel titles: a stop or a destination. The wordmark is heading-md set bold. |
 | `typography.heading-sm` | Schibsted Grotesk | 600    | 14 px | 1.3         | 0 px     | Card titles, such as a disruption                                           |
 | `typography.lead`       | Schibsted Grotesk | 400    | 16 px | 1.5         | 0 px     | Page intros: the paragraph under a page title on long-form screens          |
-| `typography.body`       | Schibsted Grotesk | 400    | 14 px | 1.5         | 0 px     | Sentences and inputs                                                        |
+| `typography.body`       | Schibsted Grotesk | 400    | 14 px | 1.5         | 0 px     | Sentences in panels and dialogs, and the text typed into inputs             |
 | `typography.body-sm`    | Schibsted Grotesk | 400    | 13 px | 1.5         | 0 px     | Supporting sentences: the line under a title, disruption details            |
 | `typography.caption`    | Schibsted Grotesk | 400    | 12 px | 1.5         | 0 px     | Notes, second lines in rows, legend descriptions, map credits               |
 | `typography.label`      | Schibsted Grotesk | 600    | 13 px | 1.3         | 0 px     | Buttons, tabs, chips and names in lists                                     |
 | `typography.label-sm`   | Schibsted Grotesk | 500    | 12 px | 1.3         | 0 px     | Legend items, field and stat labels, tooltips                               |
 | `typography.overline`   | Schibsted Grotesk | 600    | 11 px | 1.3         | 0.88 px  | Section headings and tags, set in capitals                                  |
-| `typography.badge`      | Schibsted Grotesk | 700    | 12 px | 1           | 0.12 px  | Line badge labels                                                           |
+| `typography.badge`      | Schibsted Grotesk | 700    | 12 px | 1           | 0.12 px  | The line name inside a line badge, such as M1 or 5C                         |
 | `typography.stat`       | Schibsted Grotesk | 600    | 28 px | 1.15        | -0.84 px | Key figures. Steps down to font.size.600 on phones.                         |
 | `typography.data-xl`    | JetBrains Mono    | 600    | 48 px | 1           | -1.92 px | Kiosk clock. Steps down to font.size.800 on phones.                         |
 | `typography.data-lg`    | JetBrains Mono    | 600    | 16 px | 1.15        | 0 px     | Top bar clock, departure countdowns                                         |
@@ -39,15 +39,15 @@ Seventeen roles, one per job. Set every piece of text with a role, either as a c
 
 <!-- tokens: font.family.* font.weight.* -->
 
-| Token                  | Value                                                                       | Use                                                                    |
-| ---------------------- | --------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| `font.family.display`  | `Familjen Grotesk, Schibsted Grotesk, system-ui, sans-serif`                | Display: headings and the wordmark                                     |
-| `font.family.body`     | `Schibsted Grotesk, system-ui, -apple-system, Segoe UI, Roboto, sans-serif` | All interface text                                                     |
-| `font.family.data`     | `JetBrains Mono, ui-monospace, SF Mono, Menlo, Consolas, monospace`         | Data: times, countdowns, counts and data ages. Always tabular figures. |
-| `font.weight.regular`  | `400`                                                                       | Running text                                                           |
-| `font.weight.medium`   | `500`                                                                       | Controls, list titles, data                                            |
-| `font.weight.semibold` | `600`                                                                       | Labels, titles, stats                                                  |
-| `font.weight.bold`     | `700`                                                                       | Display titles, wordmark, line badges                                  |
+| Token                  | Value                                                                       | Use                                                                                               |
+| ---------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `font.family.display`  | `Familjen Grotesk, Schibsted Grotesk, system-ui, sans-serif`                | Display: headings and the wordmark                                                                |
+| `font.family.body`     | `Schibsted Grotesk, system-ui, -apple-system, Segoe UI, Roboto, sans-serif` | Sentences, labels, controls and small headings: every role but the large headings and the figures |
+| `font.family.data`     | `JetBrains Mono, ui-monospace, SF Mono, Menlo, Consolas, monospace`         | Data: times, countdowns, counts and data ages. Always tabular figures.                            |
+| `font.weight.regular`  | `400`                                                                       | Running text: lead, body and caption sentences                                                    |
+| `font.weight.medium`   | `500`                                                                       | Controls, list titles, data                                                                       |
+| `font.weight.semibold` | `600`                                                                       | Labels, small headings, overlines and key figures                                                 |
+| `font.weight.bold`     | `700`                                                                       | Display titles, wordmark, line badges                                                             |
 
 <!-- /tokens -->
 
@@ -83,6 +83,6 @@ Four line heights. Use `none` for single lines in a fixed box, `tight` for headi
 | `font.line-height.none`   | `1`    | Single lines in a fixed box: line badges, the kiosk clock |
 | `font.line-height.tight`  | `1.15` | Headings, key figures and clocks                          |
 | `font.line-height.snug`   | `1.3`  | Labels, small headings and data                           |
-| `font.line-height.normal` | `1.5`  | Running text                                              |
+| `font.line-height.normal` | `1.5`  | Running text that wraps: lead, body and caption sentences |
 
 <!-- /tokens -->

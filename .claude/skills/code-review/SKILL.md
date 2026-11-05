@@ -36,6 +36,7 @@ Look for the originating spec, in this order:
 Search the repo for every file that documents how code should be written. `CLAUDE.md` is always on the list. Then add each one the diff touches:
 
 - component code: the contract, `docs/components/README.md`;
+- code that renders a Perron component or pattern, such as a pattern or a story: the Do and don't of each entry's spec, whose rules a finding cites by spec and id, `button.md DD-1`. A `must` rule broken is a hard violation, a `should` rule broken with no reason given a judgement call, and a `types` rule is `npm run check`'s;
 - tokens: the `design-tokens` skill;
 - tests, a story's `play` among them: the `tdd` skill's Anti-patterns, where a tautological test (an assertion that cannot go red) is a hard violation;
 - anything a rider sees or hears: the foundation page for it in `docs/foundations/`, and `docs/content-design.md` for the words;
@@ -70,7 +71,7 @@ Issue both sub-agent calls together, in the foreground, and aggregate the report
 
 - The full diff command and commit list.
 - The list of standards-source files you found in step 3, **plus the smell baseline from step 3** pasted in full (the sub-agent has no other access to it).
-- The brief: "Report, per file/hunk where relevant, (a) every place the diff violates a documented standard: cite the standard (file + the rule); and (b) any baseline smell you spot: name it and quote the hunk. Distinguish hard violations from judgement calls: documented-standard breaches can be hard, but baseline smells are always judgement calls, and a documented repo standard overrides the baseline. Skip anything `npm run check` enforces. Under 400 words."
+- The brief: "Report, per file/hunk where relevant, (a) every place the diff violates a documented standard: cite the standard (file + the rule, a spec's Do and don't rule by its id, `DD-<n>`); and (b) any baseline smell you spot: name it and quote the hunk. Distinguish hard violations from judgement calls: documented-standard breaches can be hard, but baseline smells are always judgement calls, and a documented repo standard overrides the baseline. Skip anything `npm run check` enforces. Under 400 words."
 
 **Spec sub-agent prompt** should include:
 

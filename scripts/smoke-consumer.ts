@@ -130,10 +130,14 @@ createRoot(document.getElementById('app')!).render(
     name: 'list_tokens',
     arguments: { query: 'surface warning' },
   })
+  const component = await client.callTool({ name: 'get_component', arguments: { name: 'Button' } })
   await client.close()
   const [first] = (answer.content ?? []) as { text?: string }[]
   if (answer.isError || !first?.text?.includes(warning))
     fail('the MCP server did not answer list_tokens')
+  const [button] = (component.content ?? []) as { text?: string }[]
+  if (component.isError || !button?.text?.includes(`"import": "import { Button }`))
+    fail('the MCP server did not answer get_component from the installed data')
   rmSync(app, { recursive: true, force: true })
   console.log(`smoke-consumer: ${[...packs.keys()].join(' and ')} install, build and answer`)
 } catch (error) {

@@ -6,6 +6,15 @@ The top of the detail panel: it names what the panel shows, a line's vehicle by 
 
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): this spec decides what the drawing would, from the [contract](../components/README.md) and its Patterns section, the [foundations](../foundations/README.md), [content design](../content-design.md), the tokens and the specs of the two components in `dependsOn`, [LineBadge](../components/line-badge.md) and [StationIcon](../components/station-icon.md). The extracted prototype is not reachable from this branch, so nothing here rests on it. DetailHeader is the first pattern, so it also sets how a pattern takes a line.
 
+## When to use
+
+Use DetailHeader for the top of a detail panel the screen draws itself, to name the line's vehicle or the stop the panel shows.
+
+| Use instead                         | When                                                                                                        |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| [DetailPanel](detail-panel.md)      | The whole panel is wanted, opening beside the map with its close button; it draws a DetailHeader of its own |
+| [Section](../components/section.md) | A part inside a panel needs a heading                                                                       |
+
 ## Anatomy
 
 Penpot page `Patterns/DetailHeader`. Family: none, since it is content that sits on the detail panel's surface and draws no surface of its own. Shared parts: `VisuallyHidden`.
@@ -150,13 +159,17 @@ Stories are titled `Patterns/DetailHeader`. No Penpot design yet, so the variant
 
 ## Do and don't
 
-For a caller using the pattern, with the reason.
+For a caller using the pattern, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                   | Don't                                                                                                                                                             |
-| ---------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Give the destination as `title` and the line's short name as `lineName`: "Husum Torv" with "5C"      | Put the line in the title as well, "5C Husum Torv": the header already reads the line first, so it would be said twice                                            |
-| Leave `line` off in `stop` for a station several lines serve, and name its lines in `subheader`      | Pick one line's colour for a shared station, which tells the eye only one line stops there                                                                        |
-| Keep `subheader` to one plain line that says no more than the data knows: "Next stop: Nørreport St." | Put a list of departures or delays in `subheader`; they belong in the panel's body                                                                                |
-| Put at most one of the panel's own controls in `action`, such as "Show on map"                       | Put a close button in `action`, which DetailPanel draws from the Sheet after the header; or add a `brand` action there when the panel already has its main action |
-| Use one DetailHeader at the top of a detail panel, and name the panel from its title's `id`          | Use it to head a section inside a panel: its title is always an `h2`                                                                                              |
-| Let the panel set the surface and padding around it                                                  | Give it a fill or a border with `className`; it would draw a card inside the panel                                                                                |
+| Rule | Level  | Do                                                                                                   | Don't                                                                                                                                                             | Checked by |
+| ---- | ------ | ---------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | should | Give the destination as `title` and the line's short name as `lineName`: "Husum Torv" with "5C"      | Put the line in the title as well, "5C Husum Torv": the header already reads the line first, so it would be said twice                                            | review     |
+| DD-2 | must   | Leave `line` off in `stop` for a station several lines serve, and name its lines in `subheader`      | Pick one line's colour for a shared station, which tells the eye only one line stops there                                                                        | review     |
+| DD-3 | should | Keep `subheader` to one plain line that says no more than the data knows: "Next stop: Nørreport St." | Put a list of departures or delays in `subheader`; they belong in the panel's body                                                                                | review     |
+| DD-4 | must   | Put at most one of the panel's own controls in `action`, such as "Show on map"                       | Put a close button in `action`, which DetailPanel draws from the Sheet after the header; or add a `brand` action there when the panel already has its main action | review     |
+| DD-5 | must   | Use one DetailHeader at the top of a detail panel, and name the panel from its title's `id`          | Use it to head a section inside a panel: its title is always an `h2`                                                                                              | review     |
+| DD-6 | should | Let the panel set the surface and padding around it                                                  | Give it a fill or a border with `className`; it would draw a card inside the panel                                                                                | review     |
+
+## For agents
+
+None known yet.

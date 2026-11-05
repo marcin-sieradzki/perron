@@ -6,6 +6,15 @@ The field that finds a line or a stop: a labelled text input with the search ico
 
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the [contract](README.md), the [foundations](../foundations/README.md), the tokens and the Base UI reference for `Field` and `Autocomplete` (`@base-ui/react` 1.9.0, installed). The extracted prototype component is not in any branch this run can reach.
 
+## When to use
+
+Use SearchField to find a line or a stop among many, with suggestions that narrow as the person types.
+
+| Use instead                | When                                                                                  |
+| -------------------------- | ------------------------------------------------------------------------------------- |
+| [Select](select.md)        | The person picks one value from a short, fixed list                                   |
+| [TextField](text-field.md) | The person types one line of words and needs no suggestions, such as an email address |
+
 ## Anatomy
 
 Penpot page `Components/SearchField`. Family: Fields, for the input group; Popups, for the list's popup; Rows, for its suggestions. Shared parts: `VisuallyHidden`, for a hidden label; `CloseButton`, for the clear button.
@@ -277,16 +286,20 @@ The deferred drawing has no variant property and a `State` property with the val
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                                   | Don't                                                                                                                                        |
-| ------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| Give a `label` that names what is searched, "Search lines and stops", and hide it with `hiddenLabel` only where the icon says enough | Leave the placeholder as the field's only words: it vanishes as the person types, and it is not a name                                       |
-| Put a hint in the placeholder as an instruction with an example, "Line or stop, such as 5C"                                          | Put anything the person must remember in the placeholder: it is gone once they type, and drawn in `color.text.tertiary`, below text contrast |
-| Act on `onItemSelect`, which gives the item, to move the map to the stop or show the line                                            | Find the chosen item from `onChange`'s words with `'item-press'`: two stops can share a name                                                 |
-| Pass `filter={null}` when the suggestions come already matched, such as from a server                                                | Leave Base UI's filter on server results: it hides a match whose label doesn't contain the words, such as a stop found by its old name       |
-| Give a short `label` and a `description` that tells two rows apart, "Bus, Husum Torv to Lufthavnen"                                  | Put a link, a button or a field in a row: an option is chosen as a whole, and the keys never reach a control inside it                       |
-| Use a [StationIcon](station-icon.md) or a [LineBadge](line-badge.md) as an item's `startIcon`, which carries its own text            | Use colour alone to tell a line from a stop: the mark needs its words, and the row its description                                           |
-| Put the field in a `<search>` element, or a `<form role="search">`, when it is the screen's search                                   | Expect SearchField to be a landmark: it is one field, and a screen may hold more than one                                                    |
-| Set the width on the container, or through `className` on the root                                                                   | Give the input or the box a width through `slotProps`: the list takes the box's width, and the label the root's                              |
-| Keep the field in a `PerronProvider` with the screen's locale, so "Clear" and "No matches" speak it                                  | Translate them with `clearLabel` and `noMatchesLabel` on every instance: those are for one instance's own words                              |
+| Rule | Level  | Do                                                                                                                                   | Don't                                                                                                                                        | Checked by |
+| ---- | ------ | ------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | must   | Give a `label` that names what is searched, "Search lines and stops", and hide it with `hiddenLabel` only where the icon says enough | Leave the placeholder as the field's only words: it vanishes as the person types, and it is not a name                                       | review     |
+| DD-2 | must   | Put a hint in the placeholder as an instruction with an example, "Line or stop, such as 5C"                                          | Put anything the person must remember in the placeholder: it is gone once they type, and drawn in `color.text.tertiary`, below text contrast | review     |
+| DD-3 | must   | Act on `onItemSelect`, which gives the item, to move the map to the stop or show the line                                            | Find the chosen item from `onChange`'s words with `'item-press'`: two stops can share a name                                                 | review     |
+| DD-4 | must   | Pass `filter={null}` when the suggestions come already matched, such as from a server                                                | Leave Base UI's filter on server results: it hides a match whose label doesn't contain the words, such as a stop found by its old name       | review     |
+| DD-5 | must   | Give a short `label` and a `description` that tells two rows apart, "Bus, Husum Torv to Lufthavnen"                                  | Put a link, a button or a field in a row: an option is chosen as a whole, and the keys never reach a control inside it                       | review     |
+| DD-6 | must   | Use a [StationIcon](station-icon.md) or a [LineBadge](line-badge.md) as an item's `startIcon`, which carries its own text            | Use colour alone to tell a line from a stop: the mark needs its words, and the row its description                                           | review     |
+| DD-7 | should | Put the field in a `<search>` element, or a `<form role="search">`, when it is the screen's search                                   | Expect SearchField to be a landmark: it is one field, and a screen may hold more than one                                                    | review     |
+| DD-8 | should | Set the width on the container, or through `className` on the root                                                                   | Give the input or the box a width through `slotProps`: the list takes the box's width, and the label the root's                              | review     |
+| DD-9 | should | Keep the field in a `PerronProvider` with the screen's locale, so "Clear" and "No matches" speak it                                  | Translate them with `clearLabel` and `noMatchesLabel` on every instance: those are for one instance's own words                              | review     |
+
+## For agents
+
+None known yet.

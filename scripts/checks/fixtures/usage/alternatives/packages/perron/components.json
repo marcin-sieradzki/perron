@@ -1,0 +1,57 @@
+[
+  {
+    "name": "Flag",
+    "layer": "component",
+    "category": "Display",
+    "status": "building",
+    "baseUiParts": [],
+    "penpotPath": "Components/Flag",
+    "dependsOn": []
+  },
+  {
+    "name": "Pin",
+    "layer": "component",
+    "category": "Display",
+    "status": "stable",
+    "baseUiParts": [],
+    "penpotPath": "Components/Pin",
+    "dependsOn": []
+  },
+  {
+    "name": "Tag",
+    "layer": "component",
+    "category": "Display",
+    "status": "stable",
+    "baseUiParts": [],
+    "penpotPath": "Components/Tag",
+    "dependsOn": []
+  },
+  {
+    "name": "StopRow",
+    "layer": "pattern",
+    "category": "Departures",
+    "status": "building",
+    "baseUiParts": [],
+    "penpotPath": "Patterns/StopRow",
+    "dependsOn": []
+  },
+  {
+    "name": "Badge",
+    "layer": "component",
+    "category": "Display",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Components/Badge",
+    "dependsOn": []
+  },
+  {
+    "name": "Label",
+    "layer": "component",
+    "category": "Display",
+    "status": "deprecated",
+    "replacedBy": "Tag",
+    "baseUiParts": [],
+    "penpotPath": "Components/Label",
+    "dependsOn": []
+  }
+]

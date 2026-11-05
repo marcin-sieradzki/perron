@@ -6,6 +6,17 @@ A hairline that divides two groups of content, across a column (horizontal) or d
 
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the [contract](README.md), the [foundations](../foundations/README.md), the tokens, the Base UI reference for `Separator` (`@base-ui/react` 1.9.0, installed) and the three separators already merged, [Toolbar](toolbar.md)'s `ToolbarSeparator`, [Select](select.md)'s separator between groups and [Menu](menu.md)'s `MenuSeparator`, whose line it shares. Its registry entry has no `dependsOn`. No ROADMAP line names Separator, and the extracted prototype component is not in any branch this run can reach, so nothing here rests on it. The factory's brief for this slot put it in the Layout category, asked for a minimal API, and asked the spec to say whether the merged separators should later render it (CR-8).
 
+## When to use
+
+Use Separator for a line where two groups of content meet and the layout doesn't already set them apart, such as between a vehicle's facts and its actions in a panel.
+
+| Use instead           | When                                                                   |
+| --------------------- | ---------------------------------------------------------------------- |
+| [Section](section.md) | The break needs words: a heading over each group                       |
+| [Toolbar](toolbar.md) | The line sits in a toolbar: its `ToolbarSeparator` runs across the bar |
+| [Menu](menu.md)       | The line sits in a menu: its `MenuSeparator` is the menu's own part    |
+| [Surface](surface.md) | The line is a panel's or a card's edge                                 |
+
 ## Anatomy
 
 Penpot page `Components/Separator`. Family: none: the contract's [Families](README.md#families) have no divider of its own, and the line is the one the Rows family divides rows with, `border.width.025` in `color.border.subtle`. Shared parts: none.
@@ -109,13 +120,17 @@ No owned strings: the separator shows and announces no words, only its role.
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                                                           | Don't                                                                                                                                                                               |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Put a Separator where two groups of content meet and the layout doesn't already set them apart, such as between a vehicle's facts and its actions in a panel | Put one between every row of a list or after every paragraph: the interface around the map stays calm, and white space sets most things apart without a line                        |
-| Space the line with its container's `gap` or padding, from the `space.*` scale                                                                               | Give the separator a margin of its own: it adds to the container's gap, and two screens end up with two spacings                                                                    |
-| Put a vertical Separator in a flex row, and a horizontal one in a block or a flex column, so the line runs the container's length                            | Put a vertical one in block flow or a horizontal one in a flex row, where it has no length and draws nothing                                                                        |
-| Use `ToolbarSeparator` inside a `Toolbar` and `MenuSeparator` inside a `Menu`, and let Select draw its own between groups                                    | Put a Separator in a toolbar, where it doesn't run across the bar, in a menu, where it isn't the menu's own part, or in a list, where a `separator` is not a listbox's child (CR-8) |
-| Give a break that needs words a heading                                                                                                                      | Put text in the separator, or swap its role for `none` to hide it: a break the eye sees is one the ear is told                                                                      |
-| Draw a panel's or card's edge with its own border                                                                                                            | Use a Separator as an element's edge: it announces a break between two groups, which an edge is not                                                                                 |
+| Rule | Level  | Do                                                                                                                                                           | Don't                                                                                                                                                                               | Checked by |
+| ---- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | should | Put a Separator where two groups of content meet and the layout doesn't already set them apart, such as between a vehicle's facts and its actions in a panel | Put one between every row of a list or after every paragraph: the interface around the map stays calm, and white space sets most things apart without a line                        | review     |
+| DD-2 | should | Space the line with its container's `gap` or padding, from the `space.*` scale                                                                               | Give the separator a margin of its own: it adds to the container's gap, and two screens end up with two spacings                                                                    | review     |
+| DD-3 | must   | Put a vertical Separator in a flex row, and a horizontal one in a block or a flex column, so the line runs the container's length                            | Put a vertical one in block flow or a horizontal one in a flex row, where it has no length and draws nothing                                                                        | review     |
+| DD-4 | must   | Use `ToolbarSeparator` inside a `Toolbar` and `MenuSeparator` inside a `Menu`, and let Select draw its own between groups                                    | Put a Separator in a toolbar, where it doesn't run across the bar, in a menu, where it isn't the menu's own part, or in a list, where a `separator` is not a listbox's child (CR-8) | review     |
+| DD-5 | must   | Give a break that needs words a heading                                                                                                                      | Put text in the separator, or swap its role for `none` to hide it: a break the eye sees is one the ear is told                                                                      | review     |
+| DD-6 | must   | Draw a panel's or card's edge with its own border                                                                                                            | Use a Separator as an element's edge: it announces a break between two groups, which an edge is not                                                                                 | review     |
+
+## For agents
+
+None known yet.

@@ -8,6 +8,17 @@ The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-def
 
 CheckboxGroup and RadioGroup build on Fieldset next: each renders Fieldset with its own Base UI root through `render`, as Base UI's forms guide composes `<Fieldset.Root render={<RadioGroup />}>`, so the group takes Fieldset's legend, its name and its disabled state (CR-5).
 
+## When to use
+
+Use Fieldset to name a group of related controls, such as the modes shown on the map or the fields of a report form, so they are heard as one group and can be disabled together.
+
+| Use instead                        | When                                                                                         |
+| ---------------------------------- | -------------------------------------------------------------------------------------------- |
+| [CheckboxGroup](checkbox-group.md) | The group is a set of checkboxes that answer one question, such as which modes the map shows |
+| [RadioGroup](radio-group.md)       | The group is a set of choices of which exactly one holds                                     |
+| [Field](field.md)                  | One control stands alone, named by its own label                                             |
+| [Section](section.md)              | A titled block of content in a panel holds no controls                                       |
+
 ## Anatomy
 
 Penpot page `Components/Fieldset`. Family: none, since it draws no box, fill or border and joins no family's treatment; its controls keep their own. Shared parts: `VisuallyHidden`, for a hidden legend.
@@ -130,14 +141,18 @@ One per variant and state the design would show. The design is deferred and has 
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                                      | Don't                                                                                                                                                                                                                             |
-| --------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Group controls that answer one question, such as which modes to show, or fields that belong together, such as a report's place and time | Wrap a single control in a Fieldset: one control is named by its own label, through Field                                                                                                                                         |
-| Write the legend in sentence case, a few words or a short question: "Show on the map"                                                   | Put a heading element inside `legend`, or type it in capitals: the legend is already the group's name, a heading inside it adds one to the page's outline that no section follows, and capitals come only from the overline style |
-| Use CheckboxGroup or RadioGroup for a set of checkboxes or radios, once they ship: they compose Fieldset with the group's behaviour     | Render Fieldset as a Base UI group yourself in a screen: the groups hold the value, the keys and the form name for you                                                                                                            |
-| Disable the whole group with `disabled`, so every control in it goes together                                                           | Disable each control by hand inside a Fieldset that stays enabled: the legend then looks live over dead controls                                                                                                                  |
-| Use `hiddenLegend` where a heading right above already names the group for the eye                                                      | Leave out the legend, or replace it with an `aria-label` on the root: the legend is the group's one name, seen and heard alike                                                                                                    |
-| Use Section for a titled block of content in a panel                                                                                    | Use Fieldset to title content that holds no controls: a `group` with nothing to fill in tells a screen reader there is something to fill in                                                                                       |
-| Give the group's description and error through a Base UI `Field.Root`, as CheckboxGroup and RadioGroup do                               | Put a hint or an error as plain text among the controls: nothing ties it to the group for the ear                                                                                                                                 |
+| Rule | Level  | Do                                                                                                                                      | Don't                                                                                                                                                                                                                             | Checked by |
+| ---- | ------ | --------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | should | Group controls that answer one question, such as which modes to show, or fields that belong together, such as a report's place and time | Wrap a single control in a Fieldset: one control is named by its own label, through Field                                                                                                                                         | review     |
+| DD-2 | must   | Write the legend in sentence case, a few words or a short question: "Show on the map"                                                   | Put a heading element inside `legend`, or type it in capitals: the legend is already the group's name, a heading inside it adds one to the page's outline that no section follows, and capitals come only from the overline style | review     |
+| DD-3 | should | Use CheckboxGroup or RadioGroup for a set of checkboxes or radios, once they ship: they compose Fieldset with the group's behaviour     | Render Fieldset as a Base UI group yourself in a screen: the groups hold the value, the keys and the form name for you                                                                                                            | review     |
+| DD-4 | should | Disable the whole group with `disabled`, so every control in it goes together                                                           | Disable each control by hand inside a Fieldset that stays enabled: the legend then looks live over dead controls                                                                                                                  | review     |
+| DD-5 | must   | Use `hiddenLegend` where a heading right above already names the group for the eye                                                      | Leave out the legend, or replace it with an `aria-label` on the root: the legend is the group's one name, seen and heard alike                                                                                                    | review     |
+| DD-6 | must   | Use Section for a titled block of content in a panel                                                                                    | Use Fieldset to title content that holds no controls: a `group` with nothing to fill in tells a screen reader there is something to fill in                                                                                       | review     |
+| DD-7 | must   | Give the group's description and error through a Base UI `Field.Root`, as CheckboxGroup and RadioGroup do                               | Put a hint or an error as plain text among the controls: nothing ties it to the group for the ear                                                                                                                                 | review     |
+
+## For agents
+
+None known yet.

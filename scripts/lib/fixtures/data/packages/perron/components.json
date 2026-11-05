@@ -1,0 +1,39 @@
+[
+  {
+    "name": "Chip",
+    "layer": "component",
+    "category": "Display",
+    "status": "deprecated",
+    "replacedBy": "Tag",
+    "baseUiParts": [],
+    "penpotPath": "Components/Chip",
+    "dependsOn": []
+  },
+  {
+    "name": "Tag",
+    "layer": "component",
+    "category": "Display",
+    "status": "stable",
+    "baseUiParts": [],
+    "penpotPath": "Components/Tag",
+    "dependsOn": []
+  },
+  {
+    "name": "Sketch",
+    "layer": "component",
+    "category": "Display",
+    "status": "designing",
+    "baseUiParts": [],
+    "penpotPath": "Components/Sketch",
+    "dependsOn": []
+  },
+  {
+    "name": "TagRow",
+    "layer": "pattern",
+    "category": "Data",
+    "status": "building",
+    "baseUiParts": [],
+    "penpotPath": "Patterns/TagRow",
+    "dependsOn": ["Tag"]
+  }
+]

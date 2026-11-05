@@ -22,7 +22,7 @@ Every colour token in both themes. A `color` token says what a colour is for and
 | `color.text.on-color.dark`  | `#12181B` (palette.neutral.900)   | `#12181B` (palette.neutral.900)   | Dark text on a coloured fill (bus, light line colours)                                     |
 | `color.text.on-color.light` | `#FFFFFF` (palette.neutral.0)     | `#FFFFFF` (palette.neutral.0)     | White text on a coloured fill                                                              |
 | `color.text.primary`        | `#12181B` (palette.neutral.900)   | `#EBEEEB` (palette.neutral.100)   | Main text and icons; also the focus ring                                                   |
-| `color.text.secondary`      | `#47535A` (palette.neutral.600)   | `#A2ADB1` (palette.neutral.300)   | Supporting text                                                                            |
+| `color.text.secondary`      | `#47535A` (palette.neutral.600)   | `#A2ADB1` (palette.neutral.300)   | Supporting text beside or under the main text: labels, second lines and details            |
 | `color.text.tertiary`       | `#74818A` (palette.neutral.500)   | `#74818A` (palette.neutral.500)   | Hints, captions, inactive controls                                                         |
 | `color.text.inverse`        | `#FAFBF9` (color.surface.default) | `#12181B` (color.surface.default) | Text on inverse surfaces: tooltips, the chart's value tip                                  |
 | `color.text.success`        | `#067849` (palette.green.700)     | `#3CCB80` (palette.green.300)     | Text in the success colour: on time, running normally                                      |
@@ -47,10 +47,10 @@ A control shows hover and pressed as two steps away from its rest look, each one
 | Token                           | Light                           | Dark                            | Use                                                                                                       |
 | ------------------------------- | ------------------------------- | ------------------------------- | --------------------------------------------------------------------------------------------------------- |
 | `color.surface.default`         | `#FAFBF9` (palette.neutral.50)  | `#12181B` (palette.neutral.900) | Opaque panel background; text on inverse surfaces                                                         |
-| `color.surface.raised`          | `#FFFFFF` (palette.neutral.0)   | `#1D2428` (palette.neutral.800) | Inputs, selected segment                                                                                  |
+| `color.surface.raised`          | `#FFFFFF` (palette.neutral.0)   | `#1D2428` (palette.neutral.800) | Background of fields, checkboxes, radios and keys, and of the selected segment                            |
 | `color.surface.inset`           | `#EBEEEB` (palette.neutral.100) | `#283237` (palette.neutral.700) | Segmented control track, counts, inset boxes                                                              |
 | `color.surface.overlay`         | `rgba(250, 251, 249, 0.9)`      | `rgba(18, 24, 27, 0.88)`        | Translucent floating panels over the map (used with backdrop blur)                                        |
-| `color.surface.hover`           | `rgba(18, 24, 27, 0.05)`        | `rgba(235, 238, 235, 0.06)`     | Hover state layer                                                                                         |
+| `color.surface.hover`           | `rgba(18, 24, 27, 0.05)`        | `rgba(235, 238, 235, 0.06)`     | Translucent layer over a control under the pointer                                                        |
 | `color.surface.selected`        | `rgba(18, 24, 27, 0.09)`        | `rgba(235, 238, 235, 0.09)`     | Selected row; the pressed layer of a quiet or outline control, in place of color.surface.hover and denser |
 | `color.surface.inverse`         | `#12181B` (color.text.primary)  | `#EBEEEB` (color.text.primary)  | Primary buttons, pressed icon buttons, chart tooltip                                                      |
 | `color.surface.inverse-hover`   | `#283237` (palette.neutral.700) | `#A2ADB1` (palette.neutral.300) | Hover fill of a primary button, a step from color.surface.inverse the eye sees                            |
@@ -74,7 +74,7 @@ A control shows hover and pressed as two steps away from its rest look, each one
 | `color.border.strong`  | `rgba(18, 24, 27, 0.22)`       | `rgba(235, 238, 235, 0.2)`     | Dashed tags, axis lines: lines that decorate rather than show where a control is            |
 | `color.border.control` | `rgba(18, 24, 27, 0.47)`       | `rgba(235, 238, 235, 0.39)`    | Edges that show where a control is: inputs, outline buttons. 3:1 or better on every surface |
 | `color.border.brand`   | `#896001` (palette.yellow.700) | `#F2B630` (palette.yellow.300) | Edge of a brand button, solid or outline, so the yellow reaches 3:1 on every surface        |
-| `color.border.focus`   | `#12181B` (color.text.primary) | `#EBEEEB` (color.text.primary) | Keyboard focus ring                                                                         |
+| `color.border.focus`   | `#12181B` (color.text.primary) | `#EBEEEB` (color.text.primary) | The ring around the control that has keyboard focus                                         |
 
 <!-- /tokens -->
 
@@ -88,16 +88,16 @@ Status colours are reserved for health, delays and problems: success, warning, d
 
 <!-- tokens: color.status.* color.surface.success color.surface.warning color.surface.danger color.surface.info -->
 
-| Token                   | Light                          | Dark                           | Use                                                            |
-| ----------------------- | ------------------------------ | ------------------------------ | -------------------------------------------------------------- |
-| `color.status.success`  | `#13915A` (palette.green.500)  | `#3CCB80` (palette.green.300)  | Healthy, on time, live share at or above 70%                   |
-| `color.status.warning`  | `#B06A00` (palette.orange.500) | `#F0A43A` (palette.orange.300) | Partial, live share 40–69%                                     |
-| `color.status.danger`   | `#C2410C` (palette.red.500)    | `#FF8655` (palette.red.300)    | Late by 3 min or more, live share under 40%, delay disruptions |
-| `color.status.info`     | `#2D5FC4` (palette.blue.500)   | `#7FA6FF` (palette.blue.300)   | Early, diversions                                              |
-| `color.surface.success` | `#E5FAEC` (palette.green.100)  | `#133622` (palette.green.900)  | Tinted background for a success message                        |
-| `color.surface.warning` | `#FEF1E4` (palette.orange.100) | `#3F280A` (palette.orange.900) | Tinted background for a warning message or count               |
-| `color.surface.danger`  | `#FEF0EC` (palette.red.100)    | `#452417` (palette.red.900)    | Tinted background for a danger message                         |
-| `color.surface.info`    | `#EEF4FF` (palette.blue.100)   | `#202D49` (palette.blue.900)   | Tinted background for an info message                          |
+| Token                   | Light                          | Dark                           | Use                                                                      |
+| ----------------------- | ------------------------------ | ------------------------------ | ------------------------------------------------------------------------ |
+| `color.status.success`  | `#13915A` (palette.green.500)  | `#3CCB80` (palette.green.300)  | Healthy, on time, live share at or above 70%                             |
+| `color.status.warning`  | `#B06A00` (palette.orange.500) | `#F0A43A` (palette.orange.300) | Partial, live share 40–69%                                               |
+| `color.status.danger`   | `#C2410C` (palette.red.500)    | `#FF8655` (palette.red.300)    | Late by 3 min or more, live share under 40%, delay disruptions           |
+| `color.status.info`     | `#2D5FC4` (palette.blue.500)   | `#7FA6FF` (palette.blue.300)   | Running early and diversions: the info fill of alerts, toasts and meters |
+| `color.surface.success` | `#E5FAEC` (palette.green.100)  | `#133622` (palette.green.900)  | Tinted background for a success message                                  |
+| `color.surface.warning` | `#FEF1E4` (palette.orange.100) | `#3F280A` (palette.orange.900) | Tinted background for a warning message or count                         |
+| `color.surface.danger`  | `#FEF0EC` (palette.red.100)    | `#452417` (palette.red.900)    | Tinted background for a danger message                                   |
+| `color.surface.info`    | `#EEF4FF` (palette.blue.100)   | `#202D49` (palette.blue.900)   | Tinted background for an info message                                    |
 
 <!-- /tokens -->
 
@@ -117,7 +117,7 @@ The brand colour is the yellow of the bus dot in the [Mylder mark](logos.md), an
 | `color.surface.brand`         | `#D99A00` (palette.yellow.500) | `#F2B630` (palette.yellow.300) | Brand fill: brand buttons, hero bands and calls to action. Text on it is color.text.on-color.dark |
 | `color.surface.brand-hover`   | `#C48A02` (palette.yellow.550) | `#D99A00` (palette.yellow.500) | Hover fill of a brand button, a step from color.surface.brand the eye sees                        |
 | `color.surface.brand-pressed` | `#B07B05` (palette.yellow.600) | `#B07B05` (palette.yellow.600) | Pressed fill of a brand button, a step further from color.surface.brand than its hover            |
-| `color.surface.brand-subtle`  | `#FFF2DD` (palette.yellow.100) | `#3B2B07` (palette.yellow.900) | Tinted brand background                                                                           |
+| `color.surface.brand-subtle`  | `#FFF2DD` (palette.yellow.100) | `#3B2B07` (palette.yellow.900) | Brand tint for emphasis on the hero page, under color.text.brand                                  |
 | `color.text.brand`            | `#896001` (palette.yellow.700) | `#F2B630` (palette.yellow.300) | Text in the brand colour: brand outline buttons and emphasis on the hero page; never links        |
 
 <!-- /tokens -->
@@ -131,32 +131,32 @@ The brand colour is the yellow of the bus dot in the [Mylder mark](logos.md), an
 
 <!-- tokens: color.transit.line.* color.transit.line-on.* color.transit.mode.* -->
 
-| Token                            | Light                                 | Dark                                  | Use                                 |
-| -------------------------------- | ------------------------------------- | ------------------------------------- | ----------------------------------- |
-| `color.transit.line.m1`          | `#0B8A44`                             | `#0B8A44`                             | Metro M1                            |
-| `color.transit.line.m2`          | `#F0B400`                             | `#F0B400`                             | Metro M2                            |
-| `color.transit.line.m3`          | `#E2231A`                             | `#E2231A`                             | Metro M3 (Cityringen)               |
-| `color.transit.line.m4`          | `#0090D0`                             | `#0090D0`                             | Metro M4                            |
-| `color.transit.line.a`           | `#00A1DE`                             | `#00A1DE`                             | S-tog A                             |
-| `color.transit.line.b`           | `#4BA046`                             | `#4BA046`                             | S-tog B                             |
-| `color.transit.line.c`           | `#F18A00`                             | `#F18A00`                             | S-tog C                             |
-| `color.transit.line.e`           | `#7D5AA6`                             | `#7D5AA6`                             | S-tog E                             |
-| `color.transit.line.f`           | `#F5C200`                             | `#F5C200`                             | S-tog F                             |
-| `color.transit.line.h`           | `#DD1F2A`                             | `#DD1F2A`                             | S-tog H                             |
-| `color.transit.line-on.m1`       | `#FFFFFF` (color.text.on-color.light) | `#FFFFFF` (color.text.on-color.light) | Label text on the M1 line badge     |
-| `color.transit.line-on.m2`       | `#12181B` (color.text.on-color.dark)  | `#12181B` (color.text.on-color.dark)  | Label text on the M2 line badge     |
-| `color.transit.line-on.m3`       | `#FFFFFF` (color.text.on-color.light) | `#FFFFFF` (color.text.on-color.light) | Label text on the M3 line badge     |
-| `color.transit.line-on.m4`       | `#FFFFFF` (color.text.on-color.light) | `#FFFFFF` (color.text.on-color.light) | Label text on the M4 line badge     |
-| `color.transit.line-on.a`        | `#FFFFFF` (color.text.on-color.light) | `#FFFFFF` (color.text.on-color.light) | Label text on the A line badge      |
-| `color.transit.line-on.b`        | `#FFFFFF` (color.text.on-color.light) | `#FFFFFF` (color.text.on-color.light) | Label text on the B line badge      |
-| `color.transit.line-on.c`        | `#FFFFFF` (color.text.on-color.light) | `#FFFFFF` (color.text.on-color.light) | Label text on the C line badge      |
-| `color.transit.line-on.e`        | `#FFFFFF` (color.text.on-color.light) | `#FFFFFF` (color.text.on-color.light) | Label text on the E line badge      |
-| `color.transit.line-on.f`        | `#12181B` (color.text.on-color.dark)  | `#12181B` (color.text.on-color.dark)  | Label text on the F line badge      |
-| `color.transit.line-on.h`        | `#FFFFFF` (color.text.on-color.light) | `#FFFFFF` (color.text.on-color.light) | Label text on the H line badge      |
-| `color.transit.mode.bus`         | `#D99A00` (palette.yellow.500)        | `#F2B630` (palette.yellow.300)        | All bus lines                       |
-| `color.transit.mode.regional`    | `#232C31`                             | `#EEF1F0`                             | Regional and Øresund trains         |
-| `color.transit.mode.on-bus`      | `#12181B` (color.text.on-color.dark)  | `#12181B` (color.text.on-color.dark)  | Label text on bus badges            |
-| `color.transit.mode.on-regional` | `#FAFBF9` (color.surface.default)     | `#12181B` (color.surface.default)     | Label text on regional train badges |
+| Token                            | Light                                 | Dark                                  | Use                                                                                                                                                 |
+| -------------------------------- | ------------------------------------- | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `color.transit.line.m1`          | `#0B8A44`                             | `#0B8A44`                             | Metro M1: fills its line badge and colours its vehicle dots, station icons, stop timeline and rail on the map                                       |
+| `color.transit.line.m2`          | `#F0B400`                             | `#F0B400`                             | Metro M2: fills its line badge and colours its vehicle dots, station icons, stop timeline and rail on the map                                       |
+| `color.transit.line.m3`          | `#E2231A`                             | `#E2231A`                             | Metro M3 (Cityringen): fills its line badge and colours its vehicle dots, station icons, stop timeline and rail on the map                          |
+| `color.transit.line.m4`          | `#0090D0`                             | `#0090D0`                             | Metro M4: fills its line badge and colours its vehicle dots, station icons, stop timeline and rail on the map                                       |
+| `color.transit.line.a`           | `#00A1DE`                             | `#00A1DE`                             | S-tog A: fills its line badge and colours its vehicle dots, station icons, stop timeline and rail on the map; also the S-tog dot of the Mylder mark |
+| `color.transit.line.b`           | `#4BA046`                             | `#4BA046`                             | S-tog B: fills its line badge and colours its vehicle dots, station icons, stop timeline and rail on the map                                        |
+| `color.transit.line.c`           | `#F18A00`                             | `#F18A00`                             | S-tog C: fills its line badge and colours its vehicle dots, station icons, stop timeline and rail on the map                                        |
+| `color.transit.line.e`           | `#7D5AA6`                             | `#7D5AA6`                             | S-tog E: fills its line badge and colours its vehicle dots, station icons, stop timeline and rail on the map                                        |
+| `color.transit.line.f`           | `#F5C200`                             | `#F5C200`                             | S-tog F: fills its line badge and colours its vehicle dots, station icons, stop timeline and rail on the map                                        |
+| `color.transit.line.h`           | `#DD1F2A`                             | `#DD1F2A`                             | S-tog H: fills its line badge and colours its vehicle dots, station icons, stop timeline and rail on the map                                        |
+| `color.transit.line-on.m1`       | `#FFFFFF` (color.text.on-color.light) | `#FFFFFF` (color.text.on-color.light) | Label text on the M1 line badge                                                                                                                     |
+| `color.transit.line-on.m2`       | `#12181B` (color.text.on-color.dark)  | `#12181B` (color.text.on-color.dark)  | Label text on the M2 line badge                                                                                                                     |
+| `color.transit.line-on.m3`       | `#FFFFFF` (color.text.on-color.light) | `#FFFFFF` (color.text.on-color.light) | Label text on the M3 line badge                                                                                                                     |
+| `color.transit.line-on.m4`       | `#FFFFFF` (color.text.on-color.light) | `#FFFFFF` (color.text.on-color.light) | Label text on the M4 line badge                                                                                                                     |
+| `color.transit.line-on.a`        | `#FFFFFF` (color.text.on-color.light) | `#FFFFFF` (color.text.on-color.light) | Label text on the A line badge                                                                                                                      |
+| `color.transit.line-on.b`        | `#FFFFFF` (color.text.on-color.light) | `#FFFFFF` (color.text.on-color.light) | Label text on the B line badge                                                                                                                      |
+| `color.transit.line-on.c`        | `#FFFFFF` (color.text.on-color.light) | `#FFFFFF` (color.text.on-color.light) | Label text on the C line badge                                                                                                                      |
+| `color.transit.line-on.e`        | `#FFFFFF` (color.text.on-color.light) | `#FFFFFF` (color.text.on-color.light) | Label text on the E line badge                                                                                                                      |
+| `color.transit.line-on.f`        | `#12181B` (color.text.on-color.dark)  | `#12181B` (color.text.on-color.dark)  | Label text on the F line badge                                                                                                                      |
+| `color.transit.line-on.h`        | `#FFFFFF` (color.text.on-color.light) | `#FFFFFF` (color.text.on-color.light) | Label text on the H line badge                                                                                                                      |
+| `color.transit.mode.bus`         | `#D99A00` (palette.yellow.500)        | `#F2B630` (palette.yellow.300)        | Every bus line: fills bus badges and colours bus dots, station icons and stop timelines; also the bus dot of the Mylder mark                        |
+| `color.transit.mode.regional`    | `#232C31`                             | `#EEF1F0`                             | Regional and Øresund trains                                                                                                                         |
+| `color.transit.mode.on-bus`      | `#12181B` (color.text.on-color.dark)  | `#12181B` (color.text.on-color.dark)  | Label text on bus badges                                                                                                                            |
+| `color.transit.mode.on-regional` | `#FAFBF9` (color.surface.default)     | `#12181B` (color.surface.default)     | Label text on regional train badges                                                                                                                 |
 
 <!-- /tokens -->
 
@@ -174,7 +174,7 @@ Delay and disruption colours point at the status text colours. When each is used
 | `color.transit.delay.early`        | `#2351AF` (color.text.info)      | `#7FA6FF` (color.text.info)      | Delay text when early                      |
 | `color.transit.delay.unknown`      | `#74818A` (color.text.tertiary)  | `#74818A` (color.text.tertiary)  | Delay text when there is no real-time data |
 | `color.transit.severity.delay`     | `#AD3600` (color.text.danger)    | `#FF8655` (color.text.danger)    | Icon and label for delays                  |
-| `color.transit.severity.data`      | `#47535A` (color.text.secondary) | `#A2ADB1` (color.text.secondary) | Data feed problems                         |
+| `color.transit.severity.data`      | `#47535A` (color.text.secondary) | `#A2ADB1` (color.text.secondary) | Icon and label for data feed problems      |
 | `color.transit.severity.diversion` | `#2351AF` (color.text.info)      | `#7FA6FF` (color.text.info)      | Icon and label for diversions              |
 | `color.transit.severity.planned`   | `#47535A` (color.text.secondary) | `#A2ADB1` (color.text.secondary) | Icon and label for planned works           |
 | `color.transit.severity.notice`    | `#47535A` (color.text.secondary) | `#A2ADB1` (color.text.secondary) | Icon and label for service notices         |
@@ -217,14 +217,14 @@ The map's ground. How the map is drawn is on [Map](map.md).
 | `color.map.water`       | `#C4D4DD` | `#0A1115` | Sea, lakes and the page behind the map                                        |
 | `color.map.land`        | `#EDEFEB` | `#151B1E` | Land, the map's main ground                                                   |
 | `color.map.park`        | `#D8E4D2` | `#16231E` | Parks and green areas                                                         |
-| `color.map.street`      | `#FFFFFF` | `#252D31` | Streets                                                                       |
-| `color.map.airport`     | `#E2E5E1` | `#1C2326` | Airport grounds                                                               |
-| `color.map.runway`      | `#CBD1CE` | `#2B3438` | Runways and taxiways                                                          |
+| `color.map.street`      | `#FFFFFF` | `#252D31` | Roads and streets, drawn over the land                                        |
+| `color.map.airport`     | `#E2E5E1` | `#1C2326` | Airport grounds, under the runways and taxiways                               |
+| `color.map.runway`      | `#CBD1CE` | `#2B3438` | Runways and taxiways, drawn over the airport grounds                          |
 | `color.map.building`    | `#E2E5E0` | `#1A2125` | Building footprints at close zoom, on the flat map                            |
 | `color.map.building-3d` | `#D3D9D4` | `#2A3338` | 3D buildings, walls and roofs: the map's light shades each face from it       |
 | `color.map.rail`        | `#BCC4C1` | `#323C41` | Rail tracks without a coloured line on them                                   |
-| `color.map.label`       | `#66737A` | `#7E8B91` | Place names                                                                   |
-| `color.map.water-label` | `#5F7A88` | `#4B6774` | Water names                                                                   |
+| `color.map.label`       | `#66737A` | `#7E8B91` | Place names on land; names on water use color.map.water-label                 |
+| `color.map.water-label` | `#5F7A88` | `#4B6774` | Names of seas, lakes and harbours, set on the water                           |
 | `color.map.aircraft`    | `#B3127A` | `#F27BC8` | The aircraft glyph on the map, and nothing else; a no-signal aircraft is grey |
 
 <!-- /tokens -->

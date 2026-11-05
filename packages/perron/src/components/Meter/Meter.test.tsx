@@ -142,3 +142,15 @@ describe('Meter', () => {
     expect(markup).toContain('>—</span>')
   })
 })
+
+// Meter's props type requires `label`, so `npm run typecheck` fails the day MeterProps takes a meter
+// with none. It catches half of its spec's DD-4, which stays checked by review: `label=""` compiles.
+describe("Meter's props type", () => {
+  it('requires the label, without which the meter renders with an empty name', () => {
+    const markup = renderToStaticMarkup(
+      // @ts-expect-error: a meter with no label tells the ear a number and nothing about it
+      <Meter value={82} />,
+    )
+    expect(markup).toMatch(/class="pn-Meter-label"[^>]*><\/span>/)
+  })
+})

@@ -82,12 +82,12 @@ Each kind of disruption has its colour, always with its icon and its name. A ser
 
 <!-- tokens: color.transit.severity.* -->
 
-| Token                              | Light                            | Dark                             | Use                                |
-| ---------------------------------- | -------------------------------- | -------------------------------- | ---------------------------------- |
-| `color.transit.severity.delay`     | `#AD3600` (color.text.danger)    | `#FF8655` (color.text.danger)    | Icon and label for delays          |
-| `color.transit.severity.data`      | `#47535A` (color.text.secondary) | `#A2ADB1` (color.text.secondary) | Data feed problems                 |
-| `color.transit.severity.diversion` | `#2351AF` (color.text.info)      | `#7FA6FF` (color.text.info)      | Icon and label for diversions      |
-| `color.transit.severity.planned`   | `#47535A` (color.text.secondary) | `#A2ADB1` (color.text.secondary) | Icon and label for planned works   |
-| `color.transit.severity.notice`    | `#47535A` (color.text.secondary) | `#A2ADB1` (color.text.secondary) | Icon and label for service notices |
+| Token                              | Light                            | Dark                             | Use                                   |
+| ---------------------------------- | -------------------------------- | -------------------------------- | ------------------------------------- |
+| `color.transit.severity.delay`     | `#AD3600` (color.text.danger)    | `#FF8655` (color.text.danger)    | Icon and label for delays             |
+| `color.transit.severity.data`      | `#47535A` (color.text.secondary) | `#A2ADB1` (color.text.secondary) | Icon and label for data feed problems |
+| `color.transit.severity.diversion` | `#2351AF` (color.text.info)      | `#7FA6FF` (color.text.info)      | Icon and label for diversions         |
+| `color.transit.severity.planned`   | `#47535A` (color.text.secondary) | `#A2ADB1` (color.text.secondary) | Icon and label for planned works      |
+| `color.transit.severity.notice`    | `#47535A` (color.text.secondary) | `#A2ADB1` (color.text.secondary) | Icon and label for service notices    |
 
 <!-- /tokens -->

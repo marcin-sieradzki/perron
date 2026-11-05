@@ -170,7 +170,8 @@ describe('specProblems', () => {
     for (const f of specs) {
       const spec = readFileSync(join(root, f), 'utf8')
       const name = /^# (.+)$/m.exec(spec)?.[1] ?? ''
-      expect({ f, ...specProblems(spec, template, name, banned) }).toEqual({
+      const { pending, problems } = specProblems(spec, template, name, banned)
+      expect({ f, pending, problems }).toEqual({
         f,
         pending: 0,
         problems: [],

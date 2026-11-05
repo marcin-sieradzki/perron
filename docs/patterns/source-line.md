@@ -6,6 +6,15 @@ One caption line that names where a panel's data comes from and the time of that
 
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`), so there is no read-back, code map or export: this spec decides what the drawing would, the layers, the design states and the token for every part. Its sources are the [contract](../components/README.md) and its Patterns section, the [foundations](../foundations/README.md) ("Honest. Every vehicle shows how fresh its data is, and every sentence says no more than the data knows"), [Data states](../foundations/data-states.md) ("The components draw the state they are given and never work one out from a timestamp"), [Typography](../foundations/typography.md#roles), [Accessibility](../foundations/accessibility.md), [content design](../content-design.md), `list_tokens`, and the spec of [Text](../components/text.md), the one entry in its `dependsOn`, with its neighbours [Attribution](../components/attribution.md), the map's credits, and [KioskBar](kiosk-bar.md), [ReportStrip](report-strip.md) and [VehicleTable](vehicle-table.md), which take times as the caller's strings. Its ROADMAP line is ticket marcin-sieradzki/perron#154: one caption line naming a panel's source and its data's time, an optional second source and time, the paused and may-be-out-of-date states, never counting up and never blending two sources, because Rejseplanen's terms ask for the source and the update time on every screen, and Mylder shows each source with its own time so a stale board under a fresh snapshot can't read as fresh. In Mylder it stands in as a Text caption with the same words and order on every panel. No sibling on a branch shares its parts: the TopBar the same ticket's parent names, whose status line reads "Updated 08:14:05" with a paused state, has no spec yet. Ticket marcin-sieradzki/perron#168 then let each source say what its time is of in the app's own words, as Mylder's screens word their lines; [What each time is of](#what-each-time-is-of) gives the reasons. The extracted prototype is not reachable from this branch, so nothing here rests on it. As a pattern it imports only Perron's components and parts, never `@base-ui/react`.
 
+## When to use
+
+Use SourceLine on every panel that shows a source's data, to name the source and the time of its data, and to say when that data is paused or may be out of date.
+
+| Use instead                                 | When                                                                         |
+| ------------------------------------------- | ---------------------------------------------------------------------------- |
+| [Attribution](../components/attribution.md) | The credits are the map's, for its tiles and data, with links to their terms |
+| [TopBar](top-bar.md)                        | The time is the moving map's, in the status line along the top of the map    |
+
 ## Anatomy
 
 Penpot page `Patterns/SourceLine`. Family: none: it is a line of supporting text on its container's surface, not a row, field, popup, panel or tooltip, and it draws no surface of its own (CR-9). Shared parts: none: every word is said in text, and nothing is told by an icon or a shape.
@@ -197,15 +206,19 @@ Rules for this pattern alone, numbered so the build and the review can cite them
 
 ## Do and don't
 
-For a caller using the pattern, with the reason.
+For a caller using the pattern, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                     | Don't                                                                                                                        |
-| ---------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| Put a SourceLine on every panel that shows a source's data, in the same place, so the reader finds it on every screen  | Leave the line off a panel because another panel on the screen has one: Rejseplanen's terms ask for it on every screen       |
-| Give each source its own entry with the time of its own data                                                           | Pass one source named "Rejseplanen and positions" with one time: a stale feed would read as fresh under the other's time     |
-| Word each time by what it is of in `label`, "position {time}", and leave `name` off a second fact of the same provider | Write "may be out of date" into a `label`, or pick the label by `outOfDate`: set `outOfDate` and the line adds its own words |
-| Give the time of the data the panel shows, and give it again when that data changes                                    | Give the time the screen last rendered, or the device's clock: the line would say the data is newer than it is               |
-| Set `outOfDate` from the app's own judgement, such as a failed refresh or a time past its limit                        | Leave a source that failed to refresh without `outOfDate`: its time alone doesn't tell the reader it stopped                 |
-| Set `paused` while the panel takes no updates, and leave each time as it was                                           | Count the time up, or show "8 s ago", while paused: the line would claim a freshness the panel doesn't have                  |
-| Announce a change of state, such as a source going out of date, in the screen's own polite live region                 | Make the line a live region: its times change every few seconds and would flood a screen reader                              |
-| Credit a map's sources with [Attribution](../components/attribution.md), with links to their terms                     | Use the line for the map's credits: it names the data a panel shows and when, not the map's tiles                            |
+| Rule | Level  | Do                                                                                                                     | Don't                                                                                                                        | Checked by |
+| ---- | ------ | ---------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | must   | Put a SourceLine on every panel that shows a source's data, in the same place, so the reader finds it on every screen  | Leave the line off a panel because another panel on the screen has one: Rejseplanen's terms ask for it on every screen       | review     |
+| DD-2 | must   | Give each source its own entry with the time of its own data                                                           | Pass one source named "Rejseplanen and positions" with one time: a stale feed would read as fresh under the other's time     | review     |
+| DD-3 | must   | Word each time by what it is of in `label`, "position {time}", and leave `name` off a second fact of the same provider | Write "may be out of date" into a `label`, or pick the label by `outOfDate`: set `outOfDate` and the line adds its own words | review     |
+| DD-4 | must   | Give the time of the data the panel shows, and give it again when that data changes                                    | Give the time the screen last rendered, or the device's clock: the line would say the data is newer than it is               | review     |
+| DD-5 | must   | Set `outOfDate` from the app's own judgement, such as a failed refresh or a time past its limit                        | Leave a source that failed to refresh without `outOfDate`: its time alone doesn't tell the reader it stopped                 | review     |
+| DD-6 | must   | Set `paused` while the panel takes no updates, and leave each time as it was                                           | Count the time up, or show "8 s ago", while paused: the line would claim a freshness the panel doesn't have                  | review     |
+| DD-7 | must   | Announce a change of state, such as a source going out of date, in the screen's own polite live region                 | Make the line a live region: its times change every few seconds and would flood a screen reader                              | review     |
+| DD-8 | should | Credit a map's sources with [Attribution](../components/attribution.md), with links to their terms                     | Use the line for the map's credits: it names the data a panel shows and when, not the map's tiles                            | review     |
+
+## For agents
+
+None known yet.

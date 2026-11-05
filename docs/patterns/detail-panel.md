@@ -6,6 +6,17 @@ The panel that opens on the right of the map when a rider picks a vehicle or a s
 
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): this spec decides what the drawing would, from the [contract](../components/README.md) and its Patterns section, the [foundations](../foundations/README.md), [content design](../content-design.md), the tokens and the specs of the two entries in `dependsOn`, [Sheet](../components/sheet.md) and [DetailHeader](detail-header.md). The extracted prototype is not reachable from this branch, so nothing here rests on it. What the foundations already say of the detail panel is that it sits on the right ([Layout](../foundations/layout.md#page-shell)), is `size.detail-width` wide on a wide screen, stacks at `z-index.detail` ([Layout](../foundations/layout.md#stacking)), becomes a bottom sheet under `breakpoint.phone`, sets its parts `space.300` apart ([Semantic spacing](../foundations/semantic-spacing.md#space)), and closes on Esc after a dialog and before a highlight ([Accessibility](../foundations/accessibility.md#rules)).
 
+## When to use
+
+Use DetailPanel for the panel that opens beside the map when a rider picks a vehicle or a stop, headed by what it shows and holding its details.
+
+| Use instead                                | When                                                                                        |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------- |
+| [Sheet](../components/sheet.md)            | The panel is not about one vehicle or stop, such as the overview sheet                      |
+| [DetailHeader](detail-header.md)           | Only the header is wanted, at the top of a panel the screen draws itself                    |
+| [MapTooltip](../components/map-tooltip.md) | A few words on a vehicle or a stop show while the pointer rests on it, with no panel opened |
+| [Dialog](../components/dialog.md)          | The panel must hold focus over the map until it closes, such as the help with the keys      |
+
 ## Anatomy
 
 Penpot page `Patterns/DetailPanel`. Family: Panels, through [Sheet](../components/sheet.md), whose popup draws the Panels row's glass, border, `radius.xl` and `shadow.panel`; the pattern draws no surface of its own. Shared parts: `CloseButton`, through the Sheet's close button; the `VisuallyHidden` span DetailHeader composes stays inside it.
@@ -177,13 +188,17 @@ Stories are titled `Patterns/DetailPanel`. No Penpot design yet, so the variant 
 
 ## Do and don't
 
-For a caller using the pattern, with the reason.
+For a caller using the pattern, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                                       | Don't                                                                                                                             |
-| ---------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| Open one detail panel at a time, controlled by `open`, for the vehicle or stop the rider picked, and clear the selection in `onClose`    | Stack a second detail panel over the first; pick the new vehicle into the open panel, so Esc still closes the topmost thing first |
-| Give the destination as `title` and the line's short name as `lineName`: "Husum Torv" with "5C"                                          | Put the line in the title as well, "5C Husum Torv": the panel already reads the line first, so its name would say it twice        |
-| Put at most one control of your own in `action`, such as "Show on map", and let the panel draw its close button                          | Put a close button of your own in `action`: the panel has one, at the end of the header row, which Esc and focus return go with   |
-| Pick `anchor` `bottom` under `breakpoint.phone`, in the screen's code                                                                    | Expect the panel to turn into a bottom sheet on its own; it holds no media query                                                  |
-| Compose the body from Perron's patterns and components, StopTimeline, FactList, Section and DisruptionCard, with their own `h3` headings | Put a heading of level 2 in the body: the panel's title is its `h2`, and a section inside it is an `h3`                           |
-| Keep one primary action per panel                                                                                                        | Put a `brand` button in `action` and another in the body; a screen has one brand action at most                                   |
+| Rule | Level  | Do                                                                                                                                       | Don't                                                                                                                             | Checked by |
+| ---- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | must   | Open one detail panel at a time, controlled by `open`, for the vehicle or stop the rider picked, and clear the selection in `onClose`    | Stack a second detail panel over the first; pick the new vehicle into the open panel, so Esc still closes the topmost thing first | review     |
+| DD-2 | should | Give the destination as `title` and the line's short name as `lineName`: "Husum Torv" with "5C"                                          | Put the line in the title as well, "5C Husum Torv": the panel already reads the line first, so its name would say it twice        | review     |
+| DD-3 | must   | Put at most one control of your own in `action`, such as "Show on map", and let the panel draw its close button                          | Put a close button of your own in `action`: the panel has one, at the end of the header row, which Esc and focus return go with   | review     |
+| DD-4 | should | Pick `anchor` `bottom` under `breakpoint.phone`, in the screen's code                                                                    | Expect the panel to turn into a bottom sheet on its own; it holds no media query                                                  | review     |
+| DD-5 | must   | Compose the body from Perron's patterns and components, StopTimeline, FactList, Section and DisruptionCard, with their own `h3` headings | Put a heading of level 2 in the body: the panel's title is its `h2`, and a section inside it is an `h3`                           | review     |
+| DD-6 | must   | Keep one primary action per panel                                                                                                        | Put a `brand` button in `action` and another in the body; a screen has one brand action at most                                   | review     |
+
+## For agents
+
+None known yet.

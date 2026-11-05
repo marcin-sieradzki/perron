@@ -6,6 +6,17 @@ A modal panel over the map and a `color.scrim` backdrop, such as the help with t
 
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the contract, the foundations, the tokens and the Base UI reference. The `CloseButton` shared part gives the close button its look, and the [Button](button.md) spec the trigger and the actions in the stories.
 
+## When to use
+
+Use Dialog for a short modal panel that interrupts, such as the help with the keys, which a press outside closes.
+
+| Use instead                                | When                                                                                                             |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| [AlertDialog](alert-dialog.md)             | The person must answer a question before anything else, such as before clearing every filter                     |
+| [DetailPanel](../patterns/detail-panel.md) | The panel shows a vehicle's or a stop's details beside the map, which stays usable                               |
+| [Popover](popover.md)                      | A short explanation or a few settings sit by the button that opens them, and the rest of the screen stays usable |
+| [Sheet](sheet.md)                          | The panel slides in from the edge of the screen and floats over the map                                          |
+
 ## Anatomy
 
 Penpot page `Components/Dialog`. Family: Panels (the contract's [Families](README.md#families): a dialog is a panel, glass like the Popups, over `color.scrim` when modal, `radius.xl`). Shared parts: `CloseButton`, which the contract's [Shared parts](README.md#shared-parts) table composes in `Dialog.Close`.
@@ -216,16 +227,20 @@ Each story renders the dialog open at first render beside its trigger, a [Button
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                              | Don't                                                                                                                                           |
-| ------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| Give every dialog a short `title` in sentence case, such as "Keys" or "Clear all filters?", which names it for screen readers   | Leave the title empty or hide it: the dialog then has no name                                                                                   |
-| Pass the button that opens the dialog as `trigger`, so it is announced as opening a dialog and gets focus back                  | Open a dialog from a button placed beside it with `open` alone, when a `trigger` would do: the button loses `aria-haspopup` and `aria-expanded` |
-| Set `slotProps.trigger.nativeButton` to `false` when `trigger` is not a `<button>`, as Base UI warns                            | Pass a link as the trigger for a dialog: a link goes somewhere, and a dialog opens over the screen                                              |
-| Keep the description to one sentence, and put lists, steps and controls in `children`                                           | Put block content, such as a list, in `description`: it renders in a `<p>`                                                                      |
-| Put the main action last in `actions`, the one `brand` Button, and close the dialog from an action by setting `open` to `false` | Mark more than one action `brand`, or put a second close button in the actions: the header already has one, and Esc closes too                  |
-| Use a dialog for a question that must be answered or help that interrupts, kept short                                           | Use a dialog for a vehicle's or a stop's details: they belong in the detail panel beside the map, which leaves the map usable                   |
-| Keep a dialog open, such as while it saves, by calling `details.cancel()` in `onClose`                                          | Try to disable the close button: it is never disabled, so touch screen readers can always leave                                                 |
-| Leave the close button's label to the locale, or override it with `closeLabel`                                                  | Hide the close button with a `className`: Base UI asks for it in a modal dialog, so touch screen readers can leave                              |
-| Let the dialog take `z-index.dialog` and its place in the middle of the screen                                                  | Set a `z-index`, a position or an opacity on the dialog: it would fall under another overlay or leave its scrim                                 |
+| Rule | Level  | Do                                                                                                                              | Don't                                                                                                                                           | Checked by |
+| ---- | ------ | ------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | must   | Give every dialog a short `title` in sentence case, such as "Keys" or "Clear all filters?", which names it for screen readers   | Leave the title empty or hide it: the dialog then has no name                                                                                   | review     |
+| DD-2 | must   | Pass the button that opens the dialog as `trigger`, so it is announced as opening a dialog and gets focus back                  | Open a dialog from a button placed beside it with `open` alone, when a `trigger` would do: the button loses `aria-haspopup` and `aria-expanded` | review     |
+| DD-3 | must   | Set `slotProps.trigger.nativeButton` to `false` when `trigger` is not a `<button>`, as Base UI warns                            | Pass a link as the trigger for a dialog: a link goes somewhere, and a dialog opens over the screen                                              | review     |
+| DD-4 | must   | Keep the description to one sentence, and put lists, steps and controls in `children`                                           | Put block content, such as a list, in `description`: it renders in a `<p>`                                                                      | review     |
+| DD-5 | must   | Put the main action last in `actions`, the one `brand` Button, and close the dialog from an action by setting `open` to `false` | Mark more than one action `brand`, or put a second close button in the actions: the header already has one, and Esc closes too                  | review     |
+| DD-6 | should | Use a dialog for a question that must be answered or help that interrupts, kept short                                           | Use a dialog for a vehicle's or a stop's details: they belong in the detail panel beside the map, which leaves the map usable                   | review     |
+| DD-7 | must   | Keep a dialog open, such as while it saves, by calling `details.cancel()` in `onClose`                                          | Try to disable the close button: it is never disabled, so touch screen readers can always leave                                                 | types      |
+| DD-8 | must   | Leave the close button's label to the locale, or override it with `closeLabel`                                                  | Hide the close button with a `className`: Base UI asks for it in a modal dialog, so touch screen readers can leave                              | review     |
+| DD-9 | must   | Let the dialog take `z-index.dialog` and its place in the middle of the screen                                                  | Set a `z-index`, a position or an opacity on the dialog: it would fall under another overlay or leave its scrim                                 | review     |
+
+## For agents
+
+None known yet.

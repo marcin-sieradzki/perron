@@ -2,6 +2,18 @@
 
 The kind of a disruption on a line, as its icon and its name in its colour, such as a warning triangle and "Delays", heading a disruption card or a row in a list of disruptions.
 
+## When to use
+
+Use SeverityLabel to name the kind of a disruption on a line, as its icon and its word in its colour, such as "Delays", heading a disruption card or a row in a list of disruptions.
+
+| Use instead                                      | When                                                                                                              |
+| ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| [DisruptionCard](../patterns/disruption-card.md) | The whole disruption shows as a card: its kind, the lines it touches, a title and a sentence on what is happening |
+| [Delay](delay.md)                                | The figure is how late one vehicle or departure runs                                                              |
+| [NormalService](normal-service.md)               | The line runs normally, with no disruption to name                                                                |
+| [VehicleDotLabel](vehicle-dot-label.md)          | One vehicle is silent: its dot and its word, "No signal", say so                                                  |
+| [Tag](tag.md)                                    | A word or two marks a property of a departure or a vehicle, such as "Cancelled"                                   |
+
 ## Anatomy
 
 Penpot page `Components/SeverityLabel`, not drawn yet: the design is deferred (`docs/adr/0010-unattended-runs-with-design-deferred.md`), so this spec decides the drawing. Family: none. Shared parts: none.
@@ -147,14 +159,18 @@ Each new key gets a JSDoc line like its neighbours in `packages/perron/src/local
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                           | Don't                                                                                                                                  |
-| ---------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| Head a disruption with SeverityLabel, then say what is happening in a plain sentence beside it, as content design asks.      | Let the label stand for the disruption: "Delays" says the kind, not where, why or how long.                                            |
-| Use SeverityLabel wherever a kind of disruption is named, so its icon, colour and word always come together.                 | Set your own text in a `color.transit.severity.*` colour, or show a disruption icon alone: colour and icons never carry meaning alone. |
-| Use Delay for how late one vehicle or departure runs.                                                                        | Use SeverityLabel with `severity='delay'` for one late vehicle: it names a disruption on a line.                                       |
-| Use `severity='data'` for a problem with the real-time feed across a line or the network.                                    | Use it for one silent vehicle: that is the vehicle dot's "No signal" state, said with its own word.                                    |
-| Show a line running normally with the "Running normally" word, and no SeverityLabel.                                         | Invent a kind, such as a success severity, for good news: the five kinds are disruptions and notices about the service.                |
-| Use `severity='notice'` for a message whose fields don't say which kind it is, and say what it is in the sentence beside it. | Guess a kind from a message's words, or show an unread kind as planned works: the label would claim what the message never said.       |
-| Make the whole disruption card the link or button, with the label inside it.                                                 | Make SeverityLabel itself a filter control through `render`: it is a label, smaller than `size.target-min`, and has no pressed state.  |
+| Rule | Level | Do                                                                                                                           | Don't                                                                                                                                  | Checked by |
+| ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | must  | Head a disruption with SeverityLabel, then say what is happening in a plain sentence beside it, as content design asks.      | Let the label stand for the disruption: "Delays" says the kind, not where, why or how long.                                            | review     |
+| DD-2 | must  | Use SeverityLabel wherever a kind of disruption is named, so its icon, colour and word always come together.                 | Set your own text in a `color.transit.severity.*` colour, or show a disruption icon alone: colour and icons never carry meaning alone. | review     |
+| DD-3 | must  | Use Delay for how late one vehicle or departure runs.                                                                        | Use SeverityLabel with `severity='delay'` for one late vehicle: it names a disruption on a line.                                       | review     |
+| DD-4 | must  | Use `severity='data'` for a problem with the real-time feed across a line or the network.                                    | Use it for one silent vehicle: that is the vehicle dot's "No signal" state, said with its own word.                                    | review     |
+| DD-5 | must  | Show a line running normally with the "Running normally" word, and no SeverityLabel.                                         | Invent a kind, such as a success severity, for good news: the five kinds are disruptions and notices about the service.                | types      |
+| DD-6 | must  | Use `severity='notice'` for a message whose fields don't say which kind it is, and say what it is in the sentence beside it. | Guess a kind from a message's words, or show an unread kind as planned works: the label would claim what the message never said.       | review     |
+| DD-7 | must  | Make the whole disruption card the link or button, with the label inside it.                                                 | Make SeverityLabel itself a filter control through `render`: it is a label, smaller than `size.target-min`, and has no pressed state.  | review     |
+
+## For agents
+
+None known yet.

@@ -1,7 +1,10 @@
 // The data behind a component's docs page, `<Name>.mdx`: its props table in MUI's layout, from the
-// argTypes Storybook reads out of the component's docgen, and the sections of its spec the page
-// shows. Kept apart from the blocks that draw them, so a node test can run them.
+// argTypes Storybook reads out of the component's docgen, the sections of its spec the page shows,
+// and the notice a deprecated entry's page opens with. Kept apart from the blocks that draw them,
+// so a node test can run them.
 import type { ArgTypes } from '@storybook/react-vite'
+import { deprecationNotice, specPage, type Entry } from '../../scripts/lib/entry.ts'
+import { sectionMarkdown, splitSections, WHEN_TO_USE } from '../../scripts/lib/usage.ts'
 
 type InputType = ArgTypes[string]
 
@@ -82,26 +85,33 @@ export function propRows(argTypes: ArgTypes): PropRow[] {
 export const RUN_NOTES = '<!-- run notes -->'
 
 /**
- * A spec's `##` sections by heading, and its intro: the text between `#` and the first `##`, up to
- * its run notes.
+ * A spec's `##` sections by heading, each with its heading, and its intro: the text between `#` and
+ * the first `##`, up to its run notes, then its When to use, heading and all, when it has one.
  */
-function sectionsOf(markdown: string) {
-  const [head, ...rest] = markdown.split(/^(?=## )/m)
-  const intro = head
-    .replace(/^# .*$/m, '')
-    .split(RUN_NOTES)[0]
-    .trim()
-  const sections = new Map(rest.map((s) => [/^## (.+)$/m.exec(s)![1].trim(), s.trim()] as const))
+function introAndSections(markdown: string) {
+  const { head, sections: all } = splitSections(markdown)
+  const sections = new Map(all.map((s) => [s.heading, sectionMarkdown(s).trim()] as const))
+  const intro = [
+    head
+      .map((l) => l.text)
+      .join('\n')
+      .replace(/^# .*$/m, '')
+      .split(RUN_NOTES)[0]
+      .trim(),
+    sections.get(WHEN_TO_USE),
+  ]
+    .filter(Boolean)
+    .join('\n\n')
   return { intro, sections }
 }
 
 /**
  * Prose from a spec for the docs page: `'intro'` gives what the component is for, above the run
- * notes, a list of
- * headings gives those sections, each with its `##` heading, in the order asked.
+ * notes, and its When to use; a list of headings gives those sections, each with its `##`
+ * heading, in the order asked.
  */
 export function specProse(markdown: string, which: 'intro' | string[]) {
-  const { intro, sections } = sectionsOf(markdown)
+  const { intro, sections } = introAndSections(markdown)
   if (which === 'intro') return intro
   return which
     .map((heading) => {
@@ -110,4 +120,13 @@ export function specProse(markdown: string, which: 'intro' | string[]) {
       return section
     })
     .join('\n\n')
+}
+
+/**
+ * The notice above the intro of the docs page whose spec is at `path`: a deprecated entry's
+ * successor, as markdown linked to the successor's spec, or undefined for any other entry.
+ */
+export function pageNotice(registry: Entry[], path: string) {
+  const entry = registry.find((e) => specPage(e) === path)
+  return entry && deprecationNotice(entry)
 }

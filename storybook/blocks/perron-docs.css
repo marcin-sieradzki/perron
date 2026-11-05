@@ -79,6 +79,11 @@ body,
   box-shadow: var(--perron-shadow-thumb);
 }
 
+/* A deprecated entry's successor, above its intro */
+.pd-notice {
+  margin-block: var(--perron-space-400);
+}
+
 /* Tables, the prose's and the token blocks' */
 .pd-table,
 .pd-page > table {

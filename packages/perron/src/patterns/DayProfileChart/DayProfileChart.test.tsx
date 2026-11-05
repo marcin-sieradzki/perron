@@ -172,3 +172,21 @@ describe('DayProfileChart', () => {
     expect(markup).toContain('class="pn-DayProfileChart-axis a"')
   })
 })
+
+// DayProfileChart's props type requires `label`, so `npm run typecheck` fails the day
+// DayProfileChartProps takes a chart with none. It catches half of its spec's DD-4, which stays
+// checked by review: `label=""` compiles.
+describe("DayProfileChart's props type", () => {
+  it('rejects a chart with no label, which nothing stops at run time', () => {
+    const markup = renderToStaticMarkup(
+      // @ts-expect-error: with no label, the caption is empty and the plot has no name
+      <DayProfileChart points={hours([412, 380])} />,
+    )
+    // the plot is still a focus stop, named by a caption with nothing in it
+    expect(markup).toMatch(
+      /<figcaption class="pn-DayProfileChart-caption" id="([^"]+)"><\/figcaption>/,
+    )
+    const captionId = /<figcaption[^>]* id="([^"]+)"/.exec(markup)![1]
+    expect(markup).toContain(`role="group" aria-labelledby="${captionId}" tabindex="0"`)
+  })
+})

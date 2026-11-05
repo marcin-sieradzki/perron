@@ -8,6 +8,15 @@ The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-def
 
 [Meter](meter.md), the other bar along a track on Base UI's same five parts, sets the precedent Progress follows where they meet: the layout, the figure, its locale, the track and its forced-colours rule. Meter's own Do and don't sends a task's progress here. The tokens were read from this branch's `packages/perron/tokens/` files, since the Perron MCP's `list_tokens` lacks `size.meter-track`, added since the main checkout it reads.
 
+## When to use
+
+Use Progress for a task the person waits on that ends, such as an export or a download.
+
+| Use instead                                       | When                                                                                                      |
+| ------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| [Meter](meter.md)                                 | The bar measures a value within a range, such as the share of vehicles reporting live, rather than a task |
+| [DataStatePanel](../patterns/data-state-panel.md) | A data view's data has not arrived: its calm loading message takes the view's place                       |
+
 ## Anatomy
 
 Penpot page `Components/Progress`. Family: none, since it is a static display that sits on its container's surface and joins no family's treatment: it is not pressed, takes no hover and is not one of the Rows, Fields, Popups, Panels or Tooltips. Shared parts: none; the words for a task under way reach the ear through `aria-valuetext`, not through VisuallyHidden (CR-5).
@@ -177,14 +186,18 @@ Rules for this component alone, numbered so the build and the review can cite th
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                              | Don't                                                                                                                                     |
-| ------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| Use Progress for a task the person waits on that ends, such as an export or a download                                          | Use it for a measure within a range, such as the share of vehicles reporting live: that is a Meter, a measurement rather than a task      |
-| Pass `null` while how far is not known, so Progress sweeps and says "In progress"                                               | Pass `0` or a guess: an empty fill at "0%" claims a figure the task never gave                                                            |
-| Name the task in a few words in `label`: "Exporting the report", "Loading the network"                                          | Leave the name to the layout: a progress bar with no name tells the ear a number and nothing about the task                               |
-| Announce the start and the end of the task, such as "Report ready", in the screen's own polite live region                      | Make a Progress a live region: a figure that counts up every moment floods the screen reader                                              |
-| Replace the bar with the screen's own message when the task fails, and say what happened                                        | Leave a bar at its last figure, or tint it, when the task fails: the eye reads it as still running, and colour tells no screen reader     |
-| Give `getAriaValueText` the fuller words when the figure shows them, such as "3 of 12 files" through `slotProps.value.children` | Change the shown figure and leave the ear on the percentage: the eye and the ear then hear different numbers                              |
-| Use DataStatePanel's loading status for a view whose data has not arrived                                                       | Put an indeterminate Progress in place of a data view's content: DataStatePanel's calm "Loading" message is the library's answer for that |
+| Rule | Level  | Do                                                                                                                              | Don't                                                                                                                                     | Checked by |
+| ---- | ------ | ------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | must   | Use Progress for a task the person waits on that ends, such as an export or a download                                          | Use it for a measure within a range, such as the share of vehicles reporting live: that is a Meter, a measurement rather than a task      | review     |
+| DD-2 | must   | Pass `null` while how far is not known, so Progress sweeps and says "In progress"                                               | Pass `0` or a guess: an empty fill at "0%" claims a figure the task never gave                                                            | review     |
+| DD-3 | must   | Name the task in a few words in `label`: "Exporting the report", "Loading the network"                                          | Leave the name to the layout: a progress bar with no name tells the ear a number and nothing about the task                               | review     |
+| DD-4 | must   | Announce the start and the end of the task, such as "Report ready", in the screen's own polite live region                      | Make a Progress a live region: a figure that counts up every moment floods the screen reader                                              | review     |
+| DD-5 | must   | Replace the bar with the screen's own message when the task fails, and say what happened                                        | Leave a bar at its last figure, or tint it, when the task fails: the eye reads it as still running, and colour tells no screen reader     | review     |
+| DD-6 | must   | Give `getAriaValueText` the fuller words when the figure shows them, such as "3 of 12 files" through `slotProps.value.children` | Change the shown figure and leave the ear on the percentage: the eye and the ear then hear different numbers                              | review     |
+| DD-7 | should | Use DataStatePanel's loading status for a view whose data has not arrived                                                       | Put an indeterminate Progress in place of a data view's content: DataStatePanel's calm "Loading" message is the library's answer for that | review     |
+
+## For agents
+
+None known yet.

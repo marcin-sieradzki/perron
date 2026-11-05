@@ -23,7 +23,8 @@ For a pattern, read `docs/patterns/<name>.md` for the spec, `packages/perron/src
    Then hold the sources against each other:
    - every row of the spec's Props table is a member of `<Name>Props` with the same default and a type that agrees, and every member is a row, an inherited one reading `inherited` under Base UI prop (the contract's [Props](../../../docs/components/README.md#props)); `npm run gates -- docs` holds the rows and members to each other;
    - every story the spec's Stories table names is an export of the stories file;
-   - the spec has the sections the page shows: `Keyboard and ARIA`, `Owned strings` and `Do and don't`, and no `[PENDING]`.
+   - the spec has the sections the page shows: `When to use`, drawn with the intro, `Keyboard and ARIA`, `Owned strings` and `Do and don't`, and no `[PENDING]`;
+   - every story uses `<Name>` as its spec's Do and don't allows: a story that breaks a `must` rule, or a `should` rule with no reason in its JSDoc, is a fault in the stories, named by the rule's id, `DD-3`.
 
    Done when every check holds. A check that fails is a fault in a source, found before the first write: return `failed`, naming the source, its stage, the line and the mismatch.
 
@@ -53,7 +54,7 @@ For a pattern, read `docs/patterns/<name>.md` for the spec, `packages/perron/src
 
    A compound component, whose parts `<Name>.tsx` exports beside the root (Toolbar's `ToolbarButton`, `ToolbarGroup`, `ToolbarSeparator`), adds `import { <Part>, … } from './<Name>.tsx'` and, after the root's `<PropsTable>`, one block per part in the order of the spec's Props tables: an `<h2>` naming the part inside `<Unstyled><div className="pd-page">`, then `<PropsTable of={<Part>} />`, which reads the part's docgen with no stories file of its own. Toolbar's page is that shape applied.
 
-   What each block draws, in order: the component's name; the spec's opening sentence; every story, live, with its code; the props table in MUI's layout (name, type, default, description, a required prop marked `*`), then a slots table with one row per `slotProps` key; then the three spec sections under their own headings. A prop's description is its JSDoc, and a slot's is "Props for the `<part>` part". Done when the file matches the shape line for line.
+   What each block draws, in order: the component's name; the spec's opening sentence and its When to use; every story, live, with its code; the props table in MUI's layout (name, type, default, description, a required prop marked `*`), then a slots table with one row per `slotProps` key; then the three spec sections under their own headings, the Do and don't table with its Rule and Level columns. No page shows For agents. A prop's description is its JSDoc, and a slot's is "Props for the `<part>` part". Done when the file matches the shape line for line.
 
 3. **Turn the entry stable.** In `packages/perron/components.json`, set the entry's `status` to `stable`, then run `npm run registry` and `npm run api`. Done when `packages/perron/api.json` holds `<Name>` with every member `<Name>Props` declares itself (the API leaves out the members Base UI owns).
 
@@ -69,4 +70,4 @@ The run ends with one outcome and a short summary. Whatever the outcome, a Direc
 
 - **`done`**: the page's path, and the entry now `stable`.
 - **`failed`**, from shared tooling: `failing` starts "Shared tooling:" and names the tool, its line and the gap; the factory stops for the maintainer without a build rerun.
-- **`failed`**: the fault in a source, with the source or the red check, the line or the output, the mismatch, and the stage it belongs to. The build's next run fixes it from this text, so name the fix where you can ("add `@default 'plain'` to `tone`'s JSDoc").
+- **`failed`**: the fault in a source, with the source or the red check, the line or the output, the mismatch, the rule of the spec's Do and don't it breaks by its id, `DD-3`, when it breaks one, and the stage it belongs to. The build's next run fixes it from this text, so name the fix where you can ("add `@default 'plain'` to `tone`'s JSDoc").

@@ -6,6 +6,19 @@ A key figure with the words that say what it counts, such as "412" under "Report
 
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): this spec decides what the drawing would, from the [contract](README.md), the [foundations](../foundations/README.md), [content design](../content-design.md) and the tokens. Stat has no Base UI component and nothing in `dependsOn`, and the extracted prototype is not reachable from this branch, so nothing here rests on it.
 
+## When to use
+
+Use Stat for a key figure with the words that say what it counts, such as "412" under "Reporting live", in a report, a panel or on the kiosk.
+
+| Use instead                                  | When                                                                                                |
+| -------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| [Delay](delay.md)                            | The figure is how late one vehicle or departure runs                                                |
+| [Meter](meter.md)                            | The figure is a share within a range that a bar shows, such as the share of vehicles reporting live |
+| [FactList](fact-list.md)                     | Several facts about one thing, each a name and its value, sit in a list                             |
+| [ReportStrip](../patterns/report-strip.md)   | The figures are how many vehicles are in each data state                                            |
+| [VehicleTable](../patterns/vehicle-table.md) | Figures are compared row by row in a table                                                          |
+| [Count](count.md)                            | A small count sits after a filter chip's or a tab's words                                           |
+
 ## Anatomy
 
 Penpot page `Components/Stat`. Family: none, since it is static content that sits on its container's surface and joins no family's treatment. Shared parts: VisuallyHidden, which says an unknown figure in words (CR-4).
@@ -151,13 +164,17 @@ One per variant the deferred design will draw. It has no variant property, so it
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                   | Don't                                                                                                                          |
-| -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| Leave out `children` when no data gives the figure, so Stat shows "—" and says "Unknown"                             | Pass `0` or a guess when the figure is unknown: the brand never claims more than the data knows                                |
-| Write the figure as content design does: "4 min" with a space, "≈ 30" for an estimate, "−1" with the true minus sign | Put the label's words inside the figure, such as "412 live": the figure stays short, and the label says what it counts         |
-| Name the figure in a few words in `label`: "Reporting live", "Average delay"                                         | Leave `label` empty and rely on the layout to say what the number is: a figure without its name tells the ear nothing          |
-| Say a status in words beside the figure, or show it with a Meter or a SeverityLabel                                  | Colour the figure through `className` to say it is good or bad: colour alone tells no screen reader and no colour-blind person |
-| Use Delay for one vehicle's or departure's delay, and Text with `variant='stat'` for a figure inside a sentence      | Use Stat in a row of a list or table: it is set large for a key figure, and rows compare figures in a `data` role              |
-| Announce a changed figure in the screen's own polite live region, when it changes state                              | Make a Stat a live region: a figure that updates every few seconds floods the screen reader                                    |
+| Rule | Level  | Do                                                                                                                   | Don't                                                                                                                          | Checked by |
+| ---- | ------ | -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ---------- |
+| DD-1 | must   | Leave out `children` when no data gives the figure, so Stat shows "—" and says "Unknown"                             | Pass `0` or a guess when the figure is unknown: the brand never claims more than the data knows                                | review     |
+| DD-2 | should | Write the figure as content design does: "4 min" with a space, "≈ 30" for an estimate, "−1" with the true minus sign | Put the label's words inside the figure, such as "412 live": the figure stays short, and the label says what it counts         | review     |
+| DD-3 | must   | Name the figure in a few words in `label`: "Reporting live", "Average delay"                                         | Leave `label` empty and rely on the layout to say what the number is: a figure without its name tells the ear nothing          | review     |
+| DD-4 | must   | Say a status in words beside the figure, or show it with a Meter or a SeverityLabel                                  | Colour the figure through `className` to say it is good or bad: colour alone tells no screen reader and no colour-blind person | review     |
+| DD-5 | should | Use Delay for one vehicle's or departure's delay, and Text with `variant='stat'` for a figure inside a sentence      | Use Stat in a row of a list or table: it is set large for a key figure, and rows compare figures in a `data` role              | review     |
+| DD-6 | must   | Announce a changed figure in the screen's own polite live region, when it changes state                              | Make a Stat a live region: a figure that updates every few seconds floods the screen reader                                    | review     |
+
+## For agents
+
+None known yet.

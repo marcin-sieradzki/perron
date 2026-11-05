@@ -6,6 +6,16 @@ A bar that shows where one measured value sits within a known range, with the wo
 
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the [contract](README.md), the [foundations](../foundations/README.md), [content design](../content-design.md), the tokens and the Base UI reference for `@base-ui/react` 1.9.0. Meter has nothing in `dependsOn`, and the extracted prototype is not reachable from this branch, so nothing here rests on it. The [Semantic colours](../foundations/semantic-colours.md#status) page gives the one meter Mylder already names, the live share, its thresholds, and [Motion](../foundations/motion.md) gives meters their fill change.
 
+## When to use
+
+Use Meter for a measured value within a known range that changes on its own, such as the share of a network's vehicles reporting live.
+
+| Use instead             | When                                                         |
+| ----------------------- | ------------------------------------------------------------ |
+| [Progress](progress.md) | The bar shows how far a task has got, such as an export      |
+| [Stat](stat.md)         | A key figure stands on its own, with no range                |
+| [Count](count.md)       | A tally sits beside words, such as in a filter chip or a tab |
+
 ## Anatomy
 
 Penpot page `Components/Meter`. Family: none, since it is a static display that sits on its container's surface and joins no family's treatment: it is not pressed, takes no hover and is not one of the Rows, Fields, Popups, Panels or Tooltips. Shared parts: none; the words for an unknown value reach the ear through `aria-valuetext`, not through VisuallyHidden (CR-5).
@@ -180,14 +190,18 @@ Rules for this component alone, numbered so the build and the review can cite th
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                                     | Don't                                                                                                                                                        |
-| -------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Use Meter for a measure within a known range that changes on its own, such as the share of vehicles reporting live                     | Use it for the progress of a task, such as a load: a `meter` is a measurement, and a task's progress is a `progressbar`, which [Progress](progress.md) draws |
-| Pick `color` from the value on the screen that knows what good is, such as the live share's 70% and 40%, and say it in words beside it | Let the tint alone say good or bad: colour tells no screen reader and no colour-blind person, and forced colours drop it                                     |
-| Pass `null` when no data gives the value, so Meter shows "—" and says "Unknown"                                                        | Pass `0` or a guess when the value is unknown: an empty fill at "0%" claims a figure the data never gave                                                     |
-| Name the meter in a few words in `label`: "Reporting live", "Trips run today"                                                          | Leave the name to the layout: a meter with no name tells the ear a number and nothing about it                                                               |
-| Give `getAriaValueText` the fuller words when the figure shows them, such as "1 046 of 1 204" through `slotProps.value.children`       | Change the shown figure and leave the ear on the percentage: the eye and the ear then hear different numbers                                                 |
-| Use Stat for a key figure on its own, and Count for a tally beside words                                                               | Draw a meter for a number with no range: the fill's length means nothing without a `max`                                                                     |
-| Announce a change of state in the screen's own polite live region                                                                      | Make a Meter a live region: a share that updates every few seconds floods the screen reader                                                                  |
+| Rule | Level | Do                                                                                                                                     | Don't                                                                                                                                                        | Checked by |
+| ---- | ----- | -------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- |
+| DD-1 | must  | Use Meter for a measure within a known range that changes on its own, such as the share of vehicles reporting live                     | Use it for the progress of a task, such as a load: a `meter` is a measurement, and a task's progress is a `progressbar`, which [Progress](progress.md) draws | review     |
+| DD-2 | must  | Pick `color` from the value on the screen that knows what good is, such as the live share's 70% and 40%, and say it in words beside it | Let the tint alone say good or bad: colour tells no screen reader and no colour-blind person, and forced colours drop it                                     | review     |
+| DD-3 | must  | Pass `null` when no data gives the value, so Meter shows "—" and says "Unknown"                                                        | Pass `0` or a guess when the value is unknown: an empty fill at "0%" claims a figure the data never gave                                                     | review     |
+| DD-4 | must  | Name the meter in a few words in `label`: "Reporting live", "Trips run today"                                                          | Leave the name to the layout: a meter with no name tells the ear a number and nothing about it                                                               | review     |
+| DD-5 | must  | Give `getAriaValueText` the fuller words when the figure shows them, such as "1 046 of 1 204" through `slotProps.value.children`       | Change the shown figure and leave the ear on the percentage: the eye and the ear then hear different numbers                                                 | review     |
+| DD-6 | must  | Use Stat for a key figure on its own, and Count for a tally beside words                                                               | Draw a meter for a number with no range: the fill's length means nothing without a `max`                                                                     | review     |
+| DD-7 | must  | Announce a change of state in the screen's own polite live region                                                                      | Make a Meter a live region: a share that updates every few seconds floods the screen reader                                                                  | review     |
+
+## For agents
+
+None known yet.

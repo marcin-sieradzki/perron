@@ -3,7 +3,8 @@ import { join } from 'node:path'
 import { composeStories } from '@storybook/react-vite'
 import { describe, expect, it } from 'vitest'
 import { componentDocs } from '../../scripts/lib/docgen.ts'
-import { propRows, specProse } from './component-page.ts'
+import { parseRegistry } from '../../scripts/lib/entry.ts'
+import { pageNotice, propRows, specProse } from './component-page.ts'
 import { Gauge } from './fixtures/Gauge.tsx'
 
 /** The fixture's argTypes as a docs page gets them: Perron's docgen, then Storybook's enhancers. */
@@ -167,6 +168,16 @@ describe('specProse', () => {
     )
   })
 
+  it('gives When to use with the intro, below its run notes, as the section that opens the page', () => {
+    const spec = SPEC.replace(
+      'is.\n',
+      'is.\n\n<!-- run notes -->\n\nMade for this test.\n\n## When to use\n\nUse Gauge for a share of a whole.\n\nNothing else in Perron does this.\n',
+    )
+    expect(specProse(spec, 'intro')).toBe(
+      'A gauge shows how full something is.\n\n## When to use\n\nUse Gauge for a share of a whole.\n\nNothing else in Perron does this.',
+    )
+  })
+
   it('gives the sections named, each with its heading, in the order asked', () => {
     expect(specProse(SPEC, ["Do and don't", 'Owned strings'])).toBe(
       [
@@ -178,5 +189,28 @@ describe('specProse', () => {
 
   it('fails on a section the spec does not have', () => {
     expect(() => specProse(SPEC, ['Usage'])).toThrow('The spec has no "## Usage" section')
+  })
+})
+
+describe('pageNotice', () => {
+  // Button is deprecated for IconButton; DepartureRow is a building pattern
+  const registry = parseRegistry(
+    JSON.parse(
+      readFileSync(
+        join(import.meta.dirname, '../../scripts/lib/fixtures/registry/components.json'),
+        'utf8',
+      ),
+    ),
+  )
+
+  it("opens a deprecated entry's page with its successor, linked to the successor's spec", () => {
+    expect(pageNotice(registry, 'docs/components/button.md')).toBe(
+      'Deprecated: use [IconButton](icon-button.md) instead.',
+    )
+  })
+
+  it('gives any other entry no notice', () => {
+    expect(pageNotice(registry, 'docs/components/icon-button.md')).toBeUndefined()
+    expect(pageNotice(registry, 'docs/patterns/departure-row.md')).toBeUndefined()
   })
 })

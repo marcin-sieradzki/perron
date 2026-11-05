@@ -6,6 +6,17 @@ The field that picks one value from a short, fixed list: a labelled box showing 
 
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the [contract](README.md), the [foundations](../foundations/README.md), the tokens, the Base UI reference for `Select` (`@base-ui/react` 1.9.0, installed) and the spec of [Field](field.md), which the registry entry's `dependsOn` names. The extracted prototype component is not in any branch this run can reach.
 
+## When to use
+
+Use Select for one choice from a short, fixed list, such as a transport mode or an order.
+
+| Use instead                              | When                                                                              |
+| ---------------------------------------- | --------------------------------------------------------------------------------- |
+| [SearchField](search-field.md)           | The person finds a line or a stop among hundreds, narrowing the list as they type |
+| [RadioGroup](radio-group.md)             | Two to six choices that the person should read in full before choosing            |
+| [SegmentedControl](segmented-control.md) | The choice is how one view shows its content, one of two to five                  |
+| [Menu](menu.md)                          | The list holds actions, not a value to keep                                       |
+
 ## Anatomy
 
 Penpot page `Components/Select`. Family: Fields, for the trigger, the box the person presses; Popups, for the list's popup; Rows, for its options. Shared parts: `VisuallyHidden`, through Field, for a hidden label; `SelectedMark`, for the tick beside the chosen option; `Chevron`, for the chevron at the end of the box.
@@ -327,16 +338,20 @@ The deferred drawing's `State` property has the values `default`, `hover`, `focu
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                                       | Don't                                                                                                                                    |
-| ---------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| Use Select for one choice from a short, fixed list, such as a transport mode or an order                                                 | Use it to find a line or a stop among hundreds: use [SearchField](search-field.md), which narrows the list as the person types           |
-| Give a `label` that names the value, "Transport mode", and hide it with `hiddenLabel` only where the screen already says it              | Let the placeholder stand in for the label: it is gone once an option is chosen, and drawn in `color.text.tertiary`, below text contrast |
-| Write the placeholder as an instruction, "Choose a transport mode"                                                                       | Put an option's words in the placeholder: the person reads it as a value already chosen                                                  |
-| Give short `label`s that the person can tell apart by their first letters, so typing on the closed box finds them                        | Start every option with the same word ("Line M1", "Line M2"): typing finds nothing, and the box's ellipsis cuts the words that differ    |
-| Group options with `SelectGroup` when the list mixes kinds, such as metro and S-tog lines, and write each group's label in sentence case | Write a group label in capitals: its style sets the capitals, and the ear hears the words as written                                     |
-| Set `required` or `optional`, whichever the form needs                                                                                   | Set both: the field is marked optional while the form refuses it empty                                                                   |
-| Give `error` whenever the field is `invalid`                                                                                             | Set `invalid` with no message: the trigger's red edge alone tells only the eye, and only by its colour                                   |
-| Leave an option that can't be chosen out of `items`, or give it `disabled` when the person should see it is there                        | Disable the whole field to say one option isn't available                                                                                |
-| Keep the field in a `PerronProvider` with the screen's locale, so "(optional)" speaks it                                                 | Translate it with `optionalLabel` on every instance: that is for one instance's own words                                                |
+| Rule | Level  | Do                                                                                                                                       | Don't                                                                                                                                    | Checked by |
+| ---- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | should | Use Select for one choice from a short, fixed list, such as a transport mode or an order                                                 | Use it to find a line or a stop among hundreds: use [SearchField](search-field.md), which narrows the list as the person types           | review     |
+| DD-2 | must   | Give a `label` that names the value, "Transport mode", and hide it with `hiddenLabel` only where the screen already says it              | Let the placeholder stand in for the label: it is gone once an option is chosen, and drawn in `color.text.tertiary`, below text contrast | review     |
+| DD-3 | must   | Write the placeholder as an instruction, "Choose a transport mode"                                                                       | Put an option's words in the placeholder: the person reads it as a value already chosen                                                  | review     |
+| DD-4 | should | Give short `label`s that the person can tell apart by their first letters, so typing on the closed box finds them                        | Start every option with the same word ("Line M1", "Line M2"): typing finds nothing, and the box's ellipsis cuts the words that differ    | review     |
+| DD-5 | must   | Group options with `SelectGroup` when the list mixes kinds, such as metro and S-tog lines, and write each group's label in sentence case | Write a group label in capitals: its style sets the capitals, and the ear hears the words as written                                     | review     |
+| DD-6 | must   | Set `required` or `optional`, whichever the form needs                                                                                   | Set both: the field is marked optional while the form refuses it empty                                                                   | review     |
+| DD-7 | must   | Give `error` whenever the field is `invalid`                                                                                             | Set `invalid` with no message: the trigger's red edge alone tells only the eye, and only by its colour                                   | review     |
+| DD-8 | should | Leave an option that can't be chosen out of `items`, or give it `disabled` when the person should see it is there                        | Disable the whole field to say one option isn't available                                                                                | review     |
+| DD-9 | should | Keep the field in a `PerronProvider` with the screen's locale, so "(optional)" speaks it                                                 | Translate it with `optionalLabel` on every instance: that is for one instance's own words                                                | review     |
+
+## For agents
+
+None known yet.

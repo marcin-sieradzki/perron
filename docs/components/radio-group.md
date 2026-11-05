@@ -8,6 +8,20 @@ The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-def
 
 The foundations already name most of the look: [Elevation](../foundations/elevation.md#surfaces) puts inputs on `color.surface.raised` and pressed toggles on `color.surface.inverse`; [Accessibility](../foundations/accessibility.md#rules) asks every target to be `size.target-min` and every control's edge to reach 3:1, which `color.border.control` does; [Semantic spacing](../foundations/semantic-spacing.md) gives round marks `radius.full`; and Fieldset's spec says RadioGroup renders Fieldset with Base UI's `RadioGroup` through `render`, so the group takes Fieldset's legend, its name and its disabled state (Fieldset CR-5).
 
+## When to use
+
+Use RadioGroup for one answer of two to six that a person reads in full before choosing, such as the theme the map is drawn in.
+
+| Use instead                              | When                                                                                  |
+| ---------------------------------------- | ------------------------------------------------------------------------------------- |
+| [Select](select.md)                      | The choices are more than fit a panel, in a short, fixed list that opens from one box |
+| [SearchField](search-field.md)           | The choices are many enough to need a search, such as a line or a stop                |
+| [SegmentedControl](segmented-control.md) | The choice is how one view shows its content                                          |
+| [FilterChip](filter-chip.md)             | The choice filters the map                                                            |
+| [Checkbox](checkbox.md)                  | One choice is on or off on its own                                                    |
+| [CheckboxGroup](checkbox-group.md)       | Several choices can hold at once                                                      |
+| [Switch](switch.md)                      | The choice is a setting, on or off, that takes effect at once                         |
+
 ## Anatomy
 
 Penpot page `Components/RadioGroup`. Family: none (the contract's [Families](README.md#families) have no round choice mark; a radio is not a Row, since it takes no fill on hover, and its mark's surfaces come from [Elevation](../foundations/elevation.md#surfaces)). Shared parts: `VisuallyHidden`, through Fieldset, for a hidden label.
@@ -232,16 +246,20 @@ The deferred design's page draws two things, the group, `Default`, and the radio
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                                            | Don't                                                                                                                                                                 |
-| --------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Use a RadioGroup for one answer of two to six that a person reads in full before choosing, such as the theme or the language                  | Use it for more choices than fit a panel, or for choices that need a search: a select or a search field keeps a long list out of the way                              |
-| Switch how one view shows its content with a [SegmentedControl](segmented-control.md), and filter the map with a [FilterChip](filter-chip.md) | Use a row of radios for a view's mode or the top bar's filters: a radio is a form answer, read down a column                                                          |
-| Name the group with `label`, in sentence case, a word or a short question: "Theme"                                                            | Leave out the label, or name the group with `aria-label` where there is room to show one: a sighted person can't tell what an unnamed set of choices answers          |
-| Write each radio's words as a short noun phrase in sentence case, of a similar length and shape: "Match the system", "Light", "Dark"          | Put a link or a button inside a radio's words: a radio's content is presentational, so a screen reader never reaches it, and a click on it checks the radio too       |
-| Check the safest or most common choice with `defaultValue`, or leave all unchecked with `required` when the person must decide                | Check a choice the person never made and then treat it as their answer: a pre-checked radio is easy to pass by                                                        |
-| Disable the whole group with `disabled`, or one radio that can't be chosen now, and say why in the label or the Field's description           | Disable a radio with no word of why, or hide it: a dimmed choice can't explain itself, and a missing one moves the others                                             |
-| Give a hint or an error through Base UI's `Field.Root` round the group, with `Field.Description` and `Field.Error` and no `Field.Label`       | Put a hint or an error as plain text among the radios: nothing ties it to the group for the ear, and the arrow keys never reach it                                    |
-| Name the group with its own `label`                                                                                                           | Wrap the group in Perron's [Field](field.md): its label renames every radio in it, so each radio is heard as the field's label, never its own words                   |
-| Use a checkbox for a choice that can be on or off on its own, or several at once                                                              | Use a RadioGroup of one radio, or of "Yes" and "No" for a setting that takes effect at once: one radio can't be unchecked, and a setting that applies now is a switch |
+| Rule | Level  | Do                                                                                                                                            | Don't                                                                                                                                                                 | Checked by |
+| ---- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | should | Use a RadioGroup for one answer of two to six that a person reads in full before choosing, such as the theme or the language                  | Use it for more choices than fit a panel, or for choices that need a search: a select or a search field keeps a long list out of the way                              | review     |
+| DD-2 | should | Switch how one view shows its content with a [SegmentedControl](segmented-control.md), and filter the map with a [FilterChip](filter-chip.md) | Use a row of radios for a view's mode or the top bar's filters: a radio is a form answer, read down a column                                                          | review     |
+| DD-3 | must   | Name the group with `label`, in sentence case, a word or a short question: "Theme"                                                            | Leave out the label, or name the group with `aria-label` where there is room to show one: a sighted person can't tell what an unnamed set of choices answers          | review     |
+| DD-4 | must   | Write each radio's words as a short noun phrase in sentence case, of a similar length and shape: "Match the system", "Light", "Dark"          | Put a link or a button inside a radio's words: a radio's content is presentational, so a screen reader never reaches it, and a click on it checks the radio too       | review     |
+| DD-5 | should | Check the safest or most common choice with `defaultValue`, or leave all unchecked with `required` when the person must decide                | Check a choice the person never made and then treat it as their answer: a pre-checked radio is easy to pass by                                                        | review     |
+| DD-6 | should | Disable the whole group with `disabled`, or one radio that can't be chosen now, and say why in the label or the Field's description           | Disable a radio with no word of why, or hide it: a dimmed choice can't explain itself, and a missing one moves the others                                             | review     |
+| DD-7 | must   | Give a hint or an error through Base UI's `Field.Root` round the group, with `Field.Description` and `Field.Error` and no `Field.Label`       | Put a hint or an error as plain text among the radios: nothing ties it to the group for the ear, and the arrow keys never reach it                                    | review     |
+| DD-8 | must   | Name the group with its own `label`                                                                                                           | Wrap the group in Perron's [Field](field.md): its label renames every radio in it, so each radio is heard as the field's label, never its own words                   | review     |
+| DD-9 | should | Use a checkbox for a choice that can be on or off on its own, or several at once                                                              | Use a RadioGroup of one radio, or of "Yes" and "No" for a setting that takes effect at once: one radio can't be unchecked, and a setting that applies now is a switch | review     |
+
+## For agents
+
+None known yet.

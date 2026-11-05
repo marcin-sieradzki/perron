@@ -19,6 +19,12 @@ const button = {
   penpotPath: 'Components/Button',
   dependsOn: [],
 }
+const link = {
+  ...button,
+  name: 'LinkButton',
+  status: 'stable',
+  penpotPath: 'Components/LinkButton',
+}
 const row = {
   name: 'DepartureRow',
   layer: 'pattern',
@@ -33,6 +39,11 @@ describe('parseRegistry', () => {
   it('takes an empty registry and a valid one', () => {
     expect(parseRegistry([])).toEqual([])
     expect(parseRegistry([button, row])).toEqual([button, row])
+  })
+
+  it('takes a deprecated entry that names its successor', () => {
+    const old = { ...button, status: 'deprecated', replacedBy: 'LinkButton' }
+    expect(parseRegistry([old, link])).toEqual([old, link])
   })
 
   it.each([
@@ -96,6 +107,55 @@ describe('parseRegistry', () => {
         { ...row, dependsOn: [] },
       ],
       'Button is a component and depends on the pattern DepartureRow',
+    ],
+    [
+      'replacedBy on an entry that is not deprecated',
+      [{ ...button, replacedBy: 'LinkButton' }, link],
+      'Button names replacedBy but is building; only a deprecated entry names its successor',
+    ],
+    [
+      'a deprecated entry without replacedBy',
+      [{ ...button, status: 'deprecated' }],
+      'Button is deprecated and names no replacedBy, the entry to use instead',
+    ],
+    [
+      'a replacedBy that is not a name',
+      [{ ...button, status: 'deprecated', replacedBy: ['LinkButton'] }, link],
+      "Button: replacedBy is not an entry's name, such as LinkButton",
+    ],
+    [
+      'a successor the registry does not list',
+      [{ ...button, status: 'deprecated', replacedBy: 'LinkButton' }],
+      'Button is replaced by LinkButton, which the registry does not list',
+    ],
+    [
+      'a successor that is deprecated',
+      [
+        { ...button, status: 'deprecated', replacedBy: 'LinkButton' },
+        { ...link, status: 'deprecated', replacedBy: 'Button' },
+      ],
+      'Button is replaced by LinkButton, which is deprecated, not stable',
+    ],
+    [
+      'a successor that is still being built',
+      [
+        { ...button, status: 'deprecated', replacedBy: 'LinkButton' },
+        { ...link, status: 'building' },
+      ],
+      'Button is replaced by LinkButton, which is building, not stable',
+    ],
+    [
+      'an entry that replaces itself',
+      [{ ...button, status: 'deprecated', replacedBy: 'Button' }],
+      "Button can't replace itself",
+    ],
+    [
+      'a successor in another layer',
+      [
+        { ...button, status: 'deprecated', replacedBy: 'DepartureRow' },
+        { ...row, status: 'stable', dependsOn: [] },
+      ],
+      'Button is a component and is replaced by the pattern DepartureRow; its successor is in the same layer',
     ],
   ])('fails on %s', (_, registry, message) => {
     expect(() => parseRegistry(registry)).toThrow(message)

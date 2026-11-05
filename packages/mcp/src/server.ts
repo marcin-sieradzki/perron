@@ -1,4 +1,4 @@
-// The Perron MCP server: tokens and docs from the data @mylder/perron ships, and the API reference
+// The Perron MCP server: tokens, docs and components from the data @mylder/perron ships, and the API reference
 // of the Base UI and MUI versions installed in the project. The data comes from the project's own
 // @mylder/perron when it has one, so the answers match what the app ships, else from the server's.
 import { existsSync, readFileSync, statSync } from 'node:fs'
@@ -6,6 +6,13 @@ import { createRequire } from 'node:module'
 import { join } from 'node:path'
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
+import {
+  findComponent,
+  listComponents,
+  listed,
+  nearestNames,
+  type ComponentRecord,
+} from './components.ts'
 import { searchDocs, type DocPage } from './docs.ts'
 import { getReference, LIBRARIES, type Library } from './reference.ts'
 import { packageDir } from './resolve.ts'
@@ -48,6 +55,7 @@ export function createServer({ cwd = process.cwd() }: Options = {}) {
   // read once now, so a project without the data fails at start rather than at the first call
   data<TokenEntry[]>('tokens', cwd)
   data<DocPage[]>('docs', cwd)
+  data<ComponentRecord[]>('components', cwd)
   const server = new McpServer({ name: 'perron', version })
 
   server.registerTool(
@@ -107,6 +115,60 @@ export function createServer({ cwd = process.cwd() }: Options = {}) {
       const hits = searchDocs(data<DocPage[]>('docs', dir ?? cwd), query, limit)
       if (!hits.length) return error(`No section matches "${query}".`)
       return text(hits.map((h) => `From ${h.page} (${h.path}):\n\n${h.text}`).join('\n\n---\n\n'))
+    },
+  )
+
+  server.registerTool(
+    'list_components',
+    {
+      title: 'List Perron components',
+      description:
+        "Perron's components and patterns, one JSON line each: name, layer, category, status, its successor when deprecated, and what it is in one sentence. Filter by words, such as `turn a setting on or off`, which keeps the entries that hold any of them, ranked by how well they match, and by layer and category, such as `Inputs`. Then ask `get_component` for the one to use.",
+      inputSchema: {
+        query: z
+          .string()
+          .optional()
+          .describe('Words to look for in the name, the category, the summary and when to use it'),
+        layer: z.enum(['component', 'pattern']).optional(),
+        category: z
+          .string()
+          .optional()
+          .describe('A category, such as Actions, Inputs or Overlays for a component'),
+        dir: dirInput,
+      },
+      annotations: { readOnlyHint: true },
+    },
+    ({ query, layer, category, dir }) => {
+      const records = data<ComponentRecord[]>('components', dir ?? cwd)
+      const found = listComponents(records, query, layer, category)
+      if (!found.length)
+        return error(
+          `No ${layer ?? 'component or pattern'}${category ? ` in ${category}` : ''} matches${query ? ` "${query}"` : ''}.`,
+        )
+      return text(found.map((r) => JSON.stringify(listed(r))).join('\n'))
+    },
+  )
+
+  server.registerTool(
+    'get_component',
+    {
+      title: 'Get a Perron component',
+      description:
+        "Everything a caller needs to use a Perron component or pattern, as JSON: what it is, its import line, when to use it and which entries to use instead, its props with their types, defaults, descriptions and deprecations, the rules of its Do and don't, each with an id such as `DD-2`, a level (`must`, or `should`, which a reason may break) and what checks it (`types`, the compiler, or `review`, nothing but you), the mistakes agents have made with it, and its docs page.",
+      inputSchema: {
+        name: z.string().describe('The component or pattern, such as `Button` or `DepartureRow`'),
+        dir: dirInput,
+      },
+      annotations: { readOnlyHint: true },
+    },
+    ({ name, dir }) => {
+      const records = data<ComponentRecord[]>('components', dir ?? cwd)
+      const record = findComponent(records, name)
+      if (!record)
+        return error(
+          `No component or pattern is named "${name}". The nearest: ${nearestNames(records, name).join(', ')}.`,
+        )
+      return text(JSON.stringify(record, null, 2))
     },
   )
 

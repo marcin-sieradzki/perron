@@ -6,6 +6,15 @@ A short message that floats in at the bottom of the screen to confirm what just 
 
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the [contract](README.md), the [foundations](../foundations/README.md), [content design](../content-design.md), [Accessibility](../foundations/accessibility.md), [Motion](../foundations/motion.md), the tokens, the Base UI reference for `Toast` at the version pinned here (1.9.0) and its source under `node_modules/@base-ui/react/toast/`, and the specs it reuses or sits beside: [Alert](alert.md), merged to `main` (PR #131), whose look, intents, parts, `IntentIcon` shared part (`packages/perron/src/parts/IntentIcon/`) and decisions Toast takes whole, as Alert's CR-12 asks, each fact checked against Alert's spec and its code in `packages/perron/src/components/Alert/` on `main`; [Dialog](dialog.md) and [Tooltip](tooltip.md) for the overlay stories, the `CloseButton` shared part and a provider held by `PerronProvider`; and [Button](button.md) for an action. The registry files Toast under Feedback with nothing in `dependsOn` and the `baseUiParts` `Toast.Provider`, `Toast.Portal`, `Toast.Viewport`, `Toast.Root`, `Toast.Content`, `Toast.Title`, `Toast.Description` and `Toast.Close`; the ROADMAP does not name it. The extracted prototype components are not on any branch this machine can reach.
 
+## When to use
+
+Use Toast to confirm in a few words what just happened, such as "Link copied", in a message that leaves on its own after a few seconds.
+
+| Use instead                    | When                                                                                  |
+| ------------------------------ | ------------------------------------------------------------------------------------- |
+| [Alert](alert.md)              | The message must stay while its cause lasts, such as a signal fault, set into a panel |
+| [AlertDialog](alert-dialog.md) | A failure must stop the task until the person answers                                 |
+
 ## Anatomy
 
 Penpot page `Components/Toast`. Family: none, as Alert's: a toast is an Alert that floats, and joins no family's treatment (its glass-free tinted surface is Alert's, not the Popups'). Shared parts: `IntentIcon` (`packages/perron/src/parts/IntentIcon/`), composed in Alert, for the intent's icon; `CloseButton`, and `VisuallyHidden` through it.
@@ -258,14 +267,18 @@ Rules for this component alone, numbered so the build and the review can cite th
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                                                            | Don't                                                                                                                                     |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| Confirm what just happened, in a few words: "Link copied", "Filters cleared"                                                                                  | Write "Success!" or "Something went wrong": content design has no exclamation marks, and the words should say what happened               |
-| Keep the app inside one `PerronProvider`, so every toast stacks in one region at the bottom of the screen and is read by one live region                      | Render Toasts with no provider: each gets a region of its own, and two at once overlap                                                    |
-| Set `open` to `false` in `onClose`, so the next `true` shows the toast again                                                                                  | Leave `open` `true` after the toast has closed itself: it doesn't show again until `open` turns `false` and `true`                        |
-| Give a toast an action only for what can't wait, such as "Undo", and let it stay until it is closed                                                           | Give an action toast a short `autoHideDuration`: a person still hearing the toast can miss the action, and it may be the only way to undo |
-| Put an app-wide context an action needs, such as a router's, around `PerronProvider`: the toast renders in `PerronProvider`'s region, not where it is written | Rely on a context between `PerronProvider` and the Toast in the action: the region renders outside it                                     |
-| Show a message that must stay while its cause lasts, such as a signal fault, as an Alert in the panel                                                         | Use a toast for something the person needs later: it leaves after five seconds                                                            |
-| Use an AlertDialog for a failure that must stop the task                                                                                                      | Use a toast to interrupt: every toast is polite, and waits for the screen reader to finish                                                |
+| Rule | Level | Do                                                                                                                                                            | Don't                                                                                                                                     | Checked by |
+| ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | must  | Confirm what just happened, in a few words: "Link copied", "Filters cleared"                                                                                  | Write "Success!" or "Something went wrong": content design has no exclamation marks, and the words should say what happened               | review     |
+| DD-2 | must  | Keep the app inside one `PerronProvider`, so every toast stacks in one region at the bottom of the screen and is read by one live region                      | Render Toasts with no provider: each gets a region of its own, and two at once overlap                                                    | review     |
+| DD-3 | must  | Set `open` to `false` in `onClose`, so the next `true` shows the toast again                                                                                  | Leave `open` `true` after the toast has closed itself: it doesn't show again until `open` turns `false` and `true`                        | review     |
+| DD-4 | must  | Give a toast an action only for what can't wait, such as "Undo", and let it stay until it is closed                                                           | Give an action toast a short `autoHideDuration`: a person still hearing the toast can miss the action, and it may be the only way to undo | review     |
+| DD-5 | must  | Put an app-wide context an action needs, such as a router's, around `PerronProvider`: the toast renders in `PerronProvider`'s region, not where it is written | Rely on a context between `PerronProvider` and the Toast in the action: the region renders outside it                                     | review     |
+| DD-6 | must  | Show a message that must stay while its cause lasts, such as a signal fault, as an Alert in the panel                                                         | Use a toast for something the person needs later: it leaves after five seconds                                                            | review     |
+| DD-7 | must  | Use an AlertDialog for a failure that must stop the task                                                                                                      | Use a toast to interrupt: every toast is polite, and waits for the screen reader to finish                                                | review     |
+
+## For agents
+
+None known yet.

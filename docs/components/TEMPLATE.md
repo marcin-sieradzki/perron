@@ -9,6 +9,17 @@ How to fill it:
 - Write a question the sources can't answer in place, as `[PENDING] <the question>`, and put it to the maintainer. Its answer replaces the whole line with the decision, a statement with its reason, and no "Answered" label. The spec is done when every section is filled and no `[PENDING]` is left.
 - Link only a page the docs site serves: the foundations, the guidelines, the contract and the other specs. Write any other repo path, such as an ADR (`docs/adr/0010-unattended-runs-with-design-deferred.md`), `penpot/README.md` or the read-back, as a code span, as the contract does; `scripts/lib/site.test.ts` fails on a link the site can't follow.
 - Keep every section, in this order. A section that doesn't apply says why in one line: "No owned strings: every word comes from the caller."
+- Write for people. For agents, the last section, is the one place for what an agent needs and a person doesn't.
+
+## When to use
+
+The first section, right after the intro and its run notes: the docs page shows it with the intro. A sentence or two on when to reach for the component, then one row per registered entry a caller might reach for in its place, past `designing` and not `deprecated`, its name linked to its spec page (`[LinkButton](link-button.md)`, or `../patterns/<name>.md` for a pattern), and when that one fits instead. With no entry close to it, write "Nothing else in Perron does this." in place of the table.
+
+Use `<Name>` for `<the job it does, and where>`.
+
+| Use instead                      | When                                      |
+| -------------------------------- | ----------------------------------------- |
+| `<an entry, linked to its spec>` | `<when that entry fits and this doesn't>` |
 
 ## Anatomy
 
@@ -109,8 +120,17 @@ A few generic stories, by the contract's [Stories](README.md#stories): `Default`
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                         | Don't                      |
-| -------------------------- | -------------------------- |
-| `<the right use, and why>` | `<the misuse it replaces>` |
+One row per rule, weighed by the contract's [Words](README.md#words), which says when a rule is `must` and when its Don't is `types`. Rule is DD- and the rule's number, counted from 1 in this table and never reused, since a review cites it. Level is `must` or `should`, and Checked by is `types` or `review`, each as Words gives it; write the three as plain words. A `types` rule is proven by a line in the component's tests or stories under `// @ts-expect-error DD-<n>: <what it breaks>`. A row that names WCAG names its success criterion by number, such as 2.5.8.
+
+| Rule | Level  | Do                         | Don't                      | Checked by |
+| ---- | ------ | -------------------------- | -------------------------- | ---------- |
+| DD-1 | must   | `<the right use, and why>` | `<the misuse it replaces>` | review     |
+| DD-2 | should | `<…>`                      | `<…>`                      | types      |
+
+## For agents
+
+The last section, for agents alone: no docs page shows it. One bullet per mistake an agent has made with the component, the mistake and then its fix, added by a retro or a review finding. A new spec writes the line below.
+
+None known yet.

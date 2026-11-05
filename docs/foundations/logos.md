@@ -8,11 +8,11 @@ The mark is a bus dot, an S-tog dot and an estimated ring: three of the ways a v
 
 <!-- tokens: color.transit.mode.bus color.transit.line.a color.text.primary -->
 
-| Token                    | Light                           | Dark                            | Use                                      |
-| ------------------------ | ------------------------------- | ------------------------------- | ---------------------------------------- |
-| `color.transit.mode.bus` | `#D99A00` (palette.yellow.500)  | `#F2B630` (palette.yellow.300)  | All bus lines                            |
-| `color.transit.line.a`   | `#00A1DE`                       | `#00A1DE`                       | S-tog A                                  |
-| `color.text.primary`     | `#12181B` (palette.neutral.900) | `#EBEEEB` (palette.neutral.100) | Main text and icons; also the focus ring |
+| Token                    | Light                           | Dark                            | Use                                                                                                                                                 |
+| ------------------------ | ------------------------------- | ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `color.transit.mode.bus` | `#D99A00` (palette.yellow.500)  | `#F2B630` (palette.yellow.300)  | Every bus line: fills bus badges and colours bus dots, station icons and stop timelines; also the bus dot of the Mylder mark                        |
+| `color.transit.line.a`   | `#00A1DE`                       | `#00A1DE`                       | S-tog A: fills its line badge and colours its vehicle dots, station icons, stop timeline and rail on the map; also the S-tog dot of the Mylder mark |
+| `color.text.primary`     | `#12181B` (palette.neutral.900) | `#EBEEEB` (palette.neutral.100) | Main text and icons; also the focus ring                                                                                                            |
 
 <!-- /tokens -->
 
