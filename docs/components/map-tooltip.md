@@ -6,6 +6,16 @@ The map's hover card: a small inverse card of the caller's words, placed against
 
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the contract, the foundations, the tokens and the Base UI reference. The extracted prototype component is not in any branch this run can reach.
 
+## When to use
+
+Use MapTooltip for a few words about a vehicle or a stop on the map, such as its line and destination, shown while a mouse pointer rests on it.
+
+| Use instead                                | When                                                                          |
+| ------------------------------------------ | ----------------------------------------------------------------------------- |
+| [Tooltip](tooltip.md)                      | A short label names a control, shown on hover or keyboard focus               |
+| [Popover](popover.md)                      | The card holds a link, a button or a field, or opens when a button is pressed |
+| [DetailPanel](../patterns/detail-panel.md) | The facts are for every reader, opened by selecting the vehicle or stop       |
+
 ## Anatomy
 
 Penpot page `Components/MapTooltip`. Family: Tooltips. Shared parts: none (the card holds the caller's words and draws no mark of its own).
@@ -166,15 +176,19 @@ The meta sets `parameters: { docs: { story: { inline: false, height: '480px' } }
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                                 | Don't                                                                                                                                             |
-| ---------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Open the card while a mouse pointer rests on a vehicle or a stop, and select it on a tap or a click, opening its detail panel      | Open the card on touch: a tap has no hover, and Accessibility asks that anything shown on hover is also reached by selecting the item             |
-| Keep the card open while the pointer is over it, using the card's `onPointerEnter` and `onPointerLeave`, and close it in `onClose` | Close it the moment the pointer leaves the dot: Accessibility asks that a hover card stays while the pointer is over it                           |
-| Give a few words: the line and its destination, the data state                                                                     | Put a link, a button or a field in the card: it is out of the tab order, so the keys can't reach them; use a panel or a popover                   |
-| Pass a new `anchorEl` when the vehicle moves, so the card moves with it                                                            | Expect the card to follow a moving point on its own: Base UI re-reads the anchor on scroll, resize and layout shift, not on every frame           |
-| Let the card's words take its inverse colour, and use components that draw their own colours on a fill, such as a line badge       | Put text that sets its own secondary or tertiary colour in the card: those colours are measured on light surfaces, not on `color.surface.inverse` |
-| Give the same facts in the vehicle list or the detail panel                                                                        | Put anything only in the card: screen reader, keyboard and touch users never see it                                                               |
-| Change the side through `slotProps.positioner`, such as `side: 'bottom'`                                                           | Move the card with a margin or a `transform`: Base UI's placement and flipping no longer match what is drawn                                      |
-| Show one card at a time                                                                                                            | Open a card for each vehicle at once: the cards cover the map they describe                                                                       |
+| Rule | Level  | Do                                                                                                                                 | Don't                                                                                                                                             | Checked by |
+| ---- | ------ | ---------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | must   | Open the card while a mouse pointer rests on a vehicle or a stop, and select it on a tap or a click, opening its detail panel      | Open the card on touch: a tap has no hover, and Accessibility asks that anything shown on hover is also reached by selecting the item             | review     |
+| DD-2 | must   | Keep the card open while the pointer is over it, using the card's `onPointerEnter` and `onPointerLeave`, and close it in `onClose` | Close it the moment the pointer leaves the dot: Accessibility asks that a hover card stays while the pointer is over it                           | review     |
+| DD-3 | must   | Give a few words: the line and its destination, the data state                                                                     | Put a link, a button or a field in the card: it is out of the tab order, so the keys can't reach them; use a panel or a popover                   | review     |
+| DD-4 | should | Pass a new `anchorEl` when the vehicle moves, so the card moves with it                                                            | Expect the card to follow a moving point on its own: Base UI re-reads the anchor on scroll, resize and layout shift, not on every frame           | review     |
+| DD-5 | must   | Let the card's words take its inverse colour, and use components that draw their own colours on a fill, such as a line badge       | Put text that sets its own secondary or tertiary colour in the card: those colours are measured on light surfaces, not on `color.surface.inverse` | review     |
+| DD-6 | must   | Give the same facts in the vehicle list or the detail panel                                                                        | Put anything only in the card: screen reader, keyboard and touch users never see it                                                               | review     |
+| DD-7 | should | Change the side through `slotProps.positioner`, such as `side: 'bottom'`                                                           | Move the card with a margin or a `transform`: Base UI's placement and flipping no longer match what is drawn                                      | review     |
+| DD-8 | should | Show one card at a time                                                                                                            | Open a card for each vehicle at once: the cards cover the map they describe                                                                       | review     |
+
+## For agents
+
+None known yet.

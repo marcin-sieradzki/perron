@@ -2,6 +2,17 @@
 
 A small filled label that names one Copenhagen line, a metro, S-tog, bus or regional train, in the operator's own line colour.
 
+## When to use
+
+Use LineBadge to name one line in its operator's colour, beside the words that name it, in a row, a list or a panel's header.
+
+| Use instead                        | When                                                                                   |
+| ---------------------------------- | -------------------------------------------------------------------------------------- |
+| [StationIcon](station-icon.md)     | The mark stands for a stop or station, in the colour of the line that serves it        |
+| [VehicleDot](vehicle-dot.md)       | The mark stands for one vehicle, in its line's colour, with how fresh its data is      |
+| [Tag](tag.md)                      | The words mark a property of a departure or vehicle, such as "Night bus", not its line |
+| [HighlightChip](highlight-chip.md) | The rider puts the line in focus on the map and turns it off again                     |
+
 ## Anatomy
 
 Penpot page `Components/LineBadge`. Family: none. Shared parts: none.
@@ -126,13 +137,17 @@ The deferred design's Penpot properties are `line` and `size`, in that order, wi
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                                        | Don't                                                                                                                |
-| ----------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| Name the line in words near the badge, such as "M1 towards Vanløse", because five official pairs (M1, M4, A, B, C) miss 4.5:1 and stay so | Rely on the badge's label alone where the line matters, such as the only mention of a line in a disruption           |
-| Pass the name riders know as `children`: "5C", "A", "RE"                                                                                  | Pass a sentence or a mode word ("Bus 5C"); the colour already says the mode, and the badge is sized for a short name |
-| Use a line colour as a fill only in a LineBadge, and as a dot, ring, rail or swatch elsewhere, as Semantic colours says                   | Fill another shape, such as a chip or a panel header, with a line colour                                             |
-| Wrap the badge in a Perron button or link when the rider can open the line                                                                | Add `onClick` or `tabIndex` to the badge; it has no focus ring, role or target size                                  |
-| Keep brand buttons out of rows of line badges                                                                                             | Put a brand button beside bus badges, where its yellow fill and ink label read as one more bus                       |
-| Choose `large` only for the one badge that heads a panel                                                                                  | Mix sizes in one row or list                                                                                         |
+| Rule | Level  | Do                                                                                                                                        | Don't                                                                                                                | Checked by |
+| ---- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | must   | Name the line in words near the badge, such as "M1 towards Vanløse", because five official pairs (M1, M4, A, B, C) miss 4.5:1 and stay so | Rely on the badge's label alone where the line matters, such as the only mention of a line in a disruption           | review     |
+| DD-2 | should | Pass the name riders know as `children`: "5C", "A", "RE"                                                                                  | Pass a sentence or a mode word ("Bus 5C"); the colour already says the mode, and the badge is sized for a short name | review     |
+| DD-3 | must   | Use a line colour as a fill only in a LineBadge, and as a dot, ring, rail or swatch elsewhere, as Semantic colours says                   | Fill another shape, such as a chip or a panel header, with a line colour                                             | review     |
+| DD-4 | must   | Wrap the badge in a Perron button or link when the rider can open the line                                                                | Add `onClick` or `tabIndex` to the badge; it has no focus ring, role or target size                                  | review     |
+| DD-5 | should | Keep brand buttons out of rows of line badges                                                                                             | Put a brand button beside bus badges, where its yellow fill and ink label read as one more bus                       | review     |
+| DD-6 | should | Choose `large` only for the one badge that heads a panel                                                                                  | Mix sizes in one row or list                                                                                         | review     |
+
+## For agents
+
+None known yet.

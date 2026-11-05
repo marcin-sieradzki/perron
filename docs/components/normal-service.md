@@ -2,6 +2,16 @@
 
 The good news about a line: a mark and the words "Running normally" in the success colour, set where a line's disruptions would be listed, such as a line's detail panel or a row in a list of lines, when the line has none.
 
+## When to use
+
+Use NormalService where a line's disruptions would be listed, such as a line's detail panel or a row in a list of lines, when the line has none.
+
+| Use instead                        | When                                                            |
+| ---------------------------------- | --------------------------------------------------------------- |
+| [SeverityLabel](severity-label.md) | The line has a disruption, named by its kind                    |
+| [Delay](delay.md)                  | One vehicle or departure keeps to the timetable: "On time"      |
+| [EmptyState](empty-state.md)       | A list or panel has nothing to show because the data is missing |
+
 ## Anatomy
 
 Penpot page `Components/NormalService`, not drawn yet: the design is deferred (`docs/adr/0010-unattended-runs-with-design-deferred.md`), so this spec decides the drawing. Its sources are the [contract](README.md), [Content design](../content-design.md), which names the state "Running normally" among the data-state, delay and disruption words, [Semantic colours](../foundations/semantic-colours.md#text), whose `color.text.success` is "Text in the success colour: on time, running normally", [Icons](../foundations/icons.md) and the [SeverityLabel](severity-label.md) spec, whose Do and don't sends a line running normally here: "Show a line running normally with the "Running normally" word, and no SeverityLabel." The registry gives NormalService no `baseUiParts` and no `dependsOn`. Family: none. Shared parts: none.
@@ -123,12 +133,16 @@ One per variant the deferred design will draw: the one, `Default`. Its `play` te
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                  | Don't                                                                                                                                        |
-| ------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| Show NormalService where a line's disruptions would be, when it has none, so a rider sees the answer and not a gap. | Show an empty list, or EmptyState's "No data to show": no disruptions is news about the line, not missing data.                              |
-| Name the line beside it, in a heading, a LineBadge or a row, so "Running normally" says which line.                 | Pass the line's name through `runningNormallyLabel` ("M2 running normally"): the label overrides the content-design words, not adds to them. |
-| Use SeverityLabel for each kind of disruption, and NormalService only when there are none.                          | Show NormalService beside a SeverityLabel on the same line: a line is either disrupted or running normally.                                  |
-| Use Delay's "On time" for one vehicle or departure keeping to the timetable.                                        | Use NormalService for one vehicle: it says a whole line has no delays or disruptions.                                                        |
-| Make the whole row or panel the link, with the label inside it.                                                     | Make NormalService itself a control through `render`: it is a label, smaller than `size.target-min`, and has no pressed state.               |
+| Rule | Level  | Do                                                                                                                  | Don't                                                                                                                                        | Checked by |
+| ---- | ------ | ------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | must   | Show NormalService where a line's disruptions would be, when it has none, so a rider sees the answer and not a gap. | Show an empty list, or EmptyState's "No data to show": no disruptions is news about the line, not missing data.                              | review     |
+| DD-2 | should | Name the line beside it, in a heading, a LineBadge or a row, so "Running normally" says which line.                 | Pass the line's name through `runningNormallyLabel` ("M2 running normally"): the label overrides the content-design words, not adds to them. | review     |
+| DD-3 | must   | Use SeverityLabel for each kind of disruption, and NormalService only when there are none.                          | Show NormalService beside a SeverityLabel on the same line: a line is either disrupted or running normally.                                  | review     |
+| DD-4 | must   | Use Delay's "On time" for one vehicle or departure keeping to the timetable.                                        | Use NormalService for one vehicle: it says a whole line has no delays or disruptions.                                                        | review     |
+| DD-5 | must   | Make the whole row or panel the link, with the label inside it.                                                     | Make NormalService itself a control through `render`: it is a label, smaller than `size.target-min`, and has no pressed state.               | review     |
+
+## For agents
+
+None known yet.
