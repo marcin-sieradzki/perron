@@ -6,6 +6,17 @@ A pill that turns one filter on and off, such as "Delays" in the top bar's filte
 
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the [contract](README.md), the [foundations](../foundations/README.md), the tokens, the Base UI reference for `Toggle` and the ROADMAP line that names it (`ROADMAP.md`, "Wave 3, interactive, on Base UI": "FilterChip and HighlightChip (Toggle)"). The extracted prototype component is not in any branch this run can reach, so nothing here rests on it. The foundations already name much of its look: [Layout](../foundations/layout.md#other-layout-properties) gives `size.control` to "icon buttons and filter chips", [Semantic spacing](../foundations/semantic-spacing.md#radius) rounds "chips" with `radius.full`, [Typography](../foundations/typography.md#roles) sets "chips" in `typography.label` and "counts in chips" in `typography.data-sm`, and [Elevation](../foundations/elevation.md#surfaces) makes `color.surface.inverse`, with `color.text.inverse`, the fill of "pressed toggles".
 
+## When to use
+
+Use FilterChip for a filter people turn on and off on its own, in a row of filters, such as showing delays on the map.
+
+| Use instead                              | When                                                                          |
+| ---------------------------------------- | ----------------------------------------------------------------------------- |
+| [SegmentedControl](segmented-control.md) | The choice is one of two to five views or modes, and only one holds at a time |
+| [HighlightChip](highlight-chip.md)       | One highlight floats over the map, such as a line in focus                    |
+| [Switch](switch.md)                      | The thing turned on and off is a setting, which takes effect at once          |
+| [Tag](tag.md)                            | A property is marked and can't be pressed                                     |
+
 ## Anatomy
 
 Penpot page `Components/FilterChip`. Family: none (the contract's [Families](README.md#families) have no chips; a chip is a pill-shaped toggle button, and takes Button's ink treatments on a `radius.full` edge, see Tokens). Shared parts: none (every word is the caller's, and the count is text the chip is named by).
@@ -200,15 +211,19 @@ The deferred design draws one `State` property (`default`, `hover`, `focus`, `se
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                                       | Don't                                                                                                                           |
-| ---------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| Use FilterChip for a filter people turn on and off on its own, such as showing delays on the map                                         | Use it to pick one of several views or modes: that is one choice, a SegmentedControl's, and chips would let two be on at once   |
-| Keep the label the filter's name, the same on and off, in sentence case: "Delays", "Planned works"                                       | Change the label to say the state ("Delays on"): `aria-pressed` and the fill already say it, and a changing label moves the row |
-| Give the count as `count`, so every chip's count has Count's shape and is heard after the label                                          | Build a count into `children`, or pass a guess when the number is unknown: leave `count` out, and the chip shows none           |
-| Use the [content design](../content-design.md) words for kinds of disruption and data states, so the chips agree with the rest of Mylder | Coin a filter name of your own for a kind the table names                                                                       |
-| Lay a row of chips out with `flex-wrap: wrap` and a gap, and name the group in the pattern that holds it                                 | Put chips in a [Toolbar](toolbar.md) or make them one tab stop: each is a filter of its own, reached with Tab                   |
-| Use a [Tag](tag.md) to mark a property that can't be pressed                                                                             | Use a FilterChip as a label: a chip invites a press, and one that does nothing misleads                                         |
-| Disable a chip only while its filter can't apply, and say why nearby                                                                     | Disable a chip to show a count of 0: show the 0, since a disabled chip leaves the tab order and can't explain itself            |
-| Keep `onChange` for the filter's state, and cancel it with `details.cancel()` when the change must not happen                            | Set `aria-pressed` yourself or toggle a class: Base UI keeps the state and the attribute in step                                |
+| Rule | Level  | Do                                                                                                                                       | Don't                                                                                                                           | Checked by |
+| ---- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | must   | Use FilterChip for a filter people turn on and off on its own, such as showing delays on the map                                         | Use it to pick one of several views or modes: that is one choice, a SegmentedControl's, and chips would let two be on at once   | review     |
+| DD-2 | must   | Keep the label the filter's name, the same on and off, in sentence case: "Delays", "Planned works"                                       | Change the label to say the state ("Delays on"): `aria-pressed` and the fill already say it, and a changing label moves the row | review     |
+| DD-3 | must   | Give the count as `count`, so every chip's count has Count's shape and is heard after the label                                          | Build a count into `children`, or pass a guess when the number is unknown: leave `count` out, and the chip shows none           | review     |
+| DD-4 | should | Use the [content design](../content-design.md) words for kinds of disruption and data states, so the chips agree with the rest of Mylder | Coin a filter name of your own for a kind the table names                                                                       | review     |
+| DD-5 | must   | Lay a row of chips out with `flex-wrap: wrap` and a gap, and name the group in the pattern that holds it                                 | Put chips in a [Toolbar](toolbar.md) or make them one tab stop: each is a filter of its own, reached with Tab                   | review     |
+| DD-6 | must   | Use a [Tag](tag.md) to mark a property that can't be pressed                                                                             | Use a FilterChip as a label: a chip invites a press, and one that does nothing misleads                                         | review     |
+| DD-7 | must   | Disable a chip only while its filter can't apply, and say why nearby                                                                     | Disable a chip to show a count of 0: show the 0, since a disabled chip leaves the tab order and can't explain itself            | review     |
+| DD-8 | must   | Keep `onChange` for the filter's state, and cancel it with `details.cancel()` when the change must not happen                            | Set `aria-pressed` yourself or toggle a class: Base UI keeps the state and the attribute in step                                | review     |
+
+## For agents
+
+None known yet.

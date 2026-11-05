@@ -142,3 +142,16 @@ describe('Meter', () => {
     expect(markup).toContain('>—</span>')
   })
 })
+
+// Meter's props type holds the rule of its spec's Do and don't checked by types: the line under the
+// `@ts-expect-error DD-<n>` is one the compiler rejects, so `npm run typecheck` fails the day
+// MeterProps accepts it.
+describe("Meter's props type", () => {
+  it('requires the label, without which the meter renders with an empty name (DD-4)', () => {
+    const markup = renderToStaticMarkup(
+      // @ts-expect-error DD-4: a meter with no label tells the ear a number and nothing about it
+      <Meter value={82} />,
+    )
+    expect(markup).toMatch(/class="pn-Meter-label"[^>]*><\/span>/)
+  })
+})

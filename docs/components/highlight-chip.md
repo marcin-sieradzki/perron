@@ -6,6 +6,15 @@ A pill that floats over the map on glass and turns one highlight of the map on a
 
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the contract, the foundations, the tokens, the Base UI reference and the ROADMAP line that names it (`ROADMAP.md`, "Wave 3, interactive, on Base UI": "FilterChip and HighlightChip (Toggle)"). The extracted prototype component is not in any branch this run can reach. The foundations already place it: [Layout](../foundations/layout.md#stacking) stacks "the highlight chip" above the overview sheet and below the detail panel, with `z-index.highlight`; [Accessibility](../foundations/accessibility.md#rules) has Esc close "a dialog, then a detail panel, then a highlight"; and [Map](../foundations/map.md#focus-and-dimming) gives the dimming a line in focus brings.
 
+## When to use
+
+Use HighlightChip for the one highlight that floats over the map, such as line 5C in focus with everything outside it dimmed, which the rider turns on and off.
+
+| Use instead                              | When                                                                     |
+| ---------------------------------------- | ------------------------------------------------------------------------ |
+| [FilterChip](filter-chip.md)             | A filter turns on and off in a row of filters, in a panel or the top bar |
+| [SegmentedControl](segmented-control.md) | The choice is one of two to five ways to show one view                   |
+
 ## Anatomy
 
 Penpot page `Components/HighlightChip`. Family: none (the contract's [Families](README.md#families) have no toggle; the chip takes the glass of a floating panel from [Elevation](../foundations/elevation.md#surfaces) and the pressed toggle's `color.surface.inverse` from the same page). Shared parts: none (every word is the caller's, and the selected state is told by `aria-pressed`, not by a hidden word).
@@ -167,13 +176,17 @@ The deferred design draws a `State` property; the visual stage renders each stat
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                                 | Don't                                                                                                                                                    |
-| ---------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Name what the chip highlights in a word or two: "Line 5C", "Delayed vehicles".                                                     | Write an instruction such as "Click to highlight": `aria-pressed` already says it is a toggle and whether it is on.                                      |
-| Float one chip over the map, placed by the screen with `z-index.highlight`, and clear it on Esc after a dialog and a detail panel. | Put a row of highlight chips in a panel or the top bar: a filter people turn on and off there is a FilterChip, and a choice of views a SegmentedControl. |
-| Control it with `selected` when the map can change the highlight too, such as a click on another line.                             | Keep a second copy of the state beside an uncontrolled chip: the two drift apart, and the chip says the highlight is on when it is not.                  |
-| Put a LineBadge or an icon in `children` beside the words when it helps the eye find the line.                                     | Give the chip a badge or an icon alone: its content is its name, and a screen reader needs the words.                                                    |
-| Keep the words the same, on and off, and let `aria-pressed` say whether the highlight is on.                                       | Restyle the selected chip through `className` to look like the unselected one: the inverse fill is what tells the eye the highlight is on.               |
-| Let the chip wrap in a narrow container: it grows taller and keeps every word.                                                     | Cut its words off with `nowrap` and an ellipsis through `className`: a Danish line name at 320 px would lose its end.                                    |
+| Rule | Level  | Do                                                                                                                                 | Don't                                                                                                                                                    | Checked by |
+| ---- | ------ | ---------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | must   | Name what the chip highlights in a word or two: "Line 5C", "Delayed vehicles".                                                     | Write an instruction such as "Click to highlight": `aria-pressed` already says it is a toggle and whether it is on.                                      | review     |
+| DD-2 | should | Float one chip over the map, placed by the screen with `z-index.highlight`, and clear it on Esc after a dialog and a detail panel. | Put a row of highlight chips in a panel or the top bar: a filter people turn on and off there is a FilterChip, and a choice of views a SegmentedControl. | review     |
+| DD-3 | must   | Control it with `selected` when the map can change the highlight too, such as a click on another line.                             | Keep a second copy of the state beside an uncontrolled chip: the two drift apart, and the chip says the highlight is on when it is not.                  | review     |
+| DD-4 | must   | Put a LineBadge or an icon in `children` beside the words when it helps the eye find the line.                                     | Give the chip a badge or an icon alone: its content is its name, and a screen reader needs the words.                                                    | review     |
+| DD-5 | must   | Keep the words the same, on and off, and let `aria-pressed` say whether the highlight is on.                                       | Restyle the selected chip through `className` to look like the unselected one: the inverse fill is what tells the eye the highlight is on.               | review     |
+| DD-6 | must   | Let the chip wrap in a narrow container: it grows taller and keeps every word.                                                     | Cut its words off with `nowrap` and an ellipsis through `className`: a Danish line name at 320 px would lose its end.                                    | review     |
+
+## For agents
+
+None known yet.
