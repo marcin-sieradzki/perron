@@ -6,6 +6,18 @@ A button that runs one action and shows it as an icon alone, such as zoom in or 
 
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the contract, the foundations, the tokens, the Base UI reference and the spec of its sibling [Button](button.md), a source it follows rather than a dependency: IconButton builds on Base UI's `Button` and the `VisuallyHidden` part, not on Perron's Button. The [Toolbar](toolbar.md) spec gives its icon-only buttons the look and size answered below, and this spec follows it so the two match side by side.
 
+## When to use
+
+Use IconButton for an action shown as an icon alone, one people know at a glance, such as zoom in, close or search.
+
+| Use instead                    | When                                                                                  |
+| ------------------------------ | ------------------------------------------------------------------------------------- |
+| [Button](button.md)            | The action is named in words, or its icon would have to be guessed                    |
+| [LinkButton](link-button.md)   | Pressing it takes the reader to another page or place                                 |
+| [Toolbar](toolbar.md)          | Several actions sit together in one bar, one tab stop moved through with the arrows   |
+| [MapControls](map-controls.md) | The buttons are the map's own: zoom, centre, the 3D toggle, the compass and the pause |
+| [FilterChip](filter-chip.md)   | The control turns a filter on and off                                                 |
+
 ## Anatomy
 
 Penpot page `Components/IconButton`. Family: none (the contract's [Families](README.md#families) give buttons only their text, and an icon button shows none). Shared parts: `VisuallyHidden`, which holds the label: the contract composes it in "any component with a word the eye gets from an icon or a shape".
@@ -167,15 +179,19 @@ The deferred design's variant properties, in this order: `color` (`neutral`, `br
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                                                         | Don't                                                                                                                                           |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| Give `label` the action in sentence case, as a verb and what it acts on: "Zoom in", "Centre the map"                                                       | Name the icon rather than the action ("Plus", "Magnifier"), or write Title Case or an exclamation mark ([Content design](../content-design.md)) |
-| Use IconButton only where the icon is one people know at a glance, such as zoom, locate, close or search, and use [Button](button.md) with words otherwise | Put an icon whose meaning has to be guessed in an IconButton: the label reaches only screen readers, and the eye gets the icon alone            |
-| Give `size="large"` to an icon drawn on the 18 px grid (`monitor`, `info`), and keep the default `medium` for the 16 px ones                               | Set `--perron-icon-size` or a width on the icon yourself, or give a 16 px icon `large`: an icon drawn on one grid blurs when scaled to another  |
-| Give one action per screen `color="brand"`, for its main action                                                                                            | Use `brand` for emphasis, or set two brand actions on one screen                                                                                |
-| Set icon buttons on a panel, a sheet or the top bar's glass, which mark where they sit                                                                     | Float a `neutral` icon button straight over the map: its transparent fill disappears on the land and water                                      |
-| Put each action of a [Toolbar](toolbar.md) in a `ToolbarButton`, so the arrow keys reach it                                                                | Put an IconButton inside a Toolbar: it falls out of the arrow-key order and adds a tab stop                                                     |
-| Use a toggle component, such as FilterChip, for an icon that turns something on and off                                                                    | Set `aria-pressed` on an IconButton and restyle it: IconButton keeps no pressed state, and a toggle says its state in words                     |
-| Set `disabled` when the action can't run, with `focusableWhenDisabled` so the button can still be reached and its name heard                               | Restyle a disabled icon button with `opacity`: disabled is `color.text.tertiary`, a colour                                                      |
+| Rule | Level  | Do                                                                                                                                                         | Don't                                                                                                                                           | Checked by |
+| ---- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | must   | Give `label` the action in sentence case, as a verb and what it acts on: "Zoom in", "Centre the map"                                                       | Name the icon rather than the action ("Plus", "Magnifier"), or write Title Case or an exclamation mark ([Content design](../content-design.md)) | review     |
+| DD-2 | should | Use IconButton only where the icon is one people know at a glance, such as zoom, locate, close or search, and use [Button](button.md) with words otherwise | Put an icon whose meaning has to be guessed in an IconButton: the label reaches only screen readers, and the eye gets the icon alone            | review     |
+| DD-3 | should | Give `size="large"` to an icon drawn on the 18 px grid (`monitor`, `info`), and keep the default `medium` for the 16 px ones                               | Set `--perron-icon-size` or a width on the icon yourself, or give a 16 px icon `large`: an icon drawn on one grid blurs when scaled to another  | review     |
+| DD-4 | must   | Give one action per screen `color="brand"`, for its main action                                                                                            | Use `brand` for emphasis, or set two brand actions on one screen                                                                                | review     |
+| DD-5 | should | Set icon buttons on a panel, a sheet or the top bar's glass, which mark where they sit                                                                     | Float a `neutral` icon button straight over the map: its transparent fill disappears on the land and water                                      | review     |
+| DD-6 | must   | Put each action of a [Toolbar](toolbar.md) in a `ToolbarButton`, so the arrow keys reach it                                                                | Put an IconButton inside a Toolbar: it falls out of the arrow-key order and adds a tab stop                                                     | review     |
+| DD-7 | must   | Use a toggle component, such as FilterChip, for an icon that turns something on and off                                                                    | Set `aria-pressed` on an IconButton and restyle it: IconButton keeps no pressed state, and a toggle says its state in words                     | review     |
+| DD-8 | must   | Set `disabled` when the action can't run, with `focusableWhenDisabled` so the button can still be reached and its name heard                               | Restyle a disabled icon button with `opacity`: disabled is `color.text.tertiary`, a colour                                                      | review     |
+
+## For agents
+
+- An agent labelled an `info` button "About", the page it opens, rather than the action. Write a verb and what it acts on, such as "Show help" (DD-1).
