@@ -3,7 +3,7 @@
 // values its matrix crosses, the state styles the matrix forces from the component's own
 // stylesheet, the sizes' tokens, and the lines of its install strip. Server-only: it reads the repo.
 import postcss, { type AtRule, type ChildNode, type Container, type Rule } from 'postcss'
-import { FOR_AGENTS, specProse, WHEN_TO_USE } from '../../storybook/blocks/component-page.ts'
+import { specProse } from '../../storybook/blocks/component-page.ts'
 import { folderOf, kebab, type Layer } from '../../scripts/lib/entry.ts'
 import { SITE } from '../../scripts/lib/site.ts'
 import {
@@ -13,6 +13,7 @@ import {
   type PropRow,
   type SpecPropRow,
 } from '../../scripts/lib/spec-props.ts'
+import { FOR_AGENTS, sectionMarkdown, sectionsOf, WHEN_TO_USE } from '../../scripts/lib/usage.ts'
 import { markdownHeadings, slug, type Heading } from './anchors.ts'
 import type { ComponentApi } from './api.ts'
 import type { RegistryEntry } from './registry.ts'
@@ -33,13 +34,11 @@ export function specIntro(markdown: string) {
   return { lead: lead.trim().replace(/\s*\n\s*/g, ' '), rest: rest.join('\n\n').trim() }
 }
 
-const hasSection = (markdown: string, heading: string) =>
-  new RegExp(`^## ${heading.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*$`, 'm').test(markdown)
-
 /** The `##` sections named, each with its heading, that the spec has, in the order asked. */
 export function specSections(markdown: string, headings: readonly string[]) {
+  const has = new Set(sectionsOf(markdown).map((s) => s.heading))
   return headings
-    .filter((h) => hasSection(markdown, h))
+    .filter((h) => has.has(h))
     .map((heading) => ({ heading, markdown: specProse(markdown, [heading]) }))
 }
 
@@ -48,11 +47,11 @@ export function specSections(markdown: string, headings: readonly string[]) {
  * but When to use, which its intro holds, and For agents, which no page for people shows.
  */
 export function specBody(markdown: string) {
-  const [, ...rest] = markdown.split(/^(?=## )/m)
   const left = new Set([WHEN_TO_USE, FOR_AGENTS])
-  return rest
-    .filter((s) => !left.has(/^## (.+)$/m.exec(s)![1].trim()))
-    .join('')
+  return sectionsOf(markdown)
+    .filter((s) => !left.has(s.heading))
+    .map(sectionMarkdown)
+    .join('\n')
     .trim()
 }
 

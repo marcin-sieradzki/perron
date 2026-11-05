@@ -4,6 +4,7 @@
 // so a node test can run them.
 import type { ArgTypes } from '@storybook/react-vite'
 import { deprecationNotice, specPage, type Entry } from '../../scripts/lib/entry.ts'
+import { sectionMarkdown, splitSections, WHEN_TO_USE } from '../../scripts/lib/usage.ts'
 
 type InputType = ArgTypes[string]
 
@@ -84,26 +85,16 @@ export function propRows(argTypes: ArgTypes): PropRow[] {
 export const RUN_NOTES = '<!-- run notes -->'
 
 /**
- * The section a docs page shows as part of its intro: when to reach for the entry and what to use
- * instead, so a reader picks the right one early.
+ * A spec's `##` sections by heading, each with its heading, and its intro: the text between `#` and
+ * the first `##`, up to its run notes, then its When to use, heading and all, when it has one.
  */
-export const WHEN_TO_USE = 'When to use'
-
-/**
- * The section no docs page shows: the mistakes agents have made with the entry, which the spec,
- * its Markdown twin and the Perron MCP keep for agents.
- */
-export const FOR_AGENTS = 'For agents'
-
-/**
- * A spec's `##` sections by heading, and its intro: the text between `#` and the first `##`, up to
- * its run notes, then its When to use, heading and all, when it has one.
- */
-function sectionsOf(markdown: string) {
-  const [head, ...rest] = markdown.split(/^(?=## )/m)
-  const sections = new Map(rest.map((s) => [/^## (.+)$/m.exec(s)![1].trim(), s.trim()] as const))
+function introAndSections(markdown: string) {
+  const { head, sections: all } = splitSections(markdown)
+  const sections = new Map(all.map((s) => [s.heading, sectionMarkdown(s).trim()] as const))
   const intro = [
     head
+      .map((l) => l.text)
+      .join('\n')
       .replace(/^# .*$/m, '')
       .split(RUN_NOTES)[0]
       .trim(),
@@ -120,7 +111,7 @@ function sectionsOf(markdown: string) {
  * heading, in the order asked.
  */
 export function specProse(markdown: string, which: 'intro' | string[]) {
-  const { intro, sections } = sectionsOf(markdown)
+  const { intro, sections } = introAndSections(markdown)
   if (which === 'intro') return intro
   return which
     .map((heading) => {
