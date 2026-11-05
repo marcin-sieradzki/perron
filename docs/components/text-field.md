@@ -6,6 +6,17 @@ The box a person types one line of words into, such as a stop's name or an email
 
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the [contract](README.md), the [foundations](../foundations/README.md), the tokens, the Base UI reference for `Field` (`@base-ui/react` 1.9.0, installed) and the [Field](field.md) spec, the entry TextField's registry entry names in `dependsOn`. No ROADMAP line names TextField, and the extracted prototype component is not in any branch this run can reach.
 
+## When to use
+
+Use TextField for one line of words a person types, such as a stop's name or an email address, with its label, its line of help and its error.
+
+| Use instead                    | When                                                                                  |
+| ------------------------------ | ------------------------------------------------------------------------------------- |
+| [TextArea](text-area.md)       | The words run to sentences, over several lines, such as what the person saw on a trip |
+| [SearchField](search-field.md) | The words find a line or a stop, with suggestions under the box                       |
+| [NumberField](number-field.md) | The value is a number, typed or stepped up and down                                   |
+| [Select](select.md)            | The value is one of a short, fixed list                                               |
+
 ## Anatomy
 
 Penpot page `Components/TextField`. Family: Fields, for the box. Shared parts: `VisuallyHidden`, through Field, for a hidden label.
@@ -195,17 +206,21 @@ The deferred drawing's `State` property has the values `default`, `hover`, `focu
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                     | Don't                                                                                                                                                |
-| ---------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Give a `label` that names the words, "Stop name", and hide it with `hiddenLabel` only where the screen already says it | Let the `placeholder` stand in for the label: it vanishes as the person types, and it is drawn in `color.text.tertiary`, below text contrast         |
-| Put help the person needs while typing in `description`, "As written on the stop sign"                                 | Put that help in the `placeholder`: it is gone once they type                                                                                        |
-| Word an `error` as what to do, "Enter a stop name"                                                                     | Blame the person or say only that it failed ("Invalid input"), against [Content design](../content-design.md)                                        |
-| Spread React Hook Form's `register('stop')` on TextField, or pass Formik's `handleChange`, as on a native `<input>`    | Wrap TextField in a controller to read its value: its `onChange` is the native one already                                                           |
-| Give `error` from the form library whenever the field is invalid                                                       | Set `slotProps.field.invalid` with no message: the red edge alone tells only the eye, and only by its colour                                         |
-| Give `autoComplete` for the person's own details, such as `autoComplete="email"`, so the browser can fill them         | Leave a field that asks for a name, an email address or a phone number without `autoComplete`: WCAG 2.2's identify input purpose (1.3.5) asks for it |
-| Set `optional` on the few fields the person may leave empty, and `required` where an empty field must fail             | Write "(optional)", "(required)" or an asterisk into `label` yourself: it misses the locale, and an asterisk needs a legend                          |
-| Use SearchField to find a line or a stop, and NumberField for a number                                                 | Give TextField a `type` of `'search'` or `'number'`: the type union leaves them out, and SearchField and NumberField carry their own keys and words  |
-| Use TextField on its own: it already has its label, its help and its error                                             | Wrap TextField in Field: the input would be labelled twice, as Field's spec says                                                                     |
-| Set the width on the container, or on the frame through `slotProps.field`                                              | Give the input a width through `style` alone: the label and the error take the frame's width, not the box's                                          |
+| Rule  | Level  | Do                                                                                                                     | Don't                                                                                                                                                | Checked by |
+| ----- | ------ | ---------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1  | must   | Give a `label` that names the words, "Stop name", and hide it with `hiddenLabel` only where the screen already says it | Let the `placeholder` stand in for the label: it vanishes as the person types, and it is drawn in `color.text.tertiary`, below text contrast         | review     |
+| DD-2  | must   | Put help the person needs while typing in `description`, "As written on the stop sign"                                 | Put that help in the `placeholder`: it is gone once they type                                                                                        | review     |
+| DD-3  | must   | Word an `error` as what to do, "Enter a stop name"                                                                     | Blame the person or say only that it failed ("Invalid input"), against [Content design](../content-design.md)                                        | review     |
+| DD-4  | should | Spread React Hook Form's `register('stop')` on TextField, or pass Formik's `handleChange`, as on a native `<input>`    | Wrap TextField in a controller to read its value: its `onChange` is the native one already                                                           | review     |
+| DD-5  | must   | Give `error` from the form library whenever the field is invalid                                                       | Set `slotProps.field.invalid` with no message: the red edge alone tells only the eye, and only by its colour                                         | review     |
+| DD-6  | must   | Give `autoComplete` for the person's own details, such as `autoComplete="email"`, so the browser can fill them         | Leave a field that asks for a name, an email address or a phone number without `autoComplete`: WCAG 2.2's identify input purpose (1.3.5) asks for it | review     |
+| DD-7  | should | Set `optional` on the few fields the person may leave empty, and `required` where an empty field must fail             | Write "(optional)", "(required)" or an asterisk into `label` yourself: it misses the locale, and an asterisk needs a legend                          | review     |
+| DD-8  | must   | Use SearchField to find a line or a stop, and NumberField for a number                                                 | Give TextField a `type` of `'search'` or `'number'`: the type union leaves them out, and SearchField and NumberField carry their own keys and words  | types      |
+| DD-9  | must   | Use TextField on its own: it already has its label, its help and its error                                             | Wrap TextField in Field: the input would be labelled twice, as Field's spec says                                                                     | review     |
+| DD-10 | should | Set the width on the container, or on the frame through `slotProps.field`                                              | Give the input a width through `style` alone: the label and the error take the frame's width, not the box's                                          | review     |
+
+## For agents
+
+None known yet.
