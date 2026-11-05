@@ -2,6 +2,14 @@
 
 The stops of one vehicle's trip, in order, on a rail in its line's colour: each stop's name, its time, the time real-time data expects there and how late the vehicle runs there, with the stops already passed set back and the next stop marked, as in a vehicle's detail panel. A cancelled call stays in the list, marked "Cancelled".
 
+## When to use
+
+Use StopTimeline for the stops of one vehicle's trip, in order, with each stop's times and delay and the next stop marked, as in a vehicle's detail panel.
+
+| Use instead                      | When                                                                        |
+| -------------------------------- | --------------------------------------------------------------------------- |
+| [DepartureRow](departure-row.md) | The list is the departures from one stop, each its own line and destination |
+
 ## Anatomy
 
 Penpot page `Patterns/StopTimeline`, not drawn yet: the design is deferred (`docs/adr/0010-unattended-runs-with-design-deferred.md`), so this spec decides the drawing. Family: none. Shared parts: VisuallyHidden.
@@ -237,15 +245,19 @@ StopTimeline stays a plain list: every stop it is given is shown and none is pre
 
 ## Do and don't
 
-For a caller using the pattern, with the reason.
+For a caller using the pattern, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                                        | Don't                                                                                                                                     |
-| ----------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| Name the line in words around the timeline, such as in the panel's header with a LineBadge, because the rail's colour is decoration       | Rely on the rail's colour to say which line runs the trip: colour is never alone ([Accessibility](../foundations/accessibility.md#rules)) |
-| Leave `nextStopIndex` out when no real-time data places the vehicle, so no stop claims to be next                                         | Guess a next stop from the timetable and pass it: it claims more certainty than the data has ([Content design](../content-design.md))     |
-| Pass `delay: null` for a stop whose delay no real-time data says, and leave `delay` out where no delay belongs                            | Pass `0` for an unknown delay: "On time" claims a certainty the data doesn't have                                                         |
-| Give the timetabled `time` and let Delay say how late the vehicle runs; give the expected time as `expected` where real-time data says it | Pass the expected time as `time` as well as a delay: the rider adds the delay twice                                                       |
-| Keep a cancelled call in `stops` with `cancelled: true`, where the vehicle would have called                                              | Drop it from the list: a rider waiting there reads its absence as a stop not yet shown                                                    |
-| Leave `expected` out where no real-time data gives one                                                                                    | Copy the timetabled time into `expected`: the "~" claims an estimate the data doesn't have                                                |
-| Point the root's `aria-labelledby` at the panel heading that names the trip                                                               | Wrap the timeline in a live region: every update rereads the whole trip                                                                   |
-| Pass only the stops the screen needs, such as the next few, when the trip is long                                                         | Restyle the markers or the rail's width through `className`, which breaks the ring's and the rail's matching weight                       |
+| Rule | Level  | Do                                                                                                                                        | Don't                                                                                                                                     | Checked by |
+| ---- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | must   | Name the line in words around the timeline, such as in the panel's header with a LineBadge, because the rail's colour is decoration       | Rely on the rail's colour to say which line runs the trip: colour is never alone ([Accessibility](../foundations/accessibility.md#rules)) | review     |
+| DD-2 | must   | Leave `nextStopIndex` out when no real-time data places the vehicle, so no stop claims to be next                                         | Guess a next stop from the timetable and pass it: it claims more certainty than the data has ([Content design](../content-design.md))     | review     |
+| DD-3 | must   | Pass `delay: null` for a stop whose delay no real-time data says, and leave `delay` out where no delay belongs                            | Pass `0` for an unknown delay: "On time" claims a certainty the data doesn't have                                                         | review     |
+| DD-4 | must   | Give the timetabled `time` and let Delay say how late the vehicle runs; give the expected time as `expected` where real-time data says it | Pass the expected time as `time` as well as a delay: the rider adds the delay twice                                                       | review     |
+| DD-5 | must   | Keep a cancelled call in `stops` with `cancelled: true`, where the vehicle would have called                                              | Drop it from the list: a rider waiting there reads its absence as a stop not yet shown                                                    | review     |
+| DD-6 | must   | Leave `expected` out where no real-time data gives one                                                                                    | Copy the timetabled time into `expected`: the "~" claims an estimate the data doesn't have                                                | review     |
+| DD-7 | must   | Point the root's `aria-labelledby` at the panel heading that names the trip                                                               | Wrap the timeline in a live region: every update rereads the whole trip                                                                   | review     |
+| DD-8 | should | Pass only the stops the screen needs, such as the next few, when the trip is long                                                         | Restyle the markers or the rail's width through `className`, which breaks the ring's and the rail's matching weight                       | review     |
+
+## For agents
+
+None known yet.

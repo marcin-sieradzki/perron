@@ -8,6 +8,15 @@ DayProfileChart plots one series of counts across one calendar day, 00:00 to 24:
 
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): this spec decides what the drawing would, from the [contract](../components/README.md) and its Patterns section, the [foundations](../foundations/README.md), [content design](../content-design.md) and the tokens. The extracted prototype is not reachable from this branch, so nothing here rests on it. The ROADMAP names it among the patterns (7.2), and the registry files it under Data with no `dependsOn` and no `baseUiParts`, beside ReportStrip and VehicleTable, the views [DataStatePanel](data-state-panel.md) holds while their data loads. What the foundations already say of it: a chart with one series draws it in `color.chart.series`, "the vehicles in service curve", with the area under the line at `opacity.series-fill`, and its values and labels in text colours ([Semantic colours](../foundations/semantic-colours.md#charts)); its axis lines are `color.border.strong` and its axis labels `color.text.tertiary` in `typography.data-sm` ([Typography](../foundations/typography.md#roles)), which this chart's axis and scale take in `color.text.secondary` for contrast (Tokens); and its value tip is `color.surface.inverse` with `color.text.inverse` ([Elevation](../foundations/elevation.md#surfaces)).
 
+## When to use
+
+Use DayProfileChart to show how one count moves across one day, from midnight to midnight, such as the vehicles in service each hour.
+
+| Use instead                     | When                                                                                  |
+| ------------------------------- | ------------------------------------------------------------------------------------- |
+| [Stat](../components/stat.md)   | One figure now matters, not how it moved across the day                               |
+| [Meter](../components/meter.md) | One value is shown within a known range, such as the share of vehicles reporting live |
+
 ## Anatomy
 
 Penpot page `Patterns/DayProfileChart`, not drawn yet. Family: none, since it draws no surface and sits on the panel, sheet or card that holds it, as DataStatePanel does; its value tip takes the Tooltips row's fill, text and radius. Shared parts: VisuallyHidden, for each point's words, an unknown count's "Unknown" among them: the whole item is hidden from the eye, so the chart composes VisuallyHidden itself where the `UnknownValue` helper would add a "—" (CR-5).
@@ -248,14 +257,18 @@ Stories are titled `Patterns/DayProfileChart`. No Penpot design yet, and DayProf
 
 ## Do and don't
 
-For a caller using the pattern, with the reason.
+For a caller using the pattern, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                                  | Don't                                                                                                                                                  |
-| ----------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Give each point's time in Copenhagen's time as `HH:MM`, in time order, one per hour or per quarter-hour                             | Pass the device's local time, a 12-hour time or points out of order: the line runs through them as given, and the brand keeps the city's 24-hour clock |
-| Give `count` `null` for an hour no data covers, so the line breaks and the point says "Unknown"                                     | Pass `0` or a guess for an hour the data doesn't know: a dip to 0 claims no vehicles ran, and the brand never claims more than the data knows          |
-| Give the points so far today and let the line end at the latest                                                                     | Pad the rest of the day with zeros or the timetable's figures: the line would drop to 0 or show plans as counts                                        |
-| Name what the line counts in `label`, in a few words: "Vehicles in service"                                                         | Leave the chart to a heading above it alone: the caption is what names the figure and the plot to a screen reader                                      |
-| Wrap the chart in [DataStatePanel](data-state-panel.md) while its data loads, is empty or could not be loaded                       | Show an empty chart, or one of all-unknown points, while the data is on its way: the baseline alone reads as a day with nothing in it                  |
-| Let the chart redraw in silence as each hour's count arrives, and announce a change of state in the screen's own polite live region | Make the chart or its tip a live region: every new count would be read out                                                                             |
-| Give the chart its container's width, from a 320 px phone to the overview sheet, and let its height follow                          | Set a fixed height or width through `className`: the plot keeps its shape by its ratio, and a squeezed one distorts the curve                          |
+| Rule | Level  | Do                                                                                                                                  | Don't                                                                                                                                                  | Checked by |
+| ---- | ------ | ----------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- |
+| DD-1 | must   | Give each point's time in Copenhagen's time as `HH:MM`, in time order, one per hour or per quarter-hour                             | Pass the device's local time, a 12-hour time or points out of order: the line runs through them as given, and the brand keeps the city's 24-hour clock | review     |
+| DD-2 | must   | Give `count` `null` for an hour no data covers, so the line breaks and the point says "Unknown"                                     | Pass `0` or a guess for an hour the data doesn't know: a dip to 0 claims no vehicles ran, and the brand never claims more than the data knows          | review     |
+| DD-3 | must   | Give the points so far today and let the line end at the latest                                                                     | Pad the rest of the day with zeros or the timetable's figures: the line would drop to 0 or show plans as counts                                        | review     |
+| DD-4 | must   | Name what the line counts in `label`, in a few words: "Vehicles in service"                                                         | Leave the chart to a heading above it alone: the caption is what names the figure and the plot to a screen reader                                      | types      |
+| DD-5 | must   | Wrap the chart in [DataStatePanel](data-state-panel.md) while its data loads, is empty or could not be loaded                       | Show an empty chart, or one of all-unknown points, while the data is on its way: the baseline alone reads as a day with nothing in it                  | review     |
+| DD-6 | must   | Let the chart redraw in silence as each hour's count arrives, and announce a change of state in the screen's own polite live region | Make the chart or its tip a live region: every new count would be read out                                                                             | review     |
+| DD-7 | should | Give the chart its container's width, from a 320 px phone to the overview sheet, and let its height follow                          | Set a fixed height or width through `className`: the plot keeps its shape by its ratio, and a squeezed one distorts the curve                          | review     |
+
+## For agents
+
+None known yet.

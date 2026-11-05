@@ -6,6 +6,15 @@ The bar a Mylder screen in kiosk mode shows over the map, for a display people r
 
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): this spec decides what the drawing would, from the [contract](../components/README.md) and its Patterns section, the [foundations](../foundations/README.md), [content design](../content-design.md), the tokens and the specs of the three components it composes, [Surface](../components/surface.md), [Brand](../components/brand.md) and [Stat](../components/stat.md). The extracted prototype is not reachable from this branch, so nothing here rests on it. What the foundations already say of the kiosk bar is that it stacks at `z-index.sheet` with the overview sheet ([Layout](../foundations/layout.md#stacking)), that its clock is set in `typography.data-xl` ([Typography](../foundations/typography.md#roles)), and that Brand and Stat were drawn to sit in it.
 
+## When to use
+
+Use KioskBar for the bar over the map on a screen in kiosk mode, which people read from across a room and never touch: the brand, a few key figures and the clock, large.
+
+| Use instead                   | When                                                                                      |
+| ----------------------------- | ----------------------------------------------------------------------------------------- |
+| [TopBar](top-bar.md)          | People operate the screen: TopBar has the filters, the tools and a clock sized for a desk |
+| [Stat](../components/stat.md) | One key figure is shown on its own, in a report or a panel                                |
+
 ## Anatomy
 
 Penpot page `Patterns/KioskBar`. Family: Panels, since it is a panel floating over the map and takes the Panels row's glass at `radius.xl` through [Surface](../components/surface.md)'s `glass` variant. Shared parts: none of its own; the `VisuallyHidden` parts that Brand and Stat compose stay inside them.
@@ -181,14 +190,18 @@ Stories are titled `Patterns/KioskBar`. No Penpot design yet, and KioskBar has n
 
 ## Do and don't
 
-For a caller using the pattern, with the reason.
+For a caller using the pattern, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                 | Don't                                                                                                                  |
-| ------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
-| Give `time` in Copenhagen's time as `HH:MM`, and update it when the minute turns                                   | Pass the device's local time or a 12-hour time: the brand keeps the 24-hour clock, and a kiosk shows the city's time   |
-| Keep to about four figures, each named in a few words: "Reporting live", "Average delay"                           | Fill the bar with figures until it wraps on a wide screen: read from across a room, fewer figures read faster          |
-| Leave out an entry's `figure` when no data gives it, so Stat shows "—" and says "Unknown"                          | Pass `0` or a guess for a figure the data doesn't know: the brand never claims more than the data knows                |
-| Place the bar from the screen, `size.panel-gap` from the edges at `z-index.sheet`, and wrap it in a landmark there | Give it a position, a margin or a `z-index` through `className`: the pattern sizes to its container and places nothing |
-| Pick `slotProps.brand.variant` `'mark'` where the bar is tight                                                     | Hide the brand or its parts with `className`, which can leave a mark no screen reader hears                            |
-| Announce a change of state, such as a data feed problem, in the screen's own polite live region                    | Make the clock or the figures a live region: they change every minute and would flood a screen reader                  |
-| Use the top bar's clock, in `typography.data-lg`, on a screen people operate                                       | Use KioskBar on a screen people touch or tab through: it has no controls and its clock is sized for a room, not a desk |
+| Rule | Level  | Do                                                                                                                 | Don't                                                                                                                  | Checked by |
+| ---- | ------ | ------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | must   | Give `time` in Copenhagen's time as `HH:MM`, and update it when the minute turns                                   | Pass the device's local time or a 12-hour time: the brand keeps the 24-hour clock, and a kiosk shows the city's time   | review     |
+| DD-2 | should | Keep to about four figures, each named in a few words: "Reporting live", "Average delay"                           | Fill the bar with figures until it wraps on a wide screen: read from across a room, fewer figures read faster          | review     |
+| DD-3 | must   | Leave out an entry's `figure` when no data gives it, so Stat shows "—" and says "Unknown"                          | Pass `0` or a guess for a figure the data doesn't know: the brand never claims more than the data knows                | review     |
+| DD-4 | should | Place the bar from the screen, `size.panel-gap` from the edges at `z-index.sheet`, and wrap it in a landmark there | Give it a position, a margin or a `z-index` through `className`: the pattern sizes to its container and places nothing | review     |
+| DD-5 | must   | Pick `slotProps.brand.variant` `'mark'` where the bar is tight                                                     | Hide the brand or its parts with `className`, which can leave a mark no screen reader hears                            | review     |
+| DD-6 | must   | Announce a change of state, such as a data feed problem, in the screen's own polite live region                    | Make the clock or the figures a live region: they change every minute and would flood a screen reader                  | review     |
+| DD-7 | should | Use the top bar's clock, in `typography.data-lg`, on a screen people operate                                       | Use KioskBar on a screen people touch or tab through: it has no controls and its clock is sized for a room, not a desk | review     |
+
+## For agents
+
+None known yet.

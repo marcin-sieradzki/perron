@@ -2,6 +2,16 @@
 
 A card for one disruption on Copenhagen's network: its kind, the lines it touches, a short title and a plain sentence on what is happening, then the stops it affects, when it runs and one action, set as a raised card in a list of disruptions or in a line's detail panel.
 
+## When to use
+
+Use DisruptionCard for one disruption on the network, with its kind, its lines, what is happening and where and when, in a list of disruptions or in a line's detail panel.
+
+| Use instead                                      | When                                                                                                     |
+| ------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| [SeverityLabel](../components/severity-label.md) | Only the kind of a disruption is shown, such as in a row of a list of lines                              |
+| [NormalService](../components/normal-service.md) | The line has no disruption, and the screen says it runs normally                                         |
+| [Alert](../components/alert.md)                  | The message is about the app or the screen, such as a data feed problem, not a disruption on the network |
+
 ## Anatomy
 
 Penpot page `Patterns/DisruptionCard`, not drawn yet: the design is deferred (`docs/adr/0010-unattended-runs-with-design-deferred.md`), so this spec decides the drawing. Its sources are the [contract](../components/README.md), the foundations, the tokens and the specs of the components it composes: [SeverityLabel](../components/severity-label.md), [LineBadge](../components/line-badge.md), [Surface](../components/surface.md) and [Text](../components/text.md), the four its `dependsOn` lists once the build adds Surface and Text to the registry (CR-1). Family: none. Shared parts: `VisuallyHidden`, which says "Affected lines" before the line badges (CR-4).
@@ -247,16 +257,20 @@ The stops' and the time's strings join them with a JSDoc each that names its pla
 
 ## Do and don't
 
-For a caller using the pattern, with the reason.
+For a caller using the pattern, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                                                 | Don't                                                                                                                                                     |
-| -------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Name the lines in words in the title or the sentence, "M2 and M3 trains…", as well as in the badges.                                               | Let the badges be the only mention of a line: five official badge pairs miss 4.5:1, and LineBadge asks for the name in words beside them.                 |
-| Say what is happening, then where, how long and how sure we are, in plain sentences: "Signal fault at Kongens Nytorv" over its sentence.           | Repeat the kind in the title ("Delays on M2"): the SeverityLabel already says it, in the content-design word every screen shares.                         |
-| Set a list of disruptions as a `<ul>` of cards, each rendered as `<li>`, or make each card a link with `render={<a href="…" />}` to open the line. | Make the card a `<button>`, or put a link or button inside a card that is itself a link: the card's blocks are invalid in a button, and links can't nest. |
-| Make the title a heading with `slotProps.title.render` at the level the panel around it needs.                                                     | Pass a heading element as `title`: the title part is a `<p>` until `render` swaps it, and a heading inside a `<p>` is invalid.                            |
-| Leave `lines` out for a disruption across the whole network, such as a data feed problem.                                                          | Pass every line on the network, or a placeholder badge, to fill the header.                                                                               |
-| Give the stops and the time as data, `stops` and `time`, from the message's own fields.                                                            | Write "Affects …" or "From …" into the sentence yourself: the words then differ from every other card's, and from the other languages'.                   |
-| Give `severity='notice'` to a message whose fields don't say which kind it is.                                                                     | Show an unread kind as planned works, or guess one from the message's words.                                                                              |
-| Give one `action`, a LinkButton or Button, such as "Show on map", when the card is not itself a link.                                              | Give an `action` to a card made a link, or put several actions in it: links can't nest, and one action keeps the card one decision.                       |
-| Put DisruptionCards inside a panel, which supplies the glass or opaque surface they sit on.                                                        | Tint or stripe the card in the kind's colour with `className`: the colour belongs to the SeverityLabel and never carries meaning alone.                   |
+| Rule | Level  | Do                                                                                                                                                 | Don't                                                                                                                                                     | Checked by |
+| ---- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | must   | Name the lines in words in the title or the sentence, "M2 and M3 trains…", as well as in the badges.                                               | Let the badges be the only mention of a line: five official badge pairs miss 4.5:1, and LineBadge asks for the name in words beside them.                 | review     |
+| DD-2 | should | Say what is happening, then where, how long and how sure we are, in plain sentences: "Signal fault at Kongens Nytorv" over its sentence.           | Repeat the kind in the title ("Delays on M2"): the SeverityLabel already says it, in the content-design word every screen shares.                         | review     |
+| DD-3 | must   | Set a list of disruptions as a `<ul>` of cards, each rendered as `<li>`, or make each card a link with `render={<a href="…" />}` to open the line. | Make the card a `<button>`, or put a link or button inside a card that is itself a link: the card's blocks are invalid in a button, and links can't nest. | review     |
+| DD-4 | must   | Make the title a heading with `slotProps.title.render` at the level the panel around it needs.                                                     | Pass a heading element as `title`: the title part is a `<p>` until `render` swaps it, and a heading inside a `<p>` is invalid.                            | review     |
+| DD-5 | should | Leave `lines` out for a disruption across the whole network, such as a data feed problem.                                                          | Pass every line on the network, or a placeholder badge, to fill the header.                                                                               | review     |
+| DD-6 | should | Give the stops and the time as data, `stops` and `time`, from the message's own fields.                                                            | Write "Affects …" or "From …" into the sentence yourself: the words then differ from every other card's, and from the other languages'.                   | review     |
+| DD-7 | must   | Give `severity='notice'` to a message whose fields don't say which kind it is.                                                                     | Show an unread kind as planned works, or guess one from the message's words.                                                                              | review     |
+| DD-8 | must   | Give one `action`, a LinkButton or Button, such as "Show on map", when the card is not itself a link.                                              | Give an `action` to a card made a link, or put several actions in it: links can't nest, and one action keeps the card one decision.                       | review     |
+| DD-9 | should | Put DisruptionCards inside a panel, which supplies the glass or opaque surface they sit on.                                                        | Tint or stripe the card in the kind's colour with `className`: the colour belongs to the SeverityLabel and never carries meaning alone.                   | review     |
+
+## For agents
+
+None known yet.
