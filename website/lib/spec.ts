@@ -3,7 +3,7 @@
 // values its matrix crosses, the state styles the matrix forces from the component's own
 // stylesheet, the sizes' tokens, and the lines of its install strip. Server-only: it reads the repo.
 import postcss, { type AtRule, type ChildNode, type Container, type Rule } from 'postcss'
-import { specProse } from '../../storybook/blocks/component-page.ts'
+import { FOR_AGENTS, specProse, WHEN_TO_USE } from '../../storybook/blocks/component-page.ts'
 import { folderOf, kebab, type Layer } from '../../scripts/lib/entry.ts'
 import { SITE } from '../../scripts/lib/site.ts'
 import { markdownHeadings, slug, type Heading } from './anchors.ts'
@@ -37,10 +37,17 @@ export function specSections(markdown: string, headings: readonly string[]) {
     .map((heading) => ({ heading, markdown: specProse(markdown, [heading]) }))
 }
 
-/** Every `##` section of the spec, below its intro and run notes: an entry in design shows them all. */
+/**
+ * Every `##` section of the spec, below its intro and run notes, that an entry in design shows: all
+ * but When to use, which its intro holds, and For agents, which no page for people shows.
+ */
 export function specBody(markdown: string) {
   const [, ...rest] = markdown.split(/^(?=## )/m)
-  return rest.join('').trim()
+  const left = new Set([WHEN_TO_USE, FOR_AGENTS])
+  return rest
+    .filter((s) => !left.has(/^## (.+)$/m.exec(s)![1].trim()))
+    .join('')
+    .trim()
 }
 
 /** The prose sections a built entry's page shows after its props, each with its anchor. */
