@@ -23,7 +23,7 @@ export const MCP_README = 'packages/mcp/README.md'
 export const EXAMPLES: Record<string, Record<string, unknown>> = {
   list_tokens: { query: 'surface warning' },
   search_docs: { query: 'reduced motion', limit: 1 },
-  list_components: { query: 'a yes or no setting' },
+  list_components: { query: 'setting', category: 'Inputs' },
   get_component: { name: 'Button' },
   get_reference: { library: 'base-ui', component: 'Select', part: 'Positioner' },
 }

@@ -28,7 +28,7 @@ The sections of the foundation pages, content design, the glossary and the compo
 
 ### `list_components`
 
-Every component and pattern, one JSON line each: its name, layer, category, status, the entry that replaces it when it is deprecated, and what it is in one sentence. `query` puts the entries that hold the most of its words first, a word few entries hold counting for more (`a yes or no setting` finds Checkbox and Switch); `layer` keeps `component` or `pattern`, and `category` one category (`Inputs`).
+Every component and pattern, one JSON line each: its name, layer, category, status, the entry that replaces it when it is deprecated, and what it is in one sentence. `query` keeps the entries that hold any of its words (`turn a setting on or off`), ranked by how well they match: a word few entries hold counts for more than a common one, and a word of the name breaks a tie; `layer` keeps `component` or `pattern`, and `category` one category (`Inputs`).
 
 ### `get_component`
 
