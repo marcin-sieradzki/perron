@@ -2,9 +2,17 @@
 
 A pin on the map.
 
-## Anatomy
+## When to use
 
-Filled.
+Use Pin for a place on the map.
+
+Nothing else in Perron does this.
+
+## Do and don't
+
+| Rule | Level | Do     | Don't     | Checked by |
+| ---- | ----- | ------ | --------- | ---------- |
+| DD-1 | must  | Use it | Misuse it | review     |
 
 ## For agents
 

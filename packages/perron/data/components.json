@@ -1322,7 +1322,7 @@
         "level": "must",
         "do": "Name the meter in a few words in `label`: \"Reporting live\", \"Trips run today\"",
         "dont": "Leave the name to the layout: a meter with no name tells the ear a number and nothing about it",
-        "checkedBy": "types"
+        "checkedBy": "review"
       },
       {
         "id": "DD-5",
@@ -3416,7 +3416,7 @@
         "level": "must",
         "do": "Use `hiddenLegend` where a heading right above already names the group for the eye",
         "dont": "Leave out the legend, or replace it with an `aria-label` on the root: the legend is the group's one name, seen and heard alike",
-        "checkedBy": "types"
+        "checkedBy": "review"
       },
       {
         "id": "DD-6",
@@ -10416,7 +10416,7 @@
         "level": "must",
         "do": "Name what the line counts in `label`, in a few words: \"Vehicles in service\"",
         "dont": "Leave the chart to a heading above it alone: the caption is what names the figure and the plot to a screen reader",
-        "checkedBy": "types"
+        "checkedBy": "review"
       },
       {
         "id": "DD-5",

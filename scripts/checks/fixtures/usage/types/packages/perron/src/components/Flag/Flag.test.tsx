@@ -1,5 +1,5 @@
-// A made-up Flag's type tests: DD-1 is cited in JSX, DD-2 only by a bare directive and from Pin's
-// folder, DD-3 is a review rule, and DD-9 is no rule.
+// A made-up Flag's type tests: DD-1 is cited in JSX, DD-2 only by a bare directive here and by Pin's
+// own rule in its folder, DD-3 is a review rule, and DD-9 is no rule.
 import { Flag } from './Flag.tsx'
 
 export const loud = (

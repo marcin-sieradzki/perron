@@ -167,14 +167,11 @@ describe('specProblems', () => {
         .filter((f) => f.endsWith('.md') && f !== 'README.md' && f !== 'TEMPLATE.md')
         .map((f) => `docs/${dir}/${f}`),
     )
-    // the specs move over to When to use and For agents in batches, so a spec that has not moved
-    // yet may lack both until the usage gate requires them; a brief's new spec has them from the start
-    const notMoved = new Set(['has no "## When to use" section', 'has no "## For agents" section'])
     for (const f of specs) {
       const spec = readFileSync(join(root, f), 'utf8')
       const name = /^# (.+)$/m.exec(spec)?.[1] ?? ''
       const { pending, problems } = specProblems(spec, template, name, banned)
-      expect({ f, pending, problems: problems.filter((p) => !notMoved.has(p)) }).toEqual({
+      expect({ f, pending, problems }).toEqual({
         f,
         pending: 0,
         problems: [],

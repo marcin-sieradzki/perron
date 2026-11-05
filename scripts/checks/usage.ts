@@ -4,9 +4,8 @@
 // its own, each linked to its spec page, or says none comes close; the Do and don't table's rules
 // each have an id, a level and what checks them, and each `types` rule is proven by a
 // `@ts-expect-error` citing it in the entry's tests or stories; a row that names WCAG names its
-// success criterion; For agents comes last, as a list or "None known yet." It checks whatever of
-// these a spec already has, so the specs move over a batch at a time. A breach is a spec's row to
-// rewrite, so this rule takes no perron-allow.
+// success criterion; For agents comes last, as a list or "None known yet." Every such spec has all
+// three. A breach is a spec's row to rewrite, so this rule takes no perron-allow.
 import { existsSync, readFileSync } from 'node:fs'
 import { join, posix } from 'node:path'
 import { PACKAGE } from '../lib/paths.ts'
@@ -38,10 +37,9 @@ const RULE = 'usage'
 /** Where a problem's reader finds the layout. */
 const TEMPLATE = '(docs/components/TEMPLATE.md)'
 
-/** A moved Do and don't table without the five columns, and each rule with a cell out of its vocabulary. */
+/** A Do and don't table without the five columns, and each rule with a cell out of its vocabulary. */
 function tableProblems(e: Entry, table: DoAndDont): Problem[] {
   const file = specPage(e)
-  if (!table.moved) return []
   if (!hasRuleColumns(table.columns))
     return [
       {
@@ -109,7 +107,7 @@ function citationProblems(root: string, e: Entry, table: DoAndDont): Problem[] {
 /** A success criterion by its number, such as 2.5.8; WCAG's own version, 2.2, is none. */
 const CRITERION = /\b[1-4]\.\d{1,2}\.\d{1,2}\b/
 
-/** Each Do and don't row, moved over or not, that names WCAG with no success criterion. */
+/** Each Do and don't row, in five columns or not, that names WCAG with no success criterion. */
 function wcagProblems(e: Entry, table: DoAndDont): Problem[] {
   return table.rows
     .filter((r) => /\bWCAG\b/.test(r.text) && !CRITERION.test(r.text))
@@ -202,11 +200,32 @@ function placeProblems(e: Entry, spec: string): Problem[] {
   return problems
 }
 
+/** Each of When to use, the Do and don't table and For agents that the spec lacks. */
+function missingProblems(e: Entry, spec: string): Problem[] {
+  const file = specPage(e)
+  const missing = (has: unknown, message: string) => (has ? [] : [{ file, message }])
+  return [
+    ...missing(
+      readWhenToUse(spec),
+      `${file} has no When to use: write it as the first section, right after the intro and its run notes ${TEMPLATE}`,
+    ),
+    ...missing(
+      readForAgents(spec),
+      `${file} has no For agents: write it as the last section, with "${NONE_KNOWN}" until an agent makes a mistake with the entry ${TEMPLATE}`,
+    ),
+    ...missing(
+      readDoAndDont(spec),
+      `${file} has no Do and don't table: give it one, with the columns ${RULE_COLUMNS.slice(0, -1).join(', ')} and ${RULE_COLUMNS.at(-1)} ${TEMPLATE}`,
+    ),
+  ]
+}
+
 /** The problems of one entry's spec. */
 function specProblems(root: string, e: Entry, registry: Entry[], spec: string): Problem[] {
   const table = readDoAndDont(spec)
   const when = readWhenToUse(spec)
   return [
+    ...missingProblems(e, spec),
     ...placeProblems(e, spec),
     ...(when ? alternativeProblems(e, registry, when) : []),
     ...(table
