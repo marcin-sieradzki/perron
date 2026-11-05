@@ -6,6 +6,16 @@ A panel that slides in from the edge of the screen and floats over the map: the 
 
 The design is deferred (`docs/adr/0010-unattended-runs-with-design-deferred.md`): this spec decides the variant property, the parts and the token of every part, from the contract, the foundations, the tokens and the Base UI reference. A later design run can change them.
 
+## When to use
+
+Use Sheet for a panel beside the map that stays open while the rider pans and picks vehicles, and the bottom sheet it becomes on a phone.
+
+| Use instead                                | When                                                                                     |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------- |
+| [DetailPanel](../patterns/detail-panel.md) | The panel shows the vehicle or the stop a rider picked: a Sheet headed by a DetailHeader |
+| [Dialog](dialog.md)                        | The panel asks for a decision, and holds focus until it is answered                      |
+| [Popover](popover.md)                      | A few sentences or settings sit against the button that opens them                       |
+
 ## Anatomy
 
 Penpot page `Components/Sheet`. Family: `Panels`. Shared parts: `CloseButton`.
@@ -203,13 +213,17 @@ One per variant and state the spec decides, named by the `anchor` values. The de
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                                                                                           | Don't                                                                                                                                              |
-| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Use a sheet for a panel beside the map, left open while the rider pans and picks vehicles: it is not modal by default                                                                        | Use a modal sheet to ask for a decision; that is a Dialog, which needs no swipe or snap points (Base UI's own advice)                              |
-| Pick `anchor` `bottom` on a phone, under `breakpoint.phone`, in the screen's code                                                                                                            | Expect the sheet to turn into a bottom sheet on its own; it sizes to its viewport and holds no media query                                         |
-| Name the sheet with `title`: the stop, line or destination it shows                                                                                                                          | Leave the title out, or draw a heading of your own in `children`: the dialog takes its name from `title`                                           |
-| Handle `onClose` and let Esc close the topmost sheet, as [Accessibility](../foundations/accessibility.md#rules) orders: a dialog, then a detail panel                                        | Cancel every close of a sheet the rider can't otherwise leave; cancel only the reasons a screen must refuse, such as `swipe` on the overview sheet |
-| Mark a horizontal carousel inside a bottom sheet with `data-base-ui-swipe-ignore`, so its drags don't swipe the sheet; put a [Slider](slider.md) in as it is, since it marks its own control | Let a control that drags sideways fight the sheet's swipe                                                                                          |
-| Keep one primary action per sheet                                                                                                                                                            | Put two brand buttons in one sheet; a screen has one brand action at most                                                                          |
+| Rule | Level  | Do                                                                                                                                                                                           | Don't                                                                                                                                              | Checked by |
+| ---- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | should | Use a sheet for a panel beside the map, left open while the rider pans and picks vehicles: it is not modal by default                                                                        | Use a modal sheet to ask for a decision; that is a Dialog, which needs no swipe or snap points (Base UI's own advice)                              | review     |
+| DD-2 | must   | Pick `anchor` `bottom` on a phone, under `breakpoint.phone`, in the screen's code                                                                                                            | Expect the sheet to turn into a bottom sheet on its own; it sizes to its viewport and holds no media query                                         | review     |
+| DD-3 | must   | Name the sheet with `title`: the stop, line or destination it shows                                                                                                                          | Leave the title out, or draw a heading of your own in `children`: the dialog takes its name from `title`                                           | review     |
+| DD-4 | must   | Handle `onClose` and let Esc close the topmost sheet, as [Accessibility](../foundations/accessibility.md#rules) orders: a dialog, then a detail panel                                        | Cancel every close of a sheet the rider can't otherwise leave; cancel only the reasons a screen must refuse, such as `swipe` on the overview sheet | review     |
+| DD-5 | must   | Mark a horizontal carousel inside a bottom sheet with `data-base-ui-swipe-ignore`, so its drags don't swipe the sheet; put a [Slider](slider.md) in as it is, since it marks its own control | Let a control that drags sideways fight the sheet's swipe                                                                                          | review     |
+| DD-6 | must   | Keep one primary action per sheet                                                                                                                                                            | Put two brand buttons in one sheet; a screen has one brand action at most                                                                          | review     |
+
+## For agents
+
+None known yet.

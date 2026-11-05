@@ -6,6 +6,15 @@ The box a person types a number into, or steps up and down with its minus and pl
 
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the [contract](README.md), the [foundations](../foundations/README.md), the tokens, the Base UI reference for `NumberField` (`@base-ui/react` 1.9.0, installed, its keys, labels and button semantics confirmed in the installed `NumberFieldInput`, `NumberFieldRoot` and `useNumberFieldStepperButton`), the [Field](field.md) spec, the entry NumberField's registry entry names in `dependsOn`, and its siblings in the Fields family, [TextField](text-field.md) and [SearchField](search-field.md). No ROADMAP line names NumberField, and the extracted prototype component is not in any branch this run can reach.
 
+## When to use
+
+Use NumberField for a count or an amount a person types or steps up and down, such as how many departures a board shows.
+
+| Use instead                | When                                                                                                                                                  |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [TextField](text-field.md) | The number is a name, such as a line number, a stop code or a phone number, which no one steps and a separator or a dropped leading zero would change |
+| [Slider](slider.md)        | The place in a range matters more than the exact figure, such as a trail's length                                                                     |
+
 ## Anatomy
 
 Penpot page `Components/NumberField`. Family: Fields, for the box. Shared parts: `VisuallyHidden`, through Field, for a hidden label.
@@ -296,16 +305,20 @@ The stories render the field in a 320 px wide container, in a `PerronProvider` i
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                                 | Don't                                                                                                                                                                                    |
-| ---------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Use NumberField for a count or an amount a person may nudge up or down, such as the departures a board shows                       | Use it for a number that is a name, such as a line number, a stop code or a phone number: no one steps those, and a separator or a dropped leading zero would change them; use TextField |
-| Set `min` and `max` wherever the number has bounds, and say them in `description`, "From 1 to 20"                                  | Leave the bounds to an error after the fact: the buttons and the keys clamp to them only when they are set                                                                               |
-| Pass the unit through `format`, such as `{ style: 'unit', unit: 'minute' }`, so it is written in the locale with a space before it | Write the unit into `label` alone, or into a text beside the box: the number in the box would read bare                                                                                  |
-| Read the number from `onChange`'s second argument, and save or fetch on `onChangeCommitted`                                        | Read `event.target.value`: it is the formatted text, "1,500", not the number; and don't fetch on every `onChange`, which fires on each step of a held button                             |
-| Connect React Hook Form through `Controller`, with `onChange={(event, value) => field.onChange(value)}`                            | Spread `register()` on NumberField: its value is a number Base UI keeps, not a native input's text                                                                                       |
-| Let the PerronProvider's locale write the number, or give `locale` only where the number must be written in another language       | Format the number yourself and pass a string: `value` is a number, and Base UI parses what the person types in the same locale                                                           |
-| Give `error` from the form library whenever the field is invalid, worded as what to do, "Enter a number from 1 to 20"              | Set `slotProps.field.invalid` with no message, or blame the person ("Invalid number"), against [Content design](../content-design.md)                                                    |
-| Set the width on the container, or on the frame through `slotProps.field`, wide enough for the longest number and both buttons     | Squeeze the box until the number scrolls: the buttons keep their size, and the number is what the person reads                                                                           |
-| Use NumberField on its own: it already has its label, its help and its error                                                       | Wrap NumberField in Field: the input would be labelled twice, as Field's spec says                                                                                                       |
+| Rule | Level  | Do                                                                                                                                 | Don't                                                                                                                                                                                    | Checked by |
+| ---- | ------ | ---------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | must   | Use NumberField for a count or an amount a person may nudge up or down, such as the departures a board shows                       | Use it for a number that is a name, such as a line number, a stop code or a phone number: no one steps those, and a separator or a dropped leading zero would change them; use TextField | review     |
+| DD-2 | should | Set `min` and `max` wherever the number has bounds, and say them in `description`, "From 1 to 20"                                  | Leave the bounds to an error after the fact: the buttons and the keys clamp to them only when they are set                                                                               | review     |
+| DD-3 | should | Pass the unit through `format`, such as `{ style: 'unit', unit: 'minute' }`, so it is written in the locale with a space before it | Write the unit into `label` alone, or into a text beside the box: the number in the box would read bare                                                                                  | review     |
+| DD-4 | must   | Read the number from `onChange`'s second argument, and save or fetch on `onChangeCommitted`                                        | Read `event.target.value`: it is the formatted text, "1,500", not the number; and don't fetch on every `onChange`, which fires on each step of a held button                             | review     |
+| DD-5 | must   | Connect React Hook Form through `Controller`, with `onChange={(event, value) => field.onChange(value)}`                            | Spread `register()` on NumberField: its value is a number Base UI keeps, not a native input's text                                                                                       | review     |
+| DD-6 | must   | Let the PerronProvider's locale write the number, or give `locale` only where the number must be written in another language       | Format the number yourself and pass a string: `value` is a number, and Base UI parses what the person types in the same locale                                                           | types      |
+| DD-7 | must   | Give `error` from the form library whenever the field is invalid, worded as what to do, "Enter a number from 1 to 20"              | Set `slotProps.field.invalid` with no message, or blame the person ("Invalid number"), against [Content design](../content-design.md)                                                    | review     |
+| DD-8 | should | Set the width on the container, or on the frame through `slotProps.field`, wide enough for the longest number and both buttons     | Squeeze the box until the number scrolls: the buttons keep their size, and the number is what the person reads                                                                           | review     |
+| DD-9 | must   | Use NumberField on its own: it already has its label, its help and its error                                                       | Wrap NumberField in Field: the input would be labelled twice, as Field's spec says                                                                                                       | review     |
+
+## For agents
+
+None known yet.
