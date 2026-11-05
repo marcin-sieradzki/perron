@@ -123,7 +123,7 @@ export function createServer({ cwd = process.cwd() }: Options = {}) {
     {
       title: 'List Perron components',
       description:
-        "Perron's components and patterns, one JSON line each: name, layer, category, status, its successor when deprecated, and what it is in one sentence. Filter by words, such as `a yes or no setting`, which puts the entries that hold the most of them first, and by layer and category, such as `Inputs`. Then ask `get_component` for the one to use.",
+        "Perron's components and patterns, one JSON line each: name, layer, category, status, its successor when deprecated, and what it is in one sentence. Filter by words, such as `turn a setting on or off`, which keeps the entries that hold any of them, ranked by how well they match, and by layer and category, such as `Inputs`. Then ask `get_component` for the one to use.",
       inputSchema: {
         query: z
           .string()

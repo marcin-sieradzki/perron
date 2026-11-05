@@ -123,7 +123,8 @@ describe('usage', () => {
   })
 
   it('names an alternative that is no registered entry, the entry itself or no link to its spec', () => {
-    // Pin, StopRow, a pattern, and Badge, in design, are registered; StopRow has no alternative
+    // Pin and StopRow, a pattern, are registered and built; Badge is in design, and Label is
+    // deprecated for Tag; StopRow has no alternative
     const flag = (line: number, message: string) => ({
       file: 'docs/components/flag.md',
       line,
@@ -131,16 +132,21 @@ describe('usage', () => {
     })
     expect(usage.run(fixture('alternatives'))).toEqual([
       flag(
-        14,
+        13,
+        'Badge is in design, so no one can use it yet: name an entry from building on, or take the row out',
+      ),
+      flag(14, 'Label is deprecated: name its successor, Tag, or take the row out'),
+      flag(
+        15,
         'Chip is no registered entry: name an entry of packages/perron/components.json, or take the row out',
       ),
-      flag(15, 'Flag names itself: When to use names the entries to use in its place'),
-      flag(16, "The link to Tag goes to tag-old.md, not to Tag's spec page: link tag.md"),
+      flag(16, 'Flag names itself: When to use names the entries to use in its place'),
+      flag(17, "The link to Tag goes to tag-old.md, not to Tag's spec page: link tag.md"),
       flag(
-        17,
+        18,
         "This row names no entry by a link: write the entry's name as a link to its spec page, such as [Pin](pin.md)",
       ),
-      flag(18, "Pin's row says nothing under When: say when to use Pin in Flag's place"),
+      flag(19, "Pin's row says nothing under When: say when to use Pin in Flag's place"),
       {
         file: 'docs/components/pin.md',
         line: 5,

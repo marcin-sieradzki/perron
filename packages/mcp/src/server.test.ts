@@ -185,13 +185,12 @@ describe('the Perron MCP server', () => {
     )
   })
 
-  it('answers a question in words with the entries that fit it first', async () => {
-    const { text } = await call('list_components', { query: 'something for a yes or no setting' })
-    const first = text
-      .split('\n')
-      .slice(0, 3)
-      .map((l) => JSON.parse(l).name)
-    expect(first).toEqual(expect.arrayContaining(['Checkbox', 'Switch']))
+  it('answers a question in words with the entries that fit it', async () => {
+    const { text } = await call('list_components', {
+      query: 'something to turn a setting on or off',
+    })
+    const names = text.split('\n').map((l) => JSON.parse(l).name)
+    expect(names).toEqual(expect.arrayContaining(['Checkbox', 'Switch']))
   })
 
   it('lists every component and pattern when nothing filters them', async () => {

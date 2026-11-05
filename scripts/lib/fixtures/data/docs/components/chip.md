@@ -17,12 +17,13 @@ Use Chip for a label that says what a thing is.
 
 ## Props
 
-| Name       | Type                   | Default    | Base UI prop | Description                                |
-| ---------- | ---------------------- | ---------- | ------------ | ------------------------------------------ |
-| `variant`  | `'solid' \| 'outline'` | `'solid'`  | none         | How much the chip stands out.              |
-| `outlined` | `boolean`              | `false`    | none         | Draws an edge only. Use `variant` instead. |
-| `children` | `ReactNode`            | (required) | none         | The label.                                 |
-| `render`   | Base UI's `render`     | none       | `render`     | Swaps the root element.                    |
+| Name           | Type                   | Default    | Base UI prop   | Description                                |
+| -------------- | ---------------------- | ---------- | -------------- | ------------------------------------------ |
+| `variant`      | `'solid' \| 'outline'` | `'solid'`  | none           | How much the chip stands out.              |
+| `outlined`     | `boolean`              | `false`    | none           | Draws an edge only. Use `variant` instead. |
+| `children`     | `ReactNode`            | (required) | none           | The label.                                 |
+| `render`       | Base UI's `render`     | none       | `render`       | Swaps the root element.                    |
+| `nativeButton` | `boolean`              | `false`    | `nativeButton` | Whether `render` gives a native button.    |
 
 ## Do and don't
 

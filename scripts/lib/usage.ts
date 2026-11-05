@@ -2,10 +2,19 @@
 // for the entry and which entries to use instead; the rules of its Do and don't table, each with
 // its id, its level and what checks it; and For agents, the mistakes agents have made with it. The
 // `usage` gate checks them (scripts/checks/usage.ts), and the layout is the spec template's
-// (docs/components/TEMPLATE.md).
-import { FOR_AGENTS, WHEN_TO_USE } from '../../storybook/blocks/component-page.ts'
+// (docs/components/TEMPLATE.md). Node-free, so the docs pages split a spec with it in the browser.
 
-export { FOR_AGENTS, WHEN_TO_USE }
+/**
+ * The section a docs page shows as part of its intro: when to reach for the entry and what to use
+ * instead, so a reader picks the right one early.
+ */
+export const WHEN_TO_USE = 'When to use'
+
+/**
+ * The section no docs page shows: the mistakes agents have made with the entry, which the spec,
+ * its Markdown twin and the Perron MCP keep for agents.
+ */
+export const FOR_AGENTS = 'For agents'
 
 /** The heading of the Do and don't table's section. */
 export const DO_AND_DONT = "Do and don't"
@@ -51,7 +60,7 @@ export const citations = (code: string) =>
 export const TYPE_TEST_FILE = /\.(test|stories)\.tsx?$/
 
 /** One line of a spec, with its 1-based number. */
-interface Line {
+export interface Line {
   text: string
   line: number
 }
@@ -70,16 +79,24 @@ export interface Table {
   rows: { cells: string[]; line: number }[]
 }
 
-/** The `##` sections of a spec, in order. */
-export function sectionsOf(spec: string): Section[] {
+/** A spec split at its `##` headings: the lines above the first, and each section in order. */
+export function splitSections(spec: string): { head: Line[]; sections: Section[] } {
+  const head: Line[] = []
   const sections: Section[] = []
   spec.split('\n').forEach((text, i) => {
     const heading = /^## (.+?)\s*$/.exec(text)?.[1]
     if (heading) sections.push({ heading, line: i + 1, body: [] })
-    else sections.at(-1)?.body.push({ text, line: i + 1 })
+    else (sections.at(-1)?.body ?? head).push({ text, line: i + 1 })
   })
-  return sections
+  return { head, sections }
 }
+
+/** The `##` sections of a spec, in order. */
+export const sectionsOf = (spec: string) => splitSections(spec).sections
+
+/** A section as Markdown, its `##` heading and all, untrimmed. */
+export const sectionMarkdown = (s: Section) =>
+  [`## ${s.heading}`, ...s.body.map((l) => l.text)].join('\n')
 
 /** A table row's cells, trimmed, with `\|` read as `|`. */
 const cells = (row: string) =>

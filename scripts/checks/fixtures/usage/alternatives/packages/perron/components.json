@@ -43,5 +43,15 @@
     "baseUiParts": [],
     "penpotPath": "Components/Badge",
     "dependsOn": []
+  },
+  {
+    "name": "Label",
+    "layer": "component",
+    "category": "Display",
+    "status": "deprecated",
+    "replacedBy": "Tag",
+    "baseUiParts": [],
+    "penpotPath": "Components/Label",
+    "dependsOn": []
   }
 ]

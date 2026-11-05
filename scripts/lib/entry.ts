@@ -18,7 +18,7 @@ export interface Entry {
   status: Status
   /**
    * The entry to use instead, by name: required when `status` is `deprecated` and left out
-   * otherwise. It is a registered entry in the same layer that is not deprecated itself.
+   * otherwise. It is another registered entry in the same layer, and it is `stable`.
    */
   replacedBy?: string
   /** The Base UI parts it builds on, such as `Select.Root`; always empty for a pattern */
@@ -100,7 +100,7 @@ function entryProblems(raw: unknown, index: number): string[] {
 
 /**
  * The problems between entries: duplicates, unknown or wrong-layer dependencies, a successor that
- * is missing, deprecated or in another layer, cycles.
+ * is the entry itself, missing, not stable or in another layer, cycles.
  */
 function graphProblems(entries: Entry[]): string[] {
   const out: string[] = []
@@ -121,10 +121,11 @@ function graphProblems(entries: Entry[]): string[] {
   for (const e of entries) {
     if (e.replacedBy === undefined) continue
     const next = byName.get(e.replacedBy)
-    if (!next)
+    if (e.replacedBy === e.name) out.push(`${e.name} can't replace itself`)
+    else if (!next)
       out.push(`${e.name} is replaced by ${e.replacedBy}, which the registry does not list`)
-    else if (next.status === 'deprecated')
-      out.push(`${e.name} is replaced by ${next.name}, which is deprecated itself`)
+    else if (next.status !== 'stable')
+      out.push(`${e.name} is replaced by ${next.name}, which is ${next.status}, not stable`)
     else if (next.layer !== e.layer)
       out.push(
         `${e.name} is a ${e.layer} and is replaced by the ${next.layer} ${next.name}; its successor is in the same layer`,

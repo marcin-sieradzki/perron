@@ -2,6 +2,7 @@
 // @mylder/perron ships, found by words, layer and category, or by name.
 import { wordsOf } from './docs.ts'
 
+// A copy across the package boundary: scripts/lib/data.ts in the repo builds this shape.
 /** A component or pattern as the data holds it: what get_component answers. */
 export interface ComponentRecord {
   name: string
@@ -57,7 +58,7 @@ const spaced = (name: string) => name.replace(/([a-z0-9])([A-Z])/g, '$1 $2')
 export function listComponents(
   records: ComponentRecord[],
   query = '',
-  layer?: string,
+  layer?: ComponentRecord['layer'],
   category?: string,
 ) {
   const kept = records.filter(
