@@ -50,6 +50,14 @@ _Avoid_: Internal label, default text
 A value of a component's `color` prop, backed by tokens: what the colour means, not which colour it is.
 _Avoid_: Tone, colour name
 
+**Level**:
+How binding a rule of a spec's Do and don't is: `must`, whose Don't is never right, or `should`, a default a caller breaks only with a reason.
+_Avoid_: Severity, priority
+
+**Usage gate**:
+The `usage` check, which holds every spec from `building` on to its caller guidance: When to use first, a Do and don't table whose rules each carry an id, a level and what checks them, and For agents last.
+_Avoid_: Guidelines, lint
+
 ## The factory
 
 **Factory**:

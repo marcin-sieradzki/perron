@@ -1,18 +1,18 @@
-// Fieldset's props type holds the rule of its spec's Do and don't checked by types: each line under
-// a `@ts-expect-error DD-<n>` is one the compiler rejects, so `npm run typecheck` fails the day
-// FieldsetProps accepts it. Spec: docs/components/fieldset.md.
+// Fieldset's props type requires `legend`, so `npm run typecheck` fails the day FieldsetProps takes a
+// fieldset with none. It catches half of its spec's DD-5, which stays checked by review:
+// `legend=""` compiles. Spec: docs/components/fieldset.md.
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import { Fieldset } from './Fieldset.tsx'
 
 describe("Fieldset's props type", () => {
-  it('requires the legend, which nothing asks for at run time (DD-5)', () => {
+  it('requires the legend, which nothing asks for at run time', () => {
     const misuses = [
-      // @ts-expect-error DD-5: the legend is the group's one name, seen and heard alike
+      // @ts-expect-error: the legend is the group's one name, seen and heard alike
       <Fieldset>
         <input type="checkbox" />
       </Fieldset>,
-      // @ts-expect-error DD-5: an aria-label on the root names the group for the ear alone
+      // @ts-expect-error: an aria-label on the root names the group for the ear alone
       <Fieldset aria-label="Show on the map">
         <input type="checkbox" />
       </Fieldset>,
