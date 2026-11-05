@@ -5861,7 +5861,7 @@
     "status": "stable",
     "summary": "A box that sets content on one step of the surface ladder: glass or an opaque panel floating over the map, a raised card inside a panel, or an inset box, each with its fill, edge, radius, shadow and padding from the tokens.",
     "import": "import { Surface } from '@mylder/perron'",
-    "whenToUse": "Use Surface for a box with no behaviour of its own that sets content on one step of the surface ladder: a panel floating over the map, a card inside a panel, or a box set into one.",
+    "whenToUse": "Use Surface for a box that only sets content on one step of the surface ladder: a panel floating over the map, a card inside a panel, or a box set into one.",
     "alternatives": [
       {
         "name": "Dialog",

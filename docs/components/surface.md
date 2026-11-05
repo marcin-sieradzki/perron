@@ -4,7 +4,7 @@ A box that sets content on one step of the surface ladder: glass or an opaque pa
 
 ## When to use
 
-Use Surface for a box with no behaviour of its own that sets content on one step of the surface ladder: a panel floating over the map, a card inside a panel, or a box set into one.
+Use Surface for a box that only sets content on one step of the surface ladder: a panel floating over the map, a card inside a panel, or a box set into one.
 
 | Use instead           | When                                                                                      |
 | --------------------- | ----------------------------------------------------------------------------------------- |
