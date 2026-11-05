@@ -6,6 +6,17 @@ A small pill holding how many there are, such as the "3" after "Delays" in a fil
 
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): this spec decides what the drawing would, from the [contract](README.md), the [foundations](../foundations/README.md), [content design](../content-design.md), the tokens and the specs of its Display siblings, [Stat](stat.md)'s, [Text](text.md)'s and [LineBadge](line-badge.md)'s. Count has no Base UI component and nothing in `dependsOn`, and the extracted prototype is not reachable from this branch, so nothing here rests on it. The foundations already name its look: [Typography](../foundations/typography.md#roles) gives `typography.data-sm` to "counts in chips and tabs", [Elevation](../foundations/elevation.md) puts counts on `color.surface.inset`, [Semantic spacing](../foundations/semantic-spacing.md#radius) rounds them with `radius.full`, and [Semantic colours](../foundations/semantic-colours.md) gives `color.surface.warning` to "a warning message or count".
 
+## When to use
+
+Use Count for how many there are, as a small pill after the words that say what it counts, in a filter chip, a tab or a heading.
+
+| Use instead                | When                                                                    |
+| -------------------------- | ----------------------------------------------------------------------- |
+| [Stat](stat.md)            | The number is a key figure, set large to read at a glance               |
+| [Text](text.md)            | The number sits in a row or a sentence, in the `data` role              |
+| [LineBadge](line-badge.md) | The pill names a line                                                   |
+| [Tag](tag.md)              | The pill holds a word or two that marks a property, such as "Night bus" |
+
 ## Anatomy
 
 Penpot page `Components/Count`. Family: none, since it is a static mark that joins no family's treatment: it is not pressed, takes no hover and is not one of the Rows, Fields, Popups, Panels or Tooltips. Shared parts: VisuallyHidden, through the `UnknownValue` helper, which says an unknown count in words (CR-5).
@@ -151,15 +162,19 @@ Rules for this component alone, numbered so the build and the review can cite th
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                      | Don't                                                                                                                    |
-| ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| Put a Count after the words that say what it counts, with a space between them in the markup: `Delays <Count>3</Count>` | Leave the space out: the accessible name may run the words together, "Delays3"                                           |
-| Leave out `children` when no data gives the count, so Count shows "—" and says "Unknown"                                | Pass `0` or a guess when the count is unknown: the brand never claims more than the data knows                           |
-| Render no Count when there is nothing to count and the screen hides empty tallies                                       | Rely on Count to hide itself at `0`, as MUI's Badge does: `0` is a count, and Count shows it                             |
-| Write the count in the screen's locale, and cap it yourself if the space is short: `'1 204'`, `'99+'`                   | Squeeze a long count into a narrow chip and let it overflow: Count never wraps or truncates                              |
-| Use a status `color` for a count of good or bad news beside the words that name it, such as `danger` after "Delays"     | Let the tint be the only sign, or colour a plain tally such as the number of lines on a tab                              |
-| Use Stat for a key figure and Text with a `data` role for a number in a row or a sentence                               | Use Count as a key figure or inside running text as a number: it is a small pill for tallies in chips, tabs and headings |
-| Use LineBadge to name a line                                                                                            | Put a line's name in a Count: it takes the operator's colour, not an intent                                              |
-| Announce a changed count in the screen's own polite live region, when it changes state                                  | Make a Count a live region: a tally that updates every few seconds floods the screen reader                              |
+| Rule | Level  | Do                                                                                                                      | Don't                                                                                                                    | Checked by |
+| ---- | ------ | ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ---------- |
+| DD-1 | must   | Put a Count after the words that say what it counts, with a space between them in the markup: `Delays <Count>3</Count>` | Leave the space out: the accessible name may run the words together, "Delays3"                                           | review     |
+| DD-2 | must   | Leave out `children` when no data gives the count, so Count shows "—" and says "Unknown"                                | Pass `0` or a guess when the count is unknown: the brand never claims more than the data knows                           | review     |
+| DD-3 | should | Render no Count when there is nothing to count and the screen hides empty tallies                                       | Rely on Count to hide itself at `0`, as MUI's Badge does: `0` is a count, and Count shows it                             | review     |
+| DD-4 | should | Write the count in the screen's locale, and cap it yourself if the space is short: `'1 204'`, `'99+'`                   | Squeeze a long count into a narrow chip and let it overflow: Count never wraps or truncates                              | review     |
+| DD-5 | must   | Use a status `color` for a count of good or bad news beside the words that name it, such as `danger` after "Delays"     | Let the tint be the only sign, or colour a plain tally such as the number of lines on a tab                              | review     |
+| DD-6 | should | Use Stat for a key figure and Text with a `data` role for a number in a row or a sentence                               | Use Count as a key figure or inside running text as a number: it is a small pill for tallies in chips, tabs and headings | review     |
+| DD-7 | should | Use LineBadge to name a line                                                                                            | Put a line's name in a Count: it takes the operator's colour, not an intent                                              | review     |
+| DD-8 | must   | Announce a changed count in the screen's own polite live region, when it changes state                                  | Make a Count a live region: a tally that updates every few seconds floods the screen reader                              | review     |
+
+## For agents
+
+None known yet.

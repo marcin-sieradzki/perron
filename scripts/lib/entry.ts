@@ -1,7 +1,7 @@
 // A registry entry of packages/perron/components.json: its shape, its validation, and what follows
-// from the entry alone (its folder, whether it is built, its spec page, its deprecation notice).
-// Node-free, so the contract story and the docs pages read the registry with it in the browser;
-// scripts/lib/registry.ts does the file I/O.
+// from the entry alone (its folder, whether it is built, its import line, its spec page, its
+// deprecation notice). Node-free, so the contract story and the docs pages read the registry with
+// it in the browser; scripts/lib/registry.ts does the file I/O.
 
 export const LAYERS = ['component', 'pattern'] as const
 export const STATUSES = ['designing', 'building', 'stable', 'deprecated'] as const
@@ -167,6 +167,10 @@ export function kebab(name: string) {
     .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
     .toLowerCase()
 }
+
+/** The import line of an entry: from `@mylder/perron`, or `@mylder/perron/patterns`. */
+export const importLine = (e: Pick<Entry, 'name' | 'layer'>) =>
+  `import { ${e.name} } from '@mylder/perron${e.layer === 'pattern' ? '/patterns' : ''}'`
 
 /** An entry's spec page, by path from the repo root. */
 export const specPage = (e: Entry) => `docs/${folderOf(e.layer)}/${kebab(e.name)}.md`

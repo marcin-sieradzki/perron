@@ -6,6 +6,12 @@ The map's scale: a short bar on glass at the bottom right of the map, with the g
 
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the [contract](../components/README.md) and its Patterns section, the [foundations](../foundations/README.md), [content design](../content-design.md), the tokens and the specs of what it composes, [Surface](../components/surface.md), and the neighbours it sits beside, [Attribution](../components/attribution.md) and [MapControls](../components/map-controls.md). `packages/perron/components.json` gives ScaleBar no `baseUiParts`, and its `dependsOn` lists `Surface` (CR-1). The extracted prototype is not reachable from this branch, so nothing here rests on it. What the foundations already say of the scale is that it sits at the bottom right with the map controls ([Layout](../foundations/layout.md#page-shell)) and stacks with them, the legend and the attribution at `z-index.map-controls` ([Layout](../foundations/layout.md#stacking)).
 
+## When to use
+
+Use ScaleBar for the map's scale, at the bottom right of the map, so the rider can tell how far apart things are as the map zooms.
+
+Nothing else in Perron does this.
+
 ## Anatomy
 
 Penpot page `Patterns/ScaleBar`. Family: none (the contract's [Families](../components/README.md#families) have no measure drawn over the map; the root takes Surface's `glass`, as every element floating over the map does). Shared parts: `VisuallyHidden`, for the word "Scale" the eye gets from the bar's shape.
@@ -165,12 +171,16 @@ Rules for this pattern alone, numbered so the build and the review can cite them
 
 ## Do and don't
 
-For a caller using the pattern, with the reason.
+For a caller using the pattern, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                                      | Don't                                                                                                                |
-| --------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| Give `metersPerPixel` for the map's centre, and give it again on every zoom and on every move that changes the latitude much            | Give it once and leave it: the scale then claims a distance the map no longer shows                                  |
-| Leave `metersPerPixel` as `NaN` until the map has loaded, so the scale shows "—" and says "Unknown"                                     | Pass a guess or `0` before the map is ready: the brand never claims more than the data knows                         |
-| Place the scale from the screen, at the bottom right beside the map controls, `size.panel-gap` from the edges at `z-index.map-controls` | Give it a position, a margin or a `z-index` through `className`: the pattern sizes to its content and places nothing |
-| Keep one scale on the map                                                                                                               | Put a scale in a panel or a sheet, away from the map it measures                                                     |
-| Leave the scale out of the screen's live region; announce changes of state there                                                        | Make the label a live region: it changes on every zoom step and would flood a screen reader                          |
+| Rule | Level  | Do                                                                                                                                      | Don't                                                                                                                | Checked by |
+| ---- | ------ | --------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | must   | Give `metersPerPixel` for the map's centre, and give it again on every zoom and on every move that changes the latitude much            | Give it once and leave it: the scale then claims a distance the map no longer shows                                  | review     |
+| DD-2 | must   | Leave `metersPerPixel` as `NaN` until the map has loaded, so the scale shows "—" and says "Unknown"                                     | Pass a guess or `0` before the map is ready: the brand never claims more than the data knows                         | review     |
+| DD-3 | should | Place the scale from the screen, at the bottom right beside the map controls, `size.panel-gap` from the edges at `z-index.map-controls` | Give it a position, a margin or a `z-index` through `className`: the pattern sizes to its content and places nothing | review     |
+| DD-4 | should | Keep one scale on the map                                                                                                               | Put a scale in a panel or a sheet, away from the map it measures                                                     | review     |
+| DD-5 | must   | Leave the scale out of the screen's live region; announce changes of state there                                                        | Make the label a live region: it changes on every zoom step and would flood a screen reader                          | review     |
+
+## For agents
+
+None known yet.

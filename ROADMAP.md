@@ -244,8 +244,9 @@ After the design step, three agent contexts run in sequence, rather than as an a
 - [ ] **5.1 Button through the whole loop.** Local. Run `/factory Button` from Penpot to a released `@mylder/perron@0.2.0`, and switch Mylder's own buttons to it. Log every place where the loop stalled or an agent guessed, and keep every stage's transcript: the log and the transcripts are what 5.2 checks the scorers against.
 - [ ] **5.2 Retro.** Local, where the transcripts are. Fix the skills, checks and templates the log points at, before the next component starts, running the `retro` skill on each stage's transcript to find where each fix goes. Write the three scorers of 5.5 and run them on Button's transcripts: a scorer that misses a log entry it should catch, or fails a run the log is happy with, gets its rubric rewritten. **Done** when every log entry is fixed, or written down as a known gap in the contract, and the scorers agree with the log.
 - [ ] **5.3 Perron MCP, components.** Any.
-  - Add `list_components`, `get_component` (spec, props, code map) and `get_design` (read-back and exports) to the server.
-  - Generate a `.md` prop contract per component for the docs site and `llms.txt`.
+  - [x] Add `list_components` and `get_component` (spec, props) to the server.
+  - [ ] Add `get_design` (read-back, code map and exports) to the server.
+  - [ ] Generate a `.md` prop contract per component for the docs site and `llms.txt`.
 - [ ] **5.4 The factory.** Local, after 5.2. Puts `/factory` behind GitHub Issues, as [ADR 0008](docs/adr/0008-local-component-factory.md) describes, so a component goes from a filed issue to a ready PR with the maintainer acting only at the two gates.
   - **Identity.** At first the factory acts as the maintainer's own `gh` login, and the board shows which component waits at a gate. Its `gh` and `git push` calls all read the token from `GH_TOKEN`, so changing identity later means changing that token only.
   - **Labels.** One per stage (`design`, `brief`, `build`, `review`, `docs`, `visual`), plus `design-approved`, `needs-human`, and `factory:running`, the claim.

@@ -6,6 +6,15 @@ A link in text: words, in a sentence or standing alone, that take the reader to 
 
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the [contract](README.md), the [foundations](../foundations/README.md), the tokens, Base UI's `useRender` and `mergeProps` (`@base-ui/react` 1.9.0, installed) and the two merged components that already draw links: [LinkButton](link-button.md), the link shaped like a button, whose root, `href` and answers Link shares, and [Attribution](attribution.md), whose rule for the caller's links (`.pn-Attribution :any-link` in `packages/perron/src/components/Attribution/Attribution.css`) gives Link its ink and underline. Its registry entry, in the Navigation category, has no `baseUiParts` and no `dependsOn`. No ROADMAP line names Link, and the extracted prototype component is not in any branch this run can reach, so nothing here rests on it. No component of its family or category is on a branch. MUI's `Link` (9.5.0) takes `color`, `underline` and a typography `variant`; Link takes none of them (see Props). The factory's brief for this slot asked for a minimal API, Attribution's treatment under the contract's [Pointer feedback](README.md#pointer-feedback), a decision on an "opens in a new tab" affordance, a decision on whether Attribution should later use Link, and a `play` step for every Keyboard row.
 
+## When to use
+
+Use Link for words that take the reader to another page or place, in a sentence or standing alone, such as "Departures from Rejseplanen".
+
+| Use instead                  | When                                                                   |
+| ---------------------------- | ---------------------------------------------------------------------- |
+| [LinkButton](link-button.md) | The link stands apart, shaped like a button, such as "Back to the map" |
+| [Button](button.md)          | Pressing it runs an action on the screen it sits on                    |
+
 ## Anatomy
 
 Penpot page `Components/Link`. Family: none: the contract's [Families](README.md#families) have no row for text, and Link takes the type and colour of the text it sits in. Shared parts: none.
@@ -139,15 +148,19 @@ The deferred design's one variant property is `State` (`default`, `hover`, `focu
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                          | Don't                                                                                                                                                                      |
-| --------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Use Link for a link in text, in a sentence or standing alone, and [LinkButton](link-button.md) for one shaped like a button | Put a LinkButton in running text: its height and padding break the line                                                                                                    |
-| Use Link when pressing it goes somewhere: another page, another place in the app, another site                              | Use Link to run an action, such as showing a line or closing a panel, with an `onClick` that prevents the link: that is a Button                                           |
-| Name where it goes, in the words of the sentence: "Departures from Rejseplanen", "Show all departures"                      | Write "Click here", "Read more" or a bare URL: the link's words are all a screen reader hears of it in a list of links (WCAG 2.2, 2.4.4 Link purpose)                      |
-| Set the colour and type on the text around the link, and let Link take them                                                 | Recolour a Link in the brand yellow or a status colour on its own: brand is never a link ([Intents](README.md#intents)), and the text's colour already carries any meaning |
-| Give a standalone link `size.target-min` of room, such as a row of that height or a gap around it                           | Set a standalone link against another target, where a 21 px line leaves too small a mark to press                                                                          |
-| Give a router's link through `render`, such as `render={<RouterLink to="/departures" />}`, so the app's navigation runs     | Wrap a Link in a router link, or a router link in a Link: two nested `<a>` elements are invalid and make two tab stops                                                     |
-| Name a site the link leaves Mylder for, and keep Mylder's own links in the same tab                                         | Open a new tab without saying where the link goes                                                                                                                          |
-| Leave a link out when there is nowhere to go yet                                                                            | Render a Link without `href` or `render`, or fake a disabled one with `opacity`: an `<a>` with no `href` is not a link, and disabled is a colour                           |
+| Rule | Level  | Do                                                                                                                          | Don't                                                                                                                                                                      | Checked by |
+| ---- | ------ | --------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | should | Use Link for a link in text, in a sentence or standing alone, and [LinkButton](link-button.md) for one shaped like a button | Put a LinkButton in running text: its height and padding break the line                                                                                                    | review     |
+| DD-2 | must   | Use Link when pressing it goes somewhere: another page, another place in the app, another site                              | Use Link to run an action, such as showing a line or closing a panel, with an `onClick` that prevents the link: that is a Button                                           | review     |
+| DD-3 | must   | Name where it goes, in the words of the sentence: "Departures from Rejseplanen", "Show all departures"                      | Write "Click here", "Read more" or a bare URL: the link's words are all a screen reader hears of it in a list of links (WCAG 2.2, 2.4.4 Link purpose)                      | review     |
+| DD-4 | must   | Set the colour and type on the text around the link, and let Link take them                                                 | Recolour a Link in the brand yellow or a status colour on its own: brand is never a link ([Intents](README.md#intents)), and the text's colour already carries any meaning | review     |
+| DD-5 | must   | Give a standalone link `size.target-min` of room, such as a row of that height or a gap around it                           | Set a standalone link against another target, where a 21 px line leaves too small a mark to press                                                                          | review     |
+| DD-6 | must   | Give a router's link through `render`, such as `render={<RouterLink to="/departures" />}`, so the app's navigation runs     | Wrap a Link in a router link, or a router link in a Link: two nested `<a>` elements are invalid and make two tab stops                                                     | review     |
+| DD-7 | must   | Name a site the link leaves Mylder for, and keep Mylder's own links in the same tab                                         | Open a new tab without saying where the link goes                                                                                                                          | review     |
+| DD-8 | must   | Leave a link out when there is nowhere to go yet                                                                            | Render a Link without `href` or `render`, or fake a disabled one with `opacity`: an `<a>` with no `href` is not a link, and disabled is a colour                           | review     |
+
+## For agents
+
+None known yet.

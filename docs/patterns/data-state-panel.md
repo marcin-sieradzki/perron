@@ -8,6 +8,16 @@ DataStatePanel is the wrapper that shows a data view's loading, empty and error 
 
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): this spec decides what the drawing would, from the [contract](../components/README.md), the [foundations](../foundations/README.md), [content design](../content-design.md), the tokens and the spec of [EmptyState](../components/empty-state.md), the one entry in its `dependsOn`. The ROADMAP names it among the patterns (7.2) and the registry files it under Data, beside ReportStrip, VehicleTable and DayProfileChart, the views it is for. As a pattern it imports only Perron's components and parts, never `@base-ui/react`.
 
+## When to use
+
+Use DataStatePanel to hold a data view whose data loads, such as a VehicleTable or a DayProfileChart, so that a calm message takes its place while the data loads, when there is none, or when it could not be loaded.
+
+| Use instead                                           | When                                                                                                            |
+| ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| [EmptyState](../components/empty-state.md)            | A list is empty for a reason the screen already knows, such as a search with no matches, and no data is loading |
+| [VehicleDotLabel](../components/vehicle-dot-label.md) | The state to show is a vehicle's, such as "No signal", not the view's request for its data                      |
+| [Alert](../components/alert.md)                       | A problem is said beside content that stays on the screen, rather than in its place                             |
+
 ## Anatomy
 
 Penpot page `Patterns/DataStatePanel`. Family: none, since it draws no surface and sits on the panel, sheet or card that holds it. Shared parts: none.
@@ -134,13 +144,17 @@ When a change of status removes the element that had focus inside the message, s
 
 ## Do and don't
 
-For a caller using the pattern, with the reason.
+For a caller using the pattern, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                                | Don't                                                                                                                                                       |
-| --------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Keep `status` `'ready'` while fresh data replaces data already shown, and use `'loading'` only while there is nothing to show yet | Flip to `'loading'` on every refresh: the table blinks out every few seconds and the status region reads "Loading" each time                                |
-| Name what is missing through `noDataLabel` when the view knows: "No vehicles on line 5C right now"                                | Write "No data" when the view knows what kind: content design asks to say what is happening, plainly                                                        |
-| Give the error status one neutral action that loads the data again, such as "Try again"                                           | Add a `brand` action when the panel already has one: a screen has one brand action at most                                                                  |
-| Show a vehicle that has gone silent as `'ready'` content, with its vehicle dot state and the words "No signal"                    | Use `'error'` or `'empty'` for a vehicle's data state: `status` is about the view's data request, and the data-state words have their own components        |
-| Use plain EmptyState for a list that is empty for a reason the screen already knows, such as a search with no matches             | Wrap a list in DataStatePanel only to show an empty message: it is for views whose data loads, and its status region would announce a state nothing changed |
-| Let the message part announce the change, and put the view's own live updates, if any, in the view                                | Add `role="status"` or `aria-live` to `children` or the root: the table's every refresh would be read out, on top of the message                            |
+| Rule | Level  | Do                                                                                                                                | Don't                                                                                                                                                       | Checked by |
+| ---- | ------ | --------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | must   | Keep `status` `'ready'` while fresh data replaces data already shown, and use `'loading'` only while there is nothing to show yet | Flip to `'loading'` on every refresh: the table blinks out every few seconds and the status region reads "Loading" each time                                | review     |
+| DD-2 | should | Name what is missing through `noDataLabel` when the view knows: "No vehicles on line 5C right now"                                | Write "No data" when the view knows what kind: content design asks to say what is happening, plainly                                                        | review     |
+| DD-3 | must   | Give the error status one neutral action that loads the data again, such as "Try again"                                           | Add a `brand` action when the panel already has one: a screen has one brand action at most                                                                  | review     |
+| DD-4 | must   | Show a vehicle that has gone silent as `'ready'` content, with its vehicle dot state and the words "No signal"                    | Use `'error'` or `'empty'` for a vehicle's data state: `status` is about the view's data request, and the data-state words have their own components        | review     |
+| DD-5 | should | Use plain EmptyState for a list that is empty for a reason the screen already knows, such as a search with no matches             | Wrap a list in DataStatePanel only to show an empty message: it is for views whose data loads, and its status region would announce a state nothing changed | review     |
+| DD-6 | must   | Let the message part announce the change, and put the view's own live updates, if any, in the view                                | Add `role="status"` or `aria-live` to `children` or the root: the table's every refresh would be read out, on top of the message                            | review     |
+
+## For agents
+
+None known yet.

@@ -2,6 +2,14 @@
 
 How late or early a vehicle or departure runs, as a short figure in the delay's colour, such as "+3 min", with the same thing said in words to a screen reader.
 
+## When to use
+
+Use Delay for how late or early one vehicle or departure runs, beside stronger text such as the departure time.
+
+| Use instead                        | When                                      |
+| ---------------------------------- | ----------------------------------------- |
+| [SeverityLabel](severity-label.md) | The delay is a disruption on a whole line |
+
 ## Anatomy
 
 Penpot page `Components/Delay`. Family: none. Shared parts: VisuallyHidden.
@@ -136,12 +144,16 @@ No key in `packages/perron/src/locale/en.ts` says any of these, so all five are 
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                             | Don't                                                                                                                          |
-| ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
-| Pass `minutes={null}` for a timetable-only or no-signal vehicle, because no real-time data says how late it is.                | Pass `0` when the delay is unknown: "On time" claims more certainty than the data has.                                         |
-| Pass the delay in minutes, and let Delay round, sign and colour it.                                                            | Format the figure yourself and put it in a Text in a delay colour: the words for the ear and the `data-delay` kind go missing. |
-| Set Delay beside stronger text, such as the departure time, because `color.transit.delay.unknown` is too faint to stand alone. | Use Delay alone as a row's only content when it may be unknown: "—" in that colour misses 4.5:1 by design.                     |
-| Announce a changed delay in the screen's own polite live region, once, when its kind changes.                                  | Wrap Delay in a live region that reads every minute's change: it floods the screen reader.                                     |
-| Use `color.transit.severity.delay` and its label for a delay disruption on a line.                                             | Use Delay for a line's disruption: it says how late one vehicle or departure runs.                                             |
+| Rule | Level  | Do                                                                                                                             | Don't                                                                                                                          | Checked by |
+| ---- | ------ | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ | ---------- |
+| DD-1 | must   | Pass `minutes={null}` for a timetable-only or no-signal vehicle, because no real-time data says how late it is.                | Pass `0` when the delay is unknown: "On time" claims more certainty than the data has.                                         | review     |
+| DD-2 | must   | Pass the delay in minutes, and let Delay round, sign and colour it.                                                            | Format the figure yourself and put it in a Text in a delay colour: the words for the ear and the `data-delay` kind go missing. | review     |
+| DD-3 | must   | Set Delay beside stronger text, such as the departure time, because `color.transit.delay.unknown` is too faint to stand alone. | Use Delay alone as a row's only content when it may be unknown: "—" in that colour misses 4.5:1 by design.                     | review     |
+| DD-4 | must   | Announce a changed delay in the screen's own polite live region, once, when its kind changes.                                  | Wrap Delay in a live region that reads every minute's change: it floods the screen reader.                                     | review     |
+| DD-5 | should | Use `color.transit.severity.delay` and its label for a delay disruption on a line.                                             | Use Delay for a line's disruption: it says how late one vehicle or departure runs.                                             | review     |
+
+## For agents
+
+None known yet.
