@@ -10,10 +10,10 @@ The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-def
 
 Use KioskBar for the bar over the map on a screen in kiosk mode, which people read from across a room and never touch: the brand, a few key figures and the clock, large.
 
-| Use instead                   | When                                                                                      |
-| ----------------------------- | ----------------------------------------------------------------------------------------- |
-| [TopBar](top-bar.md)          | People operate the screen: TopBar has the filters, the tools and a clock sized for a desk |
-| [Stat](../components/stat.md) | One key figure is shown on its own, in a report or a panel                                |
+| Use instead                   | When                                                                        |
+| ----------------------------- | --------------------------------------------------------------------------- |
+| [TopBar](top-bar.md)          | People operate the screen, which TopBar gives the filters and the tools for |
+| [Stat](../components/stat.md) | One key figure is shown on its own, in a report or a panel                  |
 
 ## Anatomy
 
