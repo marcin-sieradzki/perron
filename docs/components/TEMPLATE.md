@@ -13,7 +13,7 @@ How to fill it:
 
 ## When to use
 
-The first section, right after the intro and its run notes: the docs page shows it with the intro. A sentence or two on when to reach for the component, then one row per registered entry a caller might reach for in its place, its name linked to its spec page (`[LinkButton](link-button.md)`, or `../patterns/<name>.md` for a pattern), and when that one fits instead. With no entry close to it, write "Nothing else in Perron does this." in place of the table.
+The first section, right after the intro and its run notes: the docs page shows it with the intro. A sentence or two on when to reach for the component, then one row per registered entry a caller might reach for in its place, past `designing` and not `deprecated`, its name linked to its spec page (`[LinkButton](link-button.md)`, or `../patterns/<name>.md` for a pattern), and when that one fits instead. With no entry close to it, write "Nothing else in Perron does this." in place of the table.
 
 Use `<Name>` for `<the job it does, and where>`.
 

@@ -11,6 +11,7 @@ Use Flag to mark one thing in a list.
 | [Pin](pin.md)                      | The thing is a place on the map |
 | [StopRow](../patterns/stop-row.md) | The thing is a stop, in a list  |
 | [Badge](badge.md)                  | The mark is a count             |
+| [Label](label.md)                  | The mark is text                |
 | [Chip](chip.md)                    | The mark can be pressed         |
 | [Flag](flag.md)                    | Always                          |
 | [Tag](tag-old.md)                  | The mark is a status            |

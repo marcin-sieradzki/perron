@@ -1,11 +1,11 @@
 // The `usage` rule: a registered entry's spec, from `building` on, gives its caller guidance as
 // data the docs pages and the Perron MCP can read (scripts/lib/usage.ts, laid out by
 // docs/components/TEMPLATE.md). When to use comes first and names registered entries other than
-// its own, each linked to its spec page, or says none comes close; the Do and don't table's rules
-// each have an id, a level and what checks them, and each `types` rule is proven by a
-// `@ts-expect-error` citing it in the entry's tests or stories; a row that names WCAG names its
-// success criterion; For agents comes last, as a list or "None known yet." Every such spec has all
-// three. A breach is a spec's row to rewrite, so this rule takes no perron-allow.
+// its own, from building on and not deprecated, each linked to its spec page, or says none comes
+// close; the Do and don't table's rules each have an id, a level and what checks them, and each
+// `types` rule is proven by a `@ts-expect-error` citing it in the entry's tests or stories; a row
+// that names WCAG names its success criterion; For agents comes last, as a list or "None known
+// yet." Every such spec has all three. A breach is a spec's row to rewrite, so this rule takes no perron-allow.
 import { existsSync, readFileSync } from 'node:fs'
 import { join, posix } from 'node:path'
 import { PACKAGE } from '../lib/paths.ts'
@@ -125,7 +125,8 @@ const linkTo = (from: Entry, to: Entry) =>
 
 /**
  * When to use with neither its table nor the no-alternative line, a table with other columns, and
- * each row whose entry is not registered, is the entry itself, or is no link to its spec page.
+ * each row whose entry is not registered, is in design or deprecated, is the entry itself, or is no
+ * link to its spec page.
  */
 function alternativeProblems(e: Entry, registry: Entry[], when: WhenToUse): Problem[] {
   const file = specPage(e)
@@ -159,6 +160,14 @@ function alternativeProblems(e: Entry, registry: Entry[], when: WhenToUse): Prob
     if (!other)
       return at(
         `${name} is no registered entry: name an entry of packages/perron/components.json, or take the row out`,
+      )
+    if (!isBuilt(other))
+      return at(
+        `${name} is in design, so no one can use it yet: name an entry from building on, or take the row out`,
+      )
+    if (other.status === 'deprecated')
+      return at(
+        `${name} is deprecated: name its successor, ${other.replacedBy}, or take the row out`,
       )
     const want = linkTo(e, other)
     if (posix.normalize(href.split('#')[0]) !== want)
