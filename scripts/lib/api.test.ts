@@ -15,6 +15,12 @@ describe('apiFiles', () => {
           disabled: { optional: true, type: ['boolean'] },
           label: { optional: false, type: ['string'] },
           onOpen: { optional: true, type: ['(event: Event) => void'] },
+          // its @deprecated text, which says what to use instead
+          outlined: {
+            optional: true,
+            type: ['boolean'],
+            deprecated: 'Use `variant="outlined"` instead.',
+          },
           size: { optional: true, type: ['"large"', '"medium"', '"small"'] },
           startIcon: { optional: true, type: ['ReactNode'] },
           variant: { optional: true, type: ['"contained"', '"outlined"'] },

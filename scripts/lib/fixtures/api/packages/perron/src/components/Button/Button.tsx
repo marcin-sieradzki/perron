@@ -16,6 +16,11 @@ export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement
   onOpen?: (event: Event) => void
   /** Read out */
   label: string
+  /**
+   * Draws the outline look
+   * @deprecated Use `variant="outlined"` instead.
+   */
+  outlined?: boolean
 }
 
 export function Button(props: ButtonProps) {

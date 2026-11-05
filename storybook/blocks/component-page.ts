@@ -1,7 +1,9 @@
 // The data behind a component's docs page, `<Name>.mdx`: its props table in MUI's layout, from the
-// argTypes Storybook reads out of the component's docgen, and the sections of its spec the page
-// shows. Kept apart from the blocks that draw them, so a node test can run them.
+// argTypes Storybook reads out of the component's docgen, the sections of its spec the page shows,
+// and the notice a deprecated entry's page opens with. Kept apart from the blocks that draw them,
+// so a node test can run them.
 import type { ArgTypes } from '@storybook/react-vite'
+import { deprecationNotice, specPage, type Entry } from '../../scripts/lib/entry.ts'
 
 type InputType = ArgTypes[string]
 
@@ -110,4 +112,13 @@ export function specProse(markdown: string, which: 'intro' | string[]) {
       return section
     })
     .join('\n\n')
+}
+
+/**
+ * The notice above the intro of the docs page whose spec is at `path`: a deprecated entry's
+ * successor, as markdown linked to the successor's spec, or undefined for any other entry.
+ */
+export function pageNotice(registry: Entry[], path: string) {
+  const entry = registry.find((e) => specPage(e) === path)
+  return entry && deprecationNotice(entry)
 }

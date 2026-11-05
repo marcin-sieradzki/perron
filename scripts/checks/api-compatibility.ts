@@ -4,7 +4,8 @@
 // this check reads that file at the latest `@mylder/perron@x.y.z` tag and compares it with the API
 // the code has now. Growing is a new optional prop, a prop made optional, a wider union, a new
 // base, or an object type such as `slotProps` gaining optional members; anything else is a break. A deliberate break is a row of the "Breaking changes" table in
-// the contract, not a perron-allow: an API has no line to excuse.
+// the contract, not a perron-allow: an API has no line to excuse. A prop's `deprecated` text is
+// not compared: it changes nothing a caller can write.
 import { execFileSync } from 'node:child_process'
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
