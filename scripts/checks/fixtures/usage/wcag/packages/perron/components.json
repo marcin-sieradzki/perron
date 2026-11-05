@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Flag",
+    "layer": "component",
+    "category": "Display",
+    "status": "building",
+    "baseUiParts": [],
+    "penpotPath": "Components/Flag",
+    "dependsOn": []
+  },
+  {
+    "name": "StopRow",
+    "layer": "pattern",
+    "category": "Departures",
+    "status": "stable",
+    "baseUiParts": [],
+    "penpotPath": "Patterns/StopRow",
+    "dependsOn": []
+  }
+]

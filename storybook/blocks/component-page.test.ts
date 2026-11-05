@@ -167,6 +167,16 @@ describe('specProse', () => {
     )
   })
 
+  it('gives When to use with the intro, below its run notes, as the section that opens the page', () => {
+    const spec = SPEC.replace(
+      'is.\n',
+      'is.\n\n<!-- run notes -->\n\nMade for this test.\n\n## When to use\n\nUse Gauge for a share of a whole.\n\nNothing else in Perron does this.\n',
+    )
+    expect(specProse(spec, 'intro')).toBe(
+      'A gauge shows how full something is.\n\n## When to use\n\nUse Gauge for a share of a whole.\n\nNothing else in Perron does this.',
+    )
+  })
+
   it('gives the sections named, each with its heading, in the order asked', () => {
     expect(specProse(SPEC, ["Do and don't", 'Owned strings'])).toBe(
       [

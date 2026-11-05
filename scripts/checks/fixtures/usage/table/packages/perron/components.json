@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Flag",
+    "layer": "component",
+    "category": "Display",
+    "status": "building",
+    "baseUiParts": [],
+    "penpotPath": "Components/Flag",
+    "dependsOn": []
+  },
+  {
+    "name": "Pin",
+    "layer": "component",
+    "category": "Display",
+    "status": "stable",
+    "baseUiParts": [],
+    "penpotPath": "Components/Pin",
+    "dependsOn": []
+  }
+]

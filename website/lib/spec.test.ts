@@ -10,6 +10,8 @@ import {
   importLine,
   propRows,
   sizeSpecs,
+  specBody,
+  specHeadings,
   specIntro,
   specPropsTable,
   specSections,
@@ -72,6 +74,27 @@ describe('the spec prose', () => {
     const sections = specSections(BUTTON_SPEC, PROSE_SECTIONS)
     expect(sections.map((s) => s.heading)).toEqual([...PROSE_SECTIONS])
     expect(sections[0].markdown).toMatch(/^## Keyboard and ARIA/)
+  })
+
+  it("shows Button's When to use under its lead, with the entries to use instead", () => {
+    const { rest } = specIntro(BUTTON_SPEC)
+    expect(rest).toMatch(/^## When to use\n/)
+    expect(rest).toContain('| [LinkButton](link-button.md) ')
+    expect(rest).not.toMatch(/## Anatomy|## For agents/)
+  })
+
+  it('leaves For agents off the page, and When to use out of a spec in design shown whole', () => {
+    expect(BUTTON_SPEC).toMatch(/^## For agents$/m)
+    const built = specHeadings({ built: true }, BUTTON_SPEC).map((h) => h.title)
+    expect(built).toEqual([...PROSE_SECTIONS])
+    // an entry in design shows its whole spec, but its intro already holds When to use
+    const body = specBody(BUTTON_SPEC)
+    expect(body).toMatch(/^## Anatomy/)
+    expect(body).not.toMatch(/^## (When to use|For agents)$/m)
+    expect(body.trimEnd()).toMatch(/\| review +\|$/)
+    const design = specHeadings({ built: false }, BUTTON_SPEC).map((h) => h.title)
+    expect(design).not.toContain('For agents')
+    expect(design).not.toContain('When to use')
   })
 })
 

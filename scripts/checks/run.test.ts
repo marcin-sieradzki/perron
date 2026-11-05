@@ -25,6 +25,7 @@ describe('the gates', () => {
       'pointer-feedback',
       'props',
       'shared-parts',
+      'usage',
     ])
   })
 

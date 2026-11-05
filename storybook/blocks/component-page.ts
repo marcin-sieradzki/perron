@@ -82,23 +82,40 @@ export function propRows(argTypes: ArgTypes): PropRow[] {
 export const RUN_NOTES = '<!-- run notes -->'
 
 /**
+ * The section a docs page shows as part of its intro: when to reach for the entry and what to use
+ * instead, so a reader picks the right one early.
+ */
+export const WHEN_TO_USE = 'When to use'
+
+/**
+ * The section no docs page shows: the mistakes agents have made with the entry, which the spec,
+ * its Markdown twin and the Perron MCP keep for agents.
+ */
+export const FOR_AGENTS = 'For agents'
+
+/**
  * A spec's `##` sections by heading, and its intro: the text between `#` and the first `##`, up to
- * its run notes.
+ * its run notes, then its When to use, heading and all, when it has one.
  */
 function sectionsOf(markdown: string) {
   const [head, ...rest] = markdown.split(/^(?=## )/m)
-  const intro = head
-    .replace(/^# .*$/m, '')
-    .split(RUN_NOTES)[0]
-    .trim()
   const sections = new Map(rest.map((s) => [/^## (.+)$/m.exec(s)![1].trim(), s.trim()] as const))
+  const intro = [
+    head
+      .replace(/^# .*$/m, '')
+      .split(RUN_NOTES)[0]
+      .trim(),
+    sections.get(WHEN_TO_USE),
+  ]
+    .filter(Boolean)
+    .join('\n\n')
   return { intro, sections }
 }
 
 /**
  * Prose from a spec for the docs page: `'intro'` gives what the component is for, above the run
- * notes, a list of
- * headings gives those sections, each with its `##` heading, in the order asked.
+ * notes, and its When to use; a list of headings gives those sections, each with its `##`
+ * heading, in the order asked.
  */
 export function specProse(markdown: string, which: 'intro' | string[]) {
   const { intro, sections } = sectionsOf(markdown)
