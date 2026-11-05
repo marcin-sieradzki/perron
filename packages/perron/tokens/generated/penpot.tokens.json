@@ -194,52 +194,52 @@
           "m1": {
             "$type": "color",
             "$value": "#0B8A44",
-            "$description": "Metro M1"
+            "$description": "Metro M1: fills its line badge and colours its vehicle dots, station icons, stop timeline and rail on the map"
           },
           "m2": {
             "$type": "color",
             "$value": "#F0B400",
-            "$description": "Metro M2"
+            "$description": "Metro M2: fills its line badge and colours its vehicle dots, station icons, stop timeline and rail on the map"
           },
           "m3": {
             "$type": "color",
             "$value": "#E2231A",
-            "$description": "Metro M3 (Cityringen)"
+            "$description": "Metro M3 (Cityringen): fills its line badge and colours its vehicle dots, station icons, stop timeline and rail on the map"
           },
           "m4": {
             "$type": "color",
             "$value": "#0090D0",
-            "$description": "Metro M4"
+            "$description": "Metro M4: fills its line badge and colours its vehicle dots, station icons, stop timeline and rail on the map"
           },
           "a": {
             "$type": "color",
             "$value": "#00A1DE",
-            "$description": "S-tog A"
+            "$description": "S-tog A: fills its line badge and colours its vehicle dots, station icons, stop timeline and rail on the map; also the S-tog dot of the Mylder mark"
           },
           "b": {
             "$type": "color",
             "$value": "#4BA046",
-            "$description": "S-tog B"
+            "$description": "S-tog B: fills its line badge and colours its vehicle dots, station icons, stop timeline and rail on the map"
           },
           "c": {
             "$type": "color",
             "$value": "#F18A00",
-            "$description": "S-tog C"
+            "$description": "S-tog C: fills its line badge and colours its vehicle dots, station icons, stop timeline and rail on the map"
           },
           "e": {
             "$type": "color",
             "$value": "#7D5AA6",
-            "$description": "S-tog E"
+            "$description": "S-tog E: fills its line badge and colours its vehicle dots, station icons, stop timeline and rail on the map"
           },
           "f": {
             "$type": "color",
             "$value": "#F5C200",
-            "$description": "S-tog F"
+            "$description": "S-tog F: fills its line badge and colours its vehicle dots, station icons, stop timeline and rail on the map"
           },
           "h": {
             "$type": "color",
             "$value": "#DD1F2A",
-            "$description": "S-tog H"
+            "$description": "S-tog H: fills its line badge and colours its vehicle dots, station icons, stop timeline and rail on the map"
           }
         },
         "line-on": {
@@ -306,7 +306,7 @@
         "body": {
           "$type": "fontFamilies",
           "$value": "Schibsted Grotesk",
-          "$description": "All interface text"
+          "$description": "Sentences, labels, controls and small headings: every role but the large headings and the figures"
         },
         "data": {
           "$type": "fontFamilies",
@@ -318,7 +318,7 @@
         "regular": {
           "$type": "fontWeights",
           "$value": "400",
-          "$description": "Running text"
+          "$description": "Running text: lead, body and caption sentences"
         },
         "medium": {
           "$type": "fontWeights",
@@ -328,7 +328,7 @@
         "semibold": {
           "$type": "fontWeights",
           "$value": "600",
-          "$description": "Labels, titles, stats"
+          "$description": "Labels, small headings, overlines and key figures"
         },
         "bold": {
           "$type": "fontWeights",
@@ -397,7 +397,7 @@
         "normal": {
           "$type": "number",
           "$value": "1.5",
-          "$description": "Running text"
+          "$description": "Running text that wraps: lead, body and caption sentences"
         }
       }
     },
@@ -466,7 +466,7 @@
           "lineHeight": "{font.line-height.normal}",
           "letterSpacing": "0px"
         },
-        "$description": "Sentences and inputs"
+        "$description": "Sentences in panels and dialogs, and the text typed into inputs"
       },
       "body-sm": {
         "$type": "typography",
@@ -532,7 +532,7 @@
           "lineHeight": "{font.line-height.none}",
           "letterSpacing": "0.12px"
         },
-        "$description": "Line badge labels"
+        "$description": "The line name inside a line badge, such as M1 or 5C"
       },
       "stat": {
         "$type": "typography",
@@ -637,7 +637,7 @@
       "sm": {
         "$type": "borderRadius",
         "$value": "6px",
-        "$description": "Line badges"
+        "$description": "Corners of line badges"
       },
       "md": {
         "$type": "borderRadius",
@@ -731,12 +731,12 @@
       "highlight": {
         "$type": "number",
         "$value": "5",
-        "$description": "Highlight chip"
+        "$description": "The highlight chip, above the overview sheet and under the detail panel"
       },
       "detail": {
         "$type": "number",
         "$value": "6",
-        "$description": "Detail panel"
+        "$description": "The detail panel, above the highlight chip and under the top bar"
       },
       "top-bar": {
         "$type": "number",
@@ -773,7 +773,7 @@
       "desktop": {
         "$type": "dimension",
         "$value": "1400px",
-        "$description": "Hide \"Later\" chips"
+        "$description": "Below it, the filter chips marked \"Later\", for filters still to come, are hidden"
       }
     },
     "size": {
@@ -795,27 +795,27 @@
       "button": {
         "$type": "sizing",
         "$value": "36px",
-        "$description": "Buttons"
+        "$description": "Height of a button, a link button, a tab and an accordion header"
       },
       "button-sm": {
         "$type": "sizing",
         "$value": "30px",
-        "$description": "Small buttons"
+        "$description": "Height of a small button or link button"
       },
       "input": {
         "$type": "sizing",
         "$value": "38px",
-        "$description": "Search field"
+        "$description": "Height of text, number and search fields and of selects"
       },
       "segment": {
         "$type": "sizing",
         "$value": "32px",
-        "$description": "Segmented control item"
+        "$description": "Height of an item in a segmented control"
       },
       "badge": {
         "$type": "sizing",
         "$value": "22px",
-        "$description": "Line badge height"
+        "$description": "Height of a line badge; a disruption card header is at least this tall"
       },
       "badge-lg": {
         "$type": "sizing",
@@ -1136,7 +1136,7 @@
         "secondary": {
           "$type": "color",
           "$value": "{palette.neutral.600}",
-          "$description": "Supporting text"
+          "$description": "Supporting text beside or under the main text: labels, second lines and details"
         },
         "tertiary": {
           "$type": "color",
@@ -1183,7 +1183,7 @@
         "raised": {
           "$type": "color",
           "$value": "{palette.neutral.0}",
-          "$description": "Inputs, selected segment"
+          "$description": "Background of fields, checkboxes, radios and keys, and of the selected segment"
         },
         "inset": {
           "$type": "color",
@@ -1198,7 +1198,7 @@
         "hover": {
           "$type": "color",
           "$value": "rgba(18, 24, 27, 0.05)",
-          "$description": "Hover state layer"
+          "$description": "Translucent layer over a control under the pointer"
         },
         "selected": {
           "$type": "color",
@@ -1258,7 +1258,7 @@
         "brand-subtle": {
           "$type": "color",
           "$value": "{palette.yellow.100}",
-          "$description": "Tinted brand background"
+          "$description": "Brand tint for emphasis on the hero page, under color.text.brand"
         }
       },
       "border": {
@@ -1285,7 +1285,7 @@
         "focus": {
           "$type": "color",
           "$value": "{color.text.primary}",
-          "$description": "Keyboard focus ring"
+          "$description": "The ring around the control that has keyboard focus"
         }
       },
       "status": {
@@ -1307,7 +1307,7 @@
         "info": {
           "$type": "color",
           "$value": "{palette.blue.500}",
-          "$description": "Early, diversions"
+          "$description": "Running early and diversions: the info fill of alerts, toasts and meters"
         }
       },
       "chart": {
@@ -1322,7 +1322,7 @@
           "bus": {
             "$type": "color",
             "$value": "{palette.yellow.500}",
-            "$description": "All bus lines"
+            "$description": "Every bus line: fills bus badges and colours bus dots, station icons and stop timelines; also the bus dot of the Mylder mark"
           },
           "regional": {
             "$type": "color",
@@ -1376,7 +1376,7 @@
           "data": {
             "$type": "color",
             "$value": "{color.text.secondary}",
-            "$description": "Data feed problems"
+            "$description": "Icon and label for data feed problems"
           },
           "diversion": {
             "$type": "color",
@@ -1431,17 +1431,17 @@
         "street": {
           "$type": "color",
           "$value": "#FFFFFF",
-          "$description": "Streets"
+          "$description": "Roads and streets, drawn over the land"
         },
         "airport": {
           "$type": "color",
           "$value": "#E2E5E1",
-          "$description": "Airport grounds"
+          "$description": "Airport grounds, under the runways and taxiways"
         },
         "runway": {
           "$type": "color",
           "$value": "#CBD1CE",
-          "$description": "Runways and taxiways"
+          "$description": "Runways and taxiways, drawn over the airport grounds"
         },
         "building": {
           "$type": "color",
@@ -1461,12 +1461,12 @@
         "label": {
           "$type": "color",
           "$value": "#66737A",
-          "$description": "Place names"
+          "$description": "Place names on land; names on water use color.map.water-label"
         },
         "water-label": {
           "$type": "color",
           "$value": "#5F7A88",
-          "$description": "Water names"
+          "$description": "Names of seas, lakes and harbours, set on the water"
         },
         "aircraft": {
           "$type": "color",
@@ -1496,7 +1496,7 @@
             "type": "dropShadow"
           }
         ],
-        "$description": "Floating panels"
+        "$description": "Lifts floating panels, dialogs, menus, popovers and toasts off what lies under them"
       },
       "thumb": {
         "$type": "boxShadow",
@@ -1525,7 +1525,7 @@
         "secondary": {
           "$type": "color",
           "$value": "{palette.neutral.300}",
-          "$description": "Supporting text"
+          "$description": "Supporting text beside or under the main text: labels, second lines and details"
         },
         "tertiary": {
           "$type": "color",
@@ -1572,7 +1572,7 @@
         "raised": {
           "$type": "color",
           "$value": "{palette.neutral.800}",
-          "$description": "Inputs, selected segment"
+          "$description": "Background of fields, checkboxes, radios and keys, and of the selected segment"
         },
         "inset": {
           "$type": "color",
@@ -1587,7 +1587,7 @@
         "hover": {
           "$type": "color",
           "$value": "rgba(235, 238, 235, 0.06)",
-          "$description": "Hover state layer"
+          "$description": "Translucent layer over a control under the pointer"
         },
         "selected": {
           "$type": "color",
@@ -1647,7 +1647,7 @@
         "brand-subtle": {
           "$type": "color",
           "$value": "{palette.yellow.900}",
-          "$description": "Tinted brand background"
+          "$description": "Brand tint for emphasis on the hero page, under color.text.brand"
         }
       },
       "border": {
@@ -1674,7 +1674,7 @@
         "focus": {
           "$type": "color",
           "$value": "{color.text.primary}",
-          "$description": "Keyboard focus ring"
+          "$description": "The ring around the control that has keyboard focus"
         }
       },
       "status": {
@@ -1696,7 +1696,7 @@
         "info": {
           "$type": "color",
           "$value": "{palette.blue.300}",
-          "$description": "Early, diversions"
+          "$description": "Running early and diversions: the info fill of alerts, toasts and meters"
         }
       },
       "chart": {
@@ -1711,7 +1711,7 @@
           "bus": {
             "$type": "color",
             "$value": "{palette.yellow.300}",
-            "$description": "All bus lines"
+            "$description": "Every bus line: fills bus badges and colours bus dots, station icons and stop timelines; also the bus dot of the Mylder mark"
           },
           "regional": {
             "$type": "color",
@@ -1765,7 +1765,7 @@
           "data": {
             "$type": "color",
             "$value": "{color.text.secondary}",
-            "$description": "Data feed problems"
+            "$description": "Icon and label for data feed problems"
           },
           "diversion": {
             "$type": "color",
@@ -1820,17 +1820,17 @@
         "street": {
           "$type": "color",
           "$value": "#252D31",
-          "$description": "Streets"
+          "$description": "Roads and streets, drawn over the land"
         },
         "airport": {
           "$type": "color",
           "$value": "#1C2326",
-          "$description": "Airport grounds"
+          "$description": "Airport grounds, under the runways and taxiways"
         },
         "runway": {
           "$type": "color",
           "$value": "#2B3438",
-          "$description": "Runways and taxiways"
+          "$description": "Runways and taxiways, drawn over the airport grounds"
         },
         "building": {
           "$type": "color",
@@ -1850,12 +1850,12 @@
         "label": {
           "$type": "color",
           "$value": "#7E8B91",
-          "$description": "Place names"
+          "$description": "Place names on land; names on water use color.map.water-label"
         },
         "water-label": {
           "$type": "color",
           "$value": "#4B6774",
-          "$description": "Water names"
+          "$description": "Names of seas, lakes and harbours, set on the water"
         },
         "aircraft": {
           "$type": "color",
@@ -1885,7 +1885,7 @@
             "type": "dropShadow"
           }
         ],
-        "$description": "Floating panels"
+        "$description": "Lifts floating panels, dialogs, menus, popovers and toasts off what lies under them"
       },
       "thumb": {
         "$type": "boxShadow",

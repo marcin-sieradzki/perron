@@ -517,12 +517,50 @@ export function emitTypographyCss(tokens: ResolvedTokens) {
   return `/* ${HEADER} */\n\n${rules.join('\n\n')}\n`
 }
 
+// Words a description can hold without saying anything about the token.
+const FILLER = new Set(
+  'a an and as at by for from in into is it its of on or the this to token value with'.split(' '),
+)
+const words = (text: string) =>
+  text
+    .toLowerCase()
+    .split(/[^\p{L}\p{N}]+/u)
+    .filter(Boolean)
+
+/**
+ * One line for each token whose description says nothing beyond its own name and value: every word,
+ * lowercased and less the filler words, is a segment of the name or a word of the value. A plural
+ * counts as its singular, so "Lines" repeats `line`.
+ */
+function descriptionProblems(tokens: ResolvedTokens) {
+  const all = [
+    ...tokens.base,
+    ...Object.values(tokens.themes).flat(),
+    ...Object.values(tokens.overrides).flatMap((m) => Object.values(m.contexts).flat()),
+  ]
+  const problems = new Set<string>()
+  for (const t of all) {
+    if (!t.description) continue
+    const own = new Set([...words(t.name), ...words(JSON.stringify(t.value))])
+    const says = words(t.description).filter(
+      (w) => !FILLER.has(w) && !own.has(w) && !own.has(w.replace(/s$/, '')),
+    )
+    if (!says.length)
+      problems.add(
+        `${t.name}: the description only repeats the token's name or value. What is the token for?`,
+      )
+  }
+  return [...problems]
+}
+
 /** Every generated file, keyed by path relative to the repo root. */
 export function buildAll(sources: TokenSources) {
   const problems = validateSources(sources)
   if (problems.length)
     throw new Error(`Token files break the 2025.10 format:\n${problems.join('\n')}`)
   const tokens = loadTokens(sources)
+  const vague = descriptionProblems(tokens)
+  if (vague.length) throw new Error(`Token descriptions say too little:\n${vague.join('\n')}`)
   return {
     [`${PACKAGE}/tokens/generated/tokens.css`]: emitCss(tokens),
     [`${PACKAGE}/tokens/generated/typography.css`]: emitTypographyCss(tokens),

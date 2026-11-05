@@ -34,7 +34,7 @@ Radius grows with the size of the thing it rounds.
 | Token         | Value    | Use                                     |
 | ------------- | -------- | --------------------------------------- |
 | `radius.xs`   | `4px`    | Small marks and ticks                   |
-| `radius.sm`   | `6px`    | Line badges                             |
+| `radius.sm`   | `6px`    | Corners of line badges                  |
 | `radius.md`   | `8px`    | Buttons, inputs, icon buttons, segments |
 | `radius.lg`   | `12px`   | Cards and inset boxes                   |
 | `radius.xl`   | `16px`   | Floating panels, sheets and dialogs     |

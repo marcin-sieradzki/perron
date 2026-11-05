@@ -320,7 +320,7 @@
             "components": [0.0431, 0.5412, 0.2667],
             "hex": "#0B8A44"
           },
-          "$description": "Metro M1"
+          "$description": "Metro M1: fills its line badge and colours its vehicle dots, station icons, stop timeline and rail on the map"
         },
         "m2": {
           "$type": "color",
@@ -329,7 +329,7 @@
             "components": [0.9412, 0.7059, 0],
             "hex": "#F0B400"
           },
-          "$description": "Metro M2"
+          "$description": "Metro M2: fills its line badge and colours its vehicle dots, station icons, stop timeline and rail on the map"
         },
         "m3": {
           "$type": "color",
@@ -338,7 +338,7 @@
             "components": [0.8863, 0.1373, 0.102],
             "hex": "#E2231A"
           },
-          "$description": "Metro M3 (Cityringen)"
+          "$description": "Metro M3 (Cityringen): fills its line badge and colours its vehicle dots, station icons, stop timeline and rail on the map"
         },
         "m4": {
           "$type": "color",
@@ -347,7 +347,7 @@
             "components": [0, 0.5647, 0.8157],
             "hex": "#0090D0"
           },
-          "$description": "Metro M4"
+          "$description": "Metro M4: fills its line badge and colours its vehicle dots, station icons, stop timeline and rail on the map"
         },
         "a": {
           "$type": "color",
@@ -356,7 +356,7 @@
             "components": [0, 0.6314, 0.8706],
             "hex": "#00A1DE"
           },
-          "$description": "S-tog A"
+          "$description": "S-tog A: fills its line badge and colours its vehicle dots, station icons, stop timeline and rail on the map; also the S-tog dot of the Mylder mark"
         },
         "b": {
           "$type": "color",
@@ -365,7 +365,7 @@
             "components": [0.2941, 0.6275, 0.2745],
             "hex": "#4BA046"
           },
-          "$description": "S-tog B"
+          "$description": "S-tog B: fills its line badge and colours its vehicle dots, station icons, stop timeline and rail on the map"
         },
         "c": {
           "$type": "color",
@@ -374,7 +374,7 @@
             "components": [0.9451, 0.5412, 0],
             "hex": "#F18A00"
           },
-          "$description": "S-tog C"
+          "$description": "S-tog C: fills its line badge and colours its vehicle dots, station icons, stop timeline and rail on the map"
         },
         "e": {
           "$type": "color",
@@ -383,7 +383,7 @@
             "components": [0.4902, 0.3529, 0.651],
             "hex": "#7D5AA6"
           },
-          "$description": "S-tog E"
+          "$description": "S-tog E: fills its line badge and colours its vehicle dots, station icons, stop timeline and rail on the map"
         },
         "f": {
           "$type": "color",
@@ -392,7 +392,7 @@
             "components": [0.9608, 0.7608, 0],
             "hex": "#F5C200"
           },
-          "$description": "S-tog F"
+          "$description": "S-tog F: fills its line badge and colours its vehicle dots, station icons, stop timeline and rail on the map"
         },
         "h": {
           "$type": "color",
@@ -401,7 +401,7 @@
             "components": [0.8667, 0.1216, 0.1647],
             "hex": "#DD1F2A"
           },
-          "$description": "S-tog H"
+          "$description": "S-tog H: fills its line badge and colours its vehicle dots, station icons, stop timeline and rail on the map"
         }
       },
       "line-on": {
@@ -465,7 +465,7 @@
           "Roboto",
           "sans-serif"
         ],
-        "$description": "All interface text"
+        "$description": "Sentences, labels, controls and small headings: every role but the large headings and the figures"
       },
       "data": {
         "$value": ["JetBrains Mono", "ui-monospace", "SF Mono", "Menlo", "Consolas", "monospace"],
@@ -476,7 +476,7 @@
       "$type": "fontWeight",
       "regular": {
         "$value": 400,
-        "$description": "Running text"
+        "$description": "Running text: lead, body and caption sentences"
       },
       "medium": {
         "$value": 500,
@@ -484,7 +484,7 @@
       },
       "semibold": {
         "$value": 600,
-        "$description": "Labels, titles, stats"
+        "$description": "Labels, small headings, overlines and key figures"
       },
       "bold": {
         "$value": 700,
@@ -572,7 +572,7 @@
       },
       "normal": {
         "$value": 1.5,
-        "$description": "Running text"
+        "$description": "Running text that wraps: lead, body and caption sentences"
       }
     }
   },
@@ -655,7 +655,7 @@
           "unit": "px"
         }
       },
-      "$description": "Sentences and inputs"
+      "$description": "Sentences in panels and dialogs, and the text typed into inputs"
     },
     "body-sm": {
       "$value": {
@@ -738,7 +738,7 @@
           "unit": "px"
         }
       },
-      "$description": "Line badge labels"
+      "$description": "The line name inside a line badge, such as M1 or 5C"
     },
     "stat": {
       "$value": {
@@ -879,7 +879,7 @@
         "value": 6,
         "unit": "px"
       },
-      "$description": "Line badges"
+      "$description": "Corners of line badges"
     },
     "md": {
       "$value": {
@@ -1012,7 +1012,7 @@
         "value": 750,
         "unit": "ms"
       },
-      "$description": "Map camera fly-to"
+      "$description": "How long the map camera takes to fly to a selection"
     },
     "follow": {
       "$type": "duration",
@@ -1075,7 +1075,7 @@
     "$type": "cubicBezier",
     "sheet": {
       "$value": [0.2, 0.8, 0.2, 1],
-      "$description": "Bottom sheet"
+      "$description": "Curve of the bottom sheet opening and closing"
     },
     "standard": {
       "$value": [0.25, 0.1, 0.25, 1],
@@ -1098,12 +1098,12 @@
     "highlight": {
       "$type": "number",
       "$value": 5,
-      "$description": "Highlight chip"
+      "$description": "The highlight chip, above the overview sheet and under the detail panel"
     },
     "detail": {
       "$type": "number",
       "$value": 6,
-      "$description": "Detail panel"
+      "$description": "The detail panel, above the highlight chip and under the top bar"
     },
     "top-bar": {
       "$type": "number",
@@ -1154,7 +1154,7 @@
         "value": 1400,
         "unit": "px"
       },
-      "$description": "Hide \"Later\" chips"
+      "$description": "Below it, the filter chips marked \"Later\", for filters still to come, are hidden"
     }
   },
   "size": {
@@ -1189,7 +1189,7 @@
         "value": 36,
         "unit": "px"
       },
-      "$description": "Buttons"
+      "$description": "Height of a button, a link button, a tab and an accordion header"
     },
     "button-sm": {
       "$type": "dimension",
@@ -1197,7 +1197,7 @@
         "value": 30,
         "unit": "px"
       },
-      "$description": "Small buttons"
+      "$description": "Height of a small button or link button"
     },
     "input": {
       "$type": "dimension",
@@ -1205,7 +1205,7 @@
         "value": 38,
         "unit": "px"
       },
-      "$description": "Search field"
+      "$description": "Height of text, number and search fields and of selects"
     },
     "segment": {
       "$type": "dimension",
@@ -1213,7 +1213,7 @@
         "value": 32,
         "unit": "px"
       },
-      "$description": "Segmented control item"
+      "$description": "Height of an item in a segmented control"
     },
     "badge": {
       "$type": "dimension",
@@ -1221,7 +1221,7 @@
         "value": 22,
         "unit": "px"
       },
-      "$description": "Line badge height"
+      "$description": "Height of a line badge; a disruption card header is at least this tall"
     },
     "badge-lg": {
       "$type": "dimension",
