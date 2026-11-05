@@ -122,7 +122,7 @@ A few generic stories, by the contract's [Stories](README.md#stories): `Default`
 
 For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-One row per rule, weighed by the contract's [Words](README.md#words), which says when a rule is `must` and when its Don't is `types`. Rule is DD- and the rule's number, counted from 1 in this table and never reused, since a review cites it. Level is `must` or `should`, and Checked by is `types` when `<Name>Props` rejects the Don't, proven by a line in the component's tests or stories under `// @ts-expect-error DD-<n>: <what it breaks>`, or `review` when only a review of the caller's code catches it; write the three as plain words. A row that names WCAG names its success criterion by number, such as 2.5.8.
+One row per rule, weighed by the contract's [Words](README.md#words), which says when a rule is `must` and when its Don't is `types`. Rule is DD- and the rule's number, counted from 1 in this table and never reused, since a review cites it. Level is `must` or `should`, and Checked by is `types` or `review`, each as Words gives it; write the three as plain words. A `types` rule is proven by a line in the component's tests or stories under `// @ts-expect-error DD-<n>: <what it breaks>`. A row that names WCAG names its success criterion by number, such as 2.5.8.
 
 | Rule | Level  | Do                         | Don't                      | Checked by |
 | ---- | ------ | -------------------------- | -------------------------- | ---------- |
