@@ -1271,8 +1271,33 @@
     "status": "stable",
     "summary": "A key figure with the words that say what it counts, such as \"412\" under \"Reporting live\", set large so it reads at a glance in a report, a panel or on the kiosk.",
     "import": "import { Stat } from '@mylder/perron'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use Stat for a key figure with the words that say what it counts, such as \"412\" under \"Reporting live\", in a report, a panel or on the kiosk.",
+    "alternatives": [
+      {
+        "name": "Delay",
+        "when": "The figure is how late one vehicle or departure runs"
+      },
+      {
+        "name": "Meter",
+        "when": "The figure is a share within a range that a bar shows, such as the share of vehicles reporting live"
+      },
+      {
+        "name": "FactList",
+        "when": "Several facts about one thing, each a name and its value, sit in a list"
+      },
+      {
+        "name": "ReportStrip",
+        "when": "The figures are how many vehicles are in each data state"
+      },
+      {
+        "name": "VehicleTable",
+        "when": "Figures are compared row by row in a table"
+      },
+      {
+        "name": "Count",
+        "when": "A small count sits after a filter chip's or a tab's words"
+      }
+    ],
     "props": [
       {
         "name": "label",
@@ -1336,7 +1361,50 @@
         "description": "Props for the `value` part"
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "must",
+        "do": "Leave out `children` when no data gives the figure, so Stat shows \"—\" and says \"Unknown\"",
+        "dont": "Pass `0` or a guess when the figure is unknown: the brand never claims more than the data knows",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "should",
+        "do": "Write the figure as content design does: \"4 min\" with a space, \"≈ 30\" for an estimate, \"−1\" with the true minus sign",
+        "dont": "Put the label's words inside the figure, such as \"412 live\": the figure stays short, and the label says what it counts",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "must",
+        "do": "Name the figure in a few words in `label`: \"Reporting live\", \"Average delay\"",
+        "dont": "Leave `label` empty and rely on the layout to say what the number is: a figure without its name tells the ear nothing",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "must",
+        "do": "Say a status in words beside the figure, or show it with a Meter or a SeverityLabel",
+        "dont": "Colour the figure through `className` to say it is good or bad: colour alone tells no screen reader and no colour-blind person",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "should",
+        "do": "Use Delay for one vehicle's or departure's delay, and Text with `variant='stat'` for a figure inside a sentence",
+        "dont": "Use Stat in a row of a list or table: it is set large for a key figure, and rows compare figures in a `data` role",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "must",
+        "do": "Announce a changed figure in the screen's own polite live region, when it changes state",
+        "dont": "Make a Stat a live region: a figure that updates every few seconds floods the screen reader",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/components/stat/"
   },
@@ -1838,8 +1906,17 @@
     "status": "stable",
     "summary": "A bar that shows how far a task has got, such as an export, with the words that name the task and the share done, such as \"Exporting the report\" at \"45%\", or, while how far is not known, that the task is under way.",
     "import": "import { Progress } from '@mylder/perron'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use Progress for a task the person waits on that ends, such as an export or a download.",
+    "alternatives": [
+      {
+        "name": "Meter",
+        "when": "The bar measures a value within a range, such as the share of vehicles reporting live, rather than a task"
+      },
+      {
+        "name": "DataStatePanel",
+        "when": "A data view's data has not arrived: its calm loading message takes the view's place"
+      }
+    ],
     "props": [
       {
         "name": "label",
@@ -1954,7 +2031,57 @@
         "description": "Props for the `indicator` part"
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "must",
+        "do": "Use Progress for a task the person waits on that ends, such as an export or a download",
+        "dont": "Use it for a measure within a range, such as the share of vehicles reporting live: that is a Meter, a measurement rather than a task",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "must",
+        "do": "Pass `null` while how far is not known, so Progress sweeps and says \"In progress\"",
+        "dont": "Pass `0` or a guess: an empty fill at \"0%\" claims a figure the task never gave",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "must",
+        "do": "Name the task in a few words in `label`: \"Exporting the report\", \"Loading the network\"",
+        "dont": "Leave the name to the layout: a progress bar with no name tells the ear a number and nothing about the task",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "must",
+        "do": "Announce the start and the end of the task, such as \"Report ready\", in the screen's own polite live region",
+        "dont": "Make a Progress a live region: a figure that counts up every moment floods the screen reader",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "must",
+        "do": "Replace the bar with the screen's own message when the task fails, and say what happened",
+        "dont": "Leave a bar at its last figure, or tint it, when the task fails: the eye reads it as still running, and colour tells no screen reader",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "must",
+        "do": "Give `getAriaValueText` the fuller words when the figure shows them, such as \"3 of 12 files\" through `slotProps.value.children`",
+        "dont": "Change the shown figure and leave the ear on the percentage: the eye and the ear then hear different numbers",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-7",
+        "level": "should",
+        "do": "Use DataStatePanel's loading status for a view whose data has not arrived",
+        "dont": "Put an indeterminate Progress in place of a data view's content: DataStatePanel's calm \"Loading\" message is the library's answer for that",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/components/progress/"
   },
@@ -3313,8 +3440,17 @@
     "status": "stable",
     "summary": "The box a person types a number into, or steps up and down with its minus and plus buttons and the arrow keys, such as how many departures a board shows, framed by the Field that gives it its label, its line of help and its error message.",
     "import": "import { NumberField } from '@mylder/perron'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use NumberField for a count or an amount a person types or steps up and down, such as how many departures a board shows.",
+    "alternatives": [
+      {
+        "name": "TextField",
+        "when": "The number is a name, such as a line number, a stop code or a phone number, which no one steps and a separator or a dropped leading zero would change"
+      },
+      {
+        "name": "Slider",
+        "when": "The place in a range matters more than the exact figure, such as a trail's length"
+      }
+    ],
     "props": [
       {
         "name": "label",
@@ -3597,7 +3733,71 @@
         "description": "Props for the `increment` part, the button that steps the number up."
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "must",
+        "do": "Use NumberField for a count or an amount a person may nudge up or down, such as the departures a board shows",
+        "dont": "Use it for a number that is a name, such as a line number, a stop code or a phone number: no one steps those, and a separator or a dropped leading zero would change them; use TextField",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "should",
+        "do": "Set `min` and `max` wherever the number has bounds, and say them in `description`, \"From 1 to 20\"",
+        "dont": "Leave the bounds to an error after the fact: the buttons and the keys clamp to them only when they are set",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "should",
+        "do": "Pass the unit through `format`, such as `{ style: 'unit', unit: 'minute' }`, so it is written in the locale with a space before it",
+        "dont": "Write the unit into `label` alone, or into a text beside the box: the number in the box would read bare",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "must",
+        "do": "Read the number from `onChange`'s second argument, and save or fetch on `onChangeCommitted`",
+        "dont": "Read `event.target.value`: it is the formatted text, \"1,500\", not the number; and don't fetch on every `onChange`, which fires on each step of a held button",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "must",
+        "do": "Connect React Hook Form through `Controller`, with `onChange={(event, value) => field.onChange(value)}`",
+        "dont": "Spread `register()` on NumberField: its value is a number Base UI keeps, not a native input's text",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "must",
+        "do": "Let the PerronProvider's locale write the number, or give `locale` only where the number must be written in another language",
+        "dont": "Format the number yourself and pass a string: `value` is a number, and Base UI parses what the person types in the same locale",
+        "checkedBy": "types"
+      },
+      {
+        "id": "DD-7",
+        "level": "must",
+        "do": "Give `error` from the form library whenever the field is invalid, worded as what to do, \"Enter a number from 1 to 20\"",
+        "dont": "Set `slotProps.field.invalid` with no message, or blame the person (\"Invalid number\"), against [Content design](../content-design.md)",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-8",
+        "level": "should",
+        "do": "Set the width on the container, or on the frame through `slotProps.field`, wide enough for the longest number and both buttons",
+        "dont": "Squeeze the box until the number scrolls: the buttons keep their size, and the number is what the person reads",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-9",
+        "level": "must",
+        "do": "Use NumberField on its own: it already has its label, its help and its error",
+        "dont": "Wrap NumberField in Field: the input would be labelled twice, as Field's spec says",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/components/number-field/"
   },
@@ -3608,8 +3808,37 @@
     "status": "stable",
     "summary": "A named set of two to six choices of which exactly one holds at a time, such as the theme the map is drawn in, each a round mark beside its words.",
     "import": "import { RadioGroup } from '@mylder/perron'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use RadioGroup for one answer of two to six that a person reads in full before choosing, such as the theme the map is drawn in.",
+    "alternatives": [
+      {
+        "name": "Select",
+        "when": "The choices are more than fit a panel, in a short, fixed list that opens from one box"
+      },
+      {
+        "name": "SearchField",
+        "when": "The choices are many enough to need a search, such as a line or a stop"
+      },
+      {
+        "name": "SegmentedControl",
+        "when": "The choice is how one view shows its content"
+      },
+      {
+        "name": "FilterChip",
+        "when": "The choice filters the map"
+      },
+      {
+        "name": "Checkbox",
+        "when": "One choice is on or off on its own"
+      },
+      {
+        "name": "CheckboxGroup",
+        "when": "Several choices can hold at once"
+      },
+      {
+        "name": "Switch",
+        "when": "The choice is a setting, on or off, that takes effect at once"
+      }
+    ],
     "props": [
       {
         "name": "label",
@@ -3724,7 +3953,71 @@
         "description": "Props for the `legend` part, merged under Perron's own; its `className` joins after `pn-RadioGroup-legend`, and its `id` is the one the group's `aria-labelledby` points at."
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "should",
+        "do": "Use a RadioGroup for one answer of two to six that a person reads in full before choosing, such as the theme or the language",
+        "dont": "Use it for more choices than fit a panel, or for choices that need a search: a select or a search field keeps a long list out of the way",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "should",
+        "do": "Switch how one view shows its content with a [SegmentedControl](segmented-control.md), and filter the map with a [FilterChip](filter-chip.md)",
+        "dont": "Use a row of radios for a view's mode or the top bar's filters: a radio is a form answer, read down a column",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "must",
+        "do": "Name the group with `label`, in sentence case, a word or a short question: \"Theme\"",
+        "dont": "Leave out the label, or name the group with `aria-label` where there is room to show one: a sighted person can't tell what an unnamed set of choices answers",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "must",
+        "do": "Write each radio's words as a short noun phrase in sentence case, of a similar length and shape: \"Match the system\", \"Light\", \"Dark\"",
+        "dont": "Put a link or a button inside a radio's words: a radio's content is presentational, so a screen reader never reaches it, and a click on it checks the radio too",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "should",
+        "do": "Check the safest or most common choice with `defaultValue`, or leave all unchecked with `required` when the person must decide",
+        "dont": "Check a choice the person never made and then treat it as their answer: a pre-checked radio is easy to pass by",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "should",
+        "do": "Disable the whole group with `disabled`, or one radio that can't be chosen now, and say why in the label or the Field's description",
+        "dont": "Disable a radio with no word of why, or hide it: a dimmed choice can't explain itself, and a missing one moves the others",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-7",
+        "level": "must",
+        "do": "Give a hint or an error through Base UI's `Field.Root` round the group, with `Field.Description` and `Field.Error` and no `Field.Label`",
+        "dont": "Put a hint or an error as plain text among the radios: nothing ties it to the group for the ear, and the arrow keys never reach it",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-8",
+        "level": "must",
+        "do": "Name the group with its own `label`",
+        "dont": "Wrap the group in Perron's [Field](field.md): its label renames every radio in it, so each radio is heard as the field's label, never its own words",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-9",
+        "level": "should",
+        "do": "Use a checkbox for a choice that can be on or off on its own, or several at once",
+        "dont": "Use a RadioGroup of one radio, or of \"Yes\" and \"No\" for a setting that takes effect at once: one radio can't be unchecked, and a setting that applies now is a switch",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/components/radio-group/"
   },
@@ -3735,8 +4028,17 @@
     "status": "stable",
     "summary": "The field that finds a line or a stop: a labelled text input with the search icon, a clear button while it holds text, and a list of suggestions under it that narrows as the person types.",
     "import": "import { SearchField } from '@mylder/perron'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use SearchField to find a line or a stop among many, with suggestions that narrow as the person types.",
+    "alternatives": [
+      {
+        "name": "Select",
+        "when": "The person picks one value from a short, fixed list"
+      },
+      {
+        "name": "TextField",
+        "when": "The person types one line of words and needs no suggestions, such as an email address"
+      }
+    ],
     "props": [
       {
         "name": "label",
@@ -3936,7 +4238,71 @@
         "description": "Props for every `item` part, each suggestion's row. Its `onClick` runs after `onItemSelect`."
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "must",
+        "do": "Give a `label` that names what is searched, \"Search lines and stops\", and hide it with `hiddenLabel` only where the icon says enough",
+        "dont": "Leave the placeholder as the field's only words: it vanishes as the person types, and it is not a name",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "must",
+        "do": "Put a hint in the placeholder as an instruction with an example, \"Line or stop, such as 5C\"",
+        "dont": "Put anything the person must remember in the placeholder: it is gone once they type, and drawn in `color.text.tertiary`, below text contrast",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "must",
+        "do": "Act on `onItemSelect`, which gives the item, to move the map to the stop or show the line",
+        "dont": "Find the chosen item from `onChange`'s words with `'item-press'`: two stops can share a name",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "must",
+        "do": "Pass `filter={null}` when the suggestions come already matched, such as from a server",
+        "dont": "Leave Base UI's filter on server results: it hides a match whose label doesn't contain the words, such as a stop found by its old name",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "must",
+        "do": "Give a short `label` and a `description` that tells two rows apart, \"Bus, Husum Torv to Lufthavnen\"",
+        "dont": "Put a link, a button or a field in a row: an option is chosen as a whole, and the keys never reach a control inside it",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "must",
+        "do": "Use a [StationIcon](station-icon.md) or a [LineBadge](line-badge.md) as an item's `startIcon`, which carries its own text",
+        "dont": "Use colour alone to tell a line from a stop: the mark needs its words, and the row its description",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-7",
+        "level": "should",
+        "do": "Put the field in a `<search>` element, or a `<form role=\"search\">`, when it is the screen's search",
+        "dont": "Expect SearchField to be a landmark: it is one field, and a screen may hold more than one",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-8",
+        "level": "should",
+        "do": "Set the width on the container, or through `className` on the root",
+        "dont": "Give the input or the box a width through `slotProps`: the list takes the box's width, and the label the root's",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-9",
+        "level": "should",
+        "do": "Keep the field in a `PerronProvider` with the screen's locale, so \"Clear\" and \"No matches\" speak it",
+        "dont": "Translate them with `clearLabel` and `noMatchesLabel` on every instance: those are for one instance's own words",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/components/search-field/"
   },
@@ -3947,8 +4313,33 @@
     "status": "stable",
     "summary": "A row of two to five segments on an inset track, one of them selected, that picks how one view shows its content, such as a stop's departures by mode.",
     "import": "import { SegmentedControl } from '@mylder/perron'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use SegmentedControl to pick how one view shows its content, one choice of two to five, such as a stop's departures by mode.",
+    "alternatives": [
+      {
+        "name": "Tabs",
+        "when": "The choice switches between views of one thing, rather than how one view shows"
+      },
+      {
+        "name": "FilterChip",
+        "when": "Each choice is a filter that turns on and off on its own"
+      },
+      {
+        "name": "RadioGroup",
+        "when": "The choice is a form's answer, read down a column"
+      },
+      {
+        "name": "Select",
+        "when": "There are more than five choices"
+      },
+      {
+        "name": "Button",
+        "when": "A press runs an action"
+      },
+      {
+        "name": "LinkButton",
+        "when": "A press goes to another screen"
+      }
+    ],
     "props": [
       {
         "name": "value",
@@ -4013,7 +4404,57 @@
         "description": "Inherited from Base UI: swaps the root element and keeps the behaviour, the class and the data attributes."
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "should",
+        "do": "Use a SegmentedControl to pick how one view shows its content, such as departures by mode or a chart by day or week",
+        "dont": "Use it to switch between views of one thing: [Tabs](tabs.md) change which view shows, a segmented control changes how one view shows",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "should",
+        "do": "Use it for one choice of two to five",
+        "dont": "Use it for filters that turn on and off apart, or for more than five choices: filter chips take several, and a long row of segments outgrows a phone",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "must",
+        "do": "Name the control with `aria-label` or `aria-labelledby`, such as \"Mode\", so a screen reader says what the choice is about",
+        "dont": "Leave the control unnamed: its segments' words alone don't say what they choose between",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "should",
+        "do": "Give it a `defaultValue` or a `value`, so one segment is always selected",
+        "dont": "Leave nothing selected without a reason: a control with no raised segment reads as broken",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "must",
+        "do": "Keep each label to a word or two, in sentence case: \"Bus\", \"Planned works\"",
+        "dont": "Write a sentence in a segment, or rely on a label's colour or an icon alone to say what it chooses",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "should",
+        "do": "Show a segment whose view is empty, and say so in the view with an [EmptyState](empty-state.md) or a [DataStatePanel](../patterns/data-state-panel.md)",
+        "dont": "Disable a segment because its view has no data: a disabled segment can't say why, and leaves the key order",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-7",
+        "level": "must",
+        "do": "Run an action with a [Button](button.md), and group actions in a [Toolbar](toolbar.md)",
+        "dont": "Use a segment as an action or as navigation: pressing one selects it and keeps it selected, and a link to another screen is a [LinkButton](link-button.md)",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/components/segmented-control/"
   },
@@ -4024,8 +4465,25 @@
     "status": "stable",
     "summary": "The field that picks one value from a short, fixed list: a labelled box showing the chosen option, or a placeholder, that opens a list of options under it, with the field's help and error round it.",
     "import": "import { Select } from '@mylder/perron'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use Select for one choice from a short, fixed list, such as a transport mode or an order.",
+    "alternatives": [
+      {
+        "name": "SearchField",
+        "when": "The person finds a line or a stop among hundreds, narrowing the list as they type"
+      },
+      {
+        "name": "RadioGroup",
+        "when": "Two to six choices that the person should read in full before choosing"
+      },
+      {
+        "name": "SegmentedControl",
+        "when": "The choice is how one view shows its content, one of two to five"
+      },
+      {
+        "name": "Menu",
+        "when": "The list holds actions, not a value to keep"
+      }
+    ],
     "props": [
       {
         "name": "items",
@@ -4319,7 +4777,71 @@
         "description": "Props for the `itemIndicator` part, the tick beside the chosen option."
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "should",
+        "do": "Use Select for one choice from a short, fixed list, such as a transport mode or an order",
+        "dont": "Use it to find a line or a stop among hundreds: use [SearchField](search-field.md), which narrows the list as the person types",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "must",
+        "do": "Give a `label` that names the value, \"Transport mode\", and hide it with `hiddenLabel` only where the screen already says it",
+        "dont": "Let the placeholder stand in for the label: it is gone once an option is chosen, and drawn in `color.text.tertiary`, below text contrast",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "must",
+        "do": "Write the placeholder as an instruction, \"Choose a transport mode\"",
+        "dont": "Put an option's words in the placeholder: the person reads it as a value already chosen",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "should",
+        "do": "Give short `label`s that the person can tell apart by their first letters, so typing on the closed box finds them",
+        "dont": "Start every option with the same word (\"Line M1\", \"Line M2\"): typing finds nothing, and the box's ellipsis cuts the words that differ",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "must",
+        "do": "Group options with `SelectGroup` when the list mixes kinds, such as metro and S-tog lines, and write each group's label in sentence case",
+        "dont": "Write a group label in capitals: its style sets the capitals, and the ear hears the words as written",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "must",
+        "do": "Set `required` or `optional`, whichever the form needs",
+        "dont": "Set both: the field is marked optional while the form refuses it empty",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-7",
+        "level": "must",
+        "do": "Give `error` whenever the field is `invalid`",
+        "dont": "Set `invalid` with no message: the trigger's red edge alone tells only the eye, and only by its colour",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-8",
+        "level": "should",
+        "do": "Leave an option that can't be chosen out of `items`, or give it `disabled` when the person should see it is there",
+        "dont": "Disable the whole field to say one option isn't available",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-9",
+        "level": "should",
+        "do": "Keep the field in a `PerronProvider` with the screen's locale, so \"(optional)\" speaks it",
+        "dont": "Translate it with `optionalLabel` on every instance: that is for one instance's own words",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/components/select/"
   },
@@ -4330,8 +4852,17 @@
     "status": "stable",
     "summary": "A control for choosing a number, or a range between two numbers, along a track by dragging a thumb or pressing the arrow keys, such as how many minutes of movement the map draws behind each vehicle, with its label, its line of help and its error from Field.",
     "import": "import { Slider } from '@mylder/perron'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use Slider for a number, or a range between two numbers, where the place in a range matters more than the exact figure, such as a trail's length or a walking distance.",
+    "alternatives": [
+      {
+        "name": "NumberField",
+        "when": "The person knows the exact number, such as how many departures a board shows"
+      },
+      {
+        "name": "Meter",
+        "when": "The value shows where it sits in a range, and the person can't change it"
+      }
+    ],
     "props": [
       {
         "name": "label",
@@ -4555,7 +5086,64 @@
         "description": "Props for the `value` part."
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "should",
+        "do": "Use a slider for a number where the place in a range matters more than the exact figure, such as a trail's length or a walking distance",
+        "dont": "Use a slider for an exact number the person knows, such as a stop number or a year: a number field takes it in one step, where a slider takes many key presses",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "should",
+        "do": "Give a `label` that names the quantity, \"Trail length\", and put its unit in `format`, so the figure says \"1.5 km\"",
+        "dont": "Write the unit into the `label` alone (\"Walking distance in km\"): the figure and the ear then say a bare number",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "should",
+        "do": "Keep the range short enough that each `step` is a place the thumb can be put by hand: a few dozen steps across the field",
+        "dont": "Set a `step` so fine that a drag skips values the person wants; give a `largeStep` for long ranges, so Page Up and Shift with an arrow cross them",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "should",
+        "do": "Act on `onChangeCommitted` when a change starts work, such as a fetch or a redraw of the map",
+        "dont": "Fetch on every `onChange`: a drag calls it at every step",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "must",
+        "do": "Give a range as a pair, `[4, 12]`, and let Slider name its thumbs \"Minimum\" and \"Maximum\", or give `minimumLabel` and `maximumLabel`",
+        "dont": "Name a range's thumbs with `aria-label` on `slotProps.thumb`, which gives both thumbs the same name; use `getAriaLabel` there, which takes each thumb's index",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "must",
+        "do": "Word an `error` as what to do, \"Choose 8 minutes or fewer\"",
+        "dont": "Blame the person or say only that it failed (\"Invalid value\"), against [Content design](../content-design.md)",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-7",
+        "level": "must",
+        "do": "Put a slider in a bottom [Sheet](sheet.md) as it is: it keeps a drag along it from swiping the sheet, and a touch drag across it still swipes (CR-11)",
+        "dont": "Wrap it in another element with `data-base-ui-swipe-ignore`: with no axis, the wrapper drops the sheet's swipe for every touch on the slider, so a drag across it no longer swipes the sheet; nor remove the control's own, which lets a drag along the slider move the sheet",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-8",
+        "level": "must",
+        "do": "Use a [Meter](meter.md) to show a value the person can't change",
+        "dont": "Use a disabled slider as a meter: it reads as a control that is switched off",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/components/slider/"
   },
@@ -5177,8 +5765,29 @@
     "status": "stable",
     "summary": "A titled group of content inside a panel or a page, such as a stop's departures or the lines that call at it: a small heading in capitals, an optional action beside it, and the caller's content below.",
     "import": "import { Section } from '@mylder/perron'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use Section for a titled group of content inside a panel or a page, such as a stop's departures or the lines that call at it.",
+    "alternatives": [
+      {
+        "name": "Surface",
+        "when": "The group needs a card or a box of its own, with a fill, an edge or a shadow"
+      },
+      {
+        "name": "Accordion",
+        "when": "Each group opens and closes its content under its heading"
+      },
+      {
+        "name": "Tabs",
+        "when": "One group shows at a time, picked from a row of tabs"
+      },
+      {
+        "name": "Fieldset",
+        "when": "The group is a set of related form controls, named by its legend"
+      },
+      {
+        "name": "Separator",
+        "when": "Two groups need a line between them and no heading"
+      }
+    ],
     "props": [
       {
         "name": "title",
@@ -5253,7 +5862,71 @@
         "description": "Props for the `content` part"
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "must",
+        "do": "Write the title in sentence case, a word or two, and let the style set the capitals: \"Departures\"",
+        "dont": "Type the title in capitals: a screen reader may spell it out letter by letter, and content design writes source text in sentence case",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "must",
+        "do": "Give the title the level that fits the page's outline through `slotProps.title.render`: `h3` under a panel's `h2`, `h4` inside an `h3`'s section",
+        "dont": "Skip a level, or wrap a heading element inside `title`: the part is already a heading, and a heading inside a heading is invalid",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "must",
+        "do": "Put one small, neutral action in the header, such as a small `outline` LinkButton to the whole list",
+        "dont": "Put the panel's main action, or a `brand` button, in a section's header: a screen has one brand action, and it belongs to the panel",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "should",
+        "do": "Give the content one block per child: a paragraph, a list, a row of buttons",
+        "dont": "Pass a sentence with a link in it straight as `children`: each element becomes a block of its own, so wrap the sentence in a paragraph",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "should",
+        "do": "Space sections apart in the caller's layout, `space.600` between blocks of a pane",
+        "dont": "Add margins or padding to Section with raw values, or rely on it for the space between sections: it adds none",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "should",
+        "do": "Wrap a section in a Surface when it needs a card or a box of its own",
+        "dont": "Add a fill, border or shadow to Section through `className`: a box is Surface's job, and the ladder lives there",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-7",
+        "level": "should",
+        "do": "Render the root as a `div` through `render` when the group is too small to be worth a region of its own",
+        "dont": "Leave a screen full of tiny named regions: a screen reader's landmark list then says less than its headings",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-8",
+        "level": "must",
+        "do": "Leave a group that opens and closes to a collapsible component, built on Base UI's Collapsible",
+        "dont": "Build a collapsible group from Section by hiding its content: it brings no button, state or keys",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-9",
+        "level": "must",
+        "do": "Set the title's `id` through `slotProps.title.id`",
+        "dont": "Put an `id` on the element in `slotProps.title.render`: it replaces the generated one and the region loses its name",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/components/section/"
   },
@@ -5264,8 +5937,25 @@
     "status": "stable",
     "summary": "A hairline that divides two groups of content, across a column (horizontal) or down a row (vertical), and tells a screen reader there is a break there.",
     "import": "import { Separator } from '@mylder/perron'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use Separator for a line where two groups of content meet and the layout doesn't already set them apart, such as between a vehicle's facts and its actions in a panel.",
+    "alternatives": [
+      {
+        "name": "Section",
+        "when": "The break needs words: a heading over each group"
+      },
+      {
+        "name": "Toolbar",
+        "when": "The line sits in a toolbar: its `ToolbarSeparator` runs across the bar"
+      },
+      {
+        "name": "Menu",
+        "when": "The line sits in a menu: its `MenuSeparator` is the menu's own part"
+      },
+      {
+        "name": "Surface",
+        "when": "The line is a panel's or a card's edge"
+      }
+    ],
     "props": [
       {
         "name": "className",
@@ -5299,7 +5989,50 @@
         "description": "Allows you to replace the component's HTML element with a different tag, or compose it with another component. Accepts a `ReactElement` or a function that returns the element to render."
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "should",
+        "do": "Put a Separator where two groups of content meet and the layout doesn't already set them apart, such as between a vehicle's facts and its actions in a panel",
+        "dont": "Put one between every row of a list or after every paragraph: the interface around the map stays calm, and white space sets most things apart without a line",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "should",
+        "do": "Space the line with its container's `gap` or padding, from the `space.*` scale",
+        "dont": "Give the separator a margin of its own: it adds to the container's gap, and two screens end up with two spacings",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "must",
+        "do": "Put a vertical Separator in a flex row, and a horizontal one in a block or a flex column, so the line runs the container's length",
+        "dont": "Put a vertical one in block flow or a horizontal one in a flex row, where it has no length and draws nothing",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "must",
+        "do": "Use `ToolbarSeparator` inside a `Toolbar` and `MenuSeparator` inside a `Menu`, and let Select draw its own between groups",
+        "dont": "Put a Separator in a toolbar, where it doesn't run across the bar, in a menu, where it isn't the menu's own part, or in a list, where a `separator` is not a listbox's child (CR-8)",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "must",
+        "do": "Give a break that needs words a heading",
+        "dont": "Put text in the separator, or swap its role for `none` to hide it: a break the eye sees is one the ear is told",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "must",
+        "do": "Draw a panel's or card's edge with its own border",
+        "dont": "Use a Separator as an element's edge: it announces a break between two groups, which an edge is not",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/components/separator/"
   },
@@ -6733,8 +7466,33 @@
     "status": "stable",
     "summary": "A small glass panel anchored to the button that opens it, such as a short explanation of the data or a few settings, which leaves the map and the rest of the screen usable while it is open and gives focus back to its button when it closes.",
     "import": "import { Popover } from '@mylder/perron'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use Popover for a short explanation or a few settings, such as \"About the data\", in a small panel against the button that opens it, which leaves the map and the rest of the screen usable.",
+    "alternatives": [
+      {
+        "name": "Dialog",
+        "when": "A question must be answered, or a long form filled, before the person goes on: it holds focus until it closes"
+      },
+      {
+        "name": "AlertDialog",
+        "when": "A short question, such as \"Clear all filters?\", is answered by one of its actions"
+      },
+      {
+        "name": "Menu",
+        "when": "The button opens a list of actions and settings, moved through with the arrow keys"
+      },
+      {
+        "name": "Tooltip",
+        "when": "A short visual label names a control while a pointer rests on it or the keyboard focuses it"
+      },
+      {
+        "name": "MapTooltip",
+        "when": "A few words show while the pointer rests on a vehicle or a stop on the map"
+      },
+      {
+        "name": "Sheet",
+        "when": "The content is a whole panel beside the map, such as a stop's details"
+      }
+    ],
     "props": [
       {
         "name": "title",
@@ -6871,7 +7629,71 @@
         "description": "Props for the `close` part, all but `disabled`: the close button is never disabled."
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "must",
+        "do": "Give every popover a short `title` in sentence case, such as \"About the data\" or \"Map layers\", which names it",
+        "dont": "Leave the title empty or hide it: the popover then has no name",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "must",
+        "do": "Pass the button that opens the popover as `trigger`, so the popover sits against it, is announced as opening and gives focus back",
+        "dont": "Open a popover from a button placed beside it with `open` alone, when a `trigger` would do: the button loses `aria-haspopup` and `aria-expanded`, and the popover has nothing to sit against",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "must",
+        "do": "Set `slotProps.trigger.nativeButton` to `false` when `trigger` is not a `<button>`, as Base UI warns",
+        "dont": "Pass a link as the trigger: a link goes somewhere, and a popover opens over the screen",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "should",
+        "do": "Keep it to a few sentences or a few controls that leave the map usable",
+        "dont": "Ask a question that must be answered, or put a long form in it: use a [Dialog](dialog.md), which holds focus until it is answered",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "must",
+        "do": "Keep the description to one sentence, and put lists and controls in `children`",
+        "dont": "Put block content, such as a list, in `description`: it renders in a `<p>`",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "should",
+        "do": "Open it on a press, and add `slotProps.trigger.openOnHover` only beside that, as [Accessibility](../foundations/accessibility.md) asks of anything shown on hover",
+        "dont": "Use a popover for a few words on hover over the map: that is a [MapTooltip](map-tooltip.md)",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-7",
+        "level": "must",
+        "do": "In a [Toolbar](toolbar.md), pass a `ToolbarButton` as `trigger`, and disable it with `slotProps.trigger.disabled`: it keeps its place in the arrow-key order, and is announced as disabled",
+        "dont": "Pass a [Button](button.md) as the trigger in a toolbar, or set `disabled` on the `ToolbarButton` itself: the arrow keys skip a Button, which adds a tab stop of its own, and a `ToolbarButton` disabled on its own looks disabled but is announced as enabled",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-8",
+        "level": "must",
+        "do": "Leave the close button's label to the locale, or override it with `closeLabel`",
+        "dont": "Hide the close button with a `className`: touch screen readers leave the popover through it",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-9",
+        "level": "should",
+        "do": "Let the popover take `z-index.dialog` and Base UI's placement, and change the side through `slotProps.positioner`",
+        "dont": "Set a `z-index`, a position or a transform on the popup: it would fall under another overlay or leave its trigger",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/components/popover/"
   },
@@ -6882,8 +7704,21 @@
     "status": "stable",
     "summary": "A panel that slides in from the edge of the screen and floats over the map: the overview sheet and the detail panel on a wide screen, and the bottom sheet they become on a phone (Layout).",
     "import": "import { Sheet } from '@mylder/perron'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use Sheet for a panel beside the map that stays open while the rider pans and picks vehicles, and the bottom sheet it becomes on a phone.",
+    "alternatives": [
+      {
+        "name": "DetailPanel",
+        "when": "The panel shows the vehicle or the stop a rider picked: a Sheet headed by a DetailHeader"
+      },
+      {
+        "name": "Dialog",
+        "when": "The panel asks for a decision, and holds focus until it is answered"
+      },
+      {
+        "name": "Popover",
+        "when": "A few sentences or settings sit against the button that opens them"
+      }
+    ],
     "props": [
       {
         "name": "anchor",
@@ -7061,7 +7896,50 @@
         "description": "Props for the `content` part"
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "should",
+        "do": "Use a sheet for a panel beside the map, left open while the rider pans and picks vehicles: it is not modal by default",
+        "dont": "Use a modal sheet to ask for a decision; that is a Dialog, which needs no swipe or snap points (Base UI's own advice)",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "must",
+        "do": "Pick `anchor` `bottom` on a phone, under `breakpoint.phone`, in the screen's code",
+        "dont": "Expect the sheet to turn into a bottom sheet on its own; it sizes to its viewport and holds no media query",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "must",
+        "do": "Name the sheet with `title`: the stop, line or destination it shows",
+        "dont": "Leave the title out, or draw a heading of your own in `children`: the dialog takes its name from `title`",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "must",
+        "do": "Handle `onClose` and let Esc close the topmost sheet, as [Accessibility](../foundations/accessibility.md#rules) orders: a dialog, then a detail panel",
+        "dont": "Cancel every close of a sheet the rider can't otherwise leave; cancel only the reasons a screen must refuse, such as `swipe` on the overview sheet",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "must",
+        "do": "Mark a horizontal carousel inside a bottom sheet with `data-base-ui-swipe-ignore`, so its drags don't swipe the sheet; put a [Slider](slider.md) in as it is, since it marks its own control",
+        "dont": "Let a control that drags sideways fight the sheet's swipe",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "must",
+        "do": "Keep one primary action per sheet",
+        "dont": "Put two brand buttons in one sheet; a screen has one brand action at most",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/components/sheet/"
   },
@@ -7506,8 +8384,29 @@
     "status": "stable",
     "summary": "The kind of a disruption on a line, as its icon and its name in its colour, such as a warning triangle and \"Delays\", heading a disruption card or a row in a list of disruptions.",
     "import": "import { SeverityLabel } from '@mylder/perron'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use SeverityLabel to name the kind of a disruption on a line, as its icon and its word in its colour, such as \"Delays\", heading a disruption card or a row in a list of disruptions.",
+    "alternatives": [
+      {
+        "name": "DisruptionCard",
+        "when": "The whole disruption shows as a card: its kind, the lines it touches, a title and a sentence on what is happening"
+      },
+      {
+        "name": "Delay",
+        "when": "The figure is how late one vehicle or departure runs"
+      },
+      {
+        "name": "NormalService",
+        "when": "The line runs normally, with no disruption to name"
+      },
+      {
+        "name": "VehicleDotLabel",
+        "when": "One vehicle is silent: its dot and its word, \"No signal\", say so"
+      },
+      {
+        "name": "Tag",
+        "when": "A word or two marks a property of a departure or a vehicle, such as \"Cancelled\""
+      }
+    ],
     "props": [
       {
         "name": "severity",
@@ -7575,7 +8474,57 @@
         "description": "Reaches the root"
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "must",
+        "do": "Head a disruption with SeverityLabel, then say what is happening in a plain sentence beside it, as content design asks.",
+        "dont": "Let the label stand for the disruption: \"Delays\" says the kind, not where, why or how long.",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "must",
+        "do": "Use SeverityLabel wherever a kind of disruption is named, so its icon, colour and word always come together.",
+        "dont": "Set your own text in a `color.transit.severity.*` colour, or show a disruption icon alone: colour and icons never carry meaning alone.",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "must",
+        "do": "Use Delay for how late one vehicle or departure runs.",
+        "dont": "Use SeverityLabel with `severity='delay'` for one late vehicle: it names a disruption on a line.",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "must",
+        "do": "Use `severity='data'` for a problem with the real-time feed across a line or the network.",
+        "dont": "Use it for one silent vehicle: that is the vehicle dot's \"No signal\" state, said with its own word.",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "must",
+        "do": "Show a line running normally with the \"Running normally\" word, and no SeverityLabel.",
+        "dont": "Invent a kind, such as a success severity, for good news: the five kinds are disruptions and notices about the service.",
+        "checkedBy": "types"
+      },
+      {
+        "id": "DD-6",
+        "level": "must",
+        "do": "Use `severity='notice'` for a message whose fields don't say which kind it is, and say what it is in the sentence beside it.",
+        "dont": "Guess a kind from a message's words, or show an unread kind as planned works: the label would claim what the message never said.",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-7",
+        "level": "must",
+        "do": "Make the whole disruption card the link or button, with the label inside it.",
+        "dont": "Make SeverityLabel itself a filter control through `render`: it is a label, smaller than `size.target-min`, and has no pressed state.",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/components/severity-label/"
   },
@@ -7586,8 +8535,21 @@
     "status": "stable",
     "summary": "A small round marker that stands for a stop or station beside its name, in the colour of the line that serves it, as in a detail panel's header and on each stop of a stop timeline.",
     "import": "import { StationIcon } from '@mylder/perron'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use StationIcon to mark a stop or a station beside its name, in the colour of the line that serves it, such as in a detail panel's header.",
+    "alternatives": [
+      {
+        "name": "LineBadge",
+        "when": "The mark names a line"
+      },
+      {
+        "name": "StopTimeline",
+        "when": "A vehicle's trip shows its stops in order, on a rail in its line's colour"
+      },
+      {
+        "name": "VehicleDot",
+        "when": "The mark stands for a vehicle and how fresh its data is"
+      }
+    ],
     "props": [
       {
         "name": "variant",
@@ -7634,8 +8596,53 @@
         "description": "Allows you to replace the component's HTML element with a different tag, or compose it with another component. Accepts a `ReactElement` or a function that returns the element to render."
       }
     ],
-    "rules": [],
-    "agentNotes": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "must",
+        "do": "Put the marker beside the stop's name, with the line named in words nearby, because the marker is hidden from screen readers",
+        "dont": "Use it alone, or as the only sign of which line serves a stop: colour is never alone ([Accessibility](../foundations/accessibility.md#rules))",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "must",
+        "do": "Leave `line` out for a station several lines serve, so the marker is neutral",
+        "dont": "Pick one of several lines' colours for a shared station, which tells the eye only one line stops there",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "must",
+        "do": "Use `filled` for the one stop that matters most in a list, such as the next stop, and say why in words beside it",
+        "dont": "Fill several stops in one list, or use `filled` to mean a state the words don't say",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "must",
+        "do": "Use a `LineBadge` to name a line",
+        "dont": "Use a StationIcon as a line's badge or swatch in a row of badges, where it reads as a stop",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "should",
+        "do": "Pick the `size` that matches the text beside it: `small` for captions, `medium` for labels, `large` for panel titles",
+        "dont": "Resize it with `className` or a raw width, which breaks the ring's weight against its icon-sized neighbours",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "must",
+        "do": "Make the whole row pressable when a stop opens something, at least `size.target-min` tall",
+        "dont": "Make the marker itself a button or link: it is too small a target and has no name",
+        "checkedBy": "review"
+      }
+    ],
+    "agentNotes": [
+      "Setting a line's name beside a StationIcon, as a legend of line swatches: a build's own `Lines` story did, and its review sent it back, since the marker reads as a stop. Name a stop in each row with its line after it, \"Nørreport, M1\", and name a line on its own with a LineBadge (DD-1, DD-4)."
+    ],
     "docs": "https://marcin-sieradzki.github.io/perron/components/station-icon/"
   },
   {
