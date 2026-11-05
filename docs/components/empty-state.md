@@ -6,6 +6,15 @@ Stands in for a list or panel that has nothing to show, and says in plain words 
 
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): this spec decides what the drawing would, from the [contract](README.md), the [foundations](../foundations/README.md), [content design](../content-design.md) and the tokens. EmptyState has no Base UI component and nothing in `dependsOn`.
 
+## When to use
+
+Use EmptyState in place of a list, a search or a panel that has nothing to show, to say what is empty, why, and what to try next.
+
+| Use instead                                       | When                                                                                                  |
+| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| [DataStatePanel](../patterns/data-state-panel.md) | A data view's message follows its data: while it loads, when there is none, or when it could not load |
+| [Alert](alert.md)                                 | The message sits beside the content rather than in its place                                          |
+
 ## Anatomy
 
 Penpot page `Components/EmptyState`. Family: none, since it is static content that sits on its container's surface and joins no family's treatment. Shared parts: none.
@@ -147,14 +156,19 @@ One per variant and state the Penpot design shows, named as Penpot names it. The
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                                                                                     | Don't                                                                                                                                       |
-| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| Say what is empty, then what to try, in plain sentences: "No matches for Nørrebro st" over "Try a line number such as 5C."                                                             | Write "Oops! Nothing here!": content design has no exclamation marks, and the title should name what is missing                             |
-| Say only what the data knows: "No departures in the next hour" when the timetable covers an hour                                                                                       | Write "No departures" when there may be some later: the brand never claims more certainty than the data has                                 |
-| Use it for a list, a search or a panel with nothing in it                                                                                                                              | Use it for loading or for missing real-time data: loading says "Loading", and missing data uses the data-state words such as "No signal"    |
-| Give one neutral action at most, such as clearing the search or the filters                                                                                                            | Add a `brand` action when the panel already has one: a screen has one brand action at most                                                  |
-| Pick a decorative icon from Perron's set that matches the title, or none; it renders at 16 px, and one drawn for another step takes that step's `icon.size.*` through `slotProps.icon` | Let the icon carry meaning alone, or use an emoji: the icon is hidden from screen readers and Mylder uses no emoji                          |
-| Make the title a heading through `slotProps.title.render` when the EmptyState stands in for a whole section                                                                            | Wrap the title in your own heading element inside `title`: the part is a `p` until `render` swaps it, and a heading inside a `p` is invalid |
-| Add `role="status"` on the root when it replaces results as the person types or filters, so the change is announced                                                                    | Add a live region to an EmptyState shown on load: there is no change to announce, and it adds noise                                         |
+| Rule | Level | Do                                                                                                                                                                                     | Don't                                                                                                                                       | Checked by |
+| ---- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | must  | Say what is empty, then what to try, in plain sentences: "No matches for Nørrebro st" over "Try a line number such as 5C."                                                             | Write "Oops! Nothing here!": content design has no exclamation marks, and the title should name what is missing                             | review     |
+| DD-2 | must  | Say only what the data knows: "No departures in the next hour" when the timetable covers an hour                                                                                       | Write "No departures" when there may be some later: the brand never claims more certainty than the data has                                 | review     |
+| DD-3 | must  | Use it for a list, a search or a panel with nothing in it                                                                                                                              | Use it for loading or for missing real-time data: loading says "Loading", and missing data uses the data-state words such as "No signal"    | review     |
+| DD-4 | must  | Give one neutral action at most, such as clearing the search or the filters                                                                                                            | Add a `brand` action when the panel already has one: a screen has one brand action at most                                                  | review     |
+| DD-5 | must  | Pick a decorative icon from Perron's set that matches the title, or none; it renders at 16 px, and one drawn for another step takes that step's `icon.size.*` through `slotProps.icon` | Let the icon carry meaning alone, or use an emoji: the icon is hidden from screen readers and Mylder uses no emoji                          | review     |
+| DD-6 | must  | Make the title a heading through `slotProps.title.render` when the EmptyState stands in for a whole section                                                                            | Wrap the title in your own heading element inside `title`: the part is a `p` until `render` swaps it, and a heading inside a `p` is invalid | review     |
+| DD-7 | must  | Add `role="status"` on the root when it replaces results as the person types or filters, so the change is announced                                                                    | Add a live region to an EmptyState shown on load: there is no change to announce, and it adds noise                                         | review     |
+
+## For agents
+
+- Wrote the title "No departures" in an example, when later departures may still come: say only what the data knows, "No departures in the next hour" (DD-2).
+- Wrote that each icon renders at its own size in `icons.json`, when every icon renders at 16 px: give an icon drawn for another step that step's `icon.size.*` through `slotProps.icon` (DD-5).
