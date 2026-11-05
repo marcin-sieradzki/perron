@@ -183,7 +183,9 @@ describe("DayProfileChart's props type", () => {
       <DayProfileChart points={hours([412, 380])} />,
     )
     // the plot is still a focus stop, named by a caption with nothing in it
-    expect(markup).toMatch(/<figcaption class="pn-DayProfileChart-caption" id="([^"]+)"><\/figcaption>/)
+    expect(markup).toMatch(
+      /<figcaption class="pn-DayProfileChart-caption" id="([^"]+)"><\/figcaption>/,
+    )
     const captionId = /<figcaption[^>]* id="([^"]+)"/.exec(markup)![1]
     expect(markup).toContain(`role="group" aria-labelledby="${captionId}" tabindex="0"`)
   })
