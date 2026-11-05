@@ -6,6 +6,16 @@ A modal question over the map and a `color.scrim` backdrop, such as "Clear all f
 
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the contract, the foundations, the tokens, the Base UI reference for `AlertDialog` and its installed source (`node_modules/@base-ui/react/dialog/root/useRenderDialogRoot.js`, which gives the popup the `alertdialog` role, keeps it modal and turns off dismissal by a press outside), the [Button](button.md) spec, whose component AlertDialog's stories render as the trigger and the actions (its `dependsOn` is empty, since the component's code imports no other component), and the [Dialog](dialog.md) spec, the built member of the same family, whose treatment AlertDialog shares. No ROADMAP line names AlertDialog: it joined the registry with twenty other components, all `designing`, in one commit.
 
+## When to use
+
+Use AlertDialog for a question the person must answer before anything else, such as "Clear all filters?" before the filters are cleared.
+
+| Use instead         | When                                                                  |
+| ------------------- | --------------------------------------------------------------------- |
+| [Dialog](dialog.md) | The panel holds help, a form or a list, and a press outside closes it |
+| [Alert](alert.md)   | A notice needs no answer and stays set into the page                  |
+| [Toast](toast.md)   | A notice needs no answer and leaves on its own                        |
+
 ## Anatomy
 
 Penpot page `Components/AlertDialog`. Family: Panels (the contract's [Families](README.md#families): an alert dialog is a dialog, glass like the Popups, over `color.scrim`, `radius.xl`). Shared parts: none: it has no close button, so no `CloseButton`, and its buttons are the caller's, in `actions`.
@@ -190,15 +200,19 @@ Each story renders the alert dialog open at first render beside its trigger, a [
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                                               | Don't                                                                                                                                           |
-| ------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| Ask one question in the `title`, in sentence case, such as "Clear all filters?", and say in the `description` what answering does                | Write a title that isn't a question, such as "Warning", or leave the consequence out: the person can't answer what they weren't asked           |
-| Name the action by what it does, such as "Clear filters", and make it the one `brand` Button, last in `actions`                                  | Name it "OK" or "Yes": the button must say what pressing it does, read on its own                                                               |
-| Use an alert dialog for an answer that must come before anything else, such as before clearing or removing something                             | Use it for help, a form or a list: those are a [Dialog](dialog.md)'s, which a press outside closes                                              |
-| Put Cancel first in `actions`, an `outline` `neutral` Button, so it takes focus when the alert dialog opens and Enter on its own changes nothing | Put the action first, or set `initialFocus` to it: a stray Enter would act at once                                                              |
-| Control the alert dialog with `open`, and close it from each button's `onClick` by setting `open` to `false`, once the action's work is done     | Leave Cancel out, disable it or hide it with a `className`: with no close button, it is the way out for touch screen readers, which have no Esc |
-| Pass the button that opens the alert dialog as `trigger`, so it is announced as opening a dialog and gets focus back                             | Open an alert dialog on its own, with no press from the person, to tell them something: a notice that needs no answer is an Alert or a Toast    |
-| Name Cancel by what it keeps when that reads better, such as "Keep filters", in the screen's locale                                              | Add a close button or a second cancelling button to `actions`: Cancel and Esc already leave without acting                                      |
-| Let the alert dialog take `z-index.dialog` and its place in the middle of the screen                                                             | Set a `z-index`, a position or an opacity on it: it would fall under another overlay or leave its scrim                                         |
+| Rule | Level  | Do                                                                                                                                               | Don't                                                                                                                                           | Checked by |
+| ---- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | must   | Ask one question in the `title`, in sentence case, such as "Clear all filters?", and say in the `description` what answering does                | Write a title that isn't a question, such as "Warning", or leave the consequence out: the person can't answer what they weren't asked           | review     |
+| DD-2 | must   | Name the action by what it does, such as "Clear filters", and make it the one `brand` Button, last in `actions`                                  | Name it "OK" or "Yes": the button must say what pressing it does, read on its own                                                               | review     |
+| DD-3 | should | Use an alert dialog for an answer that must come before anything else, such as before clearing or removing something                             | Use it for help, a form or a list: those are a [Dialog](dialog.md)'s, which a press outside closes                                              | review     |
+| DD-4 | must   | Put Cancel first in `actions`, an `outline` `neutral` Button, so it takes focus when the alert dialog opens and Enter on its own changes nothing | Put the action first, or set `initialFocus` to it: a stray Enter would act at once                                                              | review     |
+| DD-5 | must   | Control the alert dialog with `open`, and close it from each button's `onClick` by setting `open` to `false`, once the action's work is done     | Leave Cancel out, disable it or hide it with a `className`: with no close button, it is the way out for touch screen readers, which have no Esc | review     |
+| DD-6 | should | Pass the button that opens the alert dialog as `trigger`, so it is announced as opening a dialog and gets focus back                             | Open an alert dialog on its own, with no press from the person, to tell them something: a notice that needs no answer is an Alert or a Toast    | review     |
+| DD-7 | should | Name Cancel by what it keeps when that reads better, such as "Keep filters", in the screen's locale                                              | Add a close button or a second cancelling button to `actions`: Cancel and Esc already leave without acting                                      | review     |
+| DD-8 | must   | Let the alert dialog take `z-index.dialog` and its place in the middle of the screen                                                             | Set a `z-index`, a position or an opacity on it: it would fall under another overlay or leave its scrim                                         | review     |
+
+## For agents
+
+- Rendered an alert dialog open with `defaultOpen` and no `open`, whose Cancel and action did nothing when pressed: a button in `actions` closes it only by setting `open`. Control it with `open`, and set `open` to `false` in each button's `onClick` (DD-5).

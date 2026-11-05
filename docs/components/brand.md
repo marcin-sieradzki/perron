@@ -2,6 +2,12 @@
 
 The Mylder mark beside the wordmark "mylder", drawn in both themes from the tokens, for the brand slot of a top bar or a kiosk bar.
 
+## When to use
+
+Use Brand wherever the Mylder brand appears in an interface, such as the brand slot of a top bar or a kiosk bar, so the mark follows the theme.
+
+Nothing else in Perron does this.
+
 ## Anatomy
 
 Penpot page `Components/Brand`, not drawn yet: the design is deferred (`docs/adr/0010-unattended-runs-with-design-deferred.md`), so this spec decides the drawing from [Logos](../foundations/logos.md), [Typography](../foundations/typography.md), [Layout](../foundations/layout.md) and the tokens. Family: none. Shared parts: `VisuallyHidden`, which holds the brand name when the mark stands alone.
@@ -140,12 +146,16 @@ The brand name is a new owned-string key, `brandName`, with "Mylder" in all four
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                             | Don't                                                                                                                                        |
-| ------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| Use Brand wherever the Mylder brand appears in an interface, so the mark follows the theme                                     | Put `mylder-mark.svg` in an `<img>` on a themed ground: a file can't follow the theme, so the ring disappears in dark                        |
-| Keep `variant='full'`, and switch to `variant='mark'` only where space is tight                                                | Show the wordmark alone, or set "mylder" in text beside an icon: the lockup is the mark and the wordmark together                            |
-| Hide the whole Brand, or pick `variant='mark'`, at the screen's own breakpoint, such as `breakpoint.compact-phone`             | Hide parts of it with `className`, which can leave a mark that no screen reader hears or a wordmark without its mark                         |
-| Render it as a link to the start screen with `render={<a href="/" />}`, so the name and the link are one stop in the tab order | Wrap it in a `<button>` with its own `aria-label`, or give the link a second name: the brand name is already its accessible name             |
-| Keep at least the ring's width of clear space around it, as [Logos](../foundations/logos.md#usage) asks                        | Resize, recolour or restyle the mark with `className`, which breaks its drawn size and turns its colours, which are data states, into others |
+| Rule | Level | Do                                                                                                                             | Don't                                                                                                                                        | Checked by |
+| ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | must  | Use Brand wherever the Mylder brand appears in an interface, so the mark follows the theme                                     | Put `mylder-mark.svg` in an `<img>` on a themed ground: a file can't follow the theme, so the ring disappears in dark                        | review     |
+| DD-2 | must  | Keep `variant='full'`, and switch to `variant='mark'` only where space is tight                                                | Show the wordmark alone, or set "mylder" in text beside an icon: the lockup is the mark and the wordmark together                            | review     |
+| DD-3 | must  | Hide the whole Brand, or pick `variant='mark'`, at the screen's own breakpoint, such as `breakpoint.compact-phone`             | Hide parts of it with `className`, which can leave a mark that no screen reader hears or a wordmark without its mark                         | review     |
+| DD-4 | must  | Render it as a link to the start screen with `render={<a href="/" />}`, so the name and the link are one stop in the tab order | Wrap it in a `<button>` with its own `aria-label`, or give the link a second name: the brand name is already its accessible name             | review     |
+| DD-5 | must  | Keep at least the ring's width of clear space around it, as [Logos](../foundations/logos.md#usage) asks                        | Resize, recolour or restyle the mark with `className`, which breaks its drawn size and turns its colours, which are data states, into others | review     |
+
+## For agents
+
+None known yet.
