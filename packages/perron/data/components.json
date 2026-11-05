@@ -8890,8 +8890,21 @@
     "status": "stable",
     "summary": "The key to how sure the map is: the five data states, each as its dot and word, how many vehicles are in it, and one sentence saying what it means in the app's own thresholds, such as \"Live 412, Reported by the vehicle in the last 2.5 min\", for the panel that explains how much of what the map shows is live.",
     "import": "import { DataStateKey } from '@mylder/perron/patterns'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use DataStateKey to explain how sure the map is: each of the five data states with how many vehicles are in it and a sentence on what it means in the app's own thresholds, as in a panel that says how much of what the map shows is live.",
+    "alternatives": [
+      {
+        "name": "ReportStrip",
+        "when": "The counts sit in one row and need no explaining"
+      },
+      {
+        "name": "VehicleDotLegend",
+        "when": "The dots need their words and nothing is counted"
+      },
+      {
+        "name": "VehicleDotLabel",
+        "when": "One vehicle's state is shown, as its dot and word in a row or a table"
+      }
+    ],
     "props": [
       {
         "name": "counts",
@@ -9051,7 +9064,57 @@
         "description": "Props for every `description` part, each sentence's Text: a `className`"
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "must",
+        "do": "Pass the thresholds the app works out its states with, `liveThreshold` and `ageingThreshold`, in milliseconds, so the sentences say the figures the dots follow",
+        "dont": "Pass the tokens' defaults when the app's feed sets its own thresholds: the key would tell the rider 60 s while the dots fade at 150 s",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "must",
+        "do": "Work out each vehicle's state from its report's age with those [thresholds](../foundations/data-states.md#thresholds), then count",
+        "dont": "Count a vehicle as live because it is on the map: the key would claim more than the data knows",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "must",
+        "do": "Leave a state's count out, or pass `null`, when the data doesn't say it, so the key shows \"—\" and says \"Unknown\"",
+        "dont": "Pass `0` for a count the data doesn't know: `0` says no vehicle is in that state",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "must",
+        "do": "Name the key with the heading beside it, such as \"How sure are we?\", and `aria-labelledby`",
+        "dont": "Pass `aria-hidden` to the key: the eye reads its words, counts and sentences, so the ear gets them too",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "should",
+        "do": "Use [ReportStrip](report-strip.md) where the counts sit in one row and need no explaining, and [VehicleDotLegend](../components/vehicle-dot-legend.md) where the dots need their words and nothing is counted",
+        "dont": "Write your own sentences beside a ReportStrip or a legend: they drift from the key's, and from the four languages the key says them in",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "must",
+        "do": "Override a sentence with its `*DescriptionLabel` prop when a screen's copy needs it, keeping its placeholders",
+        "dont": "Write the figures into an override, such as \"Reported in the last 2.5 min\": the sentence would stop following the thresholds the app passes",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-7",
+        "level": "must",
+        "do": "Put the key in a [DataStatePanel](data-state-panel.md) while its counts load",
+        "dont": "Show five unknown counts while the data loads: the panel says it is loading, the key says the data doesn't know",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/patterns/data-state-key/"
   },
@@ -9062,8 +9125,21 @@
     "status": "stable",
     "summary": "Holds a data view, such as a vehicle table or a day's chart, and shows the caller's content once its data is in, or in its place a calm message while the data loads, when there is none, or when it could not be loaded.",
     "import": "import { DataStatePanel } from '@mylder/perron/patterns'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use DataStatePanel to hold a data view whose data loads, such as a VehicleTable or a DayProfileChart, so that a calm message takes its place while the data loads, when there is none, or when it could not be loaded.",
+    "alternatives": [
+      {
+        "name": "EmptyState",
+        "when": "A list is empty for a reason the screen already knows, such as a search with no matches, and no data is loading"
+      },
+      {
+        "name": "VehicleDotLabel",
+        "when": "The state to show is a vehicle's, such as \"No signal\", not the view's request for its data"
+      },
+      {
+        "name": "Alert",
+        "when": "A problem is said beside content that stays on the screen, rather than in its place"
+      }
+    ],
     "props": [
       {
         "name": "status",
@@ -9148,7 +9224,50 @@
         "description": "Props for the `emptyState` part, the EmptyState: its `icon`, its `slotProps`, a `className`"
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "must",
+        "do": "Keep `status` `'ready'` while fresh data replaces data already shown, and use `'loading'` only while there is nothing to show yet",
+        "dont": "Flip to `'loading'` on every refresh: the table blinks out every few seconds and the status region reads \"Loading\" each time",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "should",
+        "do": "Name what is missing through `noDataLabel` when the view knows: \"No vehicles on line 5C right now\"",
+        "dont": "Write \"No data\" when the view knows what kind: content design asks to say what is happening, plainly",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "must",
+        "do": "Give the error status one neutral action that loads the data again, such as \"Try again\"",
+        "dont": "Add a `brand` action when the panel already has one: a screen has one brand action at most",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "must",
+        "do": "Show a vehicle that has gone silent as `'ready'` content, with its vehicle dot state and the words \"No signal\"",
+        "dont": "Use `'error'` or `'empty'` for a vehicle's data state: `status` is about the view's data request, and the data-state words have their own components",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "should",
+        "do": "Use plain EmptyState for a list that is empty for a reason the screen already knows, such as a search with no matches",
+        "dont": "Wrap a list in DataStatePanel only to show an empty message: it is for views whose data loads, and its status region would announce a state nothing changed",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "must",
+        "do": "Let the message part announce the change, and put the view's own live updates, if any, in the view",
+        "dont": "Add `role=\"status\"` or `aria-live` to `children` or the root: the table's every refresh would be read out, on top of the message",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/patterns/data-state-panel/"
   },
@@ -9159,8 +9278,17 @@
     "status": "stable",
     "summary": "How one count moves across a day, such as the vehicles in service each hour from midnight to midnight: one line in the chart colour, the area under it, a 24-hour time axis, and a value tip that gives the time and the count under the pointer or the keys.",
     "import": "import { DayProfileChart } from '@mylder/perron/patterns'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use DayProfileChart to show how one count moves across one day, from midnight to midnight, such as the vehicles in service each hour.",
+    "alternatives": [
+      {
+        "name": "Stat",
+        "when": "One figure now matters, not how it moved across the day"
+      },
+      {
+        "name": "Meter",
+        "when": "One value is shown within a known range, such as the share of vehicles reporting live"
+      }
+    ],
     "props": [
       {
         "name": "points",
@@ -9254,7 +9382,57 @@
         "description": "Props for the `axis` part, the time axis"
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "must",
+        "do": "Give each point's time in Copenhagen's time as `HH:MM`, in time order, one per hour or per quarter-hour",
+        "dont": "Pass the device's local time, a 12-hour time or points out of order: the line runs through them as given, and the brand keeps the city's 24-hour clock",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "must",
+        "do": "Give `count` `null` for an hour no data covers, so the line breaks and the point says \"Unknown\"",
+        "dont": "Pass `0` or a guess for an hour the data doesn't know: a dip to 0 claims no vehicles ran, and the brand never claims more than the data knows",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "must",
+        "do": "Give the points so far today and let the line end at the latest",
+        "dont": "Pad the rest of the day with zeros or the timetable's figures: the line would drop to 0 or show plans as counts",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "must",
+        "do": "Name what the line counts in `label`, in a few words: \"Vehicles in service\"",
+        "dont": "Leave the chart to a heading above it alone: the caption is what names the figure and the plot to a screen reader",
+        "checkedBy": "types"
+      },
+      {
+        "id": "DD-5",
+        "level": "must",
+        "do": "Wrap the chart in [DataStatePanel](data-state-panel.md) while its data loads, is empty or could not be loaded",
+        "dont": "Show an empty chart, or one of all-unknown points, while the data is on its way: the baseline alone reads as a day with nothing in it",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "must",
+        "do": "Let the chart redraw in silence as each hour's count arrives, and announce a change of state in the screen's own polite live region",
+        "dont": "Make the chart or its tip a live region: every new count would be read out",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-7",
+        "level": "should",
+        "do": "Give the chart its container's width, from a 320 px phone to the overview sheet, and let its height follow",
+        "dont": "Set a fixed height or width through `className`: the plot keeps its shape by its ratio, and a squeezed one distorts the curve",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/patterns/day-profile-chart/"
   },
@@ -9265,8 +9443,25 @@
     "status": "stable",
     "summary": "How a set of vehicles is reporting right now: how many are in each of the five data states, each count beside its state's dot and word, in one row, for the data views and panels that say how much of what the map shows is live.",
     "import": "import { ReportStrip } from '@mylder/perron/patterns'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use ReportStrip to show how a set of vehicles is reporting right now: how many are in each of the five data states, in one row.",
+    "alternatives": [
+      {
+        "name": "DataStateKey",
+        "when": "Each state also needs a sentence on what it means in the app's thresholds"
+      },
+      {
+        "name": "VehicleDotLegend",
+        "when": "The dots need explaining and nothing is counted"
+      },
+      {
+        "name": "Stat",
+        "when": "One total or share is shown, such as how many vehicles report live in all"
+      },
+      {
+        "name": "Meter",
+        "when": "One share is shown within its whole, such as \"Reporting live\" at \"82%\""
+      }
+    ],
     "props": [
       {
         "name": "counts",
@@ -9359,7 +9554,57 @@
         "description": "Props for every `count` part, each count"
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "must",
+        "do": "Work out each vehicle's state from its report's age with the app's [thresholds](../foundations/data-states.md#thresholds), by default `vehicle-dot.live-threshold` and `vehicle-dot.ageing-threshold`, then count",
+        "dont": "Count a vehicle as live because it is on the map: the strip would claim more than the data knows",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "must",
+        "do": "Leave a state's count out, or pass `null`, when the data doesn't say it, so the strip shows \"—\" and says \"Unknown\"",
+        "dont": "Pass `0` for a count the data doesn't know: `0` says no vehicle is in that state",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "must",
+        "do": "Name the strip with a heading beside it and `aria-labelledby`, such as one per operator under \"Reporting live, by operator\"",
+        "dont": "Pass `aria-hidden` to the strip: the eye reads its words and counts, so the ear gets them too",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "must",
+        "do": "Show a total or a share beside the strip in a [Stat](../components/stat.md)",
+        "dont": "Add a sixth item or a total inside the list through `slotProps`: the strip holds the five states and nothing else",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "must",
+        "do": "Use [VehicleDotLegend](../components/vehicle-dot-legend.md) where the dots need explaining and nothing is counted",
+        "dont": "Use the strip as a legend with made-up counts: a count is a claim about the vehicles",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "must",
+        "do": "Put the strip in a [DataStatePanel](data-state-panel.md) while its counts load",
+        "dont": "Show five unknown counts while the data loads: the panel says it is loading, the strip says the data doesn't know",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-7",
+        "level": "must",
+        "do": "Announce a change of state, such as a feed going silent, in the screen's own polite live region",
+        "dont": "Make the strip a live region: its counts change every few seconds and would flood a screen reader",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/patterns/report-strip/"
   },
@@ -9370,8 +9615,17 @@
     "status": "stable",
     "summary": "One caption line that names where a panel's data comes from and the time of that data, \"Rejseplanen · updated 08:14:05\", with an optional second source and its own time, each time worded, when the app gives its own words, by what it is of, \"Rejseplanen · position 08:14:05 · times 08:14:20\", and two states: paused, and may be out of date.",
     "import": "import { SourceLine } from '@mylder/perron/patterns'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use SourceLine on every panel that shows a source's data, to name the source and the time of its data, and to say when that data is paused or may be out of date.",
+    "alternatives": [
+      {
+        "name": "Attribution",
+        "when": "The credits are the map's, for its tiles and data, with links to their terms"
+      },
+      {
+        "name": "TopBar",
+        "when": "The time is the moving map's, in the status line along the top of the map"
+      }
+    ],
     "props": [
       {
         "name": "sources",
@@ -9469,7 +9723,64 @@
         "description": "Props for every `time` part, each source's phrase and time: a `<time>`, or a `<span>`, given these props but `dateTime`, for a phrase that shows no time"
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "must",
+        "do": "Put a SourceLine on every panel that shows a source's data, in the same place, so the reader finds it on every screen",
+        "dont": "Leave the line off a panel because another panel on the screen has one: Rejseplanen's terms ask for it on every screen",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "must",
+        "do": "Give each source its own entry with the time of its own data",
+        "dont": "Pass one source named \"Rejseplanen and positions\" with one time: a stale feed would read as fresh under the other's time",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "must",
+        "do": "Word each time by what it is of in `label`, \"position {time}\", and leave `name` off a second fact of the same provider",
+        "dont": "Write \"may be out of date\" into a `label`, or pick the label by `outOfDate`: set `outOfDate` and the line adds its own words",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "must",
+        "do": "Give the time of the data the panel shows, and give it again when that data changes",
+        "dont": "Give the time the screen last rendered, or the device's clock: the line would say the data is newer than it is",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "must",
+        "do": "Set `outOfDate` from the app's own judgement, such as a failed refresh or a time past its limit",
+        "dont": "Leave a source that failed to refresh without `outOfDate`: its time alone doesn't tell the reader it stopped",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "must",
+        "do": "Set `paused` while the panel takes no updates, and leave each time as it was",
+        "dont": "Count the time up, or show \"8 s ago\", while paused: the line would claim a freshness the panel doesn't have",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-7",
+        "level": "must",
+        "do": "Announce a change of state, such as a source going out of date, in the screen's own polite live region",
+        "dont": "Make the line a live region: its times change every few seconds and would flood a screen reader",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-8",
+        "level": "should",
+        "do": "Credit a map's sources with [Attribution](../components/attribution.md), with links to their terms",
+        "dont": "Use the line for the map's credits: it names the data a panel shows and when, not the map's tiles",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/patterns/source-line/"
   },
@@ -9480,8 +9791,17 @@
     "status": "stable",
     "summary": "The vehicles in service as a table, one row each: the vehicle's line, where it is going, how fresh its position is, optionally when it last reported, and how late it runs, the map's text alternative, in the order the caller sorts it by.",
     "import": "import { VehicleTable } from '@mylder/perron/patterns'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use VehicleTable for the vehicles in service as a table, one row each, with their line, destination, data state and delay: the map's text alternative.",
+    "alternatives": [
+      {
+        "name": "DepartureRow",
+        "when": "The list is the departures from one stop, each with how soon it leaves"
+      },
+      {
+        "name": "ReportStrip",
+        "when": "Only how many vehicles are in each data state matters, not which ones"
+      }
+    ],
     "props": [
       {
         "name": "vehicles",
@@ -9646,7 +9966,85 @@
         "description": "Reaches the root element"
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "must",
+        "do": "Name the table from the heading above it, through `aria-labelledby`, such as a Section's \"Vehicles on line 5C\"",
+        "dont": "Leave the table without a name: a screen reader's list of tables can't tell it from another",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "must",
+        "do": "Work out each vehicle's `variant` from its last report, with the app's [thresholds](../foundations/data-states.md#thresholds), by default `vehicle-dot.live-threshold` and `vehicle-dot.ageing-threshold`",
+        "dont": "Pass `live` for a vehicle placed from the timetable: the table would claim more than the data knows",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "must",
+        "do": "Keep each vehicle's `id` the same from one update to the next",
+        "dont": "Key the vehicles by their place in the array: a row would keep another vehicle's state while the list reorders",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "should",
+        "do": "Sort the vehicles before you pass them, such as by line and then by delay, and keep the order steady between updates",
+        "dont": "Reorder the rows on every update: the rows jump under the rider's eye and a screen reader's place",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "must",
+        "do": "Sort `vehicles` by the `sort` you pass, and pass the sort `onSortChange` asks for once you have sorted by it",
+        "dont": "Pass a `sort` the rows are not in: the arrow and `aria-sort` would tell the eye and the ear an order that isn't there",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "should",
+        "do": "Hide the Delay column when nothing in the data can know a delay",
+        "dont": "Leave a column of \"—\" on every row: it reads as a delay feed that failed",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-7",
+        "level": "must",
+        "do": "Show Last seen where a rider asks how old a position is, and leave `lastSeen` out for a timetable-only vehicle",
+        "dont": "Pass the time of the timetable's call as `lastSeen`: the column would claim a report that never came",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-8",
+        "level": "should",
+        "do": "Hold the table in DataStatePanel while its vehicles load or when there are none",
+        "dont": "Show an empty table as the only answer to \"no vehicles\": a header row says nothing about why",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-9",
+        "level": "must",
+        "do": "Announce a vehicle's change of state in the screen's own polite live region, once",
+        "dont": "Put the table in a live region: every delay's change would be read",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-10",
+        "level": "must",
+        "do": "Make a vehicle openable by passing a Perron Link as its `destination`",
+        "dont": "Add `onClick` to a row: it has no focus, role or pressed look, and a keyboard can't reach it",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-11",
+        "level": "should",
+        "do": "Keep `lineName` the short name riders know and `destination` the place: \"5C\" to \"Husum Torv\"",
+        "dont": "Put the line in `destination`, \"5C Husum Torv\": the line column already reads \"5C\"",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/patterns/vehicle-table/"
   },
@@ -9657,8 +10055,17 @@
     "status": "stable",
     "summary": "One departure from a stop, as one row of the stop's list of departures: the line's badge and where it goes, how fresh the vehicle's data is, and how soon it leaves, with its timetabled time, or the expected time with the timetabled one struck through beside it, and how late it runs, or, for a line that runs to an interval, how often it runs.",
     "import": "import { DepartureRow } from '@mylder/perron/patterns'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use DepartureRow for one departure in a stop's list of departures: its line, where it goes, how fresh its vehicle's data is and how soon it leaves.",
+    "alternatives": [
+      {
+        "name": "StopTimeline",
+        "when": "The list is the stops of one vehicle's trip, in order"
+      },
+      {
+        "name": "VehicleTable",
+        "when": "The list is the vehicles in service, as a table the rider can sort"
+      }
+    ],
     "props": [
       {
         "name": "variant",
@@ -9931,7 +10338,78 @@
         "description": "Props for the `delay` part, the Delay"
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "must",
+        "do": "Work out `variant` from the departing vehicle's last report, with the app's [thresholds](../foundations/data-states.md#thresholds), by default `vehicle-dot.live-threshold` and `vehicle-dot.ageing-threshold`",
+        "dont": "Pass `live` for a departure no vehicle reports on yet: the row would claim more than the data knows; pass `timetable-only`",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "must",
+        "do": "Give `countdown` as the seconds to the expected departure, worked out from the screen's clock, and update it as the clock moves",
+        "dont": "Pass the timetabled seconds for a late departure: the countdown and the delay would disagree",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "must",
+        "do": "Give the timetabled `time` and let the Delay say how late it runs, and the `expected` time beside it where real-time data gives one",
+        "dont": "Pass the expected time as `time` as well as a delay: the rider adds the delay twice",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "should",
+        "do": "Pass both times, `time` and `expected`, in every state, and let the row choose which to show from `variant`",
+        "dont": "Draw a times line of your own under the row, or strike or mark a time yourself: the row already follows the state, and two lines would say the time twice",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "must",
+        "do": "Set a stop's departures as a `<ul>`, each row in its own `<li>`, under a Section that names the stop or the platform",
+        "dont": "Put a list of rows in a live region: every countdown's change would be read",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "should",
+        "do": "Keep `lineName` the short name riders know and `destination` the place: \"5C\" towards \"Husum Torv\"",
+        "dont": "Put the line in `destination`, \"5C Husum Torv\": the badge already reads \"5C\" first",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-7",
+        "level": "must",
+        "do": "Open a departure from a Perron link or button the screen sets beside the list, or from the list item made a link",
+        "dont": "Add `onClick` or `tabIndex` to the row: it has no focus ring, role or pressed look",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-8",
+        "level": "must",
+        "do": "Keep a cancelled departure in the list with `cancelled`, where it would have been",
+        "dont": "Drop it from the list: a rider waiting for it reads its absence as a bus not yet shown",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-9",
+        "level": "must",
+        "do": "Give `interval` for a line that runs to a headway, such as the Metro, and leave out `time`",
+        "dont": "Pass a countdown worked out from a headway: it claims a departure no timetable sets",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-10",
+        "level": "must",
+        "do": "Write `platform` whole, as the board gives it: \"Track 4\", \"Spor 4\"",
+        "dont": "Pass the number alone, \"4\": the rider can't tell a track from a minute",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/patterns/departure-row/"
   },
@@ -9942,8 +10420,17 @@
     "status": "stable",
     "summary": "The top of the detail panel: it names what the panel shows, a line's vehicle by its line badge and destination or a stop by its marker and name, with a line under it and room for the panel's own controls.",
     "import": "import { DetailHeader } from '@mylder/perron/patterns'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use DetailHeader for the top of a detail panel the screen draws itself, to name the line's vehicle or the stop the panel shows.",
+    "alternatives": [
+      {
+        "name": "DetailPanel",
+        "when": "The whole panel is wanted, opening beside the map with its close button; it draws a DetailHeader of its own"
+      },
+      {
+        "name": "Section",
+        "when": "A part inside a panel needs a heading"
+      }
+    ],
     "props": [
       {
         "name": "variant",
@@ -10031,7 +10518,50 @@
         "description": "Props for the `action` part"
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "should",
+        "do": "Give the destination as `title` and the line's short name as `lineName`: \"Husum Torv\" with \"5C\"",
+        "dont": "Put the line in the title as well, \"5C Husum Torv\": the header already reads the line first, so it would be said twice",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "must",
+        "do": "Leave `line` off in `stop` for a station several lines serve, and name its lines in `subheader`",
+        "dont": "Pick one line's colour for a shared station, which tells the eye only one line stops there",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "should",
+        "do": "Keep `subheader` to one plain line that says no more than the data knows: \"Next stop: Nørreport St.\"",
+        "dont": "Put a list of departures or delays in `subheader`; they belong in the panel's body",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "must",
+        "do": "Put at most one of the panel's own controls in `action`, such as \"Show on map\"",
+        "dont": "Put a close button in `action`, which DetailPanel draws from the Sheet after the header; or add a `brand` action there when the panel already has its main action",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "must",
+        "do": "Use one DetailHeader at the top of a detail panel, and name the panel from its title's `id`",
+        "dont": "Use it to head a section inside a panel: its title is always an `h2`",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "should",
+        "do": "Let the panel set the surface and padding around it",
+        "dont": "Give it a fill or a border with `className`; it would draw a card inside the panel",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/patterns/detail-header/"
   },
@@ -10042,8 +10572,25 @@
     "status": "stable",
     "summary": "The panel that opens on the right of the map when a rider picks a vehicle or a stop: a Sheet headed by a DetailHeader, which names the line's vehicle or the stop, with the close button at the end of its header row and the caller's details below, and the bottom sheet it becomes on a phone.",
     "import": "import { DetailPanel } from '@mylder/perron/patterns'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use DetailPanel for the panel that opens beside the map when a rider picks a vehicle or a stop, headed by what it shows and holding its details.",
+    "alternatives": [
+      {
+        "name": "Sheet",
+        "when": "The panel is not about one vehicle or stop, such as the overview sheet"
+      },
+      {
+        "name": "DetailHeader",
+        "when": "Only the header is wanted, at the top of a panel the screen draws itself"
+      },
+      {
+        "name": "MapTooltip",
+        "when": "A few words on a vehicle or a stop show while the pointer rests on it, with no panel opened"
+      },
+      {
+        "name": "Dialog",
+        "when": "The panel must hold focus over the map until it closes, such as the help with the keys"
+      }
+    ],
     "props": [
       {
         "name": "variant",
@@ -10220,7 +10767,50 @@
         "description": "Props for the `content` part, given to the Sheet's"
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "must",
+        "do": "Open one detail panel at a time, controlled by `open`, for the vehicle or stop the rider picked, and clear the selection in `onClose`",
+        "dont": "Stack a second detail panel over the first; pick the new vehicle into the open panel, so Esc still closes the topmost thing first",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "should",
+        "do": "Give the destination as `title` and the line's short name as `lineName`: \"Husum Torv\" with \"5C\"",
+        "dont": "Put the line in the title as well, \"5C Husum Torv\": the panel already reads the line first, so its name would say it twice",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "must",
+        "do": "Put at most one control of your own in `action`, such as \"Show on map\", and let the panel draw its close button",
+        "dont": "Put a close button of your own in `action`: the panel has one, at the end of the header row, which Esc and focus return go with",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "should",
+        "do": "Pick `anchor` `bottom` under `breakpoint.phone`, in the screen's code",
+        "dont": "Expect the panel to turn into a bottom sheet on its own; it holds no media query",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "must",
+        "do": "Compose the body from Perron's patterns and components, StopTimeline, FactList, Section and DisruptionCard, with their own `h3` headings",
+        "dont": "Put a heading of level 2 in the body: the panel's title is its `h2`, and a section inside it is an `h3`",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "must",
+        "do": "Keep one primary action per panel",
+        "dont": "Put a `brand` button in `action` and another in the body; a screen has one brand action at most",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/patterns/detail-panel/"
   },
@@ -10231,8 +10821,13 @@
     "status": "stable",
     "summary": "The stops of one vehicle's trip, in order, on a rail in its line's colour: each stop's name, its time, the time real-time data expects there and how late the vehicle runs there, with the stops already passed set back and the next stop marked, as in a vehicle's detail panel.",
     "import": "import { StopTimeline } from '@mylder/perron/patterns'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use StopTimeline for the stops of one vehicle's trip, in order, with each stop's times and delay and the next stop marked, as in a vehicle's detail panel.",
+    "alternatives": [
+      {
+        "name": "DepartureRow",
+        "when": "The list is the departures from one stop, each its own line and destination"
+      }
+    ],
     "props": [
       {
         "name": "stops",
@@ -10334,7 +10929,64 @@
         "description": "Reaches the root"
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "must",
+        "do": "Name the line in words around the timeline, such as in the panel's header with a LineBadge, because the rail's colour is decoration",
+        "dont": "Rely on the rail's colour to say which line runs the trip: colour is never alone ([Accessibility](../foundations/accessibility.md#rules))",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "must",
+        "do": "Leave `nextStopIndex` out when no real-time data places the vehicle, so no stop claims to be next",
+        "dont": "Guess a next stop from the timetable and pass it: it claims more certainty than the data has ([Content design](../content-design.md))",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "must",
+        "do": "Pass `delay: null` for a stop whose delay no real-time data says, and leave `delay` out where no delay belongs",
+        "dont": "Pass `0` for an unknown delay: \"On time\" claims a certainty the data doesn't have",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "must",
+        "do": "Give the timetabled `time` and let Delay say how late the vehicle runs; give the expected time as `expected` where real-time data says it",
+        "dont": "Pass the expected time as `time` as well as a delay: the rider adds the delay twice",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "must",
+        "do": "Keep a cancelled call in `stops` with `cancelled: true`, where the vehicle would have called",
+        "dont": "Drop it from the list: a rider waiting there reads its absence as a stop not yet shown",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "must",
+        "do": "Leave `expected` out where no real-time data gives one",
+        "dont": "Copy the timetabled time into `expected`: the \"~\" claims an estimate the data doesn't have",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-7",
+        "level": "must",
+        "do": "Point the root's `aria-labelledby` at the panel heading that names the trip",
+        "dont": "Wrap the timeline in a live region: every update rereads the whole trip",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-8",
+        "level": "should",
+        "do": "Pass only the stops the screen needs, such as the next few, when the trip is long",
+        "dont": "Restyle the markers or the rail's width through `className`, which breaks the ring's and the rail's matching weight",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/patterns/stop-timeline/"
   },
@@ -10345,8 +10997,21 @@
     "status": "stable",
     "summary": "A card for one disruption on Copenhagen's network: its kind, the lines it touches, a short title and a plain sentence on what is happening, then the stops it affects, when it runs and one action, set as a raised card in a list of disruptions or in a line's detail panel.",
     "import": "import { DisruptionCard } from '@mylder/perron/patterns'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use DisruptionCard for one disruption on the network, with its kind, its lines, what is happening and where and when, in a list of disruptions or in a line's detail panel.",
+    "alternatives": [
+      {
+        "name": "SeverityLabel",
+        "when": "Only the kind of a disruption is shown, such as in a row of a list of lines"
+      },
+      {
+        "name": "NormalService",
+        "when": "The line has no disruption, and the screen says it runs normally"
+      },
+      {
+        "name": "Alert",
+        "when": "The message is about the app or the screen, such as a data feed problem, not a disruption on the network"
+      }
+    ],
     "props": [
       {
         "name": "severity",
@@ -10525,7 +11190,71 @@
         "description": "Props for the `action` part, the block that holds `action`"
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "must",
+        "do": "Name the lines in words in the title or the sentence, \"M2 and M3 trains…\", as well as in the badges.",
+        "dont": "Let the badges be the only mention of a line: five official badge pairs miss 4.5:1, and LineBadge asks for the name in words beside them.",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "should",
+        "do": "Say what is happening, then where, how long and how sure we are, in plain sentences: \"Signal fault at Kongens Nytorv\" over its sentence.",
+        "dont": "Repeat the kind in the title (\"Delays on M2\"): the SeverityLabel already says it, in the content-design word every screen shares.",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "must",
+        "do": "Set a list of disruptions as a `<ul>` of cards, each rendered as `<li>`, or make each card a link with `render={<a href=\"…\" />}` to open the line.",
+        "dont": "Make the card a `<button>`, or put a link or button inside a card that is itself a link: the card's blocks are invalid in a button, and links can't nest.",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "must",
+        "do": "Make the title a heading with `slotProps.title.render` at the level the panel around it needs.",
+        "dont": "Pass a heading element as `title`: the title part is a `<p>` until `render` swaps it, and a heading inside a `<p>` is invalid.",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "should",
+        "do": "Leave `lines` out for a disruption across the whole network, such as a data feed problem.",
+        "dont": "Pass every line on the network, or a placeholder badge, to fill the header.",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "should",
+        "do": "Give the stops and the time as data, `stops` and `time`, from the message's own fields.",
+        "dont": "Write \"Affects …\" or \"From …\" into the sentence yourself: the words then differ from every other card's, and from the other languages'.",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-7",
+        "level": "must",
+        "do": "Give `severity='notice'` to a message whose fields don't say which kind it is.",
+        "dont": "Show an unread kind as planned works, or guess one from the message's words.",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-8",
+        "level": "must",
+        "do": "Give one `action`, a LinkButton or Button, such as \"Show on map\", when the card is not itself a link.",
+        "dont": "Give an `action` to a card made a link, or put several actions in it: links can't nest, and one action keeps the card one decision.",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-9",
+        "level": "should",
+        "do": "Put DisruptionCards inside a panel, which supplies the glass or opaque surface they sit on.",
+        "dont": "Tint or stripe the card in the kind's colour with `className`: the colour belongs to the SeverityLabel and never carries meaning alone.",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/patterns/disruption-card/"
   },
@@ -10536,7 +11265,7 @@
     "status": "stable",
     "summary": "The map's scale: a short bar on glass at the bottom right of the map, with the ground distance its length spans written above it, such as \"300 m\" or \"2 km\", which shortens and lengthens as the map zooms.",
     "import": "import { ScaleBar } from '@mylder/perron/patterns'",
-    "whenToUse": "",
+    "whenToUse": "Use ScaleBar for the map's scale, at the bottom right of the map, so the rider can tell how far apart things are as the map zooms.",
     "alternatives": [],
     "props": [
       {
@@ -10610,7 +11339,43 @@
         "description": "Props for the `bar` part, the drawn bracket"
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "must",
+        "do": "Give `metersPerPixel` for the map's centre, and give it again on every zoom and on every move that changes the latitude much",
+        "dont": "Give it once and leave it: the scale then claims a distance the map no longer shows",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "must",
+        "do": "Leave `metersPerPixel` as `NaN` until the map has loaded, so the scale shows \"—\" and says \"Unknown\"",
+        "dont": "Pass a guess or `0` before the map is ready: the brand never claims more than the data knows",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "should",
+        "do": "Place the scale from the screen, at the bottom right beside the map controls, `size.panel-gap` from the edges at `z-index.map-controls`",
+        "dont": "Give it a position, a margin or a `z-index` through `className`: the pattern sizes to its content and places nothing",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "should",
+        "do": "Keep one scale on the map",
+        "dont": "Put a scale in a panel or a sheet, away from the map it measures",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "must",
+        "do": "Leave the scale out of the screen's live region; announce changes of state there",
+        "dont": "Make the label a live region: it changes on every zoom step and would flood a screen reader",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/patterns/scale-bar/"
   },
@@ -10621,8 +11386,17 @@
     "status": "stable",
     "summary": "The bar a Mylder screen in kiosk mode shows over the map, for a display people read from across a room and never touch: the Mylder brand, a few key figures about the network, and the clock, large.",
     "import": "import { KioskBar } from '@mylder/perron/patterns'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use KioskBar for the bar over the map on a screen in kiosk mode, which people read from across a room and never touch: the brand, a few key figures and the clock, large.",
+    "alternatives": [
+      {
+        "name": "TopBar",
+        "when": "People operate the screen, which TopBar gives the filters and the tools for"
+      },
+      {
+        "name": "Stat",
+        "when": "One key figure is shown on its own, in a report or a panel"
+      }
+    ],
     "props": [
       {
         "name": "time",
@@ -10700,7 +11474,57 @@
         "description": "Props for the `time` part, the clock"
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "must",
+        "do": "Give `time` in Copenhagen's time as `HH:MM`, and update it when the minute turns",
+        "dont": "Pass the device's local time or a 12-hour time: the brand keeps the 24-hour clock, and a kiosk shows the city's time",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "should",
+        "do": "Keep to about four figures, each named in a few words: \"Reporting live\", \"Average delay\"",
+        "dont": "Fill the bar with figures until it wraps on a wide screen: read from across a room, fewer figures read faster",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "must",
+        "do": "Leave out an entry's `figure` when no data gives it, so Stat shows \"—\" and says \"Unknown\"",
+        "dont": "Pass `0` or a guess for a figure the data doesn't know: the brand never claims more than the data knows",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "should",
+        "do": "Place the bar from the screen, `size.panel-gap` from the edges at `z-index.sheet`, and wrap it in a landmark there",
+        "dont": "Give it a position, a margin or a `z-index` through `className`: the pattern sizes to its container and places nothing",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "must",
+        "do": "Pick `slotProps.brand.variant` `'mark'` where the bar is tight",
+        "dont": "Hide the brand or its parts with `className`, which can leave a mark no screen reader hears",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "must",
+        "do": "Announce a change of state, such as a data feed problem, in the screen's own polite live region",
+        "dont": "Make the clock or the figures a live region: they change every minute and would flood a screen reader",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-7",
+        "level": "should",
+        "do": "Use the top bar's clock, in `typography.data-lg`, on a screen people operate",
+        "dont": "Use KioskBar on a screen people touch or tab through: it has no controls and its clock is sized for a room, not a desk",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/patterns/kiosk-bar/"
   },
@@ -10711,8 +11535,21 @@
     "status": "stable",
     "summary": "The bar along the top of Mylder's moving map, on every screen size: the Mylder brand, the status line that says when the map's data is from, the screen's filters and its tools, on one glass panel over the map.",
     "import": "import { TopBar } from '@mylder/perron/patterns'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use TopBar for the bar along the top of Mylder's moving map: the brand, the status line that says when the map's data is from, the screen's filters and its tools.",
+    "alternatives": [
+      {
+        "name": "KioskBar",
+        "when": "The screen is in kiosk mode, read from across a room and never touched"
+      },
+      {
+        "name": "SourceLine",
+        "when": "A panel names where its own data comes from and the time of that data"
+      },
+      {
+        "name": "Toolbar",
+        "when": "A few actions sit together in one bar, with no brand or status line"
+      }
+    ],
     "props": [
       {
         "name": "size",
@@ -10867,7 +11704,71 @@
         "description": "Props for the `tools` part, the group of tools"
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "should",
+        "do": "Set `size` to `small` under `breakpoint.phone`, in the screen's code, or to `responsive` where the page renders before it knows its width",
+        "dont": "Render a `medium` and a `small` bar and hide one with a media query: `responsive` is both from one render, with one set of the caller's elements",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "must",
+        "do": "Place the bar from the screen, `size.panel-gap` from the edges at `z-index.top-bar`, and wrap it in the page's `header`",
+        "dont": "Give it a position or a `z-index` through `slotProps`, or expect it to be a landmark on its own",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "must",
+        "do": "Give `time` in Copenhagen's time as `HH:MM:SS`, the time the data is from, and give it again when the data changes",
+        "dont": "Pass the time now, or a time counting up: the line says when the data is from, and the brand never claims fresher data than it has",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "must",
+        "do": "Set `outOfDate` when the app judges the data may be stale, and `paused` when the map takes no updates",
+        "dont": "Leave a stale time showing as if fresh, or show \"Paused\" by changing `updatedLabel`: the states have their own words and inks",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "should",
+        "do": "Put a FilterChip in `filters` for each filter, with its `count`, and keep its state in the screen, such as in the address",
+        "dont": "Put buttons, switches or a segmented control in `filters`: a filter people turn on and off is a FilterChip, and the group is named for filters",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "should",
+        "do": "Put the language link, a small outline LinkButton, and the About button, a large IconButton with an 18 px-grid icon, in `tools`",
+        "dont": "Fill `tools` until the first row wraps on a phone: the brand, the status line and the tools share it",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-7",
+        "level": "should",
+        "do": "Give `filtersLabel` the word that names what the filters hold, such as \"Modes\"",
+        "dont": "Leave a group of modes named \"Filters\" where every chip is a mode",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-8",
+        "level": "must",
+        "do": "Pick `slotProps.brand.variant` `'mark'` under `breakpoint.compact-phone`",
+        "dont": "Hide the brand or its parts with `className`, which can leave a mark no screen reader hears",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-9",
+        "level": "must",
+        "do": "Announce a change of state, such as the data feed failing, in the screen's own polite live region",
+        "dont": "Make the status line a live region: its time changes on every refresh and would flood a screen reader",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/patterns/top-bar/"
   }
