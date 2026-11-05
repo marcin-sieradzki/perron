@@ -6,6 +6,15 @@ A short visual label beside a control, such as "Zoom in" over the map's zoom but
 
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the contract, the foundations, the tokens and the Base UI reference. The ROADMAP names no Tooltip line of its own: Base UI's Tooltip is the part under the MapTooltip line of Wave 3, and this component is its trigger-bound sibling. The extracted prototype component is not in any branch this run can reach. It shares the Tooltips family's treatment with [MapTooltip](map-tooltip.md), which places a card against a point the caller holds, where this one sits against the control it labels.
 
+## When to use
+
+Use Tooltip for a short visual label beside a control, such as "Zoom in" over an icon-only button, for sighted mouse and keyboard users.
+
+| Use instead                  | When                                                                            |
+| ---------------------------- | ------------------------------------------------------------------------------- |
+| [MapTooltip](map-tooltip.md) | The card sits against a point on the map, such as the vehicle under the pointer |
+| [Popover](popover.md)        | The reader needs a sentence, a link or a control, which a tooltip can't hold    |
+
 ## Anatomy
 
 Penpot page `Components/Tooltip`. Family: Tooltips. Shared parts: none (the popup holds the caller's words and draws no mark of its own).
@@ -170,16 +179,20 @@ The meta sets `parameters: { docs: { story: { inline: false, height: '480px' } }
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                                         | Don't                                                                                                                                      |
-| ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| Give an icon-only control a tooltip with the same words as its accessible name: an IconButton labelled "Zoom in" and the tooltip "Zoom in" | Write tooltip words that differ from the trigger's name: a screen reader hears only the name                                               |
-| Keep the words to a short label, in sentence case                                                                                          | Put a sentence the reader needs in a tooltip: touch and screen reader users never see it, so put it in visible text or a popover           |
-| Pass a control that takes a ref and spreads its props as `trigger`, such as a Button, an IconButton or a ToolbarButton                     | Pass a component that drops the props it is given: Base UI's hover and focus handlers never reach the element, and the tooltip never opens |
-| Keep a disabled trigger focusable with `focusableWhenDisabled`, so its tooltip still opens from the keys                                   | Put the tooltip on a natively `disabled` button: it leaves the tab order, so the keyboard can't reach the tooltip                          |
-| Put a button in a toolbar in a tooltip with `trigger={<ToolbarButton … />}`, the way round [Toolbar](toolbar.md) gives                     | Pass the tooltip's trigger to the button's `render`, as for popups                                                                         |
-| Keep the app inside one `PerronProvider`, so a row of tooltips opens at once after the first                                               | Add a provider per tooltip: each waits the full delay again                                                                                |
-| Use [MapTooltip](map-tooltip.md) for a card against a point on the map                                                                     | Wrap the map canvas in a Tooltip: it has one trigger, the whole canvas, not the vehicle under the pointer                                  |
-| Put only words in the tooltip                                                                                                              | Put a link, a button or a field in it: the popup is out of the tab order, so the keys can't reach them                                     |
-| Change the side through `slotProps.positioner`, such as `side: 'bottom'`                                                                   | Move the popup with a margin or a `transform`: Base UI's placement and flipping no longer match what is drawn                              |
+| Rule | Level  | Do                                                                                                                                         | Don't                                                                                                                                      | Checked by |
+| ---- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ | ---------- |
+| DD-1 | must   | Give an icon-only control a tooltip with the same words as its accessible name: an IconButton labelled "Zoom in" and the tooltip "Zoom in" | Write tooltip words that differ from the trigger's name: a screen reader hears only the name                                               | review     |
+| DD-2 | must   | Keep the words to a short label, in sentence case                                                                                          | Put a sentence the reader needs in a tooltip: touch and screen reader users never see it, so put it in visible text or a popover           | review     |
+| DD-3 | must   | Pass a control that takes a ref and spreads its props as `trigger`, such as a Button, an IconButton or a ToolbarButton                     | Pass a component that drops the props it is given: Base UI's hover and focus handlers never reach the element, and the tooltip never opens | review     |
+| DD-4 | must   | Keep a disabled trigger focusable with `focusableWhenDisabled`, so its tooltip still opens from the keys                                   | Put the tooltip on a natively `disabled` button: it leaves the tab order, so the keyboard can't reach the tooltip                          | review     |
+| DD-5 | must   | Put a button in a toolbar in a tooltip with `trigger={<ToolbarButton … />}`, the way round [Toolbar](toolbar.md) gives                     | Pass the tooltip's trigger to the button's `render`, as for popups                                                                         | review     |
+| DD-6 | should | Keep the app inside one `PerronProvider`, so a row of tooltips opens at once after the first                                               | Add a provider per tooltip: each waits the full delay again                                                                                | review     |
+| DD-7 | must   | Use [MapTooltip](map-tooltip.md) for a card against a point on the map                                                                     | Wrap the map canvas in a Tooltip: it has one trigger, the whole canvas, not the vehicle under the pointer                                  | review     |
+| DD-8 | must   | Put only words in the tooltip                                                                                                              | Put a link, a button or a field in it: the popup is out of the tab order, so the keys can't reach them                                     | review     |
+| DD-9 | should | Change the side through `slotProps.positioner`, such as `side: 'bottom'`                                                                   | Move the popup with a margin or a `transform`: Base UI's placement and flipping no longer match what is drawn                              | review     |
+
+## For agents
+
+None known yet.

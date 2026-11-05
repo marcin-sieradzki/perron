@@ -2,6 +2,18 @@
 
 A short word or two on a pill that marks a property of what it sits beside, such as "Night bus", "Replacement bus" or "Cancelled" on a departure or a vehicle, set in capitals in one of the intents' colours.
 
+## When to use
+
+Use Tag to mark a property of what it sits beside in a word or two, such as "Night bus" or "Cancelled" on a departure or a vehicle.
+
+| Use instead                        | When                                                               |
+| ---------------------------------- | ------------------------------------------------------------------ |
+| [SeverityLabel](severity-label.md) | The words name a kind of disruption on a line, such as "Delays"    |
+| [LineBadge](line-badge.md)         | The label names a line, in the operator's colour                   |
+| [Count](count.md)                  | The pill holds a number, such as how many there are                |
+| [Delay](delay.md)                  | The figure says how late or early a vehicle runs, such as "+3 min" |
+| [FilterChip](filter-chip.md)       | People turn the pill on and off, as a filter                       |
+
 ## Anatomy
 
 Penpot page `Components/Tag`, not drawn yet: the design is deferred (`docs/adr/0010-unattended-runs-with-design-deferred.md`), so this spec decides the drawing. Family: none. Shared parts: none.
@@ -135,14 +147,18 @@ The deferred design's variants are each `variant` in each `color`; the visual st
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                                          | Don't                                                                                                                                          |
-| ------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| Mark a property of a departure, vehicle or line with one or two words: "Night bus", "Replacement bus".                                      | Put a sentence in a tag: say what is happening beside it, in plain sentences, as content design asks.                                          |
-| Write the words in sentence case and let the tag set the capitals.                                                                          | Type the capitals: a screen reader may spell them out letter by letter.                                                                        |
-| Say a status in the words: `color='danger'` on "Cancelled".                                                                                 | Let red or green be the only sign, which fails 1.4.1 and every rider who can't tell them apart.                                                |
-| Use `dashed` for something announced but not yet confirmed by live data, and say so in the words where it matters: "Cancellation expected". | Use `dashed` as a quieter look for a property that holds: the dashed edge says "not confirmed", and the brand never claims more than it knows. |
-| Name a kind of disruption with SeverityLabel, a line with LineBadge, and a number with Count.                                               | Spell out "Delays", a line's name or a count in a tag: each has its own component, with its own words, colours and figures.                    |
-| Use FilterChip for a filter people turn on and off.                                                                                         | Make a tag a control through `render`: it is smaller than `size.target-min` and has no hover, pressed or selected state.                       |
-| Let a row that holds a tag beside other content wrap, with `flex-wrap: wrap`, or let its other content give way.                            | Set a tag in a row that can't wrap: its narrowest width is its longest word, so a long word pushes it past the row's edge.                     |
+| Rule | Level  | Do                                                                                                                                          | Don't                                                                                                                                          | Checked by |
+| ---- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | should | Mark a property of a departure, vehicle or line with one or two words: "Night bus", "Replacement bus".                                      | Put a sentence in a tag: say what is happening beside it, in plain sentences, as content design asks.                                          | review     |
+| DD-2 | must   | Write the words in sentence case and let the tag set the capitals.                                                                          | Type the capitals: a screen reader may spell them out letter by letter.                                                                        | review     |
+| DD-3 | must   | Say a status in the words: `color='danger'` on "Cancelled".                                                                                 | Let red or green be the only sign, which fails 1.4.1 and every rider who can't tell them apart.                                                | review     |
+| DD-4 | must   | Use `dashed` for something announced but not yet confirmed by live data, and say so in the words where it matters: "Cancellation expected". | Use `dashed` as a quieter look for a property that holds: the dashed edge says "not confirmed", and the brand never claims more than it knows. | review     |
+| DD-5 | should | Name a kind of disruption with SeverityLabel, a line with LineBadge, and a number with Count.                                               | Spell out "Delays", a line's name or a count in a tag: each has its own component, with its own words, colours and figures.                    | review     |
+| DD-6 | must   | Use FilterChip for a filter people turn on and off.                                                                                         | Make a tag a control through `render`: it is smaller than `size.target-min` and has no hover, pressed or selected state.                       | review     |
+| DD-7 | should | Let a row that holds a tag beside other content wrap, with `flex-wrap: wrap`, or let its other content give way.                            | Set a tag in a row that can't wrap: its narrowest width is its longest word, so a long word pushes it past the row's edge.                     | review     |
+
+## For agents
+
+None known yet.

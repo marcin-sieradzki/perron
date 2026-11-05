@@ -552,8 +552,29 @@
     "status": "stable",
     "summary": "A bar of actions that is one tab stop, moved through with the arrow keys, such as the map's zoom and locate controls or a glass group in the top bar.",
     "import": "import { Toolbar } from '@mylder/perron'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use Toolbar for a bar of actions that is one tab stop, moved through with the arrow keys, such as a glass group of controls in the top bar.",
+    "alternatives": [
+      {
+        "name": "MapControls",
+        "when": "The bar holds the map's zoom, centre and view buttons"
+      },
+      {
+        "name": "Button",
+        "when": "One action stands alone, named in words"
+      },
+      {
+        "name": "IconButton",
+        "when": "One action stands alone, shown as an icon"
+      },
+      {
+        "name": "Menu",
+        "when": "More actions than the bar has room for open from one button"
+      },
+      {
+        "name": "SegmentedControl",
+        "when": "The buttons pick one of two to five ways to show one view"
+      }
+    ],
     "props": [
       {
         "name": "orientation",
@@ -607,7 +628,71 @@
         "description": "Inherited from Base UI: swaps the root element and keeps the behaviour, the class and the data attributes."
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "must",
+        "do": "Name every toolbar with `aria-label` or `aria-labelledby`, such as \"Map controls\", so a screen reader tells it from the next one",
+        "dont": "Leave a toolbar unnamed: two on a screen are both announced as \"toolbar\"",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "must",
+        "do": "Put each action in a `ToolbarButton`, so the arrow keys reach it",
+        "dont": "Put a Button, an IconButton or a plain `<button>` straight into the toolbar: it falls out of the arrow-key order and adds a tab stop",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "must",
+        "do": "Give an icon-only button an `aria-label` that names the action: \"Zoom in\"",
+        "dont": "Leave an icon-only button without one: its icon is `aria-hidden`, so the button has no name",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "must",
+        "do": "Open a menu, popover or dialog through `render`, `<ToolbarButton render={<Menu.Trigger />}>`, and set `disabled` on the `ToolbarButton`, not the trigger",
+        "dont": "Disable the trigger itself: Base UI says the button then leaves the toolbar's arrow-key order",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "must",
+        "do": "Wrap a button in a [Tooltip](tooltip.md) with `<Tooltip trigger={<ToolbarButton … />}>…</Tooltip>`, the tooltip around the button",
+        "dont": "Pass the tooltip's trigger to `ToolbarButton`'s `render`, as for popups",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "must",
+        "do": "Give one button per screen `color=\"brand\"`, for its main action",
+        "dont": "Mark several toolbar buttons `brand`, or use it for emphasis: a second yellow action leaves neither the main one",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-7",
+        "level": "must",
+        "do": "Keep a disabled button focusable, the default, so it can explain itself through a tooltip",
+        "dont": "Restyle a disabled button with `opacity`: disabled is `color.text.tertiary`, a colour",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-8",
+        "level": "must",
+        "do": "Give a toggle in a toolbar, such as the map's 3D view, `selected`, held by the screen, and keep its name the same while on and off",
+        "dont": "Swap a toggle's name with its state, or draw its on look in the caller's CSS: `selected` sets `aria-pressed` and the on look together",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-9",
+        "level": "should",
+        "do": "Place the toolbar over the map in a pattern, which sets its position and stacking",
+        "dont": "Set a `z-index` or a margin from the screen edge on the toolbar itself: the component sizes to its content",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/components/toolbar/"
   },
@@ -1347,8 +1432,29 @@
     "status": "stable",
     "summary": "A short word or two on a pill that marks a property of what it sits beside, such as \"Night bus\", \"Replacement bus\" or \"Cancelled\" on a departure or a vehicle, set in capitals in one of the intents' colours.",
     "import": "import { Tag } from '@mylder/perron'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use Tag to mark a property of what it sits beside in a word or two, such as \"Night bus\" or \"Cancelled\" on a departure or a vehicle.",
+    "alternatives": [
+      {
+        "name": "SeverityLabel",
+        "when": "The words name a kind of disruption on a line, such as \"Delays\""
+      },
+      {
+        "name": "LineBadge",
+        "when": "The label names a line, in the operator's colour"
+      },
+      {
+        "name": "Count",
+        "when": "The pill holds a number, such as how many there are"
+      },
+      {
+        "name": "Delay",
+        "when": "The figure says how late or early a vehicle runs, such as \"+3 min\""
+      },
+      {
+        "name": "FilterChip",
+        "when": "People turn the pill on and off, as a filter"
+      }
+    ],
     "props": [
       {
         "name": "variant",
@@ -1395,7 +1501,57 @@
         "description": "Allows you to replace the component's HTML element with a different tag, or compose it with another component. Accepts a `ReactElement` or a function that returns the element to render."
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "should",
+        "do": "Mark a property of a departure, vehicle or line with one or two words: \"Night bus\", \"Replacement bus\".",
+        "dont": "Put a sentence in a tag: say what is happening beside it, in plain sentences, as content design asks.",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "must",
+        "do": "Write the words in sentence case and let the tag set the capitals.",
+        "dont": "Type the capitals: a screen reader may spell them out letter by letter.",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "must",
+        "do": "Say a status in the words: `color='danger'` on \"Cancelled\".",
+        "dont": "Let red or green be the only sign, which fails 1.4.1 and every rider who can't tell them apart.",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "must",
+        "do": "Use `dashed` for something announced but not yet confirmed by live data, and say so in the words where it matters: \"Cancellation expected\".",
+        "dont": "Use `dashed` as a quieter look for a property that holds: the dashed edge says \"not confirmed\", and the brand never claims more than it knows.",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "should",
+        "do": "Name a kind of disruption with SeverityLabel, a line with LineBadge, and a number with Count.",
+        "dont": "Spell out \"Delays\", a line's name or a count in a tag: each has its own component, with its own words, colours and figures.",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "must",
+        "do": "Use FilterChip for a filter people turn on and off.",
+        "dont": "Make a tag a control through `render`: it is smaller than `size.target-min` and has no hover, pressed or selected state.",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-7",
+        "level": "should",
+        "do": "Let a row that holds a tag beside other content wrap, with `flex-wrap: wrap`, or let its other content give way.",
+        "dont": "Set a tag in a row that can't wrap: its narrowest width is its longest word, so a long word pushes it past the row's edge.",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/components/tag/"
   },
@@ -1406,8 +1562,33 @@
     "status": "stable",
     "summary": "Text sets a piece of text in one of the typography roles and one of the text colours, on the element the caller's document needs.",
     "import": "import { Text } from '@mylder/perron'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use Text to set words in one typography role and one text colour, on the element the document needs, such as a heading, a caption or a time.",
+    "alternatives": [
+      {
+        "name": "Link",
+        "when": "The words take the reader to another page or place"
+      },
+      {
+        "name": "Section",
+        "when": "A small heading in capitals names a group of content inside a panel"
+      },
+      {
+        "name": "Stat",
+        "when": "A key figure stands large with the words that say what it counts"
+      },
+      {
+        "name": "Delay",
+        "when": "The words say how late or early a vehicle runs, in the delay's colour"
+      },
+      {
+        "name": "Kbd",
+        "when": "The text is a key of the keyboard, inside help text"
+      },
+      {
+        "name": "Tag",
+        "when": "A word or two on a pill marks a property of what it sits beside"
+      }
+    ],
     "props": [
       {
         "name": "variant",
@@ -1461,7 +1642,64 @@
         "description": "Allows you to replace the component's HTML element with a different tag, or compose it with another component. Accepts a `ReactElement` or a function that returns the element to render."
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "must",
+        "do": "Give a heading role its heading element through `render`, at its level in the page's outline: `render={<h2 />}`.",
+        "dont": "Set a heading's look on a `<span>`: a screen reader's list of headings never finds it.",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "must",
+        "do": "Say a status in words beside its colour: `color='danger'` on \"+4 min late\".",
+        "dont": "Let red or green be the only sign, which fails 1.4.1 and every rider who can't tell them apart.",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "must",
+        "do": "Keep `emphasis='tertiary'` for hints and captions next to stronger text.",
+        "dont": "Set a sentence people must read in tertiary: it misses 4.5:1 on purpose.",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "should",
+        "do": "Set times, countdowns, counts and delays in a `data` role, so their tabular figures line up down a column.",
+        "dont": "Set a time in `body`, where each digit has its own width and a column of times wobbles.",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "must",
+        "do": "Write an `overline`'s text in sentence case and let the role set the capitals.",
+        "dont": "Type the capitals: a screen reader may spell them out letter by letter.",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "must",
+        "do": "Keep `color='brand'` for emphasis on the hero page.",
+        "dont": "Use brand text for a link, or anything that looks like one.",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-7",
+        "level": "should",
+        "do": "Leave `badge` to line badges, the job its role was made for.",
+        "dont": "Set other text in `badge`: its line height of 1 crowds a second line against the first.",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-8",
+        "level": "should",
+        "do": "Restyle through `className`, with the tokens.",
+        "dont": "Reach for a raw size or colour in `style`, which leaves the theme and the scale behind.",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/components/text/"
   },
@@ -1965,8 +2203,17 @@
     "status": "stable",
     "summary": "A short message that floats in at the bottom of the screen to confirm what just happened, such as \"Link copied\", in Alert's look and intents, and leaves again on its own after a few seconds, with an optional title, an action and a close button.",
     "import": "import { Toast } from '@mylder/perron'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use Toast to confirm in a few words what just happened, such as \"Link copied\", in a message that leaves on its own after a few seconds.",
+    "alternatives": [
+      {
+        "name": "Alert",
+        "when": "The message must stay while its cause lasts, such as a signal fault, set into a panel"
+      },
+      {
+        "name": "AlertDialog",
+        "when": "A failure must stop the task until the person answers"
+      }
+    ],
     "props": [
       {
         "name": "color",
@@ -2106,7 +2353,57 @@
         "description": "Props for the `close` part, the `CloseButton`, all but `disabled`: the close button is never disabled"
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "must",
+        "do": "Confirm what just happened, in a few words: \"Link copied\", \"Filters cleared\"",
+        "dont": "Write \"Success!\" or \"Something went wrong\": content design has no exclamation marks, and the words should say what happened",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "must",
+        "do": "Keep the app inside one `PerronProvider`, so every toast stacks in one region at the bottom of the screen and is read by one live region",
+        "dont": "Render Toasts with no provider: each gets a region of its own, and two at once overlap",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "must",
+        "do": "Set `open` to `false` in `onClose`, so the next `true` shows the toast again",
+        "dont": "Leave `open` `true` after the toast has closed itself: it doesn't show again until `open` turns `false` and `true`",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "must",
+        "do": "Give a toast an action only for what can't wait, such as \"Undo\", and let it stay until it is closed",
+        "dont": "Give an action toast a short `autoHideDuration`: a person still hearing the toast can miss the action, and it may be the only way to undo",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "must",
+        "do": "Put an app-wide context an action needs, such as a router's, around `PerronProvider`: the toast renders in `PerronProvider`'s region, not where it is written",
+        "dont": "Rely on a context between `PerronProvider` and the Toast in the action: the region renders outside it",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "must",
+        "do": "Show a message that must stay while its cause lasts, such as a signal fault, as an Alert in the panel",
+        "dont": "Use a toast for something the person needs later: it leaves after five seconds",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-7",
+        "level": "must",
+        "do": "Use an AlertDialog for a failure that must stop the task",
+        "dont": "Use a toast to interrupt: every toast is polite, and waits for the screen reader to finish",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/components/toast/"
   },
@@ -4566,8 +4863,29 @@
     "status": "stable",
     "summary": "A two-state control that turns one setting on or off at once, such as showing vehicle trails on the map.",
     "import": "import { Switch } from '@mylder/perron'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use Switch for one setting that takes effect the moment it is turned on or off, such as showing vehicle trails on the map.",
+    "alternatives": [
+      {
+        "name": "Checkbox",
+        "when": "The answer is sent later, with a form's button"
+      },
+      {
+        "name": "FilterChip",
+        "when": "The thing turned on and off filters the map's vehicles, in a row of filters"
+      },
+      {
+        "name": "RadioGroup",
+        "when": "The choice is exactly one of several, such as the theme the map is drawn in"
+      },
+      {
+        "name": "SegmentedControl",
+        "when": "The choice is one of two to five ways to show one view"
+      },
+      {
+        "name": "Button",
+        "when": "The control runs an action, such as following a vehicle"
+      }
+    ],
     "props": [
       {
         "name": "checked",
@@ -4689,7 +5007,57 @@
         "description": "Props for the thumb part, merged under Perron's own; its `className` joins after `pn-Switch-thumb`."
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "must",
+        "do": "Use a Switch for a setting that takes effect the moment it changes, such as showing vehicle trails or the stations on the map",
+        "dont": "Use it for an answer a form sends later with a button: a checkbox says \"choose now, apply on submit\", where a switch says \"this is on now\"",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "must",
+        "do": "Name it with a visible `<label>` or a Field's label that names the setting, in sentence case: \"Show vehicle trails\"",
+        "dont": "Leave it unnamed, or name it with `aria-label` where there is room for a visible label: a sighted person can't tell what an unlabelled switch turns on",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "must",
+        "do": "Keep the label the same whether the switch is on or off",
+        "dont": "Write the state in the label, \"Trails on\", or swap it when the switch flips: the switch already says on or off, and a changing label reads as a second state",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "should",
+        "do": "Put the label before the switch in a settings row, and let a long label wrap",
+        "dont": "Squeeze the switch to fit a long label, or cut the label off: the track keeps its size, and a Danish label is longer than its English",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "should",
+        "do": "Filter the map's vehicles with a [FilterChip](filter-chip.md), and pick one way of showing a view with a [SegmentedControl](segmented-control.md)",
+        "dont": "Use a row of switches for one choice of several, or for the top bar's filters: switches each turn their own setting on, and a chip shows its count",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "must",
+        "do": "Run an action, such as following a vehicle, with a [Button](button.md)",
+        "dont": "Use a switch to start something that then runs on its own: a switch holds a state, it doesn't trigger one",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-7",
+        "level": "should",
+        "do": "Say why a switch is disabled or read-only, in its label or the Field's description",
+        "dont": "Disable a switch with no word of why: a dimmed switch can't explain itself",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/components/switch/"
   },
@@ -4700,8 +5068,25 @@
     "status": "stable",
     "summary": "The box a person types several lines of words into, such as a note about what they saw on a trip, framed by the Field that gives it its label, its line of help and its error message.",
     "import": "import { TextArea } from '@mylder/perron'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use TextArea for words a person types that run to sentences, such as a note about what they saw on a trip, with its label, its line of help and its error.",
+    "alternatives": [
+      {
+        "name": "TextField",
+        "when": "The words fit one line, such as a name or an email address"
+      },
+      {
+        "name": "NumberField",
+        "when": "The value is a number, typed or stepped up and down"
+      },
+      {
+        "name": "SearchField",
+        "when": "The words find a line or a stop"
+      },
+      {
+        "name": "Select",
+        "when": "The value is one of a short, fixed list"
+      }
+    ],
     "props": [
       {
         "name": "label",
@@ -4842,7 +5227,85 @@
         "description": "Props for the `error` part, such as `match`, to show a message of the caller's own for one failing check only, as `match=\"valueMissing\"`."
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "should",
+        "do": "Use TextArea for words that run to sentences, such as what the person saw on a trip",
+        "dont": "Use it for a name, an address or a number: TextField and NumberField take one line, its keys and its autofill",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "must",
+        "do": "Give a `label` that names the words, \"What happened\", and hide it with `hiddenLabel` only where the screen already says it",
+        "dont": "Let the `placeholder` stand in for the label: it vanishes as the person types, and it is drawn in `color.text.tertiary`, below text contrast",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "must",
+        "do": "Put help the person needs while typing in `description`, \"Say where and when, such as the stop and the time\"",
+        "dont": "Put that help in the `placeholder`: it is gone once they type",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "must",
+        "do": "Word an `error` as what to do, \"Say what happened\"",
+        "dont": "Blame the person or say only that it failed (\"Invalid input\"), against [Content design](../content-design.md)",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "should",
+        "do": "Set `rows` to the length of words you expect, so most of them fit without scrolling",
+        "dont": "Set `rows` to fill the screen: a tall empty box asks for more than the form needs, and the person can drag it taller",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "should",
+        "do": "Spread React Hook Form's `register('note')` on TextArea, or pass Formik's `handleChange`, as on a native `<textarea>`",
+        "dont": "Wrap TextArea in a controller to read its value: its `onChange` is the native one already",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-7",
+        "level": "must",
+        "do": "Give `error` from the form library whenever the field is invalid",
+        "dont": "Set `slotProps.field.invalid` with no message: the red edge alone tells only the eye, and only by its colour",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-8",
+        "level": "should",
+        "do": "Set `optional` on the few fields the person may leave empty, and `required` where an empty field must fail",
+        "dont": "Write \"(optional)\", \"(required)\" or an asterisk into `label` yourself: it misses the locale, and an asterisk needs a legend",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-9",
+        "level": "must",
+        "do": "Let Enter start a new line, and give the form a submit button",
+        "dont": "Make Enter submit the form from a TextArea: the person loses the one key that starts a new line",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-10",
+        "level": "must",
+        "do": "Use TextArea on its own: it already has its label, its help and its error",
+        "dont": "Wrap TextArea in Field: the textarea would be labelled twice, as Field's spec says",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-11",
+        "level": "should",
+        "do": "Set the width on the container, or on the frame through `slotProps.field`",
+        "dont": "Give the textarea a width through `style` or `cols`: the label and the error take the frame's width, not the box's",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/components/text-area/"
   },
@@ -4853,8 +5316,25 @@
     "status": "stable",
     "summary": "The box a person types one line of words into, such as a stop's name or an email address, framed by the Field that gives it its label, its line of help and its error message.",
     "import": "import { TextField } from '@mylder/perron'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use TextField for one line of words a person types, such as a stop's name or an email address, with its label, its line of help and its error.",
+    "alternatives": [
+      {
+        "name": "TextArea",
+        "when": "The words run to sentences, over several lines, such as what the person saw on a trip"
+      },
+      {
+        "name": "SearchField",
+        "when": "The words find a line or a stop, with suggestions under the box"
+      },
+      {
+        "name": "NumberField",
+        "when": "The value is a number, typed or stepped up and down"
+      },
+      {
+        "name": "Select",
+        "when": "The value is one of a short, fixed list"
+      }
+    ],
     "props": [
       {
         "name": "label",
@@ -5001,7 +5481,78 @@
         "description": "Props for the `error` part, such as `match`, to show a message of the caller's own for one failing check only, as `match=\"valueMissing\"`."
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "must",
+        "do": "Give a `label` that names the words, \"Stop name\", and hide it with `hiddenLabel` only where the screen already says it",
+        "dont": "Let the `placeholder` stand in for the label: it vanishes as the person types, and it is drawn in `color.text.tertiary`, below text contrast",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "must",
+        "do": "Put help the person needs while typing in `description`, \"As written on the stop sign\"",
+        "dont": "Put that help in the `placeholder`: it is gone once they type",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "must",
+        "do": "Word an `error` as what to do, \"Enter a stop name\"",
+        "dont": "Blame the person or say only that it failed (\"Invalid input\"), against [Content design](../content-design.md)",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "should",
+        "do": "Spread React Hook Form's `register('stop')` on TextField, or pass Formik's `handleChange`, as on a native `<input>`",
+        "dont": "Wrap TextField in a controller to read its value: its `onChange` is the native one already",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "must",
+        "do": "Give `error` from the form library whenever the field is invalid",
+        "dont": "Set `slotProps.field.invalid` with no message: the red edge alone tells only the eye, and only by its colour",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "must",
+        "do": "Give `autoComplete` for the person's own details, such as `autoComplete=\"email\"`, so the browser can fill them",
+        "dont": "Leave a field that asks for a name, an email address or a phone number without `autoComplete`: WCAG 2.2's identify input purpose (1.3.5) asks for it",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-7",
+        "level": "should",
+        "do": "Set `optional` on the few fields the person may leave empty, and `required` where an empty field must fail",
+        "dont": "Write \"(optional)\", \"(required)\" or an asterisk into `label` yourself: it misses the locale, and an asterisk needs a legend",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-8",
+        "level": "must",
+        "do": "Use SearchField to find a line or a stop, and NumberField for a number",
+        "dont": "Give TextField a `type` of `'search'` or `'number'`: the type union leaves them out, and SearchField and NumberField carry their own keys and words",
+        "checkedBy": "types"
+      },
+      {
+        "id": "DD-9",
+        "level": "must",
+        "do": "Use TextField on its own: it already has its label, its help and its error",
+        "dont": "Wrap TextField in Field: the input would be labelled twice, as Field's spec says",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-10",
+        "level": "should",
+        "do": "Set the width on the container, or on the frame through `slotProps.field`",
+        "dont": "Give the input a width through `style` alone: the label and the error take the frame's width, not the box's",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/components/text-field/"
   },
@@ -5310,8 +5861,29 @@
     "status": "stable",
     "summary": "A box that sets content on one step of the surface ladder: glass or an opaque panel floating over the map, a raised card inside a panel, or an inset box, each with its fill, edge, radius, shadow and padding from the tokens.",
     "import": "import { Surface } from '@mylder/perron'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use Surface for a box that only sets content on one step of the surface ladder: a panel floating over the map, a card inside a panel, or a box set into one.",
+    "alternatives": [
+      {
+        "name": "Dialog",
+        "when": "The panel opens over the screen and holds focus until it closes, with Esc and a backdrop"
+      },
+      {
+        "name": "Sheet",
+        "when": "The panel slides in from the edge of the screen, such as the overview or the detail panel"
+      },
+      {
+        "name": "Popover",
+        "when": "A small glass panel opens from a button and leaves the rest of the screen usable"
+      },
+      {
+        "name": "Section",
+        "when": "The content inside a panel needs a small heading, and an action beside it"
+      },
+      {
+        "name": "Alert",
+        "when": "The box says what is happening and how much it matters, in an intent's tinted colour"
+      }
+    ],
     "props": [
       {
         "name": "variant",
@@ -5351,7 +5923,50 @@
         "description": "Allows you to replace the component's HTML element with a different tag, or compose it with another component. Accepts a `ReactElement` or a function that returns the element to render."
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "should",
+        "do": "Use `glass` for a panel that floats over the map, and `opaque` for one full of text on a phone, as Elevation says.",
+        "dont": "Use `glass` over a plain background or inside another panel: the blur has nothing to soften, and glass on glass loses its edge.",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "should",
+        "do": "Put `raised` cards and `inset` boxes inside a panel, stepping down the ladder.",
+        "dont": "Nest a floating `glass` or `opaque` surface inside another surface, or add a shadow to a card with `className`: only floating panels cast one.",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "should",
+        "do": "Render it as `<section>` or `<aside>` with `aria-labelledby` on its heading when the box is a region someone navigates to.",
+        "dont": "Give every card a landmark element: a screen of unnamed regions is noisier than plain boxes.",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "must",
+        "do": "Use Dialog or Sheet for a panel that opens and closes over the screen, since they bring the focus, Esc and scrim.",
+        "dont": "Build a dialog from a `glass` Surface: it would look right and trap no focus.",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "must",
+        "do": "Say a state in words or with an icon inside the surface.",
+        "dont": "Tint a surface with a status colour through `className` to mean warning or success: colour is never alone.",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "should",
+        "do": "Change the padding through `className` with a `space.*` token when rows must run to the edge.",
+        "dont": "Set raw pixel padding, radius or colours on it, which leave the ladder and the themes behind.",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/components/surface/"
   },
@@ -5853,8 +6468,25 @@
     "status": "stable",
     "summary": "A row of tabs that switches between views of one thing, one panel showing at a time, such as a stop's departures, its lines and its disruptions in the detail panel.",
     "import": "import { Tabs } from '@mylder/perron'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use Tabs to switch between views of one thing, one panel showing at a time, such as a stop's departures, its lines and its disruptions.",
+    "alternatives": [
+      {
+        "name": "SegmentedControl",
+        "when": "The choice changes how one view shows its content, such as departures by mode"
+      },
+      {
+        "name": "FilterChip",
+        "when": "Filters narrow one view, each turned on and off on its own"
+      },
+      {
+        "name": "Accordion",
+        "when": "Headed sections stack down the page, each opening its content under its heading"
+      },
+      {
+        "name": "LinkButton",
+        "when": "The control goes to another screen or page"
+      }
+    ],
     "props": [
       {
         "name": "value",
@@ -5906,7 +6538,64 @@
         "description": "Inherited from Base UI: swaps the root element and keeps the behaviour, the class and the data attributes."
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "should",
+        "do": "Use Tabs to switch between views of one thing, such as a stop's departures, lines and disruptions",
+        "dont": "Use Tabs to filter or sort one view, such as departures by mode: a segmented control or filter chips change a view, tabs change which one",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "must",
+        "do": "Name the tab list with `aria-label` or `aria-labelledby`, such as the stop's name, so a screen reader tells it from the next one",
+        "dont": "Leave the list unnamed beside another set of tabs",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "should",
+        "do": "Keep each label to a word or two, in sentence case: \"Departures\", \"Planned works\"",
+        "dont": "Write a sentence on a tab, or put a count in the label's text: give it as `count`, so every count has one shape",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "must",
+        "do": "Give every `Tab` a `TabsPanel` with the same `value`",
+        "dont": "Leave a tab without a panel: its `aria-controls` points at nothing, and selecting it shows nothing",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "should",
+        "do": "Show a tab whose view is empty, and say so in its panel with an [EmptyState](empty-state.md) or a [DataStatePanel](../patterns/data-state-panel.md)",
+        "dont": "Disable a tab because its view has no data: a disabled tab can't say why, and the empty view is what Mylder should tell",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "should",
+        "do": "Use `keepMounted` on a panel that holds state the caller would lose, such as a scrolled list",
+        "dont": "Keep every panel mounted by default: hidden panels still render, and update with the live data",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-7",
+        "level": "must",
+        "do": "Link to another screen with a [LinkButton](link-button.md)",
+        "dont": "Use tabs as navigation between pages: a tab selects a panel on this screen, and a link is what goes elsewhere",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-8",
+        "level": "should",
+        "do": "Let the tabs size to their labels and wrap on a narrow screen",
+        "dont": "Set the list to scroll sideways or give the tabs fixed widths: only the map scrolls sideways, and a translated label outgrows a fixed width",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/components/tabs/"
   },
@@ -7072,8 +7761,17 @@
     "status": "stable",
     "summary": "A short visual label beside a control, such as \"Zoom in\" over the map's zoom button, shown while a mouse pointer rests on the control or the keyboard focuses it, for sighted mouse and keyboard users.",
     "import": "import { Tooltip } from '@mylder/perron'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use Tooltip for a short visual label beside a control, such as \"Zoom in\" over an icon-only button, for sighted mouse and keyboard users.",
+    "alternatives": [
+      {
+        "name": "MapTooltip",
+        "when": "The card sits against a point on the map, such as the vehicle under the pointer"
+      },
+      {
+        "name": "Popover",
+        "when": "The reader needs a sentence, a link or a control, which a tooltip can't hold"
+      }
+    ],
     "props": [
       {
         "name": "children",
@@ -7161,7 +7859,71 @@
         "description": "Props for the `positioner` part, such as `side`, `align` or `sideOffset`. Its `sideOffset` and `collisionPadding` replace Tooltip's defaults."
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "must",
+        "do": "Give an icon-only control a tooltip with the same words as its accessible name: an IconButton labelled \"Zoom in\" and the tooltip \"Zoom in\"",
+        "dont": "Write tooltip words that differ from the trigger's name: a screen reader hears only the name",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "must",
+        "do": "Keep the words to a short label, in sentence case",
+        "dont": "Put a sentence the reader needs in a tooltip: touch and screen reader users never see it, so put it in visible text or a popover",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "must",
+        "do": "Pass a control that takes a ref and spreads its props as `trigger`, such as a Button, an IconButton or a ToolbarButton",
+        "dont": "Pass a component that drops the props it is given: Base UI's hover and focus handlers never reach the element, and the tooltip never opens",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "must",
+        "do": "Keep a disabled trigger focusable with `focusableWhenDisabled`, so its tooltip still opens from the keys",
+        "dont": "Put the tooltip on a natively `disabled` button: it leaves the tab order, so the keyboard can't reach the tooltip",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "must",
+        "do": "Put a button in a toolbar in a tooltip with `trigger={<ToolbarButton … />}`, the way round [Toolbar](toolbar.md) gives",
+        "dont": "Pass the tooltip's trigger to the button's `render`, as for popups",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "should",
+        "do": "Keep the app inside one `PerronProvider`, so a row of tooltips opens at once after the first",
+        "dont": "Add a provider per tooltip: each waits the full delay again",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-7",
+        "level": "must",
+        "do": "Use [MapTooltip](map-tooltip.md) for a card against a point on the map",
+        "dont": "Wrap the map canvas in a Tooltip: it has one trigger, the whole canvas, not the vehicle under the pointer",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-8",
+        "level": "must",
+        "do": "Put only words in the tooltip",
+        "dont": "Put a link, a button or a field in it: the popup is out of the tab order, so the keys can't reach them",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-9",
+        "level": "should",
+        "do": "Change the side through `slotProps.positioner`, such as `side: 'bottom'`",
+        "dont": "Move the popup with a margin or a `transform`: Base UI's placement and flipping no longer match what is drawn",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/components/tooltip/"
   },
@@ -7645,8 +8407,25 @@
     "status": "stable",
     "summary": "One vehicle drawn as a dot in its line's colour, its shape saying how fresh the vehicle's data is, one of the five states on Data states, for rows, lists and legends beside the map.",
     "import": "import { VehicleDot } from '@mylder/perron'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use VehicleDot to draw one vehicle's data state as a dot in its line's colour, beside words that say the state, in a row, a list or a legend.",
+    "alternatives": [
+      {
+        "name": "VehicleDotLabel",
+        "when": "The state's word goes beside the dot, as it must wherever nothing else on the screen writes it"
+      },
+      {
+        "name": "VehicleDotLegend",
+        "when": "The dots need a key: all five states together"
+      },
+      {
+        "name": "StationIcon",
+        "when": "The marker stands for a stop or station"
+      },
+      {
+        "name": "LineBadge",
+        "when": "The label names the line"
+      }
+    ],
     "props": [
       {
         "name": "variant",
@@ -7728,7 +8507,71 @@
         "description": "Allows you to replace the component's HTML element with a different tag, or compose it with another component. Accepts a `ReactElement` or a function that returns the element to render."
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "must",
+        "do": "Write the state in words next to the dot, or use VehicleDotLabel, which will",
+        "dont": "Show a dot alone in a list and trust its shape to carry the state: a state is always written in words beside it",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "should",
+        "do": "Pass `aria-hidden` when the state's word is already beside the dot",
+        "dont": "Let a screen reader hear \"Live\" twice, once from the dot and once from the text",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "must",
+        "do": "Name the line in words nearby, such as in a LineBadge",
+        "dont": "Let the dot's colour be the only sign of the line: several line colours miss 3:1 on the light surfaces",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "should",
+        "do": "Leave `line` out for a dot that stands for a state across many lines, such as a count of live vehicles",
+        "dont": "Leave `line` out of one vehicle's dot: it would lose its line's colour, which the map and the rows share",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "must",
+        "do": "Work out the state from the report's age with the app's [thresholds](../foundations/data-states.md#thresholds), by default `vehicle-dot.live-threshold` and `vehicle-dot.ageing-threshold`",
+        "dont": "Pass `live` for a vehicle whose last report is minutes old: the dot would claim more than the data knows",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "must",
+        "do": "Keep the ring, the dashed ring, the cut dot and `color.data-state.no-signal` for a vehicle's data state",
+        "dont": "Draw a ring, a dashed ring or a slashed dot to mean anything else, such as a stop, an option or a disabled control",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-7",
+        "level": "should",
+        "do": "Pick the `size` that matches the text beside it: `small` for captions, `medium` for labels, `large` for panel titles",
+        "dont": "Resize it with `className` or a raw width, which breaks its stroke widths against its icon-sized neighbours",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-8",
+        "level": "should",
+        "do": "Draw vehicles on the map canvas with the map's own dot sizes and halo",
+        "dont": "Render a VehicleDot per vehicle on the map: it is for rows, lists and legends",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-9",
+        "level": "must",
+        "do": "Wrap the dot in a Perron button or link when the rider can open the vehicle",
+        "dont": "Add `onClick` or `tabIndex` to the dot: it has no focus ring, role for a control or target size",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/components/vehicle-dot/"
   },
@@ -7739,8 +8582,21 @@
     "status": "stable",
     "summary": "A vehicle's data state as its dot and its word side by side, such as a solid dot and \"Live\", for rows, tables and strips that say how fresh a vehicle's data is.",
     "import": "import { VehicleDotLabel } from '@mylder/perron'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use VehicleDotLabel wherever a vehicle's data state is shown in a row, a table or a strip, so its dot and its word always come together.",
+    "alternatives": [
+      {
+        "name": "VehicleDotLegend",
+        "when": "All five states are explained together, as a key"
+      },
+      {
+        "name": "ReportStrip",
+        "when": "The row counts how many vehicles are in each state"
+      },
+      {
+        "name": "SeverityLabel",
+        "when": "The label names a kind of disruption on a line, such as a data feed problem"
+      }
+    ],
     "props": [
       {
         "name": "variant",
@@ -7815,7 +8671,57 @@
         "description": "Allows you to replace the component's HTML element with a different tag, or compose it with another component. Accepts a `ReactElement` or a function that returns the element to render."
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "should",
+        "do": "Use VehicleDotLabel wherever a vehicle's data state is shown, so its dot and its word always come together",
+        "dont": "Set a VehicleDot beside your own word for the state: the word could drift from content design's, and be heard twice",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "must",
+        "do": "Name the line in words nearby, such as in a LineBadge",
+        "dont": "Let the dot's colour be the only sign of the line: several line colours miss 3:1 on the light surfaces",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "must",
+        "do": "Put a time beside the label, such as \"since 08:02\" after \"No signal\", in your own text",
+        "dont": "Override a `*Label` to add the time or to rename a state: the five words are the same on every screen, in every language",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "must",
+        "do": "Work out the state from the report's age with the app's [thresholds](../foundations/data-states.md#thresholds), by default `vehicle-dot.live-threshold` and `vehicle-dot.ageing-threshold`",
+        "dont": "Pass `live` for a vehicle whose last report is minutes old: the label would claim more than the data knows",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "should",
+        "do": "Use VehicleDotLegend to explain all five states together",
+        "dont": "Stack VehicleDotLabels as a legend: a legend lists all five states in Data states' order, even one with no vehicles",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "must",
+        "do": "Wrap the label in a Perron button or link when the rider can open the vehicle",
+        "dont": "Add `onClick` or `tabIndex` to the label: it has no focus ring, role for a control or target size",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-7",
+        "level": "must",
+        "do": "Use SeverityLabel for a kind of disruption on a line",
+        "dont": "Use VehicleDotLabel's no signal for a feed problem across a line: that is SeverityLabel's \"Data feed problems\"",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/components/vehicle-dot-label/"
   },
@@ -7826,8 +8732,21 @@
     "status": "stable",
     "summary": "The key to the vehicle dots: the five data states, each as its dot's shape beside its word, in the order Data states lists them, for the bottom of the map and for any panel that explains the dots.",
     "import": "import { VehicleDotLegend } from '@mylder/perron'",
-    "whenToUse": "",
-    "alternatives": [],
+    "whenToUse": "Use VehicleDotLegend as the key to the vehicle dots, wherever the dots appear without their words, such as at the bottom of the map.",
+    "alternatives": [
+      {
+        "name": "VehicleDotLabel",
+        "when": "One vehicle's state shows in a row, its dot beside its word"
+      },
+      {
+        "name": "DataStateKey",
+        "when": "The key also counts the vehicles in each state and says what each means in the app's thresholds"
+      },
+      {
+        "name": "ReportStrip",
+        "when": "The row counts how many vehicles are in each state"
+      }
+    ],
     "props": [
       {
         "name": "liveLabel",
@@ -7903,7 +8822,64 @@
         "description": "Allows you to replace the component's HTML element with a different tag, or compose it with another component. Accepts a `ReactElement` or a function that returns the element to render."
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "id": "DD-1",
+        "level": "should",
+        "do": "Show the legend wherever vehicle dots appear without their words, such as at the bottom centre of the map",
+        "dont": "Build a legend of your own from VehicleDots and words: it drifts from the five states' order and words",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-2",
+        "level": "must",
+        "do": "Keep all five states, even when no vehicle on screen is in one",
+        "dont": "Hide a state with `className` or CSS because no vehicle has it: [Data states](../foundations/data-states.md) asks for all five",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-3",
+        "level": "should",
+        "do": "Set `aircraftVisible` while the map draws aircraft, and leave it off when the screen hides them",
+        "dont": "Draw a plane of your own beside the legend: it drifts from the glyph the map draws",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-4",
+        "level": "should",
+        "do": "Put the legend on a glass Surface over the map, or straight on a panel's surface",
+        "dont": "Expect the legend to bring its own glass, place itself or stack itself over the map",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-5",
+        "level": "must",
+        "do": "Name the list with `aria-label` or `aria-labelledby` where it stands alone, as on the map",
+        "dont": "Pass `aria-hidden` to the legend: the eye reads its words, so the ear gets them too",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-6",
+        "level": "must",
+        "do": "Keep `render` on the root to another list element, `<ol>` or a component that renders one",
+        "dont": "Swap the root for a `<div>` through `render`: its `<li>`s would sit outside a list, which HTML and axe both fail",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-7",
+        "level": "must",
+        "do": "Override a word with its `*Label` prop when a screen's copy needs it, and the same prop on the screen's VehicleDots",
+        "dont": "Change one word on the legend and leave the dots' names, so the eye and the ear are told two names for one state",
+        "checkedBy": "review"
+      },
+      {
+        "id": "DD-8",
+        "level": "must",
+        "do": "Explain beside the legend what each state means, where a panel does, in the app's own figures from its [thresholds](../foundations/data-states.md#thresholds)",
+        "dont": "Write the defaults as fixed facts, such as \"Live: under a minute old\": an app with a slower feed sets its own live threshold, and the words would disagree with its dots",
+        "checkedBy": "review"
+      }
+    ],
     "agentNotes": [],
     "docs": "https://marcin-sieradzki.github.io/perron/components/vehicle-dot-legend/"
   },

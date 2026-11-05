@@ -6,6 +6,18 @@ A two-state control that turns one setting on or off at once, such as showing ve
 
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the [contract](README.md), the [foundations](../foundations/README.md), [content design](../content-design.md), the tokens and the Base UI reference for `@base-ui/react` 1.9.0. No ROADMAP line names Switch; it joined the registry with the form components, with `baseUiParts` `Switch.Root` and `Switch.Thumb` and nothing in `dependsOn`. The extracted prototype component is not in any branch this run can reach, so nothing here rests on it. The foundations already name its look: [Elevation](../foundations/elevation.md#surfaces) puts tracks on `color.surface.inset` and pressed toggles on `color.surface.inverse`, [Accessibility](../foundations/accessibility.md#rules) asks every target to be `size.target-min` and every control's edge to reach 3:1, which `color.border.control` does, and [Semantic spacing](../foundations/semantic-spacing.md#radius) gives pills `radius.full`.
 
+## When to use
+
+Use Switch for one setting that takes effect the moment it is turned on or off, such as showing vehicle trails on the map.
+
+| Use instead                              | When                                                                        |
+| ---------------------------------------- | --------------------------------------------------------------------------- |
+| [Checkbox](checkbox.md)                  | The answer is sent later, with a form's button                              |
+| [FilterChip](filter-chip.md)             | The thing turned on and off filters the map's vehicles, in a row of filters |
+| [RadioGroup](radio-group.md)             | The choice is exactly one of several, such as the theme the map is drawn in |
+| [SegmentedControl](segmented-control.md) | The choice is one of two to five ways to show one view                      |
+| [Button](button.md)                      | The control runs an action, such as following a vehicle                     |
+
 ## Anatomy
 
 Penpot page `Components/Switch`. Family: none (the contract's [Families](README.md#families) have no two-state track; its surfaces come from [Elevation](../foundations/elevation.md#surfaces), as FilterChip's do). Shared parts: none (every word is the caller's, and the state is told by `role="switch"` with `aria-checked`, not by a hidden word).
@@ -177,14 +189,18 @@ The deferred design's page draws one variant property, `State` (`default`, `hove
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                                                | Don't                                                                                                                                                        |
-| ------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Use a Switch for a setting that takes effect the moment it changes, such as showing vehicle trails or the stations on the map                     | Use it for an answer a form sends later with a button: a checkbox says "choose now, apply on submit", where a switch says "this is on now"                   |
-| Name it with a visible `<label>` or a Field's label that names the setting, in sentence case: "Show vehicle trails"                               | Leave it unnamed, or name it with `aria-label` where there is room for a visible label: a sighted person can't tell what an unlabelled switch turns on       |
-| Keep the label the same whether the switch is on or off                                                                                           | Write the state in the label, "Trails on", or swap it when the switch flips: the switch already says on or off, and a changing label reads as a second state |
-| Put the label before the switch in a settings row, and let a long label wrap                                                                      | Squeeze the switch to fit a long label, or cut the label off: the track keeps its size, and a Danish label is longer than its English                        |
-| Filter the map's vehicles with a [FilterChip](filter-chip.md), and pick one way of showing a view with a [SegmentedControl](segmented-control.md) | Use a row of switches for one choice of several, or for the top bar's filters: switches each turn their own setting on, and a chip shows its count           |
-| Run an action, such as following a vehicle, with a [Button](button.md)                                                                            | Use a switch to start something that then runs on its own: a switch holds a state, it doesn't trigger one                                                    |
-| Say why a switch is disabled or read-only, in its label or the Field's description                                                                | Disable a switch with no word of why: a dimmed switch can't explain itself                                                                                   |
+| Rule | Level  | Do                                                                                                                                                | Don't                                                                                                                                                        | Checked by |
+| ---- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- |
+| DD-1 | must   | Use a Switch for a setting that takes effect the moment it changes, such as showing vehicle trails or the stations on the map                     | Use it for an answer a form sends later with a button: a checkbox says "choose now, apply on submit", where a switch says "this is on now"                   | review     |
+| DD-2 | must   | Name it with a visible `<label>` or a Field's label that names the setting, in sentence case: "Show vehicle trails"                               | Leave it unnamed, or name it with `aria-label` where there is room for a visible label: a sighted person can't tell what an unlabelled switch turns on       | review     |
+| DD-3 | must   | Keep the label the same whether the switch is on or off                                                                                           | Write the state in the label, "Trails on", or swap it when the switch flips: the switch already says on or off, and a changing label reads as a second state | review     |
+| DD-4 | should | Put the label before the switch in a settings row, and let a long label wrap                                                                      | Squeeze the switch to fit a long label, or cut the label off: the track keeps its size, and a Danish label is longer than its English                        | review     |
+| DD-5 | should | Filter the map's vehicles with a [FilterChip](filter-chip.md), and pick one way of showing a view with a [SegmentedControl](segmented-control.md) | Use a row of switches for one choice of several, or for the top bar's filters: switches each turn their own setting on, and a chip shows its count           | review     |
+| DD-6 | must   | Run an action, such as following a vehicle, with a [Button](button.md)                                                                            | Use a switch to start something that then runs on its own: a switch holds a state, it doesn't trigger one                                                    | review     |
+| DD-7 | should | Say why a switch is disabled or read-only, in its label or the Field's description                                                                | Disable a switch with no word of why: a dimmed switch can't explain itself                                                                                   | review     |
+
+## For agents
+
+None known yet.

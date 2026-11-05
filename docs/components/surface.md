@@ -2,6 +2,18 @@
 
 A box that sets content on one step of the surface ladder: glass or an opaque panel floating over the map, a raised card inside a panel, or an inset box, each with its fill, edge, radius, shadow and padding from the tokens.
 
+## When to use
+
+Use Surface for a box that only sets content on one step of the surface ladder: a panel floating over the map, a card inside a panel, or a box set into one.
+
+| Use instead           | When                                                                                      |
+| --------------------- | ----------------------------------------------------------------------------------------- |
+| [Dialog](dialog.md)   | The panel opens over the screen and holds focus until it closes, with Esc and a backdrop  |
+| [Sheet](sheet.md)     | The panel slides in from the edge of the screen, such as the overview or the detail panel |
+| [Popover](popover.md) | A small glass panel opens from a button and leaves the rest of the screen usable          |
+| [Section](section.md) | The content inside a panel needs a small heading, and an action beside it                 |
+| [Alert](alert.md)     | The box says what is happening and how much it matters, in an intent's tinted colour      |
+
 ## Anatomy
 
 Penpot page `Components/Surface`. Family: none. Shared parts: none.
@@ -133,13 +145,17 @@ No owned strings: Surface shows and announces no words of its own; every word in
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                         | Don't                                                                                                                                          |
-| -------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| Use `glass` for a panel that floats over the map, and `opaque` for one full of text on a phone, as Elevation says.         | Use `glass` over a plain background or inside another panel: the blur has nothing to soften, and glass on glass loses its edge.                |
-| Put `raised` cards and `inset` boxes inside a panel, stepping down the ladder.                                             | Nest a floating `glass` or `opaque` surface inside another surface, or add a shadow to a card with `className`: only floating panels cast one. |
-| Render it as `<section>` or `<aside>` with `aria-labelledby` on its heading when the box is a region someone navigates to. | Give every card a landmark element: a screen of unnamed regions is noisier than plain boxes.                                                   |
-| Use Dialog or Sheet for a panel that opens and closes over the screen, since they bring the focus, Esc and scrim.          | Build a dialog from a `glass` Surface: it would look right and trap no focus.                                                                  |
-| Say a state in words or with an icon inside the surface.                                                                   | Tint a surface with a status colour through `className` to mean warning or success: colour is never alone.                                     |
-| Change the padding through `className` with a `space.*` token when rows must run to the edge.                              | Set raw pixel padding, radius or colours on it, which leave the ladder and the themes behind.                                                  |
+| Rule | Level  | Do                                                                                                                         | Don't                                                                                                                                          | Checked by |
+| ---- | ------ | -------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | should | Use `glass` for a panel that floats over the map, and `opaque` for one full of text on a phone, as Elevation says.         | Use `glass` over a plain background or inside another panel: the blur has nothing to soften, and glass on glass loses its edge.                | review     |
+| DD-2 | should | Put `raised` cards and `inset` boxes inside a panel, stepping down the ladder.                                             | Nest a floating `glass` or `opaque` surface inside another surface, or add a shadow to a card with `className`: only floating panels cast one. | review     |
+| DD-3 | should | Render it as `<section>` or `<aside>` with `aria-labelledby` on its heading when the box is a region someone navigates to. | Give every card a landmark element: a screen of unnamed regions is noisier than plain boxes.                                                   | review     |
+| DD-4 | must   | Use Dialog or Sheet for a panel that opens and closes over the screen, since they bring the focus, Esc and scrim.          | Build a dialog from a `glass` Surface: it would look right and trap no focus.                                                                  | review     |
+| DD-5 | must   | Say a state in words or with an icon inside the surface.                                                                   | Tint a surface with a status colour through `className` to mean warning or success: colour is never alone.                                     | review     |
+| DD-6 | should | Change the padding through `className` with a `space.*` token when rows must run to the edge.                              | Set raw pixel padding, radius or colours on it, which leave the ladder and the themes behind.                                                  | review     |
+
+## For agents
+
+None known yet.
