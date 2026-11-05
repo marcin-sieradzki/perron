@@ -2,6 +2,12 @@
 
 Kbd shows one key of the keyboard, such as "Esc", "+" or "↑", inside help text, so a sentence like "Keys: + and − zoom, arrows pan, Esc closes panels." shows each key as a key.
 
+## When to use
+
+Use Kbd for one key of the keyboard in help text, such as "Esc" in "Esc closes panels", so the reader sees it is a key.
+
+Nothing else in Perron does this.
+
 ## Anatomy
 
 Penpot page `Components/Kbd`. Family: none. Shared parts: none.
@@ -116,13 +122,17 @@ One per variant the deferred design will draw. Kbd has no variant property, so i
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                         | Don't                                                                                                                                            |
-| -------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Name keys in help text, one Kbd per key, as content design writes it: "Keys: + and − zoom, arrows pan, Esc closes panels." | Write a key as a quoted word, "press 'Esc'", where a Kbd says it is a key                                                                        |
-| Write the key as the keyboard prints it or the platform names it, in its own case: "Esc", "Enter", "−", "↑"                | Write it in capitals ("ESC"), as an emoji, or as an icon; the key's text is what a screen reader hears                                           |
-| Name the left and right arrows in words, or all four as "arrows", as content design writes it: "arrows pan"                | Put "←" or "→" in a Kbd; the font Perron ships has no glyph for them, so they fall back to the system's monospace and look unlike the other keys |
-| Give a combination one Kbd per key, with "+" between them in the text: `<Kbd>Ctrl</Kbd> + <Kbd>K</Kbd>`                    | Put a whole combination or a sentence in one Kbd; the box is sized for one key                                                                   |
-| Mark the control a key works with `aria-keyshortcuts`, and keep the action reachable by pressing the control too           | Make the Kbd the only way to learn or do the action, or add `onClick` or `tabIndex` to it                                                        |
-| Show key hints where people have a keyboard, such as the help on a desktop screen                                          | Show keys on a phone's screen, which has no keyboard to press them on                                                                            |
+| Rule | Level  | Do                                                                                                                         | Don't                                                                                                                                            | Checked by |
+| ---- | ------ | -------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- |
+| DD-1 | should | Name keys in help text, one Kbd per key, as content design writes it: "Keys: + and − zoom, arrows pan, Esc closes panels." | Write a key as a quoted word, "press 'Esc'", where a Kbd says it is a key                                                                        | review     |
+| DD-2 | must   | Write the key as the keyboard prints it or the platform names it, in its own case: "Esc", "Enter", "−", "↑"                | Write it in capitals ("ESC"), as an emoji, or as an icon; the key's text is what a screen reader hears                                           | review     |
+| DD-3 | should | Name the left and right arrows in words, or all four as "arrows", as content design writes it: "arrows pan"                | Put "←" or "→" in a Kbd; the font Perron ships has no glyph for them, so they fall back to the system's monospace and look unlike the other keys | review     |
+| DD-4 | should | Give a combination one Kbd per key, with "+" between them in the text: `<Kbd>Ctrl</Kbd> + <Kbd>K</Kbd>`                    | Put a whole combination or a sentence in one Kbd; the box is sized for one key                                                                   | review     |
+| DD-5 | must   | Mark the control a key works with `aria-keyshortcuts`, and keep the action reachable by pressing the control too           | Make the Kbd the only way to learn or do the action, or add `onClick` or `tabIndex` to it                                                        | review     |
+| DD-6 | should | Show key hints where people have a keyboard, such as the help on a desktop screen                                          | Show keys on a phone's screen, which has no keyboard to press them on                                                                            | review     |
+
+## For agents
+
+None known yet.
