@@ -6,6 +6,7 @@ import {
   answerMarkdown,
   answerTokens,
   callTool,
+  isJsonAnswer,
   connect,
   connectPerron,
   excerpt,
@@ -201,6 +202,24 @@ describe('answerTokens', () => {
   })
 })
 
+describe('isJsonAnswer', () => {
+  it("reads the component tools' answers as JSON, one value or one a line", async () => {
+    const tools = await loadTools()
+    const json = (name: string) =>
+      isJsonAnswer(tools.find((t) => t.name === name)?.example?.text ?? '')
+    expect({ list: json('list_components'), get: json('get_component') }).toEqual({
+      list: true,
+      get: true,
+    })
+  })
+
+  it('reads prose, and a line that is not JSON, as no JSON', () => {
+    expect(isJsonAnswer('From Motion (docs/foundations/motion.md):\n\n## Durations')).toBe(false)
+    expect(isJsonAnswer('{"name":"Button"}\nNo more.')).toBe(false)
+    expect(isJsonAnswer('')).toBe(false)
+  })
+})
+
 describe('answerMarkdown', () => {
   it('decodes references, lowers headings and unlinks relative links', () => {
     expect(answerMarkdown('| a | pixels.&#xA;Also &#38; more |')).toBe(
@@ -244,7 +263,9 @@ describe('answerMarkdown', () => {
 describe('readSources', () => {
   it('names the data and each library the server reads, at their installed versions', async () => {
     const [data, ...libraries] = await readSources()
-    expect(data.files).toEqual(expect.arrayContaining(['tokens.json', 'docs.json']))
+    expect(data.files).toEqual(
+      expect.arrayContaining(['tokens.json', 'docs.json', 'components.json']),
+    )
     expect(data.version).toMatch(/^\d+\.\d+\.\d+/)
     expect(libraries.map((l) => l.name)).toEqual(['@base-ui/react', '@mui/material'])
     for (const l of libraries) expect(l.version).toMatch(/^\d+\.\d+\.\d+/)

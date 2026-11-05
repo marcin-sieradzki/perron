@@ -6,6 +6,15 @@ A link that looks like a [Button](button.md): it takes the reader to another pag
 
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the contract, the foundations, the tokens, the Base UI reference and the [Button](button.md) spec, the one entry in its `dependsOn`. Base UI's Button guide settles the shape: Base UI's `Button` "enforces button semantics" (`role="button"`, Space activation) and "should not be used for links", and "if a link needs to look like a button visually, style the `<a>` element directly with CSS". So LinkButton is a native `<a href>` with Button's look, not a Button with `render={<a />}`.
 
+## When to use
+
+Use LinkButton for a link shaped like a button, which takes the reader to another page or place, such as "Back to the map" or "Open in Rejseplanen".
+
+| Use instead         | When                                                 |
+| ------------------- | ---------------------------------------------------- |
+| [Button](button.md) | Pressing it runs an action on the screen it sits on  |
+| [Link](link.md)     | The link sits in a sentence, or stands as plain text |
+
 ## Anatomy
 
 Penpot page `Components/LinkButton`. Family: none (the contract's [Families](README.md#families) give buttons only their text, `typography.label`, and LinkButton wears Button's treatment). Shared parts: none.
@@ -172,15 +181,19 @@ The deferred design's variant properties, in this order: `variant` (`solid`, `ou
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                            | Don't                                                                                                                                                  |
-| ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Use LinkButton when pressing it goes somewhere: another page, another place in the app, another site                          | Use LinkButton to run an action, such as showing a line or closing a panel, with an `onClick` that prevents the link: that is a Button                 |
-| Use Button for an action and LinkButton for navigation, even when they sit side by side and look alike                        | Render a link through Button's `render={<a href="/map" />}`: Base UI gives it `role="button"`, and a screen reader hears a button that navigates       |
-| Name where the link goes, in sentence case: "Back to the map", "Open in Rejseplanen"                                          | Write "Click here", "Read more", Title Case or an exclamation mark ([Content design](../content-design.md)): the role already says it is a link        |
-| Give a router's link through `render`, such as `render={<Link to="/map" />}`, so the app's navigation runs and the look stays | Wrap a LinkButton in a router link, or a router link in a LinkButton: two nested `<a>` elements are invalid and make two tab stops                     |
-| Use a plain `<a>` inside a sentence, where a link is part of the text                                                         | Put a LinkButton in running text: its height and padding break the line                                                                                |
-| Keep LinkButton in ink; give the screen's one main action to a `brand` Button                                                 | Restyle a LinkButton in the brand yellow: brand is never a link ([Intents](README.md#intents))                                                         |
-| Leave a link out, or show a disabled Button, when there is nowhere to go yet                                                  | Render a LinkButton without `href` or `render`, or fake a disabled one with `opacity`: an `<a>` with no `href` is not a link, and disabled is a colour |
-| Use IconButton for a control with an icon and no words                                                                        | Pass only a `startIcon` and no `children`: the icon is `aria-hidden`, so the link has no name                                                          |
+| Rule | Level  | Do                                                                                                                            | Don't                                                                                                                                                  | Checked by |
+| ---- | ------ | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- |
+| DD-1 | must   | Use LinkButton when pressing it goes somewhere: another page, another place in the app, another site                          | Use LinkButton to run an action, such as showing a line or closing a panel, with an `onClick` that prevents the link: that is a Button                 | review     |
+| DD-2 | must   | Use Button for an action and LinkButton for navigation, even when they sit side by side and look alike                        | Render a link through Button's `render={<a href="/map" />}`: Base UI gives it `role="button"`, and a screen reader hears a button that navigates       | review     |
+| DD-3 | must   | Name where the link goes, in sentence case: "Back to the map", "Open in Rejseplanen"                                          | Write "Click here", "Read more", Title Case or an exclamation mark ([Content design](../content-design.md)): the role already says it is a link        | review     |
+| DD-4 | must   | Give a router's link through `render`, such as `render={<Link to="/map" />}`, so the app's navigation runs and the look stays | Wrap a LinkButton in a router link, or a router link in a LinkButton: two nested `<a>` elements are invalid and make two tab stops                     | review     |
+| DD-5 | should | Use a plain `<a>` inside a sentence, where a link is part of the text                                                         | Put a LinkButton in running text: its height and padding break the line                                                                                | review     |
+| DD-6 | must   | Keep LinkButton in ink; give the screen's one main action to a `brand` Button                                                 | Restyle a LinkButton in the brand yellow: brand is never a link ([Intents](README.md#intents))                                                         | review     |
+| DD-7 | must   | Leave a link out, or show a disabled Button, when there is nowhere to go yet                                                  | Render a LinkButton without `href` or `render`, or fake a disabled one with `opacity`: an `<a>` with no `href` is not a link, and disabled is a colour | review     |
+| DD-8 | must   | Use IconButton for a control with an icon and no words                                                                        | Pass only a `startIcon` and no `children`: the icon is `aria-hidden`, so the link has no name                                                          | review     |
+
+## For agents
+
+None known yet.
