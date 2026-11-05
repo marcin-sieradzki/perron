@@ -24,7 +24,7 @@ const STOP = new Set(
 )
 
 /** A query's words, in any script, lowercased and without the common ones. */
-const wordsOf = (query: string) =>
+export const wordsOf = (query: string) =>
   query
     .toLowerCase()
     .split(/[^\p{L}\p{N}]+/u)

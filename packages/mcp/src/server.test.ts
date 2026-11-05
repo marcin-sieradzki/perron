@@ -166,6 +166,102 @@ describe('the Perron MCP server', () => {
     expect(text).toContain('Positioner')
   })
 
+  it('lists the components of one layer and category whose words match, one JSON line each', async () => {
+    const { text } = await call('list_components', {
+      query: 'setting',
+      layer: 'component',
+      category: 'inputs',
+    })
+    const found = text.split('\n').map((l) => JSON.parse(l))
+    expect(found.map((c: { name: string }) => c.name)).toEqual(
+      expect.arrayContaining(['Checkbox', 'Switch']),
+    )
+    for (const c of found) {
+      expect(Object.keys(c)).toEqual(['name', 'layer', 'category', 'status', 'summary'])
+      expect(c).toMatchObject({ layer: 'component', category: 'Inputs' })
+    }
+    expect(found.find((c: { name: string }) => c.name === 'Switch').summary).toMatch(
+      /^A two-state control that turns one setting on or off/,
+    )
+  })
+
+  it('answers a question in words with the entries that fit it first', async () => {
+    const { text } = await call('list_components', { query: 'something for a yes or no setting' })
+    const first = text
+      .split('\n')
+      .slice(0, 3)
+      .map((l) => JSON.parse(l).name)
+    expect(first).toEqual(expect.arrayContaining(['Checkbox', 'Switch']))
+  })
+
+  it('lists every component and pattern when nothing filters them', async () => {
+    const names = (await call('list_components', {})).text
+      .split('\n')
+      .map((l) => JSON.parse(l).name)
+    expect(names).toEqual(expect.arrayContaining(['Button', 'DepartureRow', 'StopTimeline']))
+  })
+
+  it('says so when no component matches', async () => {
+    const { text, isError } = await call('list_components', { query: 'hovercraft' })
+    expect(isError).toBe(true)
+    expect(text).toMatch(/hovercraft/)
+  })
+
+  it("gives Button's record: what to use instead, its props and its rules with their levels", async () => {
+    const { text, isError } = await call('get_component', { name: 'Button' })
+    expect(isError).toBe(false)
+    const button = JSON.parse(text)
+    expect(button).toMatchObject({
+      name: 'Button',
+      import: "import { Button } from '@mylder/perron'",
+      docs: expect.stringMatching(/\/components\/button\/$/),
+    })
+    expect(button.alternatives).toContainEqual(expect.objectContaining({ name: 'LinkButton' }))
+    expect(button.props).toContainEqual(
+      expect.objectContaining({ name: 'variant', default: "'solid'" }),
+    )
+    expect(button.rules).toContainEqual(
+      expect.objectContaining({ id: 'DD-4', level: 'should', checkedBy: 'review' }),
+    )
+    expect(button.rules).toContainEqual(
+      expect.objectContaining({ id: 'DD-5', level: 'must', checkedBy: 'types' }),
+    )
+  })
+
+  it('finds a component named in kebab case or lower case', async () => {
+    expect(JSON.parse((await call('get_component', { name: 'link-button' })).text).name).toBe(
+      'LinkButton',
+    )
+  })
+
+  it('names the nearest components when asked for one that does not exist', async () => {
+    const { text, isError } = await call('get_component', { name: 'IconButon' })
+    expect(isError).toBe(true)
+    expect(text).toMatch(
+      /^No component or pattern is named "IconButon"\. The nearest: IconButton, /,
+    )
+  })
+
+  it("reads the project's own components, and names a deprecated one's successor in the list", async () => {
+    const dir = mkdtempSync(join(tmpdir(), 'perron-mcp-'))
+    const data = join(dir, 'node_modules/@mylder/perron/data')
+    mkdirSync(data, { recursive: true })
+    writeFileSync(join(dir, 'node_modules/@mylder/perron/package.json'), '{}')
+    const own = JSON.parse(readFileSync(join(root, 'packages/perron/data/components.json'), 'utf8'))
+    const chip = {
+      ...own.find((c: { name: string }) => c.name === 'Tag'),
+      name: 'Chip',
+      status: 'deprecated',
+      replacedBy: 'Tag',
+    }
+    writeFileSync(join(data, 'components.json'), JSON.stringify([...own, chip]))
+    expect((await call('get_component', { name: 'Chip' })).isError).toBe(true)
+    const { text } = await call('list_components', { query: 'chip', dir })
+    expect(text.split('\n').map((l) => JSON.parse(l))).toContainEqual(
+      expect.objectContaining({ name: 'Chip', status: 'deprecated', replacedBy: 'Tag' }),
+    )
+  })
+
   it('reads the tokens of the project `dir` names, such as a worktree, over its own', async () => {
     const dir = mkdtempSync(join(tmpdir(), 'perron-mcp-'))
     const data = join(dir, 'node_modules/@mylder/perron/data')

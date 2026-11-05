@@ -23,6 +23,8 @@ export const MCP_README = 'packages/mcp/README.md'
 export const EXAMPLES: Record<string, Record<string, unknown>> = {
   list_tokens: { query: 'surface warning' },
   search_docs: { query: 'reduced motion', limit: 1 },
+  list_components: { query: 'a yes or no setting' },
+  get_component: { name: 'Button' },
   get_reference: { library: 'base-ui', component: 'Select', part: 'Positioner' },
 }
 
@@ -214,6 +216,20 @@ export function answerTokens(text: string): AnswerToken[] | undefined {
     tokens.push({ name: t.name, type: t.type, cssVar: t.cssVar, values: t.values })
   }
   return tokens
+}
+
+/** Whether `text` parses as JSON, whole or one value a line: an answer the page shows as code. */
+export function isJsonAnswer(text: string) {
+  const parses = (t: string) => {
+    try {
+      JSON.parse(t)
+      return true
+    } catch {
+      return false
+    }
+  }
+  const lines = text.split('\n').filter((l) => l.trim())
+  return lines.length > 0 && (parses(text) || lines.every(parses))
 }
 
 /**

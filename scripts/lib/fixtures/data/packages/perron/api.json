@@ -1,0 +1,20 @@
+{
+  "Chip": {
+    "extends": ["useRender.ComponentProps<'span'>"],
+    "props": {
+      "children": { "optional": false, "type": ["ReactNode"] },
+      "outlined": {
+        "optional": true,
+        "type": ["boolean"],
+        "deprecated": "Use `variant=\"outline\"` instead."
+      },
+      "variant": { "optional": true, "type": ["\"outline\"", "\"solid\""] }
+    }
+  },
+  "Tag": {
+    "extends": ["useRender.ComponentProps<'span'>"],
+    "props": {
+      "children": { "optional": true, "type": ["ReactNode"] }
+    }
+  }
+}
