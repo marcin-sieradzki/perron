@@ -1,6 +1,7 @@
 // A registry entry of packages/perron/components.json: its shape, its validation, and what follows
-// from the entry alone (its folder, whether it is built, its spec page). Node-free, so the contract
-// story reads the registry with it in the browser; scripts/lib/registry.ts does the file I/O.
+// from the entry alone (its folder, whether it is built, its spec page, its deprecation notice).
+// Node-free, so the contract story and the docs pages read the registry with it in the browser;
+// scripts/lib/registry.ts does the file I/O.
 
 export const LAYERS = ['component', 'pattern'] as const
 export const STATUSES = ['designing', 'building', 'stable', 'deprecated'] as const
@@ -15,6 +16,11 @@ export interface Entry {
   /** Groups entries in the sidebar, the barrels and the spec pages */
   category: string
   status: Status
+  /**
+   * The entry to use instead, by name: required when `status` is `deprecated` and left out
+   * otherwise. It is a registered entry in the same layer that is not deprecated itself.
+   */
+  replacedBy?: string
   /** The Base UI parts it builds on, such as `Select.Root`; always empty for a pattern */
   baseUiParts: string[]
   /** Its board in the Penpot file: `Components/<Name>` or `Patterns/<Name>` */
@@ -32,6 +38,9 @@ const FIELDS = [
   'penpotPath',
   'dependsOn',
 ] as const
+/** The fields an entry may leave out. */
+const OPTIONAL = ['replacedBy'] as const
+const KNOWN: readonly string[] = [...FIELDS, ...OPTIONAL]
 const PASCAL = /^[A-Z][A-Za-z0-9]*$/
 const PART = /^[A-Z][A-Za-z0-9]*(\.[A-Z][A-Za-z0-9]*)*$/
 /** The Penpot page folder of each layer, which a `penpotPath` starts with. */
@@ -48,8 +57,8 @@ function entryProblems(raw: unknown, index: number): string[] {
   const id = typeof e.name === 'string' && e.name ? e.name : `entry ${index + 1}`
   const out: string[] = []
   for (const key of Object.keys(e))
-    if (!(FIELDS as readonly string[]).includes(key))
-      out.push(`${id} has an unknown field "${key}"; the fields are ${FIELDS.join(', ')}`)
+    if (!KNOWN.includes(key))
+      out.push(`${id} has an unknown field "${key}"; the fields are ${KNOWN.join(', ')}`)
   const missing = FIELDS.filter((f) => e[f] === undefined)
   for (const f of missing) out.push(`${id} is missing the field "${f}"`)
   if (missing.length) return out
@@ -61,6 +70,15 @@ function entryProblems(raw: unknown, index: number): string[] {
   if (!STATUSES.includes(e.status as Status))
     out.push(`${id}: status is ${JSON.stringify(e.status)}, not one of ${STATUSES.join(', ')}`)
   if (typeof e.category !== 'string' || !e.category.trim()) out.push(`${id}: category is empty`)
+  if (e.replacedBy === undefined) {
+    if (e.status === 'deprecated')
+      out.push(`${id} is deprecated and names no replacedBy, the entry to use instead`)
+  } else if (typeof e.replacedBy !== 'string' || !PASCAL.test(e.replacedBy))
+    out.push(`${id}: replacedBy is not an entry's name, such as LinkButton`)
+  else if (e.status !== 'deprecated')
+    out.push(
+      `${id} names replacedBy but is ${e.status}; only a deprecated entry names its successor`,
+    )
   if (!isStrings(e.baseUiParts)) out.push(`${id}: baseUiParts is not a list of names`)
   else
     for (const part of e.baseUiParts.filter((p) => !PART.test(p)))
@@ -80,7 +98,10 @@ function entryProblems(raw: unknown, index: number): string[] {
   return out
 }
 
-/** The problems between entries: duplicates, unknown or wrong-layer dependencies, cycles. */
+/**
+ * The problems between entries: duplicates, unknown or wrong-layer dependencies, a successor that
+ * is missing, deprecated or in another layer, cycles.
+ */
 function graphProblems(entries: Entry[]): string[] {
   const out: string[] = []
   const byName = new Map<string, Entry>()
@@ -97,6 +118,18 @@ function graphProblems(entries: Entry[]): string[] {
           `${e.name} is a component and depends on the pattern ${d}; a component depends on components only`,
         )
     }
+  for (const e of entries) {
+    if (e.replacedBy === undefined) continue
+    const next = byName.get(e.replacedBy)
+    if (!next)
+      out.push(`${e.name} is replaced by ${e.replacedBy}, which the registry does not list`)
+    else if (next.status === 'deprecated')
+      out.push(`${e.name} is replaced by ${next.name}, which is deprecated itself`)
+    else if (next.layer !== e.layer)
+      out.push(
+        `${e.name} is a ${e.layer} and is replaced by the ${next.layer} ${next.name}; its successor is in the same layer`,
+      )
+  }
   // depth-first, reporting each cycle once from where it was entered
   const done = new Set<string>()
   const visit = (name: string, path: string[]) => {
@@ -137,3 +170,13 @@ export function kebab(name: string) {
 
 /** An entry's spec page, by path from the repo root. */
 export const specPage = (e: Entry) => `docs/${folderOf(e.layer)}/${kebab(e.name)}.md`
+
+/**
+ * The notice that opens a deprecated entry's docs pages, as markdown: "Deprecated: use <successor>
+ * instead.", linked to the successor's spec, which sits in the same folder since it is in the same
+ * layer. Each page's links take it to the successor's page. Undefined for any other entry.
+ */
+export function deprecationNotice(e: Pick<Entry, 'status' | 'replacedBy'>) {
+  if (e.status !== 'deprecated' || !e.replacedBy) return undefined
+  return `Deprecated: use [${e.replacedBy}](${kebab(e.replacedBy)}.md) instead.`
+}

@@ -13,6 +13,7 @@
     "layer": "component",
     "category": "Display",
     "status": "deprecated",
+    "replacedBy": "Button",
     "baseUiParts": [],
     "penpotPath": "Components/Chip",
     "dependsOn": []
