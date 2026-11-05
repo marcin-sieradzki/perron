@@ -6,6 +6,17 @@ The box a person types several lines of words into, such as a note about what th
 
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the [contract](README.md), the [foundations](../foundations/README.md), the tokens, the Base UI reference for `Field` (`@base-ui/react` 1.9.0, installed, and its `FieldControl` source), the [Field](field.md) spec, the entry TextArea's registry entry names in `dependsOn`, and the [TextField](text-field.md) spec, its one-line twin, whose choices TextArea keeps wherever a textarea doesn't change them. No ROADMAP line names TextArea, and the extracted prototype component is not in any branch this run can reach. The Base UI reference names no textarea: `Field.Control` renders an `<input>`, and TextArea renders it as a `<textarea>` through `render`, which the installed source handles (its Enter handling runs only on an `<input>`).
 
+## When to use
+
+Use TextArea for words a person types that run to sentences, such as a note about what they saw on a trip, with its label, its line of help and its error.
+
+| Use instead                    | When                                                       |
+| ------------------------------ | ---------------------------------------------------------- |
+| [TextField](text-field.md)     | The words fit one line, such as a name or an email address |
+| [NumberField](number-field.md) | The value is a number, typed or stepped up and down        |
+| [SearchField](search-field.md) | The words find a line or a stop                            |
+| [Select](select.md)            | The value is one of a short, fixed list                    |
+
 ## Anatomy
 
 Penpot page `Components/TextArea`. Family: Fields, for the box. Shared parts: `VisuallyHidden`, through Field, for a hidden label.
@@ -205,18 +216,22 @@ The deferred drawing's `State` property has the values `default`, `hover`, `focu
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                         | Don't                                                                                                                                        |
-| -------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| Use TextArea for words that run to sentences, such as what the person saw on a trip                                        | Use it for a name, an address or a number: TextField and NumberField take one line, its keys and its autofill                                |
-| Give a `label` that names the words, "What happened", and hide it with `hiddenLabel` only where the screen already says it | Let the `placeholder` stand in for the label: it vanishes as the person types, and it is drawn in `color.text.tertiary`, below text contrast |
-| Put help the person needs while typing in `description`, "Say where and when, such as the stop and the time"               | Put that help in the `placeholder`: it is gone once they type                                                                                |
-| Word an `error` as what to do, "Say what happened"                                                                         | Blame the person or say only that it failed ("Invalid input"), against [Content design](../content-design.md)                                |
-| Set `rows` to the length of words you expect, so most of them fit without scrolling                                        | Set `rows` to fill the screen: a tall empty box asks for more than the form needs, and the person can drag it taller                         |
-| Spread React Hook Form's `register('note')` on TextArea, or pass Formik's `handleChange`, as on a native `<textarea>`      | Wrap TextArea in a controller to read its value: its `onChange` is the native one already                                                    |
-| Give `error` from the form library whenever the field is invalid                                                           | Set `slotProps.field.invalid` with no message: the red edge alone tells only the eye, and only by its colour                                 |
-| Set `optional` on the few fields the person may leave empty, and `required` where an empty field must fail                 | Write "(optional)", "(required)" or an asterisk into `label` yourself: it misses the locale, and an asterisk needs a legend                  |
-| Let Enter start a new line, and give the form a submit button                                                              | Make Enter submit the form from a TextArea: the person loses the one key that starts a new line                                              |
-| Use TextArea on its own: it already has its label, its help and its error                                                  | Wrap TextArea in Field: the textarea would be labelled twice, as Field's spec says                                                           |
-| Set the width on the container, or on the frame through `slotProps.field`                                                  | Give the textarea a width through `style` or `cols`: the label and the error take the frame's width, not the box's                           |
+| Rule  | Level  | Do                                                                                                                         | Don't                                                                                                                                        | Checked by |
+| ----- | ------ | -------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1  | should | Use TextArea for words that run to sentences, such as what the person saw on a trip                                        | Use it for a name, an address or a number: TextField and NumberField take one line, its keys and its autofill                                | review     |
+| DD-2  | must   | Give a `label` that names the words, "What happened", and hide it with `hiddenLabel` only where the screen already says it | Let the `placeholder` stand in for the label: it vanishes as the person types, and it is drawn in `color.text.tertiary`, below text contrast | review     |
+| DD-3  | must   | Put help the person needs while typing in `description`, "Say where and when, such as the stop and the time"               | Put that help in the `placeholder`: it is gone once they type                                                                                | review     |
+| DD-4  | must   | Word an `error` as what to do, "Say what happened"                                                                         | Blame the person or say only that it failed ("Invalid input"), against [Content design](../content-design.md)                                | review     |
+| DD-5  | should | Set `rows` to the length of words you expect, so most of them fit without scrolling                                        | Set `rows` to fill the screen: a tall empty box asks for more than the form needs, and the person can drag it taller                         | review     |
+| DD-6  | should | Spread React Hook Form's `register('note')` on TextArea, or pass Formik's `handleChange`, as on a native `<textarea>`      | Wrap TextArea in a controller to read its value: its `onChange` is the native one already                                                    | review     |
+| DD-7  | must   | Give `error` from the form library whenever the field is invalid                                                           | Set `slotProps.field.invalid` with no message: the red edge alone tells only the eye, and only by its colour                                 | review     |
+| DD-8  | should | Set `optional` on the few fields the person may leave empty, and `required` where an empty field must fail                 | Write "(optional)", "(required)" or an asterisk into `label` yourself: it misses the locale, and an asterisk needs a legend                  | review     |
+| DD-9  | must   | Let Enter start a new line, and give the form a submit button                                                              | Make Enter submit the form from a TextArea: the person loses the one key that starts a new line                                              | review     |
+| DD-10 | must   | Use TextArea on its own: it already has its label, its help and its error                                                  | Wrap TextArea in Field: the textarea would be labelled twice, as Field's spec says                                                           | review     |
+| DD-11 | should | Set the width on the container, or on the frame through `slotProps.field`                                                  | Give the textarea a width through `style` or `cols`: the label and the error take the frame's width, not the box's                           | review     |
+
+## For agents
+
+None known yet.

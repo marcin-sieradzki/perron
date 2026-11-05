@@ -6,6 +6,17 @@ A row of tabs that switches between views of one thing, one panel showing at a t
 
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the contract, the foundations, the tokens, the Base UI reference and the ROADMAP line that names it (`ROADMAP.md`, "Wave 3, interactive, on Base UI"). The extracted prototype component is not in any branch this run can reach.
 
+## When to use
+
+Use Tabs to switch between views of one thing, one panel showing at a time, such as a stop's departures, its lines and its disruptions.
+
+| Use instead                              | When                                                                            |
+| ---------------------------------------- | ------------------------------------------------------------------------------- |
+| [SegmentedControl](segmented-control.md) | The choice changes how one view shows its content, such as departures by mode   |
+| [FilterChip](filter-chip.md)             | Filters narrow one view, each turned on and off on its own                      |
+| [Accordion](accordion.md)                | Headed sections stack down the page, each opening its content under its heading |
+| [LinkButton](link-button.md)             | The control goes to another screen or page                                      |
+
 ## Anatomy
 
 Penpot page `Components/Tabs`. Family: none (the contract's [Families](README.md#families) have no row of tabs; a tab is ink on whatever surface holds it, marked by an underline). Shared parts: none (every word is the caller's, and the count is text the tab is named by).
@@ -209,15 +220,19 @@ The deferred design's page draws the tab set, `Default`, and the tab, with a `St
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                                                  | Don't                                                                                                                                       |
-| --------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| Use Tabs to switch between views of one thing, such as a stop's departures, lines and disruptions                                                   | Use Tabs to filter or sort one view, such as departures by mode: a segmented control or filter chips change a view, tabs change which one   |
-| Name the tab list with `aria-label` or `aria-labelledby`, such as the stop's name, so a screen reader tells it from the next one                    | Leave the list unnamed beside another set of tabs                                                                                           |
-| Keep each label to a word or two, in sentence case: "Departures", "Planned works"                                                                   | Write a sentence on a tab, or put a count in the label's text: give it as `count`, so every count has one shape                             |
-| Give every `Tab` a `TabsPanel` with the same `value`                                                                                                | Leave a tab without a panel: its `aria-controls` points at nothing, and selecting it shows nothing                                          |
-| Show a tab whose view is empty, and say so in its panel with an [EmptyState](empty-state.md) or a [DataStatePanel](../patterns/data-state-panel.md) | Disable a tab because its view has no data: a disabled tab can't say why, and the empty view is what Mylder should tell                     |
-| Use `keepMounted` on a panel that holds state the caller would lose, such as a scrolled list                                                        | Keep every panel mounted by default: hidden panels still render, and update with the live data                                              |
-| Link to another screen with a [LinkButton](link-button.md)                                                                                          | Use tabs as navigation between pages: a tab selects a panel on this screen, and a link is what goes elsewhere                               |
-| Let the tabs size to their labels and wrap on a narrow screen                                                                                       | Set the list to scroll sideways or give the tabs fixed widths: only the map scrolls sideways, and a translated label outgrows a fixed width |
+| Rule | Level  | Do                                                                                                                                                  | Don't                                                                                                                                       | Checked by |
+| ---- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | should | Use Tabs to switch between views of one thing, such as a stop's departures, lines and disruptions                                                   | Use Tabs to filter or sort one view, such as departures by mode: a segmented control or filter chips change a view, tabs change which one   | review     |
+| DD-2 | must   | Name the tab list with `aria-label` or `aria-labelledby`, such as the stop's name, so a screen reader tells it from the next one                    | Leave the list unnamed beside another set of tabs                                                                                           | review     |
+| DD-3 | should | Keep each label to a word or two, in sentence case: "Departures", "Planned works"                                                                   | Write a sentence on a tab, or put a count in the label's text: give it as `count`, so every count has one shape                             | review     |
+| DD-4 | must   | Give every `Tab` a `TabsPanel` with the same `value`                                                                                                | Leave a tab without a panel: its `aria-controls` points at nothing, and selecting it shows nothing                                          | review     |
+| DD-5 | should | Show a tab whose view is empty, and say so in its panel with an [EmptyState](empty-state.md) or a [DataStatePanel](../patterns/data-state-panel.md) | Disable a tab because its view has no data: a disabled tab can't say why, and the empty view is what Mylder should tell                     | review     |
+| DD-6 | should | Use `keepMounted` on a panel that holds state the caller would lose, such as a scrolled list                                                        | Keep every panel mounted by default: hidden panels still render, and update with the live data                                              | review     |
+| DD-7 | must   | Link to another screen with a [LinkButton](link-button.md)                                                                                          | Use tabs as navigation between pages: a tab selects a panel on this screen, and a link is what goes elsewhere                               | review     |
+| DD-8 | should | Let the tabs size to their labels and wrap on a narrow screen                                                                                       | Set the list to scroll sideways or give the tabs fixed widths: only the map scrolls sideways, and a translated label outgrows a fixed width | review     |
+
+## For agents
+
+None known yet.

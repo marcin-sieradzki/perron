@@ -6,6 +6,16 @@ A vehicle's data state as its dot and its word side by side, such as a solid dot
 
 The design is deferred under ADR 0010 (`docs/adr/0010-unattended-runs-with-design-deferred.md`), so there is no read-back, code map or export: this spec decides the variant property, the layers, the design states and the token for every part. Its sources are the [contract](README.md), [Data states](../foundations/data-states.md), [Accessibility](../foundations/accessibility.md), [Typography](../foundations/typography.md#roles), [Icons](../foundations/icons.md#sizes), [Content design](../content-design.md#data-state-delay-and-disruption-words), `list_tokens`, the installed `@base-ui/react` types for `useRender` (the bundled Base UI docs have no page for the hook), and the merged specs of [VehicleDot](vehicle-dot.md), its one entry in `dependsOn`, and of [SeverityLabel](severity-label.md), the Transit category's other mark-and-word label. The ROADMAP names it in wave 2, Mylder's vocabulary, and VehicleDot's spec promises it: "a screen writes the state in words next to it, as VehicleDotLabel and VehicleDotLegend will" (VehicleDot's CR-5). The extracted prototype component is not in any branch this run can reach, so nothing here rests on it. VehicleDotLegend, its sibling, is on its branch with no spec yet, so there is nothing of its to align with.
 
+## When to use
+
+Use VehicleDotLabel wherever a vehicle's data state is shown in a row, a table or a strip, so its dot and its word always come together.
+
+| Use instead                                | When                                                                        |
+| ------------------------------------------ | --------------------------------------------------------------------------- |
+| [VehicleDotLegend](vehicle-dot-legend.md)  | All five states are explained together, as a key                            |
+| [ReportStrip](../patterns/report-strip.md) | The row counts how many vehicles are in each state                          |
+| [SeverityLabel](severity-label.md)         | The label names a kind of disruption on a line, such as a data feed problem |
+
 ## Anatomy
 
 Penpot page `Components/VehicleDotLabel`. Family: none, a mark and its word in one inline run, as SeverityLabel is. Shared parts: none: the word is visible text, so the dot needs no VisuallyHidden copy.
@@ -147,14 +157,18 @@ Every word VehicleDotLabel shows is its own; the caller gives only `variant` and
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                                                                                         | Don't                                                                                                                    |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
-| Use VehicleDotLabel wherever a vehicle's data state is shown, so its dot and its word always come together                                                                                 | Set a VehicleDot beside your own word for the state: the word could drift from content design's, and be heard twice      |
-| Name the line in words nearby, such as in a LineBadge                                                                                                                                      | Let the dot's colour be the only sign of the line: several line colours miss 3:1 on the light surfaces                   |
-| Put a time beside the label, such as "since 08:02" after "No signal", in your own text                                                                                                     | Override a `*Label` to add the time or to rename a state: the five words are the same on every screen, in every language |
-| Work out the state from the report's age with the app's [thresholds](../foundations/data-states.md#thresholds), by default `vehicle-dot.live-threshold` and `vehicle-dot.ageing-threshold` | Pass `live` for a vehicle whose last report is minutes old: the label would claim more than the data knows               |
-| Use VehicleDotLegend to explain all five states together                                                                                                                                   | Stack VehicleDotLabels as a legend: a legend lists all five states in Data states' order, even one with no vehicles      |
-| Wrap the label in a Perron button or link when the rider can open the vehicle                                                                                                              | Add `onClick` or `tabIndex` to the label: it has no focus ring, role for a control or target size                        |
-| Use SeverityLabel for a kind of disruption on a line                                                                                                                                       | Use VehicleDotLabel's no signal for a feed problem across a line: that is SeverityLabel's "Data feed problems"           |
+| Rule | Level  | Do                                                                                                                                                                                         | Don't                                                                                                                    | Checked by |
+| ---- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ | ---------- |
+| DD-1 | should | Use VehicleDotLabel wherever a vehicle's data state is shown, so its dot and its word always come together                                                                                 | Set a VehicleDot beside your own word for the state: the word could drift from content design's, and be heard twice      | review     |
+| DD-2 | must   | Name the line in words nearby, such as in a LineBadge                                                                                                                                      | Let the dot's colour be the only sign of the line: several line colours miss 3:1 on the light surfaces                   | review     |
+| DD-3 | must   | Put a time beside the label, such as "since 08:02" after "No signal", in your own text                                                                                                     | Override a `*Label` to add the time or to rename a state: the five words are the same on every screen, in every language | review     |
+| DD-4 | must   | Work out the state from the report's age with the app's [thresholds](../foundations/data-states.md#thresholds), by default `vehicle-dot.live-threshold` and `vehicle-dot.ageing-threshold` | Pass `live` for a vehicle whose last report is minutes old: the label would claim more than the data knows               | review     |
+| DD-5 | should | Use VehicleDotLegend to explain all five states together                                                                                                                                   | Stack VehicleDotLabels as a legend: a legend lists all five states in Data states' order, even one with no vehicles      | review     |
+| DD-6 | must   | Wrap the label in a Perron button or link when the rider can open the vehicle                                                                                                              | Add `onClick` or `tabIndex` to the label: it has no focus ring, role for a control or target size                        | review     |
+| DD-7 | must   | Use SeverityLabel for a kind of disruption on a line                                                                                                                                       | Use VehicleDotLabel's no signal for a feed problem across a line: that is SeverityLabel's "Data feed problems"           | review     |
+
+## For agents
+
+None known yet.

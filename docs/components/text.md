@@ -2,6 +2,19 @@
 
 Text sets a piece of text in one of the [typography](../foundations/typography.md) roles and one of the text colours, on the element the caller's document needs.
 
+## When to use
+
+Use Text to set words in one typography role and one text colour, on the element the document needs, such as a heading, a caption or a time.
+
+| Use instead           | When                                                                  |
+| --------------------- | --------------------------------------------------------------------- |
+| [Link](link.md)       | The words take the reader to another page or place                    |
+| [Section](section.md) | A small heading in capitals names a group of content inside a panel   |
+| [Stat](stat.md)       | A key figure stands large with the words that say what it counts      |
+| [Delay](delay.md)     | The words say how late or early a vehicle runs, in the delay's colour |
+| [Kbd](kbd.md)         | The text is a key of the keyboard, inside help text                   |
+| [Tag](tag.md)         | A word or two on a pill marks a property of what it sits beside       |
+
 ## Anatomy
 
 Penpot page `Components/Text`. Family: none. Shared parts: none.
@@ -146,15 +159,19 @@ The design draws every role in neutral at primary emphasis, `body` in each other
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                               | Don't                                                                                           |
-| ---------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| Give a heading role its heading element through `render`, at its level in the page's outline: `render={<h2 />}`. | Set a heading's look on a `<span>`: a screen reader's list of headings never finds it.          |
-| Say a status in words beside its colour: `color='danger'` on "+4 min late".                                      | Let red or green be the only sign, which fails 1.4.1 and every rider who can't tell them apart. |
-| Keep `emphasis='tertiary'` for hints and captions next to stronger text.                                         | Set a sentence people must read in tertiary: it misses 4.5:1 on purpose.                        |
-| Set times, countdowns, counts and delays in a `data` role, so their tabular figures line up down a column.       | Set a time in `body`, where each digit has its own width and a column of times wobbles.         |
-| Write an `overline`'s text in sentence case and let the role set the capitals.                                   | Type the capitals: a screen reader may spell them out letter by letter.                         |
-| Keep `color='brand'` for emphasis on the hero page.                                                              | Use brand text for a link, or anything that looks like one.                                     |
-| Leave `badge` to line badges, the job its role was made for.                                                     | Set other text in `badge`: its line height of 1 crowds a second line against the first.         |
-| Restyle through `className`, with the tokens.                                                                    | Reach for a raw size or colour in `style`, which leaves the theme and the scale behind.         |
+| Rule | Level  | Do                                                                                                               | Don't                                                                                           | Checked by |
+| ---- | ------ | ---------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | must   | Give a heading role its heading element through `render`, at its level in the page's outline: `render={<h2 />}`. | Set a heading's look on a `<span>`: a screen reader's list of headings never finds it.          | review     |
+| DD-2 | must   | Say a status in words beside its colour: `color='danger'` on "+4 min late".                                      | Let red or green be the only sign, which fails 1.4.1 and every rider who can't tell them apart. | review     |
+| DD-3 | must   | Keep `emphasis='tertiary'` for hints and captions next to stronger text.                                         | Set a sentence people must read in tertiary: it misses 4.5:1 on purpose.                        | review     |
+| DD-4 | should | Set times, countdowns, counts and delays in a `data` role, so their tabular figures line up down a column.       | Set a time in `body`, where each digit has its own width and a column of times wobbles.         | review     |
+| DD-5 | must   | Write an `overline`'s text in sentence case and let the role set the capitals.                                   | Type the capitals: a screen reader may spell them out letter by letter.                         | review     |
+| DD-6 | must   | Keep `color='brand'` for emphasis on the hero page.                                                              | Use brand text for a link, or anything that looks like one.                                     | review     |
+| DD-7 | should | Leave `badge` to line badges, the job its role was made for.                                                     | Set other text in `badge`: its line height of 1 crowds a second line against the first.         | review     |
+| DD-8 | should | Restyle through `className`, with the tokens.                                                                    | Reach for a raw size or colour in `style`, which leaves the theme and the scale behind.         | review     |
+
+## For agents
+
+None known yet.

@@ -6,6 +6,18 @@ A bar of actions that is one tab stop, moved through with the arrow keys, such a
 
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the contract, the foundations, the tokens and the Base UI reference. The extracted prototype component is not in any branch this run can reach.
 
+## When to use
+
+Use Toolbar for a bar of actions that is one tab stop, moved through with the arrow keys, such as a glass group of controls in the top bar.
+
+| Use instead                              | When                                                        |
+| ---------------------------------------- | ----------------------------------------------------------- |
+| [MapControls](map-controls.md)           | The bar holds the map's zoom, centre and view buttons       |
+| [Button](button.md)                      | One action stands alone, named in words                     |
+| [IconButton](icon-button.md)             | One action stands alone, shown as an icon                   |
+| [Menu](menu.md)                          | More actions than the bar has room for open from one button |
+| [SegmentedControl](segmented-control.md) | The buttons pick one of two to five ways to show one view   |
+
 ## Anatomy
 
 Penpot page `Components/Toolbar`. Family: none (the contract's [Families](README.md#families) have no bar of actions; the root borrows the Popups' glass, see Tokens). Shared parts: none (an icon-only button is named by the caller's `aria-label`, not by `VisuallyHidden`).
@@ -262,16 +274,20 @@ The deferred design's page draws two components: the toolbar, with one variant p
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                                                       | Don't                                                                                                                                 |
-| -------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| Name every toolbar with `aria-label` or `aria-labelledby`, such as "Map controls", so a screen reader tells it from the next one                         | Leave a toolbar unnamed: two on a screen are both announced as "toolbar"                                                              |
-| Put each action in a `ToolbarButton`, so the arrow keys reach it                                                                                         | Put a Button, an IconButton or a plain `<button>` straight into the toolbar: it falls out of the arrow-key order and adds a tab stop  |
-| Give an icon-only button an `aria-label` that names the action: "Zoom in"                                                                                | Leave an icon-only button without one: its icon is `aria-hidden`, so the button has no name                                           |
-| Open a menu, popover or dialog through `render`, `<ToolbarButton render={<Menu.Trigger />}>`, and set `disabled` on the `ToolbarButton`, not the trigger | Disable the trigger itself: Base UI says the button then leaves the toolbar's arrow-key order                                         |
-| Wrap a button in a [Tooltip](tooltip.md) with `<Tooltip trigger={<ToolbarButton … />}>…</Tooltip>`, the tooltip around the button                        | Pass the tooltip's trigger to `ToolbarButton`'s `render`, as for popups                                                               |
-| Give one button per screen `color="brand"`, for its main action                                                                                          | Mark several toolbar buttons `brand`, or use it for emphasis: a second yellow action leaves neither the main one                      |
-| Keep a disabled button focusable, the default, so it can explain itself through a tooltip                                                                | Restyle a disabled button with `opacity`: disabled is `color.text.tertiary`, a colour                                                 |
-| Give a toggle in a toolbar, such as the map's 3D view, `selected`, held by the screen, and keep its name the same while on and off                       | Swap a toggle's name with its state, or draw its on look in the caller's CSS: `selected` sets `aria-pressed` and the on look together |
-| Place the toolbar over the map in a pattern, which sets its position and stacking                                                                        | Set a `z-index` or a margin from the screen edge on the toolbar itself: the component sizes to its content                            |
+| Rule | Level  | Do                                                                                                                                                       | Don't                                                                                                                                 | Checked by |
+| ---- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | must   | Name every toolbar with `aria-label` or `aria-labelledby`, such as "Map controls", so a screen reader tells it from the next one                         | Leave a toolbar unnamed: two on a screen are both announced as "toolbar"                                                              | review     |
+| DD-2 | must   | Put each action in a `ToolbarButton`, so the arrow keys reach it                                                                                         | Put a Button, an IconButton or a plain `<button>` straight into the toolbar: it falls out of the arrow-key order and adds a tab stop  | review     |
+| DD-3 | must   | Give an icon-only button an `aria-label` that names the action: "Zoom in"                                                                                | Leave an icon-only button without one: its icon is `aria-hidden`, so the button has no name                                           | review     |
+| DD-4 | must   | Open a menu, popover or dialog through `render`, `<ToolbarButton render={<Menu.Trigger />}>`, and set `disabled` on the `ToolbarButton`, not the trigger | Disable the trigger itself: Base UI says the button then leaves the toolbar's arrow-key order                                         | review     |
+| DD-5 | must   | Wrap a button in a [Tooltip](tooltip.md) with `<Tooltip trigger={<ToolbarButton … />}>…</Tooltip>`, the tooltip around the button                        | Pass the tooltip's trigger to `ToolbarButton`'s `render`, as for popups                                                               | review     |
+| DD-6 | must   | Give one button per screen `color="brand"`, for its main action                                                                                          | Mark several toolbar buttons `brand`, or use it for emphasis: a second yellow action leaves neither the main one                      | review     |
+| DD-7 | must   | Keep a disabled button focusable, the default, so it can explain itself through a tooltip                                                                | Restyle a disabled button with `opacity`: disabled is `color.text.tertiary`, a colour                                                 | review     |
+| DD-8 | must   | Give a toggle in a toolbar, such as the map's 3D view, `selected`, held by the screen, and keep its name the same while on and off                       | Swap a toggle's name with its state, or draw its on look in the caller's CSS: `selected` sets `aria-pressed` and the on look together | review     |
+| DD-9 | should | Place the toolbar over the map in a pattern, which sets its position and stacking                                                                        | Set a `z-index` or a margin from the screen edge on the toolbar itself: the component sizes to its content                            | review     |
+
+## For agents
+
+None known yet.
