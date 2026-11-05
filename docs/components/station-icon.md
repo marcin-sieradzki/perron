@@ -2,6 +2,16 @@
 
 A small round marker that stands for a stop or station beside its name, in the colour of the line that serves it, as in a detail panel's header and on each stop of a stop timeline.
 
+## When to use
+
+Use StationIcon to mark a stop or a station beside its name, in the colour of the line that serves it, such as in a detail panel's header.
+
+| Use instead                                  | When                                                                      |
+| -------------------------------------------- | ------------------------------------------------------------------------- |
+| [LineBadge](line-badge.md)                   | The mark names a line                                                     |
+| [StopTimeline](../patterns/stop-timeline.md) | A vehicle's trip shows its stops in order, on a rail in its line's colour |
+| [VehicleDot](vehicle-dot.md)                 | The mark stands for a vehicle and how fresh its data is                   |
+
 ## Anatomy
 
 Penpot page `Components/StationIcon`, not drawn yet: the design is deferred, so this spec decides the drawing. Family: none. Shared parts: none.
@@ -124,13 +134,17 @@ No owned strings: the marker shows and announces no words, and the stop's and li
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                           | Don't                                                                                                                                         |
-| ---------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| Put the marker beside the stop's name, with the line named in words nearby, because the marker is hidden from screen readers | Use it alone, or as the only sign of which line serves a stop: colour is never alone ([Accessibility](../foundations/accessibility.md#rules)) |
-| Leave `line` out for a station several lines serve, so the marker is neutral                                                 | Pick one of several lines' colours for a shared station, which tells the eye only one line stops there                                        |
-| Use `filled` for the one stop that matters most in a list, such as the next stop, and say why in words beside it             | Fill several stops in one list, or use `filled` to mean a state the words don't say                                                           |
-| Use a `LineBadge` to name a line                                                                                             | Use a StationIcon as a line's badge or swatch in a row of badges, where it reads as a stop                                                    |
-| Pick the `size` that matches the text beside it: `small` for captions, `medium` for labels, `large` for panel titles         | Resize it with `className` or a raw width, which breaks the ring's weight against its icon-sized neighbours                                   |
-| Make the whole row pressable when a stop opens something, at least `size.target-min` tall                                    | Make the marker itself a button or link: it is too small a target and has no name                                                             |
+| Rule | Level  | Do                                                                                                                           | Don't                                                                                                                                         | Checked by |
+| ---- | ------ | ---------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | must   | Put the marker beside the stop's name, with the line named in words nearby, because the marker is hidden from screen readers | Use it alone, or as the only sign of which line serves a stop: colour is never alone ([Accessibility](../foundations/accessibility.md#rules)) | review     |
+| DD-2 | must   | Leave `line` out for a station several lines serve, so the marker is neutral                                                 | Pick one of several lines' colours for a shared station, which tells the eye only one line stops there                                        | review     |
+| DD-3 | must   | Use `filled` for the one stop that matters most in a list, such as the next stop, and say why in words beside it             | Fill several stops in one list, or use `filled` to mean a state the words don't say                                                           | review     |
+| DD-4 | must   | Use a `LineBadge` to name a line                                                                                             | Use a StationIcon as a line's badge or swatch in a row of badges, where it reads as a stop                                                    | review     |
+| DD-5 | should | Pick the `size` that matches the text beside it: `small` for captions, `medium` for labels, `large` for panel titles         | Resize it with `className` or a raw width, which breaks the ring's weight against its icon-sized neighbours                                   | review     |
+| DD-6 | must   | Make the whole row pressable when a stop opens something, at least `size.target-min` tall                                    | Make the marker itself a button or link: it is too small a target and has no name                                                             | review     |
+
+## For agents
+
+- Setting a line's name beside a StationIcon, as a legend of line swatches: a build's own `Lines` story did, and its review sent it back, since the marker reads as a stop. Name a stop in each row with its line after it, "Nørreport, M1", and name a line on its own with a LineBadge (DD-1, DD-4).

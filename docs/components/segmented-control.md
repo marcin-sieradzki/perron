@@ -6,6 +6,19 @@ A row of two to five segments on an inset track, one of them selected, that pick
 
 The design is deferred (ADR 0010, `docs/adr/0010-unattended-runs-with-design-deferred.md`): there is no read-back, code map or export, and this spec decides what the drawing would, from the contract, the foundations, the tokens, the Base UI reference and the ROADMAP line that names it (`ROADMAP.md`, "Wave 3, interactive, on Base UI": "SegmentedControl (ToggleGroup)"). The extracted prototype component is not in any branch this run can reach. The foundations already name its look: [Elevation](../foundations/elevation.md#surfaces) puts the track on `color.surface.inset` and the selected segment on `color.surface.raised` with `shadow.thumb`, the only shadow outside a floating panel; [Layout](../foundations/layout.md) gives a segment `size.segment`; and [Semantic spacing](../foundations/semantic-spacing.md) gives segments `radius.md`.
 
+## When to use
+
+Use SegmentedControl to pick how one view shows its content, one choice of two to five, such as a stop's departures by mode.
+
+| Use instead                  | When                                                                           |
+| ---------------------------- | ------------------------------------------------------------------------------ |
+| [Tabs](tabs.md)              | The choice switches between views of one thing, rather than how one view shows |
+| [FilterChip](filter-chip.md) | Each choice is a filter that turns on and off on its own                       |
+| [RadioGroup](radio-group.md) | The choice is a form's answer, read down a column                              |
+| [Select](select.md)          | There are more than five choices                                               |
+| [Button](button.md)          | A press runs an action                                                         |
+| [LinkButton](link-button.md) | A press goes to another screen                                                 |
+
 ## Anatomy
 
 Penpot page `Components/SegmentedControl`. Family: none (the contract's [Families](README.md#families) have no inset track of choices; its surfaces come from [Elevation](../foundations/elevation.md#surfaces)). Shared parts: none (every word is the caller's, and the selected segment is told by `aria-pressed`, not by a hidden word).
@@ -178,14 +191,18 @@ The deferred design's page draws two things: the control, `Default`, four segmen
 
 ## Do and don't
 
-For a caller using the component, with the reason.
+For a caller using the component, with the reason. Each row is a rule: a `must` row's Don't is never right, a `should` row's needs a reason, and Checked by says what catches the Don't in a caller's code.
 
-| Do                                                                                                                                                     | Don't                                                                                                                                                      |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Use a SegmentedControl to pick how one view shows its content, such as departures by mode or a chart by day or week                                    | Use it to switch between views of one thing: [Tabs](tabs.md) change which view shows, a segmented control changes how one view shows                       |
-| Use it for one choice of two to five                                                                                                                   | Use it for filters that turn on and off apart, or for more than five choices: filter chips take several, and a long row of segments outgrows a phone       |
-| Name the control with `aria-label` or `aria-labelledby`, such as "Mode", so a screen reader says what the choice is about                              | Leave the control unnamed: its segments' words alone don't say what they choose between                                                                    |
-| Give it a `defaultValue` or a `value`, so one segment is always selected                                                                               | Leave nothing selected without a reason: a control with no raised segment reads as broken                                                                  |
-| Keep each label to a word or two, in sentence case: "Bus", "Planned works"                                                                             | Write a sentence in a segment, or rely on a label's colour or an icon alone to say what it chooses                                                         |
-| Show a segment whose view is empty, and say so in the view with an [EmptyState](empty-state.md) or a [DataStatePanel](../patterns/data-state-panel.md) | Disable a segment because its view has no data: a disabled segment can't say why, and leaves the key order                                                 |
-| Run an action with a [Button](button.md), and group actions in a [Toolbar](toolbar.md)                                                                 | Use a segment as an action or as navigation: pressing one selects it and keeps it selected, and a link to another screen is a [LinkButton](link-button.md) |
+| Rule | Level  | Do                                                                                                                                                     | Don't                                                                                                                                                      | Checked by |
+| ---- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| DD-1 | should | Use a SegmentedControl to pick how one view shows its content, such as departures by mode or a chart by day or week                                    | Use it to switch between views of one thing: [Tabs](tabs.md) change which view shows, a segmented control changes how one view shows                       | review     |
+| DD-2 | should | Use it for one choice of two to five                                                                                                                   | Use it for filters that turn on and off apart, or for more than five choices: filter chips take several, and a long row of segments outgrows a phone       | review     |
+| DD-3 | must   | Name the control with `aria-label` or `aria-labelledby`, such as "Mode", so a screen reader says what the choice is about                              | Leave the control unnamed: its segments' words alone don't say what they choose between                                                                    | review     |
+| DD-4 | should | Give it a `defaultValue` or a `value`, so one segment is always selected                                                                               | Leave nothing selected without a reason: a control with no raised segment reads as broken                                                                  | review     |
+| DD-5 | must   | Keep each label to a word or two, in sentence case: "Bus", "Planned works"                                                                             | Write a sentence in a segment, or rely on a label's colour or an icon alone to say what it chooses                                                         | review     |
+| DD-6 | should | Show a segment whose view is empty, and say so in the view with an [EmptyState](empty-state.md) or a [DataStatePanel](../patterns/data-state-panel.md) | Disable a segment because its view has no data: a disabled segment can't say why, and leaves the key order                                                 | review     |
+| DD-7 | must   | Run an action with a [Button](button.md), and group actions in a [Toolbar](toolbar.md)                                                                 | Use a segment as an action or as navigation: pressing one selects it and keeps it selected, and a link to another screen is a [LinkButton](link-button.md) | review     |
+
+## For agents
+
+None known yet.
