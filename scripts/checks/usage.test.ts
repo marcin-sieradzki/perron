@@ -7,47 +7,75 @@ const here = dirname(fileURLToPath(import.meta.url))
 const fixture = (name: string) => join(here, 'fixtures/usage', name)
 
 describe('usage', () => {
-  it('passes a spec moved over and one that has not moved yet', () => {
-    // Button has every part, with a types row its stories cite; IconButton and DepartureRow have
-    // none; Dialog is in design, so its broken parts are not read
+  it('passes specs with every part, and one in design whatever it holds', () => {
+    // Button has a types row its stories cite and a note for agents; IconButton and DepartureRow
+    // say nothing else does what they do, and no agent has erred with them; Dialog is in design, so
+    // its broken parts are not read
     expect(usage.run(fixture('complete'))).toEqual([])
+  })
+
+  it("names a spec from building on without When to use, the five-column Do and don't table or For agents", () => {
+    // Badge is in design, so its spec needs none of them yet
+    expect(usage.run(fixture('missing'))).toEqual([
+      {
+        file: 'docs/components/flag.md',
+        message:
+          'docs/components/flag.md has no When to use: write it as the first section, right after the intro and its run notes (docs/components/TEMPLATE.md)',
+      },
+      {
+        file: 'docs/components/flag.md',
+        message:
+          'docs/components/flag.md has no For agents: write it as the last section, with "None known yet." until an agent makes a mistake with the entry (docs/components/TEMPLATE.md)',
+      },
+      {
+        file: 'docs/components/flag.md',
+        line: 11,
+        message:
+          "docs/components/flag.md's Do and don't table has the columns Do, Don't: give it Rule, Level, Do, Don't and Checked by, in that order (docs/components/TEMPLATE.md)",
+      },
+      {
+        file: 'docs/components/pin.md',
+        message:
+          "docs/components/pin.md has no Do and don't table: give it one, with the columns Rule, Level, Do, Don't and Checked by (docs/components/TEMPLATE.md)",
+      },
+    ])
   })
 
   it("names a Do and don't table without the five columns, and a malformed, repeated or unknown cell", () => {
     expect(usage.run(fixture('table'))).toEqual([
       {
         file: 'docs/components/flag.md',
-        line: 10,
+        line: 16,
         message:
           '"DD-0" is no rule id: write DD- and the rule\'s number, counted from 1 within the spec, as DD-1',
       },
       {
         file: 'docs/components/flag.md',
-        line: 11,
+        line: 17,
         message:
           '"D-3" is no rule id: write DD- and the rule\'s number, counted from 1 within the spec, as DD-1',
       },
       {
         file: 'docs/components/flag.md',
-        line: 12,
+        line: 18,
         message:
-          "DD-1 is the id of line 9's rule too: give each rule a number of its own, and keep the numbers a review may have cited",
+          "DD-1 is the id of line 15's rule too: give each rule a number of its own, and keep the numbers a review may have cited",
       },
       {
         file: 'docs/components/flag.md',
-        line: 12,
+        line: 18,
         message:
           'DD-1\'s level is "may", not must or should: must when its Don\'t is never right, should when a caller may break it with a reason',
       },
       {
         file: 'docs/components/flag.md',
-        line: 12,
+        line: 18,
         message:
           'DD-1 is checked by "tests", not types or review: types when FlagProps rejects its Don\'t, review when only a review of the caller\'s code can catch it',
       },
       {
         file: 'docs/components/pin.md',
-        line: 7,
+        line: 13,
         message:
           "docs/components/pin.md's Do and don't table has the columns Rule, Do, Don't, Level, Checked by: give it Rule, Level, Do, Don't and Checked by, in that order (docs/components/TEMPLATE.md)",
       },
@@ -55,13 +83,13 @@ describe('usage', () => {
   })
 
   it("names a types rule no @ts-expect-error in the entry's folder cites, and a citation of no types rule", () => {
-    // DD-1 is cited in JSX; DD-2 by a directive with no id, and from Pin's folder
+    // DD-1 is cited in JSX; DD-2 by a directive with no id, and in Pin's folder for Pin's own DD-2
     const cites = (id: string) =>
       `\`@ts-expect-error ${id}\` cites no types rule of docs/components/flag.md's Do and don't: cite the rule the line below breaks, one whose Checked by is types`
     expect(usage.run(fixture('types'))).toEqual([
       {
         file: 'docs/components/flag.md',
-        line: 10,
+        line: 16,
         message:
           'DD-2 is checked by types, but no `@ts-expect-error DD-2` in a test or story of packages/perron/src/components/Flag/ proves it: write a line FlagProps rejects under `// @ts-expect-error DD-2: <what it breaks>`, or check the rule by review',
       },
@@ -78,13 +106,19 @@ describe('usage', () => {
     ])
   })
 
-  it("names a Do and don't row that names WCAG with no success criterion, moved over or not", () => {
+  it("names a Do and don't row that names WCAG with no success criterion, in five columns or two", () => {
     const message =
       'This row names WCAG but no success criterion: name the one it rests on by its number, such as 2.5.8 Target size (minimum), so a review knows what to test'
     expect(usage.run(fixture('wcag'))).toEqual([
-      { file: 'docs/components/flag.md', line: 9, message },
-      { file: 'docs/components/flag.md', line: 11, message },
-      { file: 'docs/patterns/stop-row.md', line: 9, message },
+      { file: 'docs/components/flag.md', line: 15, message },
+      { file: 'docs/components/flag.md', line: 17, message },
+      {
+        file: 'docs/patterns/stop-row.md',
+        line: 13,
+        message:
+          "docs/patterns/stop-row.md's Do and don't table has the columns Do, Don't: give it Rule, Level, Do, Don't and Checked by, in that order (docs/components/TEMPLATE.md)",
+      },
+      { file: 'docs/patterns/stop-row.md', line: 15, message },
     ])
   })
 
@@ -139,7 +173,7 @@ describe('usage', () => {
       },
       {
         file: 'docs/components/pin.md',
-        line: 9,
+        line: 17,
         message:
           'docs/components/pin.md\'s For agents is neither "None known yet." nor a bulleted list: write each mistake an agent has made as a bullet, the mistake and then its fix',
       },

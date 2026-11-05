@@ -18,6 +18,6 @@ None known yet.
 
 ## Do and don't
 
-| Do     | Don't     |
-| ------ | --------- |
-| Use it | Misuse it |
+| Rule | Level | Do     | Don't     | Checked by |
+| ---- | ----- | ------ | --------- | ---------- |
+| DD-1 | must  | Use it | Misuse it | review     |

@@ -1,8 +1,8 @@
 // A spec's guidance for a caller, read out of its Markdown: When to use, which says when to reach
 // for the entry and which entries to use instead; the rules of its Do and don't table, each with
 // its id, its level and what checks it; and For agents, the mistakes agents have made with it. The
-// `usage` gate checks what a spec has of these (scripts/checks/usage.ts), and the layout is the
-// spec template's (docs/components/TEMPLATE.md).
+// `usage` gate checks them (scripts/checks/usage.ts), and the layout is the spec template's
+// (docs/components/TEMPLATE.md).
 import { FOR_AGENTS, WHEN_TO_USE } from '../../storybook/blocks/component-page.ts'
 
 export { FOR_AGENTS, WHEN_TO_USE }
@@ -179,11 +179,9 @@ export interface DoAndDont {
   /** Its table's header line */
   line: number
   columns: string[]
-  /** It has moved over: its header names a column the two-column table lacks */
-  moved: boolean
   /** Every row, each as one line of text, for what holds of any row */
   rows: { text: string; line: number }[]
-  /** The rules, read by the five columns; none until the table has them */
+  /** The rules, read by the five columns; none when the table lacks them */
   rules: Rule[]
 }
 
@@ -196,11 +194,9 @@ export function readDoAndDont(spec: string): DoAndDont | undefined {
   const s = section(spec, DO_AND_DONT)
   const table = s && tablesIn(s.body)[0]
   if (!table) return undefined
-  const moved = table.columns.some((c) => !['Do', "Don't"].includes(c))
   return {
     line: table.line,
     columns: table.columns,
-    moved,
     rows: table.rows.map((r) => ({ text: r.cells.join(' | '), line: r.line })),
     rules: hasRuleColumns(table.columns)
       ? table.rows.map(
