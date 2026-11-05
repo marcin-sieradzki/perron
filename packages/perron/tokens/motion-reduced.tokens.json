@@ -21,7 +21,7 @@
         "value": 0.01,
         "unit": "ms"
       },
-      "$description": "Map camera fly-to"
+      "$description": "How long the map camera takes to fly to a selection"
     },
     "follow": {
       "$value": {

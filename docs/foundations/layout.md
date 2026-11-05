@@ -13,12 +13,12 @@ Each breakpoint is the width below which the screen changes.
 
 <!-- tokens: breakpoint.* -->
 
-| Token                      | Value    | Use                            |
-| -------------------------- | -------- | ------------------------------ |
-| `breakpoint.compact-phone` | `380px`  | Hide the brand mark            |
-| `breakpoint.phone`         | `760px`  | Bottom sheets, compact top bar |
-| `breakpoint.tablet`        | `1180px` | Hide city name, day and legend |
-| `breakpoint.desktop`       | `1400px` | Hide "Later" chips             |
+| Token                      | Value    | Use                                                                              |
+| -------------------------- | -------- | -------------------------------------------------------------------------------- |
+| `breakpoint.compact-phone` | `380px`  | Hide the brand mark                                                              |
+| `breakpoint.phone`         | `760px`  | Bottom sheets, compact top bar                                                   |
+| `breakpoint.tablet`        | `1180px` | Hide city name, day and legend                                                   |
+| `breakpoint.desktop`       | `1400px` | Below it, the filter chips marked "Later", for filters still to come, are hidden |
 
 <!-- /tokens -->
 
@@ -52,16 +52,16 @@ From lowest to highest: map controls, the overview sheet, the highlight chip, th
 
 <!-- tokens: z-index.* color.scrim -->
 
-| Token                  | Value                    | Use                                               |
-| ---------------------- | ------------------------ | ------------------------------------------------- |
-| `z-index.map-controls` | `3`                      | Legend, map controls, scale, attribution          |
-| `z-index.sheet`        | `4`                      | Overview sheet, kiosk bar                         |
-| `z-index.highlight`    | `5`                      | Highlight chip                                    |
-| `z-index.detail`       | `6`                      | Detail panel                                      |
-| `z-index.top-bar`      | `7`                      | Brand, filters and clock along the top of the map |
-| `z-index.tooltip`      | `8`                      | Map hover card, above every panel                 |
-| `z-index.dialog`       | `10`                     | Modal dialog over everything                      |
-| `color.scrim`          | `rgba(10, 14, 16, 0.42)` | Backdrop behind modal dialogs                     |
+| Token                  | Value                    | Use                                                                     |
+| ---------------------- | ------------------------ | ----------------------------------------------------------------------- |
+| `z-index.map-controls` | `3`                      | Legend, map controls, scale, attribution                                |
+| `z-index.sheet`        | `4`                      | Overview sheet, kiosk bar                                               |
+| `z-index.highlight`    | `5`                      | The highlight chip, above the overview sheet and under the detail panel |
+| `z-index.detail`       | `6`                      | The detail panel, above the highlight chip and under the top bar        |
+| `z-index.top-bar`      | `7`                      | Brand, filters and clock along the top of the map                       |
+| `z-index.tooltip`      | `8`                      | Map hover card, above every panel                                       |
+| `z-index.dialog`       | `10`                     | Modal dialog over everything                                            |
+| `color.scrim`          | `rgba(10, 14, 16, 0.42)` | Backdrop behind modal dialogs                                           |
 
 <!-- /tokens -->
 
@@ -74,11 +74,11 @@ A measure lives here when two places must agree on it, such as a component and t
 | Token               | Value   | Use                                                                      |
 | ------------------- | ------- | ------------------------------------------------------------------------ |
 | `size.control`      | `34px`  | Icon buttons and filter chips                                            |
-| `size.button`       | `36px`  | Buttons                                                                  |
-| `size.button-sm`    | `30px`  | Small buttons                                                            |
-| `size.input`        | `38px`  | Search field                                                             |
-| `size.segment`      | `32px`  | Segmented control item                                                   |
-| `size.badge`        | `22px`  | Line badge height                                                        |
+| `size.button`       | `36px`  | Height of a button, a link button, a tab and an accordion header         |
+| `size.button-sm`    | `30px`  | Height of a small button or link button                                  |
+| `size.input`        | `38px`  | Height of text, number and search fields and of selects                  |
+| `size.segment`      | `32px`  | Height of an item in a segmented control                                 |
+| `size.badge`        | `22px`  | Height of a line badge; a disruption card header is at least this tall   |
 | `size.badge-lg`     | `34px`  | Large line badge height                                                  |
 | `size.meter-track`  | `6px`   | Height of a meter's, a progress bar's or a slider's track                |
 | `size.checkbox`     | `16px`  | The box of a checkbox, and of a menu's checkbox item                     |

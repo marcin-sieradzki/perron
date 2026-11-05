@@ -13,14 +13,14 @@ Land, water, parks, streets, rail, buildings and labels each have a colour per t
 | `color.map.water`       | `#C4D4DD` | `#0A1115` | Sea, lakes and the page behind the map                                        |
 | `color.map.land`        | `#EDEFEB` | `#151B1E` | Land, the map's main ground                                                   |
 | `color.map.park`        | `#D8E4D2` | `#16231E` | Parks and green areas                                                         |
-| `color.map.street`      | `#FFFFFF` | `#252D31` | Streets                                                                       |
-| `color.map.airport`     | `#E2E5E1` | `#1C2326` | Airport grounds                                                               |
-| `color.map.runway`      | `#CBD1CE` | `#2B3438` | Runways and taxiways                                                          |
+| `color.map.street`      | `#FFFFFF` | `#252D31` | Roads and streets, drawn over the land                                        |
+| `color.map.airport`     | `#E2E5E1` | `#1C2326` | Airport grounds, under the runways and taxiways                               |
+| `color.map.runway`      | `#CBD1CE` | `#2B3438` | Runways and taxiways, drawn over the airport grounds                          |
 | `color.map.building`    | `#E2E5E0` | `#1A2125` | Building footprints at close zoom, on the flat map                            |
 | `color.map.building-3d` | `#D3D9D4` | `#2A3338` | 3D buildings, walls and roofs: the map's light shades each face from it       |
 | `color.map.rail`        | `#BCC4C1` | `#323C41` | Rail tracks without a coloured line on them                                   |
-| `color.map.label`       | `#66737A` | `#7E8B91` | Place names                                                                   |
-| `color.map.water-label` | `#5F7A88` | `#4B6774` | Water names                                                                   |
+| `color.map.label`       | `#66737A` | `#7E8B91` | Place names on land; names on water use color.map.water-label                 |
+| `color.map.water-label` | `#5F7A88` | `#4B6774` | Names of seas, lakes and harbours, set on the water                           |
 | `color.map.aircraft`    | `#B3127A` | `#F27BC8` | The aircraft glyph on the map, and nothing else; a no-signal aircraft is grey |
 
 <!-- /tokens -->
