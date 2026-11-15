@@ -18,6 +18,11 @@
           "$type": "color",
           "$value": "#A2ADB1"
         },
+        "350": {
+          "$type": "color",
+          "$value": "#909BA1",
+          "$description": "Tertiary text in the dark theme: hints and captions at 4.5:1 on every dark surface"
+        },
         "400": {
           "$type": "color",
           "$value": "#8B979E",
@@ -26,6 +31,11 @@
         "500": {
           "$type": "color",
           "$value": "#74818A"
+        },
+        "550": {
+          "$type": "color",
+          "$value": "#606C74",
+          "$description": "Tertiary text in the light theme: hints and captions at 4.5:1 on every light surface"
         },
         "600": {
           "$type": "color",
@@ -46,6 +56,11 @@
         "950": {
           "$type": "color",
           "$value": "#0A0E10"
+        },
+        "1000": {
+          "$type": "color",
+          "$value": "#000000",
+          "$description": "Black, for label text on a mid-tone line colour that neutral 900 does not clear at 4.5:1"
         }
       },
       "blue": {
@@ -181,6 +196,11 @@
             "$type": "color",
             "$value": "{palette.neutral.0}",
             "$description": "White text on a coloured fill"
+          },
+          "black": {
+            "$type": "color",
+            "$value": "{palette.neutral.1000}",
+            "$description": "Black text on a fill that neither white nor the dark text clears at 4.5:1: the M1 line badge"
           }
         }
       },
@@ -245,7 +265,7 @@
         "line-on": {
           "m1": {
             "$type": "color",
-            "$value": "{color.text.on-color.light}",
+            "$value": "{color.text.on-color.black}",
             "$description": "Label text on the M1 line badge"
           },
           "m2": {
@@ -260,22 +280,22 @@
           },
           "m4": {
             "$type": "color",
-            "$value": "{color.text.on-color.light}",
+            "$value": "{color.text.on-color.dark}",
             "$description": "Label text on the M4 line badge"
           },
           "a": {
             "$type": "color",
-            "$value": "{color.text.on-color.light}",
+            "$value": "{color.text.on-color.dark}",
             "$description": "Label text on the A line badge"
           },
           "b": {
             "$type": "color",
-            "$value": "{color.text.on-color.light}",
+            "$value": "{color.text.on-color.dark}",
             "$description": "Label text on the B line badge"
           },
           "c": {
             "$type": "color",
-            "$value": "{color.text.on-color.light}",
+            "$value": "{color.text.on-color.dark}",
             "$description": "Label text on the C line badge"
           },
           "e": {
@@ -1140,8 +1160,8 @@
         },
         "tertiary": {
           "$type": "color",
-          "$value": "{palette.neutral.500}",
-          "$description": "Hints, captions, inactive controls"
+          "$value": "{palette.neutral.550}",
+          "$description": "Hints, captions and inactive controls, at 4.5:1 on every surface"
         },
         "inverse": {
           "$type": "color",
@@ -1529,8 +1549,8 @@
         },
         "tertiary": {
           "$type": "color",
-          "$value": "{palette.neutral.500}",
-          "$description": "Hints, captions, inactive controls"
+          "$value": "{palette.neutral.350}",
+          "$description": "Hints, captions and inactive controls, at 4.5:1 on every surface"
         },
         "inverse": {
           "$type": "color",

@@ -132,9 +132,8 @@ const onSubmit = fn((event: FormEvent<HTMLFormElement>) => event.preventDefault(
 const disabled = {
   args: { disabled: true },
   parameters: {
-    // a disabled group's legend and help are color.text.tertiary, a miss Accessibility lists by
-    // name (docs/foundations/accessibility.md) and WCAG 1.4.3 exempts for an inactive control, so
-    // axe's contrast rule is off for this story alone
+    // a disabled group's legend and help are color.text.tertiary, which WCAG 1.4.3 exempts for an
+    // inactive control, so axe's contrast rule is off for this story alone
     a11y: { options: { rules: { 'color-contrast': { enabled: false } } } },
   },
   play: async ({ args, canvasElement, step }) => {
@@ -299,8 +298,8 @@ export const Default: Story = {
 /** Each state a prop reaches, one group apiece: disabled and invalid. */
 export const States: Story = {
   parameters: {
-    // a disabled group's words are color.text.tertiary, a miss Accessibility lists by name
-    // (docs/foundations/accessibility.md) and WCAG 1.4.3 exempts for an inactive control, so axe
+    // a disabled group's words are color.text.tertiary, which WCAG 1.4.3 exempts
+    // for an inactive control, so axe
     // leaves it out
     a11y: { context: { include: ['body'], exclude: ['[data-row="Disabled"]'] } },
   },

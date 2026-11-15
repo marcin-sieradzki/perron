@@ -123,16 +123,11 @@ describe('token sources', () => {
  * also when a listed pair is fixed and should leave the list. Tertiary text is the one deliberate
  * miss; docs/foundations/colour.md says where it may be used.
  */
-const KNOWN_TEXT_FAILURES = new Set(
-  ['light', 'dark'].flatMap((th) =>
-    ['color.text.tertiary', 'color.transit.delay.unknown'].flatMap((fg) =>
-      ['default', 'raised', 'inset'].map((bg) => `${th} ${fg} on color.surface.${bg}`),
-    ),
-  ),
-)
+/** Text colours that fall below 4.5:1 on a surface: none, since WCAG 2.2 AA has no exception for hints. */
+const KNOWN_TEXT_FAILURES = new Set<string>()
 
-/** Line badges whose label colour falls below 4.5:1 on the line colour (same in both themes). */
-const KNOWN_BADGE_FAILURES = new Set(['m1', 'm4', 'a', 'b', 'c'])
+/** Line badges whose label colour falls below 4.5:1 on the line colour: none (WCAG 1.4.3). */
+const KNOWN_BADGE_FAILURES = new Set<string>()
 
 describe('contrast', () => {
   const surfaces = ['color.surface.default', 'color.surface.raised', 'color.surface.inset']

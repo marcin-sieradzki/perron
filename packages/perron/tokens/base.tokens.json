@@ -32,6 +32,14 @@
           "hex": "#A2ADB1"
         }
       },
+      "350": {
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.5647, 0.6078, 0.6314],
+          "hex": "#909BA1"
+        },
+        "$description": "Tertiary text in the dark theme: hints and captions at 4.5:1 on every dark surface"
+      },
       "400": {
         "$value": {
           "colorSpace": "srgb",
@@ -46,6 +54,14 @@
           "components": [0.4549, 0.5059, 0.5412],
           "hex": "#74818A"
         }
+      },
+      "550": {
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.3765, 0.4235, 0.4549],
+          "hex": "#606C74"
+        },
+        "$description": "Tertiary text in the light theme: hints and captions at 4.5:1 on every light surface"
       },
       "600": {
         "$value": {
@@ -81,6 +97,14 @@
           "components": [0.0392, 0.0549, 0.0627],
           "hex": "#0A0E10"
         }
+      },
+      "1000": {
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.0, 0.0, 0.0],
+          "hex": "#000000"
+        },
+        "$description": "Black, for label text on a mid-tone line colour that neutral 900 does not clear at 4.5:1"
       }
     },
     "blue": {
@@ -297,6 +321,10 @@
         "light": {
           "$value": "{palette.neutral.0}",
           "$description": "White text on a coloured fill"
+        },
+        "black": {
+          "$value": "{palette.neutral.1000}",
+          "$description": "Black text on a fill that neither white nor the dark text clears at 4.5:1: the M1 line badge"
         }
       }
     },
@@ -405,9 +433,9 @@
         }
       },
       "line-on": {
-        "$description": "Text colour on each line colour. Prototype rule: dark text when relative luminance > 0.4, else white.",
+        "$description": "Text colour on each line colour: white, the dark text or black, whichever reaches 4.5:1 on it (WCAG 1.4.3).",
         "m1": {
-          "$value": "{color.text.on-color.light}",
+          "$value": "{color.text.on-color.black}",
           "$description": "Label text on the M1 line badge"
         },
         "m2": {
@@ -419,19 +447,19 @@
           "$description": "Label text on the M3 line badge"
         },
         "m4": {
-          "$value": "{color.text.on-color.light}",
+          "$value": "{color.text.on-color.dark}",
           "$description": "Label text on the M4 line badge"
         },
         "a": {
-          "$value": "{color.text.on-color.light}",
+          "$value": "{color.text.on-color.dark}",
           "$description": "Label text on the A line badge"
         },
         "b": {
-          "$value": "{color.text.on-color.light}",
+          "$value": "{color.text.on-color.dark}",
           "$description": "Label text on the B line badge"
         },
         "c": {
-          "$value": "{color.text.on-color.light}",
+          "$value": "{color.text.on-color.dark}",
           "$description": "Label text on the C line badge"
         },
         "e": {

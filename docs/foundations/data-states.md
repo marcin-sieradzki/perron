@@ -72,7 +72,7 @@ A delay is known only for live, ageing and estimated vehicles. Timetable only an
 | `color.transit.delay.slight`  | `#12181B` (color.text.primary)  | `#EBEEEB` (color.text.primary)  | Late by 1–2 min                            |
 | `color.transit.delay.late`    | `#AD3600` (color.text.danger)   | `#FF8655` (color.text.danger)   | Late by 3 min or more                      |
 | `color.transit.delay.early`   | `#2351AF` (color.text.info)     | `#7FA6FF` (color.text.info)     | Delay text when early                      |
-| `color.transit.delay.unknown` | `#74818A` (color.text.tertiary) | `#74818A` (color.text.tertiary) | Delay text when there is no real-time data |
+| `color.transit.delay.unknown` | `#606C74` (color.text.tertiary) | `#909BA1` (color.text.tertiary) | Delay text when there is no real-time data |
 
 <!-- /tokens -->
 

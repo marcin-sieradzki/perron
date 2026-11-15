@@ -11,25 +11,26 @@ Every colour token in both themes. A `color` token says what a colour is for and
 
 ## Text
 
-- Three text colours for the interface. Use `color.text.primary` for what people read first, and `color.text.secondary` for supporting text. Keep `color.text.tertiary` for hints, axis labels, captions and the "—" of an unknown delay or figure, next to stronger text: it misses 4.5:1 on purpose (the figures are on [Accessibility](accessibility.md)), so set sentences people must read in primary or secondary.
+- Three text colours for the interface. Use `color.text.primary` for what people read first, and `color.text.secondary` for supporting text. Keep `color.text.tertiary` for hints, axis labels, captions and the "—" of an unknown delay or figure, next to stronger text. It reaches 4.5:1 on every surface, like the other two (the figures are on [Accessibility](accessibility.md)); it is the quietest of the three, so set sentences people must read in primary or secondary.
 - `color.text.inverse` sits on `color.surface.inverse`, the primary button and pressed toggles.
 - On a coloured fill, text is `color.text.on-color.dark` or `color.text.on-color.light`, whichever the fill was paired with.
 
 <!-- tokens: color.text.* -->
 
-| Token                       | Light                             | Dark                              | Use                                                                                        |
-| --------------------------- | --------------------------------- | --------------------------------- | ------------------------------------------------------------------------------------------ |
-| `color.text.on-color.dark`  | `#12181B` (palette.neutral.900)   | `#12181B` (palette.neutral.900)   | Dark text on a coloured fill (bus, light line colours)                                     |
-| `color.text.on-color.light` | `#FFFFFF` (palette.neutral.0)     | `#FFFFFF` (palette.neutral.0)     | White text on a coloured fill                                                              |
-| `color.text.primary`        | `#12181B` (palette.neutral.900)   | `#EBEEEB` (palette.neutral.100)   | Main text and icons; also the focus ring                                                   |
-| `color.text.secondary`      | `#47535A` (palette.neutral.600)   | `#A2ADB1` (palette.neutral.300)   | Supporting text beside or under the main text: labels, second lines and details            |
-| `color.text.tertiary`       | `#74818A` (palette.neutral.500)   | `#74818A` (palette.neutral.500)   | Hints, captions, inactive controls                                                         |
-| `color.text.inverse`        | `#FAFBF9` (color.surface.default) | `#12181B` (color.surface.default) | Text on inverse surfaces: tooltips, the chart's value tip                                  |
-| `color.text.success`        | `#067849` (palette.green.700)     | `#3CCB80` (palette.green.300)     | Text in the success colour: on time, running normally                                      |
-| `color.text.warning`        | `#965A00` (palette.orange.700)    | `#F0A43A` (palette.orange.300)    | Text in the warning colour                                                                 |
-| `color.text.danger`         | `#AD3600` (palette.red.700)       | `#FF8655` (palette.red.300)       | Text in the danger colour: late, delay disruptions                                         |
-| `color.text.info`           | `#2351AF` (palette.blue.700)      | `#7FA6FF` (palette.blue.300)      | Text in the info colour: early, diversions                                                 |
-| `color.text.brand`          | `#896001` (palette.yellow.700)    | `#F2B630` (palette.yellow.300)    | Text in the brand colour: brand outline buttons and emphasis on the hero page; never links |
+| Token                       | Light                             | Dark                              | Use                                                                                          |
+| --------------------------- | --------------------------------- | --------------------------------- | -------------------------------------------------------------------------------------------- |
+| `color.text.on-color.dark`  | `#12181B` (palette.neutral.900)   | `#12181B` (palette.neutral.900)   | Dark text on a coloured fill (bus, light line colours)                                       |
+| `color.text.on-color.light` | `#FFFFFF` (palette.neutral.0)     | `#FFFFFF` (palette.neutral.0)     | White text on a coloured fill                                                                |
+| `color.text.on-color.black` | `#000000` (palette.neutral.1000)  | `#000000` (palette.neutral.1000)  | Black text on a fill that neither white nor the dark text clears at 4.5:1: the M1 line badge |
+| `color.text.primary`        | `#12181B` (palette.neutral.900)   | `#EBEEEB` (palette.neutral.100)   | Main text and icons; also the focus ring                                                     |
+| `color.text.secondary`      | `#47535A` (palette.neutral.600)   | `#A2ADB1` (palette.neutral.300)   | Supporting text beside or under the main text: labels, second lines and details              |
+| `color.text.tertiary`       | `#606C74` (palette.neutral.550)   | `#909BA1` (palette.neutral.350)   | Hints, captions and inactive controls, at 4.5:1 on every surface                             |
+| `color.text.inverse`        | `#FAFBF9` (color.surface.default) | `#12181B` (color.surface.default) | Text on inverse surfaces: tooltips, the chart's value tip                                    |
+| `color.text.success`        | `#067849` (palette.green.700)     | `#3CCB80` (palette.green.300)     | Text in the success colour: on time, running normally                                        |
+| `color.text.warning`        | `#965A00` (palette.orange.700)    | `#F0A43A` (palette.orange.300)    | Text in the warning colour                                                                   |
+| `color.text.danger`         | `#AD3600` (palette.red.700)       | `#FF8655` (palette.red.300)       | Text in the danger colour: late, delay disruptions                                           |
+| `color.text.info`           | `#2351AF` (palette.blue.700)      | `#7FA6FF` (palette.blue.300)      | Text in the info colour: early, diversions                                                   |
+| `color.text.brand`          | `#896001` (palette.yellow.700)    | `#F2B630` (palette.yellow.300)    | Text in the brand colour: brand outline buttons and emphasis on the hero page; never links   |
 
 <!-- /tokens -->
 
@@ -127,7 +128,7 @@ The brand colour is the yellow of the bus dot in the [Mylder mark](logos.md), an
 - Line colours are the operators' own: `color.transit.line.<id>` for metro and S-tog, `color.transit.mode.bus` and `color.transit.mode.regional` for the rest. They stay exact, never adjusted to the brand.
 - A line colour fills a shape only in a line badge. Elsewhere it is a dot, a ring, a rail or a swatch.
 - Text on a line colour always uses its partner, `color.transit.line-on.<id>` or `color.transit.mode.on-*`.
-- Several official pairs miss 4.5:1: C 2.51:1, A 2.94:1, B 3.27:1, M4 3.56:1 and M1 4.44:1. They stay exact, set bold, with the line always named in words nearby. The test lists them.
+- Every label reaches 4.5:1 on its line colour (WCAG 1.4.3). The line colour stays exact and the label changes instead: white where white reaches it, `color.text.on-color.dark` on the light fills (A, B, C, M2, M4, F), and black, `color.text.on-color.black`, on M1's green, which neither white (4.44:1) nor the dark text (4.04:1) clears. The test fails on any pair under 4.5:1.
 
 <!-- tokens: color.transit.line.* color.transit.line-on.* color.transit.mode.* -->
 
@@ -143,13 +144,13 @@ The brand colour is the yellow of the bus dot in the [Mylder mark](logos.md), an
 | `color.transit.line.e`           | `#7D5AA6`                             | `#7D5AA6`                             | S-tog E: fills its line badge and colours its vehicle dots, station icons, stop timeline and rail on the map                                        |
 | `color.transit.line.f`           | `#F5C200`                             | `#F5C200`                             | S-tog F: fills its line badge and colours its vehicle dots, station icons, stop timeline and rail on the map                                        |
 | `color.transit.line.h`           | `#DD1F2A`                             | `#DD1F2A`                             | S-tog H: fills its line badge and colours its vehicle dots, station icons, stop timeline and rail on the map                                        |
-| `color.transit.line-on.m1`       | `#FFFFFF` (color.text.on-color.light) | `#FFFFFF` (color.text.on-color.light) | Label text on the M1 line badge                                                                                                                     |
+| `color.transit.line-on.m1`       | `#000000` (color.text.on-color.black) | `#000000` (color.text.on-color.black) | Label text on the M1 line badge                                                                                                                     |
 | `color.transit.line-on.m2`       | `#12181B` (color.text.on-color.dark)  | `#12181B` (color.text.on-color.dark)  | Label text on the M2 line badge                                                                                                                     |
 | `color.transit.line-on.m3`       | `#FFFFFF` (color.text.on-color.light) | `#FFFFFF` (color.text.on-color.light) | Label text on the M3 line badge                                                                                                                     |
-| `color.transit.line-on.m4`       | `#FFFFFF` (color.text.on-color.light) | `#FFFFFF` (color.text.on-color.light) | Label text on the M4 line badge                                                                                                                     |
-| `color.transit.line-on.a`        | `#FFFFFF` (color.text.on-color.light) | `#FFFFFF` (color.text.on-color.light) | Label text on the A line badge                                                                                                                      |
-| `color.transit.line-on.b`        | `#FFFFFF` (color.text.on-color.light) | `#FFFFFF` (color.text.on-color.light) | Label text on the B line badge                                                                                                                      |
-| `color.transit.line-on.c`        | `#FFFFFF` (color.text.on-color.light) | `#FFFFFF` (color.text.on-color.light) | Label text on the C line badge                                                                                                                      |
+| `color.transit.line-on.m4`       | `#12181B` (color.text.on-color.dark)  | `#12181B` (color.text.on-color.dark)  | Label text on the M4 line badge                                                                                                                     |
+| `color.transit.line-on.a`        | `#12181B` (color.text.on-color.dark)  | `#12181B` (color.text.on-color.dark)  | Label text on the A line badge                                                                                                                      |
+| `color.transit.line-on.b`        | `#12181B` (color.text.on-color.dark)  | `#12181B` (color.text.on-color.dark)  | Label text on the B line badge                                                                                                                      |
+| `color.transit.line-on.c`        | `#12181B` (color.text.on-color.dark)  | `#12181B` (color.text.on-color.dark)  | Label text on the C line badge                                                                                                                      |
 | `color.transit.line-on.e`        | `#FFFFFF` (color.text.on-color.light) | `#FFFFFF` (color.text.on-color.light) | Label text on the E line badge                                                                                                                      |
 | `color.transit.line-on.f`        | `#12181B` (color.text.on-color.dark)  | `#12181B` (color.text.on-color.dark)  | Label text on the F line badge                                                                                                                      |
 | `color.transit.line-on.h`        | `#FFFFFF` (color.text.on-color.light) | `#FFFFFF` (color.text.on-color.light) | Label text on the H line badge                                                                                                                      |
@@ -172,7 +173,7 @@ Delay and disruption colours point at the status text colours. When each is used
 | `color.transit.delay.slight`       | `#12181B` (color.text.primary)   | `#EBEEEB` (color.text.primary)   | Late by 1–2 min                            |
 | `color.transit.delay.late`         | `#AD3600` (color.text.danger)    | `#FF8655` (color.text.danger)    | Late by 3 min or more                      |
 | `color.transit.delay.early`        | `#2351AF` (color.text.info)      | `#7FA6FF` (color.text.info)      | Delay text when early                      |
-| `color.transit.delay.unknown`      | `#74818A` (color.text.tertiary)  | `#74818A` (color.text.tertiary)  | Delay text when there is no real-time data |
+| `color.transit.delay.unknown`      | `#606C74` (color.text.tertiary)  | `#909BA1` (color.text.tertiary)  | Delay text when there is no real-time data |
 | `color.transit.severity.delay`     | `#AD3600` (color.text.danger)    | `#FF8655` (color.text.danger)    | Icon and label for delays                  |
 | `color.transit.severity.data`      | `#47535A` (color.text.secondary) | `#A2ADB1` (color.text.secondary) | Icon and label for data feed problems      |
 | `color.transit.severity.diversion` | `#2351AF` (color.text.info)      | `#7FA6FF` (color.text.info)      | Icon and label for diversions              |

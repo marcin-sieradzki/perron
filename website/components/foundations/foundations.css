@@ -249,7 +249,7 @@
 }
 
 .fd-code-quiet {
-  color: var(--perron-color-text-tertiary);
+  color: var(--perron-color-text-secondary);
 }
 
 .fd-code-strong {
@@ -1148,12 +1148,17 @@
   border: var(--perron-border-width-025) solid var(--perron-color-border-subtle);
 }
 
+.fd-contrast-sample::before {
+  content: 'Aa';
+}
+
 .fd-contrast-sample {
   font: var(--perron-typography-heading-md);
   letter-spacing: var(--perron-typography-heading-md-tracking);
 }
 
 .fd-contrast-ratio {
+  color: var(--perron-color-text-primary);
   font: var(--perron-typography-data-sm);
   letter-spacing: var(--perron-typography-data-sm-tracking);
   white-space: nowrap;

@@ -11,8 +11,8 @@
         "$description": "Supporting text beside or under the main text: labels, second lines and details"
       },
       "tertiary": {
-        "$value": "{palette.neutral.500}",
-        "$description": "Hints, captions, inactive controls"
+        "$value": "{palette.neutral.350}",
+        "$description": "Hints, captions and inactive controls, at 4.5:1 on every surface"
       },
       "inverse": {
         "$value": "{color.surface.default}",

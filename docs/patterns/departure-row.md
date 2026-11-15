@@ -199,7 +199,7 @@ The `expected` time takes every row of the `time`'s, in one rule with it, `typog
 | `delay`       | rest                             | `white-space`                             | none: the keyword `nowrap`, Delay's own, the long-word rule of the rule that sets its role (CR-12)                                                                                          |
 | `delay`       | rest, every `data-delay`         | `color`                                   | `color.transit.delay.*`, through Delay                                                                                                                                                      |
 
-The destination and the countdown are the row's two strong pieces of text, in `color.text.primary`; the state's word and the time are its second line, in `color.text.secondary`, which reaches 4.5:1 on every surface, so the Delay's `color.transit.delay.unknown` "—", which misses it by design, always sits beside stronger text, as Delay's spec asks.
+The destination and the countdown are the row's two strong pieces of text, in `color.text.primary`; the state's word and the time are its second line, in `color.text.secondary`, which reaches 4.5:1 on every surface, so the Delay's `color.transit.delay.unknown` "—", the quietest text, always sits beside stronger text, as Delay's spec asks.
 
 ## Keyboard and ARIA
 

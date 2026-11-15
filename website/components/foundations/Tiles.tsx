@@ -53,19 +53,17 @@ interface TileProps {
 }
 
 function Tile({ page, title, href, meta, caption, wide, glass, className, children }: TileProps) {
-  const id = `fd-tile-${(href ?? page.route).replace(/\W+/g, '-')}`
-  const classes = ['fd-tile', 'lift', glass ? 'glass' : '', className ?? ''].join(' ').trim()
+  const classes = ['fd-tile', 'lift', 'tile', glass ? 'glass' : '', className ?? '']
+    .join(' ')
+    .trim()
+  // The title is the link, stretched over the tile (`.tile-link`, site.css), so its name is
+  // exactly its visible text (WCAG 2.5.3).
   return (
-    <NextLink
-      href={href ?? page.route}
-      className={classes}
-      data-wide={wide || undefined}
-      aria-labelledby={id}
-    >
+    <div className={classes} data-wide={wide || undefined}>
       <span className="fd-tile-head">
-        <span id={id} className="fd-tile-title">
+        <NextLink href={href ?? page.route} className="fd-tile-title tile-link">
           {title ?? page.title}
-        </span>
+        </NextLink>
         {meta ? <span className="fd-tile-meta">{meta}</span> : null}
       </span>
       {children}
@@ -74,7 +72,7 @@ function Tile({ page, title, href, meta, caption, wide, glass, className, childr
           <Rich text={caption} />
         </span>
       ) : null}
-    </NextLink>
+    </div>
   )
 }
 

@@ -2,20 +2,23 @@
 // reference or, with no Base UI part, its docs.
 import type { RegistryEntry } from '../../lib/registry.ts'
 import { agentCalls, importLine } from '../../lib/spec.ts'
+import { ScrollFrame } from '../site/ScrollFrame.tsx'
 
 export function InstallStrip({ entry }: { entry: RegistryEntry }) {
   return (
     <section id="install" className="spec-section spec-panel glass spec-install">
       <div className="spec-install-part">
         <h2 className="spec-install-label">Use it</h2>
-        <code className="spec-code">{importLine(entry)}</code>
+        <ScrollFrame as="code" className="spec-code" label="Import line">
+          {importLine(entry)}
+        </ScrollFrame>
       </div>
       <div className="spec-install-part">
         <h2 className="spec-install-label">Ask your agent</h2>
         {agentCalls(entry).map((call) => (
-          <code key={call} className="spec-code">
+          <ScrollFrame as="code" key={call} className="spec-code" label="Agent call">
             {call}
-          </code>
+          </ScrollFrame>
         ))}
       </div>
     </section>

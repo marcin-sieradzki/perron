@@ -4,37 +4,37 @@ Perron targets [WCAG 2.2](https://www.w3.org/TR/WCAG22/) level AA. Part of it th
 
 ## What the build checks
 
-- **Text contrast (1.4.3).** Every text colour reaches 4.5:1 on `color.surface.default`, `raised` and `inset`, in both themes. The test lists the deliberate misses by name: `color.text.tertiary` and `color.transit.delay.unknown`, which are only for hints, captions and the "—" of an unknown delay or figure, always next to stronger text. Status and brand text also reach 4.5:1 on their own tinted surfaces. Under a quiet control's hover and pressed layers, text keeps 4.5:1 on `default` and `raised`; on `inset`, the light theme's brand outline label drops to 4.3:1 on hover and 4.0:1 while pressed, so a brand outline button sits on `default` or `raised`.
+- **Text contrast (1.4.3).** Every text colour reaches 4.5:1 on `color.surface.default`, `raised` and `inset`, in both themes, `color.text.tertiary` and `color.transit.delay.unknown` included: WCAG 2.2 AA makes no exception for hints and captions, so the test allows no miss. Status and brand text also reach 4.5:1 on their own tinted surfaces. Under a quiet control's hover and pressed layers, text keeps 4.5:1 on `default` and `raised`; on `inset`, the light theme's brand outline label drops to 4.3:1 on hover and 4.0:1 while pressed, so a brand outline button sits on `default` or `raised`.
 - **Non-text contrast (1.4.11).** What shows where a control is, or what state something is in, reaches 3:1 against every surface: `color.border.control`, `color.border.brand`, the focus ring and the status fills. Decorative lines, `color.border.subtle` and `color.border.strong`, are exempt, and their descriptions say so. On the map, `color.map.aircraft` reaches 3:1 on every ground a plane flies or taxis over ([Map](map.md#aircraft)).
 - **The focus ring (2.4.7, 1.4.11)** reaches 3:1 on every surface and on the map's land, water and parks.
 - **The surface ladder.** `color.surface.inset` stands apart from `color.surface.raised` by at least 1.15:1 in both themes, so an inset track reads without a border. See [Elevation](elevation.md#surfaces).
-- **Line badges.** Label colours on line colours are measured, and the official pairs that miss are listed. See [Semantic colours](semantic-colours.md#line-colours).
+- **Line badges.** Every label colour reaches 4.5:1 on its line colour; the line colours stay exact and the label takes white, the dark text or black. See [Semantic colours](semantic-colours.md#line-colours).
 - **Reduced motion (2.3.3, a AAA criterion met anyway)** lives in the tokens: when the system asks for less motion, transitions take 0.01 ms. See [Motion](motion.md).
 
 ### Text on surfaces
 
 <!-- contrast 4.5: color.text.primary color.text.secondary color.text.tertiary color.text.success color.text.warning color.text.danger color.text.info color.text.brand color.transit.delay.* color.transit.severity.* on color.surface.default color.surface.raised color.surface.inset -->
 
-| Colour                             | Light default | Light raised  | Light inset   | Dark default  | Dark raised   | Dark inset    |
-| ---------------------------------- | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- |
-| `color.text.primary`               | 17.26:1       | 17.92:1       | 15.32:1       | 15.32:1       | 13.45:1       | 11.21:1       |
-| `color.text.secondary`             | 7.63:1        | 7.92:1        | 6.77:1        | 7.80:1        | 6.85:1        | 5.71:1        |
-| `color.text.tertiary`              | 3.85:1 (miss) | 4.00:1 (miss) | 3.42:1 (miss) | 4.48:1 (miss) | 3.93:1 (miss) | 3.28:1 (miss) |
-| `color.text.success`               | 5.34:1        | 5.54:1        | 4.74:1        | 8.57:1        | 7.52:1        | 6.27:1        |
-| `color.text.warning`               | 5.38:1        | 5.59:1        | 4.78:1        | 8.60:1        | 7.55:1        | 6.29:1        |
-| `color.text.danger`                | 6.12:1        | 6.35:1        | 5.44:1        | 7.50:1        | 6.59:1        | 5.49:1        |
-| `color.text.info`                  | 7.06:1        | 7.32:1        | 6.26:1        | 7.51:1        | 6.59:1        | 5.49:1        |
-| `color.text.brand`                 | 5.41:1        | 5.62:1        | 4.81:1        | 9.82:1        | 8.62:1        | 7.19:1        |
-| `color.transit.delay.on-time`      | 5.34:1        | 5.54:1        | 4.74:1        | 8.57:1        | 7.52:1        | 6.27:1        |
-| `color.transit.delay.slight`       | 17.26:1       | 17.92:1       | 15.32:1       | 15.32:1       | 13.45:1       | 11.21:1       |
-| `color.transit.delay.late`         | 6.12:1        | 6.35:1        | 5.44:1        | 7.50:1        | 6.59:1        | 5.49:1        |
-| `color.transit.delay.early`        | 7.06:1        | 7.32:1        | 6.26:1        | 7.51:1        | 6.59:1        | 5.49:1        |
-| `color.transit.delay.unknown`      | 3.85:1 (miss) | 4.00:1 (miss) | 3.42:1 (miss) | 4.48:1 (miss) | 3.93:1 (miss) | 3.28:1 (miss) |
-| `color.transit.severity.delay`     | 6.12:1        | 6.35:1        | 5.44:1        | 7.50:1        | 6.59:1        | 5.49:1        |
-| `color.transit.severity.data`      | 7.63:1        | 7.92:1        | 6.77:1        | 7.80:1        | 6.85:1        | 5.71:1        |
-| `color.transit.severity.diversion` | 7.06:1        | 7.32:1        | 6.26:1        | 7.51:1        | 6.59:1        | 5.49:1        |
-| `color.transit.severity.planned`   | 7.63:1        | 7.92:1        | 6.77:1        | 7.80:1        | 6.85:1        | 5.71:1        |
-| `color.transit.severity.notice`    | 7.63:1        | 7.92:1        | 6.77:1        | 7.80:1        | 6.85:1        | 5.71:1        |
+| Colour                             | Light default | Light raised | Light inset | Dark default | Dark raised | Dark inset |
+| ---------------------------------- | ------------- | ------------ | ----------- | ------------ | ----------- | ---------- |
+| `color.text.primary`               | 17.26:1       | 17.92:1      | 15.32:1     | 15.32:1      | 13.45:1     | 11.21:1    |
+| `color.text.secondary`             | 7.63:1        | 7.92:1       | 6.77:1      | 7.80:1       | 6.85:1      | 5.71:1     |
+| `color.text.tertiary`              | 5.19:1        | 5.39:1       | 4.61:1      | 6.30:1       | 5.53:1      | 4.61:1     |
+| `color.text.success`               | 5.34:1        | 5.54:1       | 4.74:1      | 8.57:1       | 7.52:1      | 6.27:1     |
+| `color.text.warning`               | 5.38:1        | 5.59:1       | 4.78:1      | 8.60:1       | 7.55:1      | 6.29:1     |
+| `color.text.danger`                | 6.12:1        | 6.35:1       | 5.44:1      | 7.50:1       | 6.59:1      | 5.49:1     |
+| `color.text.info`                  | 7.06:1        | 7.32:1       | 6.26:1      | 7.51:1       | 6.59:1      | 5.49:1     |
+| `color.text.brand`                 | 5.41:1        | 5.62:1       | 4.81:1      | 9.82:1       | 8.62:1      | 7.19:1     |
+| `color.transit.delay.on-time`      | 5.34:1        | 5.54:1       | 4.74:1      | 8.57:1       | 7.52:1      | 6.27:1     |
+| `color.transit.delay.slight`       | 17.26:1       | 17.92:1      | 15.32:1     | 15.32:1      | 13.45:1     | 11.21:1    |
+| `color.transit.delay.late`         | 6.12:1        | 6.35:1       | 5.44:1      | 7.50:1       | 6.59:1      | 5.49:1     |
+| `color.transit.delay.early`        | 7.06:1        | 7.32:1       | 6.26:1      | 7.51:1       | 6.59:1      | 5.49:1     |
+| `color.transit.delay.unknown`      | 5.19:1        | 5.39:1       | 4.61:1      | 6.30:1       | 5.53:1      | 4.61:1     |
+| `color.transit.severity.delay`     | 6.12:1        | 6.35:1       | 5.44:1      | 7.50:1       | 6.59:1      | 5.49:1     |
+| `color.transit.severity.data`      | 7.63:1        | 7.92:1       | 6.77:1      | 7.80:1       | 6.85:1      | 5.71:1     |
+| `color.transit.severity.diversion` | 7.06:1        | 7.32:1       | 6.26:1      | 7.51:1       | 6.59:1      | 5.49:1     |
+| `color.transit.severity.planned`   | 7.63:1        | 7.92:1       | 6.77:1      | 7.80:1       | 6.85:1      | 5.71:1     |
+| `color.transit.severity.notice`    | 7.63:1        | 7.92:1       | 6.77:1      | 7.80:1       | 6.85:1      | 5.71:1     |
 
 <!-- /contrast -->
 

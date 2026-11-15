@@ -65,6 +65,34 @@ body {
   );
 }
 
+/* A card whose heading is its link: the link's ::after covers the card, so the whole card
+   takes the click, and the card draws the focus ring (MadeOf.tsx, Tiles.tsx). */
+.tile {
+  position: relative;
+}
+
+.tile-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.tile-link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+}
+
+.tile-link:focus-visible {
+  outline: none;
+}
+
+.tile:has(.tile-link:focus-visible) {
+  outline: var(--perron-focus-width) solid var(--perron-color-border-focus);
+  outline-offset: var(--perron-focus-offset);
+}
+
 .link {
   color: inherit;
   text-decoration: none;

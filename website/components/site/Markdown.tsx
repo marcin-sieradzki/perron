@@ -10,6 +10,7 @@ import type { ComponentProps } from 'react'
 import { Link } from '@mylder/perron'
 import { withoutLeadingTitle } from '../../lib/anchors.ts'
 import { assetSrc, siteHref } from '../../lib/routes.ts'
+import { ScrollFrame } from './ScrollFrame.tsx'
 
 export interface MarkdownProps {
   /** The markdown, such as a Doc's `body` or one prose segment of a foundation page */
@@ -34,9 +35,9 @@ function MarkdownImage({ src, alt = '', from }: ComponentProps<'img'> & { from: 
 
 function Table(props: ComponentProps<'table'>) {
   return (
-    <div className="scroll-x markdown-table">
+    <ScrollFrame className="scroll-x markdown-table" label="Table">
       <table {...props} />
-    </div>
+    </ScrollFrame>
   )
 }
 

@@ -5,6 +5,7 @@
 import type { TokenRow, TokenSegment } from './data.ts'
 import { cssValue, spaced, words } from './data.ts'
 import { TokenPreview } from './TokenPreview.tsx'
+import { ScrollFrame } from '../site/ScrollFrame.tsx'
 
 function Value({ row, theme }: { row: TokenRow; theme: string }) {
   const { css, alias } = row.values[theme]
@@ -93,7 +94,7 @@ function ScaleBars({ rows }: { rows: TokenRow[] }) {
 function TokenRows({ themes, contexts, rows }: Omit<TokenSegment, 'kind'>) {
   const themed = themes.length > 1
   return (
-    <div className="scroll-x fd-table-frame">
+    <ScrollFrame className="scroll-x fd-table-frame" label="Tokens">
       <table className="fd-table">
         <thead>
           <tr>
@@ -132,7 +133,7 @@ function TokenRows({ themes, contexts, rows }: Omit<TokenSegment, 'kind'>) {
           ))}
         </tbody>
       </table>
-    </div>
+    </ScrollFrame>
   )
 }
 

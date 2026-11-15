@@ -206,8 +206,8 @@ export const Default: Story = {
 /** The segment "Bus" in each state it can be left in: at rest, selected and disabled. */
 export const Segments: Story = {
   parameters: {
-    // a disabled segment's words are color.text.tertiary, a miss Accessibility lists by name
-    // (docs/foundations/accessibility.md) and WCAG 1.4.3 exempts for an inactive control, so axe
+    // a disabled segment's words are color.text.tertiary, which WCAG 1.4.3 exempts
+    // for an inactive control, so axe
     // leaves it out
     a11y: { context: { include: ['body'], exclude: ['[data-row="Disabled"]'] } },
   },

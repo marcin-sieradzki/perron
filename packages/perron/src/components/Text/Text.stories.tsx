@@ -139,11 +139,6 @@ export const Colors: Story = {
  * (Semantic colours), so it follows a label here.
  */
 export const Emphasis: Story = {
-  parameters: {
-    // color.text.tertiary misses 4.5:1 on purpose, a miss Accessibility lists by name
-    // (docs/foundations/accessibility.md), so axe leaves the tertiary text out
-    a11y: { context: { include: ['body'], exclude: ['.pn-Text[data-emphasis="tertiary"]'] } },
-  },
   render: (args) => (
     <Showcase
       rows={[

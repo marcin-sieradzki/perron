@@ -3,7 +3,7 @@
 // station with `variant: 'stop'`. The panel is a Sheet, which portals out of the page, so the
 // preview holds it in a frame of its own (previews.css) and portals into that; closing it leaves
 // the button that opens it again, as picking the vehicle on the map would.
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Button, Text } from '@mylder/perron'
 import { DetailPanel, StopTimeline } from '@mylder/perron/patterns'
 import type { DetailPanelProps } from '@mylder/perron/patterns'
@@ -33,6 +33,27 @@ export function DetailPanelPreview({ frameClassName, ...props }: DetailPanelPrev
     ? { ...STATION_HEADER, children: <Text>{STATION_DEPARTURES}</Text> }
     : { ...METRO_HEADER, children: <StopTimeline {...METRO_TRIP} /> }
   const label = station ? `Show ${STATION_HEADER.title}` : METRO_TRIGGER
+
+  // Base UI's focus guards, aria-hidden spans that take Tab and pass it on, keep a real app's
+  // focus going round a panel; in a preview set into a docs page they are hidden tab stops
+  // (axe's aria-hidden-focus, WCAG 4.1.2), so the frame takes them out of the tab order and Tab
+  // follows the page.
+  useEffect(() => {
+    if (!frame) return
+    const untab = () =>
+      frame.querySelectorAll<HTMLElement>('[data-base-ui-focus-guard]').forEach((guard) => {
+        if (guard.tabIndex !== -1) guard.tabIndex = -1
+      })
+    untab()
+    const observer = new MutationObserver(untab)
+    observer.observe(frame, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      attributeFilter: ['tabindex'],
+    })
+    return () => observer.disconnect()
+  }, [frame])
 
   return (
     <div
