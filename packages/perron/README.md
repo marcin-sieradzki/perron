@@ -1,6 +1,6 @@
 # @mylder/perron
 
-Perron is the design system of Mylder, a live map of Copenhagen's buses, S-tog, metro and regional trains. This package holds all of it: the design tokens as CSS custom properties and TypeScript, the fonts, the icons and the Mylder mark, and the React components and patterns built on Base UI. The docs are at [marcin-sieradzki.github.io/perron](https://marcin-sieradzki.github.io/perron/).
+Perron is the design system of Mylder, a live map of Copenhagen's buses, S-tog, metro and regional trains. This package holds all of it: the design tokens as CSS custom properties and TypeScript, the fonts, the icons and the Mylder mark, and the React components and patterns built on Base UI. The docs are at [perron.marcinsieradzki.com](https://perron.marcinsieradzki.com/).
 
 ```sh
 npm install @mylder/perron

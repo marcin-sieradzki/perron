@@ -4,7 +4,7 @@ Perron is the design system of [Mylder](https://github.com/marcin-sieradzki/myld
 
 Each component and pattern is built to the [component contract](docs/components/README.md) by the factory loop of the [roadmap](ROADMAP.md): a spec goes in, and a loop of agents writes the code, the stories, the tests and the docs, with a code review as the gate.
 
-**Docs:** [marcin-sieradzki.github.io/perron](https://marcin-sieradzki.github.io/perron/), with the [Storybook](https://marcin-sieradzki.github.io/perron/storybook/) beside it. **Packages:** [`@mylder/perron`](https://www.npmjs.com/package/@mylder/perron) and [`@mylder/perron-mcp`](https://www.npmjs.com/package/@mylder/perron-mcp) on npm.
+**Docs:** [perron.marcinsieradzki.com](https://perron.marcinsieradzki.com/), with the [Storybook](https://perron.marcinsieradzki.com/storybook/) beside it. **Packages:** [`@mylder/perron`](https://www.npmjs.com/package/@mylder/perron) and [`@mylder/perron-mcp`](https://www.npmjs.com/package/@mylder/perron-mcp) on npm.
 
 ## Use it
 
