@@ -33,19 +33,11 @@ const LINES: Axis<{ line: LineBadgeProps['line']; name: string }>[] = [
   value: { line: line as LineBadgeProps['line'], name },
 }))
 
-/**
- * The official pairs of M1, M4, A, B and C miss 4.5:1 and stay exact by rule (CR-4, CR-6), as
- * docs/foundations/semantic-colours.md#line-colours lists them, so axe leaves their badges out;
- * every other badge keeps every rule, color-contrast among them.
- */
-const BELOW_CONTRAST = ['m1', 'm4', 'a', 'b', 'c'].map((l) => `.pn-LineBadge[data-line="${l}"]`)
-
 /** The badge alone, every prop a control: M2 at `medium`, a pair that meets 4.5:1. */
 export const Default: Story = {}
 
 /** Every line at both sizes, each showing its short name. */
 export const Lines: Story = {
-  parameters: { a11y: { context: { include: ['body'], exclude: BELOW_CONTRAST } } },
   render: (args) => (
     <Showcase
       rows={LINES}

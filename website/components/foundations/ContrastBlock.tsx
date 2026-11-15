@@ -1,8 +1,10 @@
 // A contrast block: each colour on each background, in each theme, painted with the live custom
 // properties inside a `data-theme` cell, with the ratio the build measured. A ratio under the
-// block's minimum says so in words.
+// block's minimum says so in words. The specimen is drawn by CSS, as decoration (WCAG 1.4.3's incidental
+// text), and the ratio is set in primary text, so a pair that misses on purpose never makes the page miss.
 import type { ContrastSegment } from './data.ts'
 import { shortName, words } from './data.ts'
+import { ScrollFrame } from '../site/ScrollFrame.tsx'
 
 export function ContrastBlock({
   minimum,
@@ -11,7 +13,7 @@ export function ContrastBlock({
   rows,
 }: Omit<ContrastSegment, 'kind'>) {
   return (
-    <div className="scroll-x fd-table-frame">
+    <ScrollFrame className="scroll-x fd-table-frame" label="Contrast ratios">
       <table className="fd-table fd-contrast">
         <caption className="fd-contrast-caption">
           The ratio each pair reaches, against the minimum of {minimum}:1.
@@ -54,9 +56,7 @@ export function ContrastBlock({
                         data-miss={miss || undefined}
                         style={{ background: `var(${b.cssVar})`, color: `var(${row.cssVar})` }}
                       >
-                        <span className="fd-contrast-sample" aria-hidden="true">
-                          Aa
-                        </span>
+                        <span className="fd-contrast-sample" aria-hidden="true" />
                         <span className="fd-contrast-ratio">
                           {ratio.toFixed(2)}:1{miss ? ', under' : null}
                         </span>
@@ -69,6 +69,6 @@ export function ContrastBlock({
           ))}
         </tbody>
       </table>
-    </div>
+    </ScrollFrame>
   )
 }

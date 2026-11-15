@@ -1729,7 +1729,7 @@
         "id": "DD-3",
         "level": "must",
         "do": "Keep `emphasis='tertiary'` for hints and captions next to stronger text.",
-        "dont": "Set a sentence people must read in tertiary: it misses 4.5:1 on purpose.",
+        "dont": "Set a sentence people must read in tertiary: it is the quietest text, kept for hints.",
         "checkedBy": "review"
       },
       {
@@ -12202,7 +12202,7 @@
         "id": "DD-1",
         "level": "must",
         "do": "Name the lines in words in the title or the sentence, \"M2 and M3 trains…\", as well as in the badges.",
-        "dont": "Let the badges be the only mention of a line: five official badge pairs miss 4.5:1, and LineBadge asks for the name in words beside them.",
+        "dont": "Let the badges be the only mention of a line: LineBadge asks for the name in words beside them.",
         "checkedBy": "review"
       },
       {

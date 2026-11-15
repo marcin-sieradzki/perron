@@ -18,19 +18,22 @@ Gaps in the neutral ramp are room for new steps. A translucent colour is written
 
 <!-- tokens: palette.neutral.* -->
 
-| Token                 | Value     | Use                                                                             |
-| --------------------- | --------- | ------------------------------------------------------------------------------- |
-| `palette.neutral.0`   | `#FFFFFF` |                                                                                 |
-| `palette.neutral.50`  | `#FAFBF9` |                                                                                 |
-| `palette.neutral.100` | `#EBEEEB` |                                                                                 |
-| `palette.neutral.300` | `#A2ADB1` |                                                                                 |
-| `palette.neutral.400` | `#8B979E` | Pressed fill of a dark-theme primary button, between its hover step and the 500 |
-| `palette.neutral.500` | `#74818A` |                                                                                 |
-| `palette.neutral.600` | `#47535A` |                                                                                 |
-| `palette.neutral.700` | `#283237` |                                                                                 |
-| `palette.neutral.800` | `#1D2428` |                                                                                 |
-| `palette.neutral.900` | `#12181B` |                                                                                 |
-| `palette.neutral.950` | `#0A0E10` |                                                                                 |
+| Token                  | Value     | Use                                                                                      |
+| ---------------------- | --------- | ---------------------------------------------------------------------------------------- |
+| `palette.neutral.0`    | `#FFFFFF` |                                                                                          |
+| `palette.neutral.50`   | `#FAFBF9` |                                                                                          |
+| `palette.neutral.100`  | `#EBEEEB` |                                                                                          |
+| `palette.neutral.300`  | `#A2ADB1` |                                                                                          |
+| `palette.neutral.350`  | `#909BA1` | Tertiary text in the dark theme: hints and captions at 4.5:1 on every dark surface       |
+| `palette.neutral.400`  | `#8B979E` | Pressed fill of a dark-theme primary button, between its hover step and the 500          |
+| `palette.neutral.500`  | `#74818A` |                                                                                          |
+| `palette.neutral.550`  | `#606C74` | Tertiary text in the light theme: hints and captions at 4.5:1 on every light surface     |
+| `palette.neutral.600`  | `#47535A` |                                                                                          |
+| `palette.neutral.700`  | `#283237` |                                                                                          |
+| `palette.neutral.800`  | `#1D2428` |                                                                                          |
+| `palette.neutral.900`  | `#12181B` |                                                                                          |
+| `palette.neutral.950`  | `#0A0E10` |                                                                                          |
+| `palette.neutral.1000` | `#000000` | Black, for label text on a mid-tone line colour that neutral 900 does not clear at 4.5:1 |
 
 <!-- /tokens -->
 

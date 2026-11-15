@@ -13,6 +13,7 @@ import {
   type Tool,
 } from '../../lib/mcp.ts'
 import './agents.css'
+import { ScrollFrame } from '../site/ScrollFrame.tsx'
 
 /** Where the server's descriptions are written, which a relative link in one starts from. */
 const SERVER = 'packages/mcp/src/server.ts'
@@ -25,7 +26,7 @@ function TokenTable({ tokens }: { tokens: AnswerToken[] }) {
   const themes = [...new Set(tokens.flatMap((t) => Object.keys(t.values)))]
   const themed = themes.length > 1
   return (
-    <div className="scroll-x">
+    <ScrollFrame className="scroll-x" label="Tokens">
       <table className="agents-tokens">
         <thead>
           <tr>
@@ -66,7 +67,7 @@ function TokenTable({ tokens }: { tokens: AnswerToken[] }) {
           ))}
         </tbody>
       </table>
-    </div>
+    </ScrollFrame>
   )
 }
 

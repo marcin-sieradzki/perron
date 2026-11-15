@@ -452,8 +452,8 @@ export const Default: Story = {
 /** The radio "Light" in each state it can be left in: at rest, checked and disabled. */
 export const Radios: Story = {
   parameters: {
-    // a disabled field's words are color.text.tertiary, a miss Accessibility lists by name
-    // (docs/foundations/accessibility.md) and WCAG 1.4.3 exempts for an inactive control, so axe
+    // a disabled field's words are color.text.tertiary, which WCAG 1.4.3 exempts
+    // for an inactive control, so axe
     // leaves the disabled field out
     a11y: { context: { include: ['body'], exclude: ['[data-row="Disabled"]'] } },
   },
@@ -470,8 +470,8 @@ export const Radios: Story = {
 /** The group in each state a prop reaches: disabled, read-only and invalid. */
 export const States: Story = {
   parameters: {
-    // a disabled field's words are color.text.tertiary, a miss Accessibility lists by name
-    // (docs/foundations/accessibility.md) and WCAG 1.4.3 exempts for an inactive control, so axe
+    // a disabled field's words are color.text.tertiary, which WCAG 1.4.3 exempts
+    // for an inactive control, so axe
     // leaves the disabled field out
     a11y: { context: { include: ['body'], exclude: ['[data-row="Disabled"]'] } },
   },

@@ -124,11 +124,11 @@ No owned strings: the label is the caller's `children`, and the badge announces 
 - **CR-3.** The label sits on one line, centred both ways (`display: inline-flex`, `white-space: nowrap`), and the badge grows wider for a longer label; it never wraps or truncates.
 - **CR-4.** The fill and the label colour are always the pair the line's tokens give, in both themes, never adjusted: `color.transit.line.<id>` with `color.transit.line-on.<id>`, `color.transit.mode.bus` with `color.transit.mode.on-bus`, `color.transit.mode.regional` with `color.transit.mode.on-regional`.
 - **CR-5.** The CSS reads only the component layer's [token families](README.md#token-families), `color.transit.*` among them, and no `opacity`.
-- **CR-6.** The stories of the five lines whose official pairs miss 4.5:1 (M1, M4, A, B and C, listed on [Semantic colours](../foundations/semantic-colours.md#line-colours)) turn off axe's `color-contrast` rule in their own `parameters.a11y`, with a comment citing that list, while every other story keeps it: the pairs stay exact by rule, so axe would fail them on every run.
+- **CR-6.** Every badge keeps axe's `color-contrast` rule in every story: each line's label colour reaches 4.5:1 on its fill ([Semantic colours](../foundations/semantic-colours.md#line-colours)).
 
 ## Stories
 
-The deferred design's Penpot properties are `line` and `size`, in that order, with no `State` property, since the badge has one state; the visual stage renders each of its variants on `Default`. Each badge shows its line's short name as `children`. The official pairs of M1, M4, A, B and C miss 4.5:1 and stay exact by rule (CR-4, CR-6), so axe leaves those badges out of `Lines`, and every other badge keeps every rule.
+The deferred design's Penpot properties are `line` and `size`, in that order, with no `State` property, since the badge has one state; the visual stage renders each of its variants on `Default`. Each badge shows its line's short name as `children`. Every badge in `Lines` keeps every axe rule (CR-6).
 
 | Story     | Shows                                                                                            | `play` test |
 | --------- | ------------------------------------------------------------------------------------------------ | ----------- |

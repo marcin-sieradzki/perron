@@ -229,8 +229,8 @@ export const Default: Story = {
 /** The tab "Lines" in each state it can be left in: at rest, selected and disabled, each in a tab set of its own. */
 export const TabStates: Story = {
   parameters: {
-    // a disabled tab's words are color.text.tertiary, a miss Accessibility lists by name
-    // (docs/foundations/accessibility.md) and WCAG 1.4.3 exempts for an inactive control, so axe
+    // a disabled tab's words are color.text.tertiary, which WCAG 1.4.3 exempts
+    // for an inactive control, so axe
     // leaves it out
     a11y: { context: { include: ['body'], exclude: ['[data-row="Disabled"]'] } },
   },

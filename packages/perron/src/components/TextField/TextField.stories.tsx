@@ -155,8 +155,8 @@ const focus = {
 const disabled = {
   args: { disabled: true, defaultValue: WORDS },
   parameters: {
-    // a disabled field's words are color.text.tertiary, a miss Accessibility lists by name
-    // (docs/foundations/accessibility.md) and WCAG 1.4.3 exempts for an inactive control, so
+    // a disabled field's words are color.text.tertiary, which WCAG 1.4.3 exempts
+    // for an inactive control, so
     // axe's contrast rule is off for this story alone
     a11y: { options: { rules: { 'color-contrast': { enabled: false } } } },
   },
@@ -295,8 +295,8 @@ export const Default: Story = {
 /** Each state a prop reaches, one field apiece: filled, a placeholder, optional, disabled, read-only and invalid. */
 export const States: Story = {
   parameters: {
-    // a disabled field's words are color.text.tertiary, a miss Accessibility lists by name
-    // (docs/foundations/accessibility.md) and WCAG 1.4.3 exempts for an inactive control, so axe
+    // a disabled field's words are color.text.tertiary, which WCAG 1.4.3 exempts
+    // for an inactive control, so axe
     // leaves the disabled field out
     a11y: { context: { include: ['body'], exclude: ['[data-row="Disabled"]'] } },
   },

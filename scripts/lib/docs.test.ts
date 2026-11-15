@@ -36,10 +36,12 @@ describe('doc tables', () => {
 
   it('mark a contrast below the minimum', () => {
     const md = fillTables(
-      contrastBlock('4.5: color.text.tertiary on color.surface.default'),
+      contrastBlock('4.5: color.border.control on color.surface.default'),
       tokens,
     )
-    expect(md).toContain('| `color.text.tertiary` | 3.85:1 (miss) | 4.48:1 (miss) |')
+    expect(md).toMatch(
+      /\| `color\.border\.control` +\| \d\.\d\d:1 \(miss\) +\| \d\.\d\d:1 \(miss\) +\|/,
+    )
   })
 
   it('reject a pattern that matches nothing and a translucent background', () => {

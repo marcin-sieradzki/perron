@@ -350,8 +350,8 @@ export const Default: Story = {
 /** Each state a prop reaches, one checkbox apiece. */
 export const States: Story = {
   parameters: {
-    // a disabled field's words are color.text.tertiary, a miss Accessibility lists by name
-    // (docs/foundations/accessibility.md) and WCAG 1.4.3 exempts for an inactive control, so axe
+    // a disabled field's words are color.text.tertiary, which WCAG 1.4.3 exempts
+    // for an inactive control, so axe
     // leaves the disabled checkboxes out
     a11y: { context: { include: ['body'], exclude: ['[data-row="Disabled"]'] } },
   },

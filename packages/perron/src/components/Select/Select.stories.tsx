@@ -63,15 +63,6 @@ const meta = {
   // renders in its own iframe, tall enough for the tallest open list, Groups', not to scroll (CR-16).
   parameters: {
     docs: { story: { inline: false, height: '480px' } },
-    // the placeholder is a hint in color.text.tertiary, a miss Accessibility lists by name
-    // (docs/foundations/accessibility.md), as a native input's placeholder is, which axe never
-    // checks; so in the stories that show it axe's contrast rule passes over the placeholder
-    // alone, and checks the rest (CR-16)
-    a11y: {
-      config: {
-        rules: [{ id: 'color-contrast', selector: '*:not(.pn-Select-value[data-placeholder])' }],
-      },
-    },
   },
 } satisfies Meta<typeof Select>
 
@@ -241,8 +232,8 @@ const focus = {
 const disabled = {
   args: { disabled: true, defaultValue: 'metro' },
   parameters: {
-    // a disabled field's words are color.text.tertiary, a miss Accessibility lists by name
-    // (docs/foundations/accessibility.md) and WCAG 1.4.3 exempts for an inactive control, so
+    // a disabled field's words are color.text.tertiary, which WCAG 1.4.3 exempts
+    // for an inactive control, so
     // axe's contrast rule is off for this story alone (CR-16)
     a11y: { options: { rules: { 'color-contrast': { enabled: false } } } },
   },
@@ -371,8 +362,8 @@ export const Default: Story = {
 export const States: Story = {
   parameters: {
     docs: { story: { inline: false, height: '560px' } },
-    // a disabled field's words are color.text.tertiary, a miss Accessibility lists by name
-    // (docs/foundations/accessibility.md) and WCAG 1.4.3 exempts for an inactive control, so axe
+    // a disabled field's words are color.text.tertiary, which WCAG 1.4.3 exempts
+    // for an inactive control, so axe
     // leaves the disabled field out
     a11y: { context: { include: ['body'], exclude: ['[data-row="Disabled"]'] } },
   },

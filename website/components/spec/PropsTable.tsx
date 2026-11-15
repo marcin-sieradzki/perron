@@ -5,6 +5,7 @@ import { Markdown } from '@/components/site/Markdown.tsx'
 import type { ComponentApi } from '../../lib/api.ts'
 import type { RegistryEntry } from '../../lib/registry.ts'
 import { propRows, type SpecPropRow } from '../../lib/spec.ts'
+import { ScrollFrame } from '../site/ScrollFrame.tsx'
 
 export function PropsTable({
   entry,
@@ -22,7 +23,7 @@ export function PropsTable({
       <h2 id="props-heading" className="spec-heading">
         Props
       </h2>
-      <div className="spec-panel glass scroll-x spec-props-table">
+      <ScrollFrame className="spec-panel glass scroll-x spec-props-table" label="Props">
         <table className="spec-props">
           <thead>
             <tr className="spec-overline">
@@ -52,7 +53,7 @@ export function PropsTable({
             ))}
           </tbody>
         </table>
-      </div>
+      </ScrollFrame>
       <dl className="spec-panel spec-props-list">
         {rows.map((row) => (
           <div key={row.name}>
