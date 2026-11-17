@@ -1,5 +1,18 @@
 # @mylder/perron
 
+## 0.11.0
+
+### Minor Changes
+
+- 374143d: `data/components.json` holds every component and pattern past designing for the Perron MCP: its summary, import line, when to use it and what to use instead, its props, the rules of its Do and don't with their levels, the notes for agents, its successor when deprecated, and its docs page.
+- c1e30b4: A deprecated component or pattern names its successor in the registry's new `replacedBy` field, and its docs pages open with "Deprecated: use <successor> instead.", linked to it. `api.json` records a prop's `@deprecated` text, which says what to use instead.
+- b6482c4: The specs in the shipped docs data gain caller guidance agents can read: When to use, first, says when to reach for a component and which entries to use instead; each Do and don't row is a rule with an id (`DD-<n>`), a level (`must` or `should`) and what checks it (`types` or `review`); and For agents, last, holds the mistakes agents have made with it. Every component's and pattern's spec has all three, and the contract and the spec template describe them, with the measure each rule's level and check is chosen by.
+- ec650f3: Text and line badge labels now reach WCAG 2.2 AA contrast (4.5:1) everywhere. `color.text.tertiary` (and `color.transit.delay.unknown`, which points at it) moves to two new palette steps, `palette.neutral.550` (#606C74) in the light theme and `palette.neutral.350` (#909BA1) in the dark, so hints, captions, placeholders and inactive labels pass on every surface. Line colours stay exact; their labels change instead: A, B, C and M4 take `color.text.on-color.dark`, and M1 takes the new `color.text.on-color.black` (`palette.neutral.1000`, #000000), since neither white nor the dark text clears 4.5:1 on its green.
+
+### Patch Changes
+
+- 20d6e05: Token descriptions say what each token is for: the line colours name where they are drawn, and the shortest descriptions now name a job rather than the thing. The token build fails on a description that only repeats the token's name or value.
+
 ## 0.10.1
 
 ### Patch Changes
