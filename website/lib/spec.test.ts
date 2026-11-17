@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { getReference } from '../../packages/mcp/src/reference.ts'
+import { findComponent, type ComponentRecord } from '../../packages/mcp/src/components.ts'
 import { readApi, readComponentApi } from './api.ts'
-import { entryByName, readEntries, type RegistryEntry } from './registry.ts'
-import { readRepoFile, repoRoot } from './repo.ts'
+import { entryByName, readEntries } from './registry.ts'
+import { readRepoFile } from './repo.ts'
 import { siteHref } from './routes.ts'
 import {
   PROSE_SECTIONS,
@@ -174,22 +174,18 @@ describe('the install strip and links', () => {
     )
   })
 
-  it('asks get_reference for each Base UI component it builds on, as the server answers', () => {
-    expect(agentCalls(entryByName('Button')!)).toEqual([
-      'get_reference({ library: "base-ui", component: "Button" })',
-    ])
+  it('asks get_component for every entry, and the server knows each one', () => {
+    expect(agentCalls(entryByName('Button')!)).toEqual(['get_component({ name: "Button" })'])
     expect(agentCalls(entryByName('DetailPanel')!)).toEqual([
-      'search_docs({ query: "DetailPanel" })',
+      'get_component({ name: "DetailPanel" })',
     ])
-    const asked = (e: RegistryEntry) =>
-      agentCalls(e).flatMap((c) => /component: "(\w+)"/.exec(c)?.[1] ?? [])
-    const answered = (e: RegistryEntry) =>
-      [...new Set(e.baseUiParts.map((p) => p.split('.')[0]))].filter(
-        (c) => !('error' in getReference(repoRoot(), 'base-ui', c)),
-      )
-    const by = (f: (e: RegistryEntry) => string[]) =>
-      Object.fromEntries(readEntries().map((e) => [e.name, f(e)]))
-    expect(by(asked)).toEqual(by(answered))
+    const records = JSON.parse(
+      readRepoFile('packages/perron/data/components.json'),
+    ) as ComponentRecord[]
+    const unknown = readEntries()
+      .map((e) => /name: "(\w+)"/.exec(agentCalls(e)[0])![1])
+      .filter((name) => !findComponent(records, name))
+    expect(unknown).toEqual([])
   })
 
   it("links to the entry's docs page in the published Storybook", () => {

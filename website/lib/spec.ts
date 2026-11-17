@@ -4,7 +4,7 @@
 // stylesheet, the sizes' tokens, and the lines of its install strip. Server-only: it reads the repo.
 import postcss, { type AtRule, type ChildNode, type Container, type Rule } from 'postcss'
 import { specProse } from '../../storybook/blocks/component-page.ts'
-import { folderOf, kebab, type Layer } from '../../scripts/lib/entry.ts'
+import { folderOf, type Layer } from '../../scripts/lib/entry.ts'
 import { SITE } from '../../scripts/lib/site.ts'
 import {
   ordered,
@@ -328,24 +328,12 @@ export const bareDefault = (spec: SpecPropRow[], prop: string) =>
 export { importLine } from '../../scripts/lib/entry.ts'
 
 /**
- * The page of Base UI's bundled docs that `get_reference` reads for a component, as
- * packages/mcp/src/reference.ts finds it. Checked here rather than by calling it, whose folder
- * listing the site's bundler would trace; the unit test holds the two to the same answer.
+ * What to ask the Perron MCP about the entry: `get_component` for its name, which answers with
+ * Perron's own contract (props, Do and don't, the mistakes agents make), where `get_reference`
+ * would give the Base UI API underneath, whose props a caller of Perron doesn't pass.
  */
-export const baseUiDoc = (component: string) =>
-  `node_modules/@base-ui/react/docs/react/components/${kebab(component)}.md`
-
-/**
- * What to ask the Perron MCP about the entry: `get_reference` for each Base UI component its parts
- * come from that the bundled docs have a page for, or `search_docs` for its name when none.
- */
-export function agentCalls(entry: Pick<RegistryEntry, 'name' | 'baseUiParts'>) {
-  const components = [...new Set(entry.baseUiParts.map((p) => p.split('.')[0]))].filter((c) =>
-    repoFileExists(baseUiDoc(c)),
-  )
-  return components.length
-    ? components.map((c) => `get_reference({ library: "base-ui", component: "${c}" })`)
-    : [`search_docs({ query: "${entry.name}" })`]
+export function agentCalls(entry: Pick<RegistryEntry, 'name'>) {
+  return [`get_component({ name: "${entry.name}" })`]
 }
 
 /** The published Storybook: under storybook/ on the docs site. */
