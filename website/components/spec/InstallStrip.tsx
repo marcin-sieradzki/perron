@@ -1,5 +1,5 @@
-// The install strip: the import line, and what to ask the Perron MCP about the entry, its Base UI
-// reference or, with no Base UI part, its docs.
+// The install strip: the import line, and what to ask the Perron MCP about the entry, its
+// get_component contract.
 import type { RegistryEntry } from '../../lib/registry.ts'
 import { agentCalls, importLine } from '../../lib/spec.ts'
 import { ScrollFrame } from '../site/ScrollFrame.tsx'
