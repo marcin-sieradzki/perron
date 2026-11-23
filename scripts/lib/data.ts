@@ -3,7 +3,6 @@
 // past designing with the guidance its spec gives a caller.
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { specProse } from '../../storybook/blocks/component-page.ts'
 import { PAGES_SITE } from '../../website/lib/base-path.ts'
 import type { Api, ComponentApi } from './api.ts'
 import { headingOf, PAGES, tokenSegment } from './pages.ts'
@@ -20,9 +19,17 @@ import {
   type Status,
 } from './registry.ts'
 import { openingSentence } from './site.ts'
-import { propRows, specPropsTable } from './spec-props.ts'
+import { propRows } from './spec-props.ts'
+import {
+  CHECKED_BY,
+  defaultOf,
+  LEVELS,
+  propsOf,
+  readSpec,
+  specProse,
+  type Spec,
+} from './spec-reader.ts'
 import type { ResolvedTokens } from './tokens.ts'
-import { LEVELS, CHECKED_BY, readDoAndDont, readForAgents, readWhenToUse } from './usage.ts'
 
 const json = (data: unknown) => `${JSON.stringify(data, null, 2)}\n`
 
@@ -77,18 +84,12 @@ export interface ComponentRecord {
 /** The props api.json gives, by the file's path from the repo root. */
 const API_FILE = `${PACKAGE}/api.json`
 
-/** A Default cell as code: a lone code span's text; nothing for none or for a required prop. */
-function defaultOf(cell: string) {
-  const plain = /^`[^`]+`$/.test(cell.trim()) ? cell.trim().slice(1, -1) : cell.trim()
-  return /^(none|\(required\)|—|-)?$/i.test(plain) ? undefined : plain
-}
-
 /**
  * The props of an entry: api.json's members, in the spec's order, with its types and deprecation
  * text, then the props only the spec's Props table names, such as those inherited from Base UI.
  */
-function propsOf(name: string, api: ComponentApi | undefined, spec: string): ComponentProp[] {
-  const table = specPropsTable(spec, name)
+function propsOfEntry(name: string, api: ComponentApi | undefined, spec: Spec): ComponentProp[] {
+  const table = propsOf(spec, name)?.rows ?? []
   const own = propRows(api ?? { extends: [], props: {} }, table).map((r) => {
     const deprecated = api?.props[r.name]?.deprecated
     const fallback = defaultOf(r.default)
@@ -103,13 +104,13 @@ function propsOf(name: string, api: ComponentApi | undefined, spec: string): Com
   })
   const named = new Set(own.map((p) => p.name))
   const rest = table.flatMap((r) => {
-    const fallback = defaultOf(r.default)
+    const fallback = r.defaultValue
     return r.names
       .filter((n) => !named.has(n))
       .map((n) => ({
         name: n,
         type: r.type,
-        optional: !/\(required\)/i.test(r.default),
+        optional: !r.required,
         ...(fallback !== undefined && { default: fallback }),
         description: r.description,
       }))
@@ -118,29 +119,30 @@ function propsOf(name: string, api: ComponentApi | undefined, spec: string): Com
 }
 
 /** An entry's record, from its registry entry, its props in api.json and its spec. */
-function recordOf(e: Entry, api: ComponentApi | undefined, spec: string): ComponentRecord {
-  const when = readWhenToUse(spec)
+function recordOf(e: Entry, api: ComponentApi | undefined, markdown: string): ComponentRecord {
+  const spec = readSpec(markdown)
+  const when = spec.whenToUse
   return {
     name: e.name,
     layer: e.layer,
     category: e.category,
     status: e.status as ComponentRecord['status'],
     ...(e.replacedBy && { replacedBy: e.replacedBy }),
-    summary: openingSentence(specProse(spec, 'intro')) ?? '',
+    summary: openingSentence(specProse(markdown, 'intro')) ?? '',
     import: importLine(e),
     whenToUse: when?.text ?? '',
     alternatives: (when?.alternatives ?? [])
       .filter((a) => a.name)
       .map((a) => ({ name: a.name, when: a.when })),
-    props: propsOf(e.name, api, spec),
-    rules: (readDoAndDont(spec)?.rules ?? []).map((r) => ({
+    props: propsOfEntry(e.name, api, spec),
+    rules: (spec.doAndDont?.rules ?? []).map((r) => ({
       id: r.id,
       level: r.level as ComponentRule['level'],
       do: r.do,
       dont: r.dont,
       checkedBy: r.checkedBy as ComponentRule['checkedBy'],
     })),
-    agentNotes: readForAgents(spec)?.notes ?? [],
+    agentNotes: spec.forAgents?.notes ?? [],
     docs: `${PAGES_SITE}${folderOf(e.layer)}/${kebab(e.name)}/`,
   }
 }

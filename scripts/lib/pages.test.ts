@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { RUN_NOTES } from '../../storybook/blocks/component-page.ts'
+import { RUN_NOTES } from './spec-reader.ts'
 import { describe, expect, it } from 'vitest'
 import { readSources } from './token-sources.ts'
 import { headingOf, PAGES, readPages } from './pages.ts'

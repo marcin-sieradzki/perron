@@ -1,11 +1,13 @@
 // What every check in this folder shares: the problem it reports, the order it reports them in,
 // the in-place `perron-allow(<rule>): reason` comment that excuses one line, and the readers of the
-// contract (docs/components/README.md), whose tables and lists the checks take their rules from.
+// contract (docs/components/README.md), whose tables and lists the checks take their rules from,
+// read by the spec reader's rules.
 import { readdirSync, statSync } from 'node:fs'
 import { join, relative } from 'node:path'
 import type { AtRule, Node } from 'postcss'
 import { holds } from '../../packages/perron/src/testing/pointer.ts'
 import { PACKAGE } from '../lib/paths.ts'
+import { codeSpans, linesOf, linesUnder, tablesIn } from '../lib/spec-reader.ts'
 
 /** One breach of a rule, at a file and line. */
 export interface Problem {
@@ -111,40 +113,21 @@ export function walk(root: string, dir: string, test: (name: string) => boolean)
 
 /**
  * The text under the heading `heading` (`## <heading>` or `### <heading>`), up to the next heading
- * of the same level or higher. Throws when the contract has no such heading, so a renamed section
- * fails the check that reads it.
+ * of the same level or higher, read as a spec is (scripts/lib/spec-reader.ts), so a heading in
+ * fenced code is none. Throws when the contract has no such heading, so a renamed section fails the
+ * check that reads it.
  */
 export function section(markdown: string, heading: string) {
-  const lines = markdown.split('\n')
-  const start = lines.findIndex((l) => new RegExp(`^#{2,3} ${heading}\\s*$`).test(l))
-  if (start < 0) throw new Error(`${CONTRACT} has no "${heading}" heading`)
-  const level = /^#+/.exec(lines[start])![0].length
-  const end = lines.findIndex(
-    (l, i) => i > start && /^#+ /.test(l) && /^#+/.exec(l)![0].length <= level,
-  )
-  return lines.slice(start + 1, end < 0 ? undefined : end).join('\n')
+  const lines = linesUnder(markdown, heading)
+  if (!lines) throw new Error(`${CONTRACT} has no "${heading}" heading`)
+  return lines.map((l) => l.text).join('\n')
 }
 
 /** The body rows of the first table in `markdown`, each as its trimmed cells, with `\|` read as `|`. */
-export function tableRows(markdown: string): string[][] {
-  const lines = markdown.split('\n')
-  const head = lines.findIndex(
-    (l, i) => l.startsWith('|') && /^\|[\s|:-]+\|$/.test(lines[i + 1] ?? ''),
-  )
-  const rows: string[][] = []
-  if (head < 0) return rows
-  for (let i = head + 2; i < lines.length && lines[i].startsWith('|'); i++)
-    rows.push(
-      lines[i]
-        .split(/(?<!\\)\|/)
-        .slice(1, -1)
-        .map((cell) => cell.trim().replaceAll('\\|', '|')),
-    )
-  return rows
-}
+export const tableRows = (markdown: string): string[][] =>
+  tablesIn(linesOf(markdown))[0]?.rows.map((r) => r.cells) ?? []
 
-/** The code spans of a cell or a line, without their backticks. */
-export const codeSpans = (text: string) => [...text.matchAll(/`([^`]+)`/g)].map((m) => m[1])
+export { codeSpans }
 
 /** `file:line: message` lines, for the terminal. */
 export const format = (rule: string, problems: Problem[]) =>

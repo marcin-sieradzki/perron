@@ -4,7 +4,7 @@ import { composeStories } from '@storybook/react-vite'
 import { describe, expect, it } from 'vitest'
 import { componentDocs } from '../../scripts/lib/docgen.ts'
 import { parseRegistry } from '../../scripts/lib/entry.ts'
-import { pageNotice, propRows, specProse } from './component-page.ts'
+import { pageNotice, propRows } from './component-page.ts'
 import { Gauge } from './fixtures/Gauge.tsx'
 
 /** The fixture's argTypes as a docs page gets them: Perron's docgen, then Storybook's enhancers. */
@@ -126,69 +126,6 @@ describe('propRows types', () => {
       },
     } as never)
     expect(rows[0].type).toBe('(event: Event, details: Tooltip.Root.ChangeEventDetails) => void')
-  })
-})
-
-const SPEC = `# Gauge
-
-A gauge shows how full something is.
-
-## Anatomy
-
-| Part | What it is |
-| ---- | ---------- |
-
-## Keyboard and ARIA
-
-| Key | Does | From |
-| --- | ---- | ---- |
-
-## Owned strings
-
-No owned strings: every word comes from the caller.
-
-## Do and don't
-
-| Do | Don't |
-| -- | ----- |
-`
-
-describe('specProse', () => {
-  it("gives the spec's opening sentence for the intro", () => {
-    expect(specProse(SPEC, 'intro')).toBe('A gauge shows how full something is.')
-  })
-
-  it('stops the intro at the run notes, which are for the maintainer', () => {
-    const spec = SPEC.replace(
-      'is.\n',
-      'is.\n\nIt reads 0 to 100.\n\n<!-- run notes -->\n\nThe design is deferred (ADR 0010).\n',
-    )
-    expect(specProse(spec, 'intro')).toBe(
-      'A gauge shows how full something is.\n\nIt reads 0 to 100.',
-    )
-  })
-
-  it('gives When to use with the intro, below its run notes, as the section that opens the page', () => {
-    const spec = SPEC.replace(
-      'is.\n',
-      'is.\n\n<!-- run notes -->\n\nMade for this test.\n\n## When to use\n\nUse Gauge for a share of a whole.\n\nNothing else in Perron does this.\n',
-    )
-    expect(specProse(spec, 'intro')).toBe(
-      'A gauge shows how full something is.\n\n## When to use\n\nUse Gauge for a share of a whole.\n\nNothing else in Perron does this.',
-    )
-  })
-
-  it('gives the sections named, each with its heading, in the order asked', () => {
-    expect(specProse(SPEC, ["Do and don't", 'Owned strings'])).toBe(
-      [
-        "## Do and don't\n\n| Do | Don't |\n| -- | ----- |",
-        '## Owned strings\n\nNo owned strings: every word comes from the caller.',
-      ].join('\n\n'),
-    )
-  })
-
-  it('fails on a section the spec does not have', () => {
-    expect(() => specProse(SPEC, ['Usage'])).toThrow('The spec has no "## Usage" section')
   })
 })
 

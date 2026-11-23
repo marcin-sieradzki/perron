@@ -4,7 +4,7 @@
 import { Markdown } from '@/components/site/Markdown.tsx'
 import type { ComponentApi } from '../../lib/api.ts'
 import type { RegistryEntry } from '../../lib/registry.ts'
-import { propRows, type SpecPropRow } from '../../lib/spec.ts'
+import { propRows, type SpecProp } from '../../lib/spec.ts'
 import { ScrollFrame } from '../site/ScrollFrame.tsx'
 
 export function PropsTable({
@@ -14,7 +14,7 @@ export function PropsTable({
 }: {
   entry: RegistryEntry
   api: ComponentApi
-  spec: SpecPropRow[]
+  spec: SpecProp[]
 }) {
   const rows = propRows(api, spec)
   const md = (source: string) => <Markdown source={source} path={entry.specPath} inline />

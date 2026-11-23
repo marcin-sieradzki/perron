@@ -3,17 +3,18 @@
 // values its matrix crosses, the state styles the matrix forces from the component's own
 // stylesheet, the sizes' tokens, and the lines of its install strip. Server-only: it reads the repo.
 import postcss, { type AtRule, type ChildNode, type Container, type Rule } from 'postcss'
-import { specProse } from '../../storybook/blocks/component-page.ts'
 import { folderOf, type Layer } from '../../scripts/lib/entry.ts'
 import { SITE } from '../../scripts/lib/site.ts'
+import { ordered, propRows, type PropRow } from '../../scripts/lib/spec-props.ts'
 import {
-  ordered,
-  propRows,
-  specPropsTable,
-  type PropRow,
-  type SpecPropRow,
-} from '../../scripts/lib/spec-props.ts'
-import { FOR_AGENTS, sectionMarkdown, sectionsOf, WHEN_TO_USE } from '../../scripts/lib/usage.ts'
+  FOR_AGENTS,
+  propsOf,
+  readSpec,
+  sectionMarkdown,
+  specProse,
+  WHEN_TO_USE,
+  type SpecProp,
+} from '../../scripts/lib/spec-reader.ts'
 import { markdownHeadings, slug, type Heading } from './anchors.ts'
 import type { ComponentApi } from './api.ts'
 import type { RegistryEntry } from './registry.ts'
@@ -36,7 +37,7 @@ export function specIntro(markdown: string) {
 
 /** The `##` sections named, each with its heading, that the spec has, in the order asked. */
 export function specSections(markdown: string, headings: readonly string[]) {
-  const has = new Set(sectionsOf(markdown).map((s) => s.heading))
+  const has = new Set(readSpec(markdown).sections.map((s) => s.heading))
   return headings
     .filter((h) => has.has(h))
     .map((heading) => ({ heading, markdown: specProse(markdown, [heading]) }))
@@ -48,8 +49,8 @@ export function specSections(markdown: string, headings: readonly string[]) {
  */
 export function specBody(markdown: string) {
   const left = new Set([WHEN_TO_USE, FOR_AGENTS])
-  return sectionsOf(markdown)
-    .filter((s) => !left.has(s.heading))
+  return readSpec(markdown)
+    .sections.filter((s) => !left.has(s.heading))
     .map(sectionMarkdown)
     .join('\n')
     .trim()
@@ -71,7 +72,11 @@ export function specHeadings(entry: Pick<RegistryEntry, 'built'>, markdown: stri
 
 /* The spec's props table: scripts/lib/spec-props.ts, which the MCP's data reads too */
 
-export { propRows, specPropsTable, type PropRow, type SpecPropRow }
+/** The rows of the spec's Props table for the part `name`, as scripts/lib/spec-reader.ts reads them. */
+export const specPropsTable = (markdown: string, name: string): SpecProp[] =>
+  propsOf(readSpec(markdown), name)?.rows ?? []
+
+export { propRows, type PropRow, type SpecProp }
 
 /* The matrix: the variant and colour values, by the states the stylesheet can force */
 
@@ -93,7 +98,7 @@ export const STATE_ATTRIBUTE = 'data-site-state'
  * The string-literal members of the prop's union, such as `['solid', 'outline']` for Button's
  * `variant`, in the spec's order; empty for a prop that is not such a union.
  */
-export function unionValues(api: ComponentApi, prop: string, spec: SpecPropRow[] = []) {
+export function unionValues(api: ComponentApi, prop: string, spec: SpecProp[] = []) {
   const members = api.props[prop]?.type ?? []
   if (members.length < 2 || !members.every((m) => /^"[^"]*"$/.test(m))) return []
   const row = spec.find((r) => r.names.length === 1 && r.names[0] === prop)
@@ -133,7 +138,7 @@ const MAX_CROSSED = 12
  */
 export function stateMatrix(
   api: ComponentApi,
-  spec: SpecPropRow[],
+  spec: SpecProp[],
   styles: Pick<StateStyles, 'forceable'>,
 ): Matrix | undefined {
   const axes = MATRIX_AXES.map((prop) => ({ prop, values: unionValues(api, prop, spec) })).filter(
@@ -316,7 +321,7 @@ export function sizeSpecs(css: string, name: string, values: string[], fallback?
 }
 
 /** The default of a prop as the spec writes it, `'medium'`, as a bare value, `medium`. */
-export const bareDefault = (spec: SpecPropRow[], prop: string) =>
+export const bareDefault = (spec: SpecProp[], prop: string) =>
   spec
     .find((r) => r.names.includes(prop))
     ?.default.replace(/`/g, '')

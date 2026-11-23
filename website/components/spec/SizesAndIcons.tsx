@@ -5,7 +5,7 @@ import { PackageIcon } from '@/components/site/PackageIcon.tsx'
 import { compactPreviewProps, getPreview } from '@/previews/index.ts'
 import type { ComponentApi } from '../../lib/api.ts'
 import type { RegistryEntry } from '../../lib/registry.ts'
-import { unionValues, valueLabel, type SizeSpec, type SpecPropRow } from '../../lib/spec.ts'
+import { unionValues, valueLabel, type SizeSpec, type SpecProp } from '../../lib/spec.ts'
 
 /** The icons the panel draws: one that names a place on the map, one that leads on. */
 const ICON = { startIcon: 'locate', endIcon: 'chevron-right' } as const
@@ -19,7 +19,7 @@ export function SizesAndIcons({
 }: {
   entry: RegistryEntry
   api: ComponentApi
-  spec: SpecPropRow[]
+  spec: SpecProp[]
   sizes: SizeSpec[]
   icons: readonly ('startIcon' | 'endIcon')[]
 }) {

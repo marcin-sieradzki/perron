@@ -1,5 +1,5 @@
 // The `usage` rule: a registered entry's spec, from `building` on, gives its caller guidance as
-// data the docs pages and the Perron MCP can read (scripts/lib/usage.ts, laid out by
+// data the docs pages and the Perron MCP can read (scripts/lib/spec-reader.ts, laid out by
 // docs/components/TEMPLATE.md). When to use comes first and names registered entries other than
 // its own, from building on and not deprecated, each linked to its spec page, or says none comes
 // close; the Do and don't table's rules each have an id, a level and what checks them, and each
@@ -13,26 +13,38 @@ import { folderOf, isBuilt, readRegistry, specPage, type Entry } from '../lib/re
 import {
   ALTERNATIVE_COLUMNS,
   CHECKED_BY,
-  citations,
   FOR_AGENTS,
   hasRuleColumns,
   LEVELS,
   NO_ALTERNATIVE,
   NONE_KNOWN,
-  readDoAndDont,
-  readForAgents,
-  readWhenToUse,
+  readSpec,
   RULE_COLUMNS,
   RULE_ID,
-  sectionsOf,
-  TYPE_TEST_FILE,
   WHEN_TO_USE,
   type DoAndDont,
+  type Spec,
   type WhenToUse,
-} from '../lib/usage.ts'
+} from '../lib/spec-reader.ts'
 import { byFileLine, walk, type Check, type Problem } from './lib.ts'
 
 const RULE = 'usage'
+
+/**
+ * A type test that proves a `types` rule: a `@ts-expect-error` comment whose text starts with the
+ * rule's id, `// @ts-expect-error DD-2: <what the line breaks>`, or `{/* … *\/}` in JSX.
+ */
+const CITATION = /(?:\/\/|\/\*)\s*@ts-expect-error\s+(DD-\d+)\b/
+
+/** The rule each line of `code` cites in a `@ts-expect-error`, with the line. */
+const citations = (code: string) =>
+  code.split('\n').flatMap((text, i) => {
+    const id = CITATION.exec(text)?.[1]
+    return id ? [{ id, line: i + 1 }] : []
+  })
+
+/** The files of an entry's folder that can hold its type tests: its tests and its stories. */
+const TYPE_TEST_FILE = /\.(test|stories)\.tsx?$/
 
 /** Where a problem's reader finds the layout. */
 const TEMPLATE = '(docs/components/TEMPLATE.md)'
@@ -181,9 +193,9 @@ function alternativeProblems(e: Entry, registry: Entry[], when: WhenToUse): Prob
 }
 
 /** When to use anywhere but first, For agents anywhere but last, and For agents that is no list. */
-function placeProblems(e: Entry, spec: string): Problem[] {
+function placeProblems(e: Entry, spec: Spec): Problem[] {
   const file = specPage(e)
-  const sections = sectionsOf(spec)
+  const { sections } = spec
   const problems: Problem[] = []
   const when = sections.findIndex((s) => s.heading === WHEN_TO_USE)
   if (when > 0)
@@ -199,7 +211,7 @@ function placeProblems(e: Entry, spec: string): Problem[] {
       line: sections[agents].line,
       message: `${file}'s For agents is not its last section: move it below ${sections.at(-1)!.heading} ${TEMPLATE}`,
     })
-  const notes = readForAgents(spec)
+  const notes = spec.forAgents
   if (notes && !notes.wellFormed)
     problems.push({
       file,
@@ -210,29 +222,30 @@ function placeProblems(e: Entry, spec: string): Problem[] {
 }
 
 /** Each of When to use, the Do and don't table and For agents that the spec lacks. */
-function missingProblems(e: Entry, spec: string): Problem[] {
+function missingProblems(e: Entry, spec: Spec): Problem[] {
   const file = specPage(e)
   const missing = (has: unknown, message: string) => (has ? [] : [{ file, message }])
   return [
     ...missing(
-      readWhenToUse(spec),
+      spec.whenToUse,
       `${file} has no When to use: write it as the first section, right after the intro and its run notes ${TEMPLATE}`,
     ),
     ...missing(
-      readForAgents(spec),
+      spec.forAgents,
       `${file} has no For agents: write it as the last section, with "${NONE_KNOWN}" until an agent makes a mistake with the entry ${TEMPLATE}`,
     ),
     ...missing(
-      readDoAndDont(spec),
+      spec.doAndDont,
       `${file} has no Do and don't table: give it one, with the columns ${RULE_COLUMNS.slice(0, -1).join(', ')} and ${RULE_COLUMNS.at(-1)} ${TEMPLATE}`,
     ),
   ]
 }
 
 /** The problems of one entry's spec. */
-function specProblems(root: string, e: Entry, registry: Entry[], spec: string): Problem[] {
-  const table = readDoAndDont(spec)
-  const when = readWhenToUse(spec)
+function specProblems(root: string, e: Entry, registry: Entry[], markdown: string): Problem[] {
+  const spec = readSpec(markdown)
+  const table = spec.doAndDont
+  const when = spec.whenToUse
   return [
     ...missingProblems(e, spec),
     ...placeProblems(e, spec),
