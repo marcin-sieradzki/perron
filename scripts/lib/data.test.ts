@@ -6,7 +6,7 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import { readComponents } from './data.ts'
-import { CHECKED_BY, LEVELS, RULE_ID } from './usage.ts'
+import { CHECKED_BY, LEVELS, RULE_ID } from './spec-reader.ts'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const root = join(here, '../..')

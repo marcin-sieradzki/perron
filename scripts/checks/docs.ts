@@ -19,7 +19,6 @@
 // type the component's file keeps to itself, which the page would show and the reader can't find.
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { RUN_NOTES, specProse } from '../../storybook/blocks/component-page.ts'
 import {
   componentDocs,
   docgenProgram,
@@ -29,7 +28,8 @@ import {
 import { PACKAGE } from '../lib/paths.ts'
 import { codeFile } from '../lib/props.ts'
 import { folderOf, isBuilt, readRegistry, specPage, type Entry } from '../lib/registry.ts'
-import { byFileLine, codeSpans, CONTRACT, type Check, type Problem } from './lib.ts'
+import { propsOf, readSpec, RUN_NOTES, specProse, type Spec } from '../lib/spec-reader.ts'
+import { byFileLine, CONTRACT, type Check, type Problem } from './lib.ts'
 
 const RULE = 'docs'
 
@@ -51,12 +51,6 @@ function docOf(root: string, e: Entry, shared?: DocgenProgram) {
   )
 }
 
-/** A Default cell as the props table would show it: a lone code span's text; nothing for none. */
-function specDefault(cell: string) {
-  const plain = /^`[^`]+`$/.test(cell) ? codeSpans(cell)[0] : cell
-  return /^(none|\(required\)|—|-)?$/i.test(plain.trim()) ? '' : plain.trim()
-}
-
 /** One row of a spec's Props table: the props it names, its line and its default. */
 interface SpecRow {
   names: string[]
@@ -65,29 +59,14 @@ interface SpecRow {
 }
 
 /**
- * The rows of a spec's Props table, each with the props its Name cell names, its line, and its
- * default as the props table would show it; nothing when the spec has no such table.
+ * The rows of the entry's own table in its spec's Props section, each with the props its Name
+ * cell names, its line, and its default as the props table would show it; nothing when the spec
+ * has no such table, or one with no Default column.
  */
-function propsRows(spec: string): SpecRow[] | undefined {
-  const lines = spec.split('\n')
-  const start = lines.findIndex((l) => /^## Props\s*$/.test(l))
-  if (start < 0) return undefined
-  const head = lines.findIndex((l, i) => i > start && l.startsWith('|'))
-  if (head < 0 || lines.slice(start + 1, head).some((l) => l.startsWith('## '))) return undefined
-  const cells = (l: string) =>
-    l
-      .split(/(?<!\\)\|/)
-      .slice(1, -1)
-      .map((c) => c.trim().replaceAll('\\|', '|'))
-  const column = cells(lines[head]).indexOf('Default')
-  if (column < 0) return undefined
-  const rows: SpecRow[] = []
-  for (let i = head + 2; i < lines.length && lines[i].startsWith('|'); i++) {
-    const row = cells(lines[i])
-    const names = codeSpans(row[0] ?? '')
-    if (names.length) rows.push({ names, line: i + 1, default: specDefault(row[column] ?? '') })
-  }
-  return rows
+function propsRows(spec: Spec, name: string): SpecRow[] | undefined {
+  const table = propsOf(spec, name)
+  if (!table?.columns.includes('Default')) return undefined
+  return table.rows.map((r) => ({ names: r.names, line: r.line, default: r.defaultValue ?? '' }))
 }
 
 /** The member of `<Name>Props` a Name cell's prop is: `slotProps.icon` is `slotProps`. */
@@ -129,25 +108,12 @@ function defaultProblems(e: Entry, doc: ComponentDoc, rows: SpecRow[]): Problem[
   })
 }
 
-/** Each story of the spec's Stories table, by the code span that starts its row, with its line. */
-function storyRows(spec: string) {
-  const lines = spec.split('\n')
-  const start = lines.findIndex((l) => /^## Stories\s*$/.test(l))
-  if (start < 0) return undefined
-  const rows: { name: string; line: number }[] = []
-  for (let i = start + 1; i < lines.length && !lines[i].startsWith('## '); i++) {
-    const name = /^\|\s*`([^`]+)`/.exec(lines[i])?.[1]
-    if (name) rows.push({ name, line: i + 1 })
-  }
-  return rows
-}
-
 /** Each story the stories file exports with no row in the spec's Stories table, and each row it does not export. */
 function storyProblems(root: string, e: Entry): Problem[] {
   const spec = join(root, specPage(e))
   const file = join(root, storiesFile(e))
   if (!existsSync(spec) || !existsSync(file)) return []
-  const rows = storyRows(readFileSync(spec, 'utf8'))
+  const rows = readSpec(readFileSync(spec, 'utf8')).stories
   if (!rows) return []
   const exported = [...readFileSync(file, 'utf8').matchAll(/^export const (\w+)/gm)].map(
     (m) => m[1],
@@ -222,40 +188,6 @@ export function pressed(stories: string, key: string): boolean {
 }
 
 /**
- * A row that says why no `play` test can press its keys, such as Tab after a press on the
- * backdrop, which user-event cannot reproduce: `Untested: <reason>` in its cell. The reviewer
- * checks the reason holds.
- */
-const UNTESTED = /\bUntested: \S/
-
-/**
- * Each key of the spec's Keyboard table, a code span starting a row of its first table, such as
- * `Enter` or `Shift+Tab`, with its line: the keys a `play` test presses. A row of words, such as
- * "Typing" or "A press on the label", names no key, and an `Untested: <reason>` row is left out.
- */
-function keyboardRows(spec: string) {
-  const lines = spec.split('\n')
-  const start = lines.findIndex((l) => /^## Keyboard/.test(l))
-  if (start < 0) return []
-  const keys: { key: string; line: number }[] = []
-  let seen = false
-  for (let i = start + 1; i < lines.length && !lines[i].startsWith('## '); i++) {
-    if (!lines[i].startsWith('|')) {
-      if (seen) break
-      continue
-    }
-    seen = true
-    if (UNTESTED.test(lines[i])) continue
-    const first = lines[i].split('|')[1] ?? ''
-    // the keys a row starts with, `Enter`, `Space`, before the words after them
-    const keyList = /^\s*((?:`[^`]+`(?:,\s*)?)+)/.exec(first)?.[1] ?? ''
-    for (const [, key] of keyList.matchAll(/`([^`]+)`/g))
-      if (/^[A-Z][\w+]*$/.test(key)) keys.push({ key, line: i + 1 })
-  }
-  return keys
-}
-
-/**
  * Each key of the spec's Keyboard table that no `play` test in the stories file presses, for an
  * entry still `building`: the loop's build and review hold to it, and a stable entry catches up
  * in a change of its own.
@@ -266,8 +198,8 @@ function keyboardProblems(root: string, e: Entry): Problem[] {
   const file = join(root, storiesFile(e))
   if (!existsSync(spec) || !existsSync(file)) return []
   const stories = readFileSync(file, 'utf8')
-  return keyboardRows(readFileSync(spec, 'utf8'))
-    .filter(({ key }) => !pressed(stories, key))
+  return readSpec(readFileSync(spec, 'utf8'))
+    .keys.filter(({ key }) => !pressed(stories, key))
     .map(({ key, line }) => ({
       file: specPage(e),
       line,
@@ -363,7 +295,9 @@ function introProblems(root: string, e: Entry): Problem[] {
 /** Where the spec's Props table and the docs page's would differ. */
 function tableProblems(root: string, e: Entry, doc: ComponentDoc): Problem[] {
   const spec = join(root, specPage(e))
-  const rows = existsSync(spec) ? propsRows(readFileSync(spec, 'utf8')) : undefined
+  const rows = existsSync(spec)
+    ? propsRows(readSpec(readFileSync(spec, 'utf8')), e.name)
+    : undefined
   return rows ? [...rowProblems(e, doc, rows), ...defaultProblems(e, doc, rows)] : []
 }
 

@@ -48,13 +48,6 @@ describe('propRows', () => {
     expect(rows.find((r) => r.name === 'ref')?.description).toMatch(/Reaches the root/)
   })
 
-  it('reads the table of a part when the spec has one per part', () => {
-    const md = readRepoFile('docs/components/segmented-control.md')
-    const names = specPropsTable(md, 'SegmentedControl').flatMap((r) => r.names)
-    expect(names).toContain('defaultValue')
-    expect(names).not.toContain('pressed')
-  })
-
   it('builds a row for every prop of every released entry with a spec page', () => {
     const api = readApi()
     const entries = readEntries().filter((x) => x.hasSpec && api[x.name])

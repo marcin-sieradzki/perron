@@ -1,10 +1,9 @@
 // The data behind a component's docs page, `<Name>.mdx`: its props table in MUI's layout, from the
-// argTypes Storybook reads out of the component's docgen, the sections of its spec the page shows,
-// and the notice a deprecated entry's page opens with. Kept apart from the blocks that draw them,
-// so a node test can run them.
+// argTypes Storybook reads out of the component's docgen, and the notice a deprecated entry's page
+// opens with. The sections of its spec the page shows are scripts/lib/spec-reader.ts's
+// `specProse`. Kept apart from the blocks that draw them, so a node test can run them.
 import type { ArgTypes } from '@storybook/react-vite'
 import { deprecationNotice, specPage, type Entry } from '../../scripts/lib/entry.ts'
-import { sectionMarkdown, splitSections, WHEN_TO_USE } from '../../scripts/lib/usage.ts'
 
 type InputType = ArgTypes[string]
 
@@ -76,50 +75,6 @@ export function propRows(argTypes: ArgTypes): PropRow[] {
     else props.push(row)
   }
   return [...props, ...slots]
-}
-
-/**
- * The line in a spec's intro that starts its run notes: how the spec was made (ADR 0010, the
- * sources, what the prototype gave), for the maintainer. The docs page's intro stops above it.
- */
-export const RUN_NOTES = '<!-- run notes -->'
-
-/**
- * A spec's `##` sections by heading, each with its heading, and its intro: the text between `#` and
- * the first `##`, up to its run notes, then its When to use, heading and all, when it has one.
- */
-function introAndSections(markdown: string) {
-  const { head, sections: all } = splitSections(markdown)
-  const sections = new Map(all.map((s) => [s.heading, sectionMarkdown(s).trim()] as const))
-  const intro = [
-    head
-      .map((l) => l.text)
-      .join('\n')
-      .replace(/^# .*$/m, '')
-      .split(RUN_NOTES)[0]
-      .trim(),
-    sections.get(WHEN_TO_USE),
-  ]
-    .filter(Boolean)
-    .join('\n\n')
-  return { intro, sections }
-}
-
-/**
- * Prose from a spec for the docs page: `'intro'` gives what the component is for, above the run
- * notes, and its When to use; a list of headings gives those sections, each with its `##`
- * heading, in the order asked.
- */
-export function specProse(markdown: string, which: 'intro' | string[]) {
-  const { intro, sections } = introAndSections(markdown)
-  if (which === 'intro') return intro
-  return which
-    .map((heading) => {
-      const section = sections.get(heading)
-      if (!section) throw new Error(`The spec has no "## ${heading}" section`)
-      return section
-    })
-    .join('\n\n')
 }
 
 /**

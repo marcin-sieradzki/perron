@@ -7,7 +7,8 @@ import pages from 'virtual:perron/pages'
 import registry from '../../packages/perron/components.json' with { type: 'json' }
 import { Alert } from '../../packages/perron/src/components/Alert/Alert.tsx'
 import { parseRegistry } from '../../scripts/lib/entry.ts'
-import { pageNotice, specProse } from './component-page.ts'
+import { specProse } from '../../scripts/lib/spec-reader.ts'
+import { pageNotice } from './component-page.ts'
 import { Link } from './FoundationPage.tsx'
 import './perron-docs.css'
 

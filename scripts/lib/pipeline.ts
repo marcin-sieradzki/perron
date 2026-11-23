@@ -26,6 +26,7 @@ import { CONTRACT } from '../checks/lib.ts'
 import { readPropRules } from '../checks/props.ts'
 import { folderOf, kebab, type Layer } from './entry.ts'
 import { PACKAGE } from './paths.ts'
+import { readSpec } from './spec-reader.ts'
 
 /** The stages, in the order a component goes through them. */
 export const STAGES = ['design', 'brief', 'build', 'review', 'docs', 'visual'] as const
@@ -308,7 +309,7 @@ export function specProblems(
   banned: Record<string, string> = {},
 ) {
   const problems: string[] = []
-  const headings = (md: string) => [...md.matchAll(/^## (.+?)\s*$/gm)].map((m) => m[1])
+  const headings = (md: string) => readSpec(md).sections.map((s) => s.heading)
   const wanted = headings(template)
   const have = headings(spec)
   for (const h of wanted) if (!have.includes(h)) problems.push(`has no "## ${h}" section`)
@@ -342,11 +343,9 @@ export function specProblems(
   return { pending, problems }
 }
 
-/** The prop each row of the spec's Props tables names: the first code span of its first cell. */
-function propNames(spec: string) {
-  const props = /^## Props\s*$([\s\S]*?)(?=^## |(?![\s\S]))/m.exec(spec)?.[1] ?? ''
-  return [...props.matchAll(/^\|\s*`([^`]+)`/gm)].map((m) => m[1])
-}
+/** The props every row of the spec's Props tables names, those of each part included. */
+const propNames = (spec: string) =>
+  (readSpec(spec).props ?? []).flatMap((t) => t.rows.flatMap((r) => r.names))
 
 /** The names the contract's "Names from other libraries" table bans, when the contract is there. */
 function bannedNames(env: Env) {

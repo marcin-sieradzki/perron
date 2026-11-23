@@ -1,50 +1,9 @@
-// A spec's Props table, and the props table a docs page builds from it and api.json: the rows from
-// api.json, in the spec's order, with the spec's defaults and descriptions. Node-free: the docs
-// site's spec pages and the component data the Perron MCP reads (data.ts) share it.
-import { specProse } from '../../storybook/blocks/component-page.ts'
-import { sections } from '../../packages/mcp/src/markdown.ts'
+// The props table a docs page builds from a spec's Props table and api.json: the rows from
+// api.json, in the spec's order, with the spec's defaults and descriptions. The spec's table is
+// read by scripts/lib/spec-reader.ts. Node-free: the docs site's spec pages and the component data
+// the Perron MCP reads (data.ts) share it.
 import type { ComponentApi } from './api.ts'
-import { tablesIn } from './usage.ts'
-
-/** One row of a markdown table in the spec's Props section, by its column names. */
-export interface SpecPropRow {
-  /** The props a row names: `className`, `style` and `ref` share one row */
-  names: string[]
-  type: string
-  default: string
-  description: string
-}
-
-/** The first markdown table in `text`, as rows keyed by the header's lowercased names. */
-function propTable(text: string): Record<string, string>[] {
-  const lines = text.split('\n').map((l, i) => ({ text: l.trim(), line: i + 1 }))
-  const [table] = tablesIn(lines)
-  if (!table) return []
-  const columns = table.columns.map((c) => c.toLowerCase())
-  return table.rows.map((r) => Object.fromEntries(columns.map((c, i) => [c, r.cells[i] ?? ''])))
-}
-
-/** A cell that is one code span, as its code; any other cell, such as Base UI's `render`, whole. */
-const unquote = (s: string) => (/^`[^`]*`$/.test(s) ? s.slice(1, -1) : s)
-
-/**
- * The spec's props table for the component `name`: the table under `### <name>` in its Props
- * section when the section has one per part, otherwise the section's first table.
- */
-export function specPropsTable(markdown: string, name: string): SpecPropRow[] {
-  if (!/^## Props\s*$/m.test(markdown)) return []
-  const section = specProse(markdown, ['Props'])
-  const own = sections(section).find((s) => s.level === 3 && s.heading === name)
-  return propTable(own?.text ?? section).map((r) => {
-    const named = [...(r.name ?? '').matchAll(/`([^`]+)`/g)].map((m) => m[1])
-    return {
-      names: named.length ? named : (r.name ?? '').split(/,\s*/).filter(Boolean),
-      type: unquote(r.type ?? ''),
-      default: r.default ?? '',
-      description: r.description ?? '',
-    }
-  })
-}
+import type { SpecProp } from './spec-reader.ts'
 
 /** One row of the page's props table, in MUI's columns. */
 export interface PropRow {
@@ -86,7 +45,7 @@ const LONG_TYPE = 60
  * order; a type too long to read is the spec's own text where it has one. Default and description
  * come from the spec.
  */
-export function propRows(api: ComponentApi, spec: SpecPropRow[]): PropRow[] {
+export function propRows(api: ComponentApi, spec: SpecProp[]): PropRow[] {
   const bySpec = new Map(spec.flatMap((r) => r.names.map((n) => [n, r] as const)))
   const names = Object.keys(api.props)
   const order = [
